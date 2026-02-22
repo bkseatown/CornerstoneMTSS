@@ -242,6 +242,9 @@ header {
   backdrop-filter: blur(10px);
   z-index:       40;
   animation:     slideDown 0.18s ease;
+  max-height:    calc(100dvh - var(--header-h) - var(--focus-h) - env(safe-area-inset-bottom));
+  display:       flex;
+  flex-direction: column;
 }
 
 .settings-header {
@@ -299,6 +302,89 @@ header {
   background: color-mix(in oklab, var(--panel-bg) 74%, #ffffff 26%);
   color:      var(--text);
   cursor:     pointer;
+}
+
+
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: color-mix(in oklab, var(--panel-border) 72%, #ffffff 28%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.settings-view-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.settings-tab {
+  border: 1.5px solid var(--panel-border);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--panel-bg) 78%, #ffffff 22%);
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.settings-tab:hover {
+  color: var(--text);
+  border-color: color-mix(in oklab, var(--brand) 45%, var(--panel-border) 55%);
+}
+
+.settings-tab.is-active,
+.settings-tab[aria-selected="true"] {
+  background: color-mix(in oklab, var(--brand) 20%, var(--panel-bg) 80%);
+  color: var(--text);
+  border-color: color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
+}
+
+.settings-section {
+  display: none;
+}
+
+.settings-section.is-active {
+  display: block;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: color-mix(in oklab, var(--panel-border) 72%, #ffffff 28%);
+  gap: 1px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.setting-row {
+  min-height: 56px;
+}
+
+.setting-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-row-help {
+  background: color-mix(in oklab, var(--modal-bg) 88%, #ffffff 12%);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 640px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .setting-checkbox-label {

@@ -401,8 +401,46 @@
   }
 
   // ─── 5. Settings panel wiring ───────────────────────
+  const SETTINGS_VIEWS = new Set(['quick', 'advanced']);
+
+  function setSettingsView(view, options = {}) {
+    const next = SETTINGS_VIEWS.has(view) ? view : 'quick';
+    const tabs = Array.from(document.querySelectorAll('#settings-panel [data-settings-tab]'));
+    const sections = Array.from(document.querySelectorAll('#settings-panel [data-settings-section]'));
+
+    tabs.forEach((tab) => {
+      const active = tab.getAttribute('data-settings-tab') === next;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.tabIndex = active ? 0 : -1;
+    });
+
+    sections.forEach((section) => {
+      const active = section.getAttribute('data-settings-section') === next;
+      section.classList.toggle('is-active', active);
+      section.hidden = !active;
+    });
+
+    if (options.focus) {
+      const activeTab = tabs.find((tab) => tab.getAttribute('data-settings-tab') === next);
+      if (activeTab && typeof activeTab.focus === 'function') activeTab.focus();
+    }
+  }
+
+  document.querySelectorAll('#settings-panel [data-settings-tab]').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      setSettingsView(tab.getAttribute('data-settings-tab'));
+    });
+  });
+
+  setSettingsView('quick');
+
   _el('settings-btn')?.addEventListener('click', () => {
-    _el('settings-panel')?.classList.toggle('hidden');
+    const panel = _el('settings-panel');
+    if (!panel) return;
+    const opening = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden');
+    if (opening) setSettingsView('quick');
   });
   _el('settings-close')?.addEventListener('click', () => {
     _el('settings-panel')?.classList.add('hidden');
