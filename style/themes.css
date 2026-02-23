@@ -365,9 +365,9 @@
   --key-shadow:   0 3px 0 #9d3450, 0 1px 3px rgba(0,0,0,0.22);
   --key-hover:    #f0e4d0;
   --vowel-accent: #4fa0e2;
-  --brand:        #ff4a57;
-  --brand-dk:     #c1172b;
-  --brand-text:   #fff3f3;
+  --brand:        #d11f2f;
+  --brand-dk:     #9a1320;
+  --brand-text:   #fff5f5;
   --accent:       #5fa8ff;
   --header-bg:    #ed1d24;
   --header-border: rgba(95,168,255,0.45);
@@ -667,7 +667,7 @@
 
 /* ── AMONG US ── deep space with crewmate red + visor cyan ── */
 [data-theme="amongus"] {
-  --page-bg:      #1a1b2a;
+  --page-bg:      #20233a;
   --page-bg2:     #111225;
   --plate-bg:     rgba(94,112,190,0.10);
   --plate-border: rgba(225,29,72,0.30);
