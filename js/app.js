@@ -75,6 +75,9 @@
   const PREF_MUSIC_AUTO_MIGRATION_KEY = 'wq_v2_pref_music_auto_20260222';
   const FIRST_RUN_SETUP_KEY = 'wq_v2_first_run_setup_v1';
   const SESSION_SUMMARY_KEY = 'wq_v2_teacher_session_summary_v1';
+  const SHUFFLE_BAG_KEY = 'wq_v2_shuffle_bag';
+  const REVIEW_QUEUE_KEY = 'wq_v2_spaced_review_queue_v1';
+  const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
     'chill',
@@ -159,6 +162,7 @@
   const prefs = loadPrefs();
   function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
   let autoPhysicalKeyboardSwitchApplied = false;
+  let firstRunSetupPending = false;
 
   // One-time baseline migration so existing installs land on your intended defaults.
   if (localStorage.getItem(PREF_MIGRATION_KEY) !== 'done') {
@@ -620,8 +624,11 @@
     const toggle = _el('focus-hint-toggle');
     if (!toggle) return;
     const enabled = mode !== 'off';
-    toggle.textContent = enabled ? 'Hint: On' : 'Hint: Off';
-    toggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+    toggle.textContent = 'Hint';
+    toggle.setAttribute('aria-pressed', 'false');
+    toggle.setAttribute('title', enabled
+      ? 'Get a detective clue from your informant'
+      : 'Hint cues are off in settings, but you can still ask for a clue');
     toggle.classList.toggle('is-off', !enabled);
   }
 
@@ -640,6 +647,7 @@
     if (options.toast) {
       WQUI.showToast(normalized === 'off' ? 'Hint cues are off.' : 'Hint cues are on.');
     }
+    updateNextActionLine();
   }
 
   function normalizePlayStyle(mode) {
@@ -665,7 +673,63 @@
     if (select && select.value !== normalized) select.value = normalized;
     syncPlayStyleToggleUI(normalized);
     if (options.persist !== false) setPref('playStyle', normalized);
+    updateNextActionLine();
     return normalized;
+  }
+
+  function showInformantHintToast() {
+    const state = WQGame.getState?.() || {};
+    const entry = state?.entry || null;
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const phonicsTag = String(entry?.phonics || '').toLowerCase();
+    const wordLength = Math.max(0, Number(state?.wordLength || String(entry?.word || '').trim().length || 0));
+    const clues = [];
+
+    if (!state?.word) {
+      WQUI.showToast('Informant says: start a new word and I will drop a clue.', 3600);
+      return;
+    }
+
+    if (focusValue === 'vowel_team' || /vowel[\s_-]*team/.test(phonicsTag)) {
+      clues.push('Your word has a vowel team in it, like "ea" or "ou".');
+    }
+    if (focusValue === 'digraph' || /digraph/.test(phonicsTag)) {
+      clues.push('A 2-letter sound is hiding in this word, like "sh" or "th".');
+    }
+    if (focusValue === 'trigraph' || /trigraph/.test(phonicsTag)) {
+      clues.push('Look for a 3-letter sound chunk, like "igh" or "tch".');
+    }
+    if (focusValue === 'cvce' || /silent[\s-]*e|magic[\s-]*e|cvce/.test(phonicsTag)) {
+      clues.push('A silent-e pattern may be part of this case.');
+    }
+    if (focusValue === 'r_controlled' || /r[\s_-]*controlled/.test(phonicsTag)) {
+      clues.push('An r-controlled vowel may steer the sound this round.');
+    }
+    if (focusValue === 'diphthong' || /diphthong/.test(phonicsTag)) {
+      clues.push('Listen for a glide sound, like "oi" or "ou".');
+    }
+    if (focusValue === 'prefix' || /prefix/.test(phonicsTag)) {
+      clues.push('The first chunk may be a prefix. Check the beginning.');
+    }
+    if (focusValue === 'suffix' || /suffix/.test(phonicsTag)) {
+      clues.push('The ending may hold the key. Check for a suffix.');
+    }
+    if (wordLength >= 7) {
+      clues.push(`This is a longer suspect (${wordLength} letters). Chunk it before you type.`);
+    }
+    if (preset.kind === 'subject') {
+      clues.push(`This clue is from ${preset.subject.toUpperCase()} vocabulary at ${preset.gradeBand}.`);
+    }
+    if (!clues.length && preset.kind === 'phonics') {
+      clues.push('Your focus is a sound pattern. Use the sentence clue and test that pattern first.');
+    }
+    if (!clues.length) {
+      clues.push('Use the sentence clue like a detective. Meaning narrows your suspects fast.');
+    }
+
+    const selectedClue = pickRandom(clues) || clues[0];
+    WQUI.showToast(`Informant clue: ${selectedClue}`, 4800);
   }
 
   function applyFeedback(mode) {
@@ -709,7 +773,7 @@
     if (!toggle) return;
     const layout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
     const isWilson = layout === 'wilson';
-    toggle.textContent = `Keyboard: ${isWilson ? 'Wilson' : 'QWERTY'}`;
+    toggle.textContent = `KB: ${isWilson ? 'Wilson' : 'QWERTY'}`;
     toggle.setAttribute('aria-pressed', isWilson ? 'true' : 'false');
     toggle.setAttribute('title', isWilson
       ? 'Switch to QWERTY keyboard'
@@ -892,7 +956,7 @@
     try { return localStorage.getItem(FIRST_RUN_SETUP_KEY) === 'done'; } catch { return false; }
   }
 
-  let firstRunSetupPending = !hasCompletedFirstRunSetup();
+  firstRunSetupPending = !hasCompletedFirstRunSetup();
 
   function closeFirstRunSetupModal() {
     _el('first-run-setup-modal')?.classList.add('hidden');
@@ -1064,6 +1128,198 @@
     }
   }
 
+  function normalizeReviewWord(word) {
+    return String(word || '').trim().toLowerCase().replace(/[^a-z]/g, '');
+  }
+
+  function loadReviewQueueState() {
+    const fallback = { round: 0, items: [] };
+    try {
+      const parsed = JSON.parse(localStorage.getItem(REVIEW_QUEUE_KEY) || 'null');
+      if (!parsed || typeof parsed !== 'object') return fallback;
+      const round = Math.max(0, Math.floor(Number(parsed.round) || 0));
+      const items = Array.isArray(parsed.items)
+        ? parsed.items
+          .map((item) => ({
+            word: normalizeReviewWord(item?.word),
+            dueRound: Math.max(1, Math.floor(Number(item?.dueRound) || 0)),
+            reason: String(item?.reason || 'review').trim().toLowerCase(),
+            createdAt: Math.max(0, Number(item?.createdAt) || Date.now())
+          }))
+          .filter((item) => item.word && item.dueRound > 0)
+        : [];
+      return { round, items };
+    } catch {
+      return fallback;
+    }
+  }
+
+  let reviewQueueState = loadReviewQueueState();
+
+  function saveReviewQueueState() {
+    const cleanedItems = reviewQueueState.items
+      .map((item) => ({
+        word: normalizeReviewWord(item.word),
+        dueRound: Math.max(1, Math.floor(Number(item.dueRound) || 1)),
+        reason: String(item.reason || 'review').trim().toLowerCase(),
+        createdAt: Math.max(0, Number(item.createdAt) || Date.now())
+      }))
+      .filter((item) => item.word)
+      .sort((a, b) => a.dueRound - b.dueRound || a.createdAt - b.createdAt)
+      .slice(0, REVIEW_QUEUE_MAX_ITEMS);
+    reviewQueueState = {
+      round: Math.max(0, Math.floor(Number(reviewQueueState.round) || 0)),
+      items: cleanedItems
+    };
+    try {
+      localStorage.setItem(REVIEW_QUEUE_KEY, JSON.stringify(reviewQueueState));
+    } catch {}
+  }
+
+  function buildPlayableWordSet(gradeBand, lengthPref, focusValue) {
+    const pool = WQData.getPlayableWords({
+      gradeBand: gradeBand || 'all',
+      length: lengthPref || 'any',
+      phonics: focusValue || 'all'
+    });
+    return new Set(pool.map((word) => normalizeReviewWord(word)));
+  }
+
+  function countDueReviewWords(playableSet) {
+    const due = reviewQueueState.items.filter((item) => item.dueRound <= reviewQueueState.round);
+    if (!(playableSet instanceof Set)) return due.length;
+    return due.filter((item) => playableSet.has(item.word)).length;
+  }
+
+  function peekDueReviewItemForPool(playableSet) {
+    if (!(playableSet instanceof Set) || playableSet.size === 0) return null;
+    const dueItems = reviewQueueState.items
+      .filter((item) => item.dueRound <= reviewQueueState.round && playableSet.has(item.word))
+      .sort((a, b) => a.dueRound - b.dueRound || a.createdAt - b.createdAt);
+    return dueItems[0] || null;
+  }
+
+  function consumeReviewItem(item) {
+    if (!item?.word) return;
+    const idx = reviewQueueState.items.findIndex((entry) => (
+      entry.word === item.word &&
+      entry.dueRound === item.dueRound &&
+      entry.createdAt === item.createdAt
+    ));
+    if (idx < 0) return;
+    reviewQueueState.items.splice(idx, 1);
+    saveReviewQueueState();
+  }
+
+  function scheduleReviewWord(word, delays, reason) {
+    const normalizedWord = normalizeReviewWord(word);
+    if (!normalizedWord || !Array.isArray(delays) || !delays.length) return;
+    const now = Date.now();
+    delays.forEach((delay, index) => {
+      const dueRound = reviewQueueState.round + Math.max(1, Math.floor(Number(delay) || 1));
+      const isDuplicate = reviewQueueState.items.some((item) => (
+        item.word === normalizedWord &&
+        Math.abs(item.dueRound - dueRound) <= 1
+      ));
+      if (isDuplicate) return;
+      reviewQueueState.items.push({
+        word: normalizedWord,
+        dueRound,
+        reason: String(reason || 'review').toLowerCase(),
+        createdAt: now + index
+      });
+    });
+    saveReviewQueueState();
+  }
+
+  function trackRoundForReview(result, maxGuessesValue) {
+    const solvedWord = normalizeReviewWord(result?.word);
+    if (!solvedWord) return;
+    reviewQueueState.round += 1;
+    const maxGuesses = Math.max(1, Number(maxGuessesValue) || 6);
+    const guessesUsed = Math.max(1, Array.isArray(result?.guesses) ? result.guesses.length : maxGuesses);
+    if (result?.lost) {
+      scheduleReviewWord(solvedWord, [2, 6], 'missed');
+      return;
+    }
+    const hardSolveThreshold = Math.max(4, maxGuesses - 1);
+    if (guessesUsed >= hardSolveThreshold) {
+      scheduleReviewWord(solvedWord, [4], 'hard');
+      return;
+    }
+    if (getHintMode() === 'on' && guessesUsed >= Math.max(3, Math.ceil(maxGuesses * 0.67))) {
+      scheduleReviewWord(solvedWord, [5], 'hinted');
+      return;
+    }
+    saveReviewQueueState();
+  }
+
+  function primeShuffleBagWithWord(scope, word) {
+    const normalizedWord = normalizeReviewWord(word);
+    if (!scope || !normalizedWord) return;
+    const bagKey = `${SHUFFLE_BAG_KEY}:${scope}`;
+    let prior = { queue: [], last: '' };
+    try {
+      const parsed = JSON.parse(localStorage.getItem(bagKey) || 'null');
+      if (parsed && Array.isArray(parsed.queue)) prior = parsed;
+    } catch {}
+    const cleanedQueue = prior.queue
+      .map((item) => normalizeReviewWord(item))
+      .filter((item) => item && item !== normalizedWord);
+    cleanedQueue.push(normalizedWord);
+    try {
+      localStorage.setItem(bagKey, JSON.stringify({
+        queue: cleanedQueue,
+        last: normalizeReviewWord(prior.last)
+      }));
+    } catch {}
+  }
+
+  function updateNextActionLine(options = {}) {
+    const line = _el('next-action-line');
+    if (!line) return;
+    const reviewWord = normalizeReviewWord(options.reviewWord || '');
+    const state = WQGame.getState?.() || {};
+    const hasActiveRound = Boolean(state.word && !state.gameOver);
+    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    const dueCount = Math.max(0, Number(options.dueCount) || 0);
+    let text = '';
+
+    if (firstRunSetupPending) {
+      text = 'Choose a startup preset to begin.';
+    } else if (reviewWord) {
+      text = `Level-up review: ${reviewWord.toUpperCase()} is back for a quick memory win.`;
+    } else if (dueCount > 0) {
+      text = `Review words ready: ${dueCount} due word${dueCount === 1 ? '' : 's'} in this focus.`;
+    } else if (playStyle === 'listening') {
+      text = hasActiveRound
+        ? 'Listening game: Hear Word + Hear Sentence, then type and press Enter.'
+        : 'Tap New Word to start Listening game with word + sentence audio clues.';
+    } else {
+      text = hasActiveRound
+        ? 'Detective game: Hear Sentence for the clue, then type and press Enter.'
+        : 'Tap New Word to start Detective game using sentence clues and strategy.';
+    }
+
+    line.textContent = text;
+    line.classList.toggle('hidden', !text);
+    line.classList.toggle('is-review', Boolean(reviewWord));
+  }
+
+  function bindSettingsAccordion(sectionSelector) {
+    const groups = Array.from(document.querySelectorAll(`${sectionSelector} .settings-group`));
+    if (!groups.length) return;
+    groups.forEach((group) => {
+      group.addEventListener('toggle', () => {
+        if (!(group instanceof HTMLDetailsElement) || !group.open) return;
+        groups.forEach((other) => {
+          if (other === group || !(other instanceof HTMLDetailsElement)) return;
+          other.open = false;
+        });
+      });
+    });
+  }
+
   function syncThemePreviewStripVisibility() {
     const strip = _el('theme-preview-strip');
     if (!strip) return;
@@ -1078,6 +1334,8 @@
     syncThemePreviewStripVisibility();
     updateFocusHint();
     updateFocusSummaryLabel();
+    updateGradeTargetInline();
+    updateNextActionLine();
   }
 
   document.querySelectorAll('#settings-panel [data-settings-tab]').forEach((tab) => {
@@ -1085,7 +1343,9 @@
       setSettingsView(tab.getAttribute('data-settings-tab'));
     });
   });
-  _el('settings-jump-theme')?.addEventListener('click', () => jumpToSettingsGroup('settings-group-theme'));
+  bindSettingsAccordion('#settings-quick');
+  bindSettingsAccordion('#settings-advanced');
+  _el('settings-jump-teacher')?.addEventListener('click', () => jumpToSettingsGroup('settings-group-classroom'));
   _el('settings-jump-reveal')?.addEventListener('click', () => jumpToSettingsGroup('settings-group-reveal'));
 
   document.querySelectorAll('[data-teacher-preset]').forEach((btn) => {
@@ -1278,6 +1538,7 @@
   _el('s-grade')?.addEventListener('change',   e => {
     setPref('grade', e.target.value);
     updateFocusGradeNote();
+    updateGradeTargetInline();
   });
   _el('s-length')?.addEventListener('change',  e => setPref('length',   e.target.value));
   _el('s-guesses')?.addEventListener('change', e => setPref('guesses',  e.target.value));
@@ -1285,8 +1546,8 @@
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
     WQUI.showToast(next === 'listening'
-      ? 'Listening mode: word + sentence audio available.'
-      : 'Detective mode: sentence clue only during gameplay.');
+      ? 'Listening game: word + sentence audio is available.'
+      : 'Detective game: sentence clue only during play.');
   });
   _el('s-reveal-focus')?.addEventListener('change', e => {
     const next = applyRevealFocusMode(e.target.value);
@@ -1319,17 +1580,15 @@
     WQUI.showToast(`Auto next word: ${next} seconds.`);
   });
   _el('focus-hint-toggle')?.addEventListener('click', () => {
-    const next = getHintMode() === 'on' ? 'off' : 'on';
-    setHintMode(next, { toast: true });
-    syncTeacherPresetButtons();
+    showInformantHintToast();
   });
   _el('play-style-toggle')?.addEventListener('click', () => {
     const current = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     const next = current === 'listening' ? 'detective' : 'listening';
     applyPlayStyle(next);
     WQUI.showToast(next === 'listening'
-      ? 'Listening mode enabled.'
-      : 'Detective mode enabled.');
+      ? 'Listening game enabled.'
+      : 'Detective game enabled.');
   });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => {
@@ -1364,8 +1623,8 @@
     const enabled = !!e.target.checked;
     setPref('sorNotation', enabled ? 'on' : 'off');
     WQUI.showToast(enabled
-      ? 'SoR notation will show on reveal.'
-      : 'SoR notation is hidden on reveal.'
+      ? 'SoR notation will show during reveal.'
+      : 'SoR notation is hidden during reveal.'
     );
     if (!(_el('modal-overlay')?.classList.contains('hidden'))) {
       const currentEntry = WQGame.getState()?.entry;
@@ -1991,6 +2250,7 @@
       drawWaveform();
       updateRevealSorBadge(state?.entry);
       syncRevealMeaningHighlight(state?.entry);
+      syncRevealThinkingChallenge(state);
       const practiceDetails = _el('modal-practice-details');
       if (practiceDetails) {
         const requiredPractice = getVoicePracticeMode() === 'required';
@@ -2028,6 +2288,7 @@
       const gameplayAudioEl = document.querySelector('.gameplay-audio');
       const headerEl = document.querySelector('header');
       const focusEl = document.querySelector('.focus-bar');
+      const nextActionEl = _el('next-action-line');
       const themeStripEl = _el('theme-preview-strip');
       const hintEl = _el('focus-hint');
       const hintRowEl = hintEl?.closest('.focus-hint-row') || null;
@@ -2048,6 +2309,9 @@
       const audioH = supportH ? 0 : (gameplayAudioEl?.offsetHeight || 36);
       const headerH = headerEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--header-h'), 50);
       const focusH = focusEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--focus-h'), 44);
+      const nextActionH = nextActionEl && !nextActionEl.classList.contains('hidden')
+        ? Math.max(0, nextActionEl.offsetHeight || 0)
+        : 0;
       const themeH = themeStripEl?.offsetHeight || 0;
       const viewportH = window.visualViewport?.height || window.innerHeight;
       const viewportW = window.visualViewport?.width || window.innerWidth;
@@ -2087,7 +2351,7 @@
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
       const extraSafetyH = layoutMode === 'compact' ? 56 : layoutMode === 'tight' ? 44 : layoutMode === 'wide' ? 32 : 38;
-      const reservedH = headerH + focusH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
+      const reservedH = headerH + focusH + nextActionH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const byHeight = Math.floor((availableBoardH - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
 
@@ -2190,24 +2454,31 @@
 
   function syncGradeFromFocus(focusValue, options = {}) {
     const preset = parseFocusPreset(focusValue);
-    if (preset.kind !== 'subject') return;
+    if (preset.kind !== 'subject') {
+      updateGradeTargetInline();
+      return;
+    }
     const gradeSelect = _el('s-grade');
-    if (!gradeSelect || !preset.gradeBand) return;
+    if (!gradeSelect || !preset.gradeBand) {
+      updateGradeTargetInline();
+      return;
+    }
     if (gradeSelect.value !== preset.gradeBand) {
       gradeSelect.value = preset.gradeBand;
       setPref('grade', preset.gradeBand);
       if (!options.silent) {
-        WQUI.showToast(`Grade band synced to ${preset.gradeBand} for this focus.`);
+        WQUI.showToast(`Grade synced to ${formatGradeBandLabel(preset.gradeBand)} for this quest.`);
       }
     }
+    updateGradeTargetInline();
   }
 
   function updateFocusHint() {
+    const mode = getHintMode();
+    syncHintToggleUI(mode);
     const hintEl = _el('focus-hint');
     if (!hintEl) return;
     const hintRow = hintEl.closest('.focus-hint-row');
-    const mode = getHintMode();
-    syncHintToggleUI(mode);
     if (mode !== 'on') {
       hintEl.textContent = '';
       hintEl.classList.add('hidden');
@@ -2222,14 +2493,21 @@
     const phonicsTag = String(entry?.phonics || '').trim();
     let hintText = '';
 
-    if (phonicsTag && phonicsTag.toLowerCase() !== 'all') {
-      hintText = `Hint cue: ${phonicsTag}`;
+    if (preset.kind === 'classic') {
+      hintText = '';
+    } else if (phonicsTag && phonicsTag.toLowerCase() !== 'all') {
+      hintText = phonicsTag;
     } else if (preset.kind === 'subject') {
-      hintText = `Hint cue: ${preset.subject.toUpperCase()} vocabulary · ${preset.gradeBand}`;
-    } else if (preset.kind === 'classic') {
-      hintText = 'Hint cue: classic mode uses grade + word length.';
+      hintText = `${preset.subject.toUpperCase()} · ${preset.gradeBand}`;
     } else {
-      hintText = `Hint cue: ${getFocusLabel(focusValue).replace(/[—]/g, '').trim()}`;
+      hintText = '';
+    }
+
+    if (!hintText) {
+      hintEl.textContent = '';
+      hintEl.classList.add('hidden');
+      if (hintRow) hintRow.classList.add('is-off');
+      return;
     }
 
     hintEl.textContent = hintText;
@@ -2263,14 +2541,14 @@
     const gradeVal = _el('s-grade')?.value || 'all';
     const preset = parseFocusPreset(focusVal);
     if (preset.kind === 'classic') {
-      note.textContent = `Classic uses Grade Band + Word Length. Current grade: ${gradeVal}.`;
+      note.textContent = `Classic balances decoding + meaning with Grade Band and Word Length. Current grade: ${gradeVal}.`;
       return;
     }
     if (preset.kind === 'subject') {
-      note.textContent = `Subject focus is ${preset.subject.toUpperCase()} and grade is auto-aligned to ${preset.gradeBand}.`;
+      note.textContent = `Subject focus keeps vocabulary on-level by auto-aligning grade to ${formatGradeBandLabel(preset.gradeBand)}.`;
       return;
     }
-    note.textContent = `Phonics focus narrows by pattern. Grade (${gradeVal}) and Word Length still apply.`;
+    note.textContent = `Phonics focus trains sound patterns while Grade (${gradeVal}) and Word Length keep challenge in range.`;
   }
 
   function getFocusEntries() {
@@ -2320,22 +2598,39 @@
 
   function updateFocusSummaryLabel() {
     const inputEl = _el('focus-inline-search');
-    const chipEl = _el('focus-current-label');
     const focusValue = _el('setting-focus')?.value || 'all';
     const currentLabelRaw = getFocusLabel(focusValue).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
     const currentLabel = currentLabelRaw || 'Classic (Wordle 5x6)';
 
-    if (chipEl) {
-      chipEl.textContent = `Focus: ${currentLabel}`;
-      chipEl.setAttribute('title', `Current focus: ${currentLabel}`);
-    }
-
     if (!inputEl) return;
     // Keep this as pure search input so intent is clear.
     inputEl.value = '';
-    inputEl.placeholder = 'Search focus (math, digraph, k-2)';
-    inputEl.setAttribute('title', `Search focus. Current: ${currentLabel}`);
-    inputEl.setAttribute('aria-label', `Search focus. Current focus: ${currentLabel}`);
+    inputEl.placeholder = 'Select your quest (math, digraph, k-2)';
+    inputEl.setAttribute('title', `Select your quest. Current focus: ${currentLabel}`);
+    inputEl.setAttribute('aria-label', `Select your quest. Current focus: ${currentLabel}`);
+  }
+
+  function formatGradeBandLabel(value) {
+    const normalized = String(value || 'all').toLowerCase();
+    if (normalized === 'k-2') return 'K-2';
+    if (normalized === 'g3-5') return '3-5';
+    if (normalized === 'g6-8') return '6-8';
+    if (normalized === 'g9-12') return '9-12';
+    return 'All';
+  }
+
+  function updateGradeTargetInline() {
+    const gradeEl = _el('grade-target-inline');
+    if (!gradeEl) return;
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const activeGrade = preset.kind === 'subject'
+      ? preset.gradeBand
+      : (_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade);
+    const suffix = preset.kind === 'subject' ? ' (auto)' : '';
+    const label = formatGradeBandLabel(activeGrade);
+    gradeEl.textContent = `Grade: ${label}${suffix}`;
+    gradeEl.setAttribute('title', `Grade filter in use: ${label}${suffix}`);
   }
 
   function escapeHtml(value) {
@@ -2360,8 +2655,8 @@
     'vocab-social-35',
     'vocab-ela-35'
   ]);
-  const FOCUS_EMPTY_VISIBLE_LIMIT = 8;
-  const FOCUS_QUERY_VISIBLE_LIMIT = 10;
+  const FOCUS_EMPTY_VISIBLE_LIMIT = 6;
+  const FOCUS_QUERY_VISIBLE_LIMIT = 8;
 
   // Prioritize options that are most common for everyday classroom use.
   const FOCUS_POPULARITY = Object.freeze({
@@ -2625,6 +2920,7 @@
     if (!query) {
       const used = new Set();
       FOCUS_QUICK_VALUES.forEach((value) => {
+        if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT) return;
         const found = entries.find((entry) => entry.value === value);
         if (found && !used.has(found.value)) {
           visible.push(found);
@@ -2641,7 +2937,7 @@
     }
 
     if (!visible.length) {
-      listEl.innerHTML = '<div class="focus-search-empty">No matches yet. Try terms like "math", "science", "digraph", "k-2", or "3-5".</div>';
+      listEl.innerHTML = '<div class="focus-search-empty">No matches yet. Try <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, or <b>3-5</b>.</div>';
       listEl.classList.remove('hidden');
       if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
       setFocusSearchOpen(true);
@@ -2652,7 +2948,7 @@
 
     const active = _el('setting-focus')?.value || 'all';
     const guidance = !query
-      ? '<div class="focus-search-empty">Try typing: <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, <b>3-5</b>.</div>'
+      ? '<div class="focus-search-empty focus-search-empty-hint">Quick picks. Type to narrow: <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, <b>3-5</b>.</div>'
       : '';
     listEl.innerHTML = guidance + visible.map((entry) => {
       const activeClass = entry.value === active ? ' is-active' : '';
@@ -3396,6 +3692,13 @@
 
     const s = WQUI.getSettings();
     const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    const scope = `${s.gradeBand || 'all'}:${s.length || 'any'}:${focus || 'all'}`;
+    const playableSet = buildPlayableWordSet(s.gradeBand, s.length, focus);
+    const reviewItem = peekDueReviewItemForPool(playableSet);
+    if (reviewItem) {
+      primeShuffleBagWithWord(scope, reviewItem.word);
+    }
+
     const result = WQGame.startGame({
       ...s,
       focus,
@@ -3415,9 +3718,13 @@
       } else {
         WQUI.showToast('No words found — try Classic focus or adjust filters');
       }
+      updateNextActionLine({ dueCount: countDueReviewWords(playableSet) });
       syncAssessmentLockRuntime();
       return;
     }
+    const startedWord = normalizeReviewWord(result.word);
+    const servedReview = Boolean(reviewItem && startedWord && startedWord === reviewItem.word);
+    if (servedReview) consumeReviewItem(reviewItem);
     WQUI.calcLayout(result.wordLength, result.maxGuesses);
     WQUI.buildBoard(result.wordLength, result.maxGuesses);
     WQUI.buildKeyboard();
@@ -3428,6 +3735,10 @@
     removeDupeToast();
     updateVoicePracticePanel(WQGame.getState());
     updateFocusHint();
+    updateNextActionLine({
+      reviewWord: servedReview ? startedWord : '',
+      dueCount: countDueReviewWords(playableSet)
+    });
     syncAssessmentLockRuntime();
   }
 
@@ -3507,8 +3818,16 @@
         }
         if (result.won || result.lost) {
           awardQuestProgress(result);
+          trackRoundForReview(result, s.maxGuesses);
           hideMidgameBoost();
           syncAssessmentLockRuntime();
+          const focusNow = _el('setting-focus')?.value || prefs.focus || 'all';
+          const dueCountNow = countDueReviewWords(buildPlayableWordSet(
+            _el('s-grade')?.value || 'all',
+            _el('s-length')?.value || 'any',
+            focusNow
+          ));
+          updateNextActionLine({ dueCount: dueCountNow });
           setTimeout(() => {
             WQUI.showModal(result);
             _el('new-game-btn')?.classList.add('pulse');
@@ -3625,6 +3944,32 @@
       Object.freeze({ lead: 'Next round is yours.', coach: 'Aim to test 4-5 new letters in guess two.' }),
       Object.freeze({ lead: 'Good practice round.', coach: 'Try classic focus for one quick confidence win.' })
     ])
+  });
+  const THINKING_LEVEL_META = Object.freeze({
+    remember: Object.freeze({
+      chip: 'Say It (Remember)',
+      teacher: 'Teacher lens: Bloom Remember · SoR word recognition + retrieval.'
+    }),
+    understand: Object.freeze({
+      chip: 'Explain It (Understand)',
+      teacher: 'Teacher lens: Bloom Understand · SoR semantics + background knowledge.'
+    }),
+    apply: Object.freeze({
+      chip: 'Use It (Apply)',
+      teacher: 'Teacher lens: Bloom Apply · SoR syntax + semantics in context.'
+    }),
+    analyze: Object.freeze({
+      chip: 'Compare It (Analyze)',
+      teacher: 'Teacher lens: Bloom Analyze · SoR pattern analysis + comprehension.'
+    }),
+    evaluate: Object.freeze({
+      chip: 'Defend It (Evaluate)',
+      teacher: 'Teacher lens: Bloom Evaluate · strategy reflection + comprehension.'
+    }),
+    create: Object.freeze({
+      chip: 'Invent It (Create)',
+      teacher: 'Teacher lens: Bloom Create · expressive language + transfer.'
+    })
   });
   const REVEAL_PACING_PRESETS = Object.freeze({
     guided: Object.freeze({ introDelay: 260, betweenDelay: 140, postMeaningDelay: 200 }),
@@ -3747,13 +4092,7 @@
 
   function getRevealFeedbackCopy(result) {
     const guessCount = Math.max(1, Number(result?.guesses?.length || 0));
-    const stateMax = Number(WQGame.getState?.()?.maxGuesses || 0);
-    const prefMax = Number.parseInt(_el('s-guesses')?.value || DEFAULT_PREFS.guesses, 10);
-    const maxGuesses = Math.max(1, Number.isFinite(stateMax) && stateMax > 0
-      ? stateMax
-      : Number.isFinite(prefMax) && prefMax > 0
-        ? prefMax
-        : 6);
+    const maxGuesses = getActiveMaxGuesses();
 
     if (result?.won) {
       let key = 'steady';
@@ -3768,6 +4107,107 @@
     if (remaining <= 1) key = 'close';
     else if (guessCount <= 2) key = 'early';
     return pickRandom(REVEAL_LOSS_TOASTS[key]) || { lead: 'Keep going.', coach: '' };
+  }
+
+  function getActiveMaxGuesses() {
+    const stateMax = Number(WQGame.getState?.()?.maxGuesses || 0);
+    const prefMax = Number.parseInt(_el('s-guesses')?.value || DEFAULT_PREFS.guesses, 10);
+    return Math.max(1, Number.isFinite(stateMax) && stateMax > 0
+      ? stateMax
+      : Number.isFinite(prefMax) && prefMax > 0
+        ? prefMax
+        : 6);
+  }
+
+  function trimPromptText(value, max = 80) {
+    const text = String(value || '').replace(/\s+/g, ' ').trim();
+    if (!text) return '';
+    if (text.length <= max) return text;
+    return `${text.slice(0, Math.max(0, max - 3)).trim()}...`;
+  }
+
+  function pickThinkingLevel(result) {
+    const guessCount = Math.max(1, Number(result?.guesses?.length || 0));
+    const maxGuesses = getActiveMaxGuesses();
+    if (result?.won) {
+      if (guessCount <= Math.max(2, Math.ceil(maxGuesses * 0.34))) {
+        return pickRandom(['evaluate', 'create']) || 'create';
+      }
+      if (guessCount <= Math.max(3, Math.ceil(maxGuesses * 0.67))) {
+        return pickRandom(['apply', 'analyze']) || 'analyze';
+      }
+      return 'apply';
+    }
+    if (guessCount <= 2) return 'remember';
+    if (guessCount >= Math.max(4, maxGuesses - 1)) return 'understand';
+    return 'apply';
+  }
+
+  function buildThinkingPrompt(level, result) {
+    const word = String(result?.word || '').trim().toUpperCase();
+    const sentence = trimPromptText(result?.entry?.sentence, 76);
+    const promptsByLevel = {
+      remember: [
+        `Say "${word}" and spell it out loud.`,
+        `Clap each sound in "${word}", then say the whole word.`
+      ],
+      understand: [
+        `In your own words, what does "${word}" mean?`,
+        sentence
+          ? `How does "${word}" help the meaning of this sentence: "${sentence}"?`
+          : `Tell what "${word}" means and give one real-life example.`
+      ],
+      apply: [
+        `Use "${word}" in a brand-new sentence about your day.`,
+        `Say a sentence with "${word}" that could happen at school or home.`
+      ],
+      analyze: [
+        `Compare "${word}" with another word from this topic. What is one key difference?`,
+        `Which clue narrowed "${word}" fastest: beginning, ending, or sentence context?`
+      ],
+      evaluate: [
+        `Which strategy helped most this round and why?`,
+        `If you played this word again, what one move would you keep? Explain.`
+      ],
+      create: [
+        `Create a clue for "${word}" without saying the word.`,
+        `Write a mini riddle that leads to "${word}".`
+      ]
+    };
+    return pickRandom(promptsByLevel[level] || promptsByLevel.apply) || '';
+  }
+
+  function buildThinkingChallenge(result) {
+    if (!result?.word) return null;
+    const level = pickThinkingLevel(result);
+    const meta = THINKING_LEVEL_META[level] || THINKING_LEVEL_META.apply;
+    const prompt = buildThinkingPrompt(level, result);
+    if (!prompt) return null;
+    return {
+      chip: meta.chip,
+      prompt,
+      teacher: meta.teacher
+    };
+  }
+
+  function syncRevealThinkingChallenge(result) {
+    const wrap = _el('modal-thinking-challenge');
+    const levelEl = _el('modal-thinking-level');
+    const promptEl = _el('modal-thinking-prompt');
+    const teacherEl = _el('modal-thinking-teacher');
+    if (!wrap || !levelEl || !promptEl || !teacherEl) return;
+    const challenge = buildThinkingChallenge(result);
+    if (!challenge) {
+      levelEl.textContent = '';
+      promptEl.textContent = '';
+      teacherEl.textContent = '';
+      wrap.classList.add('hidden');
+      return;
+    }
+    levelEl.textContent = challenge.chip;
+    promptEl.textContent = challenge.prompt;
+    teacherEl.textContent = challenge.teacher;
+    wrap.classList.remove('hidden');
   }
 
   function showRevealWordToast(result) {
@@ -3818,6 +4258,7 @@
     const pacing = getRevealPacingPreset();
     showRevealWordToast(result);
     syncRevealMeaningHighlight(result.entry);
+    syncRevealThinkingChallenge(result);
     if (!shouldNarrateReveal()) {
       await waitMs(Math.min(220, pacing.postMeaningDelay));
       if (token !== revealNarrationToken) return;

@@ -157,7 +157,51 @@ header {
   opacity: 0.55;
 }
 
-.header-right { display: flex; align-items: center; gap: 10px; }
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.header-quick-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.header-quick-btn {
+  min-height: 30px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 62%, var(--brand) 38%);
+  background: color-mix(in oklab, var(--panel-bg) 84%, transparent);
+  color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
+  font-family: var(--font);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.header-quick-btn:hover {
+  border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
+  background: color-mix(in oklab, var(--brand) 18%, var(--panel-bg) 82%);
+  color: var(--text);
+}
+
+.header-quick-btn.is-wilson {
+  border-color: color-mix(in oklab, var(--brand) 72%, var(--panel-border) 28%);
+  background: color-mix(in oklab, var(--brand) 24%, var(--panel-bg) 76%);
+}
+
+.header-quick-btn.is-listening {
+  border-color: color-mix(in oklab, var(--accent) 68%, var(--panel-border) 32%);
+  background: color-mix(in oklab, var(--accent) 24%, var(--panel-bg) 76%);
+}
 
 .icon-btn {
   width:         34px;
@@ -184,9 +228,9 @@ header {
   color:         var(--brand-text);
   border:        none;
   border-radius: 8px;
-  padding:       7px 16px;
+  padding:       6px 12px;
   font-family:   var(--font);
-  font-size:     0.85rem;
+  font-size:     0.78rem;
   font-weight:   700;
   cursor:        pointer;
   transition:    background 0.15s;
@@ -198,35 +242,28 @@ header {
 /* ── Focus bar ───────────────────────────────────────── */
 .focus-bar {
   width:         min(var(--focus-max-width), calc(100vw - 14px));
-  min-height:    var(--focus-h);
+  min-height:    40px;
   flex-shrink:   0;
-  display:       flex;
-  align-items:   center;
+  display:       grid;
+  grid-template-columns: var(--focusbar-cols, auto minmax(0, 1fr) auto);
+  align-items:   var(--focusbar-align, center);
+  row-gap:       var(--focusbar-row-gap, 0);
   gap:           7px;
-  padding:       0 16px;
-  background:    var(--focusbar-bg);
-  border-bottom: 1px solid var(--header-border);
+  padding:       var(--focusbar-pad-top, 6px) 16px 5px;
+  background:    color-mix(in oklab, var(--focusbar-bg) 38%, transparent);
+  border-bottom: 0;
   position:      relative;
   z-index:       15;
 }
 
-.focus-label {
-  display: inline-flex;
-  align-items: center;
-  max-width: 152px;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, var(--brand) 32%);
-  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
-  font-size: 0.66rem;
+.focus-search-label {
+  font-size: 0.67rem;
   font-weight: 800;
-  letter-spacing: 0.01em;
-  color: var(--text);
-  white-space:   nowrap;
-  flex-shrink:   0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
+  white-space: nowrap;
+  padding-left: 2px;
 }
 
 .focus-inline-wrap {
@@ -238,20 +275,20 @@ header {
 .focus-inline-search {
   width: 100%;
   height: 33px;
-  border: 1.5px solid var(--header-border);
-  border-radius: 11px;
-  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
+  border: 1px solid color-mix(in oklab, var(--header-border) 76%, var(--brand) 24%);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.82rem;
-  font-weight: 800;
-  padding: 0 10px;
+  font-size: 0.8rem;
+  font-weight: 760;
+  padding: 0 12px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .focus-inline-search:hover {
-  border-color: color-mix(in oklab, var(--brand) 48%, var(--header-border) 52%);
-  background: color-mix(in oklab, var(--panel-bg) 78%, #ffffff 22%);
+  border-color: color-mix(in oklab, var(--brand) 58%, var(--header-border) 42%);
+  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
 }
 
 .focus-inline-search:focus {
@@ -260,8 +297,8 @@ header {
 }
 
 .focus-inline-search::placeholder {
-  color: color-mix(in oklab, var(--text-muted) 78%, #ffffff 22%);
-  font-weight: 700;
+  color: color-mix(in oklab, var(--text-muted) 84%, #ffffff 16%);
+  font-weight: 680;
   opacity: 0.88;
 }
 
@@ -269,21 +306,55 @@ header {
   display: none !important;
 }
 
+.grade-target-inline {
+  max-width: 168px;
+  font-size: 0.66rem;
+  font-weight: 780;
+  letter-spacing: 0.02em;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+.next-action-line {
+  width: min(var(--focus-max-width), calc(100vw - 14px));
+  min-height: 17px;
+  padding: 1px 16px 0;
+  font-size: 0.67rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: color-mix(in oklab, var(--text-muted) 88%, var(--text) 12%);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.next-action-line.is-review {
+  color: color-mix(in oklab, var(--brand) 58%, var(--text) 42%);
+  font-weight: 760;
+}
+
 .focus-inline-results {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  max-height: min(232px, 36vh);
+  max-height: min(194px, 32vh);
   overflow-y: auto;
   display: grid;
-  gap: 6px;
-  padding: 8px;
-  border: 1px solid var(--panel-border);
-  border-radius: 10px;
-  background: color-mix(in oklab, var(--modal-bg) 90%, #ffffff 10%);
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, transparent);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--modal-bg) 94%, #ffffff 6%);
   box-shadow: var(--panel-shadow);
   z-index: 50;
+  scrollbar-width: thin;
 }
 
 .theme-preview-strip {
@@ -333,11 +404,11 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 
 /* ── Settings overlay ───────────────────────────────── */
 .settings-panel {
-  position:      absolute;
-  top:           calc(var(--header-h) + var(--focus-h) + 6px);
+  position:      fixed;
+  top:           max(6px, calc(env(safe-area-inset-top) + 6px));
   left:          50%;
   transform:     translateX(-50%);
-  width:         min(560px, 100vw);
+  width:         min(620px, calc(100vw - 12px));
   background:    color-mix(in oklab, var(--modal-bg) 90%, #ffffff 10%);
   border:        1px solid color-mix(in oklab, var(--panel-border) 58%, var(--brand) 42%);
   border-radius: 22px;
@@ -347,7 +418,7 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   backdrop-filter: blur(10px);
   z-index:       40;
   animation:     slideDown 0.18s ease;
-  max-height:    calc(100dvh - var(--header-h) - var(--focus-h) - 12px - env(safe-area-inset-bottom));
+  max-height:    calc(100dvh - 12px - env(safe-area-inset-bottom));
   display:       flex;
   flex-direction: column;
   overflow: hidden;
@@ -357,7 +428,7 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   display:         flex;
   align-items:     center;
   justify-content: space-between;
-  padding:         13px 16px;
+  padding:         10px 14px;
   border-bottom:   1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
   background:      linear-gradient(
     180deg,
@@ -402,90 +473,83 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   color: var(--text);
 }
 
-.settings-body {
-  display:               grid;
-  grid-template-columns: 1fr 1fr;
-  background:            color-mix(in oklab, var(--panel-border) 72%, #ffffff 28%);
-  gap:                   1px;
-}
-.setting-row {
-  display:        flex;
-  flex-direction: column;
-  gap:            4px;
-  padding:        9px 14px;
-  background:     color-mix(in oklab, var(--modal-bg) 92%, #ffffff 8%);
-}
-.setting-row-full { grid-column: 1 / -1; }
-.setting-row-help {
-  grid-column: 1 / -1;
-  font-size:   0.73rem;
-  font-weight: 600;
-  color:       var(--text-muted);
-  line-height: 1.45;
-}
-.setting-row label {
-  font-size:     0.68rem;
-  font-weight:   700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color:         var(--text-muted);
-}
-.setting-row select {
-  padding:    5px 7px;
-  border:     1.5px solid var(--panel-border);
-  border-radius: 6px;
-  font-family: var(--font);
-  font-size:  0.82rem;
-  background: color-mix(in oklab, var(--panel-bg) 74%, #ffffff 26%);
-  color:      var(--text);
-  cursor:     pointer;
-}
-
 .focus-search-item {
   width: 100%;
-  border: 1px solid var(--panel-border);
-  border-radius: 8px;
-  background: color-mix(in oklab, var(--modal-bg) 90%, #ffffff 10%);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   text-align: left;
-  padding: 6px 9px;
+  padding: 6px 8px;
   cursor: pointer;
-  display: grid;
-  gap: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.focus-search-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .focus-search-item small {
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 90%, transparent);
+  padding: 2px 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: color-mix(in oklab, var(--text-muted) 88%, var(--text) 12%);
 }
 
 .focus-search-item:hover,
 .focus-search-item:focus-visible {
-  border-color: color-mix(in oklab, var(--brand) 54%, var(--panel-border) 46%);
-  background: color-mix(in oklab, var(--brand) 12%, var(--modal-bg) 88%);
+  border-color: color-mix(in oklab, var(--brand) 42%, transparent);
+  background: color-mix(in oklab, var(--brand) 10%, transparent);
 }
 
 .focus-search-item.is-active {
-  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand) 30%, transparent);
+  border-color: color-mix(in oklab, var(--brand) 58%, transparent);
+  background: color-mix(in oklab, var(--brand) 14%, transparent);
+}
+
+.focus-search-item.is-active small {
+  border-color: color-mix(in oklab, var(--brand) 52%, transparent);
+  color: color-mix(in oklab, var(--brand) 72%, var(--text) 28%);
 }
 
 .focus-search-item.is-nav-active {
-  border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
-  background: color-mix(in oklab, var(--brand) 18%, var(--modal-bg) 82%);
+  border-color: color-mix(in oklab, var(--brand) 66%, transparent);
+  background: color-mix(in oklab, var(--brand) 20%, transparent);
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--brand) 36%, transparent);
 }
 
 .focus-search-empty {
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  padding: 4px 2px 2px;
+  font-size: 0.66rem;
+  font-weight: 760;
+  color: color-mix(in oklab, var(--text-muted) 86%, var(--text) 14%);
+  padding: 3px 3px 4px;
+}
+
+.focus-search-empty b {
+  color: color-mix(in oklab, var(--text) 74%, var(--brand) 26%);
+}
+
+.focus-search-empty-hint {
+  border-bottom: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+  margin-bottom: 2px;
+  padding-bottom: 6px;
 }
 
 
@@ -493,14 +557,9 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 .settings-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--panel-bg) 66%, #ffffff 34%),
-      color-mix(in oklab, var(--panel-bg) 78%, var(--page-bg) 22%)
-    );
+  gap: 7px;
+  padding: 9px;
+  background: color-mix(in oklab, var(--panel-bg) 82%, #ffffff 18%);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -518,32 +577,31 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
   gap: 7px;
-  padding: 2px 0 4px;
+  padding: 0 0 3px;
   background: inherit;
 }
 
 .settings-top-actions .quick-action-btn {
-  min-height: 32px;
-  font-size: 0.72rem;
-  border-radius: 12px;
+  min-height: 30px;
+  font-size: 0.67rem;
+  border-radius: 10px;
+  border-width: 1px;
+  background: color-mix(in oklab, var(--panel-bg) 94%, #ffffff 6%);
+  box-shadow: none;
 }
 
 .settings-tab {
-  border: 1.5px solid color-mix(in oklab, var(--panel-border) 62%, var(--brand) 38%);
-  border-radius: 14px;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 72%, #ffffff 28%),
-    color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%)
-  );
+  border: 1px solid color-mix(in oklab, var(--panel-border) 78%, transparent);
+  border-radius: 11px;
+  background: color-mix(in oklab, var(--panel-bg) 94%, #ffffff 6%);
   color: var(--text-muted);
   font-family: var(--font);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  padding: 10px 10px;
+  padding: 7px 10px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .settings-tab:hover {
@@ -553,14 +611,9 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 
 .settings-tab.is-active,
 .settings-tab[aria-selected="true"] {
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--brand) 28%, var(--panel-bg) 72%),
-    color-mix(in oklab, var(--brand) 16%, var(--panel-bg) 84%)
-  );
+  background: color-mix(in oklab, var(--brand) 15%, var(--panel-bg) 85%);
   color: var(--text);
-  border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
-  box-shadow: 0 6px 14px rgba(8, 20, 36, 0.14);
+  border-color: color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
 }
 
 .settings-section {
@@ -572,30 +625,26 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 }
 
 .settings-group {
-  border: 1px solid color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
-  border-radius: 20px;
-  background: color-mix(in oklab, var(--modal-bg) 95%, #ffffff 5%);
-  box-shadow: 0 8px 18px rgba(8, 18, 34, 0.12);
+  border: 1px solid color-mix(in oklab, var(--panel-border) 64%, transparent);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--modal-bg) 96%, #ffffff 4%);
+  box-shadow: none;
   overflow: hidden;
 }
 
 .settings-group + .settings-group {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .settings-group > summary {
   list-style: none;
   cursor: pointer;
-  padding: 12px 16px;
-  font-size: 0.84rem;
+  padding: 8px 11px;
+  font-size: 0.8rem;
   font-weight: 800;
   color: var(--text);
-  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 78%, #ffffff 22%),
-    color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%)
-  );
+  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 66%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
 }
 
 .settings-group > summary::-webkit-details-marker {
@@ -615,8 +664,8 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 .settings-group-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px;
   background: transparent;
 }
 
@@ -633,17 +682,21 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 8px;
   background: transparent;
 }
 
 .setting-row {
-  min-height: 62px;
-  padding: 11px 13px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
-  border-radius: 14px;
-  background: color-mix(in oklab, var(--modal-bg) 92%, #ffffff 8%);
+  min-height: 54px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 62%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--modal-bg) 96%, #ffffff 4%);
+}
+
+.setting-row-full {
+  grid-column: 1 / -1;
 }
 
 .setting-row label {
@@ -653,22 +706,24 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 }
 
 .setting-row select {
-  padding: 8px 10px;
-  border: 2px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
-  border-radius: 13px;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 76%, #ffffff 24%),
-    color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%)
-  );
+  padding: 6px 9px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
 }
 
 .setting-row-help {
-  background: color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%);
+  grid-column: 1 / -1;
+  background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
   font-size: 0.74rem;
+}
+
+.teacher-lens-note {
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
 }
 
 @media (max-width: 640px) {
@@ -1098,57 +1153,42 @@ main {
 
 .focus-hint {
   max-width: min(312px, calc(100vw - 170px));
-  padding: 5px 11px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%),
-    color-mix(in oklab, var(--brand) 11%, var(--panel-bg) 89%)
-  );
-  color: var(--text);
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-align: center;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: color-mix(in oklab, var(--text-muted) 90%, var(--text) 10%);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: left;
   line-height: 1.3;
   position: static;
   margin-top: 0;
   margin-bottom: 0;
   order: 0;
   z-index: 1;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: none;
   pointer-events: none;
 }
 
 .focus-hint-toggle {
-  min-height: 30px;
-  min-width: 78px;
-  border: 1px solid var(--panel-border);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--panel-bg) 92%, var(--brand) 8%);
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: 0.69rem;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  padding: 5px 10px;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  min-width: 52px;
 }
 
 .focus-hint-toggle:hover {
-  border-color: color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
-  color: var(--text);
+  border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
 }
 
 .focus-hint-toggle.is-off {
-  background: color-mix(in oklab, var(--panel-bg) 96%, transparent);
-  color: color-mix(in oklab, var(--text-muted) 82%, #666666 18%);
+  background: color-mix(in oklab, var(--panel-bg) 94%, transparent);
+  color: color-mix(in oklab, var(--text-muted) 86%, #666666 14%);
+  border-color: color-mix(in oklab, var(--panel-border) 82%, transparent);
 }
 
 .focus-hint-row.is-off .focus-hint {
+  display: none;
+}
+
+.focus-hint-row.is-off {
   display: none;
 }
 
@@ -1590,36 +1630,6 @@ html[data-board-style="soundcard"] .tile.flip {
 }
 .audio-ghost-btn svg { flex-shrink: 0; }
 
-.support-mini-btn {
-  min-height: 31px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 62%, var(--brand) 38%);
-  background: color-mix(in oklab, var(--panel-bg) 88%, var(--brand) 12%);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  padding: 5px 11px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-
-.support-mini-btn:hover {
-  border-color: color-mix(in oklab, var(--brand) 66%, var(--panel-border) 34%);
-  background: color-mix(in oklab, var(--panel-bg) 76%, var(--brand) 24%);
-}
-
-.support-mini-btn.is-wilson {
-  border-color: color-mix(in oklab, var(--brand) 70%, var(--panel-border) 30%);
-  background: color-mix(in oklab, var(--brand) 28%, var(--panel-bg) 72%);
-}
-
-.support-mini-btn.is-listening {
-  border-color: color-mix(in oklab, var(--accent) 68%, var(--panel-border) 32%);
-  background: color-mix(in oklab, var(--accent) 26%, var(--panel-bg) 74%);
-}
-
 html[data-play-style="detective"] #g-hear-word {
   display: none;
 }
@@ -1773,26 +1783,36 @@ html[data-key-style="soundcard"] .key::after {
 .key:hover  { background: var(--key-hover); }
 
 /* ── Vowel cue ───────────────────────────────────── */
-
-/* ── Vowel cue (Phonics Hint only): no heavy border ─────── */
-html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent){
-  color: color-mix(in oklab, var(--key-text) 82%, var(--vowel-accent) 18%);
+/* Hint cue uses a tiny top "smile" notch: no dot and no border ring. */
+html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent) {
+  color: color-mix(in oklab, var(--key-text) 84%, var(--vowel-accent) 16%);
 }
 
 html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent)::before {
   content: '';
   position: absolute;
-  top: 6px;
-  right: 7px;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--vowel-accent) 74%, #ffffff 26%);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--vowel-accent) 28%, transparent);
-  opacity: 0.78;
+  top: 4px;
+  left: 50%;
+  width: 16px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--vowel-accent) 78%, #ffffff 22%) 24%,
+    color-mix(in oklab, var(--vowel-accent) 78%, #ffffff 22%) 76%,
+    transparent 100%
+  );
+  opacity: 0.74;
+  transition: opacity 0.16s ease, transform 0.16s ease;
   pointer-events: none;
 }
-/* No ring, no glow — just a clean accent underline */
+
+html[data-hint="on"] .key.vowel.wq-press:not(.correct):not(.present):not(.absent)::before {
+  opacity: 0.95;
+  transform: translateX(-50%) scaleX(1.1);
+}
 /* Wide keys */
 .key.wide { flex: 1.7; max-width: 114px; font-size: 0.82rem; }
 
@@ -2165,6 +2185,67 @@ html[data-motion="reduced"] * {
       color-mix(in oklab, var(--panel-bg) 70%, #ffffff 30%),
       color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%)
     );
+}
+
+.modal-thinking-challenge {
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px dashed color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%),
+    color-mix(in oklab, var(--accent) 10%, var(--panel-bg) 90%)
+  );
+}
+
+.modal-thinking-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal-thinking-title {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
+}
+
+.modal-thinking-level {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
+  padding: 2px 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--brand);
+  background: color-mix(in oklab, var(--panel-bg) 88%, var(--brand) 12%);
+}
+
+.modal-thinking-prompt {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 760;
+  text-align: center;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.modal-thinking-teacher {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-muted) 86%, var(--text) 14%);
 }
 
 #modal-def-highlight {
@@ -2639,6 +2720,12 @@ html[data-layout-mode="compact"] .board-zone {
   padding-top: 3px;
 }
 
+html[data-layout-mode="compact"] .next-action-line {
+  font-size: 0.62rem;
+  min-height: 15px;
+  padding-inline: 11px;
+}
+
 html[data-layout-mode="compact"] .play-support-row {
   width: min(100%, calc(100vw - 18px));
   gap: 6px;
@@ -2651,11 +2738,6 @@ html[data-layout-mode="compact"] .gameplay-audio {
 html[data-layout-mode="compact"] .audio-ghost-btn {
   padding: 5px 11px;
   font-size: 0.74rem;
-}
-
-html[data-layout-mode="compact"] .support-mini-btn {
-  font-size: 0.64rem;
-  padding: 4px 9px;
 }
 
 html[data-layout-mode="compact"] .focus-hint {
@@ -2715,16 +2797,32 @@ html[data-layout-mode="compact"] .key.key-chunk {
 }
 
 @media (max-width: 560px) {
-  .focus-label {
-    max-width: 120px;
-    font-size: 0.62rem;
-    padding: 0 8px;
+  :root {
+    --focusbar-cols: auto minmax(0, 1fr);
+    --focusbar-row-gap: 5px;
+    --focusbar-pad-top: 7px;
+  }
+
+  .header-quick-btn {
+    font-size: 0.58rem;
+    padding: 4px 7px;
+  }
+
+  .grade-target-inline {
+    grid-column: 1 / -1;
+    max-width: 100%;
+    font-size: 0.64rem;
+    text-align: left;
+    padding-left: 2px;
+  }
+
+  .next-action-line {
+    font-size: 0.61rem;
+    padding-inline: 12px;
   }
 
   .focus-hint-toggle {
-    min-width: 68px;
-    padding: 5px 8px;
-    font-size: 0.64rem;
+    min-width: 58px;
   }
 }
 

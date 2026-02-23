@@ -9,8 +9,8 @@
   <!-- Atkinson Hyperlegible: distinct I/l/1, designed for low-vision readers -->
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223c">
-  <link rel="stylesheet" href="style/themes.css?v=20260223d">
-  <link rel="stylesheet" href="style/components.css?v=20260223m">
+  <link rel="stylesheet" href="style/themes.css?v=20260223e">
+  <link rel="stylesheet" href="style/components.css?v=20260223o">
 </head>
 <body>
 
@@ -20,6 +20,14 @@
   <header>
     <div class="logo">Word<span>Quest</span></div>
     <div class="header-right">
+      <div class="header-quick-controls" role="group" aria-label="Quick play toggles">
+        <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="true" title="Switch play style">
+          Mode: Detective
+        </button>
+        <button id="focus-hint-toggle" class="header-quick-btn focus-hint-toggle" type="button" aria-pressed="false" title="Get a clue">
+          Hint
+        </button>
+      </div>
       <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
@@ -32,12 +40,12 @@
 
   <!-- ── Focus bar ────────────────────────────────── -->
   <div class="focus-bar">
-    <span id="focus-current-label" class="focus-label" aria-live="polite">Focus: Classic</span>
+    <label for="focus-inline-search" class="focus-search-label">Quest</label>
     <div id="focus-inline-wrap" class="focus-inline-wrap">
-      <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Focus finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search focus (math, science, digraph, k-2)">
-      <div id="focus-inline-results" class="focus-inline-results hidden" role="listbox" aria-label="Focus finder results"></div>
+      <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Select your quest (math, digraph, k-2)">
+      <div id="focus-inline-results" class="focus-inline-results hidden" role="listbox" aria-label="Quest finder results"></div>
     </div>
-    <button id="focus-hint-toggle" class="focus-hint-toggle" type="button" aria-pressed="true">Hint: On</button>
+    <span id="grade-target-inline" class="grade-target-inline" aria-live="polite">Grade: ALL</span>
     <select id="setting-focus" class="focus-source" aria-hidden="true" tabindex="-1" hidden>
       <option value="all">— Classic (Wordle 5x6) —</option>
       <optgroup label="SoR Phonics">
@@ -64,7 +72,7 @@
       <optgroup label="ELA"><option value="vocab-ela-k2">ELA K–2</option><option value="vocab-ela-35">ELA 3–5</option><option value="vocab-ela-68">ELA 6–8</option><option value="vocab-ela-912">ELA 9–12</option></optgroup>
     </select>
   </div>
-  <div id="theme-preview-strip" class="theme-preview-strip hidden" aria-label="Theme preview"></div>
+  <div id="next-action-line" class="next-action-line" aria-live="polite"></div>
 
   <!-- ── Settings overlay ─────────────────────────── -->
   <div id="settings-panel" class="settings-panel hidden">
@@ -77,18 +85,18 @@
     </div>
     <div class="settings-body">
       <div class="settings-view-switch" role="tablist" aria-label="Settings view">
-        <button id="settings-tab-quick" class="settings-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="settings-quick" data-settings-tab="quick">Quick</button>
+        <button id="settings-tab-quick" class="settings-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="settings-quick" data-settings-tab="quick">Core</button>
         <button id="settings-tab-advanced" class="settings-tab" type="button" role="tab" aria-selected="false" aria-controls="settings-advanced" data-settings-tab="advanced">Advanced</button>
       </div>
       <div class="settings-top-actions" role="group" aria-label="Quick actions">
         <button id="s-reset-look-cache" class="quick-action-btn quick-action-btn-warning" type="button">Reset Appearance + Cache</button>
-        <button id="settings-jump-theme" class="quick-action-btn" type="button">Theme Controls</button>
+        <button id="settings-jump-teacher" class="quick-action-btn" type="button">Teacher Tools</button>
         <button id="settings-jump-reveal" class="quick-action-btn" type="button">Reveal Controls</button>
       </div>
 
       <section id="settings-quick" class="settings-section is-active" role="tabpanel" aria-labelledby="settings-tab-quick" data-settings-section="quick">
         <details id="settings-group-core" class="settings-group" open>
-          <summary>Core Play</summary>
+          <summary>Core</summary>
           <div class="settings-group-grid">
             <div class="setting-row"><label>Grade Band<select id="s-grade"><option value="all">All grades</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
             <div class="setting-row"><label>Word Length<select id="s-length"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="any">Any</option></select></label></div>
@@ -100,7 +108,7 @@
         </details>
 
         <details id="settings-group-audio" class="settings-group">
-          <summary>Audio and Voice</summary>
+          <summary>Audio</summary>
           <div class="settings-group-grid">
             <div class="setting-row"><label>Music<select id="s-music"><option value="off" selected>Off</option><option value="auto">Auto (match theme)</option><option value="chill">Chill</option><option value="lofi">Lo‑fi</option><option value="coffee">Coffeehouse</option><option value="fantasy">Fantasy</option><option value="scifi">Sci‑fi</option><option value="upbeat">Upbeat</option><option value="arcade">8‑bit Arcade</option><option value="sports">Sports Hype</option><option value="stealth">Space Mystery</option><option value="team">Team Game Hype</option></select></label></div>
             <div class="setting-row"><label>Voice Practice
@@ -118,15 +126,8 @@
         </details>
 
         <details id="settings-group-classroom" class="settings-group">
-          <summary>Classroom UX</summary>
+          <summary>Teacher</summary>
           <div class="settings-group-grid">
-            <div class="setting-row setting-row-full quick-preset-row">
-              <label class="setting-checkbox-label">
-                <input id="s-wilson-mode" type="checkbox">
-                Wilson Sound Card Mode
-              </label>
-              <div class="setting-checkbox-help">Uses A–Z sound cards with quick chunks. Turn off for standard QWERTY keyboard + simple board.</div>
-            </div>
             <div class="setting-row setting-row-full quick-preset-row">
               <div class="setting-row-heading">Teacher Presets</div>
               <div class="quick-preset-actions" role="group" aria-label="Teacher presets">
@@ -158,11 +159,9 @@
               </div>
               <div class="setting-checkbox-help">Tracks this browser session only.</div>
             </div>
-            <div class="setting-row"><label>Feedback Colors<select id="s-feedback"><option value="themed" selected>Themed (matches theme)</option><option value="classic">Classic (green/yellow/gray)</option></select></label></div>
-            <div class="setting-row"><label>Motion<select id="s-motion"><option value="fun">Fun</option><option value="calm">Calm</option><option value="reduced">Reduced</option></select></label></div>
-            <div class="setting-row"><label>Sound Tabs<select id="s-chunk-tabs"><option value="auto" selected>Auto (focus only)</option><option value="on">Always on</option><option value="off">Off</option></select></label></div>
-            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on" selected>On</option><option value="off">Off</option></select></label></div>
-            <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row setting-row-full setting-row-help teacher-lens-note">
+              Student view stays kid-friendly. Teacher lens: WordQuest builds from decoding + language comprehension (SoR) into higher-order thinking (Bloom: Remember, Understand, Apply, Analyze, Evaluate, Create).
+            </div>
           </div>
         </details>
       </section>
@@ -179,6 +178,18 @@
             <div class="setting-row"><label>Projector Mode<select id="s-projector"><option value="off">Off</option><option value="on">On · high contrast</option></select></label></div>
             <div class="setting-row"><label>Letter Case<select id="s-case"><option value="lower">lowercase</option><option value="upper">UPPERCASE</option></select></label></div>
             <div class="setting-row"><label>Duplicate Alert<select id="s-dupe"><option value="on">On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row setting-row-full quick-preset-row">
+              <label class="setting-checkbox-label">
+                <input id="s-wilson-mode" type="checkbox">
+                Wilson Sound Card Mode
+              </label>
+              <div class="setting-checkbox-help">Uses A–Z sound cards with quick chunks. Turn off for standard QWERTY keyboard + simple board.</div>
+            </div>
+            <div class="setting-row"><label>Feedback Colors<select id="s-feedback"><option value="themed" selected>Themed (matches theme)</option><option value="classic">Classic (green/yellow/gray)</option></select></label></div>
+            <div class="setting-row"><label>Motion<select id="s-motion"><option value="fun">Fun</option><option value="calm">Calm</option><option value="reduced">Reduced</option></select></label></div>
+            <div class="setting-row"><label>Sound Tabs<select id="s-chunk-tabs"><option value="auto" selected>Auto (focus only)</option><option value="on">Always on</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on" selected>On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
           </div>
         </details>
 
@@ -244,15 +255,6 @@
             Hear Sentence
           </button>
         </div>
-        <div class="focus-hint-row" role="group" aria-label="Hint cues">
-          <div id="focus-hint" class="focus-hint hidden" aria-live="polite"></div>
-        </div>
-        <button id="keyboard-layout-toggle" class="support-mini-btn" type="button" aria-pressed="false" title="Switch keyboard layout">
-          Keyboard: QWERTY
-        </button>
-        <button id="play-style-toggle" class="support-mini-btn" type="button" aria-pressed="true" title="Switch play style">
-          Mode: Detective
-        </button>
       </div>
       <div id="midgame-boost" class="midgame-boost hidden" role="status" aria-live="polite"></div>
     </div>
@@ -274,6 +276,14 @@
       <div id="modal-meaning-highlight" class="modal-meaning-highlight hidden" aria-live="polite">
         <p id="modal-def-highlight"></p>
         <p id="modal-fun-highlight" class="hidden"></p>
+      </div>
+      <div id="modal-thinking-challenge" class="modal-thinking-challenge hidden" aria-live="polite">
+        <div class="modal-thinking-head">
+          <span class="modal-thinking-title">Level Up Challenge</span>
+          <span id="modal-thinking-level" class="modal-thinking-level">Use It (Apply)</span>
+        </div>
+        <p id="modal-thinking-prompt" class="modal-thinking-prompt"></p>
+        <p id="modal-thinking-teacher" class="modal-thinking-teacher"></p>
       </div>
       <div class="modal-syllables-wrap">
         <div id="modal-syllables"></div>
@@ -382,7 +392,7 @@
   <script src="js/game.js?v=20260222c"></script>
   <script src="js/ui.js?v=20260223e"></script>
   <script src="js/theme-registry.js?v=20260223c"></script>
-  <script src="js/app.js?v=20260223m"></script>
+  <script src="js/app.js?v=20260223o"></script>
   <script src="js/theme-nav.js"></script>
 </body>
 </html>
