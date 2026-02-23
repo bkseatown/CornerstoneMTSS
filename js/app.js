@@ -782,10 +782,10 @@
   function applyTeacherPreset(mode) {
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice();
-      return;
+      return false;
     }
     const preset = TEACHER_PRESETS[mode];
-    if (!preset) return;
+    if (!preset) return false;
     setHintMode(preset.hint);
     applyRevealFocusMode(preset.revealFocus);
 
@@ -817,6 +817,7 @@
     syncAssessmentLockRuntime();
     syncTeacherPresetButtons(mode);
     WQUI.showToast(`Preset applied: ${mode}.`);
+    return true;
   }
 
   function markFirstRunSetupDone() {
@@ -847,7 +848,8 @@
       btn.addEventListener('click', () => {
         const mode = btn.getAttribute('data-first-run-preset') || '';
         if (!mode || !TEACHER_PRESETS[mode]) return;
-        applyTeacherPreset(mode);
+        const applied = applyTeacherPreset(mode);
+        if (!applied) return;
         markFirstRunSetupDone();
         firstRunSetupPending = false;
         closeFirstRunSetupModal();
@@ -936,6 +938,18 @@
       delete prefs.theme;
       savePrefs(prefs);
     }
+  }
+
+  function rerunOnboardingSetup() {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before re-running setup.');
+      return;
+    }
+    try { localStorage.removeItem(FIRST_RUN_SETUP_KEY); } catch {}
+    firstRunSetupPending = true;
+    closeFocusSearchList();
+    openFirstRunSetupModal();
+    WQUI.showToast('Choose a startup preset to continue.');
   }
 
   function populateVoiceSelector() {
@@ -1247,6 +1261,16 @@
   });
   _el('s-reset-look-cache')?.addEventListener('click', () => {
     void resetAppearanceAndCache();
+  });
+  _el('session-copy-btn')?.addEventListener('click', () => {
+    void copySessionSummary();
+  });
+  _el('session-reset-btn')?.addEventListener('click', () => {
+    resetSessionSummary();
+    WQUI.showToast('Teacher session summary reset.');
+  });
+  _el('session-rerun-onboarding-btn')?.addEventListener('click', () => {
+    rerunOnboardingSetup();
   });
   _el('s-music')?.addEventListener('change', e => {
     const selected = normalizeMusicMode(e.target.value);
@@ -2910,7 +2934,8 @@
       rounds: 0,
       wins: 0,
       hintRounds: 0,
-      voiceAttempts: 0
+      voiceAttempts: 0,
+      startedAt: Date.now()
     };
     try {
       const parsed = JSON.parse(sessionStorage.getItem(SESSION_SUMMARY_KEY) || 'null');
@@ -2919,7 +2944,8 @@
         rounds: Math.max(0, Math.floor(Number(parsed.rounds) || 0)),
         wins: Math.max(0, Math.floor(Number(parsed.wins) || 0)),
         hintRounds: Math.max(0, Math.floor(Number(parsed.hintRounds) || 0)),
-        voiceAttempts: Math.max(0, Math.floor(Number(parsed.voiceAttempts) || 0))
+        voiceAttempts: Math.max(0, Math.floor(Number(parsed.voiceAttempts) || 0)),
+        startedAt: Math.max(0, Number(parsed.startedAt) || Date.now())
       };
     } catch {
       return fallback;
@@ -2958,6 +2984,61 @@
 
   function recordVoiceAttempt() {
     sessionSummary.voiceAttempts += 1;
+    saveSessionSummaryState();
+    renderSessionSummary();
+  }
+
+  function buildSessionSummaryText() {
+    const startedAt = new Date(sessionSummary.startedAt || Date.now());
+    const winRate = sessionSummary.rounds
+      ? `${Math.round((sessionSummary.wins / sessionSummary.rounds) * 100)}%`
+      : '--';
+    return [
+      'WordQuest Session Summary',
+      `Started: ${startedAt.toLocaleString()}`,
+      `Rounds: ${sessionSummary.rounds}`,
+      `Wins: ${sessionSummary.wins}`,
+      `Win Rate: ${winRate}`,
+      `Hint Rounds: ${sessionSummary.hintRounds}`,
+      `Voice Attempts: ${sessionSummary.voiceAttempts}`
+    ].join('\n');
+  }
+
+  async function copySessionSummary() {
+    const text = buildSessionSummaryText();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        WQUI.showToast('Session summary copied.');
+        return;
+      }
+    } catch {}
+
+    const fallback = document.createElement('textarea');
+    fallback.value = text;
+    fallback.setAttribute('readonly', 'true');
+    fallback.style.position = 'fixed';
+    fallback.style.top = '-9999px';
+    document.body.appendChild(fallback);
+    fallback.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch {
+      copied = false;
+    }
+    fallback.remove();
+    WQUI.showToast(copied ? 'Session summary copied.' : 'Could not copy summary on this device.');
+  }
+
+  function resetSessionSummary() {
+    sessionSummary = {
+      rounds: 0,
+      wins: 0,
+      hintRounds: 0,
+      voiceAttempts: 0,
+      startedAt: Date.now()
+    };
     saveSessionSummaryState();
     renderSessionSummary();
   }
@@ -3348,6 +3429,10 @@
   // Buttons
   _el('new-game-btn')?.addEventListener('click',  newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
+  _el('modal-auto-next-cancel')?.addEventListener('click', () => {
+    clearRevealAutoAdvanceTimer();
+    WQUI.showToast('Auto next canceled for this reveal.');
+  });
   _el('modal-overlay')?.addEventListener('pointerdown', (event) => {
     if (event.target?.id !== 'modal-overlay') return;
     newGame();
@@ -3401,6 +3486,8 @@
     slow: Object.freeze({ introDelay: 420, betweenDelay: 220, postMeaningDelay: 320 })
   });
   let revealAutoAdvanceTimer = 0;
+  let revealAutoCountdownTimer = 0;
+  let revealAutoAdvanceEndsAt = 0;
 
   function pickRandom(items) {
     if (!Array.isArray(items) || !items.length) return '';
@@ -3409,9 +3496,24 @@
   }
 
   function clearRevealAutoAdvanceTimer() {
-    if (!revealAutoAdvanceTimer) return;
-    clearTimeout(revealAutoAdvanceTimer);
-    revealAutoAdvanceTimer = 0;
+    if (revealAutoAdvanceTimer) {
+      clearTimeout(revealAutoAdvanceTimer);
+      revealAutoAdvanceTimer = 0;
+    }
+    if (revealAutoCountdownTimer) {
+      clearInterval(revealAutoCountdownTimer);
+      revealAutoCountdownTimer = 0;
+    }
+    revealAutoAdvanceEndsAt = 0;
+    _el('modal-auto-next-banner')?.classList.add('hidden');
+  }
+
+  function showModalAutoNextBanner(message) {
+    const banner = _el('modal-auto-next-banner');
+    const label = _el('modal-auto-next-countdown');
+    if (!banner || !label) return;
+    label.textContent = message;
+    banner.classList.remove('hidden');
   }
 
   function waitMs(ms) {
@@ -3430,7 +3532,24 @@
     if (seconds <= 0) return;
     if (getVoicePracticeMode() === 'required') return;
     if (_el('modal-overlay')?.classList.contains('hidden')) return;
-    WQUI.showToast(`Auto next word in ${seconds} seconds.`, Math.max(1800, seconds * 1000));
+    revealAutoAdvanceEndsAt = Date.now() + (seconds * 1000);
+    WQUI.showToast(`Auto next word in ${seconds} seconds.`, Math.max(1400, seconds * 1000));
+
+    const tickCountdown = () => {
+      if (_el('modal-overlay')?.classList.contains('hidden')) {
+        clearRevealAutoAdvanceTimer();
+        return;
+      }
+      if (voiceIsRecording) {
+        showModalAutoNextBanner('Auto next waits for recording to finish...');
+        return;
+      }
+      const remaining = Math.max(0, Math.ceil((revealAutoAdvanceEndsAt - Date.now()) / 1000));
+      showModalAutoNextBanner(`Next word in ${remaining}s`);
+    };
+    tickCountdown();
+    revealAutoCountdownTimer = setInterval(tickCountdown, 250);
+
     const tryAdvance = () => {
       if (_el('modal-overlay')?.classList.contains('hidden')) {
         clearRevealAutoAdvanceTimer();
@@ -3440,6 +3559,7 @@
         revealAutoAdvanceTimer = setTimeout(tryAdvance, 900);
         return;
       }
+      clearRevealAutoAdvanceTimer();
       newGame();
     };
     revealAutoAdvanceTimer = setTimeout(tryAdvance, seconds * 1000);

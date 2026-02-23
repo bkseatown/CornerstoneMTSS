@@ -720,6 +720,18 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   padding: 3px 9px;
 }
 
+.teacher-session-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.teacher-session-btn {
+  min-height: 30px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
 .wq-theme-nav {
   display: flex;
   align-items: center;
@@ -1941,6 +1953,10 @@ html[data-motion="reduced"] * {
   .first-run-preset-actions {
     grid-template-columns: 1fr;
   }
+
+  .teacher-session-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Modal ───────────────────────────────────────────── */
@@ -2380,6 +2396,31 @@ html[data-motion="reduced"] * {
   opacity: 0.55;
   cursor: not-allowed;
   background: color-mix(in oklab, var(--brand) 55%, #8b8b8b 45%);
+}
+
+.modal-auto-next-banner {
+  width: 100%;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, var(--brand) 32%);
+  background: color-mix(in oklab, var(--panel-bg) 84%, var(--brand) 16%);
+  padding: 6px 9px;
+}
+
+#modal-auto-next-countdown {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.modal-auto-next-cancel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 9px;
 }
 
 html[data-reveal-focus="on"] .modal-meaning-highlight {

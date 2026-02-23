@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223c">
   <link rel="stylesheet" href="style/themes.css?v=20260223d">
-  <link rel="stylesheet" href="style/components.css?v=20260223j">
+  <link rel="stylesheet" href="style/components.css?v=20260223k">
 </head>
 <body>
 
@@ -143,6 +143,11 @@
                 <span id="session-win-rate" class="teacher-session-chip">Win Rate: --</span>
                 <span id="session-hint-rounds" class="teacher-session-chip">Hint Rounds: 0</span>
                 <span id="session-voice-attempts" class="teacher-session-chip">Voice Attempts: 0</span>
+              </div>
+              <div class="teacher-session-actions">
+                <button id="session-copy-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Summary</button>
+                <button id="session-reset-btn" class="quick-action-btn teacher-session-btn" type="button">Reset Session</button>
+                <button id="session-rerun-onboarding-btn" class="quick-action-btn teacher-session-btn" type="button">Re-run Setup</button>
               </div>
               <div class="setting-checkbox-help">Tracks this browser session only.</div>
             </div>
@@ -310,6 +315,10 @@
           </div>
         </div>
       </details>
+      <div id="modal-auto-next-banner" class="modal-auto-next-banner hidden" aria-live="polite">
+        <span id="modal-auto-next-countdown">Next word in 5s</span>
+        <button id="modal-auto-next-cancel" class="audio-btn modal-auto-next-cancel" type="button">Cancel</button>
+      </div>
       <button id="play-again-btn">Play Again →</button>
     </div>
   </div>
@@ -362,7 +371,7 @@
   <script src="js/game.js?v=20260222c"></script>
   <script src="js/ui.js?v=20260223e"></script>
   <script src="js/theme-registry.js?v=20260223c"></script>
-  <script src="js/app.js?v=20260223j"></script>
+  <script src="js/app.js?v=20260223k"></script>
   <script src="js/theme-nav.js"></script>
 </body>
 </html>
