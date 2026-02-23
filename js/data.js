@@ -6,6 +6,16 @@
  */
 
 const WQData = (() => {
+  const VALID_GRADE_BANDS = new Set(['K-2', 'G3-5', 'G6-8', 'G9-12']);
+  const GRADE_BAND_ALIASES = new Map([
+    ['K2', 'K-2'],
+    ['K-2', 'K-2'],
+    ['G3-5', 'G3-5'],
+    ['G6-8', 'G6-8'],
+    ['G9-12', 'G9-12'],
+    ['G11-12', 'G9-12'],
+    ['G12+', 'G9-12']
+  ]);
 
   // ─── Unified entry shape ───────────────────────────────────────────
   // All internal code uses this shape regardless of source:
@@ -31,12 +41,26 @@ const WQData = (() => {
   let _playable = [];     // words with game_tag === 'playable'
   let _loaded = false;
 
+  function _normalizeGradeBand(rawGradeBand) {
+    const raw = String(rawGradeBand || '').trim();
+    if (!raw) return '';
+    if (VALID_GRADE_BANDS.has(raw)) return raw;
+    const key = raw.toUpperCase().replace(/\s+/g, '');
+    return GRADE_BAND_ALIASES.get(key) || '';
+  }
+
   // ─── Normalise NEW JSON format ─────────────────────────────────────
   function _fromNew(raw) {
     const entries = {};
     for (const [, v] of Object.entries(raw)) {
       const word = (v.display_word || '').toLowerCase().trim();
       if (!word) continue;
+      const rawGradeBand = v.metadata?.grade_band || '';
+      const gradeBand = _normalizeGradeBand(rawGradeBand);
+      let gameTag = v.game_tag || 'playable';
+      if (gameTag === 'playable' && !gradeBand) {
+        gameTag = 'invalid_grade_band';
+      }
       entries[word] = {
         word,
         definition:  v.content?.definition  || '',
@@ -44,9 +68,10 @@ const WQData = (() => {
         fun_add_on:  v.content?.fun_add_on  || '',
         syllables:   _buildSyllables(word, v.metadata?.syllables),
         phonics:     v.instructional_paths?.phonics || null,
-        grade_band:  v.metadata?.grade_band  || '',
+        grade_band:  gradeBand,
+        grade_band_raw: String(rawGradeBand || '').trim(),
         tier:        v.metadata?.tier        || '',
-        game_tag:    v.game_tag              || 'playable',
+        game_tag:    gameTag,
         audio: {
           word:     v.audio_paths?.word_audio     || null,
           def:      v.audio_paths?.definition_audio || null,
@@ -65,6 +90,14 @@ const WQData = (() => {
       const w = word.toLowerCase().trim();
       if (!w) continue;
       const en = v.en || {};
+      const rawGradeBand = v.grade_band || '';
+      const gradeBand = _normalizeGradeBand(rawGradeBand);
+      let gameTag = w.includes(' ') ? 'multi_word'
+        : w.length > 12   ? 'too_long'
+          : 'playable';
+      if (gameTag === 'playable' && !gradeBand) {
+        gameTag = 'invalid_grade_band';
+      }
       entries[w] = {
         word:        w,
         definition:  en.def      || v.def      || '',
@@ -72,11 +105,10 @@ const WQData = (() => {
         fun_add_on:  en.fun      || v.fun      || '',
         syllables:   v.syllables || w,
         phonics:     v.phonics?.patterns?.[0] || null,
-        grade_band:  v.grade_band || '',
+        grade_band:  gradeBand,
+        grade_band_raw: String(rawGradeBand || '').trim(),
         tier:        v.tier       || '',
-        game_tag:    w.includes(' ') ? 'multi_word'
-                   : w.length > 12   ? 'too_long'
-                   : 'playable',
+        game_tag:    gameTag,
         audio: { word: null, def: null, sentence: null, fun: null }
       };
     }
@@ -129,8 +161,14 @@ const WQData = (() => {
 
   function _finalize() {
     _playable = Object.keys(_entries).filter(w => _entries[w].game_tag === 'playable');
+    const quarantined = Object.values(_entries).filter(
+      (entry) => entry?.game_tag === 'invalid_grade_band'
+    ).length;
     _loaded = true;
     console.log(`[WQData] ${_playable.length} words are game-playable`);
+    if (quarantined > 0) {
+      console.warn(`[WQData] ${quarantined} entries quarantined due to invalid grade band metadata.`);
+    }
   }
 
   // ─── Public API ────────────────────────────────────────────────────

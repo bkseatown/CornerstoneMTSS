@@ -168,9 +168,18 @@ const WQAudio = (() => {
     });
   }
 
-  function _speak(text, rate = 0.88, pitch = 1) {
+  function _speak(text, rate = 0.88, pitch = 1, options = {}) {
     return new Promise(res => {
-      _stop();
+      const stopFirst = options.stopFirst !== false;
+      if (stopFirst) {
+        _stop();
+      } else {
+        if (_active) { res(false); return; }
+        if (window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
+          res(false);
+          return;
+        }
+      }
       if (!window.speechSynthesis) { res(); return; }
       if (!_voicesReady) _loadVoices();
 
@@ -179,8 +188,8 @@ const WQAudio = (() => {
       utt.pitch = pitch;
       utt.lang  = 'en-US';
       if (_selectedVoice) utt.voice = _selectedVoice;
-      utt.onend   = res;
-      utt.onerror = res;
+      utt.onend   = () => res(true);
+      utt.onerror = () => res(false);
       window.speechSynthesis.speak(utt);
     });
   }
@@ -200,7 +209,7 @@ const WQAudio = (() => {
       }
     }
 
-    if (allowFallbackTTS && fallback) await _speak(fallback, rate);
+    if (allowFallbackTTS && fallback) await _speak(fallback, rate, 1, { stopFirst: true });
   }
 
   // ─── Public API ─────────────────────────────────
@@ -209,6 +218,11 @@ const WQAudio = (() => {
   function playSentence(entry) { return _play(entry?.audio?.sentence, entry?.sentence,    0.9);  }
   function playFun(entry)      { return _play(entry?.audio?.fun,      entry?.fun_add_on,  0.9);  }
   function stop()              { _stop(); }
+  // Gameplay cue speech is intentionally disabled.
+  // Keep API shape for backward compatibility with older callers.
+  function speakCue() {
+    return Promise.resolve(false);
+  }
 
   // Returns list of English voices for settings UI
   function getAvailableVoices() {
@@ -249,7 +263,7 @@ const WQAudio = (() => {
     };
   }
 
-  return { playWord, playDef, playSentence, playFun, stop,
+  return { playWord, playDef, playSentence, playFun, stop, speakCue,
            setVoiceMode, getVoiceMode,
            getAvailableVoices, setVoiceByName, getCurrentVoiceName,
            primeAudioManifest: _primeAudioManifest,

@@ -6,7 +6,7 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260222-v1';
+const SW_VERSION = '20260223-v4';
 const SHELL_CACHE = `wq-shell-${SW_VERSION}`;
 const DATA_CACHE = `wq-data-${SW_VERSION}`;
 const AUDIO_CACHE = `wq-audio-${SW_VERSION}`;
@@ -98,11 +98,11 @@ async function navigationHandler(request) {
 
 async function cacheFirst(request, primaryCache) {
   const primary = await caches.open(primaryCache);
-  const hit = await primary.match(request, { ignoreSearch: true });
+  const hit = await primary.match(request);
   if (hit) return hit;
 
   const dynamic = await caches.open(DYNAMIC_CACHE);
-  const dynamicHit = await dynamic.match(request, { ignoreSearch: true });
+  const dynamicHit = await dynamic.match(request);
   if (dynamicHit) return dynamicHit;
 
   try {
@@ -128,7 +128,7 @@ async function networkFirst(request, cacheName) {
     }
     return network;
   } catch {
-    const hit = await cache.match(request, { ignoreSearch: true });
+    const hit = await cache.match(request);
     if (hit) return hit;
     return new Response('Offline and no cached data available.', {
       status: 503,

@@ -34,28 +34,33 @@
   const PREF_KEY = 'wq_v2_prefs';
   const PREF_MIGRATION_KEY = 'wq_v2_pref_defaults_20260222';
   const PREF_MUSIC_AUTO_MIGRATION_KEY = 'wq_v2_pref_music_auto_20260222';
+  const PREF_WILSON_DEFAULT_MIGRATION_KEY = 'wq_v2_pref_wilson_default_20260223';
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
     'chill',
     'lofi',
-    'upbeat',
     'coffee',
-    'arcade',
     'fantasy',
     'scifi',
+    'upbeat',
+    'arcade',
     'sports',
+    'stealth',
+    'team',
     'off'
   ]);
   const MUSIC_LABELS = Object.freeze({
     auto: 'Auto',
     chill: 'Chill',
     lofi: 'Lo-fi',
-    upbeat: 'Upbeat',
     coffee: 'Coffeehouse',
-    arcade: '8-bit Arcade',
     fantasy: 'Fantasy',
     scifi: 'Sci-fi',
+    upbeat: 'Upbeat',
+    arcade: '8-bit Arcade',
     sports: 'Sports Hype',
+    stealth: 'Space Mystery',
+    team: 'Team Game Hype',
     off: 'Off'
   });
   const DEFAULT_PREFS = Object.freeze({
@@ -78,8 +83,10 @@
     musicVol: '0.50',
     voice: 'recorded',
     themeSave: 'off',
-    boardStyle: 'card',
-    keyStyle: 'bubble',
+    boardStyle: 'soundcard',
+    keyStyle: 'soundcard',
+    keyboardLayout: 'wilson',
+    chunkTabs: 'auto',
     atmosphere: 'glow'
   });
   function loadPrefs() {
@@ -103,6 +110,8 @@
     if (prefs.themeSave === undefined) prefs.themeSave = DEFAULT_PREFS.themeSave;
     if (prefs.boardStyle === undefined) prefs.boardStyle = DEFAULT_PREFS.boardStyle;
     if (prefs.keyStyle === undefined) prefs.keyStyle = DEFAULT_PREFS.keyStyle;
+    if (prefs.keyboardLayout === undefined) prefs.keyboardLayout = DEFAULT_PREFS.keyboardLayout;
+    if (prefs.chunkTabs === undefined) prefs.chunkTabs = DEFAULT_PREFS.chunkTabs;
     if (prefs.atmosphere === undefined) prefs.atmosphere = DEFAULT_PREFS.atmosphere;
     if (prefs.meaningPlusFun === undefined) prefs.meaningPlusFun = DEFAULT_PREFS.meaningPlusFun;
     if (prefs.sorNotation === undefined) prefs.sorNotation = DEFAULT_PREFS.sorNotation;
@@ -142,6 +151,13 @@
     prefs.music = DEFAULT_PREFS.music;
     savePrefs(prefs);
   }
+  if (localStorage.getItem(PREF_WILSON_DEFAULT_MIGRATION_KEY) !== 'done') {
+    if (!prefs.keyboardLayout) prefs.keyboardLayout = 'wilson';
+    if (!prefs.boardStyle || prefs.boardStyle === 'card') prefs.boardStyle = 'soundcard';
+    if (!prefs.keyStyle || prefs.keyStyle === 'bubble') prefs.keyStyle = 'soundcard';
+    savePrefs(prefs);
+    localStorage.setItem(PREF_WILSON_DEFAULT_MIGRATION_KEY, 'done');
+  }
 
   const _el = id => document.getElementById(id);
   const ThemeRegistry = window.WQThemeRegistry || null;
@@ -163,18 +179,21 @@
 
   const AUTO_MUSIC_BY_THEME = Object.freeze({
     default: 'chill',
-    sunset: 'upbeat',
+    sunset: 'lofi',
     ocean: 'chill',
-    superman: 'sports',
-    marvel: 'sports',
-    seahawks: 'sports',
-    huskies: 'sports',
-    ironman: 'upbeat',
-    harleyquinn: 'upbeat',
+    superman: 'fantasy',
+    mario: 'arcade',
+    zelda: 'fantasy',
+    amongus: 'scifi',
+    rainbowfriends: 'upbeat',
+    marvel: 'scifi',
+    seahawks: 'chill',
+    huskies: 'chill',
+    ironman: 'scifi',
+    harleyquinn: 'lofi',
     kuromi: 'lofi',
+    harrypotter: 'fantasy',
     minecraft: 'arcade',
-    pokemon: 'arcade',
-    barbie: 'upbeat',
     demonhunter: 'fantasy',
     dark: 'chill',
     coffee: 'coffee',
@@ -183,10 +202,29 @@
 
   const AUTO_MUSIC_BY_FAMILY = Object.freeze({
     core: 'chill',
-    sports: 'sports',
-    inspired: 'upbeat',
+    sports: 'chill',
+    inspired: 'lofi',
     dark: 'lofi'
   });
+
+  const SUBJECT_FOCUS_GRADE = Object.freeze({
+    k2: 'K-2',
+    '35': 'G3-5',
+    '68': 'G6-8',
+    '912': 'G9-12'
+  });
+
+  const CHUNK_TAB_FOCUS_KEYS = new Set([
+    'digraph',
+    'ccvc',
+    'cvcc',
+    'trigraph',
+    'welded',
+    'diphthong',
+    'vowel_team',
+    'r_controlled',
+    'floss'
+  ]);
 
   function getThemeFallback() {
     if (ThemeRegistry && typeof ThemeRegistry.defaultThemeForMode === 'function') {
@@ -248,6 +286,7 @@
     's-theme-save': 'themeSave',
     's-board-style': 'boardStyle',
     's-key-style': 'keyStyle',
+    's-chunk-tabs': 'chunkTabs',
     's-atmosphere': 'atmosphere',
     's-voice-task': 'voicePractice',
     's-boost-popups': 'boostPopups',
@@ -304,8 +343,10 @@
   applyFeedback(prefs.feedback || DEFAULT_PREFS.feedback);
   applyBoardStyle(prefs.boardStyle || DEFAULT_PREFS.boardStyle);
   applyKeyStyle(prefs.keyStyle || DEFAULT_PREFS.keyStyle);
+  applyKeyboardLayout(prefs.keyboardLayout || DEFAULT_PREFS.keyboardLayout);
   applyAtmosphere(prefs.atmosphere || DEFAULT_PREFS.atmosphere);
   WQUI.setCaseMode(prefs.caseMode || DEFAULT_PREFS.caseMode);
+  updateWilsonModeToggle();
 
   // Voice picker populated after brief delay
   setTimeout(populateVoiceSelector, 700);
@@ -350,20 +391,38 @@
   }
 
   function applyBoardStyle(mode) {
-    const allowed = new Set(['clean', 'card', 'patterned']);
+    const allowed = new Set(['clean', 'card', 'patterned', 'soundcard']);
     const normalized = allowed.has(mode) ? mode : DEFAULT_PREFS.boardStyle;
     document.documentElement.setAttribute('data-board-style', normalized);
     const select = _el('s-board-style');
     if (select && select.value !== normalized) select.value = normalized;
+    updateWilsonModeToggle();
     return normalized;
   }
 
   function applyKeyStyle(mode) {
-    const allowed = new Set(['bubble', 'classic', 'arcade']);
+    const allowed = new Set(['bubble', 'classic', 'arcade', 'soundcard']);
     const normalized = allowed.has(mode) ? mode : DEFAULT_PREFS.keyStyle;
     document.documentElement.setAttribute('data-key-style', normalized);
     const select = _el('s-key-style');
     if (select && select.value !== normalized) select.value = normalized;
+    updateWilsonModeToggle();
+    return normalized;
+  }
+
+  function applyKeyboardLayout(mode) {
+    const normalized = mode === 'wilson' ? 'wilson' : 'standard';
+    document.documentElement.setAttribute('data-keyboard-layout', normalized);
+    updateWilsonModeToggle();
+    syncChunkTabsVisibility();
+    return normalized;
+  }
+
+  function applyChunkTabsMode(mode) {
+    const normalized = mode === 'on' || mode === 'off' ? mode : 'auto';
+    const select = _el('s-chunk-tabs');
+    if (select && select.value !== normalized) select.value = normalized;
+    document.documentElement.setAttribute('data-chunk-tabs-mode', normalized);
     return normalized;
   }
 
@@ -374,6 +433,35 @@
     const select = _el('s-atmosphere');
     if (select && select.value !== normalized) select.value = normalized;
     return normalized;
+  }
+
+  function updateWilsonModeToggle() {
+    const checkbox = _el('s-wilson-mode');
+    if (!checkbox) return;
+    const boardStyle = document.documentElement.getAttribute('data-board-style');
+    const keyStyle = document.documentElement.getAttribute('data-key-style');
+    const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
+    checkbox.checked = boardStyle === 'soundcard' && keyStyle === 'soundcard' && keyboardLayout === 'wilson';
+  }
+
+  function applyWilsonMode(enabled) {
+    if (enabled) {
+      const boardStyle = applyBoardStyle('soundcard');
+      const keyStyle = applyKeyStyle('soundcard');
+      const keyboardLayout = applyKeyboardLayout('wilson');
+      setPref('boardStyle', boardStyle);
+      setPref('keyStyle', keyStyle);
+      setPref('keyboardLayout', keyboardLayout);
+      updateWilsonModeToggle();
+      return;
+    }
+    const boardStyle = applyBoardStyle('card');
+    const keyStyle = applyKeyStyle('bubble');
+    const keyboardLayout = applyKeyboardLayout('standard');
+    setPref('boardStyle', boardStyle);
+    setPref('keyStyle', keyStyle);
+    setPref('keyboardLayout', keyboardLayout);
+    updateWilsonModeToggle();
   }
 
   function isSorNotationEnabled() {
@@ -427,6 +515,22 @@
     }
   }
 
+  function syncThemePreviewStripVisibility() {
+    const strip = _el('theme-preview-strip');
+    if (!strip) return;
+    const panelOpen = !_el('settings-panel')?.classList.contains('hidden');
+    const focusOpen = document.documentElement.getAttribute('data-focus-search-open') === 'true';
+    const shouldShow = !panelOpen && !focusOpen;
+    strip.classList.toggle('hidden', !shouldShow);
+    strip.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+  }
+
+  function syncHeaderControlsVisibility() {
+    syncThemePreviewStripVisibility();
+    updateFocusHint();
+    updateFocusSummaryLabel();
+  }
+
   document.querySelectorAll('#settings-panel [data-settings-tab]').forEach((tab) => {
     tab.addEventListener('click', () => {
       setSettingsView(tab.getAttribute('data-settings-tab'));
@@ -434,6 +538,7 @@
   });
 
   setSettingsView('quick');
+  syncHeaderControlsVisibility();
 
   _el('settings-btn')?.addEventListener('click', () => {
     const panel = _el('settings-panel');
@@ -441,15 +546,18 @@
     const opening = panel.classList.contains('hidden');
     panel.classList.toggle('hidden');
     if (opening) setSettingsView('quick');
+    syncHeaderControlsVisibility();
   });
   _el('settings-close')?.addEventListener('click', () => {
     _el('settings-panel')?.classList.add('hidden');
+    syncHeaderControlsVisibility();
   });
 
   
   // Voice help modal
   const openVoiceHelp = () => {
     _el('settings-panel')?.classList.add('hidden');
+    syncHeaderControlsVisibility();
     _el('voice-help-modal')?.classList.remove('hidden');
   };
   const closeVoiceHelp = () => _el('voice-help-modal')?.classList.add('hidden');
@@ -459,11 +567,28 @@
 // Close settings when clicking outside
   document.addEventListener('pointerdown', e => {
     const panel = _el('settings-panel');
+    const focusWrap = _el('focus-inline-wrap');
+    if (focusWrap && !focusWrap.contains(e.target)) {
+      closeFocusSearchList();
+      updateFocusSummaryLabel();
+    }
     if (!panel?.classList.contains('hidden') &&
         !panel.contains(e.target) &&
         e.target !== _el('settings-btn') &&
         !_el('settings-btn')?.contains(e.target)) {
       panel.classList.add('hidden');
+      syncHeaderControlsVisibility();
+    }
+    if (_dupeToastEl && !_dupeToastEl.contains(e.target)) removeDupeToast();
+    if (_el('toast')?.classList.contains('visible')) _el('toast').classList.remove('visible');
+    const boost = _el('midgame-boost');
+    if (
+      boost &&
+      !boost.classList.contains('hidden') &&
+      !boost.contains(e.target) &&
+      !shouldKeepMidgameBoostOpen(e.target)
+    ) {
+      hideMidgameBoost();
     }
   });
 
@@ -473,6 +598,7 @@
       setPref('theme', normalized);
     }
     _el('settings-panel')?.classList.add('hidden');
+    syncHeaderControlsVisibility();
   });
   _el('s-theme-save')?.addEventListener('change', e => {
     const next = e.target.value === 'on' ? 'on' : 'off';
@@ -486,11 +612,45 @@
       WQUI.showToast('Theme save is off. App will start on default theme next time.');
     }
   });
+
+  function refreshKeyboardLayoutPreview() {
+    const state = WQGame.getState?.();
+    if (!state?.word) return;
+    // Avoid resetting key-state mid-round; apply immediately only before first submitted guess.
+    if (state.guesses.length > 0) return;
+    WQUI.buildKeyboard();
+    if (state.guess) {
+      WQUI.updateCurrentRow(state.guess, state.wordLength, state.guesses.length);
+    }
+    if (state.wordLength && state.maxGuesses) {
+      WQUI.calcLayout(state.wordLength, state.maxGuesses);
+    }
+  }
+
   _el('s-board-style')?.addEventListener('change', e => {
-    setPref('boardStyle', applyBoardStyle(e.target.value));
+    const next = applyBoardStyle(e.target.value);
+    setPref('boardStyle', next);
+    updateWilsonModeToggle();
+    refreshKeyboardLayoutPreview();
   });
   _el('s-key-style')?.addEventListener('change', e => {
-    setPref('keyStyle', applyKeyStyle(e.target.value));
+    const next = applyKeyStyle(e.target.value);
+    setPref('keyStyle', next);
+    updateWilsonModeToggle();
+    refreshKeyboardLayoutPreview();
+  });
+  _el('s-chunk-tabs')?.addEventListener('change', e => {
+    const next = applyChunkTabsMode(e.target.value);
+    setPref('chunkTabs', next);
+    syncChunkTabsVisibility();
+  });
+  _el('s-wilson-mode')?.addEventListener('change', e => {
+    const enabled = !!e.target.checked;
+    applyWilsonMode(enabled);
+    refreshKeyboardLayoutPreview();
+    WQUI.showToast(enabled
+      ? 'Wilson sound-card mode is on.'
+      : 'Switched to standard keyboard + simple board.');
   });
   _el('s-atmosphere')?.addEventListener('change', e => {
     setPref('atmosphere', applyAtmosphere(e.target.value));
@@ -519,10 +679,6 @@
   _el('s-feedback')?.addEventListener('change', e => {
     applyFeedback(e.target.value);
     setPref('feedback', e.target.value);
-    WQUI.showToast(e.target.value === 'themed'
-      ? 'Themed feedback enabled. Meaning stays correct/present/absent.'
-      : 'Classic feedback enabled. Green/yellow/gray meanings restored.'
-    );
   });
   _el('s-meaning-fun-link')?.addEventListener('change', e => {
     const enabled = !!e.target.checked;
@@ -744,10 +900,18 @@
 
   function updateVoicePracticePanel(state) {
     const panel = _el('modal-voice-practice');
+    const practiceDetails = _el('modal-practice-details');
+    const practiceStatus = _el('modal-practice-status');
     const target = _el('voice-practice-target');
     const playAgain = _el('play-again-btn');
     const mode = getVoicePracticeMode();
     const word = String(state?.word || '').toUpperCase();
+
+    if (practiceStatus) {
+      const required = mode === 'required';
+      practiceStatus.textContent = required ? 'Required' : 'Optional';
+      practiceStatus.classList.toggle('is-required', required);
+    }
 
     if (target) target.textContent = word ? `Target: ${word}` : '';
     if (!panel) return;
@@ -755,6 +919,10 @@
     if (mode === 'off') {
       if (voiceIsRecording) stopVoiceCaptureNow();
       panel.classList.add('hidden');
+      if (practiceDetails) {
+        practiceDetails.classList.add('hidden');
+        practiceDetails.open = false;
+      }
       if (playAgain) {
         playAgain.disabled = false;
         playAgain.removeAttribute('aria-disabled');
@@ -762,8 +930,12 @@
       return;
     }
 
+    if (practiceDetails) {
+      practiceDetails.classList.remove('hidden');
+    }
     panel.classList.remove('hidden');
     if (mode === 'required' && !voiceTakeComplete) {
+      if (practiceDetails) practiceDetails.open = true;
       if (playAgain) {
         playAgain.disabled = true;
         playAgain.setAttribute('aria-disabled', 'true');
@@ -896,6 +1068,10 @@
       clearVoiceClip();
       drawWaveform();
       updateRevealSorBadge(state?.entry);
+      const practiceDetails = _el('modal-practice-details');
+      if (practiceDetails) {
+        practiceDetails.open = getVoicePracticeMode() === 'required';
+      }
       const details = _el('modal-more-details');
       if (details) details.open = false;
       updateVoicePracticePanel(state);
@@ -923,11 +1099,15 @@
       const headerEl = document.querySelector('header');
       const focusEl = document.querySelector('.focus-bar');
       const themeStripEl = _el('theme-preview-strip');
+      const hintEl = _el('focus-hint');
 
       const keyH = parsePx(rootStyle.getPropertyValue('--key-h'), 52);
       const keyGap = parsePx(rootStyle.getPropertyValue('--gap-key'), 8);
       const tileGap = parsePx(rootStyle.getPropertyValue('--gap-tile'), 5);
       const mainStyle = mainEl ? getComputedStyle(mainEl) : null;
+      const mainInnerW = (mainEl?.clientWidth || Math.min(window.innerWidth, 560))
+        - parsePx(mainStyle?.paddingLeft, 12)
+        - parsePx(mainStyle?.paddingRight, 12);
       const mainPadTop = parsePx(mainStyle?.paddingTop, 10);
       const mainPadBottom = parsePx(mainStyle?.paddingBottom, 10);
       const boardZoneGap = parsePx(getComputedStyle(boardZoneEl || document.body).gap, 10);
@@ -938,30 +1118,65 @@
       const focusH = focusEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--focus-h'), 44);
       const themeH = themeStripEl?.offsetHeight || 0;
       const viewportH = window.visualViewport?.height || window.innerHeight;
-      const viewportW = Math.min(window.innerWidth, 560);
+      const viewportW = window.visualViewport?.width || window.innerWidth;
+      const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
+      const chunkTabsOn = document.documentElement.getAttribute('data-chunk-tabs') !== 'off';
+      const isLandscape = viewportW >= viewportH;
+      let layoutMode = 'default';
+      if (viewportW >= 1040 && viewportH >= 700) layoutMode = 'wide';
+      else if (viewportH <= 620 || (isLandscape && viewportH <= 700)) layoutMode = 'compact';
+      else if (viewportH <= 760) layoutMode = 'tight';
+      document.documentElement.setAttribute('data-layout-mode', layoutMode);
+      document.documentElement.setAttribute('data-viewport-orientation', isLandscape ? 'landscape' : 'portrait');
+
+      const chunkButtons = keyboardEl
+        ? keyboardEl.querySelectorAll('.key-row-chunks .key').length
+        : 0;
+      const expectedChunkButtons = keyboardLayout === 'wilson' && chunkTabsOn ? 6 : 0;
+      const effectiveChunkButtons = Math.max(chunkButtons, expectedChunkButtons);
+      const chunkKeyH = Math.round(Math.max(18, keyH * (layoutMode === 'compact' ? 0.44 : 0.5)));
+      const chunkSlotW = Math.max(46, Math.round((keyH * 0.82)));
+      const chunkCols = Math.max(3, Math.floor(Math.max(280, mainInnerW) / chunkSlotW));
+      const chunkRowsRaw = (keyboardLayout === 'wilson' && chunkTabsOn && effectiveChunkButtons > 0)
+        ? Math.ceil(effectiveChunkButtons / chunkCols)
+        : 0;
+      const chunkRows = layoutMode === 'compact' ? Math.min(chunkRowsRaw, 1) : chunkRowsRaw;
+      const chunkRowH = chunkRows > 0
+        ? (chunkRows * chunkKeyH) + ((chunkRows - 1) * 5) + 8
+        : 0;
+      const hintH = hintEl && !hintEl.classList.contains('hidden')
+        ? Math.max(0, (hintEl.offsetHeight || 0) - 10)
+        : 0;
       const kbRows = 3;
-      const kbH = kbRows * keyH + (kbRows - 1) * keyGap + 8;
+      const keyboardSafetyPad = keyboardLayout === 'wilson'
+        ? (layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 30 : 26)
+        : 16;
+      const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const reservedH = headerH + focusH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + 20;
+      const extraSafetyH = layoutMode === 'compact' ? 56 : layoutMode === 'tight' ? 44 : layoutMode === 'wide' ? 32 : 38;
+      const reservedH = headerH + focusH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
-      const byHeight = Math.floor((availableBoardH - platePadY - tileGap * (maxGuesses - 1)) / maxGuesses);
+      const byHeight = Math.floor((availableBoardH - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
 
-      const mainInnerW = (mainEl?.clientWidth || viewportW) - parsePx(mainStyle?.paddingLeft, 12) - parsePx(mainStyle?.paddingRight, 12);
       const availableBoardW = Math.max(220, mainInnerW);
       const byWidth = Math.floor((availableBoardW - platePadX - tileGap * (wordLength - 1)) / wordLength);
 
-      const size = Math.max(30, Math.min(byHeight, byWidth, 64));
+      const sizeCap = layoutMode === 'wide' ? 62 : layoutMode === 'tight' ? 52 : layoutMode === 'compact' ? 44 : 56;
+      const sizeFloor = layoutMode === 'compact' ? 24 : 28;
+      const size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const playfieldW = Math.ceil(boardWidth);
 
-      const adaptiveKeyH = Math.max(42, Math.min(58, Math.round(size * 0.95)));
-      let adaptiveKeyMinW = Math.max(30, Math.min(42, Math.round(size * 0.66)));
-      let adaptiveKeyGap = Math.max(7, Math.min(11, Math.round(size * 0.18)));
-      const maxKeyboardW = Math.max(260, Math.min(window.innerWidth - 20, mainInnerW + 84));
-      const estimateKeyboardW = () => (adaptiveKeyMinW * 10) + (adaptiveKeyGap * 9);
-      while (estimateKeyboardW() > maxKeyboardW && adaptiveKeyMinW > 24) {
+      const adaptiveKeyH = Math.max(layoutMode === 'compact' ? 34 : 42, Math.min(layoutMode === 'wide' ? 56 : 52, Math.round(size * 0.94)));
+      let adaptiveKeyMinW = Math.max(layoutMode === 'compact' ? 22 : 26, Math.min(46, Math.round(size * 0.76)));
+      let adaptiveKeyGap = Math.max(5.8, Math.min(10, Math.round(size * 0.16)));
+      const maxKeyboardW = Math.max(286, Math.min(window.innerWidth - 16, mainInnerW - 4));
+      const activeCols = keyboardLayout === 'wilson' ? 10 : 10;
+      const estimateKeyboardW = () => (adaptiveKeyMinW * activeCols) + (adaptiveKeyGap * (activeCols - 1));
+      const minKeyFloor = layoutMode === 'compact' ? 22 : 24;
+      while (estimateKeyboardW() > maxKeyboardW && adaptiveKeyMinW > minKeyFloor) {
         adaptiveKeyMinW -= 1;
-        if (adaptiveKeyGap > 6) adaptiveKeyGap -= 0.2;
+        if (adaptiveKeyGap > 5.4) adaptiveKeyGap -= 0.2;
       }
 
       document.documentElement.style.setProperty('--tile-size', `${size}px`);
@@ -972,7 +1187,7 @@
       document.documentElement.style.setProperty('--keyboard-max-width', `${Math.ceil(maxKeyboardW)}px`);
 
       if (keyboardEl && keyboardEl.offsetWidth > maxKeyboardW) {
-        document.documentElement.style.setProperty('--key-min-w', `${Math.max(24, adaptiveKeyMinW - 3)}px`);
+        document.documentElement.style.setProperty('--key-min-w', `${Math.max(minKeyFloor, adaptiveKeyMinW - 2)}px`);
       }
 
       return { size, playfieldW };
@@ -984,15 +1199,9 @@
   installResponsiveLayoutPatch();
 
   // ─── 6. Focus + grade alignment ─────────────────────
-  const SUBJECT_FOCUS_GRADE = Object.freeze({
-    k2: 'K-2',
-    '35': 'G3-5',
-    '68': 'G6-8',
-    '912': 'G9-12'
-  });
 
   const FOCUS_HINTS = {
-    all: 'Classic mode · defaults to 5 letters and 6 guesses',
+    all: '',
     cvc:'CVC · short vowel',
     digraph:'Digraphs · sh, ch, th, wh',
     ccvc:'Initial blends · st, bl, tr…',
@@ -1062,14 +1271,51 @@
 
   function updateFocusHint() {
     const hintEl = _el('focus-hint');
-    const focusVal = _el('setting-focus')?.value || 'all';
-    const showHint = _el('s-hint')?.value === 'on';
     if (!hintEl) return;
-    if (showHint && FOCUS_HINTS[focusVal]) {
-      hintEl.textContent = FOCUS_HINTS[focusVal];
-      hintEl.classList.remove('hidden');
-    } else {
+    const mode = _el('s-hint')?.value || prefs.hint || DEFAULT_PREFS.hint;
+    if (mode !== 'on') {
+      hintEl.textContent = '';
       hintEl.classList.add('hidden');
+      return;
+    }
+    const state = WQGame.getState?.() || null;
+    const entry = state?.entry || null;
+    const focusValue = _el('setting-focus')?.value || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const phonicsTag = String(entry?.phonics || '').trim();
+    let hintText = '';
+
+    if (phonicsTag && phonicsTag.toLowerCase() !== 'all') {
+      hintText = `Hint cue: ${phonicsTag}`;
+    } else if (preset.kind === 'subject') {
+      hintText = `Hint cue: ${preset.subject.toUpperCase()} vocabulary · ${preset.gradeBand}`;
+    } else if (preset.kind === 'classic') {
+      hintText = 'Hint cue: classic mode uses grade + word length.';
+    } else {
+      hintText = `Hint cue: ${getFocusLabel(focusValue).replace(/[—]/g, '').trim()}`;
+    }
+
+    hintEl.textContent = hintText;
+    hintEl.classList.remove('hidden');
+  }
+
+  function syncChunkTabsVisibility() {
+    const layout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
+    const mode = applyChunkTabsMode(_el('s-chunk-tabs')?.value || prefs.chunkTabs || DEFAULT_PREFS.chunkTabs);
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const relevantFocus = preset.kind === 'phonics' && CHUNK_TAB_FOCUS_KEYS.has(preset.focus);
+
+    let shouldShow = false;
+    if (layout === 'wilson') {
+      if (mode === 'on') shouldShow = true;
+      else if (mode === 'auto') shouldShow = relevantFocus;
+    }
+    document.documentElement.setAttribute('data-chunk-tabs', shouldShow ? 'on' : 'off');
+
+    const state = WQGame.getState?.();
+    if (state?.wordLength && state?.maxGuesses && typeof WQUI.calcLayout === 'function') {
+      WQUI.calcLayout(state.wordLength, state.maxGuesses);
     }
   }
 
@@ -1090,6 +1336,446 @@
     note.textContent = `Phonics focus narrows by pattern. Grade (${gradeVal}) and Word Length still apply.`;
   }
 
+  function getFocusEntries() {
+    const select = _el('setting-focus');
+    if (!select) return [];
+    return Array.from(select.options)
+      .filter((option) => option.value && !option.disabled)
+      .map((option) => {
+        const parent = option.parentElement;
+        const group = parent && parent.tagName === 'OPTGROUP' ? String(parent.label || '').trim() : 'General';
+        return {
+          value: option.value,
+          label: String(option.textContent || option.value).trim(),
+          group
+        };
+      });
+  }
+
+  function getFocusLabel(value) {
+    const select = _el('setting-focus');
+    if (!select) return '— Classic (Wordle 5x6) —';
+    const option = Array.from(select.options).find((entry) => entry.value === value);
+    return String(option?.textContent || '— Classic (Wordle 5x6) —').trim();
+  }
+
+  function clearPinnedFocusSearchValue(inputEl) {
+    if (!inputEl) return;
+    const raw = String(inputEl.value || '').trim();
+    if (!raw) return;
+    const focusValue = _el('setting-focus')?.value || 'all';
+    const currentLabel = getFocusLabel(focusValue).replace(/[—]/g, '').trim().toLowerCase();
+    const normalizedRaw = raw
+      .replace(/[—]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+    if (!currentLabel || !normalizedRaw) return;
+    if (
+      normalizedRaw === currentLabel ||
+      normalizedRaw.startsWith(`${currentLabel} · type to search`) ||
+      normalizedRaw.startsWith(`${currentLabel} - type to search`) ||
+      normalizedRaw.startsWith(`search focus: ${currentLabel}`)
+    ) {
+      inputEl.value = '';
+    }
+  }
+
+  function updateFocusSummaryLabel() {
+    const labelEl = _el('focus-inline-search');
+    const focusValue = _el('setting-focus')?.value || 'all';
+    if (!labelEl) return;
+    const currentLabel = getFocusLabel(focusValue).replace(/[—]/g, '').trim();
+    // Keep the field behaving like search: show current focus in placeholder, not as locked text.
+    labelEl.value = '';
+    labelEl.placeholder = currentLabel
+      ? `${currentLabel} · type to search (math, digraph, k-2)`
+      : 'Type to search focus (math, digraph, k-2)';
+    labelEl.setAttribute('title', currentLabel ? `Current focus: ${currentLabel}` : 'Focus finder');
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  const FOCUS_QUICK_VALUES = Object.freeze([
+    'all',
+    'cvc',
+    'cvce',
+    'vowel_team',
+    'r_controlled',
+    'multisyllable',
+    'vocab-math-k2',
+    'vocab-math-35',
+    'vocab-science-35',
+    'vocab-social-35',
+    'vocab-ela-35'
+  ]);
+  const FOCUS_EMPTY_VISIBLE_LIMIT = 8;
+  const FOCUS_QUERY_VISIBLE_LIMIT = 10;
+
+  // Prioritize options that are most common for everyday classroom use.
+  const FOCUS_POPULARITY = Object.freeze({
+    all: 240,
+    cvc: 220,
+    cvce: 210,
+    digraph: 205,
+    vowel_team: 200,
+    r_controlled: 195,
+    multisyllable: 190,
+    'vocab-math-k2': 185,
+    'vocab-math-35': 182,
+    'vocab-science-k2': 180,
+    'vocab-science-35': 176,
+    'vocab-ela-k2': 172,
+    'vocab-ela-35': 168
+  });
+
+  const FOCUS_SEARCH_ALIASES = Object.freeze({
+    all: Object.freeze(['classic', 'wordle', 'default']),
+    cvc: Object.freeze(['short vowels', 'closed syllables']),
+    digraph: Object.freeze(['sh', 'ch', 'th']),
+    ccvc: Object.freeze(['initial blends', 'blends']),
+    cvcc: Object.freeze(['final blends', 'blends']),
+    trigraph: Object.freeze(['tch', 'dge', 'igh']),
+    cvce: Object.freeze(['magic e', 'silent e']),
+    vowel_team: Object.freeze(['vowel teams', 'ai', 'ee', 'oa']),
+    r_controlled: Object.freeze(['r controlled', 'bossy r', 'ar', 'or', 'er']),
+    diphthong: Object.freeze(['oi', 'oy', 'ou']),
+    floss: Object.freeze(['ff', 'll', 'ss']),
+    welded: Object.freeze(['ang', 'ing', 'ank', 'ink']),
+    multisyllable: Object.freeze(['syllables', 'multi syllable']),
+    'vocab-math-k2': Object.freeze(['math k-2', 'math k2', 'numbers']),
+    'vocab-math-35': Object.freeze(['math 3-5', 'math 35']),
+    'vocab-science-k2': Object.freeze(['science k-2', 'science k2']),
+    'vocab-science-35': Object.freeze(['science 3-5', 'science 35']),
+    'vocab-social-k2': Object.freeze(['social studies k-2', 'social k2']),
+    'vocab-ela-k2': Object.freeze(['ela k-2', 'reading k2'])
+  });
+
+  function tokenizeFocusQuery(rawQuery = '') {
+    return String(rawQuery || '')
+      .toLowerCase()
+      .trim()
+      .split(/[^a-z0-9]+/g)
+      .filter((token) => token.length >= 2);
+  }
+
+  function splitFocusSearchTokens(rawText = '') {
+    return String(rawText || '')
+      .toLowerCase()
+      .split(/[^a-z0-9]+/g)
+      .map((token) => token.trim())
+      .filter((token) => token.length >= 2);
+  }
+
+  function damerauLevenshteinDistance(source, target, maxDistance = 2) {
+    const a = String(source || '');
+    const b = String(target || '');
+    if (a === b) return 0;
+    if (!a.length || !b.length) return Math.max(a.length, b.length);
+    if (Math.abs(a.length - b.length) > maxDistance) return maxDistance + 1;
+
+    const matrix = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i += 1) matrix[i][0] = i;
+    for (let j = 0; j <= b.length; j += 1) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i += 1) {
+      let rowMin = maxDistance + 1;
+      for (let j = 1; j <= b.length; j += 1) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        let value = Math.min(
+          matrix[i - 1][j] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j - 1] + cost
+        );
+        if (
+          i > 1 &&
+          j > 1 &&
+          a[i - 1] === b[j - 2] &&
+          a[i - 2] === b[j - 1]
+        ) {
+          value = Math.min(value, matrix[i - 2][j - 2] + 1);
+        }
+        matrix[i][j] = value;
+        if (value < rowMin) rowMin = value;
+      }
+      if (rowMin > maxDistance) return maxDistance + 1;
+    }
+
+    return matrix[a.length][b.length];
+  }
+
+  function getFocusCandidateTokens(entry, aliases) {
+    const labelTokens = splitFocusSearchTokens(entry?.label || '');
+    const valueTokens = splitFocusSearchTokens(String(entry?.value || '').replaceAll('-', ' '));
+    const groupTokens = splitFocusSearchTokens(entry?.group || '');
+    const aliasTokens = aliases.flatMap((alias) => splitFocusSearchTokens(alias));
+    return Array.from(new Set([...labelTokens, ...valueTokens, ...groupTokens, ...aliasTokens]));
+  }
+
+  function getTokenFuzzyThreshold(token) {
+    const len = String(token || '').length;
+    if (len <= 4) return 1;
+    return 2;
+  }
+
+  function getBestFuzzyDistance(queryToken, candidateTokens, maxDistance = 2) {
+    let best = maxDistance + 1;
+    for (const candidate of candidateTokens) {
+      const next = damerauLevenshteinDistance(queryToken, candidate, maxDistance);
+      if (next < best) best = next;
+      if (best === 0) break;
+    }
+    return best;
+  }
+
+  function scoreFocusEntry(entry, normalizedQuery, queryTokens) {
+    const label = String(entry?.label || '').toLowerCase();
+    const value = String(entry?.value || '').toLowerCase();
+    const group = String(entry?.group || '').toLowerCase();
+    const aliases = (FOCUS_SEARCH_ALIASES[entry.value] || [])
+      .map((alias) => String(alias || '').toLowerCase())
+      .filter(Boolean);
+    const candidateTokens = getFocusCandidateTokens(entry, aliases);
+    const aliasText = aliases.join(' ');
+    const searchable = `${label} ${group} ${value} ${aliasText}`;
+    let score = FOCUS_POPULARITY[entry.value] || 0;
+    let hasMatch = false;
+
+    if (label === normalizedQuery || value === normalizedQuery) {
+      score += 420;
+      hasMatch = true;
+    }
+    if (label.startsWith(normalizedQuery) || value.startsWith(normalizedQuery)) {
+      score += 300;
+      hasMatch = true;
+    }
+    if (label.split(/[^a-z0-9]+/g).some((part) => part && part.startsWith(normalizedQuery))) {
+      score += 240;
+      hasMatch = true;
+    }
+    if (aliases.some((alias) => alias.startsWith(normalizedQuery))) {
+      score += 220;
+      hasMatch = true;
+    }
+    if (searchable.includes(normalizedQuery)) {
+      score += 150;
+      hasMatch = true;
+    }
+
+    if (queryTokens.length) {
+      let exactHits = 0;
+      let fuzzyHits = 0;
+      for (const token of queryTokens) {
+        if (searchable.includes(token)) {
+          exactHits += 1;
+          continue;
+        }
+        const fuzzyThreshold = getTokenFuzzyThreshold(token);
+        const bestDistance = getBestFuzzyDistance(token, candidateTokens, fuzzyThreshold);
+        if (bestDistance <= fuzzyThreshold) {
+          fuzzyHits += 1;
+          continue;
+        }
+        return -1;
+      }
+      score += exactHits * 60;
+      score += fuzzyHits * 44;
+      if (fuzzyHits > 0) score += 18;
+      hasMatch = true;
+    }
+
+    if (!hasMatch && normalizedQuery.length >= 4) {
+      const compactQuery = normalizedQuery.replace(/[^a-z0-9]+/g, '');
+      if (compactQuery.length >= 4) {
+        const bestDistance = getBestFuzzyDistance(compactQuery, candidateTokens, 2);
+        if (bestDistance <= 2) {
+          score += 118 - bestDistance * 26;
+          hasMatch = true;
+        }
+      }
+    }
+
+    if (!hasMatch) return -1;
+    score += Math.max(0, 34 - Math.max(0, label.length - normalizedQuery.length));
+    return score;
+  }
+
+  function getRankedFocusMatches(entries, rawQuery = '') {
+    const normalizedQuery = String(rawQuery || '').trim().toLowerCase();
+    if (!normalizedQuery) return [];
+    const queryTokens = tokenizeFocusQuery(normalizedQuery);
+    return entries
+      .map((entry) => ({ entry, score: scoreFocusEntry(entry, normalizedQuery, queryTokens) }))
+      .filter((row) => row.score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        const byGroup = String(a.entry.group || '').localeCompare(String(b.entry.group || ''));
+        if (byGroup !== 0) return byGroup;
+        return String(a.entry.label || '').localeCompare(String(b.entry.label || ''));
+      })
+      .slice(0, FOCUS_QUERY_VISIBLE_LIMIT)
+      .map((row) => row.entry);
+  }
+
+  let focusNavIndex = -1;
+
+  function setFocusSearchOpen(isOpen) {
+    document.documentElement.setAttribute('data-focus-search-open', isOpen ? 'true' : 'false');
+    const strip = _el('theme-preview-strip');
+    if (strip) {
+      strip.classList.toggle('is-search-hidden', !!isOpen);
+    }
+    syncThemePreviewStripVisibility();
+  }
+
+  function getFocusSearchButtons() {
+    const listEl = _el('focus-inline-results');
+    if (!listEl) return [];
+    return Array.from(listEl.querySelectorAll('.focus-search-item[data-focus-value]'));
+  }
+
+  function setFocusNavIndex(nextIndex, options = {}) {
+    const buttons = getFocusSearchButtons();
+    const inputEl = _el('focus-inline-search');
+    if (!buttons.length) {
+      focusNavIndex = -1;
+      if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+      return;
+    }
+
+    const clamped = Math.max(0, Math.min(nextIndex, buttons.length - 1));
+    focusNavIndex = clamped;
+    buttons.forEach((button, idx) => {
+      button.classList.toggle('is-nav-active', idx === clamped);
+    });
+    if (inputEl) inputEl.setAttribute('aria-activedescendant', buttons[clamped].id);
+    if (options.scroll !== false) {
+      buttons[clamped].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function renderFocusSearchList(rawQuery = '') {
+    const listEl = _el('focus-inline-results');
+    const inputEl = _el('focus-inline-search');
+    if (!listEl) return;
+    const query = String(rawQuery || '').trim().toLowerCase();
+    const entries = getFocusEntries();
+    if (!entries.length) {
+      listEl.innerHTML = '<div class="focus-search-empty">Focus options are loading...</div>';
+      listEl.classList.remove('hidden');
+      if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
+      setFocusSearchOpen(true);
+      focusNavIndex = -1;
+      if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+      return;
+    }
+
+    let visible = [];
+    if (!query) {
+      const used = new Set();
+      FOCUS_QUICK_VALUES.forEach((value) => {
+        const found = entries.find((entry) => entry.value === value);
+        if (found && !used.has(found.value)) {
+          visible.push(found);
+          used.add(found.value);
+        }
+      });
+      entries.forEach((entry) => {
+        if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT || used.has(entry.value)) return;
+        visible.push(entry);
+        used.add(entry.value);
+      });
+    } else {
+      visible = getRankedFocusMatches(entries, query);
+    }
+
+    if (!visible.length) {
+      listEl.innerHTML = '<div class="focus-search-empty">No matches yet. Try terms like "math", "science", "digraph", "k-2", or "3-5".</div>';
+      listEl.classList.remove('hidden');
+      if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
+      setFocusSearchOpen(true);
+      focusNavIndex = -1;
+      if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+      return;
+    }
+
+    const active = _el('setting-focus')?.value || 'all';
+    const guidance = !query
+      ? '<div class="focus-search-empty">Try typing: <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, <b>3-5</b>.</div>'
+      : '';
+    listEl.innerHTML = guidance + visible.map((entry) => {
+      const activeClass = entry.value === active ? ' is-active' : '';
+      const selected = entry.value === active ? 'true' : 'false';
+      return `<button type="button" class="focus-search-item${activeClass}" data-focus-value="${escapeHtml(entry.value)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span><small>${escapeHtml(entry.group)}</small></button>`;
+    }).join('');
+    getFocusSearchButtons().forEach((button, idx) => {
+      button.id = `focus-search-option-${idx}`;
+      button.classList.remove('is-nav-active');
+    });
+    focusNavIndex = -1;
+    if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+    listEl.classList.remove('hidden');
+    if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
+    setFocusSearchOpen(true);
+  }
+
+  function closeFocusSearchList() {
+    const list = _el('focus-inline-results');
+    const inputEl = _el('focus-inline-search');
+    if (!list) return;
+    focusNavIndex = -1;
+    if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+    if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
+    list.classList.add('hidden');
+    setFocusSearchOpen(false);
+  }
+
+  function setFocusValue(nextValue, options = {}) {
+    const select = _el('setting-focus');
+    if (!select) return;
+    const target = String(nextValue || '').trim();
+    if (!target) return;
+    const exists = Array.from(select.options).some((option) => option.value === target);
+    if (!exists) return;
+    if (select.value === target) {
+      updateFocusSummaryLabel();
+      closeFocusSearchList();
+      return;
+    }
+    select.value = target;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    if (options.toast) {
+      WQUI.showToast(`Focus set: ${getFocusLabel(target)}.`);
+    }
+    closeFocusSearchList();
+  }
+
+  const SUBJECT_TAG_ALIASES = Object.freeze({
+    math: new Set(['math', 'mathematics', 'algebra', 'geometry', 'statistics', 'calculus', 'trigonometry', 'trig']),
+    science: new Set(['science', 'sci', 'biology', 'bio', 'chemistry', 'physics', 'earth sci', 'earth science', 'anatomy', 'med', 'engineering']),
+    social: new Set(['ss', 'social studies', 'history', 'hist', 'civics', 'govt', 'government', 'geo', 'geography', 'econ', 'economics', 'law', 'bus']),
+    ela: new Set(['ela', 'language arts', 'reading', 'writing', 'literacy', 'english', 'eng'])
+  });
+
+  function normalizeSubjectTag(rawTag) {
+    const normalized = String(rawTag || '')
+      .trim()
+      .toLowerCase()
+      .replace(/^"+|"+$/g, '')
+      .replace(/\s+/g, ' ');
+    if (!normalized) return '';
+    if (normalized.length > 24) return '';
+    if (!/^[a-z0-9/&+\- ]+$/.test(normalized)) return '';
+    return normalized;
+  }
+
   const subjectTagsByWord = new Map();
   const playableWordsFromRaw = new Set();
   if (window.WQ_WORD_DATA && typeof window.WQ_WORD_DATA === 'object') {
@@ -1101,7 +1787,7 @@
       const tags = (Array.isArray(rawTags) ? rawTags : [rawTags])
         .filter(Boolean)
         .flatMap((tag) => String(tag).split(','))
-        .map((tag) => tag.trim().toLowerCase())
+        .map(normalizeSubjectTag)
         .filter(Boolean);
       if (!tags.length) return;
       const prior = subjectTagsByWord.get(word) || [];
@@ -1109,14 +1795,20 @@
     });
   }
 
+  const SUBJECT_WORD_OVERRIDES = Object.freeze({
+    oxide: Object.freeze(['science', 'math']),
+    oxidize: Object.freeze(['science', 'math'])
+  });
+
   function matchesSubjectFocus(word, subject) {
-    const tags = subjectTagsByWord.get(word) || [];
+    const normalizedWord = String(word || '').trim().toLowerCase();
+    const overrideSubjects = SUBJECT_WORD_OVERRIDES[normalizedWord];
+    if (Array.isArray(overrideSubjects) && overrideSubjects.includes(subject)) return true;
+    const tags = subjectTagsByWord.get(normalizedWord) || [];
     if (!tags.length) return false;
-    if (subject === 'math') return tags.some((tag) => tag.includes('math'));
-    if (subject === 'science') return tags.some((tag) => tag.includes('science') || tag.includes('biology'));
-    if (subject === 'social') return tags.some((tag) => tag.startsWith('ss') || tag.includes('history') || tag.includes('civics') || tag.includes('govt'));
-    if (subject === 'ela') return tags.some((tag) => tag.includes('ela') || tag.includes('literacy') || tag.includes('writing') || tag.includes('reading'));
-    return false;
+    const aliasSet = SUBJECT_TAG_ALIASES[subject];
+    if (!aliasSet) return false;
+    return tags.some((tag) => aliasSet.has(tag));
   }
 
   function matchesPhonicsFocus(phonicsValue, focus, word) {
@@ -1184,26 +1876,81 @@
     syncGradeFromFocus(focus);
     updateFocusHint();
     updateFocusGradeNote();
+    updateFocusSummaryLabel();
+    syncChunkTabsVisibility();
+    closeFocusSearchList();
+  });
+
+  _el('focus-inline-search')?.addEventListener('focus', (event) => {
+    clearPinnedFocusSearchValue(event.target);
+    const query = String(event.target?.value || '').trim();
+    renderFocusSearchList(query);
+  });
+
+  _el('focus-inline-search')?.addEventListener('input', (event) => {
+    clearPinnedFocusSearchValue(event.target);
+    const query = String(event.target?.value || '').trim();
+    renderFocusSearchList(query);
+  });
+
+  _el('focus-inline-search')?.addEventListener('keydown', (event) => {
+    clearPinnedFocusSearchValue(event.target);
+    // Prevent global game key handler from capturing focus-search typing.
+    event.stopPropagation();
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === 'Home' || event.key === 'End') {
+      const query = String(event.target?.value || '').trim();
+      const listEl = _el('focus-inline-results');
+      if (listEl?.classList.contains('hidden')) {
+        renderFocusSearchList(query);
+      }
+      const buttons = getFocusSearchButtons();
+      if (!buttons.length) return;
+      if (event.key === 'Home') {
+        setFocusNavIndex(0);
+      } else if (event.key === 'End') {
+        setFocusNavIndex(buttons.length - 1);
+      } else if (event.key === 'ArrowDown') {
+        const nextIndex = focusNavIndex < 0 ? 0 : (focusNavIndex + 1) % buttons.length;
+        setFocusNavIndex(nextIndex);
+      } else if (event.key === 'ArrowUp') {
+        const nextIndex = focusNavIndex < 0 ? buttons.length - 1 : (focusNavIndex - 1 + buttons.length) % buttons.length;
+        setFocusNavIndex(nextIndex);
+      }
+      event.preventDefault();
+      return;
+    }
+    if (event.key === 'Escape') {
+      closeFocusSearchList();
+      updateFocusSummaryLabel();
+      event.target.blur();
+      return;
+    }
+    if (event.key !== 'Enter') return;
+    const buttons = getFocusSearchButtons();
+    if (!buttons.length) return;
+    const chosen = focusNavIndex >= 0 ? buttons[focusNavIndex] : buttons[0];
+    setFocusValue(chosen.getAttribute('data-focus-value'));
+    updateFocusSummaryLabel();
+    event.preventDefault();
+  });
+
+  _el('focus-inline-results')?.addEventListener('click', (event) => {
+    const button = event.target?.closest?.('[data-focus-value]');
+    if (!button) return;
+    const value = button.getAttribute('data-focus-value');
+    setFocusValue(value);
+    updateFocusSummaryLabel();
   });
 
   syncGradeFromFocus(_el('setting-focus')?.value || prefs.focus || 'all', { silent: true });
   updateFocusHint();
   updateFocusGradeNote();
+  syncChunkTabsVisibility();
+  updateFocusSummaryLabel();
+  closeFocusSearchList();
+  setFocusSearchOpen(false);
 
   // ─── 7. New game ────────────────────────────────────
-  let feedbackModeToastShown = false;
-  function maybeShowFeedbackModeToast() {
-    const mode = document.documentElement.getAttribute('data-feedback') || DEFAULT_PREFS.feedback;
-    if (feedbackModeToastShown) return;
-    feedbackModeToastShown = true;
-    WQUI.showToast(
-      mode === 'themed'
-        ? 'Themed feedback uses classic meaning: correct, present, absent.'
-        : 'Classic feedback: green = correct, yellow = present, gray = absent.',
-      2600
-    );
-  }
-
   const MIDGAME_BOOST_KEY = 'wq_v2_midgame_boost_state_v1';
   const MIDGAME_BOOST_TRIGGER_GUESS = 3;
   const MIDGAME_BOOST_FALLBACK = Object.freeze([
@@ -1231,7 +1978,6 @@
     return Object.freeze(cleaned.map((item) => Object.freeze(item)));
   })();
   let midgameBoostShown = false;
-  let midgameBoostTimer = 0;
 
   function buildMidgameBoostState() {
     const order = Array.from({ length: MIDGAME_BOOST_POOL.length }, (_, index) => index);
@@ -1280,14 +2026,34 @@
   function hideMidgameBoost() {
     const boost = _el('midgame-boost');
     if (!boost) return;
-    if (midgameBoostTimer) {
-      clearTimeout(midgameBoostTimer);
-      midgameBoostTimer = 0;
-    }
     boost.classList.remove('is-visible');
     if (!boost.classList.contains('hidden')) {
       setTimeout(() => boost.classList.add('hidden'), 180);
     }
+  }
+
+  function splitBoostQuestionAndAnswer(type, text) {
+    const cleaned = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!cleaned) return { question: '', answer: '' };
+    if (type !== 'joke') return { question: cleaned, answer: '' };
+    const questionEnd = cleaned.indexOf('?');
+    if (questionEnd > -1 && questionEnd < cleaned.length - 1) {
+      return {
+        question: cleaned.slice(0, questionEnd + 1).trim(),
+        answer: cleaned.slice(questionEnd + 1).trim().replace(/^[\-–—:]+\s*/, '')
+      };
+    }
+    return { question: cleaned, answer: '' };
+  }
+
+  function shouldKeepMidgameBoostOpen(target) {
+    const node = target instanceof Element ? target : null;
+    if (!node) return false;
+    return Boolean(
+      node.closest(
+        '#keyboard, #game-board, .board-plate, .gameplay-audio, #new-game-btn, #focus-inline-wrap, #settings-btn'
+      )
+    );
   }
 
   function showMidgameBoost() {
@@ -1296,17 +2062,44 @@
     if (!boost) return;
     const card = nextMidgameBoostCard();
     if (!card) return;
+    const content = splitBoostQuestionAndAnswer(card.type, card.text);
+    const hasAnswer = card.type === 'joke' && Boolean(content.answer);
     const label =
       card.type === 'joke' ? 'Joke Break' :
       card.type === 'quote' ? 'Quick Quote' :
       'Fun Fact';
-    boost.innerHTML = `<span class=\"midgame-boost-tag\">${label}</span><p>${card.text}</p>`;
+    boost.innerHTML = `
+      <div class="midgame-boost-head">
+        <span class="midgame-boost-tag">${label}</span>
+        <button type="button" class="midgame-boost-close" aria-label="Dismiss boost">✕</button>
+      </div>
+      <p class="midgame-boost-question">${content.question}</p>
+      ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Show answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
+      <div class="midgame-boost-actions">
+        <button type="button" class="midgame-boost-action midgame-boost-dismiss">Keep playing</button>
+        <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off</button>
+      </div>
+    `;
+    const answerEl = boost.querySelector('.midgame-boost-answer');
+    const answerBtn = boost.querySelector('.midgame-boost-answer-btn');
+    if (answerEl) answerEl.textContent = content.answer;
+    answerBtn?.addEventListener('click', () => {
+      if (!answerEl) return;
+      const reveal = answerEl.classList.contains('hidden');
+      answerEl.classList.toggle('hidden', !reveal);
+      answerBtn.textContent = reveal ? 'Hide answer' : 'Show answer';
+    });
+    boost.querySelector('.midgame-boost-close')?.addEventListener('click', hideMidgameBoost);
+    boost.querySelector('.midgame-boost-dismiss')?.addEventListener('click', hideMidgameBoost);
+    boost.querySelector('.midgame-boost-turn-off')?.addEventListener('click', () => {
+      const select = _el('s-boost-popups');
+      if (select) select.value = 'off';
+      setPref('boostPopups', 'off');
+      hideMidgameBoost();
+      WQUI.showToast('Engagement popups are off. Turn them back on in Settings.');
+    });
     boost.classList.remove('hidden');
     requestAnimationFrame(() => boost.classList.add('is-visible'));
-    midgameBoostTimer = setTimeout(() => {
-      boost.classList.remove('is-visible');
-      setTimeout(() => boost.classList.add('hidden'), 180);
-    }, 7600);
   }
 
   const QUEST_LOOP_KEY = 'wq_v2_quest_loop_v1';
@@ -1513,7 +2306,19 @@
       phonics: focus
     });
     if (!result) {
-      WQUI.showToast('No words found — try Classic focus or adjust filters');
+      const startError = typeof WQGame.getLastStartError === 'function'
+        ? WQGame.getLastStartError()
+        : null;
+      if (startError?.code === 'EMPTY_FILTERED_POOL') {
+        const pieces = [];
+        if (startError.gradeBand && startError.gradeBand !== 'all') pieces.push(`grade ${startError.gradeBand}`);
+        if (startError.phonics && startError.phonics !== 'all') pieces.push(`focus ${getFocusLabel(startError.phonics)}`);
+        if (startError.length && startError.length !== 'any') pieces.push(`${startError.length}-letter words`);
+        const detail = pieces.length ? ` for ${pieces.join(', ')}` : '';
+        WQUI.showToast(`No words available${detail}. Adjust filters or pick Classic.`);
+      } else {
+        WQUI.showToast('No words found — try Classic focus or adjust filters');
+      }
       return;
     }
     WQUI.calcLayout(result.wordLength, result.maxGuesses);
@@ -1522,10 +2327,10 @@
     WQUI.hideModal();
     _el('new-game-btn')?.classList.remove('pulse');
     _el('settings-panel')?.classList.add('hidden');
-    updateFocusHint();
+    syncHeaderControlsVisibility();
     removeDupeToast();
     updateVoicePracticePanel(WQGame.getState());
-    setTimeout(maybeShowFeedbackModeToast, 160);
+    updateFocusHint();
   }
 
   const reflowLayout = () => {
@@ -1537,11 +2342,46 @@
   window.addEventListener('beforeunload', stopVoiceCaptureNow);
 
   // ─── 8. Input handling ──────────────────────────────
+  function insertSequenceIntoGuess(sequence) {
+    const letters = String(sequence || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (!letters) return;
+    const state = WQGame.getState();
+    if (state.gameOver) return;
+    const remaining = Math.max(0, state.wordLength - state.guess.length);
+    if (!remaining) return;
+    const clipped = letters.slice(0, remaining);
+    if (!clipped) return;
+    for (const letter of clipped) WQGame.addLetter(letter);
+    const nextState = WQGame.getState();
+    WQUI.updateCurrentRow(nextState.guess, nextState.wordLength, nextState.guesses.length);
+  }
+
+  function handleInputUnit(rawUnit) {
+    const unit = String(rawUnit || '');
+    if (!unit) return;
+    if (unit === 'Enter') {
+      handleKey('Enter');
+      return;
+    }
+    if (unit === 'Backspace' || unit === '⌫') {
+      handleKey('Backspace');
+      return;
+    }
+    if (/^[a-zA-Z]$/.test(unit)) {
+      handleKey(unit);
+      return;
+    }
+    if (/^[a-z]{2,4}$/i.test(unit)) {
+      insertSequenceIntoGuess(unit);
+    }
+  }
+
   function handleKey(key) {
     const s = WQGame.getState();
     if (s.gameOver) return;
 
     if (key === 'Enter') {
+      const themeAtSubmit = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
       const result = WQGame.submitGuess();
       if (!result) return;
       if (result.error === 'too_short') {
@@ -1552,6 +2392,9 @@
 
       const row = result.guesses.length - 1;
       WQUI.revealRow(result.guess, result.result, row, s.wordLength, () => {
+        if (normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()) !== themeAtSubmit) {
+          applyTheme(themeAtSubmit);
+        }
         WQUI.updateKeyboard(result.result, result.guess);
         checkDuplicates(result);
         if (
@@ -1571,6 +2414,9 @@
             _el('new-game-btn')?.classList.add('pulse');
             const settings = WQUI.getSettings();
             if (result.won && settings.confetti){ launchConfetti(); launchStars(); }
+            if (normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()) !== themeAtSubmit) {
+              applyTheme(themeAtSubmit);
+            }
           }, 520);
         }
       });
@@ -1587,10 +2433,29 @@
     }
   }
 
+  function isEditableTarget(target) {
+    const node = target instanceof Element ? target : null;
+    if (!node) return false;
+    if (node instanceof HTMLElement && node.isContentEditable) return true;
+    return Boolean(node.closest('input, textarea, select, [contenteditable="true"]'));
+  }
+
   // Physical keyboard
   document.addEventListener('keydown', e => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    handleKey(e.key === 'Backspace' ? 'Backspace' : e.key);
+    const activeEl = document.activeElement;
+    const shouldReleaseThemeNavFocus =
+      activeEl?.id === 'wq-theme-select' &&
+      (e.key === 'Enter' || e.key === 'Backspace' || /^[a-zA-Z]$/.test(e.key));
+    if (shouldReleaseThemeNavFocus) {
+      activeEl.blur();
+      e.preventDefault();
+    } else if (isEditableTarget(e.target)) {
+      return;
+    }
+    if (document.documentElement.getAttribute('data-focus-search-open') === 'true') return;
+    const nextKey = e.key === 'Backspace' ? 'Backspace' : e.key;
+    handleInputUnit(nextKey);
     if (/^[a-zA-Z]$/.test(e.key)) {
       const btn = document.querySelector(`.key[data-key="${e.key.toLowerCase()}"]`);
       if (btn) { btn.classList.add('wq-press'); setTimeout(() => btn.classList.remove('wq-press'), 220); }
@@ -1600,12 +2465,20 @@
   // On-screen keyboard
   _el('keyboard')?.addEventListener('click', e => {
     const btn = e.target.closest('.key');
-    if (btn){ btn.classList.add('wq-press'); setTimeout(()=>btn.classList.remove('wq-press'),220); handleKey(btn.dataset.key);} 
+    if (!btn) return;
+    btn.classList.add('wq-press');
+    setTimeout(() => btn.classList.remove('wq-press'), 220);
+    const unit = btn.dataset.seq || btn.dataset.key;
+    handleInputUnit(unit);
   });
 
   // Buttons
   _el('new-game-btn')?.addEventListener('click',  newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
+  _el('modal-overlay')?.addEventListener('pointerdown', (event) => {
+    if (event.target?.id !== 'modal-overlay') return;
+    newGame();
+  });
 
   // ─── 9. Gameplay audio buttons ──────────────────────
   const entry = () => WQGame.getState()?.entry;
@@ -1763,7 +2636,9 @@
       arcade:  Object.freeze({ seq: [523, 659, 784, 659, 523, 392, 523, 659], tempo: 260, dur: 0.1, wave: 'square', level: 0.12 }),
       fantasy: Object.freeze({ seq: [262, 330, 392, 330, 440, 392, 330, 262], tempo: 320, dur: 0.12, wave: 'triangle', level: 0.13 }),
       scifi:   Object.freeze({ seq: [440, 0, 880, 0, 660, 0, 990, 0], tempo: 280, dur: 0.1, wave: 'sawtooth', level: 0.11 }),
-      sports:  Object.freeze({ seq: [392, 392, 523, 392, 659, 523, 784, 659], tempo: 240, dur: 0.1, wave: 'square', level: 0.13 })
+      sports:  Object.freeze({ seq: [392, 392, 523, 392, 659, 523, 784, 659], tempo: 240, dur: 0.1, wave: 'square', level: 0.13 }),
+      stealth: Object.freeze({ seq: [196, 0, 196, 233, 0, 174, 0, 220], tempo: 360, dur: 0.11, wave: 'triangle', level: 0.11 }),
+      team:    Object.freeze({ seq: [392, 523, 659, 784, 659, 523, 784, 988], tempo: 220, dur: 0.1, wave: 'square', level: 0.13 })
     });
     const ALT_SEQS = Object.freeze({
       chill:   [220, 0, 247, 0, 262, 0, 247, 0],
@@ -1773,7 +2648,9 @@
       arcade:  [659, 784, 988, 784, 659, 523, 659, 784],
       fantasy: [294, 370, 440, 370, 494, 440, 370, 294],
       scifi:   [660, 0, 990, 0, 770, 0, 1120, 0],
-      sports:  [440, 440, 587, 440, 698, 587, 880, 698]
+      sports:  [440, 440, 587, 440, 698, 587, 880, 698],
+      stealth: [220, 0, 174, 196, 0, 233, 0, 196],
+      team:    [523, 659, 784, 988, 784, 659, 523, 784]
     });
 
     const ensure = () => {

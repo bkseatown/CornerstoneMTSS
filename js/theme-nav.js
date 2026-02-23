@@ -64,13 +64,31 @@
     const prev = order[(idx - 1 + order.length) % order.length];
     const next = order[(idx + 1) % order.length];
 
-    const label = byId('wq-theme-label');
+    const quickSelect = byId('wq-theme-select');
     const prevBtn = byId('wq-theme-prev');
     const nextBtn = byId('wq-theme-next');
 
-    if (label) label.textContent = getThemeLabel(current);
+    if (quickSelect && quickSelect.value !== current) quickSelect.value = current;
     if (prevBtn) prevBtn.title = getThemeLabel(prev);
     if (nextBtn) nextBtn.title = getThemeLabel(next);
+  }
+
+  function syncThemeQuickSelectOptions() {
+    const source = byId('s-theme');
+    const quick = byId('wq-theme-select');
+    if (!source || !quick) return;
+
+    const sourceOptions = Array.from(source.options).filter((option) => option.value);
+    if (!sourceOptions.length) return;
+
+    const nextMarkup = sourceOptions
+      .map((option) => `<option value="${option.value}">${option.textContent || option.value}</option>`)
+      .join('');
+
+    if (quick.dataset.optionsMarkup !== nextMarkup) {
+      quick.innerHTML = nextMarkup;
+      quick.dataset.optionsMarkup = nextMarkup;
+    }
   }
 
   function cycleTheme(direction) {
@@ -82,15 +100,16 @@
     const nextIdx = (currentIdx + direction + order.length) % order.length;
     const nextTheme = setTheme(order[nextIdx], true);
     updateNavLabels(nextTheme);
+    const active = document.activeElement;
+    if (active && active.closest && active.closest('#wq-theme-nav')) active.blur();
   }
 
   function ensureThemeNav() {
     if (byId('wq-theme-nav')) return;
 
     const themeSelect = byId('s-theme');
-    const row = themeSelect?.closest('.setting-row');
     const previewStrip = byId('theme-preview-strip');
-    const host = previewStrip || row;
+    const host = previewStrip || themeSelect?.closest('.setting-row');
     if (!host) return;
 
     const nav = document.createElement('div');
@@ -98,14 +117,22 @@
     nav.className = 'wq-theme-nav';
     nav.innerHTML = [
       '<button id="wq-theme-prev" class="wq-theme-nav-btn" type="button" aria-label="Previous theme">◀</button>',
-      '<span id="wq-theme-label" class="wq-theme-label" aria-live="polite"></span>',
+      '<select id="wq-theme-select" class="wq-theme-select" aria-label="Theme preview quick select"></select>',
       '<button id="wq-theme-next" class="wq-theme-nav-btn" type="button" aria-label="Next theme">▶</button>'
     ].join('');
     host.appendChild(nav);
 
     byId('wq-theme-prev')?.addEventListener('click', () => cycleTheme(-1));
     byId('wq-theme-next')?.addEventListener('click', () => cycleTheme(1));
+    byId('wq-theme-select')?.addEventListener('change', (event) => {
+      const selected = event.target?.value;
+      if (!selected) return;
+      const nextTheme = setTheme(selected, true);
+      updateNavLabels(nextTheme);
+      event.target.blur?.();
+    });
     nav.addEventListener('wheel', (event) => {
+      if (!event.shiftKey) return;
       event.preventDefault();
       cycleTheme(event.deltaY > 0 ? 1 : -1);
     }, { passive: false });
@@ -114,11 +141,13 @@
       themeSelect.addEventListener('change', (event) => {
         const theme = event.target?.value;
         if (!theme) return;
+        syncThemeQuickSelectOptions();
         updateNavLabels(theme);
       });
       themeSelect.dataset.wqThemeNavBound = '1';
     }
 
+    syncThemeQuickSelectOptions();
     updateNavLabels(getCurrentTheme());
   }
 
@@ -191,7 +220,7 @@
   function ensureTeacherTools() {
     if (byId('wq-teacher-tools')) return;
 
-    const settingsBody = document.querySelector('.settings-body');
+    const settingsBody = byId('settings-advanced-tools') || document.querySelector('#settings-advanced .settings-grid');
     if (!settingsBody) return;
 
     const section = document.createElement('div');
@@ -273,6 +302,7 @@
 
     const bodyObserver = new MutationObserver(() => {
       ensureThemeNav();
+      syncThemeQuickSelectOptions();
       ensureTeacherTools();
     });
     bodyObserver.observe(document.body, { childList: true, subtree: true });

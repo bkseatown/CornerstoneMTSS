@@ -11,11 +11,28 @@ const WQUI = (() => {
   const VOWELS = new Set(['a','e','i','o','u']);
 
   // GBoard: ⌫ left, Enter right
-  const KEY_ROWS = [
+  const KEY_ROWS_QWERTY = [
     ['q','w','e','r','t','y','u','i','o','p'],
     ['a','s','d','f','g','h','j','k','l'],
     ['⌫','z','x','c','v','b','n','m','Enter']
   ];
+  const KEY_ROWS_SOUNDCARD = [
+    ['a','b','c','d','e','f','g','h','i'],
+    ['j','k','l','m','n','o','p','q','r'],
+    ['s','t','u','v','w','x','y','z','⌫','Enter']
+  ];
+  const SOUNDCARD_QUICK_CHUNKS = Object.freeze({
+    default: ['sh', 'ch', 'th', 'wh', 'ck', 'qu'],
+    digraph: ['sh', 'ch', 'th', 'wh', 'ph', 'ck'],
+    ccvc: ['bl', 'tr', 'st', 'dr', 'sl', 'cl'],
+    cvcc: ['mp', 'nd', 'st', 'nt', 'nk', 'lt'],
+    trigraph: ['tch', 'dge', 'igh', 'ear', 'air', 'ure'],
+    vowel_team: ['ai', 'ee', 'oa', 'ea', 'ie', 'ou'],
+    r_controlled: ['ar', 'or', 'er', 'ir', 'ur', 'ear'],
+    diphthong: ['oi', 'oy', 'ou', 'ow', 'au', 'aw'],
+    floss: ['ff', 'll', 'ss', 'zz', 'ck', 'tch'],
+    welded: ['ang', 'ing', 'ank', 'ink', 'ong', 'ung']
+  });
 
   let _board, _keyboard, _modal, _overlay, _toast;
   let _caseMode = 'lower';
@@ -23,6 +40,11 @@ const WQUI = (() => {
 
   const _el = id => document.getElementById(id);
   const _fmt = letter => _caseMode === 'upper' ? letter.toUpperCase() : letter.toLowerCase();
+
+  function getSoundCardQuickChunks() {
+    const focusValue = String(_el('setting-focus')?.value || '').toLowerCase();
+    return SOUNDCARD_QUICK_CHUNKS[focusValue] || SOUNDCARD_QUICK_CHUNKS.default;
+  }
 
   // ─── Toast ──────────────────────────────────────
   function showToast(msg, duration = 2200) {
@@ -106,23 +128,50 @@ const WQUI = (() => {
   // ─── Keyboard ───────────────────────────────────
   function buildKeyboard() {
     _keyboard.innerHTML = '';
-    KEY_ROWS.forEach(row => {
+    const layout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
+    const soundCard = layout === 'wilson';
+    const rows = soundCard ? KEY_ROWS_SOUNDCARD : KEY_ROWS_QWERTY;
+
+    if (soundCard) {
+      const chunkRow = document.createElement('div');
+      chunkRow.className = 'key-row key-row-chunks';
+      getSoundCardQuickChunks().forEach((chunk) => {
+        const chunkBtn = document.createElement('button');
+        chunkBtn.className = 'key key-chunk';
+        chunkBtn.type = 'button';
+        chunkBtn.dataset.key = chunk;
+        chunkBtn.dataset.seq = chunk;
+        chunkBtn.textContent = _fmt(chunk);
+        chunkBtn.addEventListener('pointerdown', () => {
+          chunkBtn.classList.add('bounce');
+          setTimeout(() => chunkBtn.classList.remove('bounce'), 160);
+        });
+        chunkRow.appendChild(chunkBtn);
+      });
+      _keyboard.appendChild(chunkRow);
+    }
+
+    rows.forEach(row => {
       const rowEl = document.createElement('div');
       rowEl.className = 'key-row';
       row.forEach(key => {
         const btn = document.createElement('button');
         btn.className = 'key';
+        btn.type = 'button';
         btn.dataset.key = key;
         if (/^[A-Z]$/.test(key)) btn.dataset.letter = key.toLowerCase();
 
         if (key === '⌫') {
           btn.textContent = '⌫';
-          btn.classList.add('wide');
+          if (!soundCard) btn.classList.add('wide');
         } else if (key === 'Enter') {
           btn.textContent = 'Enter';
-          btn.classList.add('wide');
+          if (!soundCard) btn.classList.add('wide');
         } else {
           btn.textContent = _fmt(key);
+          if (key.length > 1) {
+            btn.dataset.seq = key.toLowerCase();
+          }
           if (VOWELS.has(key)) btn.classList.add('vowel');
         }
 
@@ -290,7 +339,7 @@ const WQUI = (() => {
     document.documentElement.setAttribute('data-case', mode);
     _keyboard?.querySelectorAll('.key').forEach(k => {
       const key = k.dataset.key;
-      if (key && key.length === 1) k.textContent = _fmt(key);
+      if (key && key !== 'Enter' && key !== '⌫') k.textContent = _fmt(key);
     });
   }
 

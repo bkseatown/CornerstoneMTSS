@@ -14,6 +14,7 @@ const WQGame = (() => {
   let gameOver       = false;
   let maxGuesses     = 6;
   let wordLength     = 5;
+  let lastStartError = null;
 
   // Shuffle bag — prevents same word repeating
   const BAG_KEY = 'wq_v2_shuffle_bag';
@@ -107,6 +108,7 @@ const WQGame = (() => {
 
   // ─── Public start/input API ────────────────────────────────────────
   function startGame(opts = {}) {
+    lastStartError = null;
     const gradeBand = opts.gradeBand || localStorage.getItem('wq_v2_grade_band') || 'all';
     const lengthPref = opts.length   || localStorage.getItem('wq_v2_length')     || 'any';
     const phonics    = opts.phonics  || 'all';
@@ -114,13 +116,29 @@ const WQGame = (() => {
 
     const pool = WQData.getPlayableWords({ gradeBand, length: lengthPref, phonics });
     if (!pool.length) {
-      console.warn('[WQGame] Empty pool — using all playable words');
+      const hasFilters = gradeBand !== 'all' || lengthPref !== 'any' || phonics !== 'all';
+      if (hasFilters) {
+        lastStartError = {
+          code: 'EMPTY_FILTERED_POOL',
+          gradeBand,
+          length: lengthPref,
+          phonics
+        };
+        console.warn('[WQGame] Empty filtered pool — strict gate blocks fallback to all words');
+        return false;
+      }
+      console.warn('[WQGame] Empty unfiltered pool.');
     }
-    const fallbackPool = WQData.getPlayableWords({});
-    const word = _pickWord(pool.length ? pool : fallbackPool, scope);
+    const word = _pickWord(pool, scope);
 
     if (!word) {
       console.error('[WQGame] Could not pick a word');
+      lastStartError = {
+        code: 'NO_WORD_PICKED',
+        gradeBand,
+        length: lengthPref,
+        phonics
+      };
       return false;
     }
 
@@ -133,6 +151,10 @@ const WQGame = (() => {
     maxGuesses   = opts.maxGuesses || 6;
 
     return { word, entry: currentEntry, wordLength, maxGuesses };
+  }
+
+  function getLastStartError() {
+    return lastStartError ? { ...lastStartError } : null;
   }
 
   function addLetter(letter) {
@@ -191,5 +213,5 @@ const WQGame = (() => {
     };
   }
 
-  return { startGame, addLetter, deleteLetter, submitGuess, getState, getProgress };
+  return { startGame, getLastStartError, addLetter, deleteLetter, submitGuess, getState, getProgress };
 })();
