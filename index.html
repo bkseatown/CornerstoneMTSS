@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223c">
   <link rel="stylesheet" href="style/themes.css?v=20260223e">
-  <link rel="stylesheet" href="style/components.css?v=20260223q">
+  <link rel="stylesheet" href="style/components.css?v=20260223r">
 </head>
 <body>
 
@@ -73,6 +73,7 @@
     </select>
   </div>
   <div id="next-action-line" class="next-action-line" aria-live="polite"></div>
+  <div id="classroom-turn-line" class="classroom-turn-line hidden" aria-live="polite"></div>
 
   <!-- ── Settings overlay ─────────────────────────── -->
   <div id="settings-panel" class="settings-panel hidden">
@@ -128,6 +129,34 @@
         <details id="settings-group-classroom" class="settings-group">
           <summary>Teacher</summary>
           <div class="settings-group-grid">
+            <div class="setting-row">
+              <label>Team Turns
+                <select id="s-team-mode">
+                  <option value="off" selected>Off</option>
+                  <option value="on">On</option>
+                </select>
+              </label>
+            </div>
+            <div class="setting-row">
+              <label>Teams
+                <select id="s-team-count">
+                  <option value="2" selected>2 teams</option>
+                  <option value="3">3 teams</option>
+                  <option value="4">4 teams</option>
+                </select>
+              </label>
+            </div>
+            <div class="setting-row setting-row-full">
+              <label>Turn Timer
+                <select id="s-turn-timer">
+                  <option value="off" selected>Off</option>
+                  <option value="30">30 seconds</option>
+                  <option value="45">45 seconds</option>
+                  <option value="60">60 seconds</option>
+                </select>
+              </label>
+              <div class="setting-checkbox-help">Each team gets one guess turn. If timer is on, the turn passes automatically when time runs out.</div>
+            </div>
             <div class="setting-row setting-row-full quick-preset-row">
               <div class="setting-row-heading">Teacher Presets</div>
               <div class="quick-preset-actions" role="group" aria-label="Teacher presets">
@@ -414,7 +443,7 @@
   <script src="js/game.js?v=20260222c"></script>
   <script src="js/ui.js?v=20260223e"></script>
   <script src="js/theme-registry.js?v=20260223c"></script>
-  <script src="js/app.js?v=20260223p"></script>
+  <script src="js/app.js?v=20260223r"></script>
   <script src="js/theme-nav.js"></script>
 </body>
 </html>

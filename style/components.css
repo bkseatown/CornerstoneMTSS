@@ -339,6 +339,25 @@ header {
   font-weight: 760;
 }
 
+.classroom-turn-line {
+  width: min(var(--focus-max-width), calc(100vw - 14px));
+  min-height: 17px;
+  padding: 1px 16px 0;
+  font-size: 0.67rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: color-mix(in oklab, var(--brand) 62%, var(--text) 38%);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.classroom-turn-line b {
+  color: var(--text);
+}
+
 .focus-inline-results {
   position: absolute;
   top: calc(100% + 6px);
@@ -1503,20 +1522,24 @@ html[data-board-style="soundcard"] .tile.flip {
 }
 
 .midgame-boost {
-  position: fixed;
-  top: calc(var(--header-h) + var(--focus-h) + 10px);
-  right: clamp(10px, 2vw, 22px);
-  width: min(390px, calc(100vw - 22px));
-  padding: 10px 12px 11px;
-  border: 1px solid var(--panel-border);
+  position: relative;
+  order: 2;
+  width: min(430px, calc(100vw - 22px));
+  padding: 8px 10px 9px;
+  margin-top: 2px;
+  border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--panel-border) 66%);
   border-radius: 14px;
-  background: color-mix(in oklab, var(--panel-bg) 84%, var(--page-bg) 16%);
+  background: linear-gradient(
+    140deg,
+    color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%),
+    color-mix(in oklab, var(--modal-bg) 88%, var(--accent) 12%)
+  );
   color: var(--text);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.16);
   opacity: 0;
-  transform: translateY(-8px) scale(0.98);
+  transform: translateY(5px) scale(0.98);
   transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 260;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -1535,13 +1558,13 @@ html[data-board-style="soundcard"] .tile.flip {
 
 .midgame-boost-close {
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, var(--brand) 30%);
-  background: color-mix(in oklab, var(--panel-bg) 90%, var(--brand) 10%);
+  background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
   color: var(--text);
   border-radius: 999px;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   line-height: 1;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1550,52 +1573,52 @@ html[data-board-style="soundcard"] .tile.flip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 9px;
+  padding: 2px 8px;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--brand) 45%, var(--panel-border) 55%);
   color: var(--brand);
-  font-size: 0.69rem;
+  font-size: 0.63rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .midgame-boost-question {
-  margin: 6px 0 0;
-  font-size: 0.88rem;
-  line-height: 1.4;
+  margin: 5px 0 0;
+  font-size: 0.79rem;
+  line-height: 1.32;
   font-weight: 760;
 }
 
 .midgame-boost-answer-btn {
-  margin-top: 8px;
+  margin-top: 6px;
   border: 1px solid color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
   background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
   color: var(--text);
   font-weight: 800;
   border-radius: 999px;
-  padding: 5px 11px;
+  padding: 4px 10px;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
 }
 
 .midgame-boost-answer {
-  margin: 7px 0 0;
-  padding: 7px 10px;
+  margin: 6px 0 0;
+  padding: 6px 9px;
   border-radius: 10px;
   background: color-mix(in oklab, var(--panel-bg) 70%, var(--brand) 30%);
   border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--panel-border) 66%);
-  font-size: 0.84rem;
+  font-size: 0.74rem;
   font-weight: 700;
 }
 
 .midgame-boost-actions {
-  margin-top: 9px;
+  margin-top: 6px;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .midgame-boost-action {
@@ -1604,9 +1627,9 @@ html[data-board-style="soundcard"] .tile.flip {
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.74rem;
+  font-size: 0.67rem;
   font-weight: 760;
-  padding: 4px 10px;
+  padding: 3px 9px;
   cursor: pointer;
 }
 
@@ -2856,6 +2879,12 @@ html[data-layout-mode="compact"] .next-action-line {
   padding-inline: 11px;
 }
 
+html[data-layout-mode="compact"] .classroom-turn-line {
+  font-size: 0.6rem;
+  min-height: 14px;
+  padding-inline: 11px;
+}
+
 html[data-layout-mode="compact"] .play-support-row {
   width: min(100%, calc(100vw - 18px));
   gap: 6px;
@@ -2948,6 +2977,11 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
   .next-action-line {
     font-size: 0.61rem;
+    padding-inline: 12px;
+  }
+
+  .classroom-turn-line {
+    font-size: 0.6rem;
     padding-inline: 12px;
   }
 

@@ -126,6 +126,9 @@
     meaningPlusFun: 'on',
     sorNotation: 'on',
     voicePractice: 'optional',
+    teamMode: 'off',
+    teamCount: '2',
+    turnTimer: 'off',
     assessmentLock: 'off',
     boostPopups: 'on',
     music: 'off',
@@ -188,6 +191,9 @@
     if (prefs.revealFocus === undefined) prefs.revealFocus = DEFAULT_PREFS.revealFocus;
     if (prefs.playStyle === undefined) prefs.playStyle = DEFAULT_PREFS.playStyle;
     if (prefs.voicePractice === undefined) prefs.voicePractice = DEFAULT_PREFS.voicePractice;
+    if (prefs.teamMode === undefined) prefs.teamMode = DEFAULT_PREFS.teamMode;
+    if (prefs.teamCount === undefined) prefs.teamCount = DEFAULT_PREFS.teamCount;
+    if (prefs.turnTimer === undefined) prefs.turnTimer = DEFAULT_PREFS.turnTimer;
     if (prefs.assessmentLock === undefined) prefs.assessmentLock = DEFAULT_PREFS.assessmentLock;
     if (prefs.boostPopups === undefined) prefs.boostPopups = DEFAULT_PREFS.boostPopups;
     if (prefs.themeSave !== 'on') delete prefs.theme;
@@ -226,6 +232,18 @@
   }
   if (prefs.voicePractice === undefined) {
     prefs.voicePractice = DEFAULT_PREFS.voicePractice;
+    savePrefs(prefs);
+  }
+  if (prefs.teamMode === undefined) {
+    prefs.teamMode = DEFAULT_PREFS.teamMode;
+    savePrefs(prefs);
+  }
+  if (prefs.teamCount === undefined) {
+    prefs.teamCount = DEFAULT_PREFS.teamCount;
+    savePrefs(prefs);
+  }
+  if (prefs.turnTimer === undefined) {
+    prefs.turnTimer = DEFAULT_PREFS.turnTimer;
     savePrefs(prefs);
   }
   if (prefs.assessmentLock === undefined) {
@@ -323,6 +341,7 @@
     'r_controlled',
     'floss'
   ]);
+  const TEAM_LABELS = Object.freeze(['Team A', 'Team B', 'Team C', 'Team D']);
 
   function getThemeFallback() {
     if (ThemeRegistry && typeof ThemeRegistry.defaultThemeForMode === 'function') {
@@ -365,6 +384,27 @@
     if (seconds <= 3) return '3';
     if (seconds <= 5) return '5';
     return '8';
+  }
+
+  function normalizeTeamMode(mode) {
+    return String(mode || '').trim().toLowerCase() === 'on' ? 'on' : 'off';
+  }
+
+  function normalizeTeamCount(value) {
+    const count = Number.parseInt(String(value || '').trim(), 10);
+    if (!Number.isFinite(count) || count < 2) return '2';
+    if (count > 4) return '4';
+    return String(count);
+  }
+
+  function normalizeTurnTimer(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    if (normalized === 'off') return 'off';
+    const seconds = Number.parseInt(normalized, 10);
+    if (!Number.isFinite(seconds) || seconds <= 0) return 'off';
+    if (seconds <= 30) return '30';
+    if (seconds <= 45) return '45';
+    return '60';
   }
 
   function resolveAutoMusicMode(themeId) {
@@ -415,6 +455,9 @@
     's-reveal-pacing': 'revealPacing',
     's-reveal-auto-next': 'revealAutoNext',
     's-voice-task': 'voicePractice',
+    's-team-mode': 'teamMode',
+    's-team-count': 'teamCount',
+    's-turn-timer': 'turnTimer',
     's-boost-popups': 'boostPopups',
     's-grade': 'grade', 's-length': 'length',
     's-guesses': 'guesses', 's-case': 'caseMode', 's-hint': 'hint',
@@ -467,6 +510,24 @@
     const selectedAutoNext = normalizeRevealAutoNext(prefs.revealAutoNext || DEFAULT_PREFS.revealAutoNext);
     revealAutoNextSelect.value = selectedAutoNext;
     if (prefs.revealAutoNext !== selectedAutoNext) setPref('revealAutoNext', selectedAutoNext);
+  }
+  const teamModeSelect = _el('s-team-mode');
+  if (teamModeSelect) {
+    const selectedTeamMode = normalizeTeamMode(prefs.teamMode || DEFAULT_PREFS.teamMode);
+    teamModeSelect.value = selectedTeamMode;
+    if (prefs.teamMode !== selectedTeamMode) setPref('teamMode', selectedTeamMode);
+  }
+  const teamCountSelect = _el('s-team-count');
+  if (teamCountSelect) {
+    const selectedTeamCount = normalizeTeamCount(prefs.teamCount || DEFAULT_PREFS.teamCount);
+    teamCountSelect.value = selectedTeamCount;
+    if (prefs.teamCount !== selectedTeamCount) setPref('teamCount', selectedTeamCount);
+  }
+  const turnTimerSelect = _el('s-turn-timer');
+  if (turnTimerSelect) {
+    const selectedTurnTimer = normalizeTurnTimer(prefs.turnTimer || DEFAULT_PREFS.turnTimer);
+    turnTimerSelect.value = selectedTurnTimer;
+    if (prefs.turnTimer !== selectedTurnTimer) setPref('turnTimer', selectedTurnTimer);
   }
   syncBuildBadge();
 
@@ -1043,6 +1104,9 @@
     setPref('playStyle', applyPlayStyle(DEFAULT_PREFS.playStyle));
     setPref('revealPacing', DEFAULT_PREFS.revealPacing);
     setPref('revealAutoNext', DEFAULT_PREFS.revealAutoNext);
+    setPref('teamMode', DEFAULT_PREFS.teamMode);
+    setPref('teamCount', DEFAULT_PREFS.teamCount);
+    setPref('turnTimer', DEFAULT_PREFS.turnTimer);
 
     _el('s-theme-save').value = DEFAULT_PREFS.themeSave;
     _el('s-motion').value = DEFAULT_PREFS.motion;
@@ -1052,11 +1116,15 @@
     _el('s-play-style').value = DEFAULT_PREFS.playStyle;
     _el('s-reveal-pacing').value = DEFAULT_PREFS.revealPacing;
     _el('s-reveal-auto-next').value = DEFAULT_PREFS.revealAutoNext;
+    _el('s-team-mode').value = DEFAULT_PREFS.teamMode;
+    _el('s-team-count').value = DEFAULT_PREFS.teamCount;
+    _el('s-turn-timer').value = DEFAULT_PREFS.turnTimer;
 
     applyProjector(DEFAULT_PREFS.projector);
     applyMotion(DEFAULT_PREFS.motion);
     applyFeedback(DEFAULT_PREFS.feedback);
     WQUI.setCaseMode(DEFAULT_PREFS.caseMode);
+    syncClassroomTurnRuntime({ resetTurn: true });
     updateWilsonModeToggle();
     syncTeacherPresetButtons();
     syncHeaderControlsVisibility();
@@ -1305,6 +1373,139 @@
     } catch {}
   }
 
+  let classroomTurnTimer = 0;
+  let classroomTurnEndsAt = 0;
+  let classroomTurnRemaining = 0;
+  let classroomTeamIndex = 0;
+
+  function isTeamModeEnabled() {
+    return normalizeTeamMode(_el('s-team-mode')?.value || prefs.teamMode || DEFAULT_PREFS.teamMode) === 'on';
+  }
+
+  function getTeamCount() {
+    return Number.parseInt(
+      normalizeTeamCount(_el('s-team-count')?.value || prefs.teamCount || DEFAULT_PREFS.teamCount),
+      10
+    ) || 2;
+  }
+
+  function getTurnTimerSeconds() {
+    const mode = normalizeTurnTimer(_el('s-turn-timer')?.value || prefs.turnTimer || DEFAULT_PREFS.turnTimer);
+    return mode === 'off' ? 0 : (Number.parseInt(mode, 10) || 0);
+  }
+
+  function getCurrentTeamLabel() {
+    const count = getTeamCount();
+    const index = Math.max(0, Math.min(count - 1, classroomTeamIndex));
+    return TEAM_LABELS[index] || `Team ${index + 1}`;
+  }
+
+  function formatTurnClock(seconds) {
+    const total = Math.max(0, Number(seconds) || 0);
+    const mins = Math.floor(total / 60);
+    const secs = Math.floor(total % 60);
+    return `${mins}:${String(secs).padStart(2, '0')}`;
+  }
+
+  function clearClassroomTurnTimer() {
+    if (classroomTurnTimer) {
+      clearInterval(classroomTurnTimer);
+      classroomTurnTimer = 0;
+    }
+    classroomTurnEndsAt = 0;
+    classroomTurnRemaining = 0;
+  }
+
+  function updateClassroomTurnLine() {
+    const line = _el('classroom-turn-line');
+    if (!line) return;
+    const state = WQGame.getState?.() || {};
+    const activeRound = Boolean(state.word && !state.gameOver);
+    if (!isTeamModeEnabled() || !activeRound) {
+      line.textContent = '';
+      line.classList.add('hidden');
+      return;
+    }
+    const seconds = getTurnTimerSeconds();
+    const timerPart = seconds > 0
+      ? ` · ${formatTurnClock(Math.max(0, classroomTurnRemaining || seconds))} left`
+      : '';
+    line.textContent = `${getCurrentTeamLabel()} turn${timerPart} · Type a guess, then press Enter.`;
+    line.classList.remove('hidden');
+  }
+
+  function clearCurrentGuessInput() {
+    const state = WQGame.getState?.();
+    if (!state?.word || !state.guess) return;
+    while ((WQGame.getState?.()?.guess || '').length > 0) {
+      WQGame.deleteLetter();
+    }
+    const next = WQGame.getState?.();
+    if (next?.wordLength) {
+      WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
+    }
+  }
+
+  function startClassroomTurnClock(options = {}) {
+    const resetTurn = Boolean(options.resetTurn);
+    if (resetTurn) classroomTeamIndex = 0;
+    clearClassroomTurnTimer();
+
+    const state = WQGame.getState?.() || {};
+    const activeRound = Boolean(state.word && !state.gameOver);
+    if (!isTeamModeEnabled() || !activeRound) {
+      updateClassroomTurnLine();
+      return;
+    }
+
+    const seconds = getTurnTimerSeconds();
+    if (seconds <= 0) {
+      updateClassroomTurnLine();
+      return;
+    }
+
+    classroomTurnRemaining = seconds;
+    classroomTurnEndsAt = Date.now() + (seconds * 1000);
+    updateClassroomTurnLine();
+
+    classroomTurnTimer = setInterval(() => {
+      const round = WQGame.getState?.() || {};
+      if (!round.word || round.gameOver || !isTeamModeEnabled()) {
+        clearClassroomTurnTimer();
+        updateClassroomTurnLine();
+        return;
+      }
+      const remaining = Math.max(0, Math.ceil((classroomTurnEndsAt - Date.now()) / 1000));
+      if (remaining !== classroomTurnRemaining) {
+        classroomTurnRemaining = remaining;
+        updateClassroomTurnLine();
+      }
+      if (remaining <= 0) {
+        clearClassroomTurnTimer();
+        const expiringTeam = getCurrentTeamLabel();
+        clearCurrentGuessInput();
+        classroomTeamIndex = (classroomTeamIndex + 1) % getTeamCount();
+        startClassroomTurnClock();
+        WQUI.showToast(`${expiringTeam} ran out of time. ${getCurrentTeamLabel()} is up.`);
+      }
+    }, 250);
+  }
+
+  function advanceTeamTurn() {
+    const state = WQGame.getState?.() || {};
+    const activeRound = Boolean(state.word && !state.gameOver);
+    if (!isTeamModeEnabled() || !activeRound) {
+      updateClassroomTurnLine();
+      return;
+    }
+    classroomTeamIndex = (classroomTeamIndex + 1) % getTeamCount();
+    startClassroomTurnClock();
+  }
+
+  function syncClassroomTurnRuntime(options = {}) {
+    startClassroomTurnClock({ resetTurn: !!options.resetTurn });
+  }
+
   function updateNextActionLine(options = {}) {
     const line = _el('next-action-line');
     if (!line) return;
@@ -1334,6 +1535,7 @@
     line.textContent = text;
     line.classList.toggle('hidden', !text);
     line.classList.toggle('is-review', Boolean(reviewWord));
+    updateClassroomTurnLine();
   }
 
   function bindSettingsAccordion(sectionSelector) {
@@ -1386,6 +1588,7 @@
 
   setSettingsView('quick');
   syncHeaderControlsVisibility();
+  syncClassroomTurnRuntime({ resetTurn: true });
   syncTeacherPresetButtons();
   syncAssessmentLockRuntime({ closeFocus: false });
   bindFirstRunSetupModal();
@@ -1582,6 +1785,34 @@
   });
   _el('s-length')?.addEventListener('change',  e => setPref('length',   e.target.value));
   _el('s-guesses')?.addEventListener('change', e => setPref('guesses',  e.target.value));
+  _el('s-team-mode')?.addEventListener('change', e => {
+    const normalized = normalizeTeamMode(e.target.value);
+    e.target.value = normalized;
+    setPref('teamMode', normalized);
+    syncClassroomTurnRuntime({ resetTurn: true });
+    updateNextActionLine();
+    WQUI.showToast(normalized === 'on'
+      ? 'Team turns are on.'
+      : 'Team turns are off.');
+  });
+  _el('s-team-count')?.addEventListener('change', e => {
+    const normalized = normalizeTeamCount(e.target.value);
+    e.target.value = normalized;
+    setPref('teamCount', normalized);
+    syncClassroomTurnRuntime({ resetTurn: true });
+    updateNextActionLine();
+    WQUI.showToast(`${normalized} team${normalized === '1' ? '' : 's'} ready.`);
+  });
+  _el('s-turn-timer')?.addEventListener('change', e => {
+    const normalized = normalizeTurnTimer(e.target.value);
+    e.target.value = normalized;
+    setPref('turnTimer', normalized);
+    syncClassroomTurnRuntime();
+    updateNextActionLine();
+    WQUI.showToast(normalized === 'off'
+      ? 'Team turn timer is off.'
+      : `Team turn timer: ${normalized} seconds.`);
+  });
   _el('s-hint')?.addEventListener('change',    e => { setHintMode(e.target.value); syncTeacherPresetButtons(); });
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
@@ -3286,6 +3517,13 @@
     return Object.freeze(cleaned.map((item) => Object.freeze(item)));
   })();
   let midgameBoostShown = false;
+  let midgameBoostAutoHideTimer = 0;
+
+  function clearMidgameBoostAutoHideTimer() {
+    if (!midgameBoostAutoHideTimer) return;
+    clearTimeout(midgameBoostAutoHideTimer);
+    midgameBoostAutoHideTimer = 0;
+  }
 
   function buildMidgameBoostState() {
     const order = Array.from({ length: MIDGAME_BOOST_POOL.length }, (_, index) => index);
@@ -3334,6 +3572,7 @@
   function hideMidgameBoost() {
     const boost = _el('midgame-boost');
     if (!boost) return;
+    clearMidgameBoostAutoHideTimer();
     boost.classList.remove('is-visible');
     if (!boost.classList.contains('hidden')) {
       setTimeout(() => boost.classList.add('hidden'), 180);
@@ -3369,24 +3608,28 @@
     if (isAssessmentRoundLocked()) return;
     const boost = _el('midgame-boost');
     if (!boost) return;
+    clearMidgameBoostAutoHideTimer();
     const card = nextMidgameBoostCard();
     if (!card) return;
     const content = splitBoostQuestionAndAnswer(card.type, card.text);
-    const hasAnswer = card.type === 'joke' && Boolean(content.answer);
+    const isQnA = card.type === 'joke' && Boolean(content.answer);
+    const isRiddle = isQnA && content.question.includes('?');
+    const hasAnswer = isQnA;
     const label =
-      card.type === 'joke' ? 'Joke Break' :
-      card.type === 'quote' ? 'Quick Quote' :
-      'Fun Fact';
+      card.type === 'quote'
+        ? '💡 Coach Tip'
+        : card.type === 'joke'
+          ? (isRiddle ? '🧩 Riddle' : '😄 Joke')
+          : '🕵️ Fun Fact';
     boost.innerHTML = `
       <div class="midgame-boost-head">
         <span class="midgame-boost-tag">${label}</span>
         <button type="button" class="midgame-boost-close" aria-label="Dismiss boost">✕</button>
       </div>
       <p class="midgame-boost-question">${content.question}</p>
-      ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Show answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
+      ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Reveal answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
       <div class="midgame-boost-actions">
-        <button type="button" class="midgame-boost-action midgame-boost-dismiss">Keep playing</button>
-        <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off</button>
+        <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off popups</button>
       </div>
     `;
     const answerEl = boost.querySelector('.midgame-boost-answer');
@@ -3396,10 +3639,9 @@
       if (!answerEl) return;
       const reveal = answerEl.classList.contains('hidden');
       answerEl.classList.toggle('hidden', !reveal);
-      answerBtn.textContent = reveal ? 'Hide answer' : 'Show answer';
+      answerBtn.textContent = reveal ? 'Hide answer' : 'Reveal answer';
     });
     boost.querySelector('.midgame-boost-close')?.addEventListener('click', hideMidgameBoost);
-    boost.querySelector('.midgame-boost-dismiss')?.addEventListener('click', hideMidgameBoost);
     boost.querySelector('.midgame-boost-turn-off')?.addEventListener('click', () => {
       const select = _el('s-boost-popups');
       if (select) select.value = 'off';
@@ -3409,6 +3651,9 @@
     });
     boost.classList.remove('hidden');
     requestAnimationFrame(() => boost.classList.add('is-visible'));
+    if (!hasAnswer) {
+      midgameBoostAutoHideTimer = setTimeout(hideMidgameBoost, 6800);
+    }
   }
 
   function loadSessionSummaryState() {
@@ -3705,6 +3950,7 @@
 
   function newGame() {
     hideInformantHintCard();
+    clearClassroomTurnTimer();
     if (firstRunSetupPending) {
       openFirstRunSetupModal();
       WQUI.showToast('Choose a startup preset first.');
@@ -3760,6 +4006,7 @@
         WQUI.showToast('No words found — try Classic focus or adjust filters');
       }
       updateNextActionLine({ dueCount: countDueReviewWords(playableSet) });
+      syncClassroomTurnRuntime({ resetTurn: true });
       syncAssessmentLockRuntime();
       return;
     }
@@ -3772,6 +4019,7 @@
     WQUI.hideModal();
     _el('new-game-btn')?.classList.remove('pulse');
     _el('settings-panel')?.classList.add('hidden');
+    syncClassroomTurnRuntime({ resetTurn: true });
     syncHeaderControlsVisibility();
     removeDupeToast();
     updateVoicePracticePanel(WQGame.getState());
@@ -3789,7 +4037,10 @@
   };
   window.addEventListener('resize', reflowLayout);
   window.visualViewport?.addEventListener('resize', reflowLayout);
-  window.addEventListener('beforeunload', stopVoiceCaptureNow);
+  window.addEventListener('beforeunload', () => {
+    stopVoiceCaptureNow();
+    clearClassroomTurnTimer();
+  });
 
   // ─── 8. Input handling ──────────────────────────────
   function insertSequenceIntoGuess(sequence) {
@@ -3861,6 +4112,8 @@
           showMidgameBoost();
         }
         if (result.won || result.lost) {
+          clearClassroomTurnTimer();
+          updateClassroomTurnLine();
           awardQuestProgress(result);
           trackRoundForReview(result, s.maxGuesses);
           hideMidgameBoost();
@@ -3881,6 +4134,8 @@
               applyTheme(themeAtSubmit);
             }
           }, 520);
+        } else {
+          advanceTeamTurn();
         }
       });
 
