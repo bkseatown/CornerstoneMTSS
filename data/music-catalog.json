@@ -1,52 +1,162 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-02-24T05:12:13.360Z",
-  "trackCount": 6,
+  "updatedAt": "2026-02-24T15:57:58.429Z",
+  "trackCount": 12,
   "modeIndex": {
     "focus": [
-      "pixel-breeze-853f8e5f",
-      "quiet-quest-fdb30e18",
-      "soft-blocks-7c8a60a9",
-      "steady-lanterns-e9e39764",
-      "sunrise-drift-4e39cdd9",
-      "team-spark-lite-984489bf"
-    ],
-    "arcade": [
-      "pixel-breeze-853f8e5f"
-    ],
-    "upbeat": [
-      "pixel-breeze-853f8e5f",
-      "team-spark-lite-984489bf"
-    ],
-    "fantasy": [
-      "quiet-quest-fdb30e18"
+      "after-class-calm-eca31855",
+      "library-rain-c06436aa",
+      "midnight-notes-8f61c898",
+      "notebook-nights-56e368c3",
+      "pencil-groove-74979387",
+      "pixel-breeze-a376a61a",
+      "quiet-quest-cdc988f5",
+      "soft-blocks-6f38abca",
+      "steady-lanterns-3ee0fe95",
+      "sunday-study-99611ad5",
+      "sunrise-drift-fcd990b5",
+      "team-spark-lite-f3782018"
     ],
     "chill": [
-      "quiet-quest-fdb30e18",
-      "soft-blocks-7c8a60a9",
-      "steady-lanterns-e9e39764",
-      "sunrise-drift-4e39cdd9"
-    ],
-    "lofi": [
-      "soft-blocks-7c8a60a9",
-      "sunrise-drift-4e39cdd9"
+      "after-class-calm-eca31855",
+      "library-rain-c06436aa",
+      "midnight-notes-8f61c898",
+      "notebook-nights-56e368c3",
+      "pencil-groove-74979387",
+      "quiet-quest-cdc988f5",
+      "soft-blocks-6f38abca",
+      "steady-lanterns-3ee0fe95",
+      "sunday-study-99611ad5",
+      "sunrise-drift-fcd990b5"
     ],
     "coffee": [
-      "steady-lanterns-e9e39764",
-      "sunrise-drift-4e39cdd9"
+      "after-class-calm-eca31855",
+      "library-rain-c06436aa",
+      "midnight-notes-8f61c898",
+      "steady-lanterns-3ee0fe95",
+      "sunday-study-99611ad5",
+      "sunrise-drift-fcd990b5"
+    ],
+    "fantasy": [
+      "after-class-calm-eca31855",
+      "quiet-quest-cdc988f5"
+    ],
+    "lofi": [
+      "midnight-notes-8f61c898",
+      "notebook-nights-56e368c3",
+      "pencil-groove-74979387",
+      "soft-blocks-6f38abca",
+      "sunday-study-99611ad5",
+      "sunrise-drift-fcd990b5"
+    ],
+    "upbeat": [
+      "notebook-nights-56e368c3",
+      "pixel-breeze-a376a61a",
+      "team-spark-lite-f3782018"
+    ],
+    "arcade": [
+      "pixel-breeze-a376a61a"
     ],
     "team": [
-      "team-spark-lite-984489bf"
+      "team-spark-lite-f3782018"
     ],
     "sports": [
-      "team-spark-lite-984489bf"
+      "team-spark-lite-f3782018"
     ]
   },
   "tracks": [
     {
-      "id": "pixel-breeze-853f8e5f",
+      "id": "after-class-calm-eca31855",
+      "title": "After Class Calm",
+      "src": "./assets/music/tracks/focus-flow/after-class-calm__modes-focus+chill+coffee+fantasy__bpm-84__energy-low__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "coffee",
+        "fantasy"
+      ],
+      "bpm": 84,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "library-rain-c06436aa",
+      "title": "Library Rain",
+      "src": "./assets/music/tracks/focus-flow/library-rain__modes-focus+chill+coffee__bpm-82__energy-low__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "coffee"
+      ],
+      "bpm": 82,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "midnight-notes-8f61c898",
+      "title": "Midnight Notes",
+      "src": "./assets/music/tracks/focus-flow/midnight-notes__modes-focus+chill+lofi+coffee__bpm-78__energy-low__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi",
+        "coffee"
+      ],
+      "bpm": 78,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "notebook-nights-56e368c3",
+      "title": "Notebook Nights",
+      "src": "./assets/music/tracks/focus-flow/notebook-nights__modes-focus+chill+lofi+upbeat__bpm-92__energy-mid__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi",
+        "upbeat"
+      ],
+      "bpm": 92,
+      "energy": "mid",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "pencil-groove-74979387",
+      "title": "Pencil Groove",
+      "src": "./assets/music/tracks/focus-flow/pencil-groove__modes-focus+chill+lofi__bpm-88__energy-mid__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi"
+      ],
+      "bpm": 88,
+      "energy": "mid",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "pixel-breeze-a376a61a",
       "title": "Pixel Breeze",
-      "src": "/assets/music/tracks/focus-flow/pixel-breeze__modes-focus+arcade+upbeat__bpm-100__energy-mid.wav",
+      "src": "./assets/music/tracks/focus-flow/pixel-breeze__modes-focus+arcade+upbeat__bpm-100__energy-mid.wav",
       "format": "wav",
       "modes": [
         "focus",
@@ -61,9 +171,9 @@
       "licenseRef": "original-focus-flow-pack"
     },
     {
-      "id": "quiet-quest-fdb30e18",
+      "id": "quiet-quest-cdc988f5",
       "title": "Quiet Quest",
-      "src": "/assets/music/tracks/focus-flow/quiet-quest__modes-focus+fantasy+chill__bpm-85__energy-low.wav",
+      "src": "./assets/music/tracks/focus-flow/quiet-quest__modes-focus+fantasy+chill__bpm-85__energy-low.wav",
       "format": "wav",
       "modes": [
         "focus",
@@ -78,9 +188,9 @@
       "licenseRef": "original-focus-flow-pack"
     },
     {
-      "id": "soft-blocks-7c8a60a9",
+      "id": "soft-blocks-6f38abca",
       "title": "Soft Blocks",
-      "src": "/assets/music/tracks/focus-flow/soft-blocks__modes-focus+chill+lofi__bpm-100__energy-mid.wav",
+      "src": "./assets/music/tracks/focus-flow/soft-blocks__modes-focus+chill+lofi__bpm-100__energy-mid.wav",
       "format": "wav",
       "modes": [
         "focus",
@@ -95,9 +205,9 @@
       "licenseRef": "original-focus-flow-pack"
     },
     {
-      "id": "steady-lanterns-e9e39764",
+      "id": "steady-lanterns-3ee0fe95",
       "title": "Steady Lanterns",
-      "src": "/assets/music/tracks/focus-flow/steady-lanterns__modes-focus+chill+coffee__bpm-95__energy-low.wav",
+      "src": "./assets/music/tracks/focus-flow/steady-lanterns__modes-focus+chill+coffee__bpm-95__energy-low.wav",
       "format": "wav",
       "modes": [
         "focus",
@@ -112,9 +222,27 @@
       "licenseRef": "original-focus-flow-pack"
     },
     {
-      "id": "sunrise-drift-4e39cdd9",
+      "id": "sunday-study-99611ad5",
+      "title": "Sunday Study",
+      "src": "./assets/music/tracks/focus-flow/sunday-study__modes-focus+chill+lofi+coffee__bpm-86__energy-low__license-original-focus-flow-pack.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi",
+        "coffee"
+      ],
+      "bpm": 86,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "sunrise-drift-fcd990b5",
       "title": "Sunrise Drift",
-      "src": "/assets/music/tracks/focus-flow/sunrise-drift__modes-focus+chill+lofi+coffee__bpm-90__energy-low.wav",
+      "src": "./assets/music/tracks/focus-flow/sunrise-drift__modes-focus+chill+lofi+coffee__bpm-90__energy-low.wav",
       "format": "wav",
       "modes": [
         "focus",
@@ -130,9 +258,9 @@
       "licenseRef": "original-focus-flow-pack"
     },
     {
-      "id": "team-spark-lite-984489bf",
+      "id": "team-spark-lite-f3782018",
       "title": "Team Spark Lite",
-      "src": "/assets/music/tracks/focus-flow/team-spark-lite__modes-focus+team+sports+upbeat__bpm-105__energy-mid.wav",
+      "src": "./assets/music/tracks/focus-flow/team-spark-lite__modes-focus+team+sports+upbeat__bpm-105__energy-mid.wav",
       "format": "wav",
       "modes": [
         "focus",

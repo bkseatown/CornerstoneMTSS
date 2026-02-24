@@ -9,21 +9,21 @@
   --correct:      #16a34a;
   --correct-lt:   #4ade80;
   --correct-dk:   #14532d;
-  --present:      #d97706;
-  --present-lt:   #fcd34d;
-  --present-dk:   #78350f;
+  --present:      #c9b458;
+  --present-lt:   #e2d26f;
+  --present-dk:   #8f7f35;
   --absent:       #94a3b8;
   --absent-dk:    #475569;
 
   --header-h:        50px;
   --focus-h:         44px;
-  --playfield-width: 340px;
-  --tile-size:       54px;
+  --playfield-width: 392px;
+  --tile-size:       74px;
   --key-h:           52px;
   --key-min-w:       34px;
-  --gap-tile:        5px;
+  --gap-tile:        9px;
   --gap-key:         10px;
-  --radius-tile:     17px;
+  --radius-tile:     19px;
   --radius-key:      16px;
   --radius-plate:    20px;
   --radius-panel:    16px;

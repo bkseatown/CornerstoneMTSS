@@ -202,16 +202,44 @@
   ]);
   const KEYBOARD_LAYOUT_ORDER = Object.freeze([
     'standard',
-    'alphabet',
+    'alphabet'
+  ]);
+  const ALLOWED_KEYBOARD_LAYOUTS = new Set([
+    ...KEYBOARD_LAYOUT_ORDER,
     'alphabet-arc',
     'wilson'
   ]);
-  const ALLOWED_KEYBOARD_LAYOUTS = new Set(KEYBOARD_LAYOUT_ORDER);
   const KEYBOARD_LAYOUT_LABELS = Object.freeze({
     standard: 'QWERTY',
     alphabet: 'Alphabet',
     'alphabet-arc': 'Alphabet Arc',
     wilson: 'Wilson Sound Cards'
+  });
+  const KEYBOARD_PRESET_CONFIG = Object.freeze({
+    'qwerty-bubble': Object.freeze({
+      id: 'qwerty-bubble',
+      layout: 'standard',
+      keyStyle: 'bubble',
+      label: 'QWERTY · Puffy Rounded'
+    }),
+    'qwerty-oval': Object.freeze({
+      id: 'qwerty-oval',
+      layout: 'standard',
+      keyStyle: 'pebble',
+      label: 'QWERTY · Oval / Typewriter'
+    }),
+    'alphabet-bubble': Object.freeze({
+      id: 'alphabet-bubble',
+      layout: 'alphabet',
+      keyStyle: 'bubble',
+      label: 'Alphabet · Puffy Rounded'
+    }),
+    'alphabet-oval': Object.freeze({
+      id: 'alphabet-oval',
+      layout: 'alphabet',
+      keyStyle: 'pebble',
+      label: 'Alphabet · Oval / Typewriter'
+    })
   });
 
   function normalizeKeyboardLayout(mode) {
@@ -234,16 +262,22 @@
     return KEYBOARD_LAYOUT_ORDER[(safeIndex + 1) % KEYBOARD_LAYOUT_ORDER.length];
   }
 
+  function normalizeKeyboardPresetId(mode) {
+    const raw = String(mode || '').trim().toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(KEYBOARD_PRESET_CONFIG, raw)) return raw;
+    return 'qwerty-bubble';
+  }
+
+  function deriveKeyboardPresetId(layoutMode, keyStyleMode) {
+    const layout = normalizeKeyboardLayout(layoutMode);
+    const keyStyle = String(keyStyleMode || '').trim().toLowerCase();
+    const family = layout === 'alphabet' || layout === 'alphabet-arc' ? 'alphabet' : 'qwerty';
+    const shape = keyStyle === 'pebble' ? 'oval' : 'bubble';
+    return normalizeKeyboardPresetId(`${family}-${shape}`);
+  }
+
   function detectPreferredKeyboardLayout() {
-    const touchPoints = Number(navigator.maxTouchPoints || 0);
-    let hasCoarsePointer = false;
-    let hasFinePointer = false;
-    let canHover = false;
-    try { hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches; } catch {}
-    try { hasFinePointer = window.matchMedia('(pointer: fine)').matches; } catch {}
-    try { canHover = window.matchMedia('(hover: hover)').matches; } catch {}
-    const touchOnlyDevice = touchPoints > 0 && hasCoarsePointer && !hasFinePointer && !canHover;
-    return touchOnlyDevice ? 'wilson' : 'standard';
+    return 'standard';
   }
 
   const preferredInitialKeyboardLayout = detectPreferredKeyboardLayout();
@@ -394,7 +428,8 @@
     });
     let changed = false;
     Object.entries(startupDefaults).forEach(([key, value]) => {
-      if (prefs[key] === value) return;
+      const current = prefs[key];
+      if (current !== undefined && current !== null && String(current).trim() !== '') return;
       prefs[key] = value;
       changed = true;
     });
@@ -1031,6 +1066,7 @@
   applyBoardStyle(prefs.boardStyle || DEFAULT_PREFS.boardStyle);
   applyKeyStyle(prefs.keyStyle || DEFAULT_PREFS.keyStyle);
   applyKeyboardLayout(prefs.keyboardLayout || DEFAULT_PREFS.keyboardLayout);
+  syncKeyboardPresetControl();
   applyAtmosphere(prefs.atmosphere || DEFAULT_PREFS.atmosphere);
   WQUI.setCaseMode(prefs.caseMode || DEFAULT_PREFS.caseMode);
   syncCaseToggleUI();
@@ -1253,23 +1289,23 @@
     const toggle = _el('play-style-toggle');
     if (!toggle) return;
     const listening = mode === 'listening';
-    toggle.textContent = listening ? 'Listening' : 'Detective';
+    toggle.textContent = listening ? 'Listening' : 'Classic';
     toggle.style.whiteSpace = 'nowrap';
     toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('aria-label', listening
       ? 'Listening mode on. Hear meaning and encode what you hear.'
-      : 'Detective mode on. Use tile colors and clues to encode.');
+      : 'Classic mode on. Use tile colors and clues to encode.');
     toggle.setAttribute('title', listening
       ? 'Listening mode: hear word plus meaning, then spell by sound'
-      : 'Detective mode: use color feedback and clues');
+      : 'Classic mode: use color feedback and clues');
   }
 
   function syncHeaderClueLauncherUI(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
     const button = _el('phonics-clue-open-btn');
     if (!button) return;
     const listening = mode === 'listening';
-    button.textContent = listening ? 'Coach' : 'Clue';
+    button.textContent = listening ? 'Coach' : 'Clue+';
     button.style.whiteSpace = 'nowrap';
     button.setAttribute('title', listening
       ? 'Open listening coach support'
@@ -1286,8 +1322,8 @@
     const listeningMode = mode === 'listening' && !isMissionLabStandaloneMode();
     const modeBanner = _el('play-style-banner');
     if (modeBanner) {
-      modeBanner.innerHTML = listeningMode
-        ? '<span class="play-style-chip play-style-chip-mode">🎧 Listening Challenge</span><span class="play-style-chip">1. Listen</span><span class="play-style-chip">2. Tap sounds</span><span class="play-style-chip">3. Spell</span>'
+      modeBanner.textContent = listeningMode
+        ? 'Listening mode: hear word + meaning, then spell it.'
         : '';
       modeBanner.classList.toggle('hidden', !listeningMode);
       modeBanner.classList.toggle('is-listening', listeningMode);
@@ -1295,15 +1331,20 @@
     }
     const hearWordBtn = _el('g-hear-word');
     const hearWordLabel = _el('g-hear-word-label');
-    if (hearWordLabel) hearWordLabel.textContent = listeningMode ? 'Replay Word' : 'Hear Word';
+    if (hearWordLabel) hearWordLabel.textContent = listeningMode ? 'Replay' : 'Hear Word';
     if (hearWordBtn) {
-      hearWordBtn.setAttribute('title', listeningMode ? 'Replay the target word audio' : 'Hear target word audio');
-      hearWordBtn.setAttribute('aria-label', listeningMode ? 'Replay the target word audio' : 'Hear target word audio');
+      hearWordBtn.setAttribute('title', listeningMode ? 'Replay word plus meaning audio' : 'Hear target word audio');
+      hearWordBtn.setAttribute('aria-label', listeningMode ? 'Replay word plus meaning audio' : 'Hear target word audio');
+    }
+    const focusHintToggle = _el('focus-hint-toggle');
+    if (focusHintToggle) {
+      focusHintToggle.classList.toggle('hidden', listeningMode);
     }
     if (!gameplayAudio) {
       syncHintToggleUI(getHintMode());
       return;
     }
+    gameplayAudio.classList.toggle('is-single-action', listeningMode);
     gameplayAudio.classList.toggle('hidden', !listeningMode);
     gameplayAudio.setAttribute('aria-hidden', listeningMode ? 'false' : 'true');
     syncHintToggleUI(getHintMode());
@@ -2143,6 +2184,41 @@
     return normalized;
   }
 
+  function syncKeyboardPresetControl() {
+    const select = _el('s-keyboard-preset');
+    if (!select) return;
+    const layout = document.documentElement.getAttribute('data-keyboard-layout') || prefs.keyboardLayout || DEFAULT_PREFS.keyboardLayout;
+    const keyStyle = document.documentElement.getAttribute('data-key-style') || prefs.keyStyle || DEFAULT_PREFS.keyStyle;
+    const next = deriveKeyboardPresetId(layout, keyStyle);
+    if (select.value !== next) select.value = next;
+  }
+
+  function applyKeyboardPreset(mode, options = {}) {
+    const normalized = normalizeKeyboardPresetId(mode);
+    const preset = KEYBOARD_PRESET_CONFIG[normalized] || KEYBOARD_PRESET_CONFIG['qwerty-bubble'];
+    const layout = applyKeyboardLayout(preset.layout);
+    const keyStyle = applyKeyStyle(preset.keyStyle);
+    let boardStyle = document.documentElement.getAttribute('data-board-style') || prefs.boardStyle || DEFAULT_PREFS.boardStyle;
+    // Keep board tiles less rounded when using the oval keyboard option.
+    if (preset.keyStyle === 'pebble') {
+      boardStyle = applyBoardStyle('card');
+    }
+    if (options.persist !== false) {
+      setPref('keyboardLayout', layout);
+      setPref('keyStyle', keyStyle);
+      if (preset.keyStyle === 'pebble') setPref('boardStyle', boardStyle);
+    }
+    syncKeyboardPresetControl();
+    updateWilsonModeToggle();
+    return Object.freeze({
+      id: normalized,
+      label: preset.label,
+      layout,
+      keyStyle,
+      boardStyle
+    });
+  }
+
   function syncKeyboardLayoutToggle() {
     normalizeHeaderControlLayout();
     const toggle = _el('keyboard-layout-toggle');
@@ -2150,10 +2226,12 @@
     const layout = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || 'standard');
     const next = getNextKeyboardLayout(layout);
     const isWilson = layout === 'wilson';
+    const keyboardHint = `${getKeyboardLayoutLabel(layout)} keys ready. Tap to try ${getKeyboardLayoutLabel(next)}.`;
     toggle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M6 13h1M9 13h1M12 13h1M15 13h1M6 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
     toggle.setAttribute('aria-pressed', isWilson ? 'true' : 'false');
-    toggle.setAttribute('aria-label', `${getKeyboardLayoutLabel(layout)} keyboard on. Tap for ${getKeyboardLayoutLabel(next)}.`);
-    toggle.setAttribute('title', `${getKeyboardLayoutLabel(layout)} keyboard on. Tap for ${getKeyboardLayoutLabel(next)}.`);
+    toggle.setAttribute('aria-label', keyboardHint);
+    toggle.dataset.hint = keyboardHint;
+    toggle.removeAttribute('title');
     toggle.classList.toggle('is-wilson', isWilson);
   }
 
@@ -2163,14 +2241,14 @@
     if (!toggle) return;
     const mode = String(document.documentElement.getAttribute('data-case') || prefs.caseMode || DEFAULT_PREFS.caseMode).toLowerCase();
     const isUpper = mode === 'upper';
-    toggle.textContent = 'Aa';
-    toggle.setAttribute('aria-pressed', isUpper ? 'true' : 'false');
-    toggle.setAttribute('aria-label', isUpper
-      ? 'Uppercase letters on. Tap to switch to lowercase.'
-      : 'Lowercase letters on. Tap to switch to uppercase.');
-    toggle.title = isUpper
+    const caseHint = isUpper
       ? 'Uppercase letters are on. Tap for lowercase.'
       : 'Lowercase letters are on. Tap for uppercase.';
+    toggle.textContent = 'Aa';
+    toggle.setAttribute('aria-pressed', isUpper ? 'true' : 'false');
+    toggle.setAttribute('aria-label', caseHint);
+    toggle.dataset.hint = caseHint;
+    toggle.removeAttribute('title');
   }
 
   function applyChunkTabsMode(mode) {
@@ -3000,15 +3078,134 @@
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function syncThemePreviewStripVisibility() {
-    const strip = _el('theme-preview-strip');
-    if (!strip) return;
+  function isQuickPopoverAllowed() {
     const panelOpen = !_el('settings-panel')?.classList.contains('hidden');
     const teacherPanelOpen = !_el('teacher-panel')?.classList.contains('hidden');
     const focusOpen = document.documentElement.getAttribute('data-focus-search-open') === 'true';
-    const shouldShow = !panelOpen && !teacherPanelOpen && !focusOpen && !isAssessmentRoundLocked();
-    strip.classList.toggle('hidden', !shouldShow);
-    strip.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+    return !panelOpen && !teacherPanelOpen && !focusOpen && !isAssessmentRoundLocked();
+  }
+
+  function positionQuickPopover(popover, anchorBtn) {
+    if (!(popover instanceof HTMLElement) || !(anchorBtn instanceof HTMLElement)) return;
+    popover.style.right = 'auto';
+    popover.style.left = '-9999px';
+    const margin = 8;
+    const anchorRect = anchorBtn.getBoundingClientRect();
+    const popRect = popover.getBoundingClientRect();
+    let left = anchorRect.right - popRect.width;
+    left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
+    let top = anchorRect.bottom + 8;
+    if (top + popRect.height > window.innerHeight - margin) {
+      top = Math.max(margin, anchorRect.top - popRect.height - 8);
+    }
+    popover.style.left = `${Math.round(left)}px`;
+    popover.style.top = `${Math.round(top)}px`;
+  }
+
+  function syncQuickPopoverPositions() {
+    const themePopover = _el('theme-preview-strip');
+    const musicPopover = _el('quick-music-strip');
+    if (themePopover && !themePopover.classList.contains('hidden')) {
+      positionQuickPopover(themePopover, _el('theme-dock-toggle-btn'));
+    }
+    if (musicPopover && !musicPopover.classList.contains('hidden')) {
+      positionQuickPopover(musicPopover, _el('music-dock-toggle-btn'));
+    }
+  }
+
+  function closeQuickPopover(kind = 'all') {
+    const closeTheme = kind === 'all' || kind === 'theme';
+    const closeMusic = kind === 'all' || kind === 'music';
+    const themePopover = _el('theme-preview-strip');
+    const musicPopover = _el('quick-music-strip');
+    const themeBtn = _el('theme-dock-toggle-btn');
+    const musicBtn = _el('music-dock-toggle-btn');
+    if (closeTheme && themePopover) {
+      themePopover.classList.add('hidden');
+      themePopover.setAttribute('aria-hidden', 'true');
+    }
+    if (closeMusic && musicPopover) {
+      musicPopover.classList.add('hidden');
+      musicPopover.setAttribute('aria-hidden', 'true');
+    }
+    if (closeTheme && themeBtn) {
+      themeBtn.classList.remove('is-active');
+      themeBtn.setAttribute('aria-expanded', 'false');
+    }
+    if (closeMusic && musicBtn) {
+      musicBtn.classList.remove('is-active');
+      musicBtn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function openQuickPopover(kind) {
+    if (!isQuickPopoverAllowed()) {
+      closeQuickPopover('all');
+      return;
+    }
+    const themePopover = _el('theme-preview-strip');
+    const musicPopover = _el('quick-music-strip');
+    const themeBtn = _el('theme-dock-toggle-btn');
+    const musicBtn = _el('music-dock-toggle-btn');
+    if (kind === 'theme' && themePopover) {
+      if (musicPopover) {
+        musicPopover.classList.add('hidden');
+        musicPopover.setAttribute('aria-hidden', 'true');
+      }
+      if (musicBtn) {
+        musicBtn.classList.remove('is-active');
+        musicBtn.setAttribute('aria-expanded', 'false');
+      }
+      themePopover.classList.remove('hidden');
+      themePopover.setAttribute('aria-hidden', 'false');
+      if (themeBtn) {
+        themeBtn.classList.add('is-active');
+        themeBtn.setAttribute('aria-expanded', 'true');
+        positionQuickPopover(themePopover, themeBtn);
+      }
+      return;
+    }
+    if (kind === 'music' && musicPopover) {
+      if (themePopover) {
+        themePopover.classList.add('hidden');
+        themePopover.setAttribute('aria-hidden', 'true');
+      }
+      if (themeBtn) {
+        themeBtn.classList.remove('is-active');
+        themeBtn.setAttribute('aria-expanded', 'false');
+      }
+      musicPopover.classList.remove('hidden');
+      musicPopover.setAttribute('aria-hidden', 'false');
+      if (musicBtn) {
+        musicBtn.classList.add('is-active');
+        musicBtn.setAttribute('aria-expanded', 'true');
+        positionQuickPopover(musicPopover, musicBtn);
+      }
+    }
+  }
+
+  function toggleQuickPopover(kind) {
+    const popover = kind === 'music' ? _el('quick-music-strip') : _el('theme-preview-strip');
+    if (!popover || popover.classList.contains('hidden')) {
+      openQuickPopover(kind);
+      return;
+    }
+    closeQuickPopover(kind);
+  }
+
+  function syncThemePreviewStripVisibility() {
+    const allowed = isQuickPopoverAllowed();
+    const themeBtn = _el('theme-dock-toggle-btn');
+    const musicBtn = _el('music-dock-toggle-btn');
+    [themeBtn, musicBtn].forEach((btn) => {
+      if (!btn) return;
+      btn.setAttribute('aria-disabled', allowed ? 'false' : 'true');
+    });
+    if (!allowed) {
+      closeQuickPopover('all');
+      return;
+    }
+    syncQuickPopoverPositions();
   }
 
   function isMissionLabStandaloneMode() {
@@ -3130,6 +3327,12 @@
   window.addEventListener('wq:open-teacher-hub', () => {
     _el('teacher-panel-btn')?.click();
   });
+  window.addEventListener('resize', () => {
+    syncQuickPopoverPositions();
+  }, { passive: true });
+  window.addEventListener('scroll', () => {
+    syncQuickPopoverPositions();
+  }, { passive: true });
 
   _el('settings-btn')?.addEventListener('click', () => {
     if (isAssessmentRoundLocked()) {
@@ -3181,6 +3384,18 @@
       !hintToggleBtn?.contains(e.target)
     ) {
       hideInformantHintCard();
+    }
+    const themeDockBtn = _el('theme-dock-toggle-btn');
+    const musicDockBtn = _el('music-dock-toggle-btn');
+    const themePopover = _el('theme-preview-strip');
+    const musicPopover = _el('quick-music-strip');
+    const clickInsideQuickPopover =
+      themePopover?.contains(e.target) ||
+      musicPopover?.contains(e.target) ||
+      themeDockBtn?.contains(e.target) ||
+      musicDockBtn?.contains(e.target);
+    if (!clickInsideQuickPopover) {
+      closeQuickPopover('all');
     }
     if (!panel?.classList.contains('hidden') &&
         !panel.contains(e.target) &&
@@ -3256,28 +3471,52 @@
   }
   window.addEventListener('keydown', maybeSwitchToQwertyForPhysicalKeyboard, { passive: true });
 
+  _el('s-keyboard-preset')?.addEventListener('change', e => {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice();
+      syncKeyboardPresetControl();
+      return;
+    }
+    const state = WQGame.getState?.();
+    const hasActiveProgress = Boolean(state?.word && !state?.gameOver && (state?.guesses?.length || 0) > 0);
+    const applied = applyKeyboardPreset(e.target.value, { persist: true });
+    if (hasActiveProgress) {
+      WQUI.showToast(`${applied.label} saved. It applies next word.`);
+      return;
+    }
+    refreshKeyboardLayoutPreview();
+    WQUI.showToast(`Keyboard: ${applied.label}.`);
+  });
+
   _el('s-board-style')?.addEventListener('change', e => {
     const next = applyBoardStyle(e.target.value);
     setPref('boardStyle', next);
     updateWilsonModeToggle();
+    syncKeyboardPresetControl();
     refreshKeyboardLayoutPreview();
   });
   _el('s-key-style')?.addEventListener('change', e => {
     const next = applyKeyStyle(e.target.value);
     setPref('keyStyle', next);
+    if (next === 'pebble') {
+      setPref('boardStyle', applyBoardStyle('card'));
+    }
     updateWilsonModeToggle();
+    syncKeyboardPresetControl();
     refreshKeyboardLayoutPreview();
   });
   _el('s-keyboard-layout')?.addEventListener('change', e => {
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice();
       e.target.value = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || DEFAULT_PREFS.keyboardLayout);
+      syncKeyboardPresetControl();
       return;
     }
     const state = WQGame.getState?.();
     const hasActiveProgress = Boolean(state?.word && !state?.gameOver && (state?.guesses?.length || 0) > 0);
     const next = applyKeyboardLayout(e.target.value);
     setPref('keyboardLayout', next);
+    syncKeyboardPresetControl();
     if (hasActiveProgress) {
       WQUI.showToast(`${getKeyboardLayoutLabel(next)} saved. It applies next word.`);
       return;
@@ -3293,6 +3532,7 @@
   _el('s-wilson-mode')?.addEventListener('change', e => {
     const enabled = !!e.target.checked;
     applyWilsonMode(enabled);
+    syncKeyboardPresetControl();
     refreshKeyboardLayoutPreview();
     WQUI.showToast(enabled
       ? 'Wilson sound-card mode is on.'
@@ -3308,6 +3548,7 @@
     const current = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || 'standard');
     const next = applyKeyboardLayout(getNextKeyboardLayout(current));
     setPref('keyboardLayout', next);
+    syncKeyboardPresetControl();
     if (hasActiveProgress) {
       WQUI.showToast(`${getKeyboardLayoutLabel(next)} saved. It applies next word.`);
       return;
@@ -3886,6 +4127,22 @@
   });
   _el('session-rerun-onboarding-btn')?.addEventListener('click', () => {
     rerunOnboardingSetup();
+  });
+  _el('theme-dock-toggle-btn')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (!isQuickPopoverAllowed()) return;
+    toggleQuickPopover('theme');
+  });
+  _el('music-dock-toggle-btn')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (!isQuickPopoverAllowed()) return;
+    toggleQuickPopover('music');
+  });
+  _el('theme-preview-done')?.addEventListener('click', () => {
+    closeQuickPopover('theme');
+  });
+  _el('quick-music-done')?.addEventListener('click', () => {
+    closeQuickPopover('music');
   });
   _el('quick-music-toggle')?.addEventListener('click', () => {
     toggleMusicQuick();
@@ -4668,16 +4925,16 @@
 
       const keyH = parsePx(rootStyle.getPropertyValue('--key-h'), 52);
       const keyGap = parsePx(rootStyle.getPropertyValue('--gap-key'), 8);
-      const tileGap = parsePx(rootStyle.getPropertyValue('--gap-tile'), 5);
+      const baseTileGap = parsePx(rootStyle.getPropertyValue('--gap-tile'), 9);
       const mainStyle = mainEl ? getComputedStyle(mainEl) : null;
       const mainInnerW = (mainEl?.clientWidth || Math.min(window.innerWidth, 560))
         - parsePx(mainStyle?.paddingLeft, 12)
         - parsePx(mainStyle?.paddingRight, 12);
       const mainPadTop = parsePx(mainStyle?.paddingTop, 10);
       const mainPadBottom = parsePx(mainStyle?.paddingBottom, 10);
-      const boardZoneGap = parsePx(getComputedStyle(boardZoneEl || document.body).gap, 10);
-      const platePadY = parsePx(getComputedStyle(boardPlateEl || document.body).paddingTop, 14) * 2;
-      const platePadX = parsePx(getComputedStyle(boardPlateEl || document.body).paddingLeft, 14) * 2;
+      const boardZoneGap = parsePx(getComputedStyle(boardZoneEl || document.body).gap, 16);
+      const platePadY = parsePx(getComputedStyle(boardPlateEl || document.body).paddingTop, 22) * 2;
+      const platePadX = parsePx(getComputedStyle(boardPlateEl || document.body).paddingLeft, 26) * 2;
       const supportH = supportRowEl?.offsetHeight || 0;
       const audioH = supportH ? 0 : (gameplayAudioEl?.offsetHeight || 36);
       const headerH = headerEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--header-h'), 50);
@@ -4705,6 +4962,7 @@
       if (viewportW >= 1040 && viewportH >= 680) layoutMode = 'wide';
       else if (viewportH <= 600 || (isLandscape && viewportH <= 660)) layoutMode = 'compact';
       else if (viewportH <= 740) layoutMode = 'tight';
+      const tileGap = layoutMode === 'compact' ? Math.max(7, baseTileGap - 1) : baseTileGap;
       document.documentElement.setAttribute('data-layout-mode', layoutMode);
       document.documentElement.setAttribute('data-viewport-orientation', isLandscape ? 'landscape' : 'portrait');
 
@@ -4729,31 +4987,34 @@
       const supportReserveH = supportH ? Math.max(0, supportH - 2) : 0;
       const kbRows = 3;
       const keyboardSafetyPad = keyboardLayout === 'wilson'
-        ? (layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 24 : 22)
-        : 8;
+        ? (layoutMode === 'compact' ? 24 : layoutMode === 'tight' ? 19 : 16)
+        : 4;
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const extraSafetyH = layoutMode === 'compact' ? 40 : layoutMode === 'tight' ? 30 : layoutMode === 'wide' ? 20 : 22;
+      const extraSafetyH = layoutMode === 'compact' ? 28 : layoutMode === 'tight' ? 18 : layoutMode === 'wide' ? 8 : 10;
       const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
-      const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
+      const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) + 2) / maxGuesses);
 
       const availableBoardW = Math.max(220, mainInnerW);
       const byWidth = Math.floor((availableBoardW - platePadX - tileGap * (wordLength - 1)) / wordLength);
 
-      const sizeCap = layoutMode === 'wide' ? 62 : layoutMode === 'tight' ? 52 : layoutMode === 'compact' ? 44 : 56;
-      const sizeFloor = layoutMode === 'compact' ? 26 : layoutMode === 'tight' ? 30 : 32;
-      const size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
+      const sizeCap = layoutMode === 'wide' ? 112 : layoutMode === 'tight' ? 90 : layoutMode === 'compact' ? 66 : 102;
+      const sizeFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 40 : 44;
+      let size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
+      if (layoutMode !== 'compact' && size < sizeCap && byHeight > size + 1 && byWidth > size + 1) {
+        size = Math.min(sizeCap, size + 6);
+      }
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const boardHeight = maxGuesses * size + (maxGuesses - 1) * tileGap;
       const playfieldW = Math.ceil(boardWidth);
       const playfieldH = Math.ceil(boardHeight);
 
-      const adaptiveKeyFloor = layoutMode === 'compact' ? 36 : layoutMode === 'tight' ? 44 : 48;
-      const adaptiveKeyCeil = layoutMode === 'wide' ? 58 : 54;
-      const adaptiveKeyH = Math.max(adaptiveKeyFloor, Math.min(adaptiveKeyCeil, Math.round(size * 0.96)));
-      let adaptiveKeyMinW = Math.max(layoutMode === 'compact' ? 22 : layoutMode === 'tight' ? 25 : 29, Math.min(48, Math.round(size * 0.8)));
+      const adaptiveKeyFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 40 : 44;
+      const adaptiveKeyCeil = layoutMode === 'wide' ? 52 : 50;
+      const adaptiveKeyH = Math.max(adaptiveKeyFloor, Math.min(adaptiveKeyCeil, Math.round(size * 0.9)));
+      let adaptiveKeyMinW = Math.max(layoutMode === 'compact' ? 20 : layoutMode === 'tight' ? 23 : 27, Math.min(44, Math.round(size * 0.74)));
       let adaptiveKeyGap = Math.max(layoutMode === 'compact' ? 5.6 : 6.2, Math.min(10, Math.round(size * 0.16)));
       const maxKeyboardW = Math.max(286, Math.min(window.innerWidth - 16, mainInnerW - 4));
       const activeCols = keyboardLayout === 'wilson' ? 10 : 10;
@@ -4765,6 +5026,7 @@
       }
 
       document.documentElement.style.setProperty('--tile-size', `${size}px`);
+      document.documentElement.style.setProperty('--gap-tile', `${tileGap}px`);
       document.documentElement.style.setProperty('--playfield-width', `${playfieldW}px`);
       document.documentElement.style.setProperty('--playfield-height', `${playfieldH}px`);
       document.documentElement.style.setProperty('--key-h', `${adaptiveKeyH}px`);
@@ -4774,7 +5036,7 @@
 
       if (boardPlateEl) {
         // Keep the far backplate visually square-ish to the board stack.
-        const targetPlateWidth = Math.max(playfieldW + 68, playfieldH + 56);
+        const targetPlateWidth = Math.max(playfieldW + 124, playfieldH + 102);
         boardPlateEl.style.width = `min(${Math.ceil(targetPlateWidth)}px, calc(100vw - 20px), calc(100% - 4px))`;
       }
 
@@ -5962,10 +6224,7 @@
 
   function setFocusSearchOpen(isOpen) {
     document.documentElement.setAttribute('data-focus-search-open', isOpen ? 'true' : 'false');
-    const strip = _el('theme-preview-strip');
-    if (strip) {
-      strip.classList.toggle('is-search-hidden', !!isOpen);
-    }
+    if (isOpen) closeQuickPopover('all');
     syncThemePreviewStripVisibility();
   }
 
@@ -9542,6 +9801,15 @@
       }
       return;
     }
+    const themePopoverOpen = !(_el('theme-preview-strip')?.classList.contains('hidden'));
+    const musicPopoverOpen = !(_el('quick-music-strip')?.classList.contains('hidden'));
+    if (themePopoverOpen || musicPopoverOpen) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeQuickPopover('all');
+      }
+      return;
+    }
     if (isMissionLabStandaloneMode()) return;
     const activeEl = document.activeElement;
     const shouldReleaseThemeNavFocus =
@@ -9659,6 +9927,29 @@
     if (!task || !choiceId) return;
     handleChallengeChoiceSelection(task, choiceId);
   });
+  _el('challenge-station-progress')?.addEventListener('click', (event) => {
+    const pill = event.target?.closest?.('button[data-challenge-station]');
+    if (!pill || !revealChallengeState) return;
+    const task = String(pill.dataset.challengeStation || '').trim();
+    if (!CHALLENGE_TASK_FLOW.includes(task)) return;
+    const firstIncomplete = getFirstIncompleteChallengeTask(revealChallengeState);
+    const lockedIndex = CHALLENGE_TASK_FLOW.indexOf(firstIncomplete);
+    const requestedIndex = CHALLENGE_TASK_FLOW.indexOf(task);
+    if (lockedIndex >= 0 && requestedIndex > lockedIndex) {
+      setChallengeFeedback('Finish the current station first to unlock the next one.', 'warn');
+      return;
+    }
+    revealChallengeState.activeTask = task;
+    renderRevealChallengeModal();
+  });
+  _el('challenge-next-station')?.addEventListener('click', () => {
+    if (!revealChallengeState || revealChallengeState.completedAt) return;
+    const nextTask = getNextChallengeTask(revealChallengeState, revealChallengeState.activeTask);
+    if (!nextTask) return;
+    revealChallengeState.activeTask = nextTask;
+    renderRevealChallengeModal();
+    setChallengeFeedback('Next station ready.', 'default');
+  });
   _el('challenge-hear-word')?.addEventListener('click', () => {
     cancelRevealNarration();
     const current = revealChallengeState?.result?.entry || entry();
@@ -9751,17 +10042,54 @@
   const CHALLENGE_REFLECTION_KEY = 'wq_v2_levelup_reflections_v1';
   const CHALLENGE_PROGRESS_KEY = 'wq_v2_mission_lab_progress_v1';
   const CHALLENGE_DRAFT_KEY = 'wq_v2_mission_lab_draft_v1';
-  const CHALLENGE_SPRINT_SECONDS = 90;
   const CHALLENGE_STRONG_SCORE_MIN = 75;
   const CHALLENGE_COMPLETE_LINES = Object.freeze([
     'Deep Dive complete. Pattern and meaning locked in.',
     'Deep Dive clear. You connected sound, meaning, and sentence use.',
     'Quest upgrade complete. Great transfer from decoding to comprehension.'
   ]);
+  const CHALLENGE_TASK_FLOW = Object.freeze(['listen', 'analyze', 'create']);
   const CHALLENGE_TASK_LABELS = Object.freeze({
-    listen: 'Pattern Pop',
+    listen: 'Sound Mark',
     analyze: 'Meaning Match',
-    create: 'Sentence Snap'
+    create: 'Use in Context'
+  });
+  const CHALLENGE_WORD_ROLE_META = Object.freeze({
+    noun: Object.freeze({
+      label: 'Noun',
+      kidLabel: 'naming word',
+      meaningLead: 'Pick the meaning that matches this naming word',
+      contextLead: 'Which sentence uses this naming word correctly?',
+      contextHelper: 'Check that the word names a person, place, thing, or idea.'
+    }),
+    verb: Object.freeze({
+      label: 'Verb',
+      kidLabel: 'action word',
+      meaningLead: 'Pick the meaning that matches this action word',
+      contextLead: 'Which sentence uses this action word correctly?',
+      contextHelper: 'Check that the word names an action that fits the sentence.'
+    }),
+    adjective: Object.freeze({
+      label: 'Adjective',
+      kidLabel: 'describing word',
+      meaningLead: 'Pick the meaning that matches this describing word',
+      contextLead: 'Which sentence uses this describing word correctly?',
+      contextHelper: 'Check that the word describes a noun naturally.'
+    }),
+    adverb: Object.freeze({
+      label: 'Adverb',
+      kidLabel: 'how word',
+      meaningLead: 'Pick the meaning that matches this how word',
+      contextLead: 'Which sentence uses this how word correctly?',
+      contextHelper: 'Check that the word tells how, when, or where an action happens.'
+    }),
+    general: Object.freeze({
+      label: 'Target Word',
+      kidLabel: 'word',
+      meaningLead: 'Pick the best meaning for',
+      contextLead: 'Which sentence uses this word correctly?',
+      contextHelper: 'Check which sentence sounds natural and keeps the meaning right.'
+    })
   });
   const CHALLENGE_RANKS = Object.freeze([
     Object.freeze({ minPoints: 0, label: 'Scout' }),
@@ -9830,11 +10158,6 @@
       if (total >= rank.minPoints) active = rank;
     });
     return active || CHALLENGE_RANKS[0];
-  }
-
-  function formatChallengeTimer(seconds) {
-    const safe = Math.max(0, Number(seconds) || 0);
-    return `${safe}s left`;
   }
 
   function createMissionAttemptId() {
@@ -10008,7 +10331,6 @@
     }
 
     revealChallengeState = nextState;
-    revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
     const activeElement = document.activeElement;
     challengeModalReturnFocusEl = activeElement instanceof HTMLElement && activeElement !== document.body
       ? activeElement
@@ -10016,7 +10338,6 @@
     renderRevealChallengeModal();
     _el('challenge-modal')?.classList.remove('hidden');
     focusChallengeModalStart();
-    startChallengeSprint();
     return true;
   }
 
@@ -10123,6 +10444,30 @@
 
   function normalizeChallengeWord(value) {
     return String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+  }
+
+  function inferChallengeWordRole(entryData, wordValue = '') {
+    const word = normalizeChallengeWord(wordValue || entryData?.word || '');
+    const definition = String(entryData?.definition || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const sentence = String(entryData?.sentence || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+    if (/(?:ly)$/.test(word) && !/(?:family|only|early|friendly)$/.test(word)) return 'adverb';
+    if (/^to\s+[a-z]/.test(definition)) return 'verb';
+    if (/\b(action|act|move|do|make|run|jump|write|read|carry|help)\b/.test(definition) && /\bto\b/.test(definition)) {
+      return 'verb';
+    }
+    if (/\b(describing|quality|kind of|full of|having|able to|like)\b/.test(definition)) return 'adjective';
+    if (/\b(person|place|thing|idea|someone|something)\b/.test(definition)) return 'noun';
+    if (/\b(quickly|slowly|carefully|quietly)\b/.test(sentence)) return 'adverb';
+    return 'general';
+  }
+
+  function getChallengeWordRoleMeta(entryData, wordValue = '') {
+    const roleKey = inferChallengeWordRole(entryData, wordValue);
+    return {
+      key: roleKey,
+      ...(CHALLENGE_WORD_ROLE_META[roleKey] || CHALLENGE_WORD_ROLE_META.general)
+    };
   }
 
   function escapeForRegExp(value) {
@@ -10257,7 +10602,7 @@
     };
   }
 
-  function buildDeepDiveMeaningTask(result) {
+  function buildDeepDiveMeaningTask(result, roleMeta) {
     const entryData = result?.entry || null;
     const word = String(result?.word || entryData?.word || '').trim().toUpperCase();
     const correctDefinition = String(entryData?.definition || '').replace(/\s+/g, ' ').trim();
@@ -10314,13 +10659,13 @@
     ]);
 
     return {
-      prompt: `Pick the best meaning for "${word}".`,
+      prompt: `Pick the meaning that matches this ${roleMeta?.kidLabel || 'word'}: "${word}".`,
       choices,
       distractorWords
     };
   }
 
-  function buildDeepDiveSyntaxTask(result, meaningTask) {
+  function buildDeepDiveSyntaxTask(result, meaningTask, roleMeta) {
     const entryData = result?.entry || null;
     const word = String(result?.word || entryData?.word || '').trim().toUpperCase();
     const normalizedWord = normalizeChallengeWord(word);
@@ -10350,7 +10695,7 @@
     };
 
     return {
-      prompt: `Which sentence uses "${word}" correctly?`,
+      prompt: `Which sentence uses this ${roleMeta?.kidLabel || 'word'} correctly: "${word}"?`,
       choices: shuffleList([
         { id: 'syntax-correct', label: compact(correctSentence), correct: true },
         { id: 'syntax-wrong', label: compact(wrongSentence), correct: false }
@@ -10359,10 +10704,18 @@
   }
 
   function buildDeepDiveState(result) {
+    const entryData = result?.entry || null;
+    const roleMeta = getChallengeWordRoleMeta(entryData, result?.word || entryData?.word || '');
     const patternTask = buildDeepDivePatternTask(result);
-    const meaningTask = buildDeepDiveMeaningTask(result);
-    const syntaxTask = buildDeepDiveSyntaxTask(result, meaningTask);
+    const meaningTask = buildDeepDiveMeaningTask(result, roleMeta);
+    const syntaxTask = buildDeepDiveSyntaxTask(result, meaningTask, roleMeta);
     return {
+      role: roleMeta,
+      titles: {
+        listen: `1. ${CHALLENGE_TASK_LABELS.listen}`,
+        analyze: `2. ${CHALLENGE_TASK_LABELS.analyze}`,
+        create: `3. ${CHALLENGE_TASK_LABELS.create}`
+      },
       prompts: {
         listen: patternTask.prompt,
         analyze: meaningTask.prompt,
@@ -10370,8 +10723,8 @@
       },
       helpers: {
         listen: patternTask.helper || 'Find the chunk that carries the key sound.',
-        analyze: 'Pick one meaning choice.',
-        create: 'Pick the sentence where the word fits naturally.'
+        analyze: `Choose the definition that fits this ${roleMeta.kidLabel}.`,
+        create: roleMeta.contextHelper || 'Pick the sentence where the word fits naturally.'
       },
       choices: {
         listen: patternTask.choices,
@@ -10389,6 +10742,104 @@
         create: 0
       }
     };
+  }
+
+  function getChallengeDoneCount(state = revealChallengeState) {
+    return CHALLENGE_TASK_FLOW
+      .reduce((count, task) => count + (state?.tasks?.[task] ? 1 : 0), 0);
+  }
+
+  function getFirstIncompleteChallengeTask(state = revealChallengeState) {
+    return CHALLENGE_TASK_FLOW.find((task) => !state?.tasks?.[task]) || '';
+  }
+
+  function getNextChallengeTask(state = revealChallengeState, fromTask = '') {
+    if (!state) return '';
+    const index = Math.max(0, CHALLENGE_TASK_FLOW.indexOf(fromTask || state.activeTask));
+    for (let i = index + 1; i < CHALLENGE_TASK_FLOW.length; i += 1) {
+      const task = CHALLENGE_TASK_FLOW[i];
+      if (!state.tasks?.[task]) return task;
+    }
+    for (let i = 0; i <= index; i += 1) {
+      const task = CHALLENGE_TASK_FLOW[i];
+      if (!state.tasks?.[task]) return task;
+    }
+    return '';
+  }
+
+  function setChallengeActiveTask(task, state = revealChallengeState) {
+    if (!state) return '';
+    const firstIncomplete = getFirstIncompleteChallengeTask(state);
+    const lockIndex = CHALLENGE_TASK_FLOW.indexOf(firstIncomplete);
+    if (CHALLENGE_TASK_FLOW.includes(task)) {
+      const requestedIndex = CHALLENGE_TASK_FLOW.indexOf(task);
+      state.activeTask = (lockIndex >= 0 && requestedIndex > lockIndex)
+        ? firstIncomplete
+        : task;
+      return state.activeTask;
+    }
+    const fallback = getFirstIncompleteChallengeTask(state) || CHALLENGE_TASK_FLOW[0];
+    state.activeTask = fallback;
+    return fallback;
+  }
+
+  function updateChallengeStationUI(state = revealChallengeState) {
+    const instruction = _el('challenge-instruction');
+    const nextBtn = _el('challenge-next-station');
+
+    if (!state) {
+      document.querySelectorAll('[data-challenge-task]').forEach((panel) => {
+        panel.classList.remove('is-active');
+        panel.setAttribute('aria-hidden', 'true');
+      });
+      const first = document.querySelector('[data-challenge-task="listen"]');
+      first?.classList.add('is-active');
+      first?.setAttribute('aria-hidden', 'false');
+      document.querySelectorAll('[data-challenge-station]').forEach((pill) => {
+        pill.classList.remove('is-active', 'is-complete');
+        pill.setAttribute('aria-selected', 'false');
+      });
+      const firstPill = document.querySelector('[data-challenge-station="listen"]');
+      firstPill?.classList.add('is-active');
+      firstPill?.setAttribute('aria-selected', 'true');
+      if (instruction) instruction.textContent = 'One station at a time. Complete all 3 stations to finish Deep Dive.';
+      if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.textContent = 'Next Station';
+      }
+      return;
+    }
+
+    const activeTask = setChallengeActiveTask(state.activeTask, state);
+    const activeIndex = Math.max(0, CHALLENGE_TASK_FLOW.indexOf(activeTask));
+    CHALLENGE_TASK_FLOW.forEach((task, index) => {
+      const panel = document.querySelector(`[data-challenge-task="${task}"]`);
+      const pill = document.querySelector(`[data-challenge-station="${task}"]`);
+      const isActive = index === activeIndex;
+      const isComplete = !!state.tasks?.[task];
+      if (panel) {
+        panel.classList.toggle('is-active', isActive);
+        panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+      }
+      if (pill) {
+        pill.classList.toggle('is-active', isActive);
+        pill.classList.toggle('is-complete', isComplete);
+        pill.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      }
+    });
+
+    const doneCount = getChallengeDoneCount(state);
+    const nextTask = getNextChallengeTask(state, activeTask);
+    if (instruction) {
+      instruction.textContent = doneCount >= 3
+        ? 'All 3 stations complete. Tap Finish Deep Dive.'
+        : `Station ${activeIndex + 1} of 3. Complete this station to unlock the next one.`;
+    }
+    if (nextBtn) {
+      const canAdvance = !!nextTask && !!state.tasks?.[activeTask] && !state.completedAt;
+      nextBtn.disabled = !canAdvance;
+      nextBtn.textContent = doneCount >= 3 ? 'All Stations Complete' : 'Next Station';
+    }
   }
 
   function getChallengeChoice(task, choiceId, stateOverride = revealChallengeState) {
@@ -10426,7 +10877,7 @@
     if (!choices.length) {
       const empty = document.createElement('div');
       empty.className = 'challenge-mission-helper';
-      empty.textContent = 'No choices available for this card yet.';
+      empty.textContent = 'No choices available for this station yet.';
       wrap.appendChild(empty);
       return;
     }
@@ -10458,21 +10909,33 @@
 
     state.deepDive.selected[task] = String(choice.id || '');
     state.deepDive.attempts[task] = Math.max(0, Number(state.deepDive.attempts[task]) || 0) + 1;
+    const wasComplete = !!state.tasks[task];
     setChallengeTaskComplete(task, !!choice.correct);
     syncChallengeResponseSummary(state);
-    renderRevealChallengeModal();
 
     if (!choice.correct) {
-      setChallengeFeedback('Close. Try another option on this card.', 'warn');
+      renderRevealChallengeModal();
+      setChallengeFeedback('Close. Try another option on this station.', 'warn');
       return;
     }
-    setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} complete.`, 'good');
+
+    if (!wasComplete) {
+      const nextTask = getNextChallengeTask(state, task);
+      if (nextTask) state.activeTask = nextTask;
+    }
+    renderRevealChallengeModal();
+    const remainingTask = getFirstIncompleteChallengeTask(state);
+    if (remainingTask) {
+      setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} complete. Next station unlocked.`, 'good');
+      return;
+    }
+    setChallengeFeedback('All 3 stations complete. Tap Finish Deep Dive.', 'good');
   }
 
   function computeChallengeScore(state) {
     if (!state) return { clarity: 0, evidence: 0, vocabulary: 0, total: 0 };
     const attempts = state.deepDive?.attempts || {};
-    const taskList = ['listen', 'analyze', 'create'];
+    const taskList = CHALLENGE_TASK_FLOW;
     const doneCount = taskList.reduce((count, task) => count + (state.tasks?.[task] ? 1 : 0), 0);
     const firstTryCount = taskList.reduce((count, task) => (
       count + (state.tasks?.[task] && Number(attempts?.[task] || 0) <= 1 ? 1 : 0)
@@ -10503,44 +10966,6 @@
     revealChallengeState.score = score;
     scoreLabel.textContent = `Deep Dive score: ${score.total}/100`;
     scoreDetail.textContent = `${band} band · Accuracy ${score.clarity} · Meaning ${score.evidence} · Syntax ${score.vocabulary}`;
-  }
-
-  function updateChallengeSprintUI() {
-    const timerEl = _el('challenge-sprint-timer');
-    const rankEl = _el('challenge-sprint-rank');
-    const streakEl = _el('challenge-sprint-streak');
-    if (!timerEl || !rankEl || !streakEl) return;
-    if (!revealChallengeState) {
-      timerEl.textContent = `${CHALLENGE_SPRINT_SECONDS}s left`;
-      timerEl.classList.remove('is-warning', 'is-expired');
-      const progress = loadChallengeProgress();
-      const rank = resolveChallengeRank(progress.points);
-      rankEl.textContent = `Rank: ${rank.label}`;
-      streakEl.textContent = `Streak: ${progress.streak}`;
-      return;
-    }
-    const progress = loadChallengeProgress();
-    const rank = resolveChallengeRank(progress.points);
-    rankEl.textContent = `Rank: ${rank.label}`;
-    streakEl.textContent = `Streak: ${progress.streak}`;
-
-    const endsAt = Number(revealChallengeState.sprintEndsAt || 0);
-    const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000));
-    timerEl.textContent = remaining > 0 ? formatChallengeTimer(remaining) : 'Time up';
-    timerEl.classList.toggle('is-warning', remaining > 0 && remaining <= 20);
-    timerEl.classList.toggle('is-expired', remaining <= 0);
-  }
-
-  function startChallengeSprint() {
-    if (!revealChallengeState) return;
-    if (!Number.isFinite(revealChallengeState.sprintEndsAt) || revealChallengeState.sprintEndsAt <= 0) {
-      revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
-    }
-    clearChallengeSprintTimer();
-    updateChallengeSprintUI();
-    challengeSprintTimer = setInterval(() => {
-      updateChallengeSprintUI();
-    }, 300);
   }
 
   function clearRevealAutoAdvanceTimer() {
@@ -10816,25 +11241,24 @@
     const fill = _el('challenge-progress-fill');
     const finishBtn = _el('challenge-finish-btn');
     if (!revealChallengeState) {
-      if (label) label.textContent = '0 / 3 cards complete';
+      if (label) label.textContent = '0 / 3 stations complete';
       if (fill) fill.style.width = '0%';
       if (finishBtn) finishBtn.disabled = true;
       if (finishBtn) finishBtn.textContent = 'Finish Deep Dive';
       setChallengeFeedback('');
       updateChallengeScoreUI();
-      updateChallengeSprintUI();
+      updateChallengeStationUI(null);
       return;
     }
-    const doneCount = ['listen', 'analyze', 'create']
-      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
-    if (label) label.textContent = `${doneCount} / 3 cards complete`;
+    const doneCount = getChallengeDoneCount(revealChallengeState);
+    if (label) label.textContent = `${doneCount} / 3 stations complete`;
     if (fill) fill.style.width = `${Math.round((doneCount / 3) * 100)}%`;
     if (finishBtn) {
-      finishBtn.disabled = doneCount < 2;
-      finishBtn.textContent = doneCount >= 2 ? `Finish Deep Dive (${doneCount}/3)` : 'Finish Deep Dive';
+      finishBtn.disabled = doneCount < 3;
+      finishBtn.textContent = doneCount >= 3 ? 'Finish Deep Dive (3/3)' : `Finish Deep Dive (${doneCount}/3)`;
     }
     updateChallengeScoreUI();
-    updateChallengeSprintUI();
+    updateChallengeStationUI(revealChallengeState);
   }
 
   function setChallengeTaskComplete(task, complete) {
@@ -10851,9 +11275,9 @@
     }
     if (normalized !== wasComplete) {
       if (normalized) {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} complete.`, 'good');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} complete.`, 'good');
       } else {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} still needs one more try.`, 'warn');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} still needs one more try.`, 'warn');
       }
     }
     saveChallengeDraft(revealChallengeState);
@@ -10870,10 +11294,16 @@
     const wordChip = _el('challenge-word-chip');
     const topicChip = _el('challenge-topic-chip');
     const gradeChip = _el('challenge-grade-chip');
+    const roleChip = _el('challenge-role-chip');
+    const listenTitle = _el('challenge-listen-title');
+    const analyzeTitle = _el('challenge-analyze-title');
+    const createTitle = _el('challenge-create-title');
     const listenPrompt = _el('challenge-listen-prompt');
     const analyzePrompt = _el('challenge-analyze-prompt');
     const createPrompt = _el('challenge-create-prompt');
     const listenHelper = _el('challenge-listen-helper');
+    const analyzeHelper = _el('challenge-analyze-helper');
+    const createHelper = _el('challenge-create-helper');
     const teacherLens = _el('challenge-teacher-lens');
     const deepDive = state.deepDive || buildDeepDiveState(state.result);
     state.deepDive = deepDive;
@@ -10882,10 +11312,16 @@
     if (wordChip) wordChip.textContent = `Word: ${state.word}`;
     if (topicChip) topicChip.textContent = `Quest focus: ${state.topic}`;
     if (gradeChip) gradeChip.textContent = `Grade: ${state.grade}`;
+    if (roleChip) roleChip.textContent = `Word type: ${deepDive?.role?.label || 'Target Word'} (${deepDive?.role?.kidLabel || 'word'})`;
+    if (listenTitle) listenTitle.textContent = deepDive?.titles?.listen || `1. ${CHALLENGE_TASK_LABELS.listen}`;
+    if (analyzeTitle) analyzeTitle.textContent = deepDive?.titles?.analyze || `2. ${CHALLENGE_TASK_LABELS.analyze}`;
+    if (createTitle) createTitle.textContent = deepDive?.titles?.create || `3. ${CHALLENGE_TASK_LABELS.create}`;
     if (listenPrompt) listenPrompt.textContent = deepDive.prompts.listen || `Tap the key sound chunk in "${state.word}".`;
     if (analyzePrompt) analyzePrompt.textContent = deepDive.prompts.analyze || `Pick the best meaning for "${state.word}".`;
     if (createPrompt) createPrompt.textContent = deepDive.prompts.create || `Choose the sentence that uses "${state.word}" correctly.`;
     if (listenHelper) listenHelper.textContent = deepDive.helpers.listen || '';
+    if (analyzeHelper) analyzeHelper.textContent = deepDive.helpers.analyze || '';
+    if (createHelper) createHelper.textContent = deepDive.helpers.create || '';
     if (teacherLens) teacherLens.textContent = `${challenge.teacher} Deep Dive score updates live for quick formative evidence.`;
 
     renderChallengeChoiceButtons('challenge-pattern-options', 'listen');
@@ -10898,7 +11334,7 @@
     setChallengeTaskComplete('create', !!state.tasks.create);
     const feedbackText = String(_el('challenge-live-feedback')?.textContent || '').trim();
     if (!feedbackText) {
-      setChallengeFeedback('Pick one answer on each card. Finish any 2 cards to bank a score.', 'default');
+      setChallengeFeedback('One station at a time. Complete all 3 stations to finish.', 'default');
     }
     updateChallengeProgressUI();
   }
@@ -10919,10 +11355,10 @@
       source: String(options.source || 'reveal').trim() || 'reveal',
       challenge,
       tasks: { listen: false, analyze: false, create: false },
+      activeTask: CHALLENGE_TASK_FLOW[0],
       responses: { analyze: '', create: '' },
       deepDive: buildDeepDiveState(result),
       score: { clarity: 0, evidence: 0, vocabulary: 0, total: 0 },
-      sprintEndsAt: 0,
       completedAt: 0
     };
     syncChallengeResponseSummary(state);
@@ -10954,9 +11390,9 @@
       updateChallengeProgressUI();
       return;
     }
-    meta.textContent = `${next.topic} · Grade ${next.grade} · ${CHALLENGE_SPRINT_SECONDS}s timed deep dive`;
+    meta.textContent = `${next.topic} · Grade ${next.grade} · 3 stations`;
     if (helper) {
-      helper.textContent = 'Optional extension only: finish any 2 of 3 quick cards for pattern, meaning, and sentence use.';
+      helper.textContent = 'Optional extension only: one station at a time. Finish all 3 to complete Deep Dive.';
     }
     wrap.classList.remove('hidden');
     setChallengeFeedback('');
@@ -11018,9 +11454,6 @@
       WQUI.showToast('Finish a word to unlock Deep Dive Quest.');
       return;
     }
-    if (!Number.isFinite(revealChallengeState.sprintEndsAt) || revealChallengeState.sprintEndsAt <= Date.now()) {
-      revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
-    }
     const activeElement = document.activeElement;
     challengeModalReturnFocusEl = activeElement instanceof HTMLElement && activeElement !== document.body
       ? activeElement
@@ -11029,7 +11462,6 @@
     renderRevealChallengeModal();
     _el('challenge-modal')?.classList.remove('hidden');
     focusChallengeModalStart();
-    startChallengeSprint();
   }
 
   function closeRevealChallengeModal(options = {}) {
@@ -11086,21 +11518,19 @@
     syncChallengeResponseSummary(revealChallengeState);
     const analyzeText = String(revealChallengeState.responses.analyze || '').trim();
     const createText = String(revealChallengeState.responses.create || '').trim();
-    const doneCount = ['listen', 'analyze', 'create']
-      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
+    const doneCount = getChallengeDoneCount(revealChallengeState);
     if (requireProgress && doneCount <= 0) {
-      setChallengeFeedback('Complete at least one Deep Dive card before saving.', 'warn');
+      setChallengeFeedback('Complete at least one Deep Dive station before saving.', 'warn');
       return false;
     }
     const score = computeChallengeScore(revealChallengeState);
     const scoreBand = resolveMissionScoreBand(score.total);
     const saveTs = Date.now();
     const completedAt = Math.max(0, Number(revealChallengeState.completedAt) || 0);
-    const completed = completedAt > 0 || doneCount >= 2;
+    const completed = completedAt > 0 || doneCount >= 3;
     const completionTs = completedAt || saveTs;
-    const sprintEndsAt = Math.max(0, Number(revealChallengeState.sprintEndsAt) || 0);
-    const secondsLeft = sprintEndsAt > 0 ? Math.max(0, Math.ceil((sprintEndsAt - completionTs) / 1000)) : 0;
-    const onTime = completed ? secondsLeft > 0 : false;
+    const onTime = completed;
+    const secondsLeft = 0;
     const record = {
       attemptId: String(revealChallengeState.attemptId || ''),
       source: String(revealChallengeState.source || 'reveal').trim() || 'reveal',
@@ -11132,10 +11562,9 @@
   function finishRevealChallenge() {
     if (!revealChallengeState) return;
     if (revealChallengeState.completedAt) return;
-    const doneCount = ['listen', 'analyze', 'create']
-      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
-    if (doneCount < 2) {
-      setChallengeFeedback('Complete at least 2 Deep Dive cards first.', 'warn');
+    const doneCount = getChallengeDoneCount(revealChallengeState);
+    if (doneCount < 3) {
+      setChallengeFeedback('Complete all 3 Deep Dive stations first.', 'warn');
       return;
     }
     const finishBtn = _el('challenge-finish-btn');
@@ -11143,13 +11572,7 @@
     revealChallengeState.completedAt = Date.now();
     saveRevealChallengeResponses({ requireText: false, silent: true });
     const score = computeChallengeScore(revealChallengeState);
-    const secondsLeft = Math.max(
-      0,
-      Math.ceil((Math.max(0, Number(revealChallengeState.sprintEndsAt) || 0) - revealChallengeState.completedAt) / 1000)
-    );
-    const finishedOnTime = secondsLeft > 0;
-    let pointsEarned = Math.max(8, Math.round(score.total / 10) + (doneCount * 3));
-    if (!finishedOnTime) pointsEarned = Math.max(6, pointsEarned - 4);
+    const pointsEarned = Math.max(8, Math.round(score.total / 10) + (doneCount * 3));
     const progress = loadChallengeProgress();
     progress.points += pointsEarned;
     const today = localDayKey();
@@ -11160,12 +11583,8 @@
     saveChallengeProgress(progress);
     const rank = resolveChallengeRank(progress.points);
     const line = pickRandom(CHALLENGE_COMPLETE_LINES) || 'Deep Dive complete.';
-    const timingLine = finishedOnTime
-      ? 'On-time sprint bonus secured.'
-      : 'Time expired, but your Deep Dive still counts.';
-    setChallengeFeedback(`${line} +${pointsEarned} points · Rank ${rank.label}. ${timingLine}`, 'good');
+    setChallengeFeedback(`${line} +${pointsEarned} points · Rank ${rank.label}.`, 'good');
     clearChallengeDraft(revealChallengeState);
-    updateChallengeSprintUI();
     renderSessionSummary();
     setTimeout(() => {
       closeRevealChallengeModal({ silent: true });

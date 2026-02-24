@@ -8,6 +8,7 @@
     "audio:manifest": "node scripts/build-audio-manifest.js",
     "audio:manifest:check": "node scripts/check-audio-manifest-sync.js",
     "music:focus-pack": "node scripts/generate-focus-flow-pack.js",
+    "music:study-pack": "node scripts/generate-chill-study-beats-pack.js",
     "music:catalog": "node scripts/sync-music-catalog.js",
     "offline:check": "node scripts/check-offline-contract.js",
     "release:check": "npm run audio:manifest:check && npm run offline:check && npm run grade:check && npm run hud:check && npm run scope:strict",

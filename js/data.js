@@ -7,6 +7,7 @@
 
 const WQData = (() => {
   const VALID_GRADE_BANDS = new Set(['K-2', 'G3-5', 'G6-8', 'G9-12']);
+  const GRADE_BAND_ORDER = Object.freeze(['K-2', 'G3-5', 'G6-8', 'G9-12']);
   const GRADE_BAND_ALIASES = new Map([
     ['K2', 'K-2'],
     ['K-2', 'K-2'],
@@ -47,6 +48,14 @@ const WQData = (() => {
     if (VALID_GRADE_BANDS.has(raw)) return raw;
     const key = raw.toUpperCase().replace(/\s+/g, '');
     return GRADE_BAND_ALIASES.get(key) || '';
+  }
+
+  function _expandGradeBands(requestedBand) {
+    const normalized = _normalizeGradeBand(requestedBand);
+    if (!normalized) return [];
+    const idx = GRADE_BAND_ORDER.indexOf(normalized);
+    if (idx < 0) return [normalized];
+    return GRADE_BAND_ORDER.slice(0, idx + 1);
   }
 
   // ─── Normalise NEW JSON format ─────────────────────────────────────
@@ -180,7 +189,17 @@ const WQData = (() => {
     let pool = [..._playable];
 
     if (opts.gradeBand && opts.gradeBand !== 'all') {
-      pool = pool.filter(w => _entries[w].grade_band === opts.gradeBand);
+      const normalizedBand = _normalizeGradeBand(opts.gradeBand);
+      if (normalizedBand) {
+        if (opts.includeLowerBands) {
+          const allowed = new Set(_expandGradeBands(normalizedBand));
+          pool = pool.filter((w) => allowed.has(_entries[w].grade_band));
+        } else {
+          pool = pool.filter((w) => _entries[w].grade_band === normalizedBand);
+        }
+      } else {
+        pool = [];
+      }
     }
     if (opts.length && opts.length !== 'any') {
       const len = parseInt(opts.length, 10);

@@ -69,7 +69,7 @@ function parseTrackMetadata(absPath) {
   const ext = path.extname(absPath).toLowerCase();
   if (!SUPPORTED_EXTENSIONS.has(ext)) return null;
   const relPath = path.relative(ROOT, absPath).split(path.sep).join('/');
-  const src = `/${relPath}`;
+  const src = `./${relPath}`;
   const filename = path.basename(absPath, ext);
   const [slugPart = 'track', ...metaParts] = filename.split('__');
   const slug = sanitizeToken(slugPart) || 'track';

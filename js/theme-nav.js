@@ -216,6 +216,7 @@
 
   function syncTeacherHubSelectsFromSettings() {
     const mappings = [
+      ['teacher-grade-band', 's-grade'],
       ['teacher-team-mode', 's-team-mode'],
       ['teacher-team-count', 's-team-count'],
       ['teacher-turn-timer', 's-turn-timer'],
@@ -239,6 +240,7 @@
   function bindTeacherHubControlSync() {
     if (document.body.dataset.wqTeacherHubControlBound === '1') return;
     const mappings = [
+      ['teacher-grade-band', 's-grade'],
       ['teacher-team-mode', 's-team-mode'],
       ['teacher-team-count', 's-team-count'],
       ['teacher-turn-timer', 's-turn-timer'],

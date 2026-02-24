@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Atkinson Hyperlegible: distinct I/l/1, designed for low-vision readers -->
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style/modes.css?v=20260223c">
-  <link rel="stylesheet" href="style/themes.css?v=20260224u">
-  <link rel="stylesheet" href="style/components.css?v=20260224aa">
+  <link rel="stylesheet" href="style/modes.css?v=20260223d">
+  <link rel="stylesheet" href="style/themes.css?v=20260224v">
+  <link rel="stylesheet" href="style/components.css?v=20260224ag">
 </head>
 <body>
 
@@ -21,28 +21,51 @@
     <div class="header-main-row">
       <div class="logo">Word<span>Quest</span></div>
       <div class="header-right">
-        <button id="teacher-panel-btn" class="icon-btn" type="button" aria-label="Teacher Hub" title="Teacher Hub">
-          ✏️
-        </button>
-        <button id="case-toggle-btn" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Toggle letter case" title="Toggle letter case">
-          Aa
-        </button>
-        <button id="keyboard-layout-toggle" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Cycle keyboard layout" title="Cycle keyboard layout">
-          ⌨
-        </button>
-        <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
-        <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch listening mode">
-          Audio Game: Off
-        </button>
-        <button id="phonics-clue-open-btn" class="header-quick-btn" type="button" title="Open clue card">
-          Clue
-        </button>
-        <button id="new-game-btn">New Word</button>
+        <div class="header-icon-controls">
+          <button id="teacher-panel-btn" class="icon-btn" type="button" aria-label="Teacher Hub" title="Teacher Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M3 5h18v10H3z"/>
+              <path d="M12 15v5"/>
+              <path d="M8 20h8"/>
+              <circle cx="8" cy="10" r="2"/>
+              <path d="M8 12v2"/>
+              <path d="M13 10h5"/>
+            </svg>
+          </button>
+          <button id="case-toggle-btn" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Toggle letter case">
+            Aa
+          </button>
+          <button id="keyboard-layout-toggle" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Cycle keyboard layout">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="3" y="6" width="18" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M6 13h1M9 13h1M12 13h1M15 13h1M6 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button id="theme-dock-toggle-btn" class="icon-btn quick-dock-toggle-btn" type="button" aria-haspopup="dialog" aria-controls="theme-preview-strip" aria-expanded="false" aria-label="Open theme controls" title="Theme controls">
+            🎨
+          </button>
+          <button id="music-dock-toggle-btn" class="icon-btn quick-dock-toggle-btn" type="button" aria-haspopup="dialog" aria-controls="quick-music-strip" aria-expanded="false" aria-label="Open music controls" title="Music controls">
+            ♪
+          </button>
+          <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="header-quick-controls">
+          <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch listening mode">
+            Mode: Classic
+          </button>
+          <button id="phonics-clue-open-btn" class="header-quick-btn" type="button" title="Open clue card">
+            Clue
+          </button>
+          <button id="mission-lab-nav-btn" class="header-quick-btn mission-lab-nav-btn hidden" type="button" aria-pressed="false" aria-label="Toggle Deep Dive mode" title="Open Deep Dive as a standalone activity">
+            Deep Dive
+          </button>
+          <button id="new-game-btn">New Word</button>
+        </div>
       </div>
     </div>
   </header>
@@ -82,8 +105,11 @@
       </select>
     </div>
   </div>
-  <div id="theme-preview-strip" class="theme-preview-strip quick-media-dock hidden" role="region" aria-label="Quick style controls">
+  <div id="theme-preview-strip" class="quick-popover theme-preview-strip quick-media-dock hidden" role="dialog" aria-label="Theme controls" aria-hidden="true">
     <div id="theme-preview-slot" class="theme-preview-slot quick-theme-cluster" aria-label="Theme selector"></div>
+    <button id="theme-preview-done" class="quick-popover-done" type="button" aria-label="Close theme controls">Done</button>
+  </div>
+  <div id="quick-music-strip" class="quick-popover quick-music-popover hidden" role="dialog" aria-label="Music controls" aria-hidden="true">
     <div class="quick-music-cluster" role="group" aria-label="Music controls">
       <button id="quick-music-prev" class="theme-preview-music quick-music-step" type="button" aria-label="Previous music vibe" title="Previous vibe">⏮</button>
       <button id="quick-music-toggle" class="theme-preview-music theme-preview-music-icon" type="button" aria-pressed="false" aria-label="Play music" title="Play music">▶</button>
@@ -95,6 +121,7 @@
       </label>
       <span id="quick-music-label" class="theme-preview-music-label" aria-live="polite">Stopped</span>
     </div>
+    <button id="quick-music-done" class="quick-popover-done" type="button" aria-label="Close music controls">Done</button>
   </div>
   <div id="next-action-line" class="next-action-line hidden" aria-live="polite"></div>
   <div id="classroom-turn-line" class="classroom-turn-line hidden" aria-live="polite"></div>
@@ -115,21 +142,22 @@
       </div>
 
       <section id="settings-quick" class="settings-section is-active" role="tabpanel" aria-labelledby="settings-tab-quick" data-settings-section="quick">
-        <div class="settings-fun-intro">Simple essentials only. Teacher tools moved to the teacher hub icon on the main page.</div>
+        <div class="settings-fun-intro">Gameplay essentials: word length, max guesses, and keyboard style. Grade band and class controls live in Teacher Hub.</div>
         <div class="settings-quick-jump" role="group" aria-label="Jump to settings section">
           <button class="settings-jump-chip" type="button" data-settings-jump="settings-group-core">Gameplay</button>
         </div>
         <details id="settings-group-core" class="settings-group" open>
           <summary>Gameplay</summary>
           <div class="settings-group-grid">
-            <div class="setting-row"><label>Grade Band<select id="s-grade"><option value="all">All grades (K-2 safe)</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
+            <div class="setting-row setting-row-internal hidden" aria-hidden="true"><label>Grade Band<select id="s-grade"><option value="all">All grades (K-2 safe)</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
             <div class="setting-row"><label>Word Length<select id="s-length"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="any">Any</option></select></label></div>
             <div class="setting-row"><label>Max Guesses<select id="s-guesses"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option></select></label></div>
-            <div class="setting-row"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
-            <div class="setting-row"><label>Listening Mode<select id="s-play-style"><option value="detective" selected>Off (Detective uses sentence clue)</option><option value="listening">On (Word + Meaning audio)</option></select></label></div>
-            <div class="setting-row"><label>Keyboard Layout<select id="s-keyboard-layout"><option value="standard" selected>QWERTY</option><option value="alphabet">Alphabet</option><option value="alphabet-arc">Alphabet Arc</option><option value="wilson">Wilson Sound Cards</option></select></label></div>
-            <div class="setting-row"><label>Keyboard Style<select id="s-key-style"><option value="bubble" selected>Bubble</option><option value="classic">Classic</option><option value="arcade">Arcade</option><option value="soundcard">Sound Cards</option><option value="typewriter">Typewriter</option><option value="pebble">Pebble</option></select></label></div>
-            <div class="setting-row setting-row-full setting-row-help">Listening mode gives direct Word + Meaning support. Detective mode keeps sentence-only clue hints.</div>
+            <div class="setting-row setting-row-full"><label>Keyboard Option<select id="s-keyboard-preset"><option value="qwerty-bubble" selected>QWERTY · Puffy Rounded</option><option value="qwerty-oval">QWERTY · Oval / Typewriter</option><option value="alphabet-bubble">Alphabet · Puffy Rounded</option><option value="alphabet-oval">Alphabet · Oval / Typewriter</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Classic Wordle (color + clue strategy)</option><option value="listening">Listening Challenge (hear + spell)</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Keyboard Layout<select id="s-keyboard-layout"><option value="standard" selected>QWERTY</option><option value="alphabet">Alphabet</option><option value="alphabet-arc">Alphabet Arc</option><option value="wilson">Wilson Sound Cards</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Keyboard Style<select id="s-key-style"><option value="bubble" selected>Bubble</option><option value="classic">Classic</option><option value="arcade">Arcade</option><option value="soundcard">Sound Cards</option><option value="typewriter">Typewriter</option><option value="pebble">Pebble</option></select></label></div>
+            <div class="setting-row setting-row-full setting-row-help hidden" aria-hidden="true">Listening mode gives direct Word + Meaning support. Detective mode keeps sentence-only clue hints.</div>
             <div class="setting-row setting-row-full quick-preset-row hidden">
               <label class="setting-checkbox-label">
                 <input id="s-confidence-coaching" type="checkbox" checked>
@@ -137,7 +165,7 @@
               </label>
               <div class="setting-checkbox-help">Adds low-pressure first-round guidance and starter prompts to reduce freeze-ups.</div>
             </div>
-            <details id="settings-lesson-pack" class="setting-row setting-row-full settings-subgroup">
+            <details id="settings-lesson-pack" class="setting-row setting-row-full settings-subgroup hidden" aria-hidden="true">
               <summary>Curriculum Lesson Packs (optional)</summary>
               <div class="settings-subgroup-body">
                 <div class="lesson-pack-grid">
@@ -164,7 +192,7 @@
                 </div>
               </div>
             </details>
-            <div id="focus-grade-note" class="setting-row setting-row-full setting-row-help">Classic uses Grade Band + Word Length. Subject Focus presets both domain and grade.</div>
+            <div id="focus-grade-note" class="setting-row setting-row-full setting-row-help hidden" aria-hidden="true">Classic uses Grade Band + Word Length. Subject Focus presets both domain and grade.</div>
           </div>
         </details>
 
@@ -503,6 +531,15 @@
       </div>
       <div class="teacher-panel-body">
         <div class="teacher-panel-grid">
+          <label>Grade Band
+            <select id="teacher-grade-band">
+              <option value="all" selected>All grades (K-2 safe)</option>
+              <option value="K-2">K–2</option>
+              <option value="G3-5">Grades 3–5</option>
+              <option value="G6-8">Grades 6–8</option>
+              <option value="G9-12">Grades 9–12</option>
+            </select>
+          </label>
           <label>Team Turns
             <select id="teacher-team-mode">
               <option value="off" selected>Off</option>
@@ -532,7 +569,7 @@
             </select>
           </label>
         </div>
-        <p class="teacher-panel-note">Quick classroom controls are here so settings stays simple for demo and student flow.</p>
+        <p class="teacher-panel-note">Set grade band first, then pick a quest track. Classroom controls stay here so settings can stay simple.</p>
 
         <section id="wq-teacher-tools" class="wq-teacher-tools">
           <div class="wq-teacher-heading-row">
@@ -625,6 +662,7 @@
       </div>
 
       <div class="play-support-row">
+        <div id="play-style-banner" class="play-style-banner hidden" role="status" aria-live="polite"></div>
         <!-- Hear Word remains visible during gameplay -->
         <div class="gameplay-audio">
           <button id="focus-hint-toggle" class="audio-ghost-btn focus-hint-toggle" type="button" aria-pressed="false" title="Reveal a mystery clue">
@@ -632,7 +670,7 @@
           </button>
           <button class="audio-ghost-btn" id="g-hear-word">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            Hear Word
+            <span id="g-hear-word-label">Hear Word</span>
           </button>
         </div>
       </div>
@@ -646,7 +684,10 @@
 
   <div id="toast" role="alert" aria-live="polite"></div>
   <div id="hint-clue-card" class="hint-clue-card hidden" role="dialog" aria-label="Phonics clue">
-    <div id="hint-clue-title" class="hint-clue-title">Here is your clue</div>
+    <div class="hint-clue-head">
+      <div id="hint-clue-title" class="hint-clue-title">Here is your clue</div>
+      <button id="hint-clue-close-icon" class="hint-clue-close-icon" type="button" aria-label="Close clue">✕</button>
+    </div>
     <div id="hint-clue-message" class="hint-clue-message"></div>
     <div id="hint-clue-examples" class="hint-clue-examples"></div>
     <div class="hint-clue-actions">
@@ -746,20 +787,21 @@
         <button id="challenge-modal-close" class="close-btn" aria-label="Close">✕</button>
       </div>
       <div class="modal-body challenge-modal-body">
-        <div class="challenge-sprint-row" aria-live="polite">
-          <span id="challenge-sprint-timer" class="challenge-sprint-chip">90s left</span>
-          <span id="challenge-sprint-rank" class="challenge-sprint-chip">Rank: Scout</span>
-          <span id="challenge-sprint-streak" class="challenge-sprint-chip">Streak: 0</span>
-        </div>
         <div class="challenge-meta-row" aria-live="polite">
           <span id="challenge-word-chip" class="challenge-meta-chip">Word: —</span>
           <span id="challenge-topic-chip" class="challenge-meta-chip">Quest focus: —</span>
           <span id="challenge-grade-chip" class="challenge-meta-chip">Grade: —</span>
+          <span id="challenge-role-chip" class="challenge-meta-chip">Word type: —</span>
         </div>
-        <p class="challenge-instruction">Complete the three quick cards to lock in decoding and meaning.</p>
+        <p id="challenge-instruction" class="challenge-instruction">One station at a time. Complete all 3 stations to finish Deep Dive.</p>
+        <div id="challenge-station-progress" class="challenge-station-progress" role="tablist" aria-label="Deep Dive stations">
+          <button class="challenge-station-pill is-active" type="button" data-challenge-station="listen" role="tab" aria-selected="true">1. Sound Mark</button>
+          <button class="challenge-station-pill" type="button" data-challenge-station="analyze" role="tab" aria-selected="false">2. Meaning Match</button>
+          <button class="challenge-station-pill" type="button" data-challenge-station="create" role="tab" aria-selected="false">3. Use in Context</button>
+        </div>
         <div class="challenge-mission-grid">
-          <section class="challenge-mission" data-challenge-task="listen">
-            <h3>1. Pattern Pop</h3>
+          <section class="challenge-mission is-active" data-challenge-task="listen" role="tabpanel" aria-hidden="false">
+            <h3 id="challenge-listen-title">1. Sound Mark</h3>
             <p id="challenge-listen-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-pattern-options" class="challenge-choice-grid" role="group" aria-label="Pattern choices"></div>
             <p id="challenge-listen-helper" class="challenge-mission-helper"></p>
@@ -769,24 +811,26 @@
             </div>
             <div id="challenge-status-listen" class="challenge-task-status">Pending</div>
           </section>
-          <section class="challenge-mission" data-challenge-task="analyze">
-            <h3>2. Meaning Match</h3>
+          <section class="challenge-mission" data-challenge-task="analyze" role="tabpanel" aria-hidden="true">
+            <h3 id="challenge-analyze-title">2. Meaning Match</h3>
             <p id="challenge-analyze-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-meaning-options" class="challenge-choice-grid challenge-choice-grid-meaning" role="group" aria-label="Meaning choices"></div>
+            <p id="challenge-analyze-helper" class="challenge-mission-helper"></p>
             <div class="challenge-mini-actions">
               <button id="challenge-hear-sentence" class="audio-btn" type="button">💬 Hear Sentence</button>
             </div>
             <div id="challenge-status-analyze" class="challenge-task-status">Pending</div>
           </section>
-          <section class="challenge-mission" data-challenge-task="create">
-            <h3>3. Sentence Snap</h3>
+          <section class="challenge-mission" data-challenge-task="create" role="tabpanel" aria-hidden="true">
+            <h3 id="challenge-create-title">3. Use in Context</h3>
             <p id="challenge-create-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-syntax-options" class="challenge-choice-grid challenge-choice-grid-syntax" role="group" aria-label="Sentence choices"></div>
+            <p id="challenge-create-helper" class="challenge-mission-helper"></p>
             <div id="challenge-status-create" class="challenge-task-status">Pending</div>
           </section>
         </div>
         <div class="challenge-progress-wrap" aria-live="polite">
-          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 cards complete</div>
+          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 stations complete</div>
           <div class="challenge-progress-track"><div id="challenge-progress-fill" class="challenge-progress-fill"></div></div>
         </div>
         <div class="challenge-score-wrap" aria-live="polite">
@@ -794,6 +838,7 @@
           <div id="challenge-score-detail" class="challenge-score-detail">Accuracy -- · Meaning -- · Syntax --</div>
         </div>
         <div class="challenge-actions">
+          <button id="challenge-next-station" class="audio-btn" type="button" disabled>Next Station</button>
           <button id="challenge-save-reflection" class="audio-btn" type="button">Save Deep Dive</button>
           <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish Deep Dive</button>
         </div>
@@ -895,23 +940,61 @@
         <button id="first-run-skip-btn" class="quick-action-btn first-run-skip-btn" type="button" aria-label="Close tutorial">Got it</button>
       </div>
       <div class="modal-body">
-        <p>Guess the secret word in 6 tries. Tile colors tell you what to change next:</p>
-        <div class="first-run-tile-legend" aria-label="Tile color legend">
-          <div class="first-run-tile-item">
-            <span class="first-run-tile first-run-tile-correct">A</span>
-            <span>Green: right letter, right spot</span>
+        <p class="first-run-lead">Pick your grade, choose a game style, then crack the word in 6 tries.</p>
+        <label class="first-run-grade-row" for="first-run-grade-band">
+          <span>Start with grade band</span>
+          <select id="first-run-grade-band">
+            <option value="all">All grades (K-2 safe)</option>
+            <option value="K-2">K–2</option>
+            <option value="G3-5">Grades 3–5</option>
+            <option value="G6-8">Grades 6–8</option>
+            <option value="G9-12">Grades 9–12</option>
+          </select>
+          <span class="first-run-grade-note">You can change grade later in Teacher Hub.</span>
+        </label>
+        <div class="first-run-mode-row" role="group" aria-label="Choose game style">
+          <button id="first-run-mode-detective" class="first-run-mode-btn" type="button" data-play-style-choice="detective" aria-pressed="false">🔎 Classic</button>
+          <button id="first-run-mode-listening" class="first-run-mode-btn" type="button" data-play-style-choice="listening" aria-pressed="false">🎧 Listening</button>
+        </div>
+        <p id="first-run-mode-help" class="first-run-mode-help">Classic mode: use color feedback and clue support.</p>
+        <div class="first-run-wordle-legend" aria-label="Tile color legend">
+          <div class="first-run-wordle-item">
+            <div class="first-run-wordle-row" aria-hidden="true">
+              <span class="first-run-wordle-tile is-correct">W</span>
+              <span class="first-run-wordle-tile">E</span>
+              <span class="first-run-wordle-tile">A</span>
+              <span class="first-run-wordle-tile">R</span>
+              <span class="first-run-wordle-tile">Y</span>
+            </div>
+            <span><b>Green</b>: letter is in the word and in the correct spot.</span>
           </div>
-          <div class="first-run-tile-item">
-            <span class="first-run-tile first-run-tile-present">A</span>
-            <span>Yellow: right letter, wrong spot</span>
+          <div class="first-run-wordle-item">
+            <div class="first-run-wordle-row" aria-hidden="true">
+              <span class="first-run-wordle-tile">P</span>
+              <span class="first-run-wordle-tile">I</span>
+              <span class="first-run-wordle-tile is-present">L</span>
+              <span class="first-run-wordle-tile">O</span>
+              <span class="first-run-wordle-tile">T</span>
+            </div>
+            <span><b>Yellow</b>: letter is in the word but in the wrong spot.</span>
           </div>
-          <div class="first-run-tile-item">
-            <span class="first-run-tile first-run-tile-absent">A</span>
-            <span>Gray: letter is not in this word</span>
+          <div class="first-run-wordle-item">
+            <div class="first-run-wordle-row" aria-hidden="true">
+              <span class="first-run-wordle-tile">V</span>
+              <span class="first-run-wordle-tile">A</span>
+              <span class="first-run-wordle-tile">G</span>
+              <span class="first-run-wordle-tile is-absent">U</span>
+              <span class="first-run-wordle-tile">E</span>
+            </div>
+            <span><b>Gray</b>: letter is not in the word.</span>
           </div>
         </div>
-        <p class="setting-checkbox-help first-run-help">Tip: tap <b>Clue</b> for a phonics focus hint with marked examples.</p>
-        <button id="first-run-start-btn" class="quick-action-btn first-run-start-btn" type="button">Start Playing</button>
+        <p class="setting-checkbox-help first-run-help">Tip: tap <b>Clue</b> anytime for quick support.</p>
+        <label class="first-run-hide-row">
+          <input id="first-run-hide-again" type="checkbox" checked>
+          <span>Don’t show this welcome card again</span>
+        </label>
+        <button id="first-run-start-btn" class="quick-action-btn first-run-start-btn" type="button">Start Quest</button>
       </div>
     </div>
   </div>
@@ -962,12 +1045,12 @@
 
   <script src="data/words-inline.js"></script>
   <script src="data/engagement-boosts.js?v=20260222c"></script>
-  <script src="js/data.js?v=20260222c"></script>
+  <script src="js/data.js?v=20260224b"></script>
   <script src="js/audio.js?v=20260224a"></script>
-  <script src="js/game.js?v=20260223g"></script>
-  <script src="js/ui.js?v=20260223f"></script>
+  <script src="js/game.js?v=20260224h"></script>
+  <script src="js/ui.js?v=20260224h"></script>
   <script src="js/theme-registry.js?v=20260223c"></script>
-  <script src="js/app.js?v=20260224z"></script>
+  <script src="js/app.js?v=20260224ag"></script>
   <script src="js/theme-nav.js?v=20260224e"></script>
 </body>
 </html>

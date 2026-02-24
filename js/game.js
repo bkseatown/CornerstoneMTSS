@@ -112,9 +112,31 @@ const WQGame = (() => {
     const gradeBand = opts.gradeBand || localStorage.getItem('wq_v2_grade_band') || 'all';
     const lengthPref = opts.length   || localStorage.getItem('wq_v2_length')     || 'any';
     const phonics    = opts.phonics  || 'all';
-    const scope      = `${gradeBand}:${lengthPref}:${phonics}`;
-
-    const pool = WQData.getPlayableWords({ gradeBand, length: lengthPref, phonics });
+    const normalizedPhonics = String(phonics || '').trim().toLowerCase();
+    const includeLowerBands = normalizedPhonics !== 'all' && !normalizedPhonics.startsWith('vocab-');
+    let effectiveLengthPref = lengthPref;
+    let pool = WQData.getPlayableWords({
+      gradeBand,
+      length: lengthPref,
+      phonics,
+      includeLowerBands
+    });
+    if (!pool.length && effectiveLengthPref !== 'any' && normalizedPhonics !== 'all') {
+      const relaxed = WQData.getPlayableWords({
+        gradeBand,
+        length: 'any',
+        phonics,
+        includeLowerBands
+      });
+      if (relaxed.length) {
+        pool = relaxed;
+        effectiveLengthPref = 'any';
+      }
+    }
+    const scopeGrade = includeLowerBands && gradeBand !== 'all'
+      ? `${gradeBand}+down`
+      : gradeBand;
+    const scope      = `${scopeGrade}:${effectiveLengthPref}:${phonics}`;
     if (!pool.length) {
       const hasFilters = gradeBand !== 'all' || lengthPref !== 'any' || phonics !== 'all';
       if (hasFilters) {
