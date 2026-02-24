@@ -1210,9 +1210,11 @@
     const enabled = mode !== 'off';
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     const listening = playStyle === 'listening';
-    toggle.textContent = 'Hint';
+    toggle.textContent = listening ? 'Phonics Hint' : 'Detective Hint';
     toggle.setAttribute('aria-pressed', 'false');
-    toggle.setAttribute('aria-label', listening ? 'Open optional phonics hint for listening and encoding support' : 'Open optional detective hint');
+    toggle.setAttribute('aria-label', listening
+      ? 'Open optional phonics hint to support listening and encoding'
+      : 'Open optional detective hint');
     toggle.setAttribute('title', enabled
       ? (listening
           ? 'Optional phonics hint. Primary goal is listen, map sounds, and spell.'
@@ -1288,10 +1290,10 @@
     }
     const hearWordBtn = _el('g-hear-word');
     const hearWordLabel = _el('g-hear-word-label');
-    if (hearWordLabel) hearWordLabel.textContent = listeningMode ? 'Replay Audio' : 'Hear Word';
+    if (hearWordLabel) hearWordLabel.textContent = listeningMode ? 'Replay Word' : 'Hear Word';
     if (hearWordBtn) {
-      hearWordBtn.setAttribute('title', listeningMode ? 'Replay target word audio' : 'Hear target word audio');
-      hearWordBtn.setAttribute('aria-label', listeningMode ? 'Replay target word audio' : 'Hear target word audio');
+      hearWordBtn.setAttribute('title', listeningMode ? 'Replay the target word audio' : 'Hear target word audio');
+      hearWordBtn.setAttribute('aria-label', listeningMode ? 'Replay the target word audio' : 'Hear target word audio');
     }
     if (!gameplayAudio) {
       syncHintToggleUI(getHintMode());
@@ -1849,26 +1851,27 @@
   }
 
   function buildFriendlyHintMessage(category, sourceLabel) {
-    const focusText = sourceLabel ? `We are practicing ${sourceLabel}. ` : '';
+    const cleanSource = String(sourceLabel || '').replace(/\s+/g, ' ').trim();
+    const focusText = cleanSource ? `Focus: ${cleanSource}. ` : '';
     const ruleByCategory = Object.freeze({
-      cvc: 'Say each sound in order: first, middle, last.',
-      digraph: 'Look for two letters that make one sound.',
-      trigraph: 'Watch for a three-letter sound team.',
-      cvce: 'Look for a magic e at the end changing the vowel sound.',
-      vowel_team: 'Look for two vowels teaming up in the word.',
-      r_controlled: 'Look for a vowel with r that changes the vowel sound.',
-      diphthong: 'Watch for a sliding vowel sound like oi/oy or ou/ow.',
-      welded: 'Look for a welded chunk like -ang or -ing.',
-      floss: 'Listen for a short vowel before double ff/ll/ss/zz.',
-      prefix: 'Spot the beginning chunk first, then read the base word.',
-      suffix: 'Find the ending chunk, then blend the whole word.',
-      multisyllable: 'Split into chunks, read each chunk, then blend.',
-      compound: 'Find the two smaller words and join them.',
-      subject: 'Use the sentence clue first, then map the sounds to spell.',
-      general: 'Use one sound clue at a time, then adjust with tile colors.'
+      cvc: 'Say the sounds: first, middle, last.',
+      digraph: 'Find the 2-letter sound team first.',
+      trigraph: 'Find the 3-letter sound team first.',
+      cvce: 'Look for magic e at the end.',
+      vowel_team: 'Find the vowel team and keep it together.',
+      r_controlled: 'Find the vowel + r chunk and say it as one sound.',
+      diphthong: 'Listen for the sliding vowel sound.',
+      welded: 'Read the welded chunk as one unit.',
+      floss: 'Short vowel + doubled ending letters.',
+      prefix: 'Read the beginning chunk, then the base word.',
+      suffix: 'Read the base word, then add the ending.',
+      multisyllable: 'Chunk it, then blend it.',
+      compound: 'Find two small words and join them.',
+      subject: 'Use meaning first, then spell by sound.',
+      general: 'Try one sound clue, then adjust.'
     });
     const rule = ruleByCategory[category] || ruleByCategory.general;
-    return `${focusText}${rule} Try one guess, then use color feedback to coach the next one.`;
+    return `${focusText}${rule}`;
   }
 
   function buildInformantHintPayload(state) {
@@ -1895,11 +1898,9 @@
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     let message = buildFriendlyHintMessage(category, sourceLabel);
     if (playStyle === 'listening') {
-      message = message.replace(
-        'Try one guess, then use color feedback to coach the next one.',
-        'Replay the audio, map sounds to letters, then spell what you hear.'
-      );
-      message = `Listening challenge mode: hear word + meaning first. ${message}`;
+      message = sourceLabel
+        ? `Focus: ${sourceLabel}. Replay audio, tap sounds, then spell.`
+        : 'Replay audio, tap sounds, then spell.';
     }
     const actionMode = playStyle === 'detective' && !!entry?.sentence
       ? 'sentence'
@@ -1907,7 +1908,7 @@
         ? 'word-meaning'
         : 'none';
     return {
-      title: playStyle === 'listening' ? '🎧 Listening Coach' : '🔎 Clue Coach',
+      title: playStyle === 'listening' ? '🎧 Listening Coach' : `✨ ${profile.catchphrase || 'Clue Coach'}`,
       message,
       examples,
       actionMode
@@ -1918,7 +1919,7 @@
     const wrap = _el('hint-clue-examples');
     if (!wrap) return;
     wrap.innerHTML = '';
-    const rows = Array.isArray(examples) ? examples.slice(0, 3) : [];
+    const rows = Array.isArray(examples) ? examples.slice(0, 2) : [];
     if (!rows.length) {
       wrap.classList.add('hidden');
       return;
@@ -4547,7 +4548,7 @@
       const themeNestedInHeader = Boolean(themeStripEl && headerEl && headerEl.contains(themeStripEl));
       const themeStripPosition = themeStripEl ? getComputedStyle(themeStripEl).position : '';
       const themeStripOverlay = themeStripEl
-        ? themeStripEl.classList.contains('quick-media-dock') || themeStripPosition === 'fixed' || themeStripPosition === 'absolute'
+        ? themeStripPosition === 'fixed' || themeStripPosition === 'absolute'
         : false;
       const themeH = (themeNestedInHeader || themeStripOverlay) ? 0 : (themeStripEl?.offsetHeight || 0);
       const viewportH = window.visualViewport?.height || window.innerHeight;
