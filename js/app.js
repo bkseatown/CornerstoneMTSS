@@ -1011,6 +1011,8 @@
   } else if (themeSelect && initialThemeSelection) {
     themeSelect.value = initialThemeSelection;
   }
+  normalizeHeaderControlLayout();
+  syncHeaderStaticIcons();
 
   // Apply theme + modes immediately
   const initialTheme = applyTheme(initialThemeSelection || getThemeFallback());
@@ -1210,15 +1212,17 @@
     const enabled = mode !== 'off';
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     const listening = playStyle === 'listening';
-    toggle.textContent = listening ? 'Phonics Hint' : 'Detective Hint';
+    const minimumGuesses = getHintUnlockMinimum(playStyle);
+    const guessNoun = minimumGuesses === 1 ? 'guess' : 'guesses';
+    toggle.textContent = listening ? 'Sound Help' : 'Clue Hint';
     toggle.setAttribute('aria-pressed', 'false');
     toggle.setAttribute('aria-label', listening
-      ? 'Open optional phonics hint to support listening and encoding'
-      : 'Open optional detective hint');
+      ? 'Open optional sound help for listening and spelling'
+      : 'Open optional clue hint');
     toggle.setAttribute('title', enabled
       ? (listening
-          ? 'Optional phonics hint. Primary goal is listen, map sounds, and spell.'
-          : 'Optional detective hint with phonics markings')
+          ? `Optional support. Unlocks after ${minimumGuesses} submitted ${guessNoun}.`
+          : `Optional clue support with phonics markings. Unlocks after ${minimumGuesses} submitted ${guessNoun}.`)
       : 'Hint cues are off in settings, but you can still ask for support');
     toggle.classList.toggle('is-off', !enabled);
   }
@@ -1265,13 +1269,13 @@
     const button = _el('phonics-clue-open-btn');
     if (!button) return;
     const listening = mode === 'listening';
-    button.textContent = listening ? 'Clue+' : 'Clue+';
+    button.textContent = listening ? 'Coach' : 'Clue';
     button.style.whiteSpace = 'nowrap';
     button.setAttribute('title', listening
-      ? 'Open Clue Sprint for listening and encoding practice'
+      ? 'Open listening coach support'
       : 'Open Clue Sprint for detective-style clue practice');
     button.setAttribute('aria-label', listening
-      ? 'Open Clue Sprint for listening and encoding practice'
+      ? 'Open listening coach support'
       : 'Open Clue Sprint for detective clue practice');
   }
 
@@ -1282,10 +1286,11 @@
     const listeningMode = mode === 'listening' && !isMissionLabStandaloneMode();
     const modeBanner = _el('play-style-banner');
     if (modeBanner) {
-      modeBanner.textContent = listeningMode
-        ? 'Listening Challenge: hear word + meaning, then spell what you hear.'
+      modeBanner.innerHTML = listeningMode
+        ? '<span class="play-style-chip play-style-chip-mode">🎧 Listening Challenge</span><span class="play-style-chip">1. Listen</span><span class="play-style-chip">2. Tap sounds</span><span class="play-style-chip">3. Spell</span>'
         : '';
       modeBanner.classList.toggle('hidden', !listeningMode);
+      modeBanner.classList.toggle('is-listening', listeningMode);
       modeBanner.setAttribute('aria-hidden', listeningMode ? 'false' : 'true');
     }
     const hearWordBtn = _el('g-hear-word');
@@ -1871,7 +1876,33 @@
       general: 'Try one sound clue, then adjust.'
     });
     const rule = ruleByCategory[category] || ruleByCategory.general;
-    return `${focusText}${rule}`;
+    return `${focusText}${rule} The sentence clue contains the target word.`;
+  }
+
+  function getHintUnlockMinimum(playStyle) {
+    return playStyle === 'listening' ? 1 : 2;
+  }
+
+  function getHintUnlockCopy(playStyle, guessCount) {
+    const mode = playStyle === 'listening' ? 'listening' : 'detective';
+    const minimum = getHintUnlockMinimum(mode);
+    const count = Math.max(0, Number(guessCount) || 0);
+    const remaining = Math.max(0, minimum - count);
+    if (remaining <= 0) {
+      return {
+        unlocked: true,
+        minimum,
+        message: ''
+      };
+    }
+    const guessWord = remaining === 1 ? 'guess' : 'guesses';
+    return {
+      unlocked: false,
+      minimum,
+      message: mode === 'listening'
+        ? `Submit ${remaining} more ${guessWord} to unlock Phonics Hint.`
+        : `Submit ${remaining} more ${guessWord} to unlock Detective Hint.`
+    };
   }
 
   function buildInformantHintPayload(state) {
@@ -1899,8 +1930,8 @@
     let message = buildFriendlyHintMessage(category, sourceLabel);
     if (playStyle === 'listening') {
       message = sourceLabel
-        ? `Focus: ${sourceLabel}. Replay audio, tap sounds, then spell.`
-        : 'Replay audio, tap sounds, then spell.';
+        ? `Focus: ${sourceLabel}. Replay audio, tap sounds, then spell. The sentence clue contains the target word.`
+        : 'Replay audio, tap sounds, then spell. The sentence clue contains the target word.';
     }
     const actionMode = playStyle === 'detective' && !!entry?.sentence
       ? 'sentence'
@@ -1975,7 +2006,7 @@
       const actionMode = String(normalized.actionMode || '').trim().toLowerCase();
       const showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
       sentenceBtn.dataset.mode = actionMode || 'none';
-      sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence';
+      sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence (contains word)';
       sentenceBtn.classList.toggle('hidden', !showAction);
     }
     clearInformantHintHideTimer();
@@ -2004,6 +2035,27 @@
       return;
     }
     if (!state.entry) state.entry = WQData.getEntry(state.word) || null;
+    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    const guessCount = Array.isArray(state?.guesses) ? state.guesses.length : 0;
+    const unlock = getHintUnlockCopy(playStyle, guessCount);
+    if (!unlock.unlocked) {
+      showInformantHintCard({
+        title: playStyle === 'listening' ? '🎧 Hint Unlock' : '🔎 Hint Unlock',
+        message: `${unlock.message} The sentence clue contains the target word.`,
+        examples: [],
+        actionMode: 'none'
+      });
+      return;
+    }
+    if (playStyle === 'listening' && currentRoundHintRequested) {
+      showInformantHintCard({
+        title: '🎧 Listening Coach',
+        message: 'Phonics Hint is one-time per word in Listening mode. Replay Word + Meaning to keep mapping sounds and spelling.',
+        examples: [],
+        actionMode: state.entry ? 'word-meaning' : 'none'
+      });
+      return;
+    }
     currentRoundHintRequested = true;
     showInformantHintCard(buildInformantHintPayload(state));
   }
@@ -2035,6 +2087,51 @@
     return normalized;
   }
 
+  function normalizeHeaderControlLayout() {
+    const headerRight = document.querySelector('.header-right');
+    if (!headerRight) return;
+
+    const iconIds = ['teacher-panel-btn', 'case-toggle-btn', 'keyboard-layout-toggle', 'settings-btn'];
+    const quickIds = ['play-style-toggle', 'phonics-clue-open-btn', 'mission-lab-nav-btn', 'new-game-btn'];
+
+    let iconGroup = headerRight.querySelector('.header-icon-controls');
+    if (!iconGroup) {
+      iconGroup = document.createElement('div');
+      iconGroup.className = 'header-icon-controls';
+    }
+
+    let quickGroup = headerRight.querySelector('.header-quick-controls');
+    if (!quickGroup) {
+      quickGroup = document.createElement('div');
+      quickGroup.className = 'header-quick-controls';
+    }
+
+    iconIds.forEach((id) => {
+      const node = _el(id);
+      if (node) iconGroup.appendChild(node);
+    });
+    quickIds.forEach((id) => {
+      const node = _el(id);
+      if (node) quickGroup.appendChild(node);
+    });
+
+    if (iconGroup.parentElement !== headerRight) headerRight.appendChild(iconGroup);
+    if (quickGroup.parentElement !== headerRight) headerRight.appendChild(quickGroup);
+    if (headerRight.firstElementChild !== iconGroup) headerRight.insertBefore(iconGroup, headerRight.firstChild);
+    if (iconGroup.nextElementSibling !== quickGroup) headerRight.insertBefore(quickGroup, iconGroup.nextElementSibling);
+  }
+
+  function syncHeaderStaticIcons() {
+    const teacherBtn = _el('teacher-panel-btn');
+    if (teacherBtn) {
+      teacherBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 5h18v10H3z"/><path d="M12 15v5"/><path d="M8 20h8"/><circle cx="8" cy="10" r="2"/><path d="M8 12v2"/><path d="M13 10h5"/></svg>';
+    }
+    const settingsBtn = _el('settings-btn');
+    if (settingsBtn) {
+      settingsBtn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+    }
+  }
+
   function applyKeyboardLayout(mode) {
     const normalized = normalizeKeyboardLayout(mode);
     document.documentElement.setAttribute('data-keyboard-layout', normalized);
@@ -2047,6 +2144,7 @@
   }
 
   function syncKeyboardLayoutToggle() {
+    normalizeHeaderControlLayout();
     const toggle = _el('keyboard-layout-toggle');
     if (!toggle) return;
     const layout = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || 'standard');
@@ -2060,6 +2158,7 @@
   }
 
   function syncCaseToggleUI() {
+    normalizeHeaderControlLayout();
     const toggle = _el('case-toggle-btn');
     if (!toggle) return;
     const mode = String(document.documentElement.getAttribute('data-case') || prefs.caseMode || DEFAULT_PREFS.caseMode).toLowerCase();
@@ -2274,6 +2373,10 @@
     try { localStorage.setItem(FIRST_RUN_SETUP_KEY, 'done'); } catch {}
   }
 
+  function clearFirstRunSetupPreference() {
+    try { localStorage.removeItem(FIRST_RUN_SETUP_KEY); } catch {}
+  }
+
   function hasCompletedFirstRunSetup() {
     try { return localStorage.getItem(FIRST_RUN_SETUP_KEY) === 'done'; } catch { return false; }
   }
@@ -2285,10 +2388,35 @@
     _el('first-run-setup-modal')?.classList.add('hidden');
   }
 
+  function getFirstRunModeHelpText(mode) {
+    return mode === 'listening'
+      ? 'Listening mode: hear the word and meaning first, then spell what you hear.'
+      : 'Classic mode: use color feedback and clue support.';
+  }
+
+  function setFirstRunModeChoice(mode) {
+    const normalized = normalizePlayStyle(mode);
+    document.querySelectorAll('[data-play-style-choice]').forEach((button) => {
+      const active = button.getAttribute('data-play-style-choice') === normalized;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    const help = _el('first-run-mode-help');
+    if (help) help.textContent = getFirstRunModeHelpText(normalized);
+  }
+
   function syncFirstRunGradeSelectFromPrefs() {
     const modalGradeSelect = _el('first-run-grade-band');
     if (!modalGradeSelect) return;
     modalGradeSelect.value = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
+  }
+
+  function syncFirstRunSetupControlsFromPrefs() {
+    syncFirstRunGradeSelectFromPrefs();
+    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    setFirstRunModeChoice(playStyle);
+    const hideAgainToggle = _el('first-run-hide-again');
+    if (hideAgainToggle) hideAgainToggle.checked = true;
   }
 
   function applyFirstRunGradeSelection() {
@@ -2301,10 +2429,20 @@
     gradeSelect.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  function applyFirstRunPlayStyleSelection() {
+    const selectedButton = document.querySelector('[data-play-style-choice].is-active');
+    const selected = normalizePlayStyle(selectedButton?.getAttribute('data-play-style-choice') || '');
+    const select = _el('s-play-style');
+    if (!select) return;
+    if (String(select.value || '').trim() === selected) return;
+    select.value = selected;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
   function openFirstRunSetupModal() {
     const modal = _el('first-run-setup-modal');
     if (!modal) return;
-    syncFirstRunGradeSelectFromPrefs();
+    syncFirstRunSetupControlsFromPrefs();
     modal.classList.remove('hidden');
     _el('settings-panel')?.classList.add('hidden');
     _el('teacher-panel')?.classList.add('hidden');
@@ -2315,7 +2453,9 @@
     if (document.body.dataset.wqFirstRunSetupBound === '1') return;
     const closeTutorial = () => {
       applyFirstRunGradeSelection();
-      markFirstRunSetupDone();
+      applyFirstRunPlayStyleSelection();
+      if (_el('first-run-hide-again')?.checked) markFirstRunSetupDone();
+      else clearFirstRunSetupPreference();
       firstRunSetupPending = false;
       closeFirstRunSetupModal();
       const state = WQGame.getState?.() || {};
@@ -2326,6 +2466,11 @@
     };
     _el('first-run-skip-btn')?.addEventListener('click', closeTutorial);
     _el('first-run-start-btn')?.addEventListener('click', closeTutorial);
+    document.querySelectorAll('[data-play-style-choice]').forEach((button) => {
+      button.addEventListener('click', () => {
+        setFirstRunModeChoice(button.getAttribute('data-play-style-choice') || 'detective');
+      });
+    });
     _el('first-run-setup-modal')?.addEventListener('click', (event) => {
       if (event.target?.id === 'first-run-setup-modal') {
         closeTutorial();
