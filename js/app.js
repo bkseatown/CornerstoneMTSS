@@ -131,13 +131,13 @@
     caseMode: 'lower',
     hint: 'on',
     playStyle: 'detective',
-    confidenceCoaching: 'on',
+    confidenceCoaching: 'off',
     revealFocus: 'on',
     revealPacing: 'guided',
     revealAutoNext: 'off',
     dupe: 'on',
     confetti: 'on',
-    projector: 'off',
+    projector: 'on',
     motion: 'fun',
     feedback: 'themed',
     meaningPlusFun: 'on',
@@ -341,6 +341,26 @@
     } catch {}
   }
   enforceStartupGameplayDefaults();
+  function enforceLockedDemoDefaults() {
+    const lockedDefaults = Object.freeze({
+      projector: 'on',
+      feedback: 'themed',
+      revealFocus: 'on',
+      revealPacing: 'guided',
+      revealAutoNext: 'off',
+      meaningPlusFun: 'on',
+      sorNotation: 'on',
+      confidenceCoaching: 'off'
+    });
+    let changed = false;
+    Object.entries(lockedDefaults).forEach(([key, value]) => {
+      if (prefs[key] === value) return;
+      prefs[key] = value;
+      changed = true;
+    });
+    if (changed) savePrefs(prefs);
+  }
+  enforceLockedDemoDefaults();
   const _el = id => document.getElementById(id);
   const ThemeRegistry = window.WQThemeRegistry || null;
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
@@ -670,6 +690,13 @@
     }
   }
 
+  function syncQuickMusicVolume(value) {
+    const quickVolume = _el('quick-music-vol');
+    if (!quickVolume) return;
+    const next = Math.max(0, Math.min(1, Number.parseFloat(value)));
+    quickVolume.value = String(Number.isFinite(next) ? next : Number.parseFloat(DEFAULT_PREFS.musicVol));
+  }
+
   function getPreferredMusicOnMode() {
     try {
       const stored = normalizeMusicMode(localStorage.getItem(LAST_NON_OFF_MUSIC_KEY) || '');
@@ -770,6 +797,9 @@
   const musicVolInput = _el('s-music-vol');
   if (musicVolInput) {
     musicVolInput.value = String(prefs.musicVol ?? DEFAULT_PREFS.musicVol);
+    syncQuickMusicVolume(musicVolInput.value);
+  } else {
+    syncQuickMusicVolume(prefs.musicVol ?? DEFAULT_PREFS.musicVol);
   }
   const voiceSelect = _el('s-voice');
   if (voiceSelect) {
@@ -837,6 +867,7 @@
   applyKeyboardLayout(prefs.keyboardLayout || DEFAULT_PREFS.keyboardLayout);
   applyAtmosphere(prefs.atmosphere || DEFAULT_PREFS.atmosphere);
   WQUI.setCaseMode(prefs.caseMode || DEFAULT_PREFS.caseMode);
+  syncCaseToggleUI();
   updateWilsonModeToggle();
   syncHintToggleUI();
   applyReportCompactMode(prefs.reportCompact || DEFAULT_PREFS.reportCompact, { persist: false });
@@ -1016,7 +1047,7 @@
     toggle.textContent = 'Clue';
     toggle.setAttribute('aria-pressed', 'false');
     toggle.setAttribute('title', enabled
-      ? 'Get a detective clue from your informant'
+      ? 'Ask for a mystery clue with phonics markings'
       : 'Hint cues are off in settings, but you can still ask for a clue');
     toggle.classList.toggle('is-off', !enabled);
   }
@@ -1550,13 +1581,19 @@
       : preset.kind === 'phonics'
         ? getFocusLabel(preset.focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim()
         : '';
-    const sourceLine = sourceLabel ? `Focus tag: ${sourceLabel}.` : '';
-    const message = `${profile.catchphrase}: ${profile.concept}. ${profile.rule}${sourceLine ? ` ${sourceLine}` : ''}`;
+    const sourceLine = sourceLabel ? `Focus signal: ${sourceLabel}.` : '';
+    const message = `${profile.catchphrase} mission: ${profile.concept}. ${profile.rule}${sourceLine ? ` ${sourceLine}` : ''}`;
+    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    const actionMode = playStyle === 'detective' && !!entry?.sentence
+      ? 'sentence'
+      : playStyle === 'listening' && !!entry
+        ? 'word-meaning'
+        : 'none';
     return {
-      title: 'Here is your clue',
+      title: '🕵️ Secret Decoder Clue',
       message,
       examples: Array.isArray(profile.examples) ? profile.examples : [],
-      allowSentence: !!entry?.sentence
+      actionMode
     };
   }
 
@@ -1605,8 +1642,8 @@
     if (!card) return;
     const normalized = (payload && typeof payload === 'object')
       ? payload
-      : { title: 'Here is your clue', message: String(payload || '').trim(), examples: [], allowSentence: true };
-    const title = String(normalized.title || 'Here is your clue').trim() || 'Here is your clue';
+      : { title: '🕵️ Secret Decoder Clue', message: String(payload || '').trim(), examples: [], actionMode: 'none' };
+    const title = String(normalized.title || '🕵️ Secret Decoder Clue').trim() || '🕵️ Secret Decoder Clue';
     const text = String(normalized.message || '').trim();
     if (!text) return;
     if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return;
@@ -1616,7 +1653,13 @@
     if (messageEl) messageEl.textContent = text;
     renderHintExamples(normalized.examples);
     const sentenceBtn = _el('hint-clue-sentence-btn');
-    if (sentenceBtn) sentenceBtn.classList.toggle('hidden', !normalized.allowSentence);
+    if (sentenceBtn) {
+      const actionMode = String(normalized.actionMode || '').trim().toLowerCase();
+      const showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
+      sentenceBtn.dataset.mode = actionMode || 'none';
+      sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence';
+      sentenceBtn.classList.toggle('hidden', !showAction);
+    }
     clearInformantHintHideTimer();
     card.classList.remove('hidden');
     requestAnimationFrame(() => {
@@ -1635,10 +1678,10 @@
     const state = WQGame.getState?.() || {};
     if (!state?.word) {
       showInformantHintCard({
-        title: 'Here is your clue',
-        message: 'Start a word first, then tap Clue for a targeted phonics clue and examples.',
+        title: '🕵️ Secret Decoder Clue',
+        message: 'Start a new word first. Then tap Clue to unlock a focused phonics clue with marked examples.',
         examples: [],
-        allowSentence: false
+        actionMode: 'none'
       });
       return;
     }
@@ -1688,12 +1731,30 @@
     if (!toggle) return;
     const layout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
     const isWilson = layout === 'wilson';
-    toggle.textContent = `KB: ${isWilson ? 'Wilson' : 'QWERTY'}`;
+    toggle.textContent = isWilson ? '🧩' : '⌨️';
     toggle.setAttribute('aria-pressed', isWilson ? 'true' : 'false');
+    toggle.setAttribute('aria-label', isWilson
+      ? 'Sound cards on. Tap to switch to letter keyboard.'
+      : 'Letter keyboard on. Tap to switch to sound cards.');
     toggle.setAttribute('title', isWilson
-      ? 'Switch to QWERTY keyboard'
-      : 'Switch to Wilson sound-card keyboard');
+      ? 'Sound cards mode is on. Tap for letter keyboard.'
+      : 'Letter keyboard mode is on. Tap for sound cards.');
     toggle.classList.toggle('is-wilson', isWilson);
+  }
+
+  function syncCaseToggleUI() {
+    const toggle = _el('case-toggle-btn');
+    if (!toggle) return;
+    const mode = String(document.documentElement.getAttribute('data-case') || prefs.caseMode || DEFAULT_PREFS.caseMode).toLowerCase();
+    const isUpper = mode === 'upper';
+    toggle.textContent = isUpper ? '🔠' : '🔡';
+    toggle.setAttribute('aria-pressed', isUpper ? 'true' : 'false');
+    toggle.setAttribute('aria-label', isUpper
+      ? 'Uppercase letters on. Tap to switch to lowercase.'
+      : 'Lowercase letters on. Tap to switch to uppercase.');
+    toggle.title = isUpper
+      ? 'Uppercase letters are on. Tap for lowercase.'
+      : 'Lowercase letters are on. Tap for uppercase.';
   }
 
   function applyChunkTabsMode(mode) {
@@ -1900,11 +1961,7 @@
   }
 
   const shouldOfferStartupPreset = !hasCompletedFirstRunSetup();
-  firstRunSetupPending = false;
-  if (shouldOfferStartupPreset) {
-    // Keep startup smooth: default to quick start and let teachers open setup on demand.
-    markFirstRunSetupDone();
-  }
+  firstRunSetupPending = shouldOfferStartupPreset;
 
   function closeFirstRunSetupModal() {
     _el('first-run-setup-modal')?.classList.add('hidden');
@@ -1915,30 +1972,27 @@
     if (!modal) return;
     modal.classList.remove('hidden');
     _el('settings-panel')?.classList.add('hidden');
+    _el('teacher-panel')?.classList.add('hidden');
     syncHeaderControlsVisibility();
   }
 
   function bindFirstRunSetupModal() {
     if (document.body.dataset.wqFirstRunSetupBound === '1') return;
-    document.querySelectorAll('[data-first-run-preset]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const mode = btn.getAttribute('data-first-run-preset') || '';
-        if (!mode || !TEACHER_PRESETS[mode]) return;
-        const applied = applyTeacherPreset(mode);
-        if (!applied) return;
-        markFirstRunSetupDone();
-        firstRunSetupPending = false;
-        closeFirstRunSetupModal();
-        newGame();
-      });
-    });
-    _el('first-run-skip-btn')?.addEventListener('click', () => {
+    const closeTutorial = () => {
       markFirstRunSetupDone();
       firstRunSetupPending = false;
       closeFirstRunSetupModal();
       const state = WQGame.getState?.() || {};
       if (!state.word || state.gameOver) {
         newGame();
+      }
+      updateNextActionLine();
+    };
+    _el('first-run-skip-btn')?.addEventListener('click', closeTutorial);
+    _el('first-run-start-btn')?.addEventListener('click', closeTutorial);
+    _el('first-run-setup-modal')?.addEventListener('click', (event) => {
+      if (event.target?.id === 'first-run-setup-modal') {
+        closeTutorial();
       }
     });
     document.body.dataset.wqFirstRunSetupBound = '1';
@@ -2046,7 +2100,7 @@
     firstRunSetupPending = true;
     closeFocusSearchList();
     openFirstRunSetupModal();
-    WQUI.showToast('Setup choices opened. Pick one or skip.');
+    WQUI.showToast('How-to card reopened.');
   }
 
   function populateVoiceSelector() {
@@ -2407,7 +2461,7 @@
     if (isMissionLabStandaloneMode()) {
       text = 'Mission Lab standalone: launch a sprint from the panel below.';
     } else if (firstRunSetupPending) {
-      text = 'Choose a start style, or tap Skip for now.';
+      text = 'Open the quick how-to card to learn tile colors, then start your first word.';
     } else if (reviewWord) {
       text = `Level-up review: ${reviewWord.toUpperCase()} is back for a quick memory win.`;
     } else if (hasActiveRound && guessCount === 0 && activeGuessLength === 0) {
@@ -2468,8 +2522,9 @@
     const strip = _el('theme-preview-strip');
     if (!strip) return;
     const panelOpen = !_el('settings-panel')?.classList.contains('hidden');
+    const teacherPanelOpen = !_el('teacher-panel')?.classList.contains('hidden');
     const focusOpen = document.documentElement.getAttribute('data-focus-search-open') === 'true';
-    const shouldShow = !panelOpen && !focusOpen && !isAssessmentRoundLocked();
+    const shouldShow = !panelOpen && !teacherPanelOpen && !focusOpen && !isAssessmentRoundLocked();
     strip.classList.toggle('hidden', !shouldShow);
     strip.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
   }
@@ -2584,6 +2639,15 @@
   syncTeacherPresetButtons();
   syncAssessmentLockRuntime({ closeFocus: false });
   bindFirstRunSetupModal();
+  if (firstRunSetupPending) {
+    openFirstRunSetupModal();
+  }
+  window.addEventListener('wq:teacher-panel-toggle', () => {
+    syncHeaderControlsVisibility();
+  });
+  window.addEventListener('wq:open-teacher-hub', () => {
+    _el('teacher-panel-btn')?.click();
+  });
 
   _el('settings-btn')?.addEventListener('click', () => {
     if (isAssessmentRoundLocked()) {
@@ -2592,6 +2656,7 @@
     }
     const panel = _el('settings-panel');
     if (!panel) return;
+    _el('teacher-panel')?.classList.add('hidden');
     const opening = panel.classList.contains('hidden');
     panel.classList.toggle('hidden');
     if (opening) setSettingsView('quick');
@@ -2767,8 +2832,24 @@
     setPref('motion', e.target.value);
   });
   _el('s-case')?.addEventListener('change', e => {
-    WQUI.setCaseMode(e.target.value);
-    setPref('caseMode', e.target.value);
+    const next = String(e.target.value || 'lower').toLowerCase() === 'upper' ? 'upper' : 'lower';
+    WQUI.setCaseMode(next);
+    setPref('caseMode', next);
+    syncCaseToggleUI();
+  });
+  _el('case-toggle-btn')?.addEventListener('click', () => {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice();
+      return;
+    }
+    const current = String(document.documentElement.getAttribute('data-case') || prefs.caseMode || DEFAULT_PREFS.caseMode).toLowerCase();
+    const next = current === 'upper' ? 'lower' : 'upper';
+    const select = _el('s-case');
+    if (select) select.value = next;
+    WQUI.setCaseMode(next);
+    setPref('caseMode', next);
+    syncCaseToggleUI();
+    WQUI.showToast(next === 'upper' ? 'Letter case: UPPERCASE.' : 'Letter case: lowercase.');
   });
   function handleLessonPackSelectionChange(rawValue) {
     if (isAssessmentRoundLocked()) {
@@ -2945,8 +3026,8 @@
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
     WQUI.showToast(next === 'listening'
-      ? 'Listening mode: Hear Word and Clue are available when needed.'
-      : 'Guess-first mode is on.');
+      ? 'Listening mode on: use Word + Meaning audio support.'
+      : 'Listening mode off: detective sentence clues only.');
   });
   _el('s-reveal-focus')?.addEventListener('change', e => {
     const next = applyRevealFocusMode(e.target.value);
@@ -2989,11 +3070,23 @@
     event.preventDefault();
     event.stopPropagation();
     const current = WQGame.getState?.()?.entry;
+    const mode = String(event.currentTarget?.dataset?.mode || 'none').trim().toLowerCase();
+    cancelRevealNarration();
+    if (mode === 'word-meaning') {
+      if (!current) {
+        WQUI.showToast('Start a word first.');
+        return;
+      }
+      void (async () => {
+        await WQAudio.playWord(current);
+        await WQAudio.playDef(current);
+      })();
+      return;
+    }
     if (!current?.sentence) {
       WQUI.showToast('No sentence clue is available for this word yet.');
       return;
     }
-    cancelRevealNarration();
     void WQAudio.playSentence(current);
   });
   _el('play-style-toggle')?.addEventListener('click', () => {
@@ -3260,6 +3353,16 @@
     const next = Math.max(0, Math.min(1, parseFloat(e.target.value)));
     setPref('musicVol', String(Number.isFinite(next) ? next : parseFloat(DEFAULT_PREFS.musicVol)));
     if (musicController) musicController.setVolume(next);
+    syncQuickMusicVolume(next);
+  });
+  _el('quick-music-vol')?.addEventListener('input', e => {
+    const next = Math.max(0, Math.min(1, parseFloat(e.target.value)));
+    const normalized = String(Number.isFinite(next) ? next : parseFloat(DEFAULT_PREFS.musicVol));
+    const settingsInput = _el('s-music-vol');
+    if (settingsInput) settingsInput.value = normalized;
+    setPref('musicVol', normalized);
+    if (musicController) musicController.setVolume(next);
+    syncQuickMusicVolume(next);
   });
 
   _el('s-voice')?.addEventListener('change', e => {
@@ -4017,7 +4120,11 @@
         ? Math.max(0, classroomTurnEl.offsetHeight || 0)
         : 0;
       const themeNestedInHeader = Boolean(themeStripEl && headerEl && headerEl.contains(themeStripEl));
-      const themeH = themeNestedInHeader ? 0 : (themeStripEl?.offsetHeight || 0);
+      const themeStripPosition = themeStripEl ? getComputedStyle(themeStripEl).position : '';
+      const themeStripOverlay = themeStripEl
+        ? themeStripEl.classList.contains('quick-media-dock') || themeStripPosition === 'fixed' || themeStripPosition === 'absolute'
+        : false;
+      const themeH = (themeNestedInHeader || themeStripOverlay) ? 0 : (themeStripEl?.offsetHeight || 0);
       const viewportH = window.visualViewport?.height || window.innerHeight;
       const viewportW = window.visualViewport?.width || window.innerWidth;
       const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
@@ -4846,20 +4953,9 @@
     if (!inputEl) return;
     const raw = String(inputEl.value || '').trim();
     if (!raw) return;
-    const focusValue = _el('setting-focus')?.value || 'all';
-    const currentLabel = getFocusLabel(focusValue).replace(/[—]/g, '').trim().toLowerCase();
-    const normalizedRaw = raw
-      .replace(/[—]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .toLowerCase();
-    if (!currentLabel || !normalizedRaw) return;
-    if (
-      normalizedRaw === currentLabel ||
-      normalizedRaw.startsWith(`${currentLabel} · type to search`) ||
-      normalizedRaw.startsWith(`${currentLabel} - type to search`) ||
-      normalizedRaw.startsWith(`search focus: ${currentLabel}`)
-    ) {
+    const lockedLabel = String(inputEl.dataset.lockedLabel || '').trim().toLowerCase();
+    const normalizedRaw = raw.toLowerCase();
+    if (lockedLabel && normalizedRaw === lockedLabel) {
       inputEl.value = '';
     }
   }
@@ -4879,11 +4975,11 @@
     const currentLabel = currentLabelRaw || 'Classic (Wordle 5x6)';
 
     if (!inputEl) return;
-    // Keep this as pure search input so intent is clear.
-    inputEl.value = '';
-    inputEl.placeholder = 'Select your quest';
-    inputEl.setAttribute('title', `Select your quest. Curriculum tracks are included. Current focus: ${currentLabel}`);
-    inputEl.setAttribute('aria-label', `Select your quest. Curriculum tracks are included. Current focus: ${currentLabel}`);
+    inputEl.value = currentLabel;
+    inputEl.dataset.lockedLabel = currentLabel.toLowerCase();
+    inputEl.placeholder = 'Select your quest or track';
+    inputEl.setAttribute('title', `Select your quest or track. Current selection: ${currentLabel}`);
+    inputEl.setAttribute('aria-label', `Select your quest or track. Current selection: ${currentLabel}`);
   }
 
   function formatGradeBandLabel(value) {
@@ -4940,13 +5036,7 @@
   ]);
   const FOCUS_EMPTY_VISIBLE_LIMIT = 24;
   const FOCUS_QUERY_VISIBLE_LIMIT = 20;
-  const CURRICULUM_QUICK_VALUES = Object.freeze([
-    'curriculum::ufli::ufli-l2-digraph',
-    'curriculum::ufli::ufli-l4-vowel-team',
-    'curriculum::fundations::fund-l1-u2',
-    'curriculum::wilson::wilson-step-4',
-    'curriculum::justwords::jw-unit-2'
-  ]);
+  const CURRICULUM_QUICK_VALUES = Object.freeze([]);
 
   // Prioritize options that are most common for everyday classroom use.
   const FOCUS_POPULARITY = Object.freeze({
@@ -5169,21 +5259,12 @@
       showAssessmentLockNotice();
       return;
     }
-    const panel = _el('settings-panel');
-    if (!panel) return;
-    panel.classList.remove('hidden');
-    setSettingsView('advanced');
-    syncHeaderControlsVisibility();
-    requestAnimationFrame(() => {
-      const teacherWrap = _el('wq-teacher-tools');
-      const toggle = _el('wq-teacher-toggle');
-      const body = _el('wq-teacher-body');
-      if (toggle && body?.classList.contains('hidden')) {
-        toggle.click();
-      }
-      teacherWrap?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      _el('wq-teacher-words')?.focus();
-    });
+    const teacherBtn = _el('teacher-panel-btn');
+    if (teacherBtn) {
+      teacherBtn.click();
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('wq:open-teacher-hub'));
   }
 
   function getFocusSearchButtons() {
@@ -5239,15 +5320,8 @@
           used.add(found.value);
         }
       });
-      CURRICULUM_QUICK_VALUES.forEach((questValue) => {
-        if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT) return;
-        const found = entries.find((entry) => entry.questValue === questValue);
-        if (found && !used.has(found.value)) {
-          visible.push(found);
-          used.add(found.value);
-        }
-      });
       entries.forEach((entry) => {
+        if (entry.value === 'all') return;
         if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT || used.has(entry.value)) return;
         visible.push(entry);
         used.add(entry.value);
@@ -5275,15 +5349,16 @@
     const activeQuestValue = (activePack !== 'custom' && activeTarget !== 'custom')
       ? `curriculum::${activePack}::${activeTarget}`
       : `focus::${activeFocus}`;
-    const actions = '<button type="button" class="focus-search-action" data-focus-action="teacher-words">✍️ Teacher Word List</button>';
+    const actions = '<button type="button" class="focus-search-action" data-focus-action="teacher-words">👩‍🏫 Open Teacher Hub</button>';
     const guidance = !query
-      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Explore popular quests and curriculum tracks. Tap any option to launch fast.</div>'
+      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Start with a sound quest first, then choose curriculum targets below.</div>'
       : '';
     listEl.innerHTML = actions + guidance + visible.map((entry) => {
       const questValue = entry.questValue || `focus::${entry.value}`;
       const activeClass = questValue === activeQuestValue ? ' is-active' : '';
       const selected = questValue === activeQuestValue ? 'true' : 'false';
-      return `<button type="button" class="focus-search-item${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span><small>${escapeHtml(entry.group)}</small></button>`;
+      const meta = entry.value === 'all' ? '' : `<small>${escapeHtml(entry.group)}</small>`;
+      return `<button type="button" class="focus-search-item${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span>${meta}</button>`;
     }).join('');
     getFocusSearchButtons().forEach((button, idx) => {
       button.id = `focus-search-option-${idx}`;
@@ -8675,6 +8750,11 @@
   document.addEventListener('keydown', e => {
     if (e.defaultPrevented) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const phonicsClueOpen = !(_el('phonics-clue-modal')?.classList.contains('hidden'));
+    if (phonicsClueOpen) {
+      if (e.key === 'Escape') closePhonicsClueModal();
+      return;
+    }
     const challengeOpen = !(_el('challenge-modal')?.classList.contains('hidden'));
     if (challengeOpen) {
       if (e.key === 'Escape') closeRevealChallengeModal();
@@ -8713,6 +8793,52 @@
   // Buttons
   _el('new-game-btn')?.addEventListener('click',  newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
+  _el('phonics-clue-open-btn')?.addEventListener('click', () => {
+    void openPhonicsClueModal();
+  });
+  _el('phonics-clue-close')?.addEventListener('click', () => closePhonicsClueModal());
+  _el('phonics-clue-modal')?.addEventListener('pointerdown', (event) => {
+    if (event.target?.id !== 'phonics-clue-modal') return;
+    closePhonicsClueModal();
+  });
+  _el('phonics-clue-deck-select')?.addEventListener('change', () => {
+    updatePhonicsClueControlsFromUI();
+    renderPhonicsCluePanel();
+  });
+  _el('phonics-clue-context-select')?.addEventListener('change', () => {
+    updatePhonicsClueControlsFromUI();
+    renderPhonicsCluePanel();
+  });
+  _el('phonics-clue-timer-select')?.addEventListener('change', () => {
+    updatePhonicsClueControlsFromUI();
+    if (phonicsClueState.started && phonicsClueState.current) {
+      startPhonicsClueTurnTimer();
+    } else {
+      renderPhonicsCluePanel();
+    }
+  });
+  _el('phonics-clue-bonus-select')?.addEventListener('change', () => {
+    updatePhonicsClueControlsFromUI();
+    renderPhonicsCluePanel();
+  });
+  _el('phonics-clue-start-btn')?.addEventListener('click', () => {
+    void startPhonicsClueDeck();
+  });
+  _el('phonics-clue-guess-btn')?.addEventListener('click', () => {
+    awardPhonicsClueGuessPoint();
+  });
+  _el('phonics-clue-bonus-btn')?.addEventListener('click', () => {
+    awardPhonicsClueBonusPoint();
+  });
+  _el('phonics-clue-next-btn')?.addEventListener('click', () => {
+    advancePhonicsClueCard();
+  });
+  _el('phonics-clue-skip-btn')?.addEventListener('click', () => {
+    skipPhonicsClueCard();
+  });
+  _el('phonics-clue-hide-btn')?.addEventListener('click', () => {
+    togglePhonicsClueTargetVisibility();
+  });
   _el('mission-lab-start-btn')?.addEventListener('click', () => {
     startStandaloneMissionLab();
   });
@@ -9925,6 +10051,463 @@
     setTimeout(() => {
       closeRevealChallengeModal({ silent: true });
     }, 900);
+  }
+
+  const PHONICS_CLUE_DECKS_URL = './data/taboo-phonics-starter-decks.json';
+  const PHONICS_CLUE_DECK_OPTIONS = Object.freeze([
+    Object.freeze({ id: 'taboo_phonics_k_1_starter_30', label: 'K-1 Starter (30 cards)' }),
+    Object.freeze({ id: 'taboo_phonics_g2_3_starter_30', label: 'G2-3 Starter (30 cards)' }),
+    Object.freeze({ id: 'taboo_phonics_g4_5_starter_30', label: 'G4-5 Starter (30 cards)' })
+  ]);
+  const PHONICS_CLUE_CONTEXT_LABELS = Object.freeze({
+    solo: 'Solo',
+    intervention: '1:1',
+    small_group: 'Group'
+  });
+  const PHONICS_CLUE_CONTEXT_NOTES = Object.freeze({
+    solo: 'Solo mode: read clues out loud to yourself, guess, then bank one bonus action before moving on.',
+    intervention: '1:1 mode: alternate clue-giver each card. Keep one quick bonus check for intervention progress.',
+    small_group: 'Small-group mode: rotate clue giver, guesser, speller, and checker every card.'
+  });
+  const PHONICS_CLUE_BONUS_PROMPTS = Object.freeze({
+    spell: 'Bonus prompt: spell the target word.',
+    segment: 'Bonus prompt: segment the word into sounds or chunks.',
+    sentence: 'Bonus prompt: use the word in a full sentence.',
+    meaning: 'Bonus prompt: explain the meaning in your own words.'
+  });
+  const PHONICS_CLUE_TIMER_OPTIONS = new Set(['off', '45', '60', '75', '90']);
+
+  let phonicsClueDeckMap = Object.create(null);
+  let phonicsClueDeckPromise = null;
+  const phonicsClueState = {
+    deckId: 'taboo_phonics_g2_3_starter_30',
+    context: 'solo',
+    timer: '60',
+    bonus: 'spell',
+    cards: [],
+    index: -1,
+    current: null,
+    started: false,
+    targetHidden: false,
+    guessAwarded: false,
+    bonusAwarded: false,
+    guessPoints: 0,
+    bonusPoints: 0,
+    turnTimerId: 0,
+    turnEndsAt: 0,
+    turnSecondsLeft: 0
+  };
+
+  function normalizePhonicsClueDeckId(value, fallback = 'taboo_phonics_g2_3_starter_30') {
+    const normalized = String(value || '').trim();
+    const allowed = PHONICS_CLUE_DECK_OPTIONS.find((deck) => deck.id === normalized);
+    if (allowed) return allowed.id;
+    return fallback;
+  }
+
+  function normalizePhonicsClueContext(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(PHONICS_CLUE_CONTEXT_NOTES, normalized)
+      ? normalized
+      : 'solo';
+  }
+
+  function normalizePhonicsClueBonus(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return Object.prototype.hasOwnProperty.call(PHONICS_CLUE_BONUS_PROMPTS, normalized)
+      ? normalized
+      : 'spell';
+  }
+
+  function normalizePhonicsClueTimer(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    if (PHONICS_CLUE_TIMER_OPTIONS.has(normalized)) return normalized;
+    const seconds = Number.parseInt(normalized, 10);
+    if (!Number.isFinite(seconds) || seconds <= 0) return 'off';
+    if (seconds <= 45) return '45';
+    if (seconds <= 60) return '60';
+    if (seconds <= 75) return '75';
+    return '90';
+  }
+
+  function normalizePhonicsClueCard(raw, index) {
+    if (!raw || typeof raw !== 'object') return null;
+    const targetWord = String(raw.target_word || '').trim().toLowerCase();
+    if (!targetWord) return null;
+    let tabooWords = Array.isArray(raw.taboo_words)
+      ? raw.taboo_words
+      : [raw.taboo_1, raw.taboo_2, raw.taboo_3];
+    tabooWords = tabooWords
+      .map((word) => String(word || '').trim())
+      .filter(Boolean)
+      .slice(0, 3);
+    while (tabooWords.length < 3) tabooWords.push('—');
+    return Object.freeze({
+      id: Math.max(1, Number(raw.id) || index + 1),
+      deckId: normalizePhonicsClueDeckId(String(raw.deck_id || '').trim(), ''),
+      gradeBand: String(raw.grade_band || '').trim(),
+      targetWord,
+      markedWord: String(raw.marked_word || targetWord).trim() || targetWord,
+      tabooWords: Object.freeze([...tabooWords]),
+      definition: String(raw.definition || '').trim(),
+      exampleSentence: String(raw.example_sentence || '').trim()
+    });
+  }
+
+  function shufflePhonicsClueCards(cards) {
+    const next = Array.isArray(cards) ? [...cards] : [];
+    for (let i = next.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [next[i], next[j]] = [next[j], next[i]];
+    }
+    return next;
+  }
+
+  function clearPhonicsClueTurnTimer() {
+    if (phonicsClueState.turnTimerId) {
+      clearInterval(phonicsClueState.turnTimerId);
+      phonicsClueState.turnTimerId = 0;
+    }
+    phonicsClueState.turnEndsAt = 0;
+    phonicsClueState.turnSecondsLeft = 0;
+  }
+
+  function resolvePhonicsClueTurnSeconds() {
+    if (phonicsClueState.timer === 'off') return 0;
+    return Math.max(0, Number.parseInt(phonicsClueState.timer, 10) || 0);
+  }
+
+  function isPhonicsClueTurnExpired() {
+    const timerSeconds = resolvePhonicsClueTurnSeconds();
+    if (timerSeconds <= 0) return false;
+    if (!phonicsClueState.started || !phonicsClueState.current) return false;
+    return phonicsClueState.turnSecondsLeft <= 0;
+  }
+
+  function syncPhonicsClueTimerChip() {
+    const chip = _el('phonics-clue-timer-chip');
+    if (!chip) return;
+    if (!phonicsClueState.started || !phonicsClueState.current) {
+      chip.textContent = 'Timer: --';
+      return;
+    }
+    const timerSeconds = resolvePhonicsClueTurnSeconds();
+    if (timerSeconds <= 0) {
+      chip.textContent = 'Timer: Off';
+      return;
+    }
+    const left = Math.max(0, Number(phonicsClueState.turnSecondsLeft) || 0);
+    chip.textContent = left > 0 ? `Timer: ${left}s` : 'Timer: Time up';
+  }
+
+  function syncPhonicsClueActionButtons() {
+    const startBtn = _el('phonics-clue-start-btn');
+    const guessBtn = _el('phonics-clue-guess-btn');
+    const bonusBtn = _el('phonics-clue-bonus-btn');
+    const nextBtn = _el('phonics-clue-next-btn');
+    const skipBtn = _el('phonics-clue-skip-btn');
+    const hideBtn = _el('phonics-clue-hide-btn');
+    if (startBtn) {
+      startBtn.textContent = phonicsClueState.started ? 'Restart Deck' : 'Start Deck';
+    }
+    const activeCard = Boolean(phonicsClueState.started && phonicsClueState.current);
+    const expired = isPhonicsClueTurnExpired();
+    if (guessBtn) guessBtn.disabled = !activeCard || phonicsClueState.guessAwarded || expired;
+    if (bonusBtn) bonusBtn.disabled = !activeCard || phonicsClueState.bonusAwarded || expired;
+    if (nextBtn) nextBtn.disabled = !activeCard;
+    if (skipBtn) skipBtn.disabled = !activeCard;
+    if (hideBtn) {
+      hideBtn.disabled = !activeCard;
+      hideBtn.textContent = phonicsClueState.targetHidden ? 'Show Target' : 'Hide Target';
+      hideBtn.setAttribute('aria-pressed', phonicsClueState.targetHidden ? 'true' : 'false');
+    }
+  }
+
+  function applyPhonicsClueTargetVisibility() {
+    const targetEl = _el('phonics-clue-target-word');
+    if (!targetEl) return;
+    targetEl.classList.toggle('is-hidden', !!phonicsClueState.targetHidden);
+  }
+
+  function renderPhonicsCluePanel() {
+    const cardChip = _el('phonics-clue-card-chip');
+    const scoreChip = _el('phonics-clue-score-chip');
+    const bonusChip = _el('phonics-clue-bonus-chip');
+    const contextChip = _el('phonics-clue-context-chip');
+    const targetWordEl = _el('phonics-clue-target-word');
+    const markedWordEl = _el('phonics-clue-marked-word');
+    const tabooListEl = _el('phonics-clue-taboo-list');
+    const defEl = _el('phonics-clue-definition');
+    const exampleEl = _el('phonics-clue-example');
+    const bonusPromptEl = _el('phonics-clue-bonus-prompt');
+    const contextNoteEl = _el('phonics-clue-context-note');
+
+    if (cardChip) {
+      if (phonicsClueState.started && phonicsClueState.current) {
+        cardChip.textContent = `Card: ${phonicsClueState.index + 1}/${phonicsClueState.cards.length}`;
+      } else if (phonicsClueState.started && !phonicsClueState.current) {
+        cardChip.textContent = `Card: ${phonicsClueState.cards.length}/${phonicsClueState.cards.length} complete`;
+      } else {
+        cardChip.textContent = 'Card: --';
+      }
+    }
+    if (scoreChip) scoreChip.textContent = `Guess points: ${phonicsClueState.guessPoints}`;
+    if (bonusChip) bonusChip.textContent = `Bonus points: ${phonicsClueState.bonusPoints}`;
+    if (contextChip) {
+      contextChip.textContent = PHONICS_CLUE_CONTEXT_LABELS[phonicsClueState.context] || 'Solo';
+    }
+    if (bonusPromptEl) {
+      bonusPromptEl.textContent = PHONICS_CLUE_BONUS_PROMPTS[phonicsClueState.bonus] || PHONICS_CLUE_BONUS_PROMPTS.spell;
+    }
+    if (contextNoteEl) {
+      contextNoteEl.textContent = PHONICS_CLUE_CONTEXT_NOTES[phonicsClueState.context] || PHONICS_CLUE_CONTEXT_NOTES.solo;
+    }
+
+    const current = phonicsClueState.current;
+    if (!current) {
+      if (targetWordEl) targetWordEl.textContent = 'Start a round to reveal the first card.';
+      if (markedWordEl) markedWordEl.textContent = 'Marked: —';
+      if (tabooListEl) tabooListEl.innerHTML = '<li>—</li><li>—</li><li>—</li>';
+      if (defEl) defEl.textContent = 'Definition: —';
+      if (exampleEl) exampleEl.textContent = 'Example: —';
+      phonicsClueState.targetHidden = false;
+      applyPhonicsClueTargetVisibility();
+      syncPhonicsClueTimerChip();
+      syncPhonicsClueActionButtons();
+      return;
+    }
+
+    if (targetWordEl) targetWordEl.textContent = current.targetWord.toUpperCase();
+    if (markedWordEl) markedWordEl.textContent = `Marked: ${current.markedWord}`;
+    if (tabooListEl) {
+      tabooListEl.innerHTML = '';
+      current.tabooWords.forEach((tabooWord) => {
+        const li = document.createElement('li');
+        li.textContent = tabooWord;
+        tabooListEl.appendChild(li);
+      });
+    }
+    if (defEl) defEl.textContent = `Definition: ${current.definition || '—'}`;
+    if (exampleEl) exampleEl.textContent = `Example: ${current.exampleSentence || '—'}`;
+    applyPhonicsClueTargetVisibility();
+    syncPhonicsClueTimerChip();
+    syncPhonicsClueActionButtons();
+  }
+
+  function syncPhonicsClueDeckSelect() {
+    const select = _el('phonics-clue-deck-select');
+    if (!select) return;
+    const preferred = normalizePhonicsClueDeckId(select.value || phonicsClueState.deckId);
+    select.innerHTML = '';
+    PHONICS_CLUE_DECK_OPTIONS.forEach((deck) => {
+      const count = Array.isArray(phonicsClueDeckMap[deck.id]) ? phonicsClueDeckMap[deck.id].length : 0;
+      const option = document.createElement('option');
+      option.value = deck.id;
+      option.textContent = count > 0 ? deck.label : `${deck.label} (unavailable)`;
+      option.disabled = count <= 0;
+      select.appendChild(option);
+    });
+    let nextDeck = preferred;
+    if (!Array.isArray(phonicsClueDeckMap[nextDeck]) || phonicsClueDeckMap[nextDeck].length <= 0) {
+      const fallback = PHONICS_CLUE_DECK_OPTIONS.find(
+        (deck) => Array.isArray(phonicsClueDeckMap[deck.id]) && phonicsClueDeckMap[deck.id].length > 0
+      );
+      nextDeck = fallback?.id || preferred;
+    }
+    select.value = nextDeck;
+    phonicsClueState.deckId = nextDeck;
+  }
+
+  function updatePhonicsClueControlsFromUI() {
+    phonicsClueState.deckId = normalizePhonicsClueDeckId(
+      _el('phonics-clue-deck-select')?.value || phonicsClueState.deckId
+    );
+    phonicsClueState.context = normalizePhonicsClueContext(
+      _el('phonics-clue-context-select')?.value || phonicsClueState.context
+    );
+    phonicsClueState.timer = normalizePhonicsClueTimer(
+      _el('phonics-clue-timer-select')?.value || phonicsClueState.timer
+    );
+    phonicsClueState.bonus = normalizePhonicsClueBonus(
+      _el('phonics-clue-bonus-select')?.value || phonicsClueState.bonus
+    );
+    const deckSelect = _el('phonics-clue-deck-select');
+    if (deckSelect) deckSelect.value = phonicsClueState.deckId;
+    const contextSelect = _el('phonics-clue-context-select');
+    if (contextSelect) contextSelect.value = phonicsClueState.context;
+    const timerSelect = _el('phonics-clue-timer-select');
+    if (timerSelect) timerSelect.value = phonicsClueState.timer;
+    const bonusSelect = _el('phonics-clue-bonus-select');
+    if (bonusSelect) bonusSelect.value = phonicsClueState.bonus;
+  }
+
+  async function ensurePhonicsClueDeckData() {
+    if (Object.keys(phonicsClueDeckMap).length > 0) return phonicsClueDeckMap;
+    if (phonicsClueDeckPromise) return phonicsClueDeckPromise;
+    phonicsClueDeckPromise = (async () => {
+      try {
+        const response = await fetch(PHONICS_CLUE_DECKS_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`deck fetch failed (${response.status})`);
+        const rows = await response.json();
+        const grouped = Object.create(null);
+        if (Array.isArray(rows)) {
+          rows.forEach((rawCard, index) => {
+            const card = normalizePhonicsClueCard(rawCard, index);
+            if (!card || !card.deckId) return;
+            if (!grouped[card.deckId]) grouped[card.deckId] = [];
+            grouped[card.deckId].push(card);
+          });
+        }
+        PHONICS_CLUE_DECK_OPTIONS.forEach((deck) => {
+          const cards = Array.isArray(grouped[deck.id]) ? grouped[deck.id] : [];
+          if (cards.length) {
+            phonicsClueDeckMap[deck.id] = cards;
+          }
+        });
+      } catch (error) {
+        console.warn('[WordQuest] Phonics Clue Sprint deck load failed:', error?.message || error);
+      } finally {
+        phonicsClueDeckPromise = null;
+      }
+      return phonicsClueDeckMap;
+    })();
+    return phonicsClueDeckPromise;
+  }
+
+  function startPhonicsClueTurnTimer() {
+    clearPhonicsClueTurnTimer();
+    const seconds = resolvePhonicsClueTurnSeconds();
+    if (!phonicsClueState.started || !phonicsClueState.current || seconds <= 0) {
+      syncPhonicsClueTimerChip();
+      syncPhonicsClueActionButtons();
+      return;
+    }
+    phonicsClueState.turnEndsAt = Date.now() + (seconds * 1000);
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((phonicsClueState.turnEndsAt - Date.now()) / 1000));
+      phonicsClueState.turnSecondsLeft = remaining;
+      if (remaining <= 0) {
+        clearPhonicsClueTurnTimer();
+        WQUI.showToast('Time is up. Move to the next card.');
+      }
+      syncPhonicsClueTimerChip();
+      syncPhonicsClueActionButtons();
+    };
+    tick();
+    phonicsClueState.turnTimerId = setInterval(tick, 250);
+  }
+
+  function setPhonicsClueCard(index) {
+    phonicsClueState.index = index;
+    phonicsClueState.current = phonicsClueState.cards[index] || null;
+    phonicsClueState.targetHidden = false;
+    phonicsClueState.guessAwarded = false;
+    phonicsClueState.bonusAwarded = false;
+  }
+
+  async function startPhonicsClueDeck() {
+    updatePhonicsClueControlsFromUI();
+    await ensurePhonicsClueDeckData();
+    syncPhonicsClueDeckSelect();
+    const cards = Array.isArray(phonicsClueDeckMap[phonicsClueState.deckId])
+      ? phonicsClueDeckMap[phonicsClueState.deckId]
+      : [];
+    if (!cards.length) {
+      WQUI.showToast('Phonics Clue Sprint deck data is unavailable on this build.');
+      renderPhonicsCluePanel();
+      return false;
+    }
+    phonicsClueState.cards = shufflePhonicsClueCards(cards);
+    phonicsClueState.started = true;
+    phonicsClueState.guessPoints = 0;
+    phonicsClueState.bonusPoints = 0;
+    setPhonicsClueCard(0);
+    startPhonicsClueTurnTimer();
+    renderPhonicsCluePanel();
+    return true;
+  }
+
+  function completePhonicsClueDeck() {
+    clearPhonicsClueTurnTimer();
+    phonicsClueState.started = false;
+    phonicsClueState.current = null;
+    phonicsClueState.index = phonicsClueState.cards.length - 1;
+    renderPhonicsCluePanel();
+    WQUI.showToast(
+      `Round complete: ${phonicsClueState.guessPoints} guess points + ${phonicsClueState.bonusPoints} bonus points.`,
+      3200
+    );
+  }
+
+  function advancePhonicsClueCard() {
+    if (!phonicsClueState.started || !phonicsClueState.current) return;
+    const nextIndex = phonicsClueState.index + 1;
+    if (nextIndex >= phonicsClueState.cards.length) {
+      completePhonicsClueDeck();
+      return;
+    }
+    setPhonicsClueCard(nextIndex);
+    startPhonicsClueTurnTimer();
+    renderPhonicsCluePanel();
+  }
+
+  function skipPhonicsClueCard() {
+    if (!phonicsClueState.started || !phonicsClueState.current) return;
+    WQUI.showToast('Card skipped.');
+    advancePhonicsClueCard();
+  }
+
+  function awardPhonicsClueGuessPoint() {
+    if (!phonicsClueState.started || !phonicsClueState.current) return;
+    if (isPhonicsClueTurnExpired()) {
+      WQUI.showToast('Timer ended. Move to the next card.');
+      return;
+    }
+    if (phonicsClueState.guessAwarded) {
+      WQUI.showToast('Guess point already banked for this card.');
+      return;
+    }
+    phonicsClueState.guessPoints += 1;
+    phonicsClueState.guessAwarded = true;
+    renderPhonicsCluePanel();
+  }
+
+  function awardPhonicsClueBonusPoint() {
+    if (!phonicsClueState.started || !phonicsClueState.current) return;
+    if (isPhonicsClueTurnExpired()) {
+      WQUI.showToast('Timer ended. Move to the next card.');
+      return;
+    }
+    if (phonicsClueState.bonusAwarded) {
+      WQUI.showToast('Bonus point already banked for this card.');
+      return;
+    }
+    phonicsClueState.bonusPoints += 1;
+    phonicsClueState.bonusAwarded = true;
+    renderPhonicsCluePanel();
+  }
+
+  function togglePhonicsClueTargetVisibility() {
+    if (!phonicsClueState.started || !phonicsClueState.current) return;
+    phonicsClueState.targetHidden = !phonicsClueState.targetHidden;
+    applyPhonicsClueTargetVisibility();
+    syncPhonicsClueActionButtons();
+  }
+
+  async function openPhonicsClueModal() {
+    _el('phonics-clue-modal')?.classList.remove('hidden');
+    await ensurePhonicsClueDeckData();
+    syncPhonicsClueDeckSelect();
+    updatePhonicsClueControlsFromUI();
+    if (phonicsClueState.started && phonicsClueState.current) {
+      startPhonicsClueTurnTimer();
+    }
+    renderPhonicsCluePanel();
+  }
+
+  function closePhonicsClueModal() {
+    _el('phonics-clue-modal')?.classList.add('hidden');
+    clearPhonicsClueTurnTimer();
   }
 
   function showRevealWordToast(result) {

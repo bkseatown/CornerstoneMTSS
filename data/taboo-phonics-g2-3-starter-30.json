@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "ship",
+    "marked_word": "sh-i-p",
+    "taboo_words": ["boat", "sail", "ocean"],
+    "definition": "a large boat for water travel",
+    "example_sentence": "The ship crossed the bay."
+  },
+  {
+    "id": 2,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "chin",
+    "marked_word": "ch-i-n",
+    "taboo_words": ["face", "jaw", "beard"],
+    "definition": "the part below your mouth",
+    "example_sentence": "He rested his chin on his hand."
+  },
+  {
+    "id": 3,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "math",
+    "marked_word": "m-a-th",
+    "taboo_words": ["numbers", "add", "subtract"],
+    "definition": "a school subject about numbers",
+    "example_sentence": "Math starts after reading."
+  },
+  {
+    "id": 4,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "brush",
+    "marked_word": "b-r-u-sh",
+    "taboo_words": ["comb", "hair", "teeth"],
+    "definition": "a tool with bristles",
+    "example_sentence": "I used a brush on my hair."
+  },
+  {
+    "id": 5,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "chain",
+    "marked_word": "ch-ai-n",
+    "taboo_words": ["link", "metal", "necklace"],
+    "definition": "connected rings of metal",
+    "example_sentence": "The bike chain came off."
+  },
+  {
+    "id": 6,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "rain",
+    "marked_word": "r-ai-n",
+    "taboo_words": ["cloud", "umbrella", "water"],
+    "definition": "water that falls from clouds",
+    "example_sentence": "Rain tapped on the window."
+  },
+  {
+    "id": 7,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "play",
+    "marked_word": "p-l-ay",
+    "taboo_words": ["game", "fun", "recess"],
+    "definition": "to do an activity for fun",
+    "example_sentence": "We play tag at recess."
+  },
+  {
+    "id": 8,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "seed",
+    "marked_word": "s-ee-d",
+    "taboo_words": ["plant", "grow", "garden"],
+    "definition": "part of a plant that can grow",
+    "example_sentence": "Plant the seed in soil."
+  },
+  {
+    "id": 9,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "beach",
+    "marked_word": "b-ea-ch",
+    "taboo_words": ["sand", "ocean", "waves"],
+    "definition": "land by water, often sandy",
+    "example_sentence": "We found shells at the beach."
+  },
+  {
+    "id": 10,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "boat",
+    "marked_word": "b-oa-t",
+    "taboo_words": ["ship", "sail", "water"],
+    "definition": "a small water vehicle",
+    "example_sentence": "The boat moved across the lake."
+  },
+  {
+    "id": 11,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "snow",
+    "marked_word": "s-n-ow",
+    "taboo_words": ["winter", "cold", "ice"],
+    "definition": "frozen flakes from clouds",
+    "example_sentence": "Snow covered the playground."
+  },
+  {
+    "id": 12,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "coin",
+    "marked_word": "c-oi-n",
+    "taboo_words": ["money", "penny", "quarter"],
+    "definition": "a small piece of metal money",
+    "example_sentence": "I found a coin near the door."
+  },
+  {
+    "id": 13,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "cloud",
+    "marked_word": "c-l-ou-d",
+    "taboo_words": ["sky", "rain", "white"],
+    "definition": "water drops in the sky",
+    "example_sentence": "A dark cloud moved overhead."
+  },
+  {
+    "id": 14,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "star",
+    "marked_word": "s-t-ar",
+    "taboo_words": ["night", "space", "shine"],
+    "definition": "a glowing object in space",
+    "example_sentence": "One bright star was easy to spot."
+  },
+  {
+    "id": 15,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "park",
+    "marked_word": "p-ar-k",
+    "taboo_words": ["playground", "swings", "picnic"],
+    "definition": "a public outdoor place",
+    "example_sentence": "We met at the park after school."
+  },
+  {
+    "id": 16,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "fork",
+    "marked_word": "f-or-k",
+    "taboo_words": ["spoon", "knife", "eat"],
+    "definition": "a tool with prongs for eating",
+    "example_sentence": "Use a fork for the salad."
+  },
+  {
+    "id": 17,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "storm",
+    "marked_word": "s-t-or-m",
+    "taboo_words": ["thunder", "lightning", "wind"],
+    "definition": "rough weather with wind and rain",
+    "example_sentence": "The storm arrived before dinner."
+  },
+  {
+    "id": 18,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "bird",
+    "marked_word": "b-ir-d",
+    "taboo_words": ["wings", "fly", "nest"],
+    "definition": "an animal with feathers",
+    "example_sentence": "A bird landed on the fence."
+  },
+  {
+    "id": 19,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "turn",
+    "marked_word": "t-ur-n",
+    "taboo_words": ["left", "right", "rotate"],
+    "definition": "to change direction",
+    "example_sentence": "Turn left at the corner."
+  },
+  {
+    "id": 20,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "her",
+    "marked_word": "h-er",
+    "taboo_words": ["she", "girl", "hers"],
+    "definition": "a word used for a female person",
+    "example_sentence": "I gave the note to her."
+  },
+  {
+    "id": 21,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "clean",
+    "marked_word": "c-l-ea-n",
+    "taboo_words": ["dirty", "wash", "tidy"],
+    "definition": "free from dirt",
+    "example_sentence": "Please keep your desk clean."
+  },
+  {
+    "id": 22,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "team",
+    "marked_word": "t-ea-m",
+    "taboo_words": ["group", "players", "together"],
+    "definition": "people working or playing together",
+    "example_sentence": "Our team won the relay."
+  },
+  {
+    "id": 23,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "bright",
+    "marked_word": "b-r-igh-t",
+    "taboo_words": ["light", "shine", "smart"],
+    "definition": "giving a lot of light",
+    "example_sentence": "The bright lamp lit the room."
+  },
+  {
+    "id": 24,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "night",
+    "marked_word": "n-igh-t",
+    "taboo_words": ["dark", "moon", "sleep"],
+    "definition": "the time when it is dark outside",
+    "example_sentence": "We read a story at night."
+  },
+  {
+    "id": 25,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "jumped",
+    "marked_word": "jump-ed",
+    "taboo_words": ["hop", "leap", "bounced"],
+    "definition": "did a leap",
+    "example_sentence": "The cat jumped onto the chair."
+  },
+  {
+    "id": 26,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "smiling",
+    "marked_word": "smil-ing",
+    "taboo_words": ["happy", "grin", "teeth"],
+    "definition": "showing happiness with your mouth",
+    "example_sentence": "She was smiling in the photo."
+  },
+  {
+    "id": 27,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "helper",
+    "marked_word": "help-er",
+    "taboo_words": ["assist", "aid", "support"],
+    "definition": "a person who helps",
+    "example_sentence": "My helper passed out papers."
+  },
+  {
+    "id": 28,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "farmer",
+    "marked_word": "farm-er",
+    "taboo_words": ["crops", "tractor", "field"],
+    "definition": "a person who grows crops or raises animals",
+    "example_sentence": "The farmer fixed the fence."
+  },
+  {
+    "id": 29,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "thunder",
+    "marked_word": "thun-der",
+    "taboo_words": ["lightning", "loud", "storm"],
+    "definition": "the loud sound that follows lightning",
+    "example_sentence": "We heard thunder in the distance."
+  },
+  {
+    "id": 30,
+    "deck_id": "taboo_phonics_g2_3_starter_30",
+    "grade_band": "G2-3",
+    "target_word": "winter",
+    "marked_word": "win-ter",
+    "taboo_words": ["cold", "snow", "season"],
+    "definition": "the coldest season of the year",
+    "example_sentence": "Winter days are shorter."
+  }
+]

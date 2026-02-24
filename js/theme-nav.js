@@ -214,46 +214,108 @@
     }
   }
 
-  function ensureTeacherTools() {
-    if (byId('wq-teacher-tools')) return;
-
-    const settingsBody = byId('settings-advanced-tools') || document.querySelector('#settings-advanced .settings-grid');
-    if (!settingsBody) return;
-
-    const section = document.createElement('div');
-    section.id = 'wq-teacher-tools';
-    section.className = 'setting-row setting-row-full wq-teacher-tools';
-    section.innerHTML = [
-      '<button id="wq-teacher-toggle" class="wq-teacher-toggle" type="button" aria-expanded="false">',
-      '  <span class="wq-teacher-heading">Teacher Word Input</span>',
-      '  <span id="wq-teacher-arrow" class="wq-teacher-arrow" aria-hidden="true">▼</span>',
-      '  <span id="wq-teacher-status" class="wq-teacher-status hidden" aria-hidden="true">ACTIVE</span>',
-      '</button>',
-      '<div id="wq-teacher-body" class="wq-teacher-body hidden">',
-      '  <p class="wq-teacher-help">Enter one word per line or comma-separated. Letters only, 2-12 chars.</p>',
-      '  <textarea id="wq-teacher-words" class="wq-teacher-words" placeholder="cat\ndog\nbat\n(or: cat, dog, bat)"></textarea>',
-      '  <div class="wq-teacher-actions">',
-      '    <button id="wq-teacher-activate" class="wq-teacher-btn wq-teacher-btn-primary" type="button">Activate Word List</button>',
-      '    <button id="wq-teacher-clear" class="wq-teacher-btn wq-teacher-btn-muted" type="button">Clear</button>',
-      '  </div>',
-      '  <div id="wq-teacher-msg" class="wq-teacher-msg" aria-live="polite"></div>',
-      '</div>'
-    ].join('');
-
-    settingsBody.appendChild(section);
-
-    const body = byId('wq-teacher-body');
-    const arrow = byId('wq-teacher-arrow');
-    const toggle = byId('wq-teacher-toggle');
-    const wordsInput = byId('wq-teacher-words');
-
-    toggle?.addEventListener('click', () => {
-      if (!body || !arrow || !toggle) return;
-      const isOpen = !body.classList.contains('hidden');
-      body.classList.toggle('hidden', isOpen);
-      arrow.textContent = isOpen ? '▼' : '▲';
-      toggle.setAttribute('aria-expanded', String(!isOpen));
+  function syncTeacherHubSelectsFromSettings() {
+    const mappings = [
+      ['teacher-team-mode', 's-team-mode'],
+      ['teacher-team-count', 's-team-count'],
+      ['teacher-turn-timer', 's-turn-timer'],
+      ['teacher-voice-task', 's-voice-task']
+    ];
+    mappings.forEach(([teacherId, settingsId]) => {
+      const teacherSelect = byId(teacherId);
+      const settingsSelect = byId(settingsId);
+      if (!teacherSelect || !settingsSelect) return;
+      teacherSelect.value = settingsSelect.value;
     });
+  }
+
+  function dispatchSettingsSelect(settingsId, value) {
+    const settingsSelect = byId(settingsId);
+    if (!settingsSelect) return;
+    settingsSelect.value = value;
+    settingsSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function bindTeacherHubControlSync() {
+    if (document.body.dataset.wqTeacherHubControlBound === '1') return;
+    const mappings = [
+      ['teacher-team-mode', 's-team-mode'],
+      ['teacher-team-count', 's-team-count'],
+      ['teacher-turn-timer', 's-turn-timer'],
+      ['teacher-voice-task', 's-voice-task']
+    ];
+    mappings.forEach(([teacherId, settingsId]) => {
+      const teacherSelect = byId(teacherId);
+      const settingsSelect = byId(settingsId);
+      if (!teacherSelect || !settingsSelect) return;
+      teacherSelect.addEventListener('change', (event) => {
+        dispatchSettingsSelect(settingsId, event.target?.value || '');
+      });
+      settingsSelect.addEventListener('change', () => {
+        teacherSelect.value = settingsSelect.value;
+      });
+    });
+    document.body.dataset.wqTeacherHubControlBound = '1';
+  }
+
+  function bindTeacherStudioUploads() {
+    if (document.body.dataset.wqTeacherStudioBound === '1') return;
+    const msg = byId('teacher-studio-msg');
+    const update = () => {
+      const musicCount = byId('teacher-studio-music-upload')?.files?.length || 0;
+      const wordCount = byId('teacher-studio-word-audio-upload')?.files?.length || 0;
+      const phonemeCount = byId('teacher-studio-phoneme-upload')?.files?.length || 0;
+      if (!msg) return;
+      if (!musicCount && !wordCount && !phonemeCount) {
+        msg.textContent = 'Files stay local on this device for now.';
+        return;
+      }
+      msg.textContent = `Local files ready: music ${musicCount}, word audio ${wordCount}, phoneme voice ${phonemeCount}.`;
+    };
+    byId('teacher-studio-music-upload')?.addEventListener('change', update);
+    byId('teacher-studio-word-audio-upload')?.addEventListener('change', update);
+    byId('teacher-studio-phoneme-upload')?.addEventListener('change', update);
+    document.body.dataset.wqTeacherStudioBound = '1';
+  }
+
+  function openTeacherPanel() {
+    const panel = byId('teacher-panel');
+    if (!panel) return;
+    syncTeacherHubSelectsFromSettings();
+    byId('settings-panel')?.classList.add('hidden');
+    panel.classList.remove('hidden');
+    window.dispatchEvent(new Event('wq:teacher-panel-toggle'));
+    byId('wq-teacher-words')?.focus();
+  }
+
+  function closeTeacherPanel() {
+    const panel = byId('teacher-panel');
+    if (!panel) return;
+    panel.classList.add('hidden');
+    window.dispatchEvent(new Event('wq:teacher-panel-toggle'));
+  }
+
+  function bindTeacherPanel() {
+    if (document.body.dataset.wqTeacherPanelBound === '1') return;
+    byId('teacher-panel-btn')?.addEventListener('click', openTeacherPanel);
+    byId('teacher-panel-close')?.addEventListener('click', closeTeacherPanel);
+    byId('teacher-panel')?.addEventListener('click', (event) => {
+      if (event.target?.id === 'teacher-panel') closeTeacherPanel();
+    });
+    window.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const panel = byId('teacher-panel');
+      if (!panel || panel.classList.contains('hidden')) return;
+      closeTeacherPanel();
+    });
+    window.addEventListener('wq:open-teacher-hub', openTeacherPanel);
+    document.body.dataset.wqTeacherPanelBound = '1';
+  }
+
+  function ensureTeacherTools() {
+    if (document.body.dataset.wqTeacherToolsBound === '1') return;
+    const wordsInput = byId('wq-teacher-words');
+    if (!wordsInput) return;
 
     byId('wq-teacher-activate')?.addEventListener('click', () => {
       const words = parseTeacherWords(wordsInput?.value || '');
@@ -271,11 +333,16 @@
 
     const restoredWords = loadTeacherWords();
     if (restoredWords.length) {
-      if (wordsInput) wordsInput.value = restoredWords.join('\n');
+      wordsInput.value = restoredWords.join('\n');
       applyTeacherPool(restoredWords, { silent: true });
     } else {
       setTeacherStatus([]);
     }
+
+    bindTeacherHubControlSync();
+    bindTeacherStudioUploads();
+    bindTeacherPanel();
+    document.body.dataset.wqTeacherToolsBound = '1';
   }
 
   function init() {
