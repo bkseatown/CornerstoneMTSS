@@ -5038,6 +5038,48 @@
     return { kind: 'phonics', focus };
   }
 
+  const FOCUS_LENGTH_BY_VALUE = Object.freeze({
+    all: '5',
+    cvc: '3',
+    digraph: '4',
+    ccvc: '4',
+    cvcc: '4',
+    trigraph: '5',
+    cvce: '4',
+    vowel_team: '5',
+    r_controlled: '5',
+    diphthong: '5',
+    floss: '4',
+    welded: '5',
+    schwa: '6',
+    prefix: '6',
+    suffix: '6',
+    compound: '7',
+    multisyllable: '7'
+  });
+
+  function getRecommendedLengthForFocus(focusValue) {
+    const preset = parseFocusPreset(focusValue);
+    if (preset.kind === 'subject') return '';
+    if (preset.kind === 'classic') return FOCUS_LENGTH_BY_VALUE.all;
+    return FOCUS_LENGTH_BY_VALUE[preset.focus] || DEFAULT_PREFS.length;
+  }
+
+  function syncLengthFromFocus(focusValue, options = {}) {
+    if (lessonPackApplying) return false;
+    const lengthSelect = _el('s-length');
+    if (!lengthSelect) return false;
+    const recommended = getRecommendedLengthForFocus(focusValue);
+    if (!recommended) return false;
+    if (String(lengthSelect.value || '').trim() === recommended) return false;
+    lengthSelect.value = recommended;
+    setPref('length', recommended);
+    if (!options.silent) {
+      WQUI.showToast(`Word length synced to ${recommended} letters for this quest.`);
+    }
+    return true;
+  }
+
   function getEffectiveGameplayGradeBand(selectedGradeBand, focusValue = 'all') {
     const preset = parseFocusPreset(focusValue);
     if (preset.kind === 'subject' && preset.gradeBand) {
@@ -5057,14 +5099,15 @@
     const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim().toLowerCase();
     if (gradeValue !== 'all') return false;
 
+    const defaultLength = getRecommendedLengthForFocus(focusValue) || DEFAULT_PREFS.length;
     const lengthSelect = _el('s-length');
     if (!lengthSelect) return false;
-    if (String(lengthSelect.value || '').trim() === DEFAULT_PREFS.length) return false;
+    if (String(lengthSelect.value || '').trim() === defaultLength) return false;
 
-    lengthSelect.value = DEFAULT_PREFS.length;
-    setPref('length', DEFAULT_PREFS.length);
+    lengthSelect.value = defaultLength;
+    setPref('length', defaultLength);
     if (options.toast) {
-      WQUI.showToast(`All grades mode defaults to ${DEFAULT_PREFS.length}-letter words.`);
+      WQUI.showToast(`All grades mode defaults to ${defaultLength}-letter words for this quest.`);
     }
     return true;
   }
@@ -5763,6 +5806,7 @@
     if (select.value === target) {
       updateFocusSummaryLabel();
       closeFocusSearchList();
+      if (options.startNewWord) newGame();
       return;
     }
     select.value = target;
@@ -5771,6 +5815,7 @@
       WQUI.showToast(`Focus set: ${getFocusLabel(target)}.`);
     }
     closeFocusSearchList();
+    if (options.startNewWord) newGame();
   }
 
   function setQuestValue(nextValue, options = {}) {
@@ -5803,6 +5848,7 @@
         handleLessonPackSelectionChange('custom');
         updateFocusSummaryLabel();
         closeFocusSearchList();
+        if (options.startNewWord) newGame();
         return;
       }
       handleLessonPackSelectionChange(packId);
@@ -5814,6 +5860,7 @@
       }
       updateFocusSummaryLabel();
       closeFocusSearchList();
+      if (options.startNewWord) newGame();
       return;
     }
     const focusValue = raw.startsWith('focus::') ? raw.slice('focus::'.length) : raw;
@@ -5938,6 +5985,7 @@
     const focus = event.target?.value || 'all';
     setPref('focus', focus);
     releaseLessonPackToManualMode();
+    syncLengthFromFocus(focus, { silent: lessonPackApplying });
     syncGradeFromFocus(focus, { silent: lessonPackApplying });
     updateFocusHint();
     updateFocusGradeNote();
@@ -6013,7 +6061,7 @@
     const buttons = getFocusSearchButtons();
     if (!buttons.length) return;
     const chosen = focusNavIndex >= 0 ? buttons[focusNavIndex] : buttons[0];
-    setQuestValue(chosen.getAttribute('data-quest-value'));
+    setQuestValue(chosen.getAttribute('data-quest-value'), { startNewWord: true });
     updateFocusSummaryLabel();
     event.preventDefault();
   });
@@ -6043,7 +6091,7 @@
     const button = event.target?.closest?.('[data-quest-value]');
     if (!button) return;
     const value = button.getAttribute('data-quest-value');
-    setQuestValue(value);
+    setQuestValue(value, { startNewWord: true });
     updateFocusSummaryLabel();
   });
 
@@ -8939,12 +8987,7 @@
     const s = WQUI.getSettings();
     const focus = _el('setting-focus')?.value || prefs.focus || 'all';
     const effectiveGradeBand = getEffectiveGameplayGradeBand(s.gradeBand || 'all', focus);
-    const scope = `${effectiveGradeBand}:${s.length || 'any'}:${focus || 'all'}`;
     const playableSet = buildPlayableWordSet(effectiveGradeBand, s.length, focus);
-    const reviewItem = peekDueReviewItemForPool(playableSet);
-    if (reviewItem) {
-      primeShuffleBagWithWord(scope, reviewItem.word);
-    }
 
     const result = WQGame.startGame({
       ...s,
@@ -8973,8 +9016,11 @@
     }
     resetRoundTracking(result);
     const startedWord = normalizeReviewWord(result.word);
-    const servedReview = Boolean(reviewItem && startedWord && startedWord === reviewItem.word);
-    if (servedReview) consumeReviewItem(reviewItem);
+    const matchedDueReview = reviewQueueState.items.find((item) => (
+      item.word === startedWord &&
+      item.dueRound <= reviewQueueState.round
+    )) || null;
+    if (matchedDueReview) consumeReviewItem(matchedDueReview);
     WQUI.calcLayout(result.wordLength, result.maxGuesses);
     WQUI.buildBoard(result.wordLength, result.maxGuesses);
     WQUI.buildKeyboard();
@@ -8986,10 +9032,7 @@
     removeDupeToast();
     updateVoicePracticePanel(WQGame.getState());
     updateFocusHint();
-    updateNextActionLine({
-      reviewWord: servedReview ? startedWord : '',
-      dueCount: countDueReviewWords(playableSet)
-    });
+    updateNextActionLine({ dueCount: countDueReviewWords(playableSet) });
     scheduleStarterCoachHint();
     syncAssessmentLockRuntime();
   }
@@ -11305,9 +11348,12 @@
     };
 
     const chooseTrack = (playMode) => {
-      const options = customTracks.length
+      let options = customTracks.length
         ? customTracks
         : (catalog?.modeIndex?.[playMode] || []);
+      if (!options.length && !customTracks.length) {
+        options = catalog?.modeIndex?.focus || [];
+      }
       if (!options.length) return null;
       if (options.length === 1) return options[0];
       const pool = options.filter((track) => track.id !== activeTrackId);
