@@ -78,6 +78,7 @@
   const PREF_KEY = 'wq_v2_prefs';
   const PREF_MIGRATION_KEY = 'wq_v2_pref_defaults_20260222';
   const PREF_MUSIC_AUTO_MIGRATION_KEY = 'wq_v2_pref_music_auto_20260222';
+  const PREF_GUESSES_DEFAULT_MIGRATION_KEY = 'wq_v2_pref_guesses_default_20260224';
   const FIRST_RUN_SETUP_KEY = 'wq_v2_first_run_setup_v1';
   const SESSION_SUMMARY_KEY = 'wq_v2_teacher_session_summary_v1';
   const ROSTER_STATE_KEY = 'wq_v2_teacher_roster_v1';
@@ -305,6 +306,14 @@
     if (!Number.isFinite(vol) || vol < 0.4) prefs.musicVol = DEFAULT_PREFS.musicVol;
     savePrefs(prefs);
     localStorage.setItem(PREF_MUSIC_AUTO_MIGRATION_KEY, 'done');
+  }
+  if (localStorage.getItem(PREF_GUESSES_DEFAULT_MIGRATION_KEY) !== 'done') {
+    const currentGuesses = parseInt(String(prefs.guesses ?? ''), 10);
+    if (!Number.isFinite(currentGuesses) || currentGuesses === 5) {
+      prefs.guesses = DEFAULT_PREFS.guesses;
+    }
+    savePrefs(prefs);
+    localStorage.setItem(PREF_GUESSES_DEFAULT_MIGRATION_KEY, 'done');
   }
   if (prefs.meaningPlusFun === undefined) {
     prefs.meaningPlusFun = DEFAULT_PREFS.meaningPlusFun;
@@ -3237,7 +3246,35 @@
     releaseLessonPackToManualMode();
     refreshStandaloneMissionLabHub();
   });
-  _el('s-guesses')?.addEventListener('change', e => setPref('guesses',  e.target.value));
+  _el('s-guesses')?.addEventListener('change', e => {
+    const currentState = WQGame.getState?.() || null;
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before changing max guesses.');
+      e.target.value = String(
+        Math.max(1, Number(currentState?.maxGuesses || prefs.guesses || DEFAULT_PREFS.guesses || 6))
+      );
+      return;
+    }
+    const normalized = String(
+      Math.max(1, Number.parseInt(String(e.target.value || DEFAULT_PREFS.guesses), 10) || Number.parseInt(DEFAULT_PREFS.guesses, 10) || 6)
+    );
+    e.target.value = normalized;
+    setPref('guesses', normalized);
+    const hasActiveWord = Boolean(currentState?.word && !currentState?.gameOver);
+    const hasProgress = Boolean(
+      hasActiveWord && (((currentState?.guesses?.length || 0) > 0) || String(currentState?.guess || '').length > 0)
+    );
+    if (hasProgress) {
+      WQUI.showToast(`Max guesses set to ${normalized}. It applies next word.`);
+      return;
+    }
+    if (hasActiveWord) {
+      newGame();
+      WQUI.showToast(`Max guesses set to ${normalized}.`);
+      return;
+    }
+    WQUI.showToast(`Max guesses saved: ${normalized}.`);
+  });
   _el('s-confidence-coaching')?.addEventListener('change', e => {
     setConfidenceCoachingMode(!!e.target.checked, { toast: true });
   });
@@ -4451,24 +4488,25 @@
       const kbRows = 3;
       const keyboardSafetyPad = keyboardLayout === 'wilson'
         ? (layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 24 : 22)
-        : 12;
+        : 8;
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const extraSafetyH = layoutMode === 'compact' ? 48 : layoutMode === 'tight' ? 36 : layoutMode === 'wide' ? 24 : 28;
+      const extraSafetyH = layoutMode === 'compact' ? 40 : layoutMode === 'tight' ? 30 : layoutMode === 'wide' ? 20 : 22;
       const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
-      const byHeight = Math.floor((availableBoardH - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
+      const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
+      const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
 
       const availableBoardW = Math.max(220, mainInnerW);
       const byWidth = Math.floor((availableBoardW - platePadX - tileGap * (wordLength - 1)) / wordLength);
 
       const sizeCap = layoutMode === 'wide' ? 62 : layoutMode === 'tight' ? 52 : layoutMode === 'compact' ? 44 : 56;
-      const sizeFloor = layoutMode === 'compact' ? 24 : 28;
+      const sizeFloor = layoutMode === 'compact' ? 26 : layoutMode === 'tight' ? 30 : 32;
       const size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const playfieldW = Math.ceil(boardWidth);
 
-      const adaptiveKeyFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 41 : 46;
+      const adaptiveKeyFloor = layoutMode === 'compact' ? 36 : layoutMode === 'tight' ? 44 : 48;
       const adaptiveKeyCeil = layoutMode === 'wide' ? 58 : 54;
       const adaptiveKeyH = Math.max(adaptiveKeyFloor, Math.min(adaptiveKeyCeil, Math.round(size * 0.96)));
       let adaptiveKeyMinW = Math.max(layoutMode === 'compact' ? 22 : layoutMode === 'tight' ? 25 : 29, Math.min(48, Math.round(size * 0.8)));
@@ -6125,11 +6163,11 @@
       ? 'midgame-boost-ticker is-static'
       : 'midgame-boost-ticker';
     boost.innerHTML = `
-      <button type="button" class="midgame-boost-peek" aria-expanded="false" aria-label="Open clue peek">
+      <button type="button" class="midgame-boost-peek" aria-expanded="true" aria-label="Toggle clue peek">
         <span class="midgame-boost-peek-dot" aria-hidden="true"></span>
         Clue Peek
       </button>
-      <div class="midgame-boost-bubble hidden">
+      <div class="midgame-boost-bubble">
         <span class="midgame-boost-mascot" aria-hidden="true">${mascot}</span>
         <button type="button" class="midgame-boost-close" aria-label="Close clue bubble">✕</button>
         <span class="midgame-boost-tag">${label}</span>
@@ -6177,7 +6215,6 @@
     });
     boost.classList.remove('hidden');
     requestAnimationFrame(() => boost.classList.add('is-visible'));
-    midgameBoostAutoHideTimer = setTimeout(hideMidgameBoost, hasAnswer ? 15000 : 12000);
   }
 
   const ERROR_PATTERN_LABELS = Object.freeze({
@@ -9078,6 +9115,8 @@
     }
     if (document.documentElement.getAttribute('data-focus-search-open') === 'true') return;
     const nextKey = e.key === 'Backspace' ? 'Backspace' : e.key;
+    const isGameplayKey = nextKey === 'Enter' || nextKey === 'Backspace' || /^[a-zA-Z]$/.test(nextKey);
+    if (isGameplayKey) e.preventDefault();
     handleInputUnit(nextKey);
     if (/^[a-zA-Z]$/.test(e.key)) {
       const btn = document.querySelector(`.key[data-key="${e.key.toLowerCase()}"]`);

@@ -2566,7 +2566,7 @@ html[data-board-style="soundcard"] .tile.flip {
 .midgame-boost {
   position: relative;
   order: 2;
-  width: min(520px, calc(100vw - 18px));
+  width: min(680px, calc(100vw - 18px));
   display: grid;
   gap: 6px;
   justify-items: center;
@@ -2592,10 +2592,10 @@ html[data-board-style="soundcard"] .tile.flip {
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
   color: var(--text);
   font: inherit;
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   font-weight: 820;
   letter-spacing: 0.01em;
-  padding: 3px 10px;
+  padding: 5px 14px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -2614,7 +2614,7 @@ html[data-board-style="soundcard"] .tile.flip {
 
 .midgame-boost-bubble {
   position: relative;
-  width: min(430px, calc(100vw - 24px));
+  width: min(560px, calc(100vw - 24px));
   border: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
   border-radius: 18px 18px 18px 10px;
   background:
@@ -2625,7 +2625,7 @@ html[data-board-style="soundcard"] .tile.flip {
       color-mix(in oklab, var(--modal-bg) 88%, var(--accent) 12%)
     );
   box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-  padding: 10px 11px 10px;
+  padding: 12px 14px 12px;
   display: grid;
   gap: 6px;
 }
@@ -2682,7 +2682,7 @@ html[data-board-style="soundcard"] .tile.flip {
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--brand) 45%, var(--panel-border) 55%);
   color: var(--brand);
-  font-size: 0.61rem;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2690,8 +2690,8 @@ html[data-board-style="soundcard"] .tile.flip {
 
 .midgame-boost-question {
   margin: 1px 0 0;
-  font-size: 0.76rem;
-  line-height: 1.32;
+  font-size: 0.9rem;
+  line-height: 1.4;
   font-weight: 760;
   color: var(--text);
 }
@@ -2706,7 +2706,7 @@ html[data-board-style="soundcard"] .tile.flip {
   padding: 4px 10px;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   width: fit-content;
 }
 
@@ -2716,7 +2716,7 @@ html[data-board-style="soundcard"] .tile.flip {
   border-radius: 9px;
   background: color-mix(in oklab, var(--panel-bg) 70%, var(--brand) 30%);
   border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--panel-border) 66%);
-  font-size: 0.72rem;
+  font-size: 0.84rem;
   font-weight: 700;
 }
 
@@ -2734,7 +2734,7 @@ html[data-board-style="soundcard"] .tile.flip {
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   font-weight: 760;
   padding: 3px 9px;
   cursor: pointer;
@@ -2752,7 +2752,7 @@ html[data-board-style="soundcard"] .tile.flip {
   border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
   background: color-mix(in oklab, var(--page-bg) 82%, var(--brand) 18%);
   border-radius: 999px;
-  min-height: 22px;
+  min-height: 30px;
   display: flex;
   align-items: center;
 }
@@ -2767,7 +2767,7 @@ html[data-board-style="soundcard"] .tile.flip {
 .midgame-boost-ticker-track > span {
   display: inline-block;
   padding-right: 36px;
-  font-size: 0.67rem;
+  font-size: 0.82rem;
   font-weight: 760;
   color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
 }
