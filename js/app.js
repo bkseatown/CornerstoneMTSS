@@ -83,6 +83,7 @@
   const REVIEW_QUEUE_KEY = 'wq_v2_spaced_review_queue_v1';
   const PAGE_MODE_KEY = 'wq_v2_page_mode_v1';
   const LAST_NON_OFF_MUSIC_KEY = 'wq_v2_last_non_off_music_v1';
+  const MISSION_LAB_ENABLED = false;
   const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
@@ -338,7 +339,12 @@
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
   let musicController = null;
 
+  function isMissionLabEnabled() {
+    return MISSION_LAB_ENABLED;
+  }
+
   function normalizePageMode(mode) {
+    if (!isMissionLabEnabled()) return 'wordquest';
     return String(mode || '').trim().toLowerCase() === 'mission-lab'
       ? 'mission-lab'
       : 'wordquest';
@@ -2476,10 +2482,13 @@
   }
 
   function syncPageModeUI() {
-    const missionMode = isMissionLabStandaloneMode();
+    const missionEnabled = isMissionLabEnabled();
+    const missionMode = missionEnabled && isMissionLabStandaloneMode();
     document.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'wordquest');
+    document.documentElement.setAttribute('data-mission-lab', missionEnabled ? 'on' : 'off');
     const navBtn = _el('mission-lab-nav-btn');
     if (navBtn) {
+      navBtn.classList.toggle('hidden', !missionEnabled);
       navBtn.textContent = missionMode ? 'WordQuest' : 'Mission Lab';
       navBtn.setAttribute('aria-pressed', missionMode ? 'true' : 'false');
       navBtn.title = missionMode
@@ -2496,6 +2505,13 @@
     }
     _el('mission-lab-hub')?.classList.toggle('hidden', !missionMode);
     syncGameplayAudioStrip();
+    if (!missionEnabled) {
+      closeRevealChallengeModal({ silent: true, preserveFeedback: false });
+      _el('modal-challenge-launch')?.classList.add('hidden');
+      _el('challenge-modal')?.classList.add('hidden');
+      _el('mission-lab-hub')?.classList.add('hidden');
+      return;
+    }
     if (missionMode) {
       hideInformantHintCard();
       _el('toast')?.classList.remove('visible', 'toast-informant');
@@ -9573,6 +9589,15 @@
     const meta = _el('modal-challenge-launch-meta');
     const helper = _el('modal-challenge-launch-helper');
     if (!wrap || !meta) return;
+    if (!isMissionLabEnabled()) {
+      revealChallengeState = null;
+      meta.textContent = '';
+      if (helper) helper.textContent = '';
+      wrap.classList.add('hidden');
+      clearChallengeSprintTimer();
+      updateChallengeProgressUI();
+      return;
+    }
     const next = buildRevealChallengeState(result);
     revealChallengeState = next;
     if (!next) {
@@ -9594,6 +9619,7 @@
   }
 
   function openRevealChallengeModal() {
+    if (!isMissionLabEnabled()) return;
     if (!revealChallengeState) {
       if (isMissionLabStandaloneMode()) {
         startStandaloneMissionLab();

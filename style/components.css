@@ -611,6 +611,16 @@ header .theme-preview-music-label {
   color: color-mix(in oklab, var(--text-muted) 86%, var(--text) 14%);
 }
 
+html[data-mission-lab="off"] #mission-lab-nav-btn,
+html[data-mission-lab="off"] #mission-lab-hub,
+html[data-mission-lab="off"] #modal-challenge-launch,
+html[data-mission-lab="off"] #challenge-modal,
+html[data-mission-lab="off"] .teacher-mission-metrics,
+html[data-mission-lab="off"] #session-copy-mission-btn,
+html[data-mission-lab="off"] #session-copy-mission-csv-btn {
+  display: none !important;
+}
+
 .focus-inline-results {
   position: absolute;
   top: calc(100% + 6px);
