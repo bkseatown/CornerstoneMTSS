@@ -5,7 +5,7 @@
   'use strict';
 
   var THEME_REGISTRY = Object.freeze([
-    Object.freeze({ id: 'default', label: '🌿 Slate Classic', family: 'core' }),
+    Object.freeze({ id: 'default', label: '🌿 Sage Classic', family: 'core' }),
     Object.freeze({ id: 'sunset', label: '🌅 Sunset', family: 'core' }),
     Object.freeze({ id: 'ocean', label: '🌊 Ocean', family: 'core' }),
     Object.freeze({ id: 'coffee', label: '☕ Coffeehouse', family: 'core' }),
