@@ -149,10 +149,14 @@ header {
   display:     inline-flex;
   align-items: baseline;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 1px rgba(8, 16, 28, 0.2);
 }
 .logo span {
-  color: var(--logo-quest, var(--accent));
+  color: var(--logo-quest, color-mix(in oklab, #f3fff8 86%, var(--vowel-accent) 14%));
   position: relative;
+  text-shadow: 0 1px 1px rgba(8, 16, 28, 0.3);
 }
 .logo span::before {
   content: '·';
@@ -2264,7 +2268,8 @@ html[data-page-mode="mission-lab"] #focus-hint-toggle {
 .board-plate {
   background:    var(--plate-bg);
   border-radius: var(--radius-plate);
-  padding:       14px;
+  width:         min(calc(var(--playfield-width) + 68px), calc(100vw - 20px), calc(100% - 4px));
+  padding:       14px 18px;
   border:        1px solid var(--plate-border);
   box-shadow:    0 4px 24px rgba(0,0,0,0.12);
   position:      relative;
@@ -2394,6 +2399,7 @@ html[data-atmosphere="spark"] .board-plate::after {
   grid-template-columns: repeat(var(--word-length, 5), var(--tile-size));
   grid-template-rows:    repeat(var(--max-guesses, 6), var(--tile-size));
   gap:                   var(--gap-tile);
+  margin:                0 auto;
   position:              relative;
   z-index:               1;
 }
