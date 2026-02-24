@@ -16,6 +16,16 @@ const WQUI = (() => {
     ['a','s','d','f','g','h','j','k','l'],
     ['⌫','z','x','c','v','b','n','m','Enter']
   ];
+  const KEY_ROWS_ALPHABET = [
+    ['a','b','c','d','e','f','g','h','i'],
+    ['j','k','l','m','n','o','p','q','r'],
+    ['⌫','s','t','u','v','w','x','y','z','Enter']
+  ];
+  const KEY_ROWS_ALPHABET_ARC = [
+    ['a','b','c','d','e','f','g','h'],
+    ['i','j','k','l','m','n','o','p','q','r'],
+    ['⌫','s','t','u','v','w','x','y','z','Enter']
+  ];
   const KEY_ROWS_SOUNDCARD = [
     ['a','b','c','d','e','f','g','h','i'],
     ['j','k','l','m','n','o','p','q','r'],
@@ -128,9 +138,16 @@ const WQUI = (() => {
   // ─── Keyboard ───────────────────────────────────
   function buildKeyboard() {
     _keyboard.innerHTML = '';
-    const layout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
+    const layoutRaw = String(document.documentElement.getAttribute('data-keyboard-layout') || 'standard').toLowerCase();
+    const layout = layoutRaw === 'qwerty' ? 'standard' : layoutRaw;
     const soundCard = layout === 'wilson';
-    const rows = soundCard ? KEY_ROWS_SOUNDCARD : KEY_ROWS_QWERTY;
+    const rows = soundCard
+      ? KEY_ROWS_SOUNDCARD
+      : layout === 'alphabet'
+        ? KEY_ROWS_ALPHABET
+        : layout === 'alphabet-arc'
+          ? KEY_ROWS_ALPHABET_ARC
+          : KEY_ROWS_QWERTY;
 
     if (soundCard) {
       const chunkRow = document.createElement('div');
@@ -151,22 +168,22 @@ const WQUI = (() => {
       _keyboard.appendChild(chunkRow);
     }
 
-    rows.forEach(row => {
+    rows.forEach((row, rowIndex) => {
       const rowEl = document.createElement('div');
-      rowEl.className = 'key-row';
+      rowEl.className = `key-row key-row-${rowIndex + 1}`;
       row.forEach(key => {
         const btn = document.createElement('button');
         btn.className = 'key';
         btn.type = 'button';
         btn.dataset.key = key;
-        if (/^[A-Z]$/.test(key)) btn.dataset.letter = key.toLowerCase();
+        if (/^[a-z]$/i.test(key)) btn.dataset.letter = key.toLowerCase();
 
         if (key === '⌫') {
           btn.textContent = '⌫';
-          if (!soundCard) btn.classList.add('wide');
+          if (layout === 'standard') btn.classList.add('wide');
         } else if (key === 'Enter') {
           btn.textContent = 'Enter';
-          if (!soundCard) btn.classList.add('wide');
+          if (layout === 'standard') btn.classList.add('wide');
         } else {
           btn.textContent = _fmt(key);
           if (key.length > 1) {

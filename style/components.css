@@ -2846,6 +2846,26 @@ html[data-chunk-tabs="off"] .key-row-chunks {
   display: none;
 }
 
+html[data-keyboard-layout="alphabet"] .key-row-1 {
+  padding-inline: 10px;
+}
+
+html[data-keyboard-layout="alphabet"] .key-row-2 {
+  padding-inline: 4px;
+}
+
+html[data-keyboard-layout="alphabet-arc"] .key-row-1 {
+  padding-inline: 18px;
+}
+
+html[data-keyboard-layout="alphabet-arc"] .key-row-2 {
+  padding-inline: 2px;
+}
+
+html[data-keyboard-layout="alphabet-arc"] .key-row-3 {
+  padding-inline: 10px;
+}
+
 .key {
   height:        var(--key-h);
   min-width:     var(--key-min-w);
@@ -2942,6 +2962,47 @@ html[data-key-style="soundcard"] .key {
 
 html[data-key-style="soundcard"] .key::after {
   opacity: 0.62;
+}
+
+html[data-key-style="typewriter"] .key {
+  border-width: 2px;
+  border-radius: 11px 11px 14px 14px;
+  border-color: color-mix(in oklab, var(--key-bg) 40%, #1f2733 60%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--key-bg) 62%, #ffffff 38%) 0%,
+    color-mix(in oklab, var(--key-bg) 78%, #f3f6fa 22%) 58%,
+    color-mix(in oklab, var(--key-bg) 60%, #202a36 40%) 100%
+  );
+  box-shadow:
+    0 4px 0 color-mix(in oklab, var(--key-bg) 28%, #182230 72%),
+    0 8px 14px rgba(8, 16, 28, 0.2),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(0,0,0,0.25);
+  letter-spacing: 0.02em;
+}
+
+html[data-key-style="typewriter"] .key::after {
+  opacity: 0.26;
+}
+
+html[data-key-style="pebble"] .key {
+  border-width: 1.4px;
+  border-radius: 999px;
+  border-color: color-mix(in oklab, var(--key-bg) 56%, #1f2f47 44%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--key-bg) 90%, #ffffff 10%) 0%,
+    color-mix(in oklab, var(--key-bg) 95%, #f5f8fb 5%) 100%
+  );
+  box-shadow:
+    0 3px 0 color-mix(in oklab, var(--key-bg) 48%, #000000 38%),
+    0 7px 12px rgba(8, 18, 34, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+html[data-key-style="pebble"] .key::after {
+  opacity: 0.48;
 }
 
 .key::after {
