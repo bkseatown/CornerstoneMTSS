@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223c">
   <link rel="stylesheet" href="style/themes.css?v=20260223e">
-  <link rel="stylesheet" href="style/components.css?v=20260223r">
+  <link rel="stylesheet" href="style/components.css?v=20260224i">
 </head>
 <body>
 
@@ -24,8 +24,8 @@
         <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="true" title="Switch play style">
           Mode: Detective
         </button>
-        <button id="focus-hint-toggle" class="header-quick-btn focus-hint-toggle" type="button" aria-pressed="false" title="Get a clue">
-          Hint
+        <button id="focus-hint-toggle" class="header-quick-btn focus-hint-toggle" type="button" aria-pressed="false" title="Get a focused clue">
+          Clue
         </button>
       </div>
       <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
@@ -33,6 +33,9 @@
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
+      </button>
+      <button id="mission-lab-nav-btn" class="header-quick-btn mission-lab-nav-btn" type="button" aria-pressed="false" title="Open Mission Lab as a standalone activity">
+        Mission Lab
       </button>
       <button id="new-game-btn">New Word</button>
     </div>
@@ -42,10 +45,10 @@
   <div class="focus-bar">
     <label for="focus-inline-search" class="focus-search-label">Quest</label>
     <div id="focus-inline-wrap" class="focus-inline-wrap">
-      <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Select your quest (math, digraph, k-2)">
+      <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" spellcheck="false" autocomplete="off" placeholder="Select your quest">
       <div id="focus-inline-results" class="focus-inline-results hidden" role="listbox" aria-label="Quest finder results"></div>
     </div>
-    <span id="grade-target-inline" class="grade-target-inline" aria-live="polite">Grade: ALL</span>
+    <span id="grade-target-inline" class="grade-target-inline" aria-live="polite">Grade: All (K-2 safe)</span>
     <select id="setting-focus" class="focus-source" aria-hidden="true" tabindex="-1" hidden>
       <option value="all">— Classic (Wordle 5x6) —</option>
       <optgroup label="SoR Phonics">
@@ -72,8 +75,34 @@
       <optgroup label="ELA"><option value="vocab-ela-k2">ELA K–2</option><option value="vocab-ela-35">ELA 3–5</option><option value="vocab-ela-68">ELA 6–8</option><option value="vocab-ela-912">ELA 9–12</option></optgroup>
     </select>
   </div>
-  <div id="next-action-line" class="next-action-line" aria-live="polite"></div>
+  <div id="curriculum-main-bar" class="curriculum-main-bar" role="region" aria-label="Curriculum quick controls">
+    <label class="curriculum-main-step-field" for="m-curriculum-step">
+      Curriculum
+      <select id="m-curriculum-step" aria-label="Curriculum and lesson target">
+        <option value="custom::custom" selected>Manual (no curriculum pack)</option>
+      </select>
+    </label>
+    <span id="curriculum-main-summary" class="curriculum-main-summary sr-only" aria-live="polite">Curriculum: Manual</span>
+    <div class="curriculum-main-hidden" aria-hidden="true">
+      <select id="m-lesson-pack" tabindex="-1">
+        <option value="custom" selected>Manual (no pack)</option>
+        <option value="ufli">UFLI Foundations</option>
+        <option value="fundations">Fundations</option>
+        <option value="wilson">Wilson Reading</option>
+        <option value="justwords">Just Words</option>
+      </select>
+      <select id="m-lesson-target" tabindex="-1">
+        <option value="custom" selected>Manual</option>
+      </select>
+    </div>
+  </div>
+  <div id="next-action-line" class="next-action-line hidden" aria-live="polite"></div>
   <div id="classroom-turn-line" class="classroom-turn-line hidden" aria-live="polite"></div>
+  <div id="theme-preview-strip" class="theme-preview-strip hidden" role="region" aria-label="Quick style controls">
+    <div id="theme-preview-slot" class="theme-preview-slot" aria-label="Theme carousel"></div>
+    <button id="quick-music-toggle" class="theme-preview-music" type="button" aria-pressed="false">Music Off</button>
+    <span id="quick-music-label" class="theme-preview-music-label" aria-live="polite">Muted</span>
+  </div>
 
   <!-- ── Settings overlay ─────────────────────────── -->
   <div id="settings-panel" class="settings-panel hidden">
@@ -86,30 +115,86 @@
     </div>
     <div class="settings-body">
       <div class="settings-view-switch" role="tablist" aria-label="Settings view">
-        <button id="settings-tab-quick" class="settings-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="settings-quick" data-settings-tab="quick">Core</button>
+        <button id="settings-tab-quick" class="settings-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="settings-quick" data-settings-tab="quick">Essentials</button>
         <button id="settings-tab-advanced" class="settings-tab" type="button" role="tab" aria-selected="false" aria-controls="settings-advanced" data-settings-tab="advanced">Advanced</button>
-      </div>
-      <div class="settings-top-actions" role="group" aria-label="Quick actions">
-        <button id="s-reset-look-cache" class="quick-action-btn quick-action-btn-warning" type="button">Reset Appearance + Cache</button>
-        <button id="settings-jump-teacher" class="quick-action-btn" type="button">Teacher Tools</button>
-        <button id="settings-jump-reveal" class="quick-action-btn" type="button">Reveal Controls</button>
       </div>
 
       <section id="settings-quick" class="settings-section is-active" role="tabpanel" aria-labelledby="settings-tab-quick" data-settings-section="quick">
+        <div class="settings-fun-intro">
+          Pick a lane to edit. Keep quick student controls (Theme + Music) on the main page.
+        </div>
+        <div class="settings-quick-jump" role="group" aria-label="Jump to settings section">
+          <button class="settings-jump-chip" type="button" data-settings-jump="settings-group-core">Gameplay</button>
+          <button class="settings-jump-chip" type="button" data-settings-jump="settings-group-theme-quick">Theme + Visual</button>
+          <button class="settings-jump-chip" type="button" data-settings-jump="settings-group-audio">Audio + Voice</button>
+          <button class="settings-jump-chip" type="button" data-settings-jump="settings-group-classroom">Classroom</button>
+        </div>
         <details id="settings-group-core" class="settings-group" open>
-          <summary>Core</summary>
+          <summary>Gameplay</summary>
           <div class="settings-group-grid">
-            <div class="setting-row"><label>Grade Band<select id="s-grade"><option value="all">All grades</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
+            <div class="setting-row"><label>Grade Band<select id="s-grade"><option value="all">All grades (K-2 safe)</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
             <div class="setting-row"><label>Word Length<select id="s-length"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="any">Any</option></select></label></div>
             <div class="setting-row"><label>Max Guesses<select id="s-guesses"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option></select></label></div>
             <div class="setting-row"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
-            <div class="setting-row"><label>Play Style<select id="s-play-style"><option value="detective" selected>Detective (sentence clue only)</option><option value="listening">Listening (word + sentence)</option></select></label></div>
+            <div class="setting-row"><label>Play Style<select id="s-play-style"><option value="detective" selected>Detective (guess first, clue optional)</option><option value="listening">Listening (word + sentence)</option></select></label></div>
+            <div class="setting-row setting-row-full quick-preset-row">
+              <label class="setting-checkbox-label">
+                <input id="s-confidence-coaching" type="checkbox" checked>
+                Confidence Coaching (recommended)
+              </label>
+              <div class="setting-checkbox-help">Adds low-pressure first-round guidance and starter prompts to reduce freeze-ups.</div>
+            </div>
+            <details id="settings-lesson-pack" class="setting-row setting-row-full settings-subgroup">
+              <summary>Curriculum Lesson Packs (optional)</summary>
+              <div class="settings-subgroup-body">
+                <div class="lesson-pack-grid">
+                  <label>Program
+                    <select id="s-lesson-pack">
+                      <option value="custom" selected>Manual (no pack)</option>
+                      <option value="ufli">UFLI Foundations</option>
+                      <option value="fundations">Fundations</option>
+                      <option value="wilson">Wilson Reading</option>
+                      <option value="justwords">Just Words</option>
+                    </select>
+                  </label>
+                  <label>Lesson Target
+                    <select id="s-lesson-target">
+                      <option value="custom" selected>Manual</option>
+                    </select>
+                  </label>
+                </div>
+                <div id="lesson-pack-note" class="setting-checkbox-help lesson-pack-note">Manual mode keeps Quest, Grade Band, and Word Length under your control.</div>
+                <div id="lesson-pack-pacing" class="setting-checkbox-help lesson-pack-pacing">District pacing: choose a program and lesson target to view suggested week range.</div>
+                <div class="lesson-pack-week-row">
+                  <div id="lesson-pack-week" class="setting-checkbox-help lesson-pack-week">School week recommendation: set a program to view guidance.</div>
+                  <button id="lesson-pack-apply-week-btn" class="quick-action-btn lesson-pack-week-btn" type="button" disabled>Apply Week Target</button>
+                </div>
+              </div>
+            </details>
             <div id="focus-grade-note" class="setting-row setting-row-full setting-row-help">Classic uses Grade Band + Word Length. Subject Focus presets both domain and grade.</div>
           </div>
         </details>
 
+        <details id="settings-group-theme-quick" class="settings-group">
+          <summary>Theme and Visual</summary>
+          <div class="settings-group-grid">
+            <div class="setting-row setting-row-full setting-theme-current-row">
+              <div class="setting-row-heading">Current Theme</div>
+              <div id="settings-theme-name" class="settings-theme-name">Loading...</div>
+            </div>
+            <div class="setting-row setting-row-full setting-row-help">Use the Theme arrows on the main page to preview quickly. This panel keeps advanced visual controls.</div>
+            <div class="setting-row setting-row-full setting-row-internal hidden" aria-hidden="true"><label>Theme<select id="s-theme"><option value="">Loading themes...</option></select></label></div>
+            <div class="setting-row"><label>Remember Theme<select id="s-theme-save"><option value="off" selected>Off (reset on refresh)</option><option value="on">On (save this theme)</option></select></label></div>
+            <div class="setting-row"><label>Board Style<select id="s-board-style"><option value="clean">Clean</option><option value="card" selected>Card</option><option value="patterned">Patterned</option><option value="soundcard">Sound Card (SoR)</option></select></label></div>
+            <div class="setting-row"><label>Key Style<select id="s-key-style"><option value="bubble" selected>Bubble</option><option value="classic">Classic</option><option value="arcade">Arcade</option><option value="soundcard">Sound Card (SoR)</option></select></label></div>
+            <div class="setting-row"><label>Atmosphere<select id="s-atmosphere"><option value="minimal" selected>Minimal</option><option value="glow">Glow</option><option value="spark">Spark</option></select></label></div>
+            <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on" selected>On</option><option value="off">Off</option></select></label></div>
+          </div>
+        </details>
+
         <details id="settings-group-audio" class="settings-group">
-          <summary>Audio</summary>
+          <summary>Audio and Voice</summary>
           <div class="settings-group-grid">
             <div class="setting-row"><label>Music<select id="s-music"><option value="off" selected>Off</option><option value="auto">Auto (match theme)</option><option value="chill">Chill</option><option value="lofi">Lo‑fi</option><option value="coffee">Coffeehouse</option><option value="fantasy">Fantasy</option><option value="scifi">Sci‑fi</option><option value="upbeat">Upbeat</option><option value="arcade">8‑bit Arcade</option><option value="sports">Sports Hype</option><option value="stealth">Space Mystery</option><option value="team">Team Game Hype</option></select></label></div>
             <div class="setting-row"><label>Voice Practice
@@ -127,7 +212,7 @@
         </details>
 
         <details id="settings-group-classroom" class="settings-group">
-          <summary>Teacher</summary>
+          <summary>Classroom</summary>
           <div class="settings-group-grid">
             <div class="setting-row">
               <label>Team Turns
@@ -175,16 +260,189 @@
             </div>
             <div id="teacher-session-panel" class="setting-row setting-row-full teacher-session-panel" role="status" aria-live="polite">
               <div class="setting-row-heading">Teacher Session Summary</div>
+              <div class="teacher-report-controls" role="group" aria-label="Mastery report controls">
+                <label class="setting-checkbox-label teacher-report-compact-toggle">
+                  <input id="s-report-compact" type="checkbox">
+                  Compact Report Mode
+                </label>
+                <label>Sort by
+                  <select id="s-mastery-sort">
+                    <option value="attempts_desc" selected>Attempts (high to low)</option>
+                    <option value="accuracy_desc">Accuracy (high to low)</option>
+                    <option value="hint_rate_desc">Hint rate (high to low)</option>
+                    <option value="voice_desc">Voice attempts (high to low)</option>
+                    <option value="top_error">Top error pattern</option>
+                  </select>
+                </label>
+                <label>Filter
+                  <select id="s-mastery-filter">
+                    <option value="all" selected>All skills</option>
+                    <option value="needs_support">Needs support</option>
+                    <option value="high_hints">High hint rate</option>
+                    <option value="vowel_pattern">Top error: vowel pattern</option>
+                    <option value="blend_position">Top error: blend position</option>
+                    <option value="morpheme_ending">Top error: morpheme ending</option>
+                    <option value="context_strategy">Top error: clue strategy</option>
+                  </select>
+                </label>
+              </div>
+              <div id="session-mastery-filter-note" class="setting-checkbox-help teacher-report-filter-note">Showing all skills.</div>
+              <div class="teacher-session-roster-row">
+                <label>Student Roster
+                  <select id="s-roster-student">
+                    <option value="">No student selected</option>
+                  </select>
+                </label>
+                <label>Add Student
+                  <input id="s-roster-name" class="settings-text-input" type="text" maxlength="30" placeholder="Student name">
+                </label>
+                <div class="teacher-session-roster-actions" role="group" aria-label="Roster actions">
+                  <button id="session-roster-add-btn" class="quick-action-btn teacher-session-btn" type="button">Add</button>
+                  <button id="session-roster-remove-btn" class="quick-action-btn teacher-session-btn" type="button">Remove</button>
+                  <button id="session-roster-clear-btn" class="quick-action-btn teacher-session-btn" type="button">Clear</button>
+                </div>
+              </div>
+              <div class="teacher-session-playlist-row">
+                <label>Assignment Playlist
+                  <select id="s-playlist-select">
+                    <option value="">No playlist selected</option>
+                  </select>
+                </label>
+                <label>Playlist Name
+                  <input id="s-playlist-name" class="settings-text-input" type="text" maxlength="40" placeholder="Group A CVC Set">
+                </label>
+                <div class="teacher-session-playlist-actions" role="group" aria-label="Playlist actions">
+                  <button id="session-playlist-save-btn" class="quick-action-btn teacher-session-btn" type="button">Save Current Target</button>
+                  <button id="session-playlist-assign-btn" class="quick-action-btn teacher-session-btn" type="button">Assign to Active Student</button>
+                  <button id="session-playlist-apply-btn" class="quick-action-btn teacher-session-btn" type="button">Apply Assigned Playlist</button>
+                  <button id="session-playlist-delete-btn" class="quick-action-btn teacher-session-btn" type="button">Delete Playlist</button>
+                </div>
+              </div>
+              <div class="teacher-session-metrics teacher-playlist-metrics">
+                <span id="session-playlist-summary" class="teacher-session-chip">Playlist: --</span>
+                <span id="session-playlist-assigned" class="teacher-session-chip">Assignment: --</span>
+              </div>
+              <div class="teacher-session-goal-row">
+                <label>Goal Accuracy %
+                  <input id="s-goal-accuracy" class="settings-text-input" type="number" min="50" max="100" step="1" placeholder="80">
+                </label>
+                <label>Goal Avg Guesses
+                  <input id="s-goal-guesses" class="settings-text-input" type="number" min="1" max="8" step="0.1" placeholder="4.0">
+                </label>
+                <div class="teacher-session-goal-actions" role="group" aria-label="Student goal actions">
+                  <button id="session-goal-save-btn" class="quick-action-btn teacher-session-btn" type="button">Save Goal</button>
+                  <button id="session-goal-clear-btn" class="quick-action-btn teacher-session-btn" type="button">Clear Goal</button>
+                </div>
+              </div>
+              <div class="teacher-session-metrics teacher-goal-metrics">
+                <span id="session-goal-status" class="teacher-session-chip">Goal: --</span>
+                <span id="session-goal-progress" class="teacher-session-chip">Goal Progress: --</span>
+              </div>
               <div class="teacher-session-metrics">
                 <span id="session-rounds" class="teacher-session-chip">Rounds: 0</span>
                 <span id="session-win-rate" class="teacher-session-chip">Win Rate: --</span>
                 <span id="session-hint-rounds" class="teacher-session-chip">Hint Rounds: 0</span>
                 <span id="session-voice-attempts" class="teacher-session-chip">Voice Attempts: 0</span>
+                <span id="session-active-student" class="teacher-session-chip">Student: Class</span>
+              </div>
+              <div class="teacher-session-metrics teacher-mastery-metrics">
+                <span id="session-top-skill" class="teacher-session-chip">Top Skill: --</span>
+                <span id="session-mastery-rate" class="teacher-session-chip">Mastery: --</span>
+                <span id="session-avg-guesses" class="teacher-session-chip">Avg Guesses: --</span>
+                <span id="session-avg-time" class="teacher-session-chip">Avg Time: --</span>
+                <span id="session-top-error" class="teacher-session-chip">Top Error: --</span>
+                <span id="session-next-step" class="teacher-session-chip">Next Step: --</span>
+              </div>
+              <div class="teacher-session-metrics teacher-mission-metrics">
+                <span id="session-mission-count" class="teacher-session-chip">Mission Rounds: 0</span>
+                <span id="session-mission-score" class="teacher-session-chip">Mission Avg Score: --</span>
+                <span id="session-mission-complete" class="teacher-session-chip">Mission Completion: --</span>
+                <span id="session-mission-level" class="teacher-session-chip">Mission Top Level: --</span>
+              </div>
+              <div class="teacher-session-mini-lesson-row">
+                <div class="setting-row-heading">Quick Mini-Lesson Launcher</div>
+                <div class="teacher-mini-lesson-actions" role="group" aria-label="Quick mini lesson launcher">
+                  <button id="session-mini-lesson-top-btn" class="quick-action-btn teacher-session-btn" type="button">Use Top Error</button>
+                  <button id="session-mini-lesson-vowel-btn" class="quick-action-btn teacher-session-btn" type="button">Vowel Pattern</button>
+                  <button id="session-mini-lesson-blend-btn" class="quick-action-btn teacher-session-btn" type="button">Blend Position</button>
+                  <button id="session-mini-lesson-morpheme-btn" class="quick-action-btn teacher-session-btn" type="button">Morpheme Ending</button>
+                  <button id="session-mini-lesson-context-btn" class="quick-action-btn teacher-session-btn" type="button">Clue Strategy</button>
+                </div>
+                <div id="session-mini-lesson-copy" class="setting-checkbox-help teacher-mini-lesson-copy">Select a mini-lesson to load a 5-minute reteach routine.</div>
+                <button id="session-mini-lesson-copy-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mini-Lesson Plan</button>
+              </div>
+              <div class="teacher-session-mastery-table-row">
+                <div class="setting-row-heading">Mastery by Skill</div>
+                <div class="teacher-mastery-table-wrap" role="region" aria-label="Mastery by skill table">
+                  <table class="teacher-mastery-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Skill</th>
+                        <th scope="col">Accuracy</th>
+                        <th scope="col">Attempts</th>
+                        <th scope="col">Hints</th>
+                        <th scope="col">Voice</th>
+                        <th scope="col">Avg Guess</th>
+                        <th scope="col">Avg Time</th>
+                        <th scope="col">Top Error</th>
+                      </tr>
+                    </thead>
+                    <tbody id="session-mastery-table-body">
+                      <tr>
+                        <td colspan="8">No skill rounds yet.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="teacher-session-probe-row">
+                <div class="setting-row-heading">Weekly Progress Probe</div>
+                <div class="teacher-session-probe-controls">
+                  <label>Probe Length
+                    <select id="s-probe-rounds">
+                      <option value="3" selected>3 rounds (quick)</option>
+                      <option value="5">5 rounds (standard)</option>
+                      <option value="8">8 rounds (deep)</option>
+                    </select>
+                  </label>
+                  <button id="session-probe-start-btn" class="quick-action-btn teacher-session-btn" data-nonexport="true" type="button">Start Probe</button>
+                  <button id="session-probe-stop-btn" class="quick-action-btn teacher-session-btn" data-nonexport="true" type="button">Stop Probe</button>
+                  <button id="session-probe-copy-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Probe</button>
+                  <button id="session-probe-copy-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Probe CSV</button>
+                </div>
+                <div class="teacher-session-metrics">
+                  <span id="probe-status" class="teacher-session-chip">Probe: Inactive</span>
+                  <span id="probe-accuracy" class="teacher-session-chip">Accuracy: --</span>
+                  <span id="probe-avg-guesses" class="teacher-session-chip">Avg Guesses: --</span>
+                  <span id="probe-avg-time" class="teacher-session-chip">Avg Time: --</span>
+                  <span id="probe-hint-rate" class="teacher-session-chip">Hint Rate: --</span>
+                </div>
+                <div class="teacher-session-metrics teacher-session-probe-trend">
+                  <span id="probe-trend-label" class="teacher-session-chip">Trend: --</span>
+                  <span id="probe-trend-accuracy" class="teacher-session-chip">Accuracy Δ: --</span>
+                  <span id="probe-trend-guesses" class="teacher-session-chip">Avg Guesses Δ: --</span>
+                  <span id="probe-trend-time" class="teacher-session-chip">Avg Time Δ: --</span>
+                </div>
+                <div class="teacher-session-metrics teacher-session-support-metrics">
+                  <span id="probe-recency-chip" class="teacher-session-chip">Probe Recency: --</span>
+                  <span id="session-risk-chip" class="teacher-session-chip">Support Flag: --</span>
+                </div>
               </div>
               <div class="teacher-session-actions">
                 <button id="session-copy-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Summary</button>
-                <button id="session-reset-btn" class="quick-action-btn teacher-session-btn" type="button">Reset Session</button>
-                <button id="session-rerun-onboarding-btn" class="quick-action-btn teacher-session-btn" type="button">Re-run Setup</button>
+                <button id="session-copy-mastery-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mastery</button>
+                <button id="session-copy-mastery-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mastery CSV</button>
+                <button id="session-copy-mission-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mission</button>
+                <button id="session-copy-mission-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mission CSV</button>
+                <button id="session-copy-mtss-note-btn" class="quick-action-btn teacher-session-btn" type="button">Copy MTSS/IEP Note</button>
+                <button id="session-copy-family-handout-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Family Handout</button>
+                <button id="session-download-family-handout-btn" class="quick-action-btn teacher-session-btn" type="button">Download Family Handout</button>
+                <button id="session-download-csv-bundle-btn" class="quick-action-btn teacher-session-btn" type="button">Download CSV Bundle</button>
+                <button id="session-download-class-rollup-btn" class="quick-action-btn teacher-session-btn" type="button">Download Class Rollup CSV</button>
+                <button id="session-copy-probe-export-btn" class="quick-action-btn teacher-session-btn teacher-export-only-btn" type="button">Copy Probe</button>
+                <button id="session-copy-probe-csv-export-btn" class="quick-action-btn teacher-session-btn teacher-export-only-btn" type="button">Copy Probe CSV</button>
+                <button id="session-reset-btn" class="quick-action-btn teacher-session-btn" data-nonexport="true" type="button">Reset Session</button>
+                <button id="session-rerun-onboarding-btn" class="quick-action-btn teacher-session-btn" data-nonexport="true" type="button">Re-run Setup</button>
               </div>
               <div class="setting-checkbox-help">Tracks this browser session only.</div>
             </div>
@@ -197,16 +455,14 @@
 
       <section id="settings-advanced" class="settings-section" role="tabpanel" aria-labelledby="settings-tab-advanced" data-settings-section="advanced" hidden>
         <details id="settings-group-theme" class="settings-group">
-          <summary>Theme and Visual System</summary>
+          <summary>Power and Keyboard</summary>
           <div id="settings-advanced-tools" class="settings-group-grid settings-grid">
-            <div class="setting-row"><label>Theme (full list)<select id="s-theme"><option value="">Loading themes...</option></select></label></div>
-            <div class="setting-row"><label>Remember Theme<select id="s-theme-save"><option value="off" selected>Off (reset on refresh)</option><option value="on">On (save this theme)</option></select></label></div>
-            <div class="setting-row"><label>Board Style<select id="s-board-style"><option value="clean">Clean</option><option value="card" selected>Card</option><option value="patterned">Patterned</option><option value="soundcard">Sound Card (SoR)</option></select></label></div>
-            <div class="setting-row"><label>Key Style<select id="s-key-style"><option value="bubble" selected>Bubble</option><option value="classic">Classic</option><option value="arcade">Arcade</option><option value="soundcard">Sound Card (SoR)</option></select></label></div>
-            <div class="setting-row"><label>Atmosphere<select id="s-atmosphere"><option value="minimal" selected>Minimal</option><option value="glow">Glow</option><option value="spark">Spark</option></select></label></div>
             <div class="setting-row"><label>Projector Mode<select id="s-projector"><option value="off">Off</option><option value="on">On · high contrast</option></select></label></div>
             <div class="setting-row"><label>Letter Case<select id="s-case"><option value="lower">lowercase</option><option value="upper">UPPERCASE</option></select></label></div>
             <div class="setting-row"><label>Duplicate Alert<select id="s-dupe"><option value="on">On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row"><label>Feedback Colors<select id="s-feedback"><option value="themed" selected>Themed (matches theme)</option><option value="classic">Classic (green/yellow/gray)</option></select></label></div>
+            <div class="setting-row"><label>Motion<select id="s-motion"><option value="fun">Fun</option><option value="calm">Calm</option><option value="reduced">Reduced</option></select></label></div>
+            <div class="setting-row"><label>Sound Tabs<select id="s-chunk-tabs"><option value="auto" selected>Auto (focus only)</option><option value="on">Always on</option><option value="off">Off</option></select></label></div>
             <div class="setting-row setting-row-full quick-preset-row">
               <label class="setting-checkbox-label">
                 <input id="s-wilson-mode" type="checkbox">
@@ -214,11 +470,6 @@
               </label>
               <div class="setting-checkbox-help">Uses A–Z sound cards with quick chunks. Turn off for standard QWERTY keyboard + simple board.</div>
             </div>
-            <div class="setting-row"><label>Feedback Colors<select id="s-feedback"><option value="themed" selected>Themed (matches theme)</option><option value="classic">Classic (green/yellow/gray)</option></select></label></div>
-            <div class="setting-row"><label>Motion<select id="s-motion"><option value="fun">Fun</option><option value="calm">Calm</option><option value="reduced">Reduced</option></select></label></div>
-            <div class="setting-row"><label>Sound Tabs<select id="s-chunk-tabs"><option value="auto" selected>Auto (focus only)</option><option value="on">Always on</option><option value="off">Off</option></select></label></div>
-            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on" selected>On</option><option value="off">Off</option></select></label></div>
-            <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
           </div>
         </details>
 
@@ -243,12 +494,45 @@
             </div>
           </div>
         </details>
+        <div class="settings-inline-note">Visual and cache repair runs automatically after updates. No manual reset needed for normal use.</div>
       </section>
     </div>
   </div>
 
   <!-- ── Main game area ───────────────────────────── -->
   <main id="main">
+    <section id="mission-lab-hub" class="mission-lab-hub hidden" aria-label="Mission Lab standalone activity">
+      <div class="mission-lab-hub-head">
+        <div class="mission-lab-hub-title-wrap">
+          <strong>Mission Lab</strong>
+          <span id="mission-lab-hub-meta" class="mission-lab-hub-meta">Standalone mission mode uses your current quest focus and grade-safe word pool.</span>
+        </div>
+        <button id="mission-lab-start-btn" class="quick-action-btn mission-lab-start-btn" type="button">Start Mission Lab</button>
+      </div>
+      <details id="mission-lab-customize" class="mission-lab-customize">
+        <summary>Customize word + Bloom level</summary>
+        <div class="mission-lab-customize-grid">
+          <label>Word
+            <select id="mission-lab-word-select">
+              <option value="" selected>Auto-pick from current filters</option>
+            </select>
+          </label>
+          <label>Bloom Level
+            <select id="mission-lab-level-select">
+              <option value="auto" selected>Auto</option>
+              <option value="remember">Remember</option>
+              <option value="understand">Understand</option>
+              <option value="apply">Apply</option>
+              <option value="analyze">Analyze</option>
+              <option value="evaluate">Evaluate</option>
+              <option value="create">Create</option>
+            </select>
+          </label>
+        </div>
+      </details>
+      <div id="mission-lab-hub-note" class="mission-lab-hub-note">Tip: keep focus + grade aligned to your current lesson target, then launch a mission sprint.</div>
+    </section>
+
     <section id="quest-loop" class="quest-loop hidden" aria-label="Quest progress">
       <div class="quest-loop-top">
         <span id="quest-tier-chip" class="quest-chip">Tier: Rookie</span>
@@ -273,15 +557,11 @@
       </div>
 
       <div class="play-support-row">
-        <!-- Hear Word / Hear Sentence — visible during gameplay like old version -->
+        <!-- Hear Word remains visible during gameplay -->
         <div class="gameplay-audio">
           <button class="audio-ghost-btn" id="g-hear-word">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
             Hear Word
-          </button>
-          <button class="audio-ghost-btn" id="g-hear-sentence">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Hear Sentence
           </button>
         </div>
       </div>
@@ -294,7 +574,15 @@
   </main>
 
   <div id="toast" role="alert" aria-live="polite"></div>
-  <div id="hint-clue-card" class="hint-clue-card hidden" role="status" aria-live="polite"></div>
+  <div id="hint-clue-card" class="hint-clue-card hidden" role="dialog" aria-label="Phonics clue">
+    <div id="hint-clue-title" class="hint-clue-title">Here is your clue</div>
+    <div id="hint-clue-message" class="hint-clue-message"></div>
+    <div id="hint-clue-examples" class="hint-clue-examples"></div>
+    <div class="hint-clue-actions">
+      <button id="hint-clue-sentence-btn" class="audio-btn hint-clue-btn" type="button">Hear Sentence</button>
+      <button id="hint-clue-close-btn" class="audio-btn hint-clue-btn hint-clue-btn-muted" type="button">Close</button>
+    </div>
+  </div>
   <div id="celebrate-layer" class="celebrate-layer" aria-hidden="true"></div>
   <canvas id="confetti-canvas"></canvas>
 
@@ -304,16 +592,15 @@
       <div id="modal-result"></div>
       <div id="modal-word"></div>
       <div id="modal-meaning-highlight" class="modal-meaning-highlight hidden" aria-live="polite">
-        <p id="modal-def-highlight"></p>
-        <p id="modal-fun-highlight" class="hidden"></p>
+        <p id="modal-meaning-highlight-line"></p>
       </div>
-      <div id="modal-thinking-challenge" class="modal-thinking-challenge hidden" aria-live="polite">
-        <div class="modal-thinking-head">
-          <span class="modal-thinking-title">Level Up Challenge</span>
-          <span id="modal-thinking-level" class="modal-thinking-level">Use It (Apply)</span>
+      <div id="modal-challenge-launch" class="modal-challenge-launch hidden" aria-live="polite">
+        <div class="modal-challenge-launch-copy">
+          <span class="modal-challenge-launch-title">Mission Lab (Optional)</span>
+          <span id="modal-challenge-launch-meta" class="modal-challenge-launch-meta"></span>
+          <span id="modal-challenge-launch-helper" class="modal-challenge-launch-helper">Optional extension after each solved word. Not required to continue.</span>
         </div>
-        <p id="modal-thinking-prompt" class="modal-thinking-prompt"></p>
-        <p id="modal-thinking-teacher" class="modal-thinking-teacher"></p>
+        <button id="modal-open-challenge" class="audio-btn modal-open-challenge-btn" type="button">Start Mission Lab</button>
       </div>
       <div class="modal-syllables-wrap">
         <div id="modal-syllables"></div>
@@ -326,7 +613,10 @@
       <details id="modal-practice-details" class="modal-practice-details">
         <summary>
           <span>🎤 Say It Back</span>
-          <span id="modal-practice-status" class="modal-practice-status">Optional</span>
+          <span class="modal-practice-summary-actions">
+            <button id="modal-practice-status" class="modal-practice-status modal-practice-status-btn" type="button" aria-label="Toggle voice practice requirement">Optional</button>
+            <button id="voice-quick-record-btn" class="audio-btn voice-quick-record-btn" type="button">Record</button>
+          </span>
         </summary>
         <div id="modal-voice-practice" class="modal-voice-practice">
           <div class="voice-practice-head">
@@ -339,7 +629,7 @@
             <button class="audio-btn" id="voice-play-btn" type="button" disabled>Play My Voice</button>
             <button class="audio-btn" id="voice-save-btn" type="button" disabled>Save Clip</button>
           </div>
-          <div id="voice-practice-feedback" class="voice-practice-feedback" aria-live="polite">Tap Start to capture a 1-second clip, then compare with the model audio.</div>
+          <div id="voice-practice-feedback" class="voice-practice-feedback" aria-live="polite">Tap Record above to capture a 1-second clip, then compare with model audio.</div>
           <div id="voice-history-strip" class="voice-history-strip">
             <div class="voice-history-head">
               <span>Recent clips</span>
@@ -351,16 +641,16 @@
           </div>
         </div>
       </details>
-      <div class="modal-meta-row">
+      <div class="modal-meta-row hidden" aria-hidden="true">
         <div id="modal-guesses"></div>
         <div id="modal-badge"></div>
       </div>
-      <details id="modal-more-details" class="modal-more-details">
+      <details id="modal-more-details" class="modal-more-details hidden" aria-hidden="true">
         <summary>More details</summary>
         <div class="modal-more-body">
-          <p id="modal-def"></p>
+          <p id="modal-def" class="hidden" aria-hidden="true"></p>
           <p id="modal-sentence"></p>
-          <div id="modal-fun-wrap"><p id="modal-fun"></p></div>
+          <div id="modal-fun-wrap" class="hidden" aria-hidden="true"><p id="modal-fun"></p></div>
           <div class="audio-row">
             <button class="audio-btn" id="hear-sentence-btn">💬 Sentence</button>
           </div>
@@ -374,20 +664,93 @@
     </div>
   </div>
 
+  <!-- ── Level Up challenge modal ─────────────────── -->
+  <div id="challenge-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Mission Lab">
+    <div class="modal-card challenge-modal-card">
+      <div class="modal-head challenge-modal-head">
+        <div class="challenge-modal-title-wrap">
+          <strong>Mission Lab</strong>
+          <span id="challenge-level-chip" class="challenge-level-chip">Use It (Apply)</span>
+        </div>
+        <button id="challenge-modal-close" class="close-btn" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body challenge-modal-body">
+        <div class="challenge-sprint-row" aria-live="polite">
+          <span id="challenge-sprint-timer" class="challenge-sprint-chip">90s left</span>
+          <span id="challenge-sprint-rank" class="challenge-sprint-chip">Rank: Scout</span>
+          <span id="challenge-sprint-streak" class="challenge-sprint-chip">Streak: 0</span>
+        </div>
+        <div class="challenge-meta-row" aria-live="polite">
+          <span id="challenge-word-chip" class="challenge-meta-chip">Word: —</span>
+          <span id="challenge-topic-chip" class="challenge-meta-chip">Quest focus: —</span>
+          <span id="challenge-grade-chip" class="challenge-meta-chip">Grade: —</span>
+        </div>
+        <p class="challenge-instruction">Complete this 90-second mission sprint. Finish at least 2 tasks to bank a win.</p>
+        <div class="challenge-mission-grid">
+          <section class="challenge-mission" data-challenge-task="listen">
+            <h3>Sound Sleuth</h3>
+            <p id="challenge-listen-prompt" class="challenge-mission-copy"></p>
+            <div class="challenge-mini-actions">
+              <button id="challenge-hear-word" class="audio-btn" type="button">🔊 Hear Word</button>
+              <button id="challenge-hear-sentence" class="audio-btn" type="button">💬 Hear Sentence</button>
+              <button id="challenge-open-practice" class="audio-btn" type="button">🎤 Record in Say It Back</button>
+            </div>
+            <div id="challenge-status-listen" class="challenge-task-status">Pending</div>
+          </section>
+          <section class="challenge-mission" data-challenge-task="analyze">
+            <h3>Clue Compare</h3>
+            <p id="challenge-analyze-prompt" class="challenge-mission-copy"></p>
+            <textarea id="challenge-analyze-input" class="challenge-textarea" rows="2" placeholder="No pressure: start with 'I noticed...' or 'Because...'"></textarea>
+            <div class="challenge-text-meta">
+              <span id="challenge-analyze-count" class="challenge-text-count">0 / 5 words</span>
+              <button id="challenge-analyze-starter" class="challenge-starter-btn" type="button">Use Starter</button>
+            </div>
+            <div id="challenge-status-analyze" class="challenge-task-status">Pending</div>
+          </section>
+          <section class="challenge-mission" data-challenge-task="create">
+            <h3>Create A Clue</h3>
+            <p id="challenge-create-prompt" class="challenge-mission-copy"></p>
+            <textarea id="challenge-create-input" class="challenge-textarea" rows="2" placeholder="Try a clue starter: 'I am thinking of a word that...'"></textarea>
+            <div class="challenge-text-meta">
+              <span id="challenge-create-count" class="challenge-text-count">0 / 5 words</span>
+              <button id="challenge-create-starter" class="challenge-starter-btn" type="button">Use Starter</button>
+            </div>
+            <div id="challenge-status-create" class="challenge-task-status">Pending</div>
+          </section>
+        </div>
+        <div class="challenge-progress-wrap" aria-live="polite">
+          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 missions complete</div>
+          <div class="challenge-progress-track"><div id="challenge-progress-fill" class="challenge-progress-fill"></div></div>
+        </div>
+        <div class="challenge-score-wrap" aria-live="polite">
+          <div id="challenge-score-label" class="challenge-score-label">Mission score: --</div>
+          <div id="challenge-score-detail" class="challenge-score-detail">Clarity -- · Evidence -- · Vocabulary --</div>
+        </div>
+        <div class="challenge-actions">
+          <button id="challenge-save-reflection" class="audio-btn" type="button">Save Mission Notes</button>
+          <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish Mission Lab</button>
+        </div>
+        <div id="challenge-live-feedback" class="challenge-live-feedback" aria-live="polite"></div>
+        <p id="challenge-teacher-lens" class="challenge-teacher-lens"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- ── First run setup modal ───────────────────── -->
   <div id="first-run-setup-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Choose startup preset">
     <div class="modal-card first-run-setup-card">
       <div class="modal-head">
-        <strong>Start In Teacher Mode</strong>
+        <strong>Welcome! Choose Your Start Style</strong>
+        <button id="first-run-skip-btn" class="quick-action-btn first-run-skip-btn" type="button" aria-label="Skip setup for now">Skip for now</button>
       </div>
       <div class="modal-body">
-        <p>Choose the classroom setup you want as your starting point.</p>
+        <p>Pick one setup now, or skip and start playing right away.</p>
         <div class="first-run-preset-actions" role="group" aria-label="First run setup presets">
-          <button class="quick-action-btn" type="button" data-first-run-preset="guided">Guided</button>
+          <button class="quick-action-btn" type="button" data-first-run-preset="guided">Guided Support</button>
           <button class="quick-action-btn" type="button" data-first-run-preset="independent">Independent</button>
           <button class="quick-action-btn" type="button" data-first-run-preset="assessment">Assessment</button>
         </div>
-        <p class="setting-checkbox-help first-run-help">You can change this any time from Settings → Classroom UX.</p>
+        <p class="setting-checkbox-help first-run-help">You can change this any time from Settings → Classroom.</p>
       </div>
     </div>
   </div>
@@ -439,11 +802,11 @@
   <script src="data/words-inline.js"></script>
   <script src="data/engagement-boosts.js?v=20260222c"></script>
   <script src="js/data.js?v=20260222c"></script>
-  <script src="js/audio.js?v=20260223e"></script>
-  <script src="js/game.js?v=20260222c"></script>
-  <script src="js/ui.js?v=20260223e"></script>
+  <script src="js/audio.js?v=20260224a"></script>
+  <script src="js/game.js?v=20260223g"></script>
+  <script src="js/ui.js?v=20260223f"></script>
   <script src="js/theme-registry.js?v=20260223c"></script>
-  <script src="js/app.js?v=20260223r"></script>
-  <script src="js/theme-nav.js"></script>
+  <script src="js/app.js?v=20260224j"></script>
+  <script src="js/theme-nav.js?v=20260224b"></script>
 </body>
 </html>

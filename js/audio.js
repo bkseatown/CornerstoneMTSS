@@ -133,10 +133,26 @@ const WQAudio = (() => {
     if (!_allVoices.length) return;
     _voicesReady = true;
 
+    const avaVoices = _allVoices
+      .filter((voice) => /^en(-|$)/i.test(String(voice.lang || '')) && /\bava\b/i.test(String(voice.name || '')))
+      .map((voice) => ({ voice, score: _scoreVoice(voice) }))
+      .sort((a, b) => b.score - a.score);
+    const preferredAvaVoice = avaVoices[0]?.voice || null;
+
     // Apply saved preference, or pick best automatically
     const saved = localStorage.getItem(VOICE_PREF_KEY);
     if (saved && saved !== 'auto') {
       _selectedVoice = _allVoices.find(v => v.name === saved) || null;
+    }
+    // Keep reveal voice on Ava when the device provides one.
+    if (preferredAvaVoice && !_selectedVoice) {
+      _selectedVoice = preferredAvaVoice;
+    } else if (
+      preferredAvaVoice &&
+      _selectedVoice &&
+      !/\bava\b/i.test(String(_selectedVoice.name || ''))
+    ) {
+      _selectedVoice = preferredAvaVoice;
     }
     if (!_selectedVoice) {
       const ranked = [..._allVoices]
@@ -221,6 +237,72 @@ const WQAudio = (() => {
     if (allowFallbackTTS && fallback) await _speak(fallback, rate, 1, { stopFirst: true });
   }
 
+  function _normalizeSpeechText(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function _ensureTerminalPunctuation(value) {
+    const text = _normalizeSpeechText(value);
+    if (!text) return '';
+    return /[.!?]$/.test(text) ? text : `${text}.`;
+  }
+
+  async function playMeaningBundle(entry, options = {}) {
+    const includeFun = options.includeFun !== false;
+    const allowFallbackInRecorded = options.allowFallbackInRecorded === true;
+    const mode = _normalizeVoiceMode(_voiceMode || 'recorded');
+    if (mode === 'off') {
+      _stop();
+      return false;
+    }
+
+    const definition = _normalizeSpeechText(entry?.definition);
+    const funText = includeFun ? _normalizeSpeechText(entry?.fun_add_on) : '';
+    const readDefinition = _normalizeSpeechText(entry?.text_to_read_definition)
+      || _ensureTerminalPunctuation(entry?.word && definition ? `${entry.word} means ${definition}` : definition);
+    const readFun = includeFun
+      ? _normalizeSpeechText(entry?.text_to_read_fun) || funText
+      : '';
+    const fallbackText = _normalizeSpeechText(options.fallbackText)
+      || _normalizeSpeechText([readDefinition, readFun].filter(Boolean).join(' '));
+
+    const canUseRecorded = mode !== 'device';
+    const allowTtsFallback = mode !== 'recorded' || allowFallbackInRecorded;
+    const defPath = _normalizeAudioPath(entry?.audio?.def);
+    const funPath = includeFun ? _normalizeAudioPath(entry?.audio?.fun) : null;
+    const hasDefRecorded = canUseRecorded && !!defPath && _isKnownAudioPath(defPath) !== false;
+    const hasFunRecorded = includeFun && !!readFun && canUseRecorded && !!funPath && _isKnownAudioPath(funPath) !== false;
+
+    // If both recorded clips exist, keep the natural studio voice.
+    if (hasDefRecorded && (!readFun || hasFunRecorded)) {
+      try {
+        await _playFile(defPath);
+        if (readFun && hasFunRecorded) await _playFile(funPath);
+        return true;
+      } catch {
+        // Fall through to TTS fallback.
+      }
+    }
+
+    if (allowTtsFallback && fallbackText) {
+      const spoken = await _speak(fallbackText, 0.9, 1, { stopFirst: true });
+      if (spoken) return true;
+    }
+
+    // If TTS fallback is disabled, attempt whatever recorded audio is available.
+    if (hasDefRecorded) {
+      try {
+        await _playFile(defPath);
+        if (readFun && hasFunRecorded) await _playFile(funPath);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
   // ─── Public API ─────────────────────────────────
   function playWord(entry)     { return _play(entry?.audio?.word,     entry?.word,        0.82); }
   function playDef(entry)      { return _play(entry?.audio?.def,      entry ? `${entry.word} means: ${entry.definition}` : '', 0.9); }
@@ -270,7 +352,7 @@ const WQAudio = (() => {
     };
   }
 
-  return { playWord, playDef, playSentence, playFun, stop, speakCue,
+  return { playWord, playDef, playSentence, playFun, playMeaningBundle, stop, speakCue,
            setVoiceMode, getVoiceMode,
            getAvailableVoices, setVoiceByName, getCurrentVoiceName,
            primeAudioManifest: _primeAudioManifest,

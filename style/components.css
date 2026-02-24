@@ -71,7 +71,7 @@ html {
 
 :root {
   --shell-max-width: 560px;
-  --focus-max-width: 460px;
+  --focus-max-width: 560px;
   --main-max-width: 560px;
   --quest-max-width: 520px;
 }
@@ -115,12 +115,14 @@ body {
 header {
   width:           min(var(--shell-max-width), calc(100vw - 14px));
   max-width:       var(--shell-max-width);
-  height:          var(--header-h);
+  height:          var(--header-shell-h, var(--header-h));
+  min-height:      var(--header-shell-min-h, 0);
   flex-shrink:     0;
-  padding:         0 16px;
+  padding:         var(--header-shell-pad, 0 16px);
   display:         flex;
-  align-items:     center;
+  align-items:     var(--header-shell-align, center);
   justify-content: space-between;
+  gap:             var(--header-shell-gap, 0);
   background:      var(--header-bg);
   border-bottom:   1px solid var(--header-border);
   position:        relative;
@@ -162,6 +164,7 @@ header {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  min-width: 0;
 }
 
 .header-quick-controls {
@@ -203,6 +206,10 @@ header {
   background: color-mix(in oklab, var(--accent) 24%, var(--panel-bg) 76%);
 }
 
+.mission-lab-nav-btn {
+  min-width: 96px;
+}
+
 .icon-btn {
   width:         34px;
   height:        34px;
@@ -242,14 +249,14 @@ header {
 /* ── Focus bar ───────────────────────────────────────── */
 .focus-bar {
   width:         min(var(--focus-max-width), calc(100vw - 14px));
-  min-height:    40px;
+  min-height:    35px;
   flex-shrink:   0;
   display:       grid;
-  grid-template-columns: var(--focusbar-cols, auto minmax(0, 1fr) auto);
+  grid-template-columns: var(--focusbar-cols, auto minmax(0, 1fr) minmax(88px, auto));
   align-items:   var(--focusbar-align, center);
   row-gap:       var(--focusbar-row-gap, 0);
   gap:           7px;
-  padding:       var(--focusbar-pad-top, 6px) 16px 5px;
+  padding:       var(--focusbar-pad-top, 4px) 14px 4px;
   background:    color-mix(in oklab, var(--focusbar-bg) 38%, transparent);
   border-bottom: 0;
   position:      relative;
@@ -280,7 +287,7 @@ header {
   background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 760;
   padding: 0 12px;
   transition: border-color 0.15s ease, background 0.15s ease;
@@ -307,21 +314,87 @@ header {
 }
 
 .grade-target-inline {
-  max-width: 168px;
-  font-size: 0.66rem;
+  max-width: none;
+  min-width: 0;
+  font-size: 0.63rem;
   font-weight: 780;
   letter-spacing: 0.02em;
   color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
-  text-transform: uppercase;
+  text-transform: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: right;
 }
 
+.curriculum-main-bar {
+  width: min(var(--main-max-width), calc(100vw - 14px));
+  flex-shrink: 0;
+  display: grid;
+  align-items: center;
+  padding: 3px 12px 4px;
+  background: color-mix(in oklab, var(--focusbar-bg) 30%, transparent);
+  border-top: 1px solid color-mix(in oklab, var(--panel-border) 54%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 54%, transparent);
+}
+
+.curriculum-main-step-field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 0.68rem;
+  font-weight: 790;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
+}
+
+.curriculum-main-step-field select {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.76rem;
+  font-weight: 760;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  padding: 0 10px;
+}
+
+.curriculum-main-step-field select:hover {
+  border-color: color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
+}
+
+.curriculum-main-step-field select:focus {
+  outline: 2px solid color-mix(in oklab, var(--brand) 52%, #ffffff 48%);
+  outline-offset: 1px;
+}
+
+.curriculum-main-hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 .next-action-line {
   width: min(var(--focus-max-width), calc(100vw - 14px));
-  min-height: 17px;
+  min-height: 15px;
   padding: 1px 16px 0;
   font-size: 0.67rem;
   font-weight: 700;
@@ -358,6 +431,116 @@ header {
   color: var(--text);
 }
 
+.mission-lab-hub {
+  width: min(var(--quest-max-width), calc(100vw - 24px));
+  display: grid;
+  gap: 8px;
+  padding: 10px 11px;
+  border-radius: 13px;
+  border: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%),
+      color-mix(in oklab, var(--brand) 9%, var(--panel-bg) 91%)
+    );
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.11);
+}
+
+.mission-lab-hub-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mission-lab-hub-title-wrap {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mission-lab-hub-title-wrap strong {
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.mission-lab-hub-meta {
+  font-size: 0.73rem;
+  font-weight: 740;
+  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
+}
+
+.mission-lab-start-btn {
+  white-space: nowrap;
+}
+
+.mission-lab-customize {
+  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, transparent);
+  border-radius: 11px;
+  background: color-mix(in oklab, var(--panel-bg) 84%, var(--page-bg) 16%);
+  overflow: hidden;
+}
+
+.mission-lab-customize > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  font-weight: 780;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+}
+
+.mission-lab-customize > summary::-webkit-details-marker {
+  display: none;
+}
+
+.mission-lab-customize > summary::after {
+  content: '▾';
+  float: right;
+  color: var(--text-muted);
+}
+
+.mission-lab-customize[open] > summary::after {
+  content: '▴';
+}
+
+.mission-lab-customize-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0 10px 10px;
+}
+
+.mission-lab-customize-grid label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.69rem;
+  font-weight: 760;
+  color: var(--text-muted);
+}
+
+.mission-lab-customize-grid select {
+  width: 100%;
+  height: 31px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
+  border-radius: 11px;
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.74rem;
+  font-weight: 760;
+  padding: 0 10px;
+}
+
+.mission-lab-hub-note {
+  font-size: 0.71rem;
+  font-weight: 740;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-muted) 86%, var(--text) 14%);
+}
+
 .focus-inline-results {
   position: absolute;
   top: calc(100% + 6px);
@@ -377,20 +560,20 @@ header {
 }
 
 .theme-preview-strip {
-  width:         min(340px, calc(100vw - 26px));
-  min-height:    34px;
+  width:         min(430px, calc(100vw - 24px));
+  min-height:    36px;
   display:       flex;
   align-items:   center;
-  justify-content: center;
-  gap:           6px;
-  padding:       4px 8px;
+  justify-content: space-between;
+  gap:           7px;
+  padding:       5px 8px;
   background:    color-mix(in oklab, var(--focusbar-bg) 82%, var(--panel-bg) 18%);
-  border:        1px solid var(--header-border);
+  border:        1px solid color-mix(in oklab, var(--header-border) 78%, var(--brand) 22%);
   border-radius: 999px;
-  margin:        6px auto 0;
+  margin:        5px auto 0;
   position:      relative;
   z-index:       12;
-  box-shadow:    0 3px 10px rgba(0,0,0,0.08);
+  box-shadow:    0 4px 12px rgba(0,0,0,0.10);
   transition:    opacity 0.14s ease;
 }
 
@@ -402,23 +585,42 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   display: none;
 }
 
-.theme-preview-strip .wq-theme-select {
-  min-width: 152px;
-  max-width: 186px;
-  height: 24px;
-  border-radius: 999px;
-  border: 1.5px solid var(--panel-border);
-  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 0.73rem;
-  font-weight: 800;
-  padding: 0 26px 0 10px;
+.theme-preview-slot {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
-.theme-preview-strip .wq-theme-select:focus {
-  outline: 2px solid color-mix(in oklab, var(--brand) 52%, #ffffff 48%);
-  outline-offset: 1px;
+.theme-preview-music {
+  flex: 0 0 auto;
+  min-height: 25px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, var(--brand) 32%);
+  background: color-mix(in oklab, var(--panel-bg) 88%, transparent);
+  color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
+  font-family: var(--font);
+  font-size: 0.66rem;
+  font-weight: 820;
+  cursor: pointer;
+  transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease;
+}
+
+.theme-preview-music:hover {
+  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  background: color-mix(in oklab, var(--brand) 16%, var(--panel-bg) 84%);
+}
+
+.theme-preview-music.is-on {
+  border-color: color-mix(in oklab, var(--accent) 62%, var(--panel-border) 38%);
+  background: color-mix(in oklab, var(--accent) 20%, var(--panel-bg) 80%);
+  color: var(--text);
+}
+
+.theme-preview-music-label {
+  flex: 0 0 auto;
+  font-size: 0.62rem;
+  font-weight: 760;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
 }
 
 /* ── Settings overlay ───────────────────────────────── */
@@ -580,7 +782,7 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 .settings-body {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
   padding: 9px;
   background: linear-gradient(
     180deg,
@@ -591,30 +793,50 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   overscroll-behavior: contain;
 }
 
+.settings-fun-intro {
+  padding: 8px 11px;
+  border-radius: 11px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--panel-bg) 82%, #ffffff 18%),
+    color-mix(in oklab, var(--brand) 16%, var(--panel-bg) 84%)
+  );
+  font-size: 0.72rem;
+  font-weight: 760;
+  color: color-mix(in oklab, var(--text) 84%, var(--text-muted) 16%);
+}
+
+.settings-quick-jump {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.settings-jump-chip {
+  min-height: 31px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 88%, transparent);
+  color: color-mix(in oklab, var(--text) 84%, var(--text-muted) 16%);
+  font-family: var(--font);
+  font-size: 0.69rem;
+  font-weight: 810;
+  cursor: pointer;
+  transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease;
+}
+
+.settings-jump-chip:hover {
+  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  background: color-mix(in oklab, var(--brand) 16%, var(--panel-bg) 84%);
+  color: var(--text);
+}
+
 .settings-view-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.settings-top-actions {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
-  gap: 7px;
-  padding: 0 0 3px;
-  background: inherit;
-}
-
-.settings-top-actions .quick-action-btn {
-  min-height: 30px;
-  font-size: 0.67rem;
-  border-radius: 10px;
-  border-width: 1px;
-  background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
-  box-shadow: none;
 }
 
 .settings-tab {
@@ -623,10 +845,10 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   background: color-mix(in oklab, var(--panel-bg) 84%, var(--brand) 16%);
   color: var(--text-muted);
   font-family: var(--font);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  padding: 7px 10px;
+  padding: 8px 10px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
@@ -660,7 +882,7 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 }
 
 .settings-group + .settings-group {
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
 .settings-group > summary {
@@ -722,6 +944,40 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   background: color-mix(in oklab, var(--modal-bg) 88%, var(--panel-bg) 12%);
 }
 
+.settings-subgroup {
+  padding: 0;
+}
+
+.settings-subgroup > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 8px 9px;
+  font-size: 0.72rem;
+  font-weight: 810;
+  color: var(--text);
+}
+
+.settings-subgroup > summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-subgroup > summary::after {
+  content: '▾';
+  float: right;
+  color: var(--text-muted);
+}
+
+.settings-subgroup[open] > summary::after {
+  content: '▴';
+}
+
+.settings-subgroup-body {
+  border-top: 1px solid color-mix(in oklab, var(--panel-border) 66%, transparent);
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+}
+
 .setting-row-full {
   grid-column: 1 / -1;
 }
@@ -742,10 +998,65 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   font-weight: 700;
 }
 
+.lesson-pack-row {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-pack-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.lesson-pack-note {
+  margin-left: 0;
+}
+
+.lesson-pack-pacing {
+  margin-left: 0;
+}
+
 .setting-row-help {
   grid-column: 1 / -1;
   background: color-mix(in oklab, var(--panel-bg) 80%, var(--brand) 20%);
   font-size: 0.74rem;
+}
+
+.setting-theme-current-row {
+  display: grid;
+  gap: 4px;
+}
+
+.settings-theme-name {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
+  background: color-mix(in oklab, var(--brand) 20%, var(--panel-bg) 80%);
+  color: var(--text);
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 3px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-maintenance-row {
+  display: grid;
+  gap: 8px;
+}
+
+.settings-maintenance-row .quick-action-btn {
+  min-height: 34px;
+}
+
+.settings-maintenance-note {
+  margin-left: 0;
 }
 
 .teacher-lens-note {
@@ -754,13 +1065,42 @@ html[data-focus-search-open="true"] .theme-preview-strip {
 }
 
 @media (max-width: 640px) {
-  .settings-top-actions {
-    grid-template-columns: 1fr;
-  }
-
   .settings-group-grid,
   .settings-grid {
     grid-template-columns: 1fr;
+  }
+
+  .lesson-pack-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-session-roster-actions,
+  .teacher-session-playlist-actions,
+  .teacher-session-goal-actions,
+  .teacher-session-probe-controls,
+  .teacher-mini-lesson-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .teacher-report-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .teacher-report-compact-toggle {
+    grid-column: 1 / -1;
+  }
+
+  .teacher-session-probe-controls label {
+    grid-column: 1 / -1;
+  }
+
+  .lesson-pack-week-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .teacher-mastery-table {
+    min-width: 640px;
   }
 
   .quick-preset-actions {
@@ -859,10 +1199,192 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
 }
 
+.teacher-report-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  align-items: end;
+}
+
+.teacher-report-controls label {
+  display: grid;
+  gap: 5px;
+}
+
+.teacher-report-compact-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
+  padding: 6px 8px;
+}
+
+.teacher-report-filter-note {
+  margin-left: 0;
+}
+
+.teacher-session-roster-row {
+  display: grid;
+  gap: 7px;
+}
+
+.teacher-session-roster-row label {
+  display: grid;
+  gap: 5px;
+}
+
+.teacher-session-roster-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.teacher-session-playlist-row {
+  display: grid;
+  gap: 7px;
+}
+
+.teacher-session-playlist-row label {
+  display: grid;
+  gap: 5px;
+}
+
+.teacher-session-playlist-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.teacher-playlist-metrics {
+  padding-top: 2px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-goal-row {
+  display: grid;
+  gap: 7px;
+}
+
+.teacher-session-goal-row label {
+  display: grid;
+  gap: 5px;
+}
+
+.teacher-session-goal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.settings-text-input {
+  width: 100%;
+  padding: 6px 9px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--panel-bg) 78%, var(--page-bg) 22%);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font);
+}
+
 .teacher-session-metrics {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.teacher-mastery-metrics {
+  padding-top: 2px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-goal-metrics {
+  padding-top: 2px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-mastery-table-row {
+  display: grid;
+  gap: 6px;
+  padding-top: 3px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-mastery-table-wrap {
+  overflow: auto;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--panel-bg) 93%, transparent);
+}
+
+.teacher-mastery-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.teacher-mastery-table th,
+.teacher-mastery-table td {
+  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
+  padding: 5px 7px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teacher-mastery-table th {
+  background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
+  color: var(--text);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.teacher-mastery-table td:first-child,
+.teacher-mastery-table th:first-child {
+  width: 33%;
+  white-space: normal;
+}
+
+.teacher-mastery-table tbody tr:nth-child(even) td {
+  background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
+}
+
+.teacher-mastery-table-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.teacher-session-probe-row {
+  display: grid;
+  gap: 7px;
+  padding-top: 3px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-probe-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  align-items: end;
+}
+
+.teacher-session-probe-controls label {
+  display: grid;
+  gap: 5px;
 }
 
 .teacher-session-chip {
@@ -878,6 +1400,44 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   padding: 3px 9px;
 }
 
+.teacher-session-chip.is-good {
+  border-color: color-mix(in oklab, #2f8f53 55%, var(--panel-border) 45%);
+  color: color-mix(in oklab, #2f8f53 78%, var(--text) 22%);
+}
+
+.teacher-session-chip.is-warn {
+  border-color: color-mix(in oklab, #9a6a11 55%, var(--panel-border) 45%);
+  color: color-mix(in oklab, #9a6a11 78%, var(--text) 22%);
+}
+
+.teacher-session-probe-trend {
+  padding-top: 2px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-support-metrics {
+  padding-top: 2px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-mini-lesson-row {
+  display: grid;
+  gap: 6px;
+  padding-top: 3px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-mini-lesson-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.teacher-mini-lesson-copy {
+  margin-left: 0;
+  white-space: pre-wrap;
+}
+
 .teacher-session-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -890,24 +1450,65 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   font-weight: 800;
 }
 
+.teacher-export-only-btn {
+  display: none;
+}
+
+.teacher-session-panel.is-compact-report .teacher-session-roster-row,
+.teacher-session-panel.is-compact-report .teacher-session-playlist-row,
+.teacher-session-panel.is-compact-report .teacher-session-goal-row,
+.teacher-session-panel.is-compact-report .teacher-session-metrics,
+.teacher-session-panel.is-compact-report .teacher-session-mini-lesson-row,
+.teacher-session-panel.is-compact-report .teacher-session-probe-row,
+.teacher-session-panel.is-compact-report [data-nonexport="true"] {
+  display: none;
+}
+
+.teacher-session-panel.is-compact-report .teacher-export-only-btn {
+  display: inline-flex;
+}
+
+.teacher-session-panel.is-compact-report .teacher-session-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lesson-pack-week-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.lesson-pack-week {
+  margin-left: 0;
+}
+
+.lesson-pack-week-btn {
+  min-height: 28px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 5px 9px;
+}
+
 .wq-theme-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 5px;
   margin-top: 0;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
 }
 
 .wq-theme-nav-btn {
-  width: 24px;
-  height: 24px;
+  width: 25px;
+  height: 25px;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--brand);
   color: var(--brand-text);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.68rem;
+  font-weight: 800;
   cursor: pointer;
 }
 
@@ -915,23 +1516,56 @@ html[data-focus-search-open="true"] .theme-preview-strip {
   background: var(--brand-dk);
 }
 
+.wq-theme-label-btn {
+  min-width: 136px;
+  max-width: 210px;
+  min-height: 25px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
+  color: var(--text);
+  font-family: var(--font);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.wq-theme-label-prefix {
+  font-size: 0.58rem;
+  font-weight: 820;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+}
+
 .wq-theme-label {
-  min-width: 96px;
+  min-width: 0;
   text-align: center;
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  font-size: 0.67rem;
+  font-weight: 820;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .theme-preview-strip .wq-theme-label {
-  min-width: 112px;
-  font-size: 0.69rem;
+  min-width: 0;
+  font-size: 0.68rem;
   color: var(--text);
 }
 
 .theme-preview-strip .wq-theme-nav-btn {
   width: 26px;
-  height: 24px;
+  height: 25px;
+}
+
+.theme-preview-strip .wq-theme-label-btn {
+  min-width: 142px;
+  max-width: min(54vw, 220px);
 }
 
 .wq-teacher-tools {
@@ -1050,6 +1684,20 @@ main {
   overflow-x:      hidden;
   overflow-y:      hidden;
   scrollbar-gutter: auto;
+}
+
+html[data-page-mode="mission-lab"] .next-action-line,
+html[data-page-mode="mission-lab"] .classroom-turn-line,
+html[data-page-mode="mission-lab"] .board-zone,
+html[data-page-mode="mission-lab"] #keyboard,
+html[data-page-mode="mission-lab"] .gameplay-audio,
+html[data-page-mode="mission-lab"] #quest-loop {
+  display: none !important;
+}
+
+html[data-page-mode="mission-lab"] #play-style-toggle,
+html[data-page-mode="mission-lab"] #focus-hint-toggle {
+  display: none !important;
 }
 
 /* ── Quest loop ─────────────────────────────────────── */
@@ -1524,20 +2172,15 @@ html[data-board-style="soundcard"] .tile.flip {
 .midgame-boost {
   position: relative;
   order: 2;
-  width: min(430px, calc(100vw - 22px));
-  padding: 8px 10px 9px;
+  width: min(520px, calc(100vw - 18px));
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 0;
   margin-top: 2px;
-  border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--panel-border) 66%);
-  border-radius: 14px;
-  background: linear-gradient(
-    140deg,
-    color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%),
-    color-mix(in oklab, var(--modal-bg) 88%, var(--accent) 12%)
-  );
-  color: var(--text);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+  color: var(--text-muted);
   opacity: 0;
-  transform: translateY(5px) scale(0.98);
+  transform: translateY(4px);
   transition: opacity 0.18s ease, transform 0.18s ease;
   z-index: 3;
   pointer-events: none;
@@ -1545,26 +2188,94 @@ html[data-board-style="soundcard"] .tile.flip {
 
 .midgame-boost.is-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
   pointer-events: auto;
 }
 
-.midgame-boost-head {
-  display: flex;
+.midgame-boost-peek {
+  border: 1px solid color-mix(in oklab, var(--brand) 38%, var(--panel-border) 62%);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 820;
+  letter-spacing: 0.01em;
+  padding: 3px 10px;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 color-mix(in oklab, var(--panel-border) 75%, transparent);
+}
+
+.midgame-boost-peek-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--accent) 72%, #ffffff 28%);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 34%, transparent);
+  animation: midgame-boost-peek-pulse 1.8s ease-out infinite;
+}
+
+.midgame-boost-bubble {
+  position: relative;
+  width: min(430px, calc(100vw - 24px));
+  border: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
+  border-radius: 18px 18px 18px 10px;
+  background:
+    radial-gradient(circle at 12% 18%, color-mix(in oklab, var(--accent) 24%, transparent), transparent 58%),
+    linear-gradient(
+      140deg,
+      color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%),
+      color-mix(in oklab, var(--modal-bg) 88%, var(--accent) 12%)
+    );
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+  padding: 10px 11px 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.midgame-boost-bubble::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  border-top: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
+  border-left: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
+  background: color-mix(in oklab, var(--panel-bg) 85%, var(--brand) 15%);
+  transform: rotate(45deg);
+  border-top-left-radius: 4px;
+}
+
+.midgame-boost-mascot {
+  position: absolute;
+  right: 34px;
+  top: -11px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in oklab, var(--brand) 44%, var(--panel-border) 56%);
+  background: color-mix(in oklab, var(--modal-bg) 74%, var(--accent) 26%);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  font-size: 0.94rem;
 }
 
 .midgame-boost-close {
+  justify-self: end;
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, var(--brand) 30%);
   background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
   color: var(--text);
   border-radius: 999px;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   line-height: 1;
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1573,25 +2284,26 @@ html[data-board-style="soundcard"] .tile.flip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--brand) 45%, var(--panel-border) 55%);
   color: var(--brand);
-  font-size: 0.63rem;
+  font-size: 0.61rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .midgame-boost-question {
-  margin: 5px 0 0;
-  font-size: 0.79rem;
+  margin: 1px 0 0;
+  font-size: 0.76rem;
   line-height: 1.32;
   font-weight: 760;
+  color: var(--text);
 }
 
 .midgame-boost-answer-btn {
-  margin-top: 6px;
+  margin-top: 2px;
   border: 1px solid color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
   background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
   color: var(--text);
@@ -1600,21 +2312,22 @@ html[data-board-style="soundcard"] .tile.flip {
   padding: 4px 10px;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
+  width: fit-content;
 }
 
 .midgame-boost-answer {
-  margin: 6px 0 0;
+  margin: 0;
   padding: 6px 9px;
-  border-radius: 10px;
+  border-radius: 9px;
   background: color-mix(in oklab, var(--panel-bg) 70%, var(--brand) 30%);
   border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--panel-border) 66%);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
 .midgame-boost-actions {
-  margin-top: 6px;
+  margin-top: 0;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
@@ -1636,6 +2349,42 @@ html[data-board-style="soundcard"] .tile.flip {
 .midgame-boost-turn-off {
   border-color: color-mix(in oklab, var(--absent) 48%, var(--panel-border) 52%);
   color: color-mix(in oklab, var(--absent-dk) 78%, var(--text) 22%);
+}
+
+.midgame-boost-ticker {
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
+  background: color-mix(in oklab, var(--page-bg) 82%, var(--brand) 18%);
+  border-radius: 999px;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.midgame-boost-ticker-track {
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: midgame-boost-ticker 18s linear infinite;
+  will-change: transform;
+}
+
+.midgame-boost-ticker-track > span {
+  display: inline-block;
+  padding-right: 36px;
+  font-size: 0.67rem;
+  font-weight: 760;
+  color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
+}
+
+.midgame-boost-ticker.is-static .midgame-boost-ticker-track {
+  padding-left: 10px;
+  animation: none;
+}
+
+.midgame-boost-ticker.is-static .midgame-boost-ticker-track > span {
+  padding-right: 10px;
 }
 
 .audio-ghost-btn {
@@ -1661,7 +2410,11 @@ html[data-board-style="soundcard"] .tile.flip {
 }
 .audio-ghost-btn svg { flex-shrink: 0; }
 
-html[data-play-style="detective"] #g-hear-word {
+#g-hear-sentence {
+  display: none !important;
+}
+
+html[data-play-style="detective"] .gameplay-audio {
   display: none;
 }
 
@@ -1932,6 +2685,20 @@ html[data-motion="reduced"] * {
 
 
 /* ── Animations ──────────────────────────────────────── */
+@keyframes midgame-boost-peek-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 34%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px color-mix(in oklab, var(--accent) 0%, transparent);
+  }
+}
+
+@keyframes midgame-boost-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
 @keyframes tile-jiggle {
   0%   { transform: translateY(0) scale(1); }
   24%  { transform: translateY(2px) scale(0.95) rotate(-1.1deg); }
@@ -1960,6 +2727,11 @@ html[data-motion="reduced"] * {
   35%       { transform: translateX(6px);  }
   55%       { transform: translateX(-4px); }
   75%       { transform: translateX(4px);  }
+}
+
+html[data-motion="reduced"] .midgame-boost-peek-dot,
+html[data-motion="reduced"] .midgame-boost-ticker-track {
+  animation: none !important;
 }
 
 @keyframes key-bounce {
@@ -2004,8 +2776,8 @@ html[data-motion="reduced"] * {
   top:            calc(var(--header-h) + var(--focus-h) + 12px);
   left:           50%;
   transform:      translateX(-50%) translateY(-6px);
-  background:     rgba(15,20,30,0.92);
-  color:          #f0f0f8;
+  background:     color-mix(in oklab, var(--panel-bg) 74%, var(--brand) 26%);
+  color:          color-mix(in oklab, var(--text) 92%, #ffffff 8%);
   padding:        9px 20px;
   border-radius:  24px;
   font-size:      0.87rem;
@@ -2016,7 +2788,8 @@ html[data-motion="reduced"] * {
   z-index:        200;
   max-width:      88vw;
   text-align:     center;
-  border:         1px solid rgba(255,255,255,0.1);
+  border:         1px solid color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
+  box-shadow:     0 10px 26px rgba(10, 20, 40, 0.24);
 }
 #toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -2045,9 +2818,9 @@ html[data-motion="reduced"] * {
   top: calc(var(--header-h) + var(--focus-h) + 12px);
   left: 50%;
   transform: translateX(-50%) translateY(-6px);
-  max-width: min(92vw, 660px);
-  padding: 12px 18px;
-  border-radius: 20px;
+  max-width: min(94vw, 660px);
+  padding: 12px 14px;
+  border-radius: 16px;
   background: linear-gradient(
     145deg,
     color-mix(in oklab, var(--brand) 34%, #0d1a32 66%) 0%,
@@ -2058,12 +2831,13 @@ html[data-motion="reduced"] * {
   box-shadow:
     0 14px 34px rgba(6, 16, 34, 0.38),
     inset 0 1px 0 rgba(255,255,255,0.24);
-  font-size: 0.95rem;
-  font-weight: 760;
+  display: grid;
+  gap: 8px;
+  font-size: 0.83rem;
   line-height: 1.35;
-  letter-spacing: 0.01em;
-  text-align: center;
-  pointer-events: none;
+  letter-spacing: 0.005em;
+  text-align: left;
+  pointer-events: auto;
   z-index: 204;
   opacity: 0;
   transition: opacity 0.18s ease, transform 0.18s ease;
@@ -2072,6 +2846,89 @@ html[data-motion="reduced"] * {
 .hint-clue-card.visible {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+.hint-clue-title {
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, #ffffff 90%, var(--accent) 10%);
+}
+
+.hint-clue-message {
+  font-size: 0.82rem;
+  font-weight: 760;
+  color: color-mix(in oklab, #ffffff 90%, var(--accent) 10%);
+}
+
+.hint-clue-examples {
+  display: grid;
+  gap: 6px;
+}
+
+.hint-example {
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, rgba(255,255,255,0.18) 68%, transparent 32%);
+  background: color-mix(in oklab, #0f1f3f 78%, var(--accent) 22%);
+  padding: 6px 8px;
+  display: grid;
+  gap: 2px;
+}
+
+.hint-example-word {
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  color: #f7fbff;
+}
+
+.hint-example-note {
+  font-size: 0.7rem;
+  font-weight: 680;
+  color: color-mix(in oklab, #e6f0ff 88%, var(--accent) 12%);
+}
+
+.hint-mark-letter {
+  border-bottom: 2px solid color-mix(in oklab, #ffffff 92%, var(--accent) 8%);
+  padding-bottom: 1px;
+}
+
+.hint-mark-team {
+  border-bottom: 3px solid color-mix(in oklab, #ffffff 94%, var(--accent) 6%);
+  padding-bottom: 1px;
+}
+
+.hint-mark-affix {
+  border-bottom: 3px double color-mix(in oklab, #ffffff 92%, var(--accent) 8%);
+  padding-bottom: 1px;
+}
+
+.hint-mark-schwa {
+  border-bottom: 2px dotted color-mix(in oklab, #ffffff 92%, var(--accent) 8%);
+  padding-bottom: 1px;
+}
+
+.hint-mark-silent {
+  border-bottom: 2px dashed color-mix(in oklab, #ffffff 88%, var(--accent) 12%);
+  padding-bottom: 1px;
+}
+
+.hint-clue-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hint-clue-btn {
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  min-height: 30px;
+}
+
+.hint-clue-btn-muted {
+  opacity: 0.9;
 }
 
 /* Duplicate toast */
@@ -2259,6 +3116,11 @@ html[data-motion="reduced"] * {
   width: min(420px, 100%);
 }
 
+.first-run-skip-btn {
+  font-size: 0.66rem;
+  padding: 4px 9px;
+}
+
 .first-run-preset-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2270,10 +3132,23 @@ html[data-motion="reduced"] * {
 }
 
 @media (max-width: 460px) {
+  .teacher-report-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-mastery-table {
+    min-width: 560px;
+  }
+
   .first-run-preset-actions {
     grid-template-columns: 1fr;
   }
 
+  .teacher-session-roster-actions,
+  .teacher-session-playlist-actions,
+  .teacher-session-goal-actions,
+  .teacher-session-probe-controls,
+  .teacher-mini-lesson-actions,
   .teacher-session-actions {
     grid-template-columns: 1fr;
   }
@@ -2328,33 +3203,230 @@ html[data-motion="reduced"] * {
 .modal-meaning-highlight {
   width: 100%;
   display: grid;
-  gap: 7px;
-  padding: 11px 12px;
+  gap: 5px;
+  padding: 12px 13px;
   border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--brand) 46%, var(--panel-border) 54%);
+  border: 1px solid color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
   background:
     linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--panel-bg) 70%, #ffffff 30%),
-      color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%)
+      145deg,
+      color-mix(in oklab, var(--panel-bg) 64%, #ffffff 36%) 0%,
+      color-mix(in oklab, var(--brand) 18%, var(--panel-bg) 82%) 58%,
+      color-mix(in oklab, var(--accent) 14%, var(--panel-bg) 86%) 100%
     );
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--brand) 20%, transparent),
+    0 8px 16px rgba(10, 20, 40, 0.08);
 }
 
-.modal-thinking-challenge {
+.modal-challenge-launch {
   width: 100%;
-  display: grid;
-  gap: 6px;
-  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 11px;
   border-radius: 12px;
-  border: 1px dashed color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
+  border: 1px solid color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
   background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%),
-    color-mix(in oklab, var(--accent) 10%, var(--panel-bg) 90%)
+    140deg,
+    color-mix(in oklab, var(--panel-bg) 74%, #ffffff 26%) 0%,
+    color-mix(in oklab, var(--brand) 24%, var(--panel-bg) 76%) 100%
   );
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--brand) 22%, transparent),
+    0 6px 14px rgba(10, 20, 40, 0.08);
 }
 
-.modal-thinking-head {
+.modal-challenge-launch-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.modal-challenge-launch-title {
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
+}
+
+.modal-challenge-launch-title::before {
+  content: '🧠 ';
+}
+
+.modal-challenge-launch-meta {
+  display: block;
+  max-width: 330px;
+  white-space: normal;
+  font-size: 0.75rem;
+  font-weight: 780;
+  color: var(--text);
+}
+
+.modal-challenge-launch-helper {
+  display: block;
+  max-width: 330px;
+  font-size: 0.67rem;
+  font-weight: 720;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+}
+
+.modal-open-challenge-btn {
+  padding: 7px 11px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+#challenge-modal {
+  z-index: 430;
+}
+
+.challenge-modal-card {
+  width: min(780px, 100%);
+}
+
+.challenge-modal-head {
+  align-items: flex-start;
+}
+
+.challenge-modal-title-wrap {
+  display: grid;
+  gap: 4px;
+}
+
+.challenge-level-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--brand) 60%, var(--panel-border) 40%);
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: color-mix(in oklab, var(--brand) 78%, var(--text) 22%);
+  background: color-mix(in oklab, var(--panel-bg) 88%, var(--brand) 12%);
+}
+
+.challenge-modal-body {
+  gap: 12px;
+}
+
+.challenge-sprint-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.challenge-sprint-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--brand) 48%, var(--panel-border) 52%);
+  background: color-mix(in oklab, var(--panel-bg) 84%, var(--brand) 16%);
+  padding: 4px 10px;
+  font-size: 0.73rem;
+  font-weight: 780;
+  color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
+}
+
+#challenge-sprint-timer.is-warning {
+  border-color: color-mix(in oklab, #d97706 68%, var(--panel-border) 32%);
+  color: color-mix(in oklab, #b45309 84%, var(--text) 16%);
+}
+
+#challenge-sprint-timer.is-expired {
+  border-color: color-mix(in oklab, #ef4444 72%, var(--panel-border) 28%);
+  color: #b91c1c;
+}
+
+.challenge-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.challenge-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 82%, var(--page-bg) 18%);
+  padding: 4px 10px;
+  font-size: 0.73rem;
+  font-weight: 760;
+  color: var(--text-muted);
+}
+
+.challenge-instruction {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: color-mix(in oklab, var(--text-muted) 76%, var(--text) 24%);
+}
+
+.challenge-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.challenge-mission {
+  border: 1px solid color-mix(in oklab, var(--panel-border) 78%, transparent);
+  border-radius: 13px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease, background 0.16s ease;
+}
+
+.challenge-mission h3 {
+  font-size: 0.84rem;
+  line-height: 1.2;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.challenge-mission-copy {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--text-muted) 72%, var(--text) 28%);
+}
+
+.challenge-mini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.challenge-mini-actions .audio-btn {
+  padding: 7px 10px;
+  font-size: 0.72rem;
+}
+
+.challenge-textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  padding: 9px 10px;
+}
+
+.challenge-textarea:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 16%, transparent);
+}
+
+.challenge-text-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2362,61 +3434,170 @@ html[data-motion="reduced"] * {
   flex-wrap: wrap;
 }
 
-.modal-thinking-title {
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
-}
-
-.modal-thinking-level {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
-  padding: 2px 8px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--brand);
-  background: color-mix(in oklab, var(--panel-bg) 88%, var(--brand) 12%);
-}
-
-.modal-thinking-prompt {
-  margin: 0;
-  font-size: 0.84rem;
+.challenge-text-count {
+  font-size: 0.69rem;
   font-weight: 760;
-  text-align: center;
-  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.challenge-text-count.is-complete {
+  color: color-mix(in oklab, var(--correct) 78%, var(--text) 22%);
+}
+
+.challenge-starter-btn {
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.69rem;
+  font-weight: 760;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.challenge-starter-btn:hover {
+  border-color: color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
+  background: color-mix(in oklab, var(--brand) 14%, var(--panel-bg) 86%);
   color: var(--text);
 }
 
-.modal-thinking-teacher {
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.35;
-  color: color-mix(in oklab, var(--text-muted) 86%, var(--text) 14%);
+.challenge-task-status {
+  width: fit-content;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
+  color: var(--text-muted);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 780;
 }
 
-#modal-def-highlight {
+.challenge-mission.is-complete {
+  border-color: color-mix(in oklab, var(--correct) 58%, var(--panel-border) 42%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--correct) 34%, transparent);
+  background: color-mix(in oklab, var(--correct-lt) 20%, var(--panel-bg) 80%);
+}
+
+.challenge-mission.is-complete .challenge-task-status {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--correct-lt) 72%, #ffffff 28%), var(--correct));
+  border-color: var(--correct-dk);
+  color: #ffffff;
+}
+
+.challenge-progress-wrap {
+  display: grid;
+  gap: 5px;
+}
+
+.challenge-progress-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.challenge-progress-track {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 80%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 74%, var(--page-bg) 26%);
+  overflow: hidden;
+}
+
+.challenge-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--brand) 72%, #ffffff 28%), color-mix(in oklab, var(--accent) 72%, #ffffff 28%));
+  transition: width 0.2s ease;
+}
+
+.challenge-score-wrap {
+  display: grid;
+  gap: 2px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
+}
+
+.challenge-score-label {
+  font-size: 0.77rem;
+  font-weight: 820;
+  color: var(--text);
+}
+
+.challenge-score-detail {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.challenge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.challenge-actions .audio-btn {
+  padding: 8px 12px;
+}
+
+.challenge-actions #challenge-finish-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.challenge-live-feedback {
+  min-height: 20px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  font-weight: 760;
+  color: var(--text-muted);
+}
+
+.challenge-live-feedback.is-good {
+  border-color: color-mix(in oklab, var(--correct) 62%, var(--panel-border) 38%);
+  color: color-mix(in oklab, var(--correct) 78%, var(--text) 22%);
+}
+
+.challenge-live-feedback.is-warn {
+  border-color: color-mix(in oklab, #d97706 66%, var(--panel-border) 34%);
+  color: color-mix(in oklab, #b45309 82%, var(--text) 18%);
+}
+
+.challenge-teacher-lens {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+}
+
+@media (max-width: 560px) {
+  .modal-challenge-launch {
+    flex-wrap: wrap;
+  }
+  .modal-open-challenge-btn {
+    width: 100%;
+  }
+  .challenge-mission-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#modal-meaning-highlight-line {
   margin: 0;
   font-size: 1.02rem;
-  font-weight: 800;
+  font-weight: 760;
   text-align: center;
   line-height: 1.5;
   color: var(--text);
-}
-
-#modal-fun-highlight {
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.45;
-  color: var(--fun-text);
 }
 
 .modal-syllables-wrap {
@@ -2438,10 +3619,19 @@ html[data-motion="reduced"] * {
 }
 
 #modal-sor {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 100%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: color-mix(in oklab, var(--brand) 72%, var(--text) 28%);
+  letter-spacing: 0.01em;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--brand) 42%, var(--panel-border) 58%);
+  background: color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%);
+  padding: 5px 10px;
 }
 
 .audio-row-core {
@@ -2469,6 +3659,12 @@ html[data-motion="reduced"] * {
   gap: 8px;
 }
 
+.modal-practice-summary-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .modal-practice-details > summary::-webkit-details-marker { display: none; }
 
 .modal-practice-details > summary::after {
@@ -2491,9 +3687,34 @@ html[data-motion="reduced"] * {
   color: var(--text-muted);
 }
 
+.modal-practice-status-btn {
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.modal-practice-status-btn:hover,
+.modal-practice-status-btn:focus-visible {
+  border-color: color-mix(in oklab, var(--brand) 60%, var(--panel-border) 40%);
+  background: color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%);
+  color: var(--text);
+}
+
+.modal-practice-status-btn:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+}
+
 .modal-practice-status.is-required {
   border-color: color-mix(in oklab, var(--brand) 60%, var(--panel-border) 40%);
   color: var(--brand);
+}
+
+.voice-quick-record-btn {
+  min-height: 24px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
 }
 
 .modal-voice-practice {
@@ -2672,7 +3893,7 @@ html[data-motion="reduced"] * {
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: -1px;
+  margin-top: 3px;
 }
 
 #modal-more-details {
@@ -2809,8 +4030,8 @@ html[data-reveal-focus="on"] .modal-meaning-highlight {
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand) 24%, transparent);
 }
 
-html[data-reveal-focus="on"] #modal-def-highlight {
-  font-size: 1.06rem;
+html[data-reveal-focus="on"] #modal-meaning-highlight-line {
+  font-size: 1.03rem;
 }
 
 html[data-reveal-focus="on"] #modal-more-details,
@@ -2819,7 +4040,7 @@ html[data-reveal-focus="on"] .modal-practice-details {
 }
 
 html[data-reveal-focus="on"] .modal-meta-row {
-  margin-top: -3px;
+  margin-top: 1px;
 }
 
 html[data-layout-mode="wide"] {
@@ -2946,7 +4167,11 @@ html[data-layout-mode="compact"] .key.key-chunk {
 @media (max-width: 380px) {
   :root { --key-min-w: 26px; --key-h: 44px; }
   main { padding-top: 24px; }
-  .theme-preview-strip { width: min(246px, calc(100vw - 22px)); }
+  .theme-preview-strip { width: min(332px, calc(100vw - 18px)); }
+  .theme-preview-music-label { display: none; }
+  .theme-preview-music { font-size: 0.61rem; padding: 3px 8px; }
+  .theme-preview-strip .wq-theme-label-btn { min-width: 118px; max-width: min(52vw, 166px); }
+  .settings-quick-jump { grid-template-columns: 1fr; }
   .key { font-size: 0.78rem; }
   .quest-loop { padding: 7px 8px; }
   .quest-loop-top { gap: 6px; }
@@ -2957,9 +4182,42 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
 @media (max-width: 560px) {
   :root {
-    --focusbar-cols: auto minmax(0, 1fr);
+    --header-shell-h: auto;
+    --header-shell-min-h: var(--header-h);
+    --header-shell-pad: 6px 10px;
+    --header-shell-align: flex-start;
+    --header-shell-gap: 6px;
+    --focusbar-cols: auto minmax(0, 1fr) minmax(72px, auto);
     --focusbar-row-gap: 5px;
-    --focusbar-pad-top: 7px;
+    --focusbar-pad-top: 5px;
+  }
+
+  .logo {
+    font-size: 1.12rem;
+    line-height: 1.1;
+    padding-top: 1px;
+  }
+
+  .header-right {
+    flex: 1;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .header-quick-controls {
+    gap: 5px;
+    max-width: 100%;
+    justify-content: flex-end;
+  }
+
+  .focus-inline-wrap {
+    min-width: 0;
+  }
+
+  .theme-preview-strip {
+    width: min(392px, calc(100vw - 20px));
   }
 
   .header-quick-btn {
@@ -2967,17 +4225,49 @@ html[data-layout-mode="compact"] .key.key-chunk {
     padding: 4px 7px;
   }
 
+  .mission-lab-nav-btn {
+    min-width: 84px;
+  }
+
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  #new-game-btn {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+  }
+
   .grade-target-inline {
-    grid-column: 1 / -1;
-    max-width: 100%;
-    font-size: 0.64rem;
-    text-align: left;
-    padding-left: 2px;
+    grid-column: auto;
+    max-width: 108px;
+    font-size: 0.58rem;
+    text-align: right;
+    white-space: nowrap;
   }
 
   .next-action-line {
     font-size: 0.61rem;
     padding-inline: 12px;
+  }
+
+  .curriculum-main-bar {
+    padding-inline: 12px;
+  }
+
+  .curriculum-main-summary {
+    font-size: 0.66rem;
+  }
+
+  .curriculum-main-step-field {
+    gap: 6px;
+    font-size: 0.61rem;
+  }
+
+  .curriculum-main-step-field select {
+    height: 28px;
+    font-size: 0.7rem;
   }
 
   .classroom-turn-line {
@@ -2987,6 +4277,29 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
   .focus-hint-toggle {
     min-width: 58px;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --header-shell-pad: 6px 8px;
+  }
+
+  .logo {
+    font-size: 1.04rem;
+  }
+
+  #play-style-toggle {
+    display: none;
+  }
+
+  .mission-lab-nav-btn {
+    min-width: 74px;
+    padding: 4px 8px;
+  }
+
+  #new-game-btn {
+    padding: 5px 9px;
   }
 }
 

@@ -75,8 +75,14 @@
   const PREF_MUSIC_AUTO_MIGRATION_KEY = 'wq_v2_pref_music_auto_20260222';
   const FIRST_RUN_SETUP_KEY = 'wq_v2_first_run_setup_v1';
   const SESSION_SUMMARY_KEY = 'wq_v2_teacher_session_summary_v1';
+  const ROSTER_STATE_KEY = 'wq_v2_teacher_roster_v1';
+  const PROBE_HISTORY_KEY = 'wq_v2_weekly_probe_history_v1';
+  const STUDENT_GOALS_KEY = 'wq_v2_student_goals_v1';
+  const PLAYLIST_STATE_KEY = 'wq_v2_assignment_playlists_v1';
   const SHUFFLE_BAG_KEY = 'wq_v2_shuffle_bag';
   const REVIEW_QUEUE_KEY = 'wq_v2_spaced_review_queue_v1';
+  const PAGE_MODE_KEY = 'wq_v2_page_mode_v1';
+  const LAST_NON_OFF_MUSIC_KEY = 'wq_v2_last_non_off_music_v1';
   const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
@@ -109,12 +115,15 @@
   });
   const DEFAULT_PREFS = Object.freeze({
     focus: 'all',
+    lessonPack: 'custom',
+    lessonTarget: 'custom',
     grade: 'all',
     length: '5',
     guesses: '6',
     caseMode: 'lower',
     hint: 'on',
     playStyle: 'detective',
+    confidenceCoaching: 'on',
     revealFocus: 'on',
     revealPacing: 'guided',
     revealAutoNext: 'off',
@@ -129,6 +138,8 @@
     teamMode: 'off',
     teamCount: '2',
     turnTimer: 'off',
+    probeRounds: '3',
+    reportCompact: 'off',
     assessmentLock: 'off',
     boostPopups: 'on',
     music: 'off',
@@ -141,6 +152,23 @@
     chunkTabs: 'auto',
     atmosphere: 'minimal'
   });
+  const SAFE_DEFAULT_GRADE_BAND = 'K-2';
+  const ALLOWED_MASTERY_SORT_MODES = new Set([
+    'attempts_desc',
+    'accuracy_desc',
+    'hint_rate_desc',
+    'voice_desc',
+    'top_error'
+  ]);
+  const ALLOWED_MASTERY_FILTER_MODES = new Set([
+    'all',
+    'needs_support',
+    'high_hints',
+    'vowel_pattern',
+    'blend_position',
+    'morpheme_ending',
+    'context_strategy'
+  ]);
 
   function detectPreferredKeyboardLayout() {
     const touchPoints = Number(navigator.maxTouchPoints || 0);
@@ -166,6 +194,7 @@
   function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
   let autoPhysicalKeyboardSwitchApplied = false;
   let firstRunSetupPending = false;
+  let pageMode = 'wordquest';
 
   // One-time baseline migration so existing installs land on your intended defaults.
   if (localStorage.getItem(PREF_MIGRATION_KEY) !== 'done') {
@@ -175,6 +204,8 @@
     if (prefs.music === undefined || prefs.music === 'off') prefs.music = DEFAULT_PREFS.music;
     if (prefs.musicVol === undefined) prefs.musicVol = DEFAULT_PREFS.musicVol;
     if (prefs.focus === undefined) prefs.focus = DEFAULT_PREFS.focus;
+    if (prefs.lessonPack === undefined) prefs.lessonPack = DEFAULT_PREFS.lessonPack;
+    if (prefs.lessonTarget === undefined) prefs.lessonTarget = DEFAULT_PREFS.lessonTarget;
     if (prefs.grade === undefined) prefs.grade = DEFAULT_PREFS.grade;
     if (prefs.themeSave === undefined) prefs.themeSave = DEFAULT_PREFS.themeSave;
     if (prefs.keyboardLayout === undefined) prefs.keyboardLayout = preferredInitialKeyboardLayout;
@@ -190,10 +221,13 @@
     if (prefs.sorNotation === undefined) prefs.sorNotation = DEFAULT_PREFS.sorNotation;
     if (prefs.revealFocus === undefined) prefs.revealFocus = DEFAULT_PREFS.revealFocus;
     if (prefs.playStyle === undefined) prefs.playStyle = DEFAULT_PREFS.playStyle;
+    if (prefs.confidenceCoaching === undefined) prefs.confidenceCoaching = DEFAULT_PREFS.confidenceCoaching;
     if (prefs.voicePractice === undefined) prefs.voicePractice = DEFAULT_PREFS.voicePractice;
     if (prefs.teamMode === undefined) prefs.teamMode = DEFAULT_PREFS.teamMode;
     if (prefs.teamCount === undefined) prefs.teamCount = DEFAULT_PREFS.teamCount;
     if (prefs.turnTimer === undefined) prefs.turnTimer = DEFAULT_PREFS.turnTimer;
+    if (prefs.probeRounds === undefined) prefs.probeRounds = DEFAULT_PREFS.probeRounds;
+    if (prefs.reportCompact === undefined) prefs.reportCompact = DEFAULT_PREFS.reportCompact;
     if (prefs.assessmentLock === undefined) prefs.assessmentLock = DEFAULT_PREFS.assessmentLock;
     if (prefs.boostPopups === undefined) prefs.boostPopups = DEFAULT_PREFS.boostPopups;
     if (prefs.themeSave !== 'on') delete prefs.theme;
@@ -212,6 +246,14 @@
   }
   if (prefs.meaningPlusFun === undefined) {
     prefs.meaningPlusFun = DEFAULT_PREFS.meaningPlusFun;
+    savePrefs(prefs);
+  }
+  if (prefs.lessonPack === undefined) {
+    prefs.lessonPack = DEFAULT_PREFS.lessonPack;
+    savePrefs(prefs);
+  }
+  if (prefs.lessonTarget === undefined) {
+    prefs.lessonTarget = DEFAULT_PREFS.lessonTarget;
     savePrefs(prefs);
   }
   if (prefs.sorNotation === undefined) {
@@ -246,6 +288,14 @@
     prefs.turnTimer = DEFAULT_PREFS.turnTimer;
     savePrefs(prefs);
   }
+  if (prefs.probeRounds === undefined) {
+    prefs.probeRounds = DEFAULT_PREFS.probeRounds;
+    savePrefs(prefs);
+  }
+  if (prefs.reportCompact === undefined) {
+    prefs.reportCompact = DEFAULT_PREFS.reportCompact;
+    savePrefs(prefs);
+  }
   if (prefs.assessmentLock === undefined) {
     prefs.assessmentLock = DEFAULT_PREFS.assessmentLock;
     savePrefs(prefs);
@@ -254,14 +304,67 @@
     prefs.boostPopups = DEFAULT_PREFS.boostPopups;
     savePrefs(prefs);
   }
+  if (prefs.confidenceCoaching === undefined) {
+    prefs.confidenceCoaching = DEFAULT_PREFS.confidenceCoaching;
+    savePrefs(prefs);
+  }
   if (!ALLOWED_MUSIC_MODES.has(String(prefs.music || '').toLowerCase())) {
     prefs.music = DEFAULT_PREFS.music;
     savePrefs(prefs);
   }
+  function enforceStartupGameplayDefaults() {
+    const startupDefaults = Object.freeze({
+      focus: DEFAULT_PREFS.focus,
+      lessonPack: DEFAULT_PREFS.lessonPack,
+      lessonTarget: DEFAULT_PREFS.lessonTarget,
+      grade: DEFAULT_PREFS.grade,
+      length: DEFAULT_PREFS.length
+    });
+    let changed = false;
+    Object.entries(startupDefaults).forEach(([key, value]) => {
+      if (prefs[key] === value) return;
+      prefs[key] = value;
+      changed = true;
+    });
+    if (changed) savePrefs(prefs);
+    try {
+      localStorage.removeItem('wq_v2_grade_band');
+      localStorage.removeItem('wq_v2_length');
+    } catch {}
+  }
+  enforceStartupGameplayDefaults();
   const _el = id => document.getElementById(id);
   const ThemeRegistry = window.WQThemeRegistry || null;
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
   let musicController = null;
+
+  function normalizePageMode(mode) {
+    return String(mode || '').trim().toLowerCase() === 'mission-lab'
+      ? 'mission-lab'
+      : 'wordquest';
+  }
+
+  function readPageModeFromQuery() {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      const raw = params.get('page') || params.get('mode') || '';
+      return normalizePageMode(raw);
+    } catch {
+      return 'wordquest';
+    }
+  }
+
+  function loadStoredPageMode() {
+    try {
+      return normalizePageMode(localStorage.getItem(PAGE_MODE_KEY) || 'wordquest');
+    } catch {
+      return 'wordquest';
+    }
+  }
+
+  function persistPageMode(mode) {
+    try { localStorage.setItem(PAGE_MODE_KEY, normalizePageMode(mode)); } catch {}
+  }
 
   function resolveBuildLabel() {
     const appScript = Array.from(document.querySelectorAll('script[src]'))
@@ -278,6 +381,32 @@
     const label = resolveBuildLabel();
     badge.textContent = label ? `Build ${label}` : 'Build local';
     badge.title = label ? `WordQuest build ${label}` : 'WordQuest local build';
+  }
+
+  async function runAutoCacheRepairForBuild() {
+    const CACHE_REPAIR_BUILD_KEY = 'wq_v2_cache_repair_build_v1';
+    const buildLabel = resolveBuildLabel();
+    if (!buildLabel) return;
+    let priorBuild = '';
+    try {
+      priorBuild = String(localStorage.getItem(CACHE_REPAIR_BUILD_KEY) || '');
+      localStorage.setItem(CACHE_REPAIR_BUILD_KEY, buildLabel);
+    } catch {
+      priorBuild = '';
+    }
+    if (priorBuild === buildLabel) return;
+    if (!('caches' in window)) return;
+    try {
+      const names = await caches.keys();
+      const targets = names.filter((name) => String(name || '').startsWith('wq-'));
+      if (targets.length) await Promise.all(targets.map((name) => caches.delete(name)));
+    } catch {}
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.update().catch(() => {})));
+      } catch {}
+    }
   }
   const themeFamilyById = (() => {
     const map = new Map();
@@ -328,6 +457,63 @@
     '35': 'G3-5',
     '68': 'G6-8',
     '912': 'G9-12'
+  });
+
+  const CURRICULUM_LESSON_PACKS = Object.freeze({
+    custom: Object.freeze({
+      label: 'Manual (no pack)',
+      targets: Object.freeze([])
+    }),
+    ufli: Object.freeze({
+      label: 'UFLI Foundations',
+      targets: Object.freeze([
+        Object.freeze({ id: 'ufli-l1-cvc', label: 'UFLI Lessons 1-8 · CVC and short vowels', focus: 'cvc', gradeBand: 'K-2', length: '3', pacing: 'Weeks 1-4 (Aug-Sep)' }),
+        Object.freeze({ id: 'ufli-l2-digraph', label: 'UFLI Lessons 9-24 · Digraphs and blends', focus: 'digraph', gradeBand: 'K-2', length: '4', pacing: 'Weeks 5-11 (Oct-Nov)' }),
+        Object.freeze({ id: 'ufli-l3-cvce', label: 'UFLI Lessons 25-34 · Magic E (CVCe)', focus: 'cvce', gradeBand: 'K-2', length: '4', pacing: 'Weeks 12-15 (Dec)' }),
+        Object.freeze({ id: 'ufli-l4-vowel-team', label: 'UFLI Lessons 35-52 · Vowel teams', focus: 'vowel_team', gradeBand: 'K-2', length: '5', pacing: 'Weeks 16-23 (Jan-Feb)' }),
+        Object.freeze({ id: 'ufli-l5-r-controlled', label: 'UFLI Lessons 53-64 · R-controlled vowels', focus: 'r_controlled', gradeBand: 'K-2', length: '5', pacing: 'Weeks 24-29 (Mar-Apr)' }),
+        Object.freeze({ id: 'ufli-l6-syllable', label: 'UFLI Lessons 65+ · Syllable and affix transfer', focus: 'multisyllable', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 30-36 (May-Jun)' })
+      ])
+    }),
+    fundations: Object.freeze({
+      label: 'Fundations',
+      targets: Object.freeze([
+        Object.freeze({ id: 'fund-l1-u1', label: 'Fundations Level 1 · Unit 1-4 (CVC)', focus: 'cvc', gradeBand: 'K-2', length: '3', pacing: 'Weeks 1-8 (Sep-Oct)' }),
+        Object.freeze({ id: 'fund-l1-u2', label: 'Fundations Level 1 · Unit 5-8 (digraph/blend)', focus: 'digraph', gradeBand: 'K-2', length: '4', pacing: 'Weeks 9-16 (Nov-Jan)' }),
+        Object.freeze({ id: 'fund-l1-u3', label: 'Fundations Level 1 · Unit 9-14 (welded sounds)', focus: 'welded', gradeBand: 'K-2', length: '5', pacing: 'Weeks 17-36 (Feb-Jun)' }),
+        Object.freeze({ id: 'fund-l2-u1', label: 'Fundations Level 2 · Unit 1-6 (silent e / r-controlled)', focus: 'r_controlled', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 1-12 (Sep-Nov)' }),
+        Object.freeze({ id: 'fund-l2-u2', label: 'Fundations Level 2 · Unit 7-11 (vowel teams)', focus: 'vowel_team', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 13-22 (Dec-Feb)' }),
+        Object.freeze({ id: 'fund-l2-u3', label: 'Fundations Level 2 · Unit 12-17 (suffixes)', focus: 'suffix', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 23-36 (Mar-Jun)' }),
+        Object.freeze({ id: 'fund-l3-u1', label: 'Fundations Level 3 · Unit 1-4 (syllable division)', focus: 'multisyllable', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 1-11 (Sep-Nov)' }),
+        Object.freeze({ id: 'fund-l3-u2', label: 'Fundations Level 3 · Unit 5-8 (prefixes)', focus: 'prefix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 12-23 (Dec-Mar)' }),
+        Object.freeze({ id: 'fund-l3-u3', label: 'Fundations Level 3 · Unit 9+ (suffix/root transfer)', focus: 'suffix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 24-36 (Apr-Jun)' })
+      ])
+    }),
+    wilson: Object.freeze({
+      label: 'Wilson Reading',
+      targets: Object.freeze([
+        Object.freeze({ id: 'wilson-step-1', label: 'Wilson Step 1 · Closed syllable', focus: 'cvc', gradeBand: 'G3-5', length: '4', pacing: 'Weeks 1-3 (Sep)' }),
+        Object.freeze({ id: 'wilson-step-2', label: 'Wilson Step 2 · Welded sounds', focus: 'welded', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 4-7 (Sep-Oct)' }),
+        Object.freeze({ id: 'wilson-step-3', label: 'Wilson Step 3 · Silent E', focus: 'cvce', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 8-11 (Oct-Nov)' }),
+        Object.freeze({ id: 'wilson-step-4', label: 'Wilson Step 4 · R-controlled syllables', focus: 'r_controlled', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 12-15 (Dec)' }),
+        Object.freeze({ id: 'wilson-step-5', label: 'Wilson Step 5 · Vowel teams', focus: 'vowel_team', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 16-20 (Jan-Feb)' }),
+        Object.freeze({ id: 'wilson-step-6', label: 'Wilson Step 6 · Syllable types', focus: 'multisyllable', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 21-25 (Mar)' }),
+        Object.freeze({ id: 'wilson-step-7', label: 'Wilson Step 7 · Advanced multisyllable', focus: 'multisyllable', gradeBand: 'G6-8', length: '8', pacing: 'Weeks 26-29 (Apr)' }),
+        Object.freeze({ id: 'wilson-step-8', label: 'Wilson Step 8 · Prefixes', focus: 'prefix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 30-32 (May)' }),
+        Object.freeze({ id: 'wilson-step-9', label: 'Wilson Step 9 · Suffixes', focus: 'suffix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 33-35 (May-Jun)' }),
+        Object.freeze({ id: 'wilson-step-10', label: 'Wilson Step 10+ · Morphology transfer', focus: 'vocab-ela-68', gradeBand: 'G6-8', length: 'any', pacing: 'Weeks 36+ (Jun and summer bridge)' })
+      ])
+    }),
+    justwords: Object.freeze({
+      label: 'Just Words',
+      targets: Object.freeze([
+        Object.freeze({ id: 'jw-unit-1', label: 'Just Words Unit 1 · Syllable and vowel patterns', focus: 'multisyllable', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 1-7 (Sep-Oct)' }),
+        Object.freeze({ id: 'jw-unit-2', label: 'Just Words Unit 2 · Prefix study', focus: 'prefix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 8-14 (Nov-Dec)' }),
+        Object.freeze({ id: 'jw-unit-3', label: 'Just Words Unit 3 · Suffix study', focus: 'suffix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 15-22 (Jan-Feb)' }),
+        Object.freeze({ id: 'jw-unit-4', label: 'Just Words Unit 4 · Roots and meaning', focus: 'vocab-ela-68', gradeBand: 'G6-8', length: 'any', pacing: 'Weeks 23-30 (Mar-Apr)' }),
+        Object.freeze({ id: 'jw-unit-5', label: 'Just Words Unit 5 · Reading-writing transfer', focus: 'vocab-ela-68', gradeBand: 'G6-8', length: 'any', pacing: 'Weeks 31-36 (May-Jun)' })
+      ])
+    })
   });
 
   const CHUNK_TAB_FOCUS_KEYS = new Set([
@@ -407,6 +593,20 @@
     return '60';
   }
 
+  function normalizeReportCompactMode(value) {
+    return String(value || '').trim().toLowerCase() === 'on' ? 'on' : 'off';
+  }
+
+  function normalizeMasterySort(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return ALLOWED_MASTERY_SORT_MODES.has(normalized) ? normalized : 'attempts_desc';
+  }
+
+  function normalizeMasteryFilter(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return ALLOWED_MASTERY_FILTER_MODES.has(normalized) ? normalized : 'all';
+  }
+
   function resolveAutoMusicMode(themeId) {
     const normalizedTheme = normalizeTheme(themeId, getThemeFallback());
     const directMode = AUTO_MUSIC_BY_THEME[normalizedTheme];
@@ -419,22 +619,64 @@
     if (!status) return;
     if (selectedMode === 'off') {
       status.textContent = 'Music is off.';
+      syncQuickMusicDock('off', activeMode);
       return;
     }
     const activeLabel = MUSIC_LABELS[activeMode] || activeMode;
     if (selectedMode === 'auto') {
       status.textContent = `Auto picks ${activeLabel} for the active theme.`;
+      syncQuickMusicDock(selectedMode, activeMode);
       return;
     }
     status.textContent = `Fixed music vibe: ${activeLabel}.`;
+    syncQuickMusicDock(selectedMode, activeMode);
+  }
+
+  function syncQuickMusicDock(selectedMode, activeMode) {
+    const toggleBtn = _el('quick-music-toggle');
+    const labelEl = _el('quick-music-label');
+    if (!toggleBtn) return;
+    const selected = normalizeMusicMode(selectedMode || _el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
+    const active = normalizeMusicMode(activeMode || (selected === 'auto'
+      ? resolveAutoMusicMode(normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()))
+      : selected));
+    const isOn = selected !== 'off';
+    toggleBtn.textContent = isOn ? 'Music On' : 'Music Off';
+    toggleBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+    toggleBtn.classList.toggle('is-on', isOn);
+    toggleBtn.title = isOn ? `Turn music off (currently ${MUSIC_LABELS[active] || active}).` : 'Turn music on.';
+    if (labelEl) {
+      labelEl.textContent = isOn ? (MUSIC_LABELS[active] || active) : 'Muted';
+    }
+    if (isOn) {
+      try { localStorage.setItem(LAST_NON_OFF_MUSIC_KEY, selected === 'auto' ? 'auto' : active); } catch {}
+    }
+  }
+
+  function getPreferredMusicOnMode() {
+    try {
+      const stored = normalizeMusicMode(localStorage.getItem(LAST_NON_OFF_MUSIC_KEY) || '');
+      if (stored && stored !== 'off') return stored;
+    } catch {}
+    const pref = normalizeMusicMode(_el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
+    if (pref !== 'off') return pref;
+    return 'auto';
+  }
+
+  function toggleMusicQuick() {
+    const select = _el('s-music');
+    const current = normalizeMusicMode(select?.value || prefs.music || DEFAULT_PREFS.music);
+    const next = current === 'off' ? getPreferredMusicOnMode() : 'off';
+    if (select) select.value = next;
+    setPref('music', next);
+    syncMusicForTheme({ toast: true });
   }
 
   function syncMusicForTheme(options = {}) {
-    if (!musicController) return;
     const selected = normalizeMusicMode(_el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
     const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
     const effective = selected === 'auto' ? resolveAutoMusicMode(activeTheme) : selected;
-    musicController.setMode(effective);
+    if (musicController) musicController.setMode(effective);
     updateMusicStatus(selected, effective);
     if (options.toast) {
       const label = MUSIC_LABELS[effective] || effective;
@@ -445,6 +687,8 @@
   // Apply saved values to selects
   const PREF_SELECTS = {
     'setting-focus': 'focus',
+    's-lesson-pack': 'lessonPack',
+    'm-lesson-pack': 'lessonPack',
     's-theme-save': 'themeSave',
     's-board-style': 'boardStyle',
     's-key-style': 'keyStyle',
@@ -458,6 +702,7 @@
     's-team-mode': 'teamMode',
     's-team-count': 'teamCount',
     's-turn-timer': 'turnTimer',
+    's-probe-rounds': 'probeRounds',
     's-boost-popups': 'boostPopups',
     's-grade': 'grade', 's-length': 'length',
     's-guesses': 'guesses', 's-case': 'caseMode', 's-hint': 'hint',
@@ -482,6 +727,22 @@
   const assessmentLockToggle = _el('s-assessment-lock');
   if (assessmentLockToggle) {
     assessmentLockToggle.checked = (prefs.assessmentLock || DEFAULT_PREFS.assessmentLock) === 'on';
+  }
+  const reportCompactToggle = _el('s-report-compact');
+  if (reportCompactToggle) {
+    reportCompactToggle.checked = normalizeReportCompactMode(prefs.reportCompact || DEFAULT_PREFS.reportCompact) === 'on';
+  }
+  const confidenceCoachingToggle = _el('s-confidence-coaching');
+  if (confidenceCoachingToggle) {
+    confidenceCoachingToggle.checked = String(prefs.confidenceCoaching || DEFAULT_PREFS.confidenceCoaching).toLowerCase() !== 'off';
+  }
+  const masterySortSelect = _el('s-mastery-sort');
+  if (masterySortSelect) {
+    masterySortSelect.value = normalizeMasterySort(masterySortSelect.value || 'attempts_desc');
+  }
+  const masteryFilterSelect = _el('s-mastery-filter');
+  if (masteryFilterSelect) {
+    masteryFilterSelect.value = normalizeMasteryFilter(masteryFilterSelect.value || 'all');
   }
   const musicSelect = _el('s-music');
   if (musicSelect) {
@@ -530,6 +791,7 @@
     if (prefs.turnTimer !== selectedTurnTimer) setPref('turnTimer', selectedTurnTimer);
   }
   syncBuildBadge();
+  void runAutoCacheRepairForBuild();
 
   const themeSelect = _el('s-theme');
   const initialThemeSelection = shouldPersistTheme() ? prefs.theme : getThemeFallback();
@@ -560,6 +822,7 @@
   WQUI.setCaseMode(prefs.caseMode || DEFAULT_PREFS.caseMode);
   updateWilsonModeToggle();
   syncHintToggleUI();
+  applyReportCompactMode(prefs.reportCompact || DEFAULT_PREFS.reportCompact, { persist: false });
 
   // Voice picker populated after brief delay
   setTimeout(populateVoiceSelector, 700);
@@ -574,12 +837,29 @@
   }
 
   // ─── 4. Theme / projector / motion helpers ──────────
+  function getThemeDisplayLabel(themeId) {
+    const normalized = normalizeTheme(themeId, getThemeFallback());
+    if (ThemeRegistry && typeof ThemeRegistry.getLabel === 'function') {
+      return ThemeRegistry.getLabel(normalized);
+    }
+    return normalized;
+  }
+
+  function syncSettingsThemeName(themeId) {
+    const labelEl = _el('settings-theme-name');
+    if (!labelEl) return;
+    const normalized = normalizeTheme(themeId || document.documentElement.getAttribute('data-theme'), getThemeFallback());
+    labelEl.textContent = getThemeDisplayLabel(normalized);
+    labelEl.title = `Current theme: ${getThemeDisplayLabel(normalized)}`;
+  }
+
   function applyTheme(name) {
     const normalized = normalizeTheme(name, getThemeFallback());
     document.documentElement.setAttribute('data-theme', normalized);
     document.documentElement.setAttribute('data-theme-family', getThemeFamily(normalized));
     const select = _el('s-theme');
     if (select && select.value !== normalized) select.value = normalized;
+    syncSettingsThemeName(normalized);
     syncMusicForTheme();
     return normalized;
   }
@@ -594,6 +874,17 @@
 
   function applyHint(mode) {
     document.documentElement.setAttribute('data-hint', mode);
+  }
+
+  function applyReportCompactMode(mode, options = {}) {
+    const normalized = normalizeReportCompactMode(mode);
+    const enabled = normalized === 'on';
+    const panel = _el('teacher-session-panel');
+    if (panel) panel.classList.toggle('is-compact-report', enabled);
+    const toggle = _el('s-report-compact');
+    if (toggle) toggle.checked = enabled;
+    if (options.persist !== false) setPref('reportCompact', normalized);
+    return normalized;
   }
 
   function getRevealFocusMode() {
@@ -619,7 +910,7 @@
       practiceDetails.open = requiredPractice || focusMode === 'off';
     }
     const details = _el('modal-more-details');
-    if (details) {
+    if (details && !details.classList.contains('hidden')) {
       details.open = focusMode === 'off';
     }
   }
@@ -681,11 +972,31 @@
     return mode === 'off' ? 'off' : 'on';
   }
 
+  function isConfidenceCoachingEnabled() {
+    const toggle = _el('s-confidence-coaching');
+    if (toggle) return !!toggle.checked;
+    return String(prefs.confidenceCoaching || DEFAULT_PREFS.confidenceCoaching).toLowerCase() !== 'off';
+  }
+
+  function setConfidenceCoachingMode(enabled, options = {}) {
+    const normalized = enabled ? 'on' : 'off';
+    const toggle = _el('s-confidence-coaching');
+    if (toggle) toggle.checked = normalized === 'on';
+    setPref('confidenceCoaching', normalized);
+    if (normalized === 'off') hideInformantHintCard();
+    updateNextActionLine();
+    if (options.toast) {
+      WQUI.showToast(normalized === 'on'
+        ? 'Confidence coaching is on.'
+        : 'Confidence coaching is off.');
+    }
+  }
+
   function syncHintToggleUI(mode = getHintMode()) {
     const toggle = _el('focus-hint-toggle');
     if (!toggle) return;
     const enabled = mode !== 'off';
-    toggle.textContent = 'Hint';
+    toggle.textContent = 'Clue';
     toggle.setAttribute('aria-pressed', 'false');
     toggle.setAttribute('title', enabled
       ? 'Get a detective clue from your informant'
@@ -727,28 +1038,569 @@
       : 'Switch to listening mode');
   }
 
+  function syncGameplayAudioStrip(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
+    const gameplayAudio = document.querySelector('.gameplay-audio');
+    const sentenceBtn = _el('g-hear-sentence');
+    if (sentenceBtn) sentenceBtn.remove();
+    if (!gameplayAudio) return;
+    const listeningMode = mode === 'listening' && !isMissionLabStandaloneMode();
+    gameplayAudio.classList.toggle('hidden', !listeningMode);
+    gameplayAudio.setAttribute('aria-hidden', listeningMode ? 'false' : 'true');
+  }
+
   function applyPlayStyle(mode, options = {}) {
     const normalized = normalizePlayStyle(mode);
     document.documentElement.setAttribute('data-play-style', normalized);
     const select = _el('s-play-style');
     if (select && select.value !== normalized) select.value = normalized;
     syncPlayStyleToggleUI(normalized);
+    syncGameplayAudioStrip(normalized);
     if (options.persist !== false) setPref('playStyle', normalized);
     updateNextActionLine();
     return normalized;
   }
 
+  function isAnyOverlayModalOpen() {
+    const revealOpen = !_el('modal-overlay')?.classList.contains('hidden');
+    const missionOpen = !_el('challenge-modal')?.classList.contains('hidden');
+    const setupOpen = !_el('first-run-setup-modal')?.classList.contains('hidden');
+    return !!(revealOpen || missionOpen || setupOpen);
+  }
+
   function hideInformantHintCard() {
+    clearStarterCoachTimer();
+    clearInformantHintHideTimer();
     const card = _el('hint-clue-card');
     if (!card) return;
+    _el('hint-clue-sentence-btn')?.classList.remove('hidden');
     card.classList.remove('visible');
     card.classList.add('hidden');
   }
 
-  function showInformantHintCard(message) {
+  let starterCoachTimer = 0;
+  let informantHintHideTimer = 0;
+
+  const SOR_HINT_PROFILES = Object.freeze({
+    initial_blend: Object.freeze({
+      catchphrase: 'Blend Builders',
+      concept: 'Initial blend focus',
+      rule: 'Your word contains an initial blend. Two consonants sit together, and you hear both sounds.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'b', mark: 'letter' }),
+            Object.freeze({ text: 'r', mark: 'letter' }),
+            Object.freeze({ text: 'ing' })
+          ]),
+          note: 'Each consonant keeps its own sound: /b/ + /r/.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 's', mark: 'letter' }),
+            Object.freeze({ text: 't', mark: 'letter' }),
+            Object.freeze({ text: 'op' })
+          ]),
+          note: 'Read both consonants quickly, then slide to the vowel.'
+        })
+      ])
+    }),
+    final_blend: Object.freeze({
+      catchphrase: 'Blend Builders',
+      concept: 'Final blend focus',
+      rule: 'Your word contains a final blend. The ending has two consonants, and you hear both sounds.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'ca' }),
+            Object.freeze({ text: 'm', mark: 'letter' }),
+            Object.freeze({ text: 'p', mark: 'letter' })
+          ]),
+          note: 'Say the ending /m/ + /p/ clearly.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'ne' }),
+            Object.freeze({ text: 's', mark: 'letter' }),
+            Object.freeze({ text: 't', mark: 'letter' })
+          ]),
+          note: 'Hold both ending consonants without dropping one.'
+        })
+      ])
+    }),
+    digraph: Object.freeze({
+      catchphrase: 'Sound Buddies',
+      concept: 'Digraph focus',
+      rule: 'Your word has a digraph. Two letters work together to make one sound.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'sh', mark: 'team' }),
+            Object.freeze({ text: 'ip' })
+          ]),
+          note: 'Keep the two letters locked as one sound chunk.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'th', mark: 'team' }),
+            Object.freeze({ text: 'in' })
+          ]),
+          note: 'Read the digraph first, then finish the word.'
+        })
+      ])
+    }),
+    trigraph: Object.freeze({
+      catchphrase: 'Three-Letter Team',
+      concept: 'Trigraph focus',
+      rule: 'Your word includes a three-letter sound team. Read the chunk first before adding other letters.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'l' }),
+            Object.freeze({ text: 'igh', mark: 'team' }),
+            Object.freeze({ text: 't' })
+          ]),
+          note: 'Treat igh as one sound chunk.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'ma' }),
+            Object.freeze({ text: 'tch', mark: 'team' })
+          ]),
+          note: 'Keep tch together at the end.'
+        })
+      ])
+    }),
+    cvc: Object.freeze({
+      catchphrase: 'Sound Steps',
+      concept: 'CVC short-vowel focus',
+      rule: 'Your word follows a consonant-vowel-consonant pattern with a short vowel in the middle.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'c' }),
+            Object.freeze({ text: 'a', mark: 'letter' }),
+            Object.freeze({ text: 't' })
+          ]),
+          note: 'Tap each sound: /c/ /a/ /t/.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'd' }),
+            Object.freeze({ text: 'o', mark: 'letter' }),
+            Object.freeze({ text: 'g' })
+          ]),
+          note: 'Keep the center vowel short and crisp.'
+        })
+      ])
+    }),
+    cvce: Object.freeze({
+      catchphrase: 'Magic E',
+      concept: 'CVCe focus',
+      rule: 'Your word uses silent e. The ending e is quiet and makes the vowel say its name.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'c' }),
+            Object.freeze({ text: 'a', mark: 'letter' }),
+            Object.freeze({ text: 'p' }),
+            Object.freeze({ text: 'e', mark: 'silent' })
+          ]),
+          note: 'The silent e changes cap to cape.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'k' }),
+            Object.freeze({ text: 'i', mark: 'letter' }),
+            Object.freeze({ text: 't' }),
+            Object.freeze({ text: 'e', mark: 'silent' })
+          ]),
+          note: 'The vowel says its name in kite.'
+        })
+      ])
+    }),
+    vowel_team: Object.freeze({
+      catchphrase: 'Vowel Team Detectives',
+      concept: 'Vowel team focus',
+      rule: 'Your word has a vowel team. Two vowels work together to carry one main sound.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'r' }),
+            Object.freeze({ text: 'ai', mark: 'team' }),
+            Object.freeze({ text: 'n' })
+          ]),
+          note: 'Read ai as one chunk.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'b' }),
+            Object.freeze({ text: 'oa', mark: 'team' }),
+            Object.freeze({ text: 't' })
+          ]),
+          note: 'Read oa as one chunk.'
+        })
+      ])
+    }),
+    r_controlled: Object.freeze({
+      catchphrase: 'Bossy R',
+      concept: 'R-controlled vowel focus',
+      rule: 'Your word contains an r-controlled vowel. The r changes the vowel sound.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'c' }),
+            Object.freeze({ text: 'ar', mark: 'team' })
+          ]),
+          note: 'Read ar as one sound pattern.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'h' }),
+            Object.freeze({ text: 'er', mark: 'team' })
+          ]),
+          note: 'Read er as one sound pattern.'
+        })
+      ])
+    }),
+    diphthong: Object.freeze({
+      catchphrase: 'Glide Team',
+      concept: 'Diphthong focus',
+      rule: 'Your word contains a diphthong. The vowel sound glides as your mouth moves.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'c' }),
+            Object.freeze({ text: 'oi', mark: 'team' }),
+            Object.freeze({ text: 'n' })
+          ]),
+          note: 'The oi glide is one sound chunk.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'cl' }),
+            Object.freeze({ text: 'ou', mark: 'team' }),
+            Object.freeze({ text: 'd' })
+          ]),
+          note: 'The ou glide is one sound chunk.'
+        })
+      ])
+    }),
+    welded: Object.freeze({
+      catchphrase: 'Welded Sounds',
+      concept: 'Welded sound focus',
+      rule: 'Your word has a welded sound chunk. Keep the vowel plus ending consonants together.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'b' }),
+            Object.freeze({ text: 'ang', mark: 'team' })
+          ]),
+          note: 'Read ang as one welded unit.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'r' }),
+            Object.freeze({ text: 'ing', mark: 'team' })
+          ]),
+          note: 'Read ing as one welded unit.'
+        })
+      ])
+    }),
+    floss: Object.freeze({
+      catchphrase: 'FLOSS Rule',
+      concept: 'Double ending focus',
+      rule: 'Your word may end with doubled f, l, s, or z after a short vowel in a one-syllable word.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'be' }),
+            Object.freeze({ text: 'll', mark: 'team' })
+          ]),
+          note: 'll is doubled after a short vowel sound.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'o' }),
+            Object.freeze({ text: 'ff', mark: 'team' })
+          ]),
+          note: 'ff is doubled after a short vowel sound.'
+        })
+      ])
+    }),
+    schwa: Object.freeze({
+      catchphrase: 'Schwa Spotter',
+      concept: 'Schwa focus',
+      rule: 'Your word has a schwa sound. The vowel is unstressed and sounds like /uh/.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'a', mark: 'schwa' }),
+            Object.freeze({ text: 'bout' })
+          ]),
+          note: 'The a is unstressed and says /uh/.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'sof' }),
+            Object.freeze({ text: 'a', mark: 'schwa' })
+          ]),
+          note: 'The final a is unstressed and says /uh/.'
+        })
+      ])
+    }),
+    prefix: Object.freeze({
+      catchphrase: 'Prefix Power',
+      concept: 'Prefix focus',
+      rule: 'Your word starts with a prefix. Read the prefix chunk first, then the base word.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 're', mark: 'affix' }),
+            Object.freeze({ text: 'play' })
+          ]),
+          note: 'Read re- first, then the base word.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'un', mark: 'affix' }),
+            Object.freeze({ text: 'lock' })
+          ]),
+          note: 'Read un- first, then the base word.'
+        })
+      ])
+    }),
+    suffix: Object.freeze({
+      catchphrase: 'Suffix Power',
+      concept: 'Suffix focus',
+      rule: 'Your word ends with a suffix. Read the base word first, then attach the ending.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'jump' }),
+            Object.freeze({ text: 'ed', mark: 'affix' })
+          ]),
+          note: 'Read base + suffix: jump + ed.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'run' }),
+            Object.freeze({ text: 'ning', mark: 'affix' })
+          ]),
+          note: 'Read base + suffix: run + ning.'
+        })
+      ])
+    }),
+    multisyllable: Object.freeze({
+      catchphrase: 'Syllable Strategy',
+      concept: 'Multisyllable focus',
+      rule: 'Your word has more than one syllable. Chunk it into syllables before spelling.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'sun' }),
+            Object.freeze({ text: '-' }),
+            Object.freeze({ text: 'set' })
+          ]),
+          note: 'Read each syllable chunk, then blend.'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'com' }),
+            Object.freeze({ text: '-' }),
+            Object.freeze({ text: 'plete' })
+          ]),
+          note: 'Read each syllable chunk, then blend.'
+        })
+      ])
+    }),
+    compound: Object.freeze({
+      catchphrase: 'Word Builders',
+      concept: 'Compound word focus',
+      rule: 'Your word joins two smaller words. Find each part first, then combine.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'sun' }),
+            Object.freeze({ text: 'flower' })
+          ]),
+          note: 'sun + flower = sunflower'
+        }),
+        Object.freeze({
+          parts: Object.freeze([
+            Object.freeze({ text: 'rain' }),
+            Object.freeze({ text: 'coat' })
+          ]),
+          note: 'rain + coat = raincoat'
+        })
+      ])
+    }),
+    subject: Object.freeze({
+      catchphrase: 'Context Detectives',
+      concept: 'Vocabulary-in-context focus',
+      rule: 'Use the sentence clue first to identify meaning, then map the sounds and spell.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([Object.freeze({ text: 'Use sentence meaning first.' })]),
+          note: 'Then spell using the sounds you hear.'
+        })
+      ])
+    }),
+    general: Object.freeze({
+      catchphrase: 'Pattern Detectives',
+      concept: 'Phonics focus',
+      rule: 'Use one clear sound pattern clue, then confirm with the sentence.',
+      examples: Object.freeze([
+        Object.freeze({
+          parts: Object.freeze([Object.freeze({ text: 'Check beginning + middle + ending.' })]),
+          note: 'Then use color feedback to refine the next guess.'
+        })
+      ])
+    })
+  });
+
+  function clearStarterCoachTimer() {
+    if (!starterCoachTimer) return;
+    clearTimeout(starterCoachTimer);
+    starterCoachTimer = 0;
+  }
+
+  function clearInformantHintHideTimer() {
+    if (!informantHintHideTimer) return;
+    clearTimeout(informantHintHideTimer);
+    informantHintHideTimer = 0;
+  }
+
+  function normalizeHintCategoryFromFocusTag(focusValue, phonicsTag) {
+    const focus = String(focusValue || '').trim().toLowerCase();
+    const tag = String(phonicsTag || '').trim().toLowerCase();
+
+    if (focus === 'ccvc') return 'initial_blend';
+    if (focus === 'cvcc') return 'final_blend';
+    if (focus === 'digraph' || /digraph/.test(tag)) return 'digraph';
+    if (focus === 'trigraph' || /trigraph/.test(tag)) return 'trigraph';
+    if (focus === 'cvc' || /(^|[^a-z])cvc([^a-z]|$)|closed[\s-]*syllable|short[\s-]*vowel/.test(tag)) return 'cvc';
+    if (focus === 'cvce' || /silent[\s-]*e|magic[\s-]*e|cvce/.test(tag)) return 'cvce';
+    if (focus === 'vowel_team' || /vowel[\s_-]*team/.test(tag)) return 'vowel_team';
+    if (focus === 'r_controlled' || /r[\s_-]*controlled/.test(tag)) return 'r_controlled';
+    if (focus === 'diphthong' || /diphthong/.test(tag)) return 'diphthong';
+    if (focus === 'welded' || /welded/.test(tag)) return 'welded';
+    if (focus === 'floss' || /floss/.test(tag)) return 'floss';
+    if (focus === 'schwa' || /schwa/.test(tag)) return 'schwa';
+    if (focus === 'prefix' || /prefix/.test(tag)) return 'prefix';
+    if (focus === 'suffix' || /suffix/.test(tag)) return 'suffix';
+    if (focus === 'multisyllable' || /multisyll/.test(tag)) return 'multisyllable';
+    if (focus === 'compound' || /compound/.test(tag)) return 'compound';
+    if (/blend/.test(tag)) {
+      if (/final|\(-/.test(tag)) return 'final_blend';
+      return 'initial_blend';
+    }
+    return 'general';
+  }
+
+  function detectHintCategoryFromWord(wordValue) {
+    const word = String(wordValue || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (!word) return 'cvc';
+    if (/(tch|dge|igh)/.test(word)) return 'trigraph';
+    if (/^(sh|ch|th|wh|ph)/.test(word) || /(sh|ch|th|wh|ph|ck|ng)/.test(word)) return 'digraph';
+    if (/(oi|oy|ou|ow|au|aw)/.test(word)) return 'diphthong';
+    if (/(ai|ay|ea|ee|oa|oe|ie|ue|ui)/.test(word)) return 'vowel_team';
+    if (/(ar|or|er|ir|ur)/.test(word)) return 'r_controlled';
+    if (/(ang|ing|ong|ung|ank|ink|onk|unk)$/.test(word)) return 'welded';
+    if (/(ff|ll|ss|zz)$/.test(word)) return 'floss';
+    if (/^[a-z]{3}$/.test(word) && /^[^aeiou][aeiou][^aeiou]$/.test(word)) return 'cvc';
+    if (/^[a-z]{4,}$/.test(word) && /[^aeiou][aeiou][^aeiou]e$/.test(word)) return 'cvce';
+    if (/^[bcdfghjklmnpqrstvwxyz]{2}/.test(word)) return 'initial_blend';
+    if (/[bcdfghjklmnpqrstvwxyz]{2}$/.test(word)) return 'final_blend';
+    if (word.length >= 7 || /[aeiou].*[aeiou].*[aeiou]/.test(word)) return 'multisyllable';
+    return 'cvc';
+  }
+
+  function buildInformantHintPayload(state) {
+    const entry = state?.entry || null;
+    const activeWord = String(state?.word || entry?.word || '').trim();
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const phonicsTag = String(entry?.phonics || '').trim();
+    let category = preset.kind === 'subject'
+      ? 'subject'
+      : normalizeHintCategoryFromFocusTag(focusValue, phonicsTag);
+    if (category === 'general') {
+      category = detectHintCategoryFromWord(activeWord);
+    }
+    const profile = SOR_HINT_PROFILES[category] || SOR_HINT_PROFILES.general;
+    const sourceLabel = phonicsTag && phonicsTag.toLowerCase() !== 'all'
+      ? phonicsTag
+      : preset.kind === 'phonics'
+        ? getFocusLabel(preset.focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim()
+        : '';
+    const sourceLine = sourceLabel ? `Focus tag: ${sourceLabel}.` : '';
+    const message = `${profile.catchphrase}: ${profile.concept}. ${profile.rule}${sourceLine ? ` ${sourceLine}` : ''}`;
+    return {
+      title: 'Here is your clue',
+      message,
+      examples: Array.isArray(profile.examples) ? profile.examples : [],
+      allowSentence: !!entry?.sentence
+    };
+  }
+
+  function renderHintExamples(examples) {
+    const wrap = _el('hint-clue-examples');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const rows = Array.isArray(examples) ? examples.slice(0, 3) : [];
+    if (!rows.length) {
+      wrap.classList.add('hidden');
+      return;
+    }
+    wrap.classList.remove('hidden');
+    rows.forEach((example) => {
+      const row = document.createElement('div');
+      row.className = 'hint-example';
+
+      const word = document.createElement('div');
+      word.className = 'hint-example-word';
+      (Array.isArray(example?.parts) ? example.parts : []).forEach((part) => {
+        const segment = document.createElement('span');
+        segment.textContent = String(part?.text || '');
+        const mark = String(part?.mark || '').trim();
+        if (mark) segment.classList.add(`hint-mark-${mark}`);
+        word.appendChild(segment);
+      });
+      row.appendChild(word);
+
+      const note = String(example?.note || '').trim();
+      if (note) {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'hint-example-note';
+        noteEl.textContent = note;
+        row.appendChild(noteEl);
+      }
+      wrap.appendChild(row);
+    });
+  }
+
+  function scheduleStarterCoachHint() {
+    clearStarterCoachTimer();
+  }
+
+  function showInformantHintCard(payload) {
     const card = _el('hint-clue-card');
     if (!card) return;
-    card.textContent = String(message || '');
+    const normalized = (payload && typeof payload === 'object')
+      ? payload
+      : { title: 'Here is your clue', message: String(payload || '').trim(), examples: [], allowSentence: true };
+    const title = String(normalized.title || 'Here is your clue').trim() || 'Here is your clue';
+    const text = String(normalized.message || '').trim();
+    if (!text) return;
+    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return;
+    const titleEl = _el('hint-clue-title');
+    const messageEl = _el('hint-clue-message');
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = text;
+    renderHintExamples(normalized.examples);
+    const sentenceBtn = _el('hint-clue-sentence-btn');
+    if (sentenceBtn) sentenceBtn.classList.toggle('hidden', !normalized.allowSentence);
+    clearInformantHintHideTimer();
     card.classList.remove('hidden');
     requestAnimationFrame(() => {
       card.classList.add('visible');
@@ -761,66 +1613,21 @@
       hideInformantHintCard();
       return;
     }
+    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return;
 
     const state = WQGame.getState?.() || {};
-    const entry = state?.entry || null;
-    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
-    const preset = parseFocusPreset(focusValue);
-    const phonicsTag = String(entry?.phonics || '').toLowerCase();
-    const wordLength = Math.max(0, Number(state?.wordLength || String(entry?.word || '').trim().length || 0));
-    const clues = [];
-    const leadIns = [
-      'Psst, Detective!',
-      'Top-secret clue!',
-      'Agent update!',
-      'Whisper from your informant!'
-    ];
-
     if (!state?.word) {
-      showInformantHintCard('Psst, Detective! Tap New Word to open a case, then I will share an inside clue.');
+      showInformantHintCard({
+        title: 'Here is your clue',
+        message: 'Start a word first, then tap Clue for a targeted phonics clue and examples.',
+        examples: [],
+        allowSentence: false
+      });
       return;
     }
-
-    if (focusValue === 'vowel_team' || /vowel[\s_-]*team/.test(phonicsTag)) {
-      clues.push('This case has a vowel team. Look for buddy vowels like "ea" in team or "ou" in cloud.');
-    }
-    if (focusValue === 'digraph' || /digraph/.test(phonicsTag)) {
-      clues.push('A digraph is hiding. Two letters share one sound, like "sh" in ship or "th" in thumb.');
-    }
-    if (focusValue === 'trigraph' || /trigraph/.test(phonicsTag)) {
-      clues.push('Watch for a 3-letter sound chunk, like "igh" in light or "tch" in match.');
-    }
-    if (focusValue === 'cvce' || /silent[\s-]*e|magic[\s-]*e|cvce/.test(phonicsTag)) {
-      clues.push('Silent e may be on the case. Think "cap" vs "cape" or "kit" vs "kite".');
-    }
-    if (focusValue === 'r_controlled' || /r[\s_-]*controlled/.test(phonicsTag)) {
-      clues.push('Listen for an r-controlled vowel, like "ar" in car or "or" in storm.');
-    }
-    if (focusValue === 'diphthong' || /diphthong/.test(phonicsTag)) {
-      clues.push('A glide sound may appear, like "oi" in coin or "ou" in loud.');
-    }
-    if (focusValue === 'prefix' || /prefix/.test(phonicsTag)) {
-      clues.push('The beginning might hold a prefix, like "un-" in unhappy or "re-" in retell.');
-    }
-    if (focusValue === 'suffix' || /suffix/.test(phonicsTag)) {
-      clues.push('The ending may hold a suffix, like "-ed" in jumped or "-ing" in running.');
-    }
-    if (wordLength >= 7) {
-      clues.push(`Long-word alert: ${wordLength} letters. Split it into chunks before you type.`);
-    }
-    if (preset.kind === 'subject') {
-      clues.push(`This clue is from ${preset.subject.toUpperCase()} words for ${formatGradeBandLabel(preset.gradeBand)}. Think classroom vocabulary.`);
-    }
-    if (!clues.length && preset.kind === 'phonics') {
-      clues.push('Your mission is a sound pattern. Use the sentence clue, then test that pattern first.');
-    }
-    if (!clues.length) {
-      clues.push('Use the sentence clue like a detective. Meaning helps you eliminate wrong suspects quickly.');
-    }
-
-    const selectedClue = pickRandom(clues) || clues[0];
-    const lead = pickRandom(leadIns) || leadIns[0];
-    showInformantHintCard(`${lead} ${selectedClue}`);
+    if (!state.entry) state.entry = WQData.getEntry(state.word) || null;
+    currentRoundHintRequested = true;
+    showInformantHintCard(buildInformantHintPayload(state));
   }
 
   function applyFeedback(mode) {
@@ -924,11 +1731,35 @@
     return (prefs.sorNotation || DEFAULT_PREFS.sorNotation) === 'on';
   }
 
-  function getVoicePracticeMode() {
-    const select = _el('s-voice-task');
-    const next = String(select?.value || prefs.voicePractice || DEFAULT_PREFS.voicePractice).toLowerCase();
+  function normalizeVoicePracticeMode(mode) {
+    const next = String(mode || '').toLowerCase();
     if (next === 'off' || next === 'required') return next;
     return 'optional';
+  }
+
+  function getVoicePracticeMode() {
+    return normalizeVoicePracticeMode(_el('s-voice-task')?.value || prefs.voicePractice || DEFAULT_PREFS.voicePractice);
+  }
+
+  function setVoicePracticeMode(mode, options = {}) {
+    const normalized = normalizeVoicePracticeMode(mode);
+    const select = _el('s-voice-task');
+    if (select && select.value !== normalized) select.value = normalized;
+    setPref('voicePractice', normalized);
+    if (!(_el('modal-overlay')?.classList.contains('hidden'))) {
+      updateVoicePracticePanel(WQGame.getState());
+      syncRevealFocusModalSections();
+    }
+    syncTeacherPresetButtons();
+    if (options.toast) {
+      WQUI.showToast(normalized === 'required'
+        ? 'Voice practice is required before next word.'
+        : normalized === 'off'
+          ? 'Voice practice is off.'
+          : 'Voice practice is optional.'
+      );
+    }
+    return normalized;
   }
 
   function areBoostPopupsEnabled() {
@@ -940,6 +1771,7 @@
   const TEACHER_PRESETS = Object.freeze({
     guided: Object.freeze({
       hint: 'on',
+      confidenceCoaching: 'on',
       revealFocus: 'on',
       voicePractice: 'required',
       voice: 'recorded',
@@ -949,6 +1781,7 @@
     }),
     independent: Object.freeze({
       hint: 'off',
+      confidenceCoaching: 'off',
       revealFocus: 'on',
       voicePractice: 'optional',
       voice: 'recorded',
@@ -958,6 +1791,7 @@
     }),
     assessment: Object.freeze({
       hint: 'off',
+      confidenceCoaching: 'off',
       revealFocus: 'on',
       voicePractice: 'off',
       voice: 'off',
@@ -970,6 +1804,7 @@
   function detectTeacherPreset() {
     const current = {
       hint: getHintMode(),
+      confidenceCoaching: isConfidenceCoachingEnabled() ? 'on' : 'off',
       revealFocus: getRevealFocusMode(),
       voicePractice: getVoicePracticeMode(),
       voice: normalizeVoiceMode(_el('s-voice')?.value || prefs.voice || DEFAULT_PREFS.voice),
@@ -981,6 +1816,7 @@
     };
     return Object.entries(TEACHER_PRESETS).find(([, preset]) =>
       current.hint === preset.hint &&
+      current.confidenceCoaching === preset.confidenceCoaching &&
       current.revealFocus === preset.revealFocus &&
       current.voicePractice === preset.voicePractice &&
       current.voice === preset.voice &&
@@ -1006,11 +1842,10 @@
     const preset = TEACHER_PRESETS[mode];
     if (!preset) return false;
     setHintMode(preset.hint);
+    setConfidenceCoachingMode(preset.confidenceCoaching === 'on');
     applyRevealFocusMode(preset.revealFocus);
 
-    const voiceTaskSelect = _el('s-voice-task');
-    if (voiceTaskSelect) voiceTaskSelect.value = preset.voicePractice;
-    setPref('voicePractice', preset.voicePractice);
+    setVoicePracticeMode(preset.voicePractice, { toast: false });
 
     const voiceSelect = _el('s-voice');
     if (voiceSelect) voiceSelect.value = preset.voice;
@@ -1047,7 +1882,12 @@
     try { return localStorage.getItem(FIRST_RUN_SETUP_KEY) === 'done'; } catch { return false; }
   }
 
-  firstRunSetupPending = !hasCompletedFirstRunSetup();
+  const shouldOfferStartupPreset = !hasCompletedFirstRunSetup();
+  firstRunSetupPending = false;
+  if (shouldOfferStartupPreset) {
+    // Keep startup smooth: default to quick start and let teachers open setup on demand.
+    markFirstRunSetupDone();
+  }
 
   function closeFirstRunSetupModal() {
     _el('first-run-setup-modal')?.classList.add('hidden');
@@ -1074,6 +1914,15 @@
         closeFirstRunSetupModal();
         newGame();
       });
+    });
+    _el('first-run-skip-btn')?.addEventListener('click', () => {
+      markFirstRunSetupDone();
+      firstRunSetupPending = false;
+      closeFirstRunSetupModal();
+      const state = WQGame.getState?.() || {};
+      if (!state.word || state.gameOver) {
+        newGame();
+      }
     });
     document.body.dataset.wqFirstRunSetupBound = '1';
   }
@@ -1107,6 +1956,7 @@
     setPref('teamMode', DEFAULT_PREFS.teamMode);
     setPref('teamCount', DEFAULT_PREFS.teamCount);
     setPref('turnTimer', DEFAULT_PREFS.turnTimer);
+    setPref('confidenceCoaching', DEFAULT_PREFS.confidenceCoaching);
 
     _el('s-theme-save').value = DEFAULT_PREFS.themeSave;
     _el('s-motion').value = DEFAULT_PREFS.motion;
@@ -1119,6 +1969,8 @@
     _el('s-team-mode').value = DEFAULT_PREFS.teamMode;
     _el('s-team-count').value = DEFAULT_PREFS.teamCount;
     _el('s-turn-timer').value = DEFAULT_PREFS.turnTimer;
+    const confidenceToggle = _el('s-confidence-coaching');
+    if (confidenceToggle) confidenceToggle.checked = DEFAULT_PREFS.confidenceCoaching === 'on';
 
     applyProjector(DEFAULT_PREFS.projector);
     applyMotion(DEFAULT_PREFS.motion);
@@ -1177,7 +2029,7 @@
     firstRunSetupPending = true;
     closeFocusSearchList();
     openFirstRunSetupModal();
-    WQUI.showToast('Choose a startup preset to continue.');
+    WQUI.showToast('Setup choices opened. Pick one or skip.');
   }
 
   function populateVoiceSelector() {
@@ -1209,20 +2061,6 @@
     if (options.focus) {
       const activeTab = tabs.find((tab) => tab.getAttribute('data-settings-tab') === next);
       if (activeTab && typeof activeTab.focus === 'function') activeTab.focus();
-    }
-  }
-
-  function jumpToSettingsGroup(groupId) {
-    const group = _el(groupId);
-    if (!group) return;
-    const parentSection = group.closest('[data-settings-section]');
-    const targetView = parentSection?.getAttribute('data-settings-section') || 'quick';
-    setSettingsView(targetView);
-    if (group instanceof HTMLDetailsElement) group.open = true;
-    if (typeof group.scrollIntoView === 'function') {
-      setTimeout(() => {
-        group.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      }, 40);
     }
   }
 
@@ -1275,8 +2113,9 @@
   }
 
   function buildPlayableWordSet(gradeBand, lengthPref, focusValue) {
+    const effectiveGradeBand = getEffectiveGameplayGradeBand(gradeBand, focusValue);
     const pool = WQData.getPlayableWords({
-      gradeBand: gradeBand || 'all',
+      gradeBand: effectiveGradeBand,
       length: lengthPref || 'any',
       phonics: focusValue || 'all'
     });
@@ -1330,23 +2169,44 @@
     saveReviewQueueState();
   }
 
-  function trackRoundForReview(result, maxGuessesValue) {
+  function trackRoundForReview(result, maxGuessesValue, roundMetrics = {}) {
     const solvedWord = normalizeReviewWord(result?.word);
     if (!solvedWord) return;
     reviewQueueState.round += 1;
     const maxGuesses = Math.max(1, Number(maxGuessesValue) || 6);
     const guessesUsed = Math.max(1, Array.isArray(result?.guesses) ? result.guesses.length : maxGuesses);
+    const hintRequested = !!roundMetrics.hintRequested;
+    const durationMs = Math.max(0, Number(roundMetrics.durationMs) || 0);
+    const topError = getTopErrorKey(roundMetrics.errorCounts || {});
+    const attachReason = (base) => topError ? `${base}:${topError}` : base;
     if (result?.lost) {
-      scheduleReviewWord(solvedWord, [2, 6], 'missed');
+      scheduleReviewWord(solvedWord, [1, 3, 7], attachReason('missed'));
+      if (topError === 'vowel_pattern') scheduleReviewWord(solvedWord, [2], 'vowel-pattern');
+      if (topError === 'morpheme_ending') scheduleReviewWord(solvedWord, [4], 'morpheme-ending');
       return;
     }
     const hardSolveThreshold = Math.max(4, maxGuesses - 1);
     if (guessesUsed >= hardSolveThreshold) {
-      scheduleReviewWord(solvedWord, [4], 'hard');
+      scheduleReviewWord(solvedWord, [3, 6], attachReason('hard'));
       return;
     }
-    if (getHintMode() === 'on' && guessesUsed >= Math.max(3, Math.ceil(maxGuesses * 0.67))) {
-      scheduleReviewWord(solvedWord, [5], 'hinted');
+    if (hintRequested) {
+      scheduleReviewWord(solvedWord, [4], attachReason('hinted'));
+    }
+    if (topError === 'vowel_pattern') {
+      scheduleReviewWord(solvedWord, [2, 5], 'vowel-pattern');
+      return;
+    }
+    if (topError === 'blend_position') {
+      scheduleReviewWord(solvedWord, [3], 'blend-position');
+      return;
+    }
+    if (topError === 'morpheme_ending') {
+      scheduleReviewWord(solvedWord, [4, 7], 'morpheme-ending');
+      return;
+    }
+    if (durationMs >= 90000) {
+      scheduleReviewWord(solvedWord, [5], 'slow-round');
       return;
     }
     saveReviewQueueState();
@@ -1372,6 +2232,13 @@
       }));
     } catch {}
   }
+
+  let activeRoundStartedAt = 0;
+  let currentRoundHintRequested = false;
+  let currentRoundVoiceAttempts = 0;
+  let currentRoundErrorCounts = Object.create(null);
+  let currentRoundSkillKey = 'classic';
+  let currentRoundSkillLabel = 'Classic mixed practice';
 
   let classroomTurnTimer = 0;
   let classroomTurnEndsAt = 0;
@@ -1512,28 +2379,49 @@
     const reviewWord = normalizeReviewWord(options.reviewWord || '');
     const state = WQGame.getState?.() || {};
     const hasActiveRound = Boolean(state.word && !state.gameOver);
+    const guessCount = Array.isArray(state.guesses) ? state.guesses.length : 0;
+    const activeGuessLength = String(state.guess || '').length;
+    const wordLength = Math.max(1, Number(state.wordLength) || 0);
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     const dueCount = Math.max(0, Number(options.dueCount) || 0);
+    const confidenceOn = isConfidenceCoachingEnabled();
     let text = '';
 
-    if (firstRunSetupPending) {
-      text = 'Choose a startup preset to begin.';
+    if (isMissionLabStandaloneMode()) {
+      text = 'Mission Lab standalone: launch a sprint from the panel below.';
+    } else if (firstRunSetupPending) {
+      text = 'Choose a start style, or tap Skip for now.';
     } else if (reviewWord) {
       text = `Level-up review: ${reviewWord.toUpperCase()} is back for a quick memory win.`;
+    } else if (hasActiveRound && guessCount === 0 && activeGuessLength === 0) {
+      if (confidenceOn) {
+        text = playStyle === 'listening'
+          ? 'No guess is wasted. Try a first word, then tap Hear Word or use Clue for a targeted phonics hint.'
+          : 'No guess is wasted. Try a first word, then use colors to guide your next guess.';
+      } else {
+        text = playStyle === 'listening'
+          ? 'Listening mode: guess first, then use Hear Word or Clue as helpers.'
+          : 'Start with a first guess, then use color feedback to refine the next word.';
+      }
+    } else if (hasActiveRound && guessCount === 0 && activeGuessLength > 0) {
+      text = `Build your first test word (${Math.min(activeGuessLength, wordLength)}/${wordLength}), then press Enter.`;
+    } else if (hasActiveRound && guessCount === 1 && confidenceOn) {
+      text = 'Great first try. Use the color feedback to move one letter at a time.';
     } else if (dueCount > 0) {
       text = `Review words ready: ${dueCount} due word${dueCount === 1 ? '' : 's'} in this focus.`;
     } else if (playStyle === 'listening') {
       text = hasActiveRound
-        ? 'Listening game: Hear Word + Hear Sentence, then type and press Enter.'
-        : 'Tap New Word to start Listening game with word + sentence audio clues.';
+        ? 'Listening mode: keep guessing and use audio buttons when needed.'
+        : 'Tap New Word to start. You can use Hear Word or Clue anytime.';
     } else {
       text = hasActiveRound
-        ? 'Detective game: Hear Sentence for the clue, then type and press Enter.'
-        : 'Tap New Word to start Detective game using sentence clues and strategy.';
+        ? 'Keep guessing and use color feedback to narrow the word.'
+        : 'Tap New Word to start. Make your first guess when ready.';
     }
 
-    line.textContent = text;
-    line.classList.toggle('hidden', !text);
+    const showTopLine = firstRunSetupPending;
+    line.textContent = showTopLine ? text : '';
+    line.classList.toggle('hidden', !showTopLine || !text);
     line.classList.toggle('is-review', Boolean(reviewWord));
     updateClassroomTurnLine();
   }
@@ -1552,6 +2440,13 @@
     });
   }
 
+  function jumpToSettingsGroup(groupId) {
+    const target = _el(groupId);
+    if (!(target instanceof HTMLElement)) return;
+    if (target instanceof HTMLDetailsElement) target.open = true;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function syncThemePreviewStripVisibility() {
     const strip = _el('theme-preview-strip');
     if (!strip) return;
@@ -1560,6 +2455,65 @@
     const shouldShow = !panelOpen && !focusOpen && !isAssessmentRoundLocked();
     strip.classList.toggle('hidden', !shouldShow);
     strip.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+  }
+
+  function isMissionLabStandaloneMode() {
+    return normalizePageMode(pageMode) === 'mission-lab';
+  }
+
+  function updatePageModeUrl(mode) {
+    try {
+      const normalized = normalizePageMode(mode);
+      const url = new URL(window.location.href);
+      if (normalized === 'mission-lab') {
+        url.searchParams.set('page', 'mission-lab');
+      } else {
+        url.searchParams.delete('page');
+      }
+      const nextHref = `${url.pathname}${url.search}${url.hash}`;
+      window.history.replaceState(window.history.state, '', nextHref);
+    } catch {}
+  }
+
+  function syncPageModeUI() {
+    const missionMode = isMissionLabStandaloneMode();
+    document.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'wordquest');
+    const navBtn = _el('mission-lab-nav-btn');
+    if (navBtn) {
+      navBtn.textContent = missionMode ? 'WordQuest' : 'Mission Lab';
+      navBtn.setAttribute('aria-pressed', missionMode ? 'true' : 'false');
+      navBtn.title = missionMode
+        ? 'Return to WordQuest gameplay mode'
+        : 'Open Mission Lab as a standalone activity';
+    }
+    const newWordBtn = _el('new-game-btn');
+    if (newWordBtn) {
+      newWordBtn.textContent = missionMode ? 'New Mission' : 'New Word';
+      newWordBtn.title = missionMode
+        ? 'Start a standalone Mission Lab sprint'
+        : 'Start a new word round';
+      if (missionMode) newWordBtn.classList.remove('pulse');
+    }
+    _el('mission-lab-hub')?.classList.toggle('hidden', !missionMode);
+    syncGameplayAudioStrip();
+    if (missionMode) {
+      hideInformantHintCard();
+      _el('toast')?.classList.remove('visible', 'toast-informant');
+      refreshStandaloneMissionLabHub();
+      closeRevealChallengeModal({ silent: true, preserveFeedback: false });
+      _el('modal-overlay')?.classList.add('hidden');
+      _el('end-modal')?.classList.add('hidden');
+    }
+  }
+
+  function setPageMode(mode, options = {}) {
+    const normalized = normalizePageMode(mode);
+    if (pageMode === normalized && !options.force) return;
+    pageMode = normalized;
+    persistPageMode(normalized);
+    if (!options.skipUrl) updatePageModeUrl(normalized);
+    syncPageModeUI();
+    syncHeaderControlsVisibility();
   }
 
   function syncHeaderControlsVisibility() {
@@ -1575,10 +2529,15 @@
       setSettingsView(tab.getAttribute('data-settings-tab'));
     });
   });
+  document.querySelectorAll('.settings-jump-chip[data-settings-jump]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const groupId = chip.getAttribute('data-settings-jump');
+      if (!groupId) return;
+      jumpToSettingsGroup(groupId);
+    });
+  });
   bindSettingsAccordion('#settings-quick');
   bindSettingsAccordion('#settings-advanced');
-  _el('settings-jump-teacher')?.addEventListener('click', () => jumpToSettingsGroup('settings-group-classroom'));
-  _el('settings-jump-reveal')?.addEventListener('click', () => jumpToSettingsGroup('settings-group-reveal'));
 
   document.querySelectorAll('[data-teacher-preset]').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -1586,7 +2545,13 @@
     });
   });
 
+  pageMode = normalizePageMode(readPageModeFromQuery());
+  if (pageMode === 'wordquest') {
+    pageMode = loadStoredPageMode();
+  }
+
   setSettingsView('quick');
+  syncPageModeUI();
   syncHeaderControlsVisibility();
   syncClassroomTurnRuntime({ resetTurn: true });
   syncTeacherPresetButtons();
@@ -1594,10 +2559,6 @@
   bindFirstRunSetupModal();
 
   _el('settings-btn')?.addEventListener('click', () => {
-    if (firstRunSetupPending) {
-      openFirstRunSetupModal();
-      return;
-    }
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice();
       return;
@@ -1625,6 +2586,9 @@
   _el('voice-help-btn')?.addEventListener('click', openVoiceHelp);
   _el('voice-help-close')?.addEventListener('click', closeVoiceHelp);
   _el('voice-help-modal')?.addEventListener('click', e => { if (e.target.id === 'voice-help-modal') closeVoiceHelp(); });
+  _el('mission-lab-nav-btn')?.addEventListener('click', () => {
+    setPageMode(isMissionLabStandaloneMode() ? 'wordquest' : 'mission-lab');
+  });
 // Close settings when clicking outside
   document.addEventListener('pointerdown', e => {
     const panel = _el('settings-panel');
@@ -1638,6 +2602,7 @@
     if (
       hintCard &&
       !hintCard.classList.contains('hidden') &&
+      !hintCard.contains(e.target) &&
       e.target !== hintToggleBtn &&
       !hintToggleBtn?.contains(e.target)
     ) {
@@ -1668,7 +2633,7 @@
     if (shouldPersistTheme()) {
       setPref('theme', normalized);
     }
-    _el('settings-panel')?.classList.add('hidden');
+    WQUI.showToast(`Theme: ${getThemeDisplayLabel(normalized)}`);
     syncHeaderControlsVisibility();
   });
   _el('s-theme-save')?.addEventListener('change', e => {
@@ -1778,13 +2743,119 @@
     WQUI.setCaseMode(e.target.value);
     setPref('caseMode', e.target.value);
   });
+  function handleLessonPackSelectionChange(rawValue) {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before changing lesson packs.');
+      syncLessonPackControlsFromPrefs();
+      return false;
+    }
+    const nextPack = normalizeLessonPackId(rawValue);
+    lessonPackApplying = true;
+    let nextTarget = 'custom';
+    try {
+      getLessonPackSelectElements().forEach((select) => { select.value = nextPack; });
+      nextTarget = populateLessonTargetSelect(nextPack, 'custom');
+    } finally {
+      lessonPackApplying = false;
+    }
+    setLessonPackPrefs(nextPack, nextTarget);
+    updateLessonPackNote(nextPack, nextTarget);
+    refreshStandaloneMissionLabHub();
+    return true;
+  }
+
+  function handleLessonTargetSelectionChange(rawValue) {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before changing lesson targets.');
+      syncLessonPackControlsFromPrefs();
+      return false;
+    }
+    const currentPack = normalizeLessonPackId(
+      prefs.lessonPack || _el('s-lesson-pack')?.value || _el('m-lesson-pack')?.value || DEFAULT_PREFS.lessonPack
+    );
+    const nextTarget = normalizeLessonTargetId(currentPack, rawValue);
+    getLessonTargetSelectElements().forEach((select) => { select.value = nextTarget; });
+    setLessonPackPrefs(currentPack, nextTarget);
+    updateLessonPackNote(currentPack, nextTarget);
+    refreshStandaloneMissionLabHub();
+    if (currentPack === 'custom' || nextTarget === 'custom') return true;
+    applyLessonTargetConfig(currentPack, nextTarget, { toast: false });
+    return true;
+  }
+
+  _el('s-lesson-pack')?.addEventListener('change', e => {
+    handleLessonPackSelectionChange(e.target.value);
+  });
+  _el('s-lesson-target')?.addEventListener('change', e => {
+    handleLessonTargetSelectionChange(e.target.value);
+  });
+  _el('m-curriculum-step')?.addEventListener('change', e => {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before changing curriculum targets.');
+      syncLessonPackControlsFromPrefs();
+      return;
+    }
+    const next = parseMainCurriculumStepValue(e.target.value);
+    if (next.packId === 'custom') {
+      handleLessonPackSelectionChange('custom');
+      updateLessonPackNote('custom', 'custom');
+      refreshStandaloneMissionLabHub();
+      return;
+    }
+    getLessonPackSelectElements().forEach((select) => { select.value = next.packId; });
+    lessonPackApplying = true;
+    let normalizedTarget = 'custom';
+    try {
+      normalizedTarget = populateLessonTargetSelect(next.packId, next.targetId);
+    } finally {
+      lessonPackApplying = false;
+    }
+    getLessonTargetSelectElements().forEach((select) => { select.value = normalizedTarget; });
+    setLessonPackPrefs(next.packId, normalizedTarget);
+    updateLessonPackNote(next.packId, normalizedTarget);
+    refreshStandaloneMissionLabHub();
+    if (normalizedTarget !== 'custom') {
+      applyLessonTargetConfig(next.packId, normalizedTarget, { toast: false });
+    }
+  });
+  _el('lesson-pack-apply-week-btn')?.addEventListener('click', () => {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before applying pacing targets.');
+      return;
+    }
+    const button = _el('lesson-pack-apply-week-btn');
+    const packId = normalizeLessonPackId(
+      button?.getAttribute('data-pack-id') || prefs.lessonPack || DEFAULT_PREFS.lessonPack
+    );
+    const recommendation = getCurrentWeekRecommendedLessonTarget(packId);
+    const targetId = recommendation?.target?.id || '';
+    if (packId === 'custom' || !targetId) {
+      WQUI.showToast('No pacing target available to apply.');
+      return;
+    }
+    getLessonPackSelectElements().forEach((select) => { select.value = packId; });
+    getLessonTargetSelectElements().forEach((select) => { select.value = targetId; });
+    setLessonPackPrefs(packId, targetId);
+    updateLessonPackNote(packId, targetId);
+    applyLessonTargetConfig(packId, targetId, { toast: true });
+  });
   _el('s-grade')?.addEventListener('change',   e => {
     setPref('grade', e.target.value);
+    applyAllGradeLengthDefault({ toast: true });
+    releaseLessonPackToManualMode();
     updateFocusGradeNote();
     updateGradeTargetInline();
+    refreshStandaloneMissionLabHub();
   });
-  _el('s-length')?.addEventListener('change',  e => setPref('length',   e.target.value));
+  _el('s-length')?.addEventListener('change',  e => {
+    setPref('length', e.target.value);
+    releaseLessonPackToManualMode();
+    refreshStandaloneMissionLabHub();
+  });
   _el('s-guesses')?.addEventListener('change', e => setPref('guesses',  e.target.value));
+  _el('s-confidence-coaching')?.addEventListener('change', e => {
+    setConfidenceCoachingMode(!!e.target.checked, { toast: true });
+  });
   _el('s-team-mode')?.addEventListener('change', e => {
     const normalized = normalizeTeamMode(e.target.value);
     e.target.value = normalized;
@@ -1813,12 +2884,33 @@
       ? 'Team turn timer is off.'
       : `Team turn timer: ${normalized} seconds.`);
   });
+  _el('s-probe-rounds')?.addEventListener('change', e => {
+    const normalized = normalizeProbeRounds(e.target.value);
+    e.target.value = normalized;
+    setPref('probeRounds', normalized);
+  });
+  _el('s-report-compact')?.addEventListener('change', e => {
+    const normalized = applyReportCompactMode(e.target?.checked ? 'on' : 'off');
+    WQUI.showToast(normalized === 'on'
+      ? 'Compact report mode is on.'
+      : 'Compact report mode is off.');
+  });
+  _el('s-mastery-sort')?.addEventListener('change', e => {
+    const normalized = normalizeMasterySort(e.target.value);
+    e.target.value = normalized;
+    renderMasteryTable();
+  });
+  _el('s-mastery-filter')?.addEventListener('change', e => {
+    const normalized = normalizeMasteryFilter(e.target.value);
+    e.target.value = normalized;
+    renderMasteryTable();
+  });
   _el('s-hint')?.addEventListener('change',    e => { setHintMode(e.target.value); syncTeacherPresetButtons(); });
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
     WQUI.showToast(next === 'listening'
-      ? 'Listening game: word + sentence audio is available.'
-      : 'Detective game: sentence clue only during play.');
+      ? 'Listening mode: Hear Word and Clue are available when needed.'
+      : 'Guess-first mode is on.');
   });
   _el('s-reveal-focus')?.addEventListener('change', e => {
     const next = applyRevealFocusMode(e.target.value);
@@ -1853,13 +2945,28 @@
   _el('focus-hint-toggle')?.addEventListener('click', () => {
     showInformantHintToast();
   });
+  _el('hint-clue-close-btn')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    hideInformantHintCard();
+  });
+  _el('hint-clue-sentence-btn')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const current = WQGame.getState?.()?.entry;
+    if (!current?.sentence) {
+      WQUI.showToast('No sentence clue is available for this word yet.');
+      return;
+    }
+    cancelRevealNarration();
+    void WQAudio.playSentence(current);
+  });
   _el('play-style-toggle')?.addEventListener('click', () => {
     const current = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     const next = current === 'listening' ? 'detective' : 'listening';
     applyPlayStyle(next);
     WQUI.showToast(next === 'listening'
-      ? 'Listening game enabled.'
-      : 'Detective game enabled.');
+      ? 'Listening mode enabled.'
+      : 'Guess-first mode enabled.');
   });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => {
@@ -1903,20 +3010,7 @@
     }
   });
   _el('s-voice-task')?.addEventListener('change', e => {
-    const mode = String(e.target.value || 'optional').toLowerCase();
-    const normalized = mode === 'off' || mode === 'required' ? mode : 'optional';
-    setPref('voicePractice', normalized);
-    if (!(_el('modal-overlay')?.classList.contains('hidden'))) {
-      updateVoicePracticePanel(WQGame.getState());
-      syncRevealFocusModalSections();
-    }
-    syncTeacherPresetButtons();
-    WQUI.showToast(normalized === 'required'
-      ? 'Voice practice is required before next word.'
-      : normalized === 'off'
-        ? 'Voice practice is off.'
-        : 'Voice practice is optional.'
-    );
+    setVoicePracticeMode(e.target.value, { toast: true });
   });
   _el('s-boost-popups')?.addEventListener('change', e => {
     const normalized = e.target.value === 'off' ? 'off' : 'on';
@@ -1931,12 +3025,194 @@
   _el('session-copy-btn')?.addEventListener('click', () => {
     void copySessionSummary();
   });
+  _el('session-copy-mastery-btn')?.addEventListener('click', () => {
+    void copyMasterySummary();
+  });
+  _el('session-copy-mastery-csv-btn')?.addEventListener('click', () => {
+    void copyMasterySummaryCsv();
+  });
+  _el('session-copy-mission-btn')?.addEventListener('click', () => {
+    void copyMissionSummary();
+  });
+  _el('session-copy-mission-csv-btn')?.addEventListener('click', () => {
+    void copyMissionSummaryCsv();
+  });
+  _el('session-copy-mtss-note-btn')?.addEventListener('click', () => {
+    void copyMtssIepNote();
+  });
+  _el('session-copy-family-handout-btn')?.addEventListener('click', () => {
+    void copyFamilyHandout();
+  });
+  _el('session-download-family-handout-btn')?.addEventListener('click', () => {
+    downloadFamilyHandout();
+  });
+  _el('session-download-csv-bundle-btn')?.addEventListener('click', () => {
+    downloadCsvBundle();
+  });
+  _el('session-download-class-rollup-btn')?.addEventListener('click', () => {
+    downloadClassRollupCsv();
+  });
+  _el('session-copy-probe-export-btn')?.addEventListener('click', () => {
+    void copyProbeSummary();
+  });
+  _el('session-copy-probe-csv-export-btn')?.addEventListener('click', () => {
+    void copyProbeSummaryCsv();
+  });
   _el('session-reset-btn')?.addEventListener('click', () => {
     resetSessionSummary();
     WQUI.showToast('Teacher session summary reset.');
   });
+  _el('session-probe-start-btn')?.addEventListener('click', () => {
+    startWeeklyProbe();
+  });
+  _el('session-probe-stop-btn')?.addEventListener('click', () => {
+    finishWeeklyProbe();
+  });
+  _el('session-probe-copy-btn')?.addEventListener('click', () => {
+    void copyProbeSummary();
+  });
+  _el('session-probe-copy-csv-btn')?.addEventListener('click', () => {
+    void copyProbeSummaryCsv();
+  });
+  _el('s-playlist-select')?.addEventListener('change', (event) => {
+    setSelectedPlaylistId(event.target?.value || '');
+    renderPlaylistControls();
+  });
+  _el('s-playlist-name')?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    _el('session-playlist-save-btn')?.click();
+  });
+  _el('session-playlist-save-btn')?.addEventListener('click', () => {
+    if (!saveCurrentTargetToPlaylist()) {
+      WQUI.showToast('Could not save the current target.');
+      return;
+    }
+    WQUI.showToast('Current target saved to playlist.');
+  });
+  _el('session-playlist-assign-btn')?.addEventListener('click', () => {
+    if (!assignSelectedPlaylistToActiveStudent()) {
+      WQUI.showToast('Select a playlist first.');
+      return;
+    }
+    WQUI.showToast(`Assigned playlist to ${getActiveStudentLabel()}.`);
+  });
+  _el('session-playlist-apply-btn')?.addEventListener('click', () => {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Finish this round before applying assigned playlists.');
+      return;
+    }
+    if (!applyAssignedPlaylistForActiveStudent()) {
+      WQUI.showToast('No assigned playlist for this student.');
+      return;
+    }
+  });
+  _el('session-playlist-delete-btn')?.addEventListener('click', () => {
+    if (!deleteSelectedPlaylist()) {
+      WQUI.showToast('Select a playlist to delete.');
+      return;
+    }
+    WQUI.showToast('Playlist deleted.');
+  });
+  _el('session-mini-lesson-top-btn')?.addEventListener('click', () => {
+    activeMiniLessonKey = 'top';
+    renderMiniLessonPanel();
+    WQUI.showToast('Loaded mini-lesson from top error.');
+  });
+  _el('session-mini-lesson-vowel-btn')?.addEventListener('click', () => {
+    activeMiniLessonKey = 'vowel_pattern';
+    renderMiniLessonPanel();
+  });
+  _el('session-mini-lesson-blend-btn')?.addEventListener('click', () => {
+    activeMiniLessonKey = 'blend_position';
+    renderMiniLessonPanel();
+  });
+  _el('session-mini-lesson-morpheme-btn')?.addEventListener('click', () => {
+    activeMiniLessonKey = 'morpheme_ending';
+    renderMiniLessonPanel();
+  });
+  _el('session-mini-lesson-context-btn')?.addEventListener('click', () => {
+    activeMiniLessonKey = 'context_strategy';
+    renderMiniLessonPanel();
+  });
+  _el('session-mini-lesson-copy-btn')?.addEventListener('click', () => {
+    void copyMiniLessonPlan();
+  });
+  _el('s-roster-student')?.addEventListener('change', (event) => {
+    const next = String(event.target?.value || '').trim();
+    rosterState.active = rosterState.students.includes(next) ? next : '';
+    saveRosterState();
+    renderRosterControls();
+    renderSessionSummary();
+    renderProbePanel();
+  });
+  _el('session-roster-add-btn')?.addEventListener('click', () => {
+    const input = _el('s-roster-name');
+    const nextName = String(input?.value || '').trim();
+    if (!nextName) {
+      WQUI.showToast('Enter a student name first.');
+      return;
+    }
+    if (addRosterStudent(nextName)) {
+      if (input) input.value = '';
+      renderSessionSummary();
+      renderProbePanel();
+      WQUI.showToast('Student added to roster.');
+      return;
+    }
+    WQUI.showToast('Could not add student name.');
+  });
+  _el('s-roster-name')?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    _el('session-roster-add-btn')?.click();
+  });
+  _el('session-roster-remove-btn')?.addEventListener('click', () => {
+    if (!removeActiveRosterStudent()) {
+      WQUI.showToast('Select a student to remove.');
+      return;
+    }
+    renderSessionSummary();
+    renderProbePanel();
+    WQUI.showToast('Student removed from roster.');
+  });
+  _el('session-roster-clear-btn')?.addEventListener('click', () => {
+    clearRosterStudents();
+    renderSessionSummary();
+    renderProbePanel();
+    WQUI.showToast('Roster cleared for this device.');
+  });
+  _el('session-goal-save-btn')?.addEventListener('click', () => {
+    const student = getActiveStudentLabel();
+    const accuracyInput = _el('s-goal-accuracy');
+    const guessesInput = _el('s-goal-guesses');
+    const accuracyTarget = normalizeGoalAccuracy(accuracyInput?.value);
+    const avgGuessesTarget = normalizeGoalGuesses(guessesInput?.value);
+    if (accuracyInput) accuracyInput.value = String(accuracyTarget);
+    if (guessesInput) guessesInput.value = String(avgGuessesTarget);
+    setGoalForStudent(student, {
+      accuracyTarget,
+      avgGuessesTarget,
+      updatedAt: Date.now()
+    });
+    renderStudentGoalPanel();
+    WQUI.showToast(`Goal saved for ${student}.`);
+  });
+  _el('session-goal-clear-btn')?.addEventListener('click', () => {
+    const student = getActiveStudentLabel();
+    if (!clearGoalForStudent(student)) {
+      WQUI.showToast('No saved goal to clear.');
+      renderStudentGoalPanel();
+      return;
+    }
+    renderStudentGoalPanel();
+    WQUI.showToast(`Goal cleared for ${student}.`);
+  });
   _el('session-rerun-onboarding-btn')?.addEventListener('click', () => {
     rerunOnboardingSetup();
+  });
+  _el('quick-music-toggle')?.addEventListener('click', () => {
+    toggleMusicQuick();
   });
   _el('s-music')?.addEventListener('change', e => {
     const selected = normalizeMusicMode(e.target.value);
@@ -2301,16 +3577,74 @@
     };
   }
 
+  function getKidFriendlyFocusLabel(notation) {
+    const raw = String(notation || '').replace(/\s+/g, ' ').trim();
+    const normalized = raw.toLowerCase();
+    if (!raw) return '';
+    if (normalized.includes('floss')) return 'FLOSS Rule: doubled ending letters (-ss, -ll, -ff, -zz)';
+    if (normalized.includes('cvc') || normalized.includes('short vowel') || normalized.includes('closed syllable')) {
+      return 'Sound Steps: CVC short-vowel pattern (cat, dog)';
+    }
+    if (normalized.includes('cvce') || normalized.includes('magic e') || normalized.includes('silent e')) {
+      return 'Magic E Rule: CVCe pattern (cap -> cape)';
+    }
+    if (normalized.includes('digraph')) return 'Sound Buddies: digraph (sh as in ship)';
+    if (normalized.includes('vowel team')) return 'Vowel Team focus (ai as in rain)';
+    if (normalized.includes('r-controlled')) return 'Bossy R focus (ar as in car)';
+    if (normalized.includes('blend')) {
+      if (normalized.includes('initial') || normalized.includes('ccvc')) return 'Blend Builders: initial blend (b+r as in bring)';
+      if (normalized.includes('final') || normalized.includes('cvcc')) return 'Blend Builders: final blend (m+p as in camp)';
+      return 'Blend Builders: consonant blend focus (br in bring)';
+    }
+    if (normalized.includes('trigraph')) return 'Three-letter team focus (igh as in light)';
+    if (normalized.includes('diphthong')) return 'Glide vowel focus (oi in coin, ou in cloud)';
+    if (normalized.includes('prefix')) return 'Prefix focus (re- as in replay)';
+    if (normalized.includes('suffix')) return 'Suffix focus (-ed as in jumped)';
+    if (normalized.includes('schwa')) return 'Schwa focus (a in about says /uh/)';
+    if (normalized.includes('multisyll')) return 'Syllable strategy focus (chunk + blend)';
+    return raw;
+  }
+
+  function getKidFriendlyFocusDetail(notation) {
+    const normalized = String(notation || '').toLowerCase();
+    if (normalized.includes('floss')) {
+      return 'Floss Rule: after a short vowel at the end of a one-syllable word, double f, l, s, or z.';
+    }
+    if (normalized.includes('cvce') || normalized.includes('magic e') || normalized.includes('silent e')) {
+      return 'Magic E makes the vowel say its name: cap → cape, kit → kite.';
+    }
+    if (normalized.includes('digraph')) {
+      return 'Digraphs are two letters that work together to make one sound.';
+    }
+    if (normalized.includes('vowel team')) {
+      return 'Vowel teams are two vowels working together to make one main sound.';
+    }
+    if (normalized.includes('r-controlled')) {
+      return 'Bossy R changes the vowel sound in patterns like ar, or, er, ir, and ur.';
+    }
+    if (normalized.includes('blend')) {
+      return 'Blends keep both consonant sounds. Initial blend example: b+r in bring. Final blend example: m+p in camp.';
+    }
+    if (normalized.includes('schwa')) {
+      return 'Schwa is the unstressed /uh/ sound in words like about or sofa.';
+    }
+    return '';
+  }
+
   function updateRevealSorBadge(entry) {
     const sor = _el('modal-sor');
     if (!sor) return;
     const notation = String(entry?.phonics || '').trim();
     if (!isSorNotationEnabled() || !notation || notation.toLowerCase() === 'all') {
       sor.textContent = '';
+      sor.removeAttribute('title');
       sor.classList.add('hidden');
       return;
     }
-    sor.textContent = `SoR focus: ${notation}`;
+    sor.textContent = getKidFriendlyFocusLabel(notation);
+    const detail = getKidFriendlyFocusDetail(notation);
+    if (detail) sor.setAttribute('title', detail);
+    else sor.removeAttribute('title');
     sor.classList.remove('hidden');
   }
 
@@ -2327,6 +3661,14 @@
       const required = mode === 'required';
       practiceStatus.textContent = required ? 'Required' : 'Optional';
       practiceStatus.classList.toggle('is-required', required);
+      const toggleLabel = required
+        ? 'Tap to switch to Optional'
+        : 'Tap to switch to Required';
+      practiceStatus.setAttribute('title', toggleLabel);
+      practiceStatus.setAttribute('aria-label', toggleLabel);
+      if (practiceStatus instanceof HTMLButtonElement) {
+        practiceStatus.disabled = mode === 'off';
+      }
     }
 
     if (target) target.textContent = word ? `Target: ${word}` : '';
@@ -2367,8 +3709,31 @@
       playAgain.removeAttribute('aria-disabled');
     }
     if (!voiceTakeComplete && !voiceIsRecording) {
-      setVoicePracticeFeedback('Tap Start to capture a 1-second clip, then compare with the model audio.');
+      setVoicePracticeFeedback('Tap Record above to capture a 1-second clip, then compare with model audio.');
     }
+  }
+
+  function openVoicePracticeAndRecord(options = {}) {
+    const mode = getVoicePracticeMode();
+    const practiceDetails = _el('modal-practice-details');
+    if (practiceDetails) practiceDetails.open = true;
+    if (mode === 'off') {
+      setVoicePracticeFeedback('Say It Back is off in Settings. Switch Voice Practice to Optional or Required.', 'warn');
+      return false;
+    }
+    if (voiceIsRecording) {
+      setVoicePracticeFeedback('Recording in progress...');
+      return true;
+    }
+    const shouldAutoStart = options.autoStart !== false;
+    if (shouldAutoStart && !voiceTakeComplete) {
+      void startVoiceRecording();
+      return true;
+    }
+    if (!voiceTakeComplete) {
+      setVoicePracticeFeedback('Tap Start 1-sec Recording to capture your voice.');
+    }
+    return true;
   }
 
   async function startVoiceRecording() {
@@ -2401,6 +3766,7 @@
         voiceClipBlob = blob;
         voiceClipUrl = URL.createObjectURL(blob);
         voiceTakeComplete = true;
+        if (revealChallengeState) setChallengeTaskComplete('listen', true);
         const playBtn = _el('voice-play-btn');
         if (playBtn) playBtn.disabled = false;
         const saveBtn = _el('voice-save-btn');
@@ -2501,6 +3867,26 @@
     _el('voice-record-btn')?.addEventListener('click', () => { void startVoiceRecording(); });
     _el('voice-play-btn')?.addEventListener('click', () => playVoiceRecording());
     _el('voice-save-btn')?.addEventListener('click', () => saveVoiceRecording());
+    _el('modal-practice-status')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const current = getVoicePracticeMode();
+      const next = current === 'required' ? 'optional' : 'required';
+      setVoicePracticeMode(next, { toast: true });
+      const details = _el('modal-practice-details');
+      if (details && next === 'required') details.open = true;
+    });
+    _el('voice-quick-record-btn')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openVoicePracticeAndRecord({ autoStart: true });
+    });
+    _el('modal-practice-details')?.addEventListener('toggle', (event) => {
+      const details = event.currentTarget;
+      if (!(details instanceof HTMLDetailsElement) || !details.open) return;
+      if (voiceTakeComplete || voiceIsRecording) return;
+      setVoicePracticeFeedback('Tap Record to capture a 1-second clip.');
+    });
     document.body.dataset.wqVoicePracticeBound = '1';
     setVoiceRecordingUI(false);
     drawWaveform();
@@ -2514,6 +3900,7 @@
     const originalShowModal = WQUI.showModal.bind(WQUI);
     WQUI.showModal = function patchedShowModal(state) {
       clearRevealAutoAdvanceTimer();
+      hideInformantHintCard();
       originalShowModal(state);
       voiceTakeComplete = false;
       stopVoiceCaptureNow();
@@ -2521,14 +3908,17 @@
       drawWaveform();
       updateRevealSorBadge(state?.entry);
       syncRevealMeaningHighlight(state?.entry);
-      syncRevealThinkingChallenge(state);
+      syncRevealChallengeLaunch(state);
+      closeRevealChallengeModal({ silent: true });
       const practiceDetails = _el('modal-practice-details');
       if (practiceDetails) {
         const requiredPractice = getVoicePracticeMode() === 'required';
         practiceDetails.open = requiredPractice || getRevealFocusMode() === 'off';
       }
       const details = _el('modal-more-details');
-      if (details) details.open = getRevealFocusMode() === 'off';
+      if (details && !details.classList.contains('hidden')) {
+        details.open = getRevealFocusMode() === 'off';
+      }
       updateVoicePracticePanel(state);
       syncRevealFocusModalSections();
       void runRevealNarration(state).finally(() => {
@@ -2559,7 +3949,9 @@
       const gameplayAudioEl = document.querySelector('.gameplay-audio');
       const headerEl = document.querySelector('header');
       const focusEl = document.querySelector('.focus-bar');
+      const curriculumEl = _el('curriculum-main-bar');
       const nextActionEl = _el('next-action-line');
+      const classroomTurnEl = _el('classroom-turn-line');
       const themeStripEl = _el('theme-preview-strip');
       const hintEl = _el('focus-hint');
       const hintRowEl = hintEl?.closest('.focus-hint-row') || null;
@@ -2580,8 +3972,12 @@
       const audioH = supportH ? 0 : (gameplayAudioEl?.offsetHeight || 36);
       const headerH = headerEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--header-h'), 50);
       const focusH = focusEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--focus-h'), 44);
+      const curriculumH = curriculumEl?.offsetHeight || 0;
       const nextActionH = nextActionEl && !nextActionEl.classList.contains('hidden')
         ? Math.max(0, nextActionEl.offsetHeight || 0)
+        : 0;
+      const classroomTurnH = classroomTurnEl && !classroomTurnEl.classList.contains('hidden')
+        ? Math.max(0, classroomTurnEl.offsetHeight || 0)
         : 0;
       const themeH = themeStripEl?.offsetHeight || 0;
       const viewportH = window.visualViewport?.height || window.innerHeight;
@@ -2622,7 +4018,7 @@
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
       const extraSafetyH = layoutMode === 'compact' ? 56 : layoutMode === 'tight' ? 44 : layoutMode === 'wide' ? 32 : 38;
-      const reservedH = headerH + focusH + nextActionH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
+      const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const byHeight = Math.floor((availableBoardH - platePadY - tileGap * (maxGuesses - 1) - 6) / maxGuesses);
 
@@ -2704,6 +4100,437 @@
     'vocab-ela-912':'ELA vocabulary · Grades 9-12'
   };
 
+  let lessonPackApplying = false;
+
+  function getLessonPackSelectElements() {
+    return [_el('s-lesson-pack'), _el('m-lesson-pack')]
+      .filter(Boolean);
+  }
+
+  function getLessonTargetSelectElements() {
+    return [_el('s-lesson-target'), _el('m-lesson-target')]
+      .filter(Boolean);
+  }
+
+  function getLessonPackDefinition(packId) {
+    const normalized = String(packId || '').trim().toLowerCase();
+    return CURRICULUM_LESSON_PACKS[normalized] || CURRICULUM_LESSON_PACKS.custom;
+  }
+
+  function normalizeLessonPackId(packId) {
+    const normalized = String(packId || '').trim().toLowerCase();
+    return CURRICULUM_LESSON_PACKS[normalized] ? normalized : 'custom';
+  }
+
+  function normalizeLessonTargetId(packId, targetId) {
+    const normalizedPack = normalizeLessonPackId(packId);
+    if (normalizedPack === 'custom') return 'custom';
+    const normalizedTarget = String(targetId || '').trim().toLowerCase();
+    if (!normalizedTarget || normalizedTarget === 'custom') return 'custom';
+    const pack = getLessonPackDefinition(normalizedPack);
+    const exists = pack.targets.some((target) => target.id === normalizedTarget);
+    return exists ? normalizedTarget : 'custom';
+  }
+
+  function getLessonTarget(packId, targetId) {
+    const normalizedPack = normalizeLessonPackId(packId);
+    if (normalizedPack === 'custom') return null;
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    if (normalizedTarget === 'custom') return null;
+    const pack = getLessonPackDefinition(normalizedPack);
+    return pack.targets.find((target) => target.id === normalizedTarget) || null;
+  }
+
+  function formatLengthPrefLabel(value) {
+    if (String(value || '').toLowerCase() === 'any') return 'Any length';
+    return `${value}-letter`;
+  }
+
+  function stripPacingMonthWindow(pacingLabel) {
+    const text = String(pacingLabel || '').trim();
+    if (!text) return '';
+    return text
+      .replace(/\s*\((?:aug|sep|oct|nov|dec|jan|feb|mar|apr|may|jun|jul)[^)]+\)\s*$/i, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function formatLessonTargetPacing(target, options = {}) {
+    const pacingRaw = String(target?.pacing || '').trim();
+    if (!pacingRaw) return 'Flexible schedule';
+    if (options.includeMonthWindow) return pacingRaw;
+    const stripped = stripPacingMonthWindow(pacingRaw);
+    return stripped || pacingRaw;
+  }
+
+  function formatLessonTargetOptionLabel(target) {
+    if (!target) return '';
+    return String(target.label || '').trim();
+  }
+
+  function parsePacingWeekRange(pacingLabel) {
+    const text = String(pacingLabel || '').trim();
+    const match = text.match(/weeks?\s+(\d+)\s*(?:-\s*(\d+)|(\+))?/i);
+    if (!match) return null;
+    const start = Math.max(1, Math.floor(Number(match[1]) || 1));
+    if (match[3]) {
+      return { start, end: 60, raw: text };
+    }
+    const end = match[2]
+      ? Math.max(start, Math.floor(Number(match[2]) || start))
+      : start;
+    return { start, end, raw: text };
+  }
+
+  function getSchoolYearStartDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const startYear = now.getMonth() >= 7 ? year : year - 1;
+    return new Date(startYear, 8, 1);
+  }
+
+  function getCurrentSchoolWeek() {
+    const now = new Date();
+    const start = getSchoolYearStartDate();
+    const dayMs = 24 * 60 * 60 * 1000;
+    const nowFloor = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startFloor = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+    const dayDiff = Math.floor((nowFloor - startFloor) / dayMs);
+    if (dayDiff <= 0) return 1;
+    return Math.max(1, Math.floor(dayDiff / 7) + 1);
+  }
+
+  function getCurrentWeekRecommendedLessonTarget(packId) {
+    const normalizedPack = normalizeLessonPackId(packId);
+    if (normalizedPack === 'custom') return null;
+    const pack = getLessonPackDefinition(normalizedPack);
+    const week = getCurrentSchoolWeek();
+    const scored = pack.targets
+      .map((target) => {
+        const range = parsePacingWeekRange(target.pacing);
+        if (!range) return null;
+        const inRange = week >= range.start && week <= range.end;
+        const distance = inRange
+          ? 0
+          : week < range.start
+            ? range.start - week
+            : week - range.end;
+        return { target, range, inRange, distance };
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        if (a.distance !== b.distance) return a.distance - b.distance;
+        if (a.range.start !== b.range.start) return a.range.start - b.range.start;
+        return 0;
+      });
+    return scored[0] || null;
+  }
+
+  function populateLessonTargetSelect(packId, preferredTarget = 'custom') {
+    const targetSelects = getLessonTargetSelectElements();
+    if (!targetSelects.length) return 'custom';
+    const pack = getLessonPackDefinition(packId);
+    const normalizedPack = normalizeLessonPackId(packId);
+    const options = [];
+    if (normalizedPack === 'custom') {
+      options.push({ value: 'custom', label: 'Manual' });
+    } else {
+      const recommended = getCurrentWeekRecommendedLessonTarget(normalizedPack);
+      const recommendedId = recommended?.target?.id || '';
+      options.push({ value: 'custom', label: 'Select a lesson target' });
+      pack.targets.forEach((target) => {
+        const prefix = target.id === recommendedId ? '★ ' : '';
+        options.push({ value: target.id, label: `${prefix}${formatLessonTargetOptionLabel(target)}` });
+      });
+    }
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, preferredTarget);
+    targetSelects.forEach((targetSelect) => {
+      targetSelect.innerHTML = '';
+      options.forEach((option) => {
+        const node = document.createElement('option');
+        node.value = option.value;
+        node.textContent = option.label;
+        targetSelect.appendChild(node);
+      });
+      targetSelect.value = normalizedTarget;
+    });
+    return normalizedTarget;
+  }
+
+  function setLessonPackPrefs(packId, targetId) {
+    const normalizedPack = normalizeLessonPackId(packId);
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    setPref('lessonPack', normalizedPack);
+    setPref('lessonTarget', normalizedTarget);
+    return { packId: normalizedPack, targetId: normalizedTarget };
+  }
+
+  function formatMainCurriculumStepValue(packId, targetId) {
+    const normalizedPack = normalizeLessonPackId(packId);
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    return `${normalizedPack}::${normalizedTarget}`;
+  }
+
+  function parseMainCurriculumStepValue(value) {
+    const [packRaw = 'custom', targetRaw = 'custom'] = String(value || '').split('::');
+    const packId = normalizeLessonPackId(packRaw);
+    const targetId = normalizeLessonTargetId(packId, targetRaw);
+    return { packId, targetId };
+  }
+
+  function buildMainCurriculumStepOptions() {
+    const options = [{ value: 'custom::custom', label: 'Manual (no curriculum pack)', group: '' }];
+    const orderedPacks = ['ufli', 'fundations', 'wilson', 'justwords'];
+    orderedPacks.forEach((packId) => {
+      const pack = getLessonPackDefinition(packId);
+      options.push({
+        value: `${packId}::custom`,
+        label: `${pack.label} · Select a lesson target`,
+        group: pack.label
+      });
+      pack.targets.forEach((target) => {
+        options.push({
+          value: `${packId}::${target.id}`,
+          label: target.label,
+          group: pack.label
+        });
+      });
+    });
+    return options;
+  }
+
+  function syncMainCurriculumStepSelect(packId, targetId) {
+    const select = _el('m-curriculum-step');
+    if (!select) return;
+    const options = buildMainCurriculumStepOptions();
+    const byGroup = new Map();
+    select.innerHTML = '';
+    options.forEach((option) => {
+      if (!option.group) {
+        const node = document.createElement('option');
+        node.value = option.value;
+        node.textContent = option.label;
+        select.appendChild(node);
+        return;
+      }
+      let group = byGroup.get(option.group);
+      if (!group) {
+        group = document.createElement('optgroup');
+        group.label = option.group;
+        byGroup.set(option.group, group);
+        select.appendChild(group);
+      }
+      const node = document.createElement('option');
+      node.value = option.value;
+      node.textContent = option.label;
+      group.appendChild(node);
+    });
+
+    const preferredValue = formatMainCurriculumStepValue(packId, targetId);
+    const fallbackValue = formatMainCurriculumStepValue(packId, 'custom');
+    const hasPreferred = options.some((option) => option.value === preferredValue);
+    const hasFallback = options.some((option) => option.value === fallbackValue);
+    const selectedValue = hasPreferred
+      ? preferredValue
+      : hasFallback
+        ? fallbackValue
+        : 'custom::custom';
+    select.value = selectedValue;
+    const selectedLabel = select.selectedOptions?.[0]?.textContent || 'Manual (no curriculum pack)';
+    select.setAttribute('title', selectedLabel);
+  }
+
+  function updateMainLessonPackSummary(packId, targetId) {
+    const summaryEl = _el('curriculum-main-summary');
+    const normalizedPack = normalizeLessonPackId(packId);
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    syncMainCurriculumStepSelect(normalizedPack, normalizedTarget);
+    if (!summaryEl) return;
+    if (normalizedPack === 'custom') {
+      summaryEl.textContent = 'Curriculum: Manual mode';
+      summaryEl.setAttribute('title', 'Manual mode keeps quest focus and word safety under teacher control.');
+      return;
+    }
+    const pack = getLessonPackDefinition(normalizedPack);
+    const target = getLessonTarget(normalizedPack, normalizedTarget);
+    if (!target) {
+      summaryEl.textContent = `Curriculum: ${pack.label} selected`;
+      summaryEl.setAttribute('title', `${pack.label} selected. Choose a lesson target from the curriculum menu.`);
+      return;
+    }
+    summaryEl.textContent = `Curriculum: ${pack.label} · ${target.label}`;
+    summaryEl.setAttribute('title', `${pack.label} · ${target.label} (${formatLessonTargetPacing(target)})`);
+  }
+
+  function updateLessonPackWeekRecommendation(packId, targetId) {
+    const weekEl = _el('lesson-pack-week');
+    const applyBtn = _el('lesson-pack-apply-week-btn');
+    if (!weekEl && !applyBtn) return;
+
+    const normalizedPack = normalizeLessonPackId(packId);
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    if (normalizedPack === 'custom') {
+      if (weekEl) {
+        weekEl.textContent = 'School week recommendation: choose a program to view suggested pacing target.';
+        weekEl.setAttribute('title', weekEl.textContent);
+      }
+      if (applyBtn) {
+        applyBtn.disabled = true;
+        applyBtn.removeAttribute('data-pack-id');
+        applyBtn.removeAttribute('data-target-id');
+      }
+      return;
+    }
+
+    const schoolWeek = getCurrentSchoolWeek();
+    const recommendation = getCurrentWeekRecommendedLessonTarget(normalizedPack);
+    if (!recommendation || !recommendation.target) {
+      if (weekEl) {
+        weekEl.textContent = `School week ${schoolWeek}: pacing map not available for this pack.`;
+        weekEl.setAttribute('title', weekEl.textContent);
+      }
+      if (applyBtn) {
+        applyBtn.disabled = true;
+        applyBtn.removeAttribute('data-pack-id');
+        applyBtn.removeAttribute('data-target-id');
+      }
+      return;
+    }
+
+    const recommendedTarget = recommendation.target;
+    const isCurrentTarget = normalizedTarget === recommendedTarget.id;
+    const pacing = formatLessonTargetPacing(recommendedTarget);
+    const text = isCurrentTarget
+      ? `School week ${schoolWeek}: on pace (${recommendedTarget.label}).`
+      : `School week ${schoolWeek}: suggested target ${recommendedTarget.label} (${pacing}).`;
+    if (weekEl) {
+      weekEl.textContent = text;
+      weekEl.setAttribute('title', text);
+    }
+    if (applyBtn) {
+      applyBtn.disabled = isCurrentTarget;
+      applyBtn.setAttribute('data-pack-id', normalizedPack);
+      applyBtn.setAttribute('data-target-id', recommendedTarget.id);
+    }
+  }
+
+  function updateLessonPackNote(packId, targetId) {
+    const noteEls = [_el('lesson-pack-note'), _el('main-lesson-pack-note')].filter(Boolean);
+    const pacingEls = [_el('lesson-pack-pacing'), _el('main-lesson-pack-pacing')].filter(Boolean);
+    const normalizedPack = normalizeLessonPackId(packId);
+    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
+    updateMainLessonPackSummary(normalizedPack, normalizedTarget);
+    updateLessonPackWeekRecommendation(normalizedPack, normalizedTarget);
+    if (!noteEls.length && !pacingEls.length) return;
+    if (normalizedPack === 'custom') {
+      noteEls.forEach((el) => {
+        el.textContent = 'Manual mode keeps Quest, Grade Band, and Word Length under your control.';
+      });
+      pacingEls.forEach((el) => {
+        el.textContent = 'District pacing: choose a program and lesson target to view suggested week range.';
+      });
+      return;
+    }
+    const pack = getLessonPackDefinition(normalizedPack);
+    const target = getLessonTarget(normalizedPack, normalizedTarget);
+    if (!target) {
+      noteEls.forEach((el) => {
+        el.textContent = `${pack.label} selected. Pick a lesson target to auto-apply Quest focus, Grade Band, and suggested Word Length.`;
+      });
+      pacingEls.forEach((el) => {
+        el.textContent = `${pack.label} pacing map loaded. Pick a lesson target to apply its week range.`;
+      });
+      return;
+    }
+    const focusLabel = getFocusLabel(target.focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
+    noteEls.forEach((el) => {
+      el.textContent = `${pack.label} · ${target.label}: Quest ${focusLabel}, Grade ${formatGradeBandLabel(target.gradeBand)}, ${formatLengthPrefLabel(target.length)}.`;
+    });
+    pacingEls.forEach((el) => {
+      el.textContent = `District pacing: ${formatLessonTargetPacing(target)}.`;
+    });
+  }
+
+  function syncLessonPackControlsFromPrefs(options = {}) {
+    const packSelects = getLessonPackSelectElements();
+    const targetSelects = getLessonTargetSelectElements();
+    const firstPackSelect = packSelects[0] || null;
+    const firstTargetSelect = targetSelects[0] || null;
+    if (!firstPackSelect && !firstTargetSelect) return { packId: 'custom', targetId: 'custom' };
+
+    const preferredPack = options.packId ?? prefs.lessonPack ?? firstPackSelect?.value ?? DEFAULT_PREFS.lessonPack;
+    const preferredTarget = options.targetId ?? prefs.lessonTarget ?? firstTargetSelect?.value ?? DEFAULT_PREFS.lessonTarget;
+    const packId = normalizeLessonPackId(preferredPack);
+    packSelects.forEach((select) => { select.value = packId; });
+    const targetId = populateLessonTargetSelect(packId, preferredTarget);
+    setLessonPackPrefs(packId, targetId);
+    updateLessonPackNote(packId, targetId);
+    refreshStandaloneMissionLabHub();
+    return { packId, targetId };
+  }
+
+  function applyLessonTargetConfig(packId, targetId, options = {}) {
+    const target = getLessonTarget(packId, targetId);
+    if (!target) return false;
+    const focusSelect = _el('setting-focus');
+    const gradeSelect = _el('s-grade');
+    const lengthSelect = _el('s-length');
+
+    lessonPackApplying = true;
+    try {
+      if (focusSelect) {
+        const focusExists = Array.from(focusSelect.options).some((option) => option.value === target.focus);
+        if (focusExists && focusSelect.value !== target.focus) {
+          focusSelect.value = target.focus;
+          focusSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+      if (gradeSelect && gradeSelect.value !== target.gradeBand) {
+        gradeSelect.value = target.gradeBand;
+        setPref('grade', target.gradeBand);
+      }
+      if (lengthSelect && lengthSelect.value !== target.length) {
+        lengthSelect.value = target.length;
+        setPref('length', target.length);
+      }
+    } finally {
+      lessonPackApplying = false;
+    }
+
+    updateFocusGradeNote();
+    updateGradeTargetInline();
+    updateFocusSummaryLabel();
+    refreshStandaloneMissionLabHub();
+    if (options.toast) {
+      const pack = getLessonPackDefinition(packId);
+      WQUI.showToast(`${pack.label}: ${target.label} applied (${formatLessonTargetPacing(target)}).`);
+    }
+    return true;
+  }
+
+  function releaseLessonPackToManualMode() {
+    if (lessonPackApplying) return;
+    const packSelects = getLessonPackSelectElements();
+    const currentPack = normalizeLessonPackId(
+      prefs.lessonPack || packSelects[0]?.value || DEFAULT_PREFS.lessonPack
+    );
+    const currentTarget = normalizeLessonTargetId(
+      currentPack,
+      prefs.lessonTarget || getLessonTargetSelectElements()[0]?.value || DEFAULT_PREFS.lessonTarget
+    );
+    if (currentPack === 'custom' && currentTarget === 'custom') return;
+    lessonPackApplying = true;
+    try {
+      packSelects.forEach((select) => { select.value = 'custom'; });
+      populateLessonTargetSelect('custom', 'custom');
+    } finally {
+      lessonPackApplying = false;
+    }
+    setLessonPackPrefs('custom', 'custom');
+    updateLessonPackNote('custom', 'custom');
+    refreshStandaloneMissionLabHub();
+  }
+
   function parseFocusPreset(value) {
     const focus = String(value || 'all').trim().toLowerCase();
     if (!focus || focus === 'all') {
@@ -2721,6 +4548,37 @@
       };
     }
     return { kind: 'phonics', focus };
+  }
+
+  function getEffectiveGameplayGradeBand(selectedGradeBand, focusValue = 'all') {
+    const preset = parseFocusPreset(focusValue);
+    if (preset.kind === 'subject' && preset.gradeBand) {
+      return preset.gradeBand;
+    }
+    const normalized = String(selectedGradeBand || 'all').trim().toLowerCase();
+    return normalized === 'all'
+      ? SAFE_DEFAULT_GRADE_BAND
+      : String(selectedGradeBand || SAFE_DEFAULT_GRADE_BAND).trim();
+  }
+
+  function applyAllGradeLengthDefault(options = {}) {
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    if (preset.kind === 'subject') return false;
+
+    const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim().toLowerCase();
+    if (gradeValue !== 'all') return false;
+
+    const lengthSelect = _el('s-length');
+    if (!lengthSelect) return false;
+    if (String(lengthSelect.value || '').trim() === DEFAULT_PREFS.length) return false;
+
+    lengthSelect.value = DEFAULT_PREFS.length;
+    setPref('length', DEFAULT_PREFS.length);
+    if (options.toast) {
+      WQUI.showToast(`All grades mode defaults to ${DEFAULT_PREFS.length}-letter words.`);
+    }
+    return true;
   }
 
   function syncGradeFromFocus(focusValue, options = {}) {
@@ -2810,16 +4668,65 @@
     if (!note) return;
     const focusVal = _el('setting-focus')?.value || 'all';
     const gradeVal = _el('s-grade')?.value || 'all';
+    const gradeLabel = formatGradeBandLabel(gradeVal);
     const preset = parseFocusPreset(focusVal);
     if (preset.kind === 'classic') {
-      note.textContent = `Classic balances decoding + meaning with Grade Band and Word Length. Current grade: ${gradeVal}.`;
+      note.textContent = `Word Safety filters age-appropriate words. Word Length separately controls letters (default 5). Current safety band: ${gradeLabel}.`;
       return;
     }
     if (preset.kind === 'subject') {
       note.textContent = `Subject focus keeps vocabulary on-level by auto-aligning grade to ${formatGradeBandLabel(preset.gradeBand)}.`;
       return;
     }
-    note.textContent = `Phonics focus trains sound patterns while Grade (${gradeVal}) and Word Length keep challenge in range.`;
+    note.textContent = `Phonics focus trains sound patterns. Word Safety (${gradeLabel}) controls age-appropriate vocabulary, while Word Length controls letters.`;
+  }
+
+  function getFocusDisplayLabel(value, fallback = '') {
+    const labels = getFocusDisplayLabel._labels || (getFocusDisplayLabel._labels = Object.freeze({
+      all: 'Classic Word Puzzle (5x6)',
+      cvc: 'CVC Builders · short vowels',
+      digraph: 'Sound Buddies · sh, ch, th',
+      ccvc: 'Blend Launch · st, bl, tr',
+      cvcc: 'Blend Landing · mp, nd, st',
+      trigraph: 'Triple Sounds · tch, dge, igh',
+      cvce: 'Magic E · CVCe',
+      vowel_team: 'Vowel Teams · ai, ee, oa',
+      r_controlled: 'Bossy R · ar, or, er',
+      diphthong: 'Slide Sounds · oi, oy, ou',
+      floss: 'Floss Rule · -ff, -ll, -ss, -zz',
+      welded: 'Welded Sounds · -ang, -ing',
+      schwa: 'Schwa Switch',
+      prefix: 'Prefix Power · un-, re-',
+      suffix: 'Suffix Power · -ing, -ed',
+      compound: 'Word Joiners · compound words',
+      multisyllable: 'Syllable Stretch'
+    }));
+    return labels[value] || String(fallback || value || '').trim();
+  }
+
+  function getFocusDisplayGroup(value, fallbackGroup = '') {
+    const groups = getFocusDisplayGroup._groups || (getFocusDisplayGroup._groups = Object.freeze({
+      all: 'Classic',
+      cvc: 'Sound Quest',
+      digraph: 'Sound Quest',
+      ccvc: 'Sound Quest',
+      cvcc: 'Sound Quest',
+      trigraph: 'Sound Quest',
+      cvce: 'Sound Quest',
+      vowel_team: 'Sound Quest',
+      r_controlled: 'Sound Quest',
+      diphthong: 'Sound Quest',
+      floss: 'Sound Quest',
+      welded: 'Sound Quest',
+      schwa: 'Sound Quest',
+      prefix: 'Word Parts',
+      suffix: 'Word Parts',
+      compound: 'Word Parts',
+      multisyllable: 'Word Parts'
+    }));
+    if (groups[value]) return groups[value];
+    if (String(value || '').startsWith('vocab-')) return 'Subject Words';
+    return String(fallbackGroup || 'General').trim() || 'General';
   }
 
   function getFocusEntries() {
@@ -2828,12 +4735,15 @@
     return Array.from(select.options)
       .filter((option) => option.value && !option.disabled)
       .map((option) => {
+        const value = String(option.value || '').trim();
         const parent = option.parentElement;
-        const group = parent && parent.tagName === 'OPTGROUP' ? String(parent.label || '').trim() : 'General';
+        const rawGroup = parent && parent.tagName === 'OPTGROUP'
+          ? String(parent.label || '').trim()
+          : 'General';
         return {
-          value: option.value,
-          label: String(option.textContent || option.value).trim(),
-          group
+          value,
+          label: getFocusDisplayLabel(value, option.textContent || value),
+          group: getFocusDisplayGroup(value, rawGroup)
         };
       });
   }
@@ -2842,7 +4752,8 @@
     const select = _el('setting-focus');
     if (!select) return '— Classic (Wordle 5x6) —';
     const option = Array.from(select.options).find((entry) => entry.value === value);
-    return String(option?.textContent || '— Classic (Wordle 5x6) —').trim();
+    const raw = String(option?.textContent || '— Classic (Wordle 5x6) —').trim();
+    return getFocusDisplayLabel(String(value || '').trim(), raw);
   }
 
   function clearPinnedFocusSearchValue(inputEl) {
@@ -2876,7 +4787,7 @@
     if (!inputEl) return;
     // Keep this as pure search input so intent is clear.
     inputEl.value = '';
-    inputEl.placeholder = 'Select your quest (math, digraph, k-2)';
+    inputEl.placeholder = 'Select your quest';
     inputEl.setAttribute('title', `Select your quest. Current focus: ${currentLabel}`);
     inputEl.setAttribute('aria-label', `Select your quest. Current focus: ${currentLabel}`);
   }
@@ -2887,7 +4798,13 @@
     if (normalized === 'g3-5') return '3-5';
     if (normalized === 'g6-8') return '6-8';
     if (normalized === 'g9-12') return '9-12';
-    return 'All';
+    return `All (${SAFE_DEFAULT_GRADE_BAND} safe)`;
+  }
+
+  function formatGradeBandInlineLabel(value) {
+    const normalized = String(value || 'all').toLowerCase();
+    if (normalized === 'all') return `All (${SAFE_DEFAULT_GRADE_BAND} safe)`;
+    return formatGradeBandLabel(value);
   }
 
   function updateGradeTargetInline() {
@@ -2898,10 +4815,14 @@
     const activeGrade = preset.kind === 'subject'
       ? preset.gradeBand
       : (_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade);
-    const suffix = preset.kind === 'subject' ? ' (auto)' : '';
-    const label = formatGradeBandLabel(activeGrade);
-    gradeEl.textContent = `Grade: ${label}${suffix}`;
-    gradeEl.setAttribute('title', `Grade filter in use: ${label}${suffix}`);
+    const inlineLabel = formatGradeBandInlineLabel(activeGrade);
+    const titleLabel = formatGradeBandLabel(activeGrade);
+    gradeEl.textContent = `Grade: ${inlineLabel}`;
+    if (preset.kind === 'subject') {
+      gradeEl.setAttribute('title', `Grade band currently follows the selected subject focus: ${titleLabel}.`);
+    } else {
+      gradeEl.setAttribute('title', `Grade band in use: ${titleLabel}. This filters age-appropriate words; word length is controlled separately.`);
+    }
   }
 
   function escapeHtml(value) {
@@ -2914,19 +4835,16 @@
   }
 
   const FOCUS_QUICK_VALUES = Object.freeze([
-    'all',
     'cvc',
+    'digraph',
     'cvce',
+    'ccvc',
+    'cvcc',
+    'floss',
     'vowel_team',
-    'r_controlled',
-    'multisyllable',
-    'vocab-math-k2',
-    'vocab-math-35',
-    'vocab-science-35',
-    'vocab-social-35',
-    'vocab-ela-35'
+    'r_controlled'
   ]);
-  const FOCUS_EMPTY_VISIBLE_LIMIT = 6;
+  const FOCUS_EMPTY_VISIBLE_LIMIT = 8;
   const FOCUS_QUERY_VISIBLE_LIMIT = 8;
 
   // Prioritize options that are most common for everyday classroom use.
@@ -2948,7 +4866,7 @@
 
   const FOCUS_SEARCH_ALIASES = Object.freeze({
     all: Object.freeze(['classic', 'wordle', 'default']),
-    cvc: Object.freeze(['short vowels', 'closed syllables']),
+    cvc: Object.freeze(['short vowels', 'closed syllables', 'cv/vc', 'cvc words']),
     digraph: Object.freeze(['sh', 'ch', 'th']),
     ccvc: Object.freeze(['initial blends', 'blends']),
     cvcc: Object.freeze(['final blends', 'blends']),
@@ -3208,7 +5126,7 @@
     }
 
     if (!visible.length) {
-      listEl.innerHTML = '<div class="focus-search-empty">No matches yet. Try <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, or <b>3-5</b>.</div>';
+      listEl.innerHTML = '<div class="focus-search-empty">No matches yet. Try <b>short vowels</b>, <b>magic e</b>, <b>vowel teams</b>, <b>digraphs</b>, or <b>blends</b>.</div>';
       listEl.classList.remove('hidden');
       if (inputEl) inputEl.setAttribute('aria-expanded', 'true');
       setFocusSearchOpen(true);
@@ -3219,7 +5137,7 @@
 
     const active = _el('setting-focus')?.value || 'all';
     const guidance = !query
-      ? '<div class="focus-search-empty focus-search-empty-hint">Quick picks. Type to narrow: <b>math</b>, <b>science</b>, <b>digraph</b>, <b>k-2</b>, <b>3-5</b>.</div>'
+      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Pick a sound quest to start.</div>'
       : '';
     listEl.innerHTML = guidance + visible.map((entry) => {
       const activeClass = entry.value === active ? ' is-active' : '';
@@ -3367,9 +5285,10 @@
     const originalGetPlayableWords = WQData.getPlayableWords.bind(WQData);
     WQData.getPlayableWords = function getPlayableWordsWithFocus(opts = {}) {
       const preset = parseFocusPreset(opts.focus || opts.phonics || 'all');
-      const gradeBand = preset.kind === 'subject' ? preset.gradeBand : opts.gradeBand;
+      const requestedGradeBand = preset.kind === 'subject' ? preset.gradeBand : opts.gradeBand;
+      const effectiveGradeBand = getEffectiveGameplayGradeBand(requestedGradeBand, opts.focus || opts.phonics || 'all');
       const basePool = originalGetPlayableWords({
-        gradeBand: gradeBand || 'all',
+        gradeBand: effectiveGradeBand || SAFE_DEFAULT_GRADE_BAND,
         length: opts.length,
         phonics: 'all'
       });
@@ -3389,11 +5308,13 @@
   _el('setting-focus')?.addEventListener('change', (event) => {
     const focus = event.target?.value || 'all';
     setPref('focus', focus);
-    syncGradeFromFocus(focus);
+    releaseLessonPackToManualMode();
+    syncGradeFromFocus(focus, { silent: lessonPackApplying });
     updateFocusHint();
     updateFocusGradeNote();
     updateFocusSummaryLabel();
     syncChunkTabsVisibility();
+    refreshStandaloneMissionLabHub();
     closeFocusSearchList();
   });
 
@@ -3481,7 +5402,12 @@
     updateFocusSummaryLabel();
   });
 
+  const initialLessonPackState = syncLessonPackControlsFromPrefs();
+  if (initialLessonPackState.packId !== 'custom' && initialLessonPackState.targetId !== 'custom') {
+    applyLessonTargetConfig(initialLessonPackState.packId, initialLessonPackState.targetId);
+  }
   syncGradeFromFocus(_el('setting-focus')?.value || prefs.focus || 'all', { silent: true });
+  applyAllGradeLengthDefault();
   updateFocusHint();
   updateFocusGradeNote();
   syncChunkTabsVisibility();
@@ -3575,7 +5501,10 @@
     clearMidgameBoostAutoHideTimer();
     boost.classList.remove('is-visible');
     if (!boost.classList.contains('hidden')) {
-      setTimeout(() => boost.classList.add('hidden'), 180);
+      setTimeout(() => {
+        boost.classList.add('hidden');
+        boost.innerHTML = '';
+      }, 180);
     }
   }
 
@@ -3621,27 +5550,62 @@
         : card.type === 'joke'
           ? (isRiddle ? '🧩 Riddle' : '😄 Joke')
           : '🕵️ Fun Fact';
+    const mascot =
+      card.type === 'quote'
+        ? '🧠'
+        : card.type === 'joke'
+          ? (isRiddle ? '🕵️' : '😄')
+          : '🛰️';
+    const tickerText = hasAnswer
+      ? `${label}: ${content.question} Tap Clue Peek to reveal the answer.`
+      : `${label}: ${content.question}`;
+    const tickerClass = tickerText.length < 84
+      ? 'midgame-boost-ticker is-static'
+      : 'midgame-boost-ticker';
     boost.innerHTML = `
-      <div class="midgame-boost-head">
+      <button type="button" class="midgame-boost-peek" aria-expanded="false" aria-label="Open clue peek">
+        <span class="midgame-boost-peek-dot" aria-hidden="true"></span>
+        Clue Peek
+      </button>
+      <div class="midgame-boost-bubble hidden">
+        <span class="midgame-boost-mascot" aria-hidden="true">${mascot}</span>
+        <button type="button" class="midgame-boost-close" aria-label="Close clue bubble">✕</button>
         <span class="midgame-boost-tag">${label}</span>
-        <button type="button" class="midgame-boost-close" aria-label="Dismiss boost">✕</button>
+        <p class="midgame-boost-question">${escapeHtml(content.question)}</p>
+        ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Reveal answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
+        <div class="midgame-boost-actions">
+          <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off popups</button>
+        </div>
       </div>
-      <p class="midgame-boost-question">${content.question}</p>
-      ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Reveal answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
-      <div class="midgame-boost-actions">
-        <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off popups</button>
+      <div class="${tickerClass}" aria-live="polite">
+        <div class="midgame-boost-ticker-track">
+          <span>${escapeHtml(tickerText)}</span>
+        </div>
       </div>
     `;
+    const peekBtn = boost.querySelector('.midgame-boost-peek');
+    const bubble = boost.querySelector('.midgame-boost-bubble');
+    const closeBubble = () => {
+      if (!bubble) return;
+      bubble.classList.add('hidden');
+      peekBtn?.setAttribute('aria-expanded', 'false');
+    };
     const answerEl = boost.querySelector('.midgame-boost-answer');
     const answerBtn = boost.querySelector('.midgame-boost-answer-btn');
     if (answerEl) answerEl.textContent = content.answer;
+    peekBtn?.addEventListener('click', () => {
+      if (!bubble) return;
+      const reveal = bubble.classList.contains('hidden');
+      bubble.classList.toggle('hidden', !reveal);
+      peekBtn.setAttribute('aria-expanded', reveal ? 'true' : 'false');
+    });
     answerBtn?.addEventListener('click', () => {
       if (!answerEl) return;
       const reveal = answerEl.classList.contains('hidden');
       answerEl.classList.toggle('hidden', !reveal);
       answerBtn.textContent = reveal ? 'Hide answer' : 'Reveal answer';
     });
-    boost.querySelector('.midgame-boost-close')?.addEventListener('click', hideMidgameBoost);
+    boost.querySelector('.midgame-boost-close')?.addEventListener('click', closeBubble);
     boost.querySelector('.midgame-boost-turn-off')?.addEventListener('click', () => {
       const select = _el('s-boost-popups');
       if (select) select.value = 'off';
@@ -3651,9 +5615,237 @@
     });
     boost.classList.remove('hidden');
     requestAnimationFrame(() => boost.classList.add('is-visible'));
-    if (!hasAnswer) {
-      midgameBoostAutoHideTimer = setTimeout(hideMidgameBoost, 6800);
+    midgameBoostAutoHideTimer = setTimeout(hideMidgameBoost, hasAnswer ? 15000 : 12000);
+  }
+
+  const ERROR_PATTERN_LABELS = Object.freeze({
+    vowel_pattern: 'Vowel Pattern',
+    blend_position: 'Blend Position',
+    morpheme_ending: 'Morpheme Ending',
+    context_strategy: 'Clue Strategy'
+  });
+
+  const ERROR_COACH_COPY = Object.freeze({
+    vowel_pattern: 'Coach: check the vowel pattern first (short, team, or r-controlled).',
+    blend_position: 'Coach: you have useful letters; adjust their positions and blends.',
+    morpheme_ending: 'Coach: re-check the ending chunk (-ed, -ing, suffixes).',
+    context_strategy: 'Coach: use the sentence clue to narrow meaning and part of speech.'
+  });
+
+  const ERROR_NEXT_STEP_COPY = Object.freeze({
+    vowel_pattern: 'Re-teach vowel pattern contrast (short vs team vs r-controlled) with 6-word sorts.',
+    blend_position: 'Run onset/rime blend mapping and left-to-right tracking with 5 guided words.',
+    morpheme_ending: 'Practice suffix-ending checks (-ed/-ing/-s) with chunk tap + dictation.',
+    context_strategy: 'Model clue-to-meaning strategy: identify part of speech, then confirm spelling.'
+  });
+
+  const ERROR_MINI_LESSON_PLANS = Object.freeze({
+    vowel_pattern: Object.freeze([
+      '1. Warm-up (1 min): sort 6 words by vowel pattern (short, team, r-controlled).',
+      '2. Guided practice (3 min): read and spell 4 target words; underline vowel chunk.',
+      '3. Transfer (1 min): use one target word in a spoken sentence clue.'
+    ]),
+    blend_position: Object.freeze([
+      '1. Warm-up (1 min): tap onset and rime on 5 words.',
+      '2. Guided practice (3 min): map 4 words left-to-right and correct blend placement.',
+      '3. Transfer (1 min): timed readback with one self-correction.'
+    ]),
+    morpheme_ending: Object.freeze([
+      '1. Warm-up (1 min): quick sort by ending (-ed, -ing, -s, suffix).',
+      '2. Guided practice (3 min): chunk and spell 4 words; circle ending morpheme.',
+      '3. Transfer (1 min): dictate one word and explain ending choice.'
+    ]),
+    context_strategy: Object.freeze([
+      '1. Warm-up (1 min): identify part of speech from clue sentence.',
+      '2. Guided practice (3 min): predict 3 candidate words, then verify spelling.',
+      '3. Transfer (1 min): student writes one new clue for a practiced word.'
+    ])
+  });
+
+  function normalizeCounterMap(raw) {
+    const map = Object.create(null);
+    if (!raw || typeof raw !== 'object') return map;
+    Object.entries(raw).forEach(([key, value]) => {
+      const normalizedKey = String(key || '').trim().toLowerCase();
+      if (!normalizedKey) return;
+      const count = Math.max(0, Math.floor(Number(value) || 0));
+      if (!count) return;
+      map[normalizedKey] = count;
+    });
+    return map;
+  }
+
+  function mergeCounterMaps(target, additions) {
+    const base = target && typeof target === 'object' ? target : Object.create(null);
+    if (!additions || typeof additions !== 'object') return base;
+    Object.entries(additions).forEach(([key, value]) => {
+      const normalizedKey = String(key || '').trim().toLowerCase();
+      if (!normalizedKey) return;
+      const next = Math.max(0, Math.floor(Number(value) || 0));
+      if (!next) return;
+      base[normalizedKey] = (base[normalizedKey] || 0) + next;
+    });
+    return base;
+  }
+
+  function getTopErrorKey(errorCounts) {
+    const entries = Object.entries(errorCounts || {});
+    if (!entries.length) return '';
+    entries.sort((a, b) => b[1] - a[1]);
+    return entries[0]?.[0] || '';
+  }
+
+  function getTopErrorLabel(errorCounts) {
+    const key = getTopErrorKey(errorCounts);
+    if (!key) return '--';
+    return ERROR_PATTERN_LABELS[key] || key.replace(/_/g, ' ');
+  }
+
+  function getInstructionalNextStep(errorCounts) {
+    const key = getTopErrorKey(errorCounts);
+    if (!key) return 'Continue current lesson target.';
+    return ERROR_NEXT_STEP_COPY[key] || 'Review recent errors and provide a targeted reteach.';
+  }
+
+  function getInstructionalNextStepChip(errorCounts) {
+    const key = getTopErrorKey(errorCounts);
+    switch (key) {
+      case 'vowel_pattern': return 'Vowel Pattern Reteach';
+      case 'blend_position': return 'Blend Position Reteach';
+      case 'morpheme_ending': return 'Morpheme Ending Reteach';
+      case 'context_strategy': return 'Clue Strategy Reteach';
+      default: return 'Stay Current Target';
     }
+  }
+
+  function resolveMiniLessonErrorKey(rawKey, fallbackCounts = null) {
+    const normalized = String(rawKey || '').trim().toLowerCase();
+    if (normalized === 'top' || normalized === 'auto') {
+      const top = getTopErrorKey(fallbackCounts || sessionSummary?.errorTotals || {});
+      return top || 'context_strategy';
+    }
+    if (ERROR_MINI_LESSON_PLANS[normalized]) return normalized;
+    return 'context_strategy';
+  }
+
+  function buildMiniLessonPlanText(errorKey, options = {}) {
+    const resolved = resolveMiniLessonErrorKey(errorKey, options.errorCounts);
+    const label = ERROR_PATTERN_LABELS[resolved] || resolved.replace(/_/g, ' ');
+    const steps = ERROR_MINI_LESSON_PLANS[resolved] || ERROR_MINI_LESSON_PLANS.context_strategy;
+    const snapshot = buildCurrentCurriculumSnapshot();
+    const lessonTargetLabel = snapshot.targetLabel || snapshot.packLabel || buildCurriculumSelectionLabel();
+    const student = options.student || getActiveStudentLabel();
+    return [
+      `WordQuest Quick Mini-Lesson · ${label}`,
+      `Student: ${student}`,
+      `Current target: ${lessonTargetLabel}`,
+      'Duration: 5 minutes',
+      '',
+      ...steps,
+      '',
+      'Materials: whiteboard or paper, 4-6 word cards, quick verbal feedback.'
+    ].join('\n');
+  }
+
+  function formatDurationLabel(durationMs) {
+    const ms = Math.max(0, Number(durationMs) || 0);
+    const seconds = Math.round(ms / 1000);
+    if (seconds < 60) return `${seconds}s`;
+    const mins = Math.floor(seconds / 60);
+    const rem = seconds % 60;
+    return `${mins}m ${String(rem).padStart(2, '0')}s`;
+  }
+
+  function getSkillDescriptorForRound(result) {
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    if (preset.kind === 'subject') {
+      return {
+        key: `subject:${preset.subject}:${preset.gradeBand || 'all'}`,
+        label: `${preset.subject.toUpperCase()} vocab (${formatGradeBandLabel(preset.gradeBand)})`
+      };
+    }
+    if (preset.kind === 'phonics' && preset.focus && preset.focus !== 'all') {
+      const label = getFocusLabel(preset.focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
+      return {
+        key: `phonics:${preset.focus}`,
+        label: label || 'Phonics focus'
+      };
+    }
+    const phonics = String(result?.entry?.phonics || '').trim();
+    if (phonics && phonics.toLowerCase() !== 'all') {
+      return {
+        key: `phonics-tag:${phonics.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        label: phonics
+      };
+    }
+    return { key: 'classic:all', label: 'Classic mixed practice' };
+  }
+
+  function resetRoundTracking(nextResult = null) {
+    if (nextResult?.word) {
+      activeRoundStartedAt = Date.now();
+      currentRoundHintRequested = false;
+      currentRoundVoiceAttempts = 0;
+      currentRoundErrorCounts = Object.create(null);
+      const skill = getSkillDescriptorForRound(nextResult);
+      currentRoundSkillKey = skill.key;
+      currentRoundSkillLabel = skill.label;
+      return;
+    }
+    activeRoundStartedAt = 0;
+    currentRoundHintRequested = false;
+    currentRoundVoiceAttempts = 0;
+    currentRoundErrorCounts = Object.create(null);
+    currentRoundSkillKey = 'classic:all';
+    currentRoundSkillLabel = 'Classic mixed practice';
+  }
+
+  function buildRoundMetrics(result, maxGuessesValue) {
+    const guessed = Math.max(1, Array.isArray(result?.guesses) ? result.guesses.length : Math.max(1, Number(maxGuessesValue) || 6));
+    const durationMs = activeRoundStartedAt > 0 ? Math.max(0, Date.now() - activeRoundStartedAt) : 0;
+    const fallbackSkill = getSkillDescriptorForRound(result);
+    return {
+      guessesUsed: guessed,
+      durationMs,
+      hintRequested: !!currentRoundHintRequested,
+      voiceAttempts: Math.max(0, Number(currentRoundVoiceAttempts) || 0),
+      skillKey: currentRoundSkillKey || fallbackSkill.key,
+      skillLabel: currentRoundSkillLabel || fallbackSkill.label,
+      errorCounts: normalizeCounterMap(currentRoundErrorCounts)
+    };
+  }
+
+  function classifyRoundErrorPattern(result) {
+    const guess = String(result?.guess || '').toLowerCase();
+    const word = String(result?.word || '').toLowerCase();
+    const statuses = Array.isArray(result?.result) ? result.result : [];
+    if (!guess || !word || !statuses.length) return '';
+    const correctCount = statuses.filter((state) => state === 'correct').length;
+    const presentCount = statuses.filter((state) => state === 'present').length;
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u', 'y']);
+    const targetVowels = Array.from(new Set(word.split('').filter((ch) => vowels.has(ch))));
+    const guessedVowels = new Set(guess.split('').filter((ch) => vowels.has(ch)));
+    const vowelOverlap = targetVowels.filter((ch) => guessedVowels.has(ch)).length;
+    const phonicsTag = String(result?.entry?.phonics || '').toLowerCase();
+
+    if (targetVowels.length >= 2 && vowelOverlap === 0) return 'vowel_pattern';
+    if (presentCount >= 2 && correctCount <= 1) return 'blend_position';
+    if ((/suffix|prefix|multisyll|welded/.test(phonicsTag) || word.length >= 6) && guess.slice(-2) !== word.slice(-2)) {
+      return 'morpheme_ending';
+    }
+    return 'context_strategy';
+  }
+
+  function maybeShowErrorCoach(result) {
+    if (!result || result.won || result.lost) return;
+    if (!Array.isArray(result.guesses) || result.guesses.length < 2) return;
+    const category = classifyRoundErrorPattern(result);
+    if (!category) return;
+    currentRoundErrorCounts[category] = (currentRoundErrorCounts[category] || 0) + 1;
+    if (currentRoundErrorCounts[category] > 1) return;
+    const message = ERROR_COACH_COPY[category];
+    if (message) WQUI.showToast(message, 2300);
   }
 
   function loadSessionSummaryState() {
@@ -3662,16 +5854,42 @@
       wins: 0,
       hintRounds: 0,
       voiceAttempts: 0,
+      totalGuesses: 0,
+      totalDurationMs: 0,
+      errorTotals: Object.create(null),
+      masteryBySkill: Object.create(null),
       startedAt: Date.now()
     };
     try {
       const parsed = JSON.parse(sessionStorage.getItem(SESSION_SUMMARY_KEY) || 'null');
       if (!parsed || typeof parsed !== 'object') return fallback;
+      const masteryBySkill = Object.create(null);
+      const rawMastery = parsed.masteryBySkill && typeof parsed.masteryBySkill === 'object'
+        ? parsed.masteryBySkill
+        : {};
+      Object.entries(rawMastery).forEach(([skillKey, row]) => {
+        const key = String(skillKey || '').trim();
+        if (!key || !row || typeof row !== 'object') return;
+        masteryBySkill[key] = {
+          label: String(row.label || key).trim(),
+          rounds: Math.max(0, Math.floor(Number(row.rounds) || 0)),
+          wins: Math.max(0, Math.floor(Number(row.wins) || 0)),
+          hintRounds: Math.max(0, Math.floor(Number(row.hintRounds) || 0)),
+          voiceAttempts: Math.max(0, Math.floor(Number(row.voiceAttempts) || 0)),
+          totalGuesses: Math.max(0, Math.floor(Number(row.totalGuesses) || 0)),
+          totalDurationMs: Math.max(0, Math.floor(Number(row.totalDurationMs) || 0)),
+          errorCounts: normalizeCounterMap(row.errorCounts)
+        };
+      });
       return {
         rounds: Math.max(0, Math.floor(Number(parsed.rounds) || 0)),
         wins: Math.max(0, Math.floor(Number(parsed.wins) || 0)),
         hintRounds: Math.max(0, Math.floor(Number(parsed.hintRounds) || 0)),
         voiceAttempts: Math.max(0, Math.floor(Number(parsed.voiceAttempts) || 0)),
+        totalGuesses: Math.max(0, Math.floor(Number(parsed.totalGuesses) || 0)),
+        totalDurationMs: Math.max(0, Math.floor(Number(parsed.totalDurationMs) || 0)),
+        errorTotals: normalizeCounterMap(parsed.errorTotals),
+        masteryBySkill,
         startedAt: Math.max(0, Number(parsed.startedAt) || Date.now())
       };
     } catch {
@@ -3679,10 +5897,1375 @@
     }
   }
 
+  function loadRosterState() {
+    const fallback = { students: [], active: '' };
+    try {
+      const parsed = JSON.parse(localStorage.getItem(ROSTER_STATE_KEY) || 'null');
+      if (!parsed || typeof parsed !== 'object') return fallback;
+      const students = Array.isArray(parsed.students)
+        ? parsed.students
+          .map((name) => String(name || '').trim().replace(/\s+/g, ' '))
+          .filter((name) => name.length > 0)
+          .slice(0, 30)
+        : [];
+      const uniqueStudents = Array.from(new Set(students));
+      const active = uniqueStudents.includes(String(parsed.active || '').trim())
+        ? String(parsed.active || '').trim()
+        : '';
+      return { students: uniqueStudents, active };
+    } catch {
+      return fallback;
+    }
+  }
+
+  function loadProbeHistory() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(PROBE_HISTORY_KEY) || '[]');
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .map((row) => ({
+          startedAt: Math.max(0, Number(row?.startedAt) || Date.now()),
+          completedAt: Math.max(0, Number(row?.completedAt) || Date.now()),
+          roundsTarget: Math.max(1, Math.floor(Number(row?.roundsTarget) || 3)),
+          roundsDone: Math.max(0, Math.floor(Number(row?.roundsDone) || 0)),
+          wins: Math.max(0, Math.floor(Number(row?.wins) || 0)),
+          totalGuesses: Math.max(0, Math.floor(Number(row?.totalGuesses) || 0)),
+          totalDurationMs: Math.max(0, Math.floor(Number(row?.totalDurationMs) || 0)),
+          hintRounds: Math.max(0, Math.floor(Number(row?.hintRounds) || 0)),
+          focusLabel: String(row?.focusLabel || '').trim(),
+          gradeLabel: String(row?.gradeLabel || '').trim(),
+          student: String(row?.student || '').trim()
+        }))
+        .slice(0, 24);
+    } catch {
+      return [];
+    }
+  }
+
+  function normalizeGoalAccuracy(value) {
+    const parsed = Math.round(Number(value) || 0);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 80;
+    return Math.max(50, Math.min(100, parsed));
+  }
+
+  function normalizeGoalGuesses(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 4;
+    const bounded = Math.max(1, Math.min(8, parsed));
+    return Number(bounded.toFixed(1));
+  }
+
+  function normalizeGoalEntry(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    return {
+      accuracyTarget: normalizeGoalAccuracy(raw.accuracyTarget),
+      avgGuessesTarget: normalizeGoalGuesses(raw.avgGuessesTarget),
+      updatedAt: Math.max(0, Number(raw.updatedAt) || Date.now())
+    };
+  }
+
+  function loadStudentGoalState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STUDENT_GOALS_KEY) || '{}');
+      if (!parsed || typeof parsed !== 'object') return Object.create(null);
+      const normalized = Object.create(null);
+      Object.entries(parsed).forEach(([key, value]) => {
+        const goalKey = String(key || '').trim();
+        if (!goalKey) return;
+        const goalEntry = normalizeGoalEntry(value);
+        if (!goalEntry) return;
+        normalized[goalKey] = goalEntry;
+      });
+      return normalized;
+    } catch {
+      return Object.create(null);
+    }
+  }
+
+  function normalizePlaylistItem(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const focus = String(raw.focus || '').trim() || 'all';
+    const gradeBand = String(raw.gradeBand || '').trim() || SAFE_DEFAULT_GRADE_BAND;
+    const length = String(raw.length || '').trim() || DEFAULT_PREFS.length;
+    const packId = normalizeLessonPackId(raw.packId || 'custom');
+    const targetId = normalizeLessonTargetId(packId, raw.targetId || 'custom');
+    const label = String(raw.label || '').trim() || 'Saved target';
+    return {
+      id: String(raw.id || `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`).trim(),
+      packId,
+      targetId,
+      focus,
+      gradeBand,
+      length,
+      label,
+      createdAt: Math.max(0, Number(raw.createdAt) || Date.now())
+    };
+  }
+
+  function normalizePlaylistEntry(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const id = String(raw.id || '').trim();
+    if (!id) return null;
+    const name = String(raw.name || '').trim() || 'Untitled Playlist';
+    const items = Array.isArray(raw.items)
+      ? raw.items.map((item) => normalizePlaylistItem(item)).filter(Boolean).slice(0, 20)
+      : [];
+    return {
+      id,
+      name,
+      items,
+      createdAt: Math.max(0, Number(raw.createdAt) || Date.now()),
+      updatedAt: Math.max(0, Number(raw.updatedAt) || Date.now())
+    };
+  }
+
+  function createEmptyPlaylistState() {
+    return { playlists: [], assignments: Object.create(null), progress: Object.create(null), selectedId: '' };
+  }
+
+  function loadPlaylistState() {
+    const fallback = createEmptyPlaylistState();
+    try {
+      const parsed = JSON.parse(localStorage.getItem(PLAYLIST_STATE_KEY) || 'null');
+      if (!parsed || typeof parsed !== 'object') return fallback;
+      const playlists = Array.isArray(parsed.playlists)
+        ? parsed.playlists.map((entry) => normalizePlaylistEntry(entry)).filter(Boolean).slice(0, 40)
+        : [];
+      const assignmentRaw = parsed.assignments && typeof parsed.assignments === 'object'
+        ? parsed.assignments
+        : {};
+      const assignments = Object.create(null);
+      Object.entries(assignmentRaw).forEach(([assigneeKey, playlistId]) => {
+        const key = String(assigneeKey || '').trim();
+        const value = String(playlistId || '').trim();
+        if (!key || !value) return;
+        if (!playlists.some((entry) => entry.id === value)) return;
+        assignments[key] = value;
+      });
+      const progressRaw = parsed.progress && typeof parsed.progress === 'object'
+        ? parsed.progress
+        : {};
+      const progress = Object.create(null);
+      Object.entries(progressRaw).forEach(([assigneeKey, index]) => {
+        const key = String(assigneeKey || '').trim();
+        if (!key) return;
+        const playlistId = String(assignments[key] || '').trim();
+        if (!playlistId) return;
+        const playlist = playlists.find((entry) => entry.id === playlistId);
+        const itemCount = Math.max(1, playlist?.items?.length || 1);
+        const parsedIndex = Math.floor(Number(index) || 0);
+        progress[key] = Math.max(0, parsedIndex % itemCount);
+      });
+      const selectedId = String(parsed.selectedId || '').trim();
+      return {
+        playlists,
+        assignments,
+        progress,
+        selectedId: playlists.some((entry) => entry.id === selectedId) ? selectedId : (playlists[0]?.id || '')
+      };
+    } catch {
+      return fallback;
+    }
+  }
+
+  function saveProbeHistory() {
+    try { localStorage.setItem(PROBE_HISTORY_KEY, JSON.stringify(probeHistory.slice(0, 24))); } catch {}
+  }
+
+  function saveStudentGoalState() {
+    try { localStorage.setItem(STUDENT_GOALS_KEY, JSON.stringify(studentGoalState)); } catch {}
+  }
+
+  function savePlaylistState() {
+    try { localStorage.setItem(PLAYLIST_STATE_KEY, JSON.stringify(playlistState)); } catch {}
+  }
+
+  function normalizeProbeRounds(value) {
+    const parsed = Math.max(1, Math.floor(Number(value) || 3));
+    if (parsed <= 3) return '3';
+    if (parsed <= 5) return '5';
+    return '8';
+  }
+
+  function createEmptyProbeState() {
+    return {
+      active: false,
+      startedAt: 0,
+      roundsTarget: Number.parseInt(normalizeProbeRounds(prefs.probeRounds || DEFAULT_PREFS.probeRounds), 10),
+      roundsDone: 0,
+      wins: 0,
+      totalGuesses: 0,
+      totalDurationMs: 0,
+      hintRounds: 0,
+      focusLabel: '',
+      gradeLabel: '',
+      student: ''
+    };
+  }
+
+  let rosterState = loadRosterState();
+  let probeHistory = loadProbeHistory();
+  let studentGoalState = loadStudentGoalState();
+  let playlistState = loadPlaylistState();
+  let probeState = createEmptyProbeState();
   let sessionSummary = loadSessionSummaryState();
+  let activeMiniLessonKey = 'top';
 
   function saveSessionSummaryState() {
     try { sessionStorage.setItem(SESSION_SUMMARY_KEY, JSON.stringify(sessionSummary)); } catch {}
+  }
+
+  function saveRosterState() {
+    try { localStorage.setItem(ROSTER_STATE_KEY, JSON.stringify(rosterState)); } catch {}
+  }
+
+  function getActiveStudentLabel() {
+    return rosterState.active || 'Class';
+  }
+
+  function getAssigneeKeyForStudent(name) {
+    const label = String(name || '').trim();
+    if (!label || label === 'Class') return 'class';
+    return `student:${label}`;
+  }
+
+  function getSelectedPlaylist() {
+    const selectedId = String(playlistState.selectedId || '').trim();
+    if (!selectedId) return null;
+    return playlistState.playlists.find((entry) => entry.id === selectedId) || null;
+  }
+
+  function setSelectedPlaylistId(playlistId) {
+    const nextId = String(playlistId || '').trim();
+    if (!nextId) {
+      playlistState.selectedId = '';
+    } else if (playlistState.playlists.some((entry) => entry.id === nextId)) {
+      playlistState.selectedId = nextId;
+    } else {
+      playlistState.selectedId = '';
+    }
+    savePlaylistState();
+  }
+
+  function getAssignedPlaylistContext(studentLabel) {
+    const studentKey = getAssigneeKeyForStudent(studentLabel);
+    const directId = String(playlistState.assignments[studentKey] || '').trim();
+    if (directId) {
+      const direct = playlistState.playlists.find((entry) => entry.id === directId);
+      if (direct) return { playlist: direct, key: studentKey };
+    }
+    const classId = String(playlistState.assignments.class || '').trim();
+    if (!classId) return null;
+    const classPlaylist = playlistState.playlists.find((entry) => entry.id === classId) || null;
+    if (!classPlaylist) return null;
+    return { playlist: classPlaylist, key: 'class' };
+  }
+
+  function getAssignedPlaylistForStudent(studentLabel) {
+    return getAssignedPlaylistContext(studentLabel)?.playlist || null;
+  }
+
+  function getPlaylistProgressIndex(assigneeKey, playlist) {
+    if (!playlist || !Array.isArray(playlist.items) || !playlist.items.length) return 0;
+    const key = String(assigneeKey || '').trim();
+    const max = playlist.items.length;
+    const raw = Math.floor(Number(playlistState.progress?.[key]) || 0);
+    return Math.max(0, raw % max);
+  }
+
+  function setPlaylistProgressIndex(assigneeKey, playlist, rawIndex = 0) {
+    const key = String(assigneeKey || '').trim();
+    if (!key) return;
+    if (!playlistState.progress || typeof playlistState.progress !== 'object') {
+      playlistState.progress = Object.create(null);
+    }
+    const max = Math.max(1, Array.isArray(playlist?.items) ? playlist.items.length : 1);
+    const parsed = Math.floor(Number(rawIndex) || 0);
+    playlistState.progress[key] = Math.max(0, parsed % max);
+  }
+
+  function buildCurrentTargetSnapshot() {
+    const packId = normalizeLessonPackId(
+      prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack
+    );
+    const targetId = normalizeLessonTargetId(
+      packId,
+      prefs.lessonTarget || _el('s-lesson-target')?.value || DEFAULT_PREFS.lessonTarget
+    );
+    const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    const gradeBand = getEffectiveGameplayGradeBand(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade, focus);
+    const length = String(_el('s-length')?.value || prefs.length || DEFAULT_PREFS.length).trim() || DEFAULT_PREFS.length;
+    let label = '';
+    if (packId !== 'custom' && targetId !== 'custom') {
+      const pack = getLessonPackDefinition(packId);
+      const target = getLessonTarget(packId, targetId);
+      label = target ? `${pack.label} · ${target.label}` : `${pack.label} · Target`;
+    } else {
+      const focusLabel = getFocusLabel(focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
+      label = `${focusLabel || 'Classic'} · ${formatGradeBandLabel(gradeBand)} · ${formatLengthPrefLabel(length)}`;
+    }
+    return {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      packId,
+      targetId,
+      focus,
+      gradeBand,
+      length,
+      label,
+      createdAt: Date.now()
+    };
+  }
+
+  function applySnapshotToSettings(snapshot, options = {}) {
+    if (!snapshot) return false;
+    const packId = normalizeLessonPackId(snapshot.packId || 'custom');
+    const targetId = normalizeLessonTargetId(packId, snapshot.targetId || 'custom');
+    const focusValue = String(snapshot.focus || 'all').trim() || 'all';
+    const gradeBand = String(snapshot.gradeBand || SAFE_DEFAULT_GRADE_BAND).trim() || SAFE_DEFAULT_GRADE_BAND;
+    const lengthValue = String(snapshot.length || DEFAULT_PREFS.length).trim() || DEFAULT_PREFS.length;
+
+    if (packId !== 'custom' && targetId !== 'custom') {
+      getLessonPackSelectElements().forEach((select) => { select.value = packId; });
+      const normalizedTarget = populateLessonTargetSelect(packId, targetId);
+      getLessonTargetSelectElements().forEach((select) => { select.value = normalizedTarget; });
+      setLessonPackPrefs(packId, normalizedTarget);
+      updateLessonPackNote(packId, normalizedTarget);
+      applyLessonTargetConfig(packId, normalizedTarget, { toast: false });
+      if (options.toast) WQUI.showToast('Assigned playlist target applied.');
+      return true;
+    }
+
+    lessonPackApplying = true;
+    try {
+      getLessonPackSelectElements().forEach((select) => { select.value = 'custom'; });
+      populateLessonTargetSelect('custom', 'custom');
+      setLessonPackPrefs('custom', 'custom');
+      const focusSelect = _el('setting-focus');
+      if (focusSelect && Array.from(focusSelect.options).some((option) => option.value === focusValue)) {
+        focusSelect.value = focusValue;
+        focusSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const gradeSelect = _el('s-grade');
+      if (gradeSelect && gradeSelect.value !== gradeBand) {
+        gradeSelect.value = gradeBand;
+        setPref('grade', gradeBand);
+      }
+      const lengthSelect = _el('s-length');
+      if (lengthSelect && lengthSelect.value !== lengthValue) {
+        lengthSelect.value = lengthValue;
+        setPref('length', lengthValue);
+      }
+    } finally {
+      lessonPackApplying = false;
+    }
+    updateLessonPackNote('custom', 'custom');
+    updateFocusGradeNote();
+    updateGradeTargetInline();
+    updateFocusSummaryLabel();
+    if (options.toast) WQUI.showToast('Assigned playlist target applied.');
+    return true;
+  }
+
+  function renderPlaylistControls() {
+    const select = _el('s-playlist-select');
+    const nameInput = _el('s-playlist-name');
+    const summaryChip = _el('session-playlist-summary');
+    const assignmentChip = _el('session-playlist-assigned');
+    if (select) {
+      select.innerHTML = '';
+      const none = document.createElement('option');
+      none.value = '';
+      none.textContent = 'No playlist selected';
+      select.appendChild(none);
+      playlistState.playlists.forEach((playlist) => {
+        const option = document.createElement('option');
+        option.value = playlist.id;
+        option.textContent = `${playlist.name} (${playlist.items.length})`;
+        select.appendChild(option);
+      });
+      if (playlistState.selectedId && playlistState.playlists.some((entry) => entry.id === playlistState.selectedId)) {
+        select.value = playlistState.selectedId;
+      } else {
+        select.value = '';
+      }
+    }
+
+    const selected = getSelectedPlaylist();
+    if (nameInput && !nameInput.matches(':focus')) {
+      nameInput.value = selected?.name || '';
+    }
+    if (summaryChip) {
+      summaryChip.textContent = selected
+        ? `Playlist: ${selected.name} (${selected.items.length} target${selected.items.length === 1 ? '' : 's'})`
+        : 'Playlist: --';
+      summaryChip.setAttribute('title', summaryChip.textContent);
+    }
+    if (assignmentChip) {
+      const studentLabel = getActiveStudentLabel();
+      const assignedContext = getAssignedPlaylistContext(studentLabel);
+      const assigned = assignedContext?.playlist || null;
+      if (!assigned) {
+        assignmentChip.textContent = 'Assignment: --';
+        assignmentChip.setAttribute('title', assignmentChip.textContent);
+      } else {
+        const nextIndex = getPlaylistProgressIndex(assignedContext.key, assigned);
+        const itemCount = Math.max(0, assigned.items.length);
+        const nextTarget = itemCount ? assigned.items[nextIndex] : null;
+        assignmentChip.textContent = itemCount
+          ? `Assignment: ${studentLabel} -> ${assigned.name} (next ${nextIndex + 1}/${itemCount})`
+          : `Assignment: ${studentLabel} -> ${assigned.name} (empty)`;
+        assignmentChip.setAttribute(
+          'title',
+          itemCount
+            ? `${assignmentChip.textContent} · Next target: ${nextTarget?.label || 'Saved target'}`
+            : `${assignmentChip.textContent} · Add at least one target to this playlist.`
+        );
+      }
+    }
+  }
+
+  function saveCurrentTargetToPlaylist() {
+    const selected = getSelectedPlaylist();
+    const nameInput = _el('s-playlist-name');
+    const typedName = String(nameInput?.value || '').trim();
+    const snapshot = buildCurrentTargetSnapshot();
+    if (!snapshot) return false;
+
+    if (selected) {
+      const duplicate = selected.items.some((entry) => (
+        entry.packId === snapshot.packId &&
+        entry.targetId === snapshot.targetId &&
+        entry.focus === snapshot.focus &&
+        entry.gradeBand === snapshot.gradeBand &&
+        entry.length === snapshot.length
+      ));
+      if (!duplicate) {
+        selected.items.push(snapshot);
+        selected.items = selected.items.slice(-20);
+      }
+      selected.updatedAt = Date.now();
+      if (typedName) selected.name = typedName;
+      savePlaylistState();
+      renderPlaylistControls();
+      return true;
+    }
+
+    const nextName = typedName || `Playlist ${playlistState.playlists.length + 1}`;
+    const playlist = {
+      id: `pl-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name: nextName,
+      items: [snapshot],
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+    playlistState.playlists.push(playlist);
+    playlistState.playlists = playlistState.playlists.slice(-40);
+    setSelectedPlaylistId(playlist.id);
+    savePlaylistState();
+    renderPlaylistControls();
+    return true;
+  }
+
+  function assignSelectedPlaylistToActiveStudent() {
+    const selected = getSelectedPlaylist();
+    if (!selected) return false;
+    const student = getActiveStudentLabel();
+    const assigneeKey = getAssigneeKeyForStudent(student);
+    playlistState.assignments[assigneeKey] = selected.id;
+    setPlaylistProgressIndex(assigneeKey, selected, 0);
+    savePlaylistState();
+    renderPlaylistControls();
+    return true;
+  }
+
+  function applyAssignedPlaylistForActiveStudent() {
+    const context = getAssignedPlaylistContext(getActiveStudentLabel());
+    const assigned = context?.playlist || null;
+    if (!context || !assigned || !assigned.items.length) return false;
+    const index = getPlaylistProgressIndex(context.key, assigned);
+    const target = assigned.items[index] || assigned.items[0];
+    const applied = applySnapshotToSettings(target, { toast: true });
+    if (!applied) return false;
+    setPlaylistProgressIndex(context.key, assigned, index + 1);
+    savePlaylistState();
+    renderPlaylistControls();
+    return true;
+  }
+
+  function deleteSelectedPlaylist() {
+    const selected = getSelectedPlaylist();
+    if (!selected) return false;
+    playlistState.playlists = playlistState.playlists.filter((entry) => entry.id !== selected.id);
+    Object.entries(playlistState.assignments).forEach(([key, playlistId]) => {
+      if (playlistId !== selected.id) return;
+      delete playlistState.assignments[key];
+      if (playlistState.progress && typeof playlistState.progress === 'object') {
+        delete playlistState.progress[key];
+      }
+    });
+    setSelectedPlaylistId(playlistState.playlists[0]?.id || '');
+    savePlaylistState();
+    renderPlaylistControls();
+    return true;
+  }
+
+  function getGoalKeyForStudent(name) {
+    const label = String(name || '').trim();
+    return label || 'Class';
+  }
+
+  function getGoalForStudent(name) {
+    const key = getGoalKeyForStudent(name);
+    return normalizeGoalEntry(studentGoalState[key]);
+  }
+
+  function setGoalForStudent(name, goal) {
+    const key = getGoalKeyForStudent(name);
+    const entry = normalizeGoalEntry(goal);
+    if (!entry) return false;
+    studentGoalState[key] = entry;
+    saveStudentGoalState();
+    return true;
+  }
+
+  function clearGoalForStudent(name) {
+    const key = getGoalKeyForStudent(name);
+    if (!Object.prototype.hasOwnProperty.call(studentGoalState, key)) return false;
+    delete studentGoalState[key];
+    saveStudentGoalState();
+    return true;
+  }
+
+  function matchesProbeRecordStudent(recordStudent, studentLabel) {
+    const left = String(recordStudent || '').trim() || 'Class';
+    const right = String(studentLabel || '').trim() || 'Class';
+    return left === right;
+  }
+
+  function getProbeRecordsForStudent(studentLabel) {
+    return probeHistory.filter((record) => matchesProbeRecordStudent(record?.student, studentLabel));
+  }
+
+  function getLatestProbeSourceForStudent(studentLabel) {
+    if (probeState.active && matchesProbeRecordStudent(probeState.student, studentLabel)) {
+      return probeState;
+    }
+    return getProbeRecordsForStudent(studentLabel)[0] || null;
+  }
+
+  function buildProbeNumericSummary(source) {
+    const roundsDone = Math.max(0, Number(source?.roundsDone) || 0);
+    const wins = Math.max(0, Number(source?.wins) || 0);
+    const totalGuesses = Math.max(0, Number(source?.totalGuesses) || 0);
+    const totalDurationMs = Math.max(0, Number(source?.totalDurationMs) || 0);
+    const hintRounds = Math.max(0, Number(source?.hintRounds) || 0);
+    return {
+      roundsDone,
+      wins,
+      accuracyRate: roundsDone ? wins / roundsDone : 0,
+      avgGuesses: roundsDone ? totalGuesses / roundsDone : 0,
+      avgTimeSeconds: roundsDone ? (totalDurationMs / roundsDone) / 1000 : 0,
+      hintRate: roundsDone ? hintRounds / roundsDone : 0
+    };
+  }
+
+  function getComparableProbeTrend(studentLabel) {
+    const records = getProbeRecordsForStudent(studentLabel);
+    const activeMatches = probeState.active &&
+      matchesProbeRecordStudent(probeState.student, studentLabel) &&
+      Math.max(0, Number(probeState.roundsDone) || 0) > 0;
+    const currentRecord = activeMatches ? probeState : (records[0] || null);
+    const previousRecord = activeMatches ? (records[0] || null) : (records[1] || null);
+    const current = currentRecord ? buildProbeNumericSummary(currentRecord) : null;
+    const previous = previousRecord ? buildProbeNumericSummary(previousRecord) : null;
+    return { current, previous, activeMatches };
+  }
+
+  function applyChipTone(el, tone) {
+    if (!el) return;
+    el.classList.remove('is-good', 'is-warn');
+    if (tone === 'good') el.classList.add('is-good');
+    if (tone === 'warn') el.classList.add('is-warn');
+  }
+
+  function formatSignedDelta(value, digits = 1) {
+    if (!Number.isFinite(value)) return '--';
+    const rounded = Number(value.toFixed(digits));
+    if (rounded > 0) return `+${rounded}`;
+    return String(rounded);
+  }
+
+  function getLatestProbePerformance(studentLabel) {
+    const trend = getComparableProbeTrend(studentLabel);
+    return trend.current || null;
+  }
+
+  function evaluateStudentGoalState(studentLabel) {
+    const goal = getGoalForStudent(studentLabel);
+    if (!goal) {
+      return {
+        statusLabel: 'Not set',
+        progressLabel: 'Set accuracy + guesses target.',
+        tone: '',
+        goal,
+        current: null
+      };
+    }
+    const current = getLatestProbePerformance(studentLabel);
+    if (!current || current.roundsDone <= 0) {
+      return {
+        statusLabel: 'Waiting for probe data',
+        progressLabel: `Targets ${goal.accuracyTarget}% and ${goal.avgGuessesTarget} guesses`,
+        tone: '',
+        goal,
+        current: null
+      };
+    }
+    const accuracyPct = Math.round(current.accuracyRate * 100);
+    const avgGuess = Number(current.avgGuesses.toFixed(1));
+    const accuracyMet = accuracyPct >= goal.accuracyTarget;
+    const guessMet = avgGuess <= goal.avgGuessesTarget;
+    let statusLabel = 'Partial';
+    let tone = '';
+    if (accuracyMet && guessMet) {
+      statusLabel = 'On Track';
+      tone = 'good';
+    } else if (!accuracyMet && !guessMet) {
+      statusLabel = 'Needs Support';
+      tone = 'warn';
+    }
+    return {
+      statusLabel,
+      progressLabel: `${accuracyPct}%/${goal.accuracyTarget}% · ${avgGuess}/${goal.avgGuessesTarget} guesses`,
+      tone,
+      goal,
+      current
+    };
+  }
+
+  function renderStudentGoalPanel() {
+    const activeStudent = getActiveStudentLabel();
+    const goalEval = evaluateStudentGoalState(activeStudent);
+    const goal = goalEval.goal;
+    const accuracyInput = _el('s-goal-accuracy');
+    const guessesInput = _el('s-goal-guesses');
+    const statusEl = _el('session-goal-status');
+    const progressEl = _el('session-goal-progress');
+
+    if (accuracyInput && !accuracyInput.matches(':focus')) {
+      accuracyInput.value = goal ? String(goal.accuracyTarget) : '';
+    }
+    if (guessesInput && !guessesInput.matches(':focus')) {
+      guessesInput.value = goal ? String(goal.avgGuessesTarget) : '';
+    }
+
+    if (!statusEl || !progressEl) return;
+    statusEl.textContent = `Goal: ${goalEval.statusLabel}`;
+    progressEl.textContent = `Goal Progress: ${goalEval.progressLabel}`;
+    statusEl.setAttribute('title', `Student goal status for ${activeStudent}.`);
+    progressEl.setAttribute('title', goalEval.current
+      ? `Based on latest probe (${goalEval.current.roundsDone} rounds).`
+      : 'Run a weekly probe to score this goal.');
+    applyChipTone(statusEl, goalEval.tone);
+    applyChipTone(progressEl, goalEval.tone);
+  }
+
+  function getMasteryRowsForDisplay() {
+    return Object.entries(sessionSummary.masteryBySkill || {})
+      .map(([skillKey, row]) => {
+        if (!row || typeof row !== 'object') return null;
+        const attempts = Math.max(0, Math.floor(Number(row.rounds) || 0));
+        if (!attempts) return null;
+        const wins = Math.max(0, Math.floor(Number(row.wins) || 0));
+        const hintRounds = Math.max(0, Math.floor(Number(row.hintRounds) || 0));
+        const voiceAttempts = Math.max(0, Math.floor(Number(row.voiceAttempts) || 0));
+        const totalGuesses = Math.max(0, Number(row.totalGuesses) || 0);
+        const totalDurationMs = Math.max(0, Number(row.totalDurationMs) || 0);
+        const accuracyRate = attempts ? wins / attempts : 0;
+        const hintRate = attempts ? hintRounds / attempts : 0;
+        const avgGuesses = attempts ? totalGuesses / attempts : 0;
+        const avgTimeMs = attempts ? totalDurationMs / attempts : 0;
+        const errorCounts = normalizeCounterMap(row.errorCounts);
+        const topErrorKey = getTopErrorKey(errorCounts);
+        return {
+          skillKey,
+          label: String(row.label || skillKey).trim() || 'Skill',
+          attempts,
+          wins,
+          hintRounds,
+          voiceAttempts,
+          accuracyRate,
+          accuracyLabel: attempts ? `${Math.round(accuracyRate * 100)}%` : '--',
+          hintRate,
+          hintRateLabel: attempts ? `${Math.round(hintRate * 100)}%` : '--',
+          avgGuesses,
+          avgGuessesLabel: attempts ? avgGuesses.toFixed(1) : '--',
+          avgTimeMs,
+          avgTimeLabel: attempts ? formatDurationLabel(avgTimeMs) : '--',
+          avgTimeSeconds: attempts ? Number((avgTimeMs / 1000).toFixed(1)) : 0,
+          topErrorKey,
+          topErrorLabel: getTopErrorLabel(errorCounts),
+          errorCounts
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function describeMasterySortMode(mode) {
+    switch (normalizeMasterySort(mode)) {
+      case 'accuracy_desc': return 'accuracy (high to low)';
+      case 'hint_rate_desc': return 'hint rate (high to low)';
+      case 'voice_desc': return 'voice attempts (high to low)';
+      case 'top_error': return 'top error pattern';
+      case 'attempts_desc':
+      default:
+        return 'attempts (high to low)';
+    }
+  }
+
+  function describeMasteryFilterMode(mode) {
+    switch (normalizeMasteryFilter(mode)) {
+      case 'needs_support': return 'needs support';
+      case 'high_hints': return 'high hint rate';
+      case 'vowel_pattern': return 'top error: vowel pattern';
+      case 'blend_position': return 'top error: blend position';
+      case 'morpheme_ending': return 'top error: morpheme ending';
+      case 'context_strategy': return 'top error: clue strategy';
+      case 'all':
+      default:
+        return 'all skills';
+    }
+  }
+
+  function getMasterySortMode() {
+    const select = _el('s-mastery-sort');
+    return normalizeMasterySort(select?.value || 'attempts_desc');
+  }
+
+  function getMasteryFilterMode() {
+    const select = _el('s-mastery-filter');
+    return normalizeMasteryFilter(select?.value || 'all');
+  }
+
+  function compareMasteryRows(a, b, mode = 'attempts_desc') {
+    const sortMode = normalizeMasterySort(mode);
+    const alpha = (left, right) => String(left || '').localeCompare(String(right || ''));
+    if (sortMode === 'accuracy_desc') {
+      if (b.accuracyRate !== a.accuracyRate) return b.accuracyRate - a.accuracyRate;
+      if (b.attempts !== a.attempts) return b.attempts - a.attempts;
+      return alpha(a.label, b.label);
+    }
+    if (sortMode === 'hint_rate_desc') {
+      if (b.hintRate !== a.hintRate) return b.hintRate - a.hintRate;
+      if (b.attempts !== a.attempts) return b.attempts - a.attempts;
+      return alpha(a.label, b.label);
+    }
+    if (sortMode === 'voice_desc') {
+      if (b.voiceAttempts !== a.voiceAttempts) return b.voiceAttempts - a.voiceAttempts;
+      if (b.attempts !== a.attempts) return b.attempts - a.attempts;
+      return alpha(a.label, b.label);
+    }
+    if (sortMode === 'top_error') {
+      const aErr = a.topErrorKey || 'zzzz';
+      const bErr = b.topErrorKey || 'zzzz';
+      if (aErr !== bErr) return alpha(aErr, bErr);
+      if (b.attempts !== a.attempts) return b.attempts - a.attempts;
+      return alpha(a.label, b.label);
+    }
+    if (b.attempts !== a.attempts) return b.attempts - a.attempts;
+    if (b.accuracyRate !== a.accuracyRate) return b.accuracyRate - a.accuracyRate;
+    return alpha(a.label, b.label);
+  }
+
+  function rowMatchesMasteryFilter(row, mode = 'all') {
+    const filterMode = normalizeMasteryFilter(mode);
+    if (filterMode === 'all') return true;
+    if (filterMode === 'needs_support') {
+      return row.accuracyRate < 0.75 || row.hintRate >= 0.4 || !!row.topErrorKey;
+    }
+    if (filterMode === 'high_hints') {
+      return row.hintRate >= 0.4;
+    }
+    return row.topErrorKey === filterMode;
+  }
+
+  function getVisibleMasteryRows() {
+    const sortMode = getMasterySortMode();
+    const filterMode = getMasteryFilterMode();
+    const allRows = getMasteryRowsForDisplay();
+    const rows = allRows
+      .filter((row) => rowMatchesMasteryFilter(row, filterMode))
+      .sort((a, b) => compareMasteryRows(a, b, sortMode));
+    return { rows, allRows, sortMode, filterMode };
+  }
+
+  function getTopMasteryEntry() {
+    const rows = getMasteryRowsForDisplay().sort((a, b) => compareMasteryRows(a, b, 'attempts_desc'));
+    return rows[0] || null;
+  }
+
+  function renderMasteryTable() {
+    const tableBody = _el('session-mastery-table-body');
+    if (!tableBody) return;
+    const sortSelect = _el('s-mastery-sort');
+    const filterSelect = _el('s-mastery-filter');
+    const filterNote = _el('session-mastery-filter-note');
+    const { rows, allRows, sortMode, filterMode } = getVisibleMasteryRows();
+    if (sortSelect && sortSelect.value !== sortMode) sortSelect.value = sortMode;
+    if (filterSelect && filterSelect.value !== filterMode) filterSelect.value = filterMode;
+    if (filterNote) {
+      if (!allRows.length) {
+        filterNote.textContent = 'Showing all skills.';
+      } else {
+        filterNote.textContent = `Showing ${rows.length} of ${allRows.length} skills · filter: ${describeMasteryFilterMode(filterMode)} · sort: ${describeMasterySortMode(sortMode)}.`;
+      }
+    }
+    tableBody.innerHTML = '';
+    if (!allRows.length || !rows.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 8;
+      td.className = 'teacher-mastery-table-empty';
+      td.textContent = allRows.length ? 'No skill rows match the current filter.' : 'No skill rounds yet.';
+      tr.appendChild(td);
+      tableBody.appendChild(tr);
+      return;
+    }
+    rows.forEach((row) => {
+      const tr = document.createElement('tr');
+      const values = [
+        row.label,
+        row.accuracyLabel,
+        String(row.attempts),
+        `${row.hintRounds} (${row.hintRateLabel})`,
+        String(row.voiceAttempts),
+        row.avgGuessesLabel,
+        row.avgTimeLabel,
+        row.topErrorLabel
+      ];
+      values.forEach((value) => {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+      tableBody.appendChild(tr);
+    });
+  }
+
+  function renderRosterControls() {
+    const select = _el('s-roster-student');
+    if (!select) return;
+    select.innerHTML = '';
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = 'No student selected';
+    select.appendChild(none);
+    rosterState.students.forEach((name) => {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+    select.value = rosterState.active || '';
+    const chip = _el('session-active-student');
+    if (chip) chip.textContent = `Student: ${getActiveStudentLabel()}`;
+    renderPlaylistControls();
+  }
+
+  function addRosterStudent(rawName) {
+    const name = String(rawName || '').trim().replace(/\s+/g, ' ');
+    if (!name) return false;
+    if (rosterState.students.includes(name)) {
+      rosterState.active = name;
+      saveRosterState();
+      renderRosterControls();
+      return true;
+    }
+    rosterState.students.push(name);
+    rosterState.students.sort((a, b) => a.localeCompare(b));
+    rosterState.active = name;
+    saveRosterState();
+    renderRosterControls();
+    return true;
+  }
+
+  function removeActiveRosterStudent() {
+    const active = String(rosterState.active || '').trim();
+    if (!active) return false;
+    rosterState.students = rosterState.students.filter((name) => name !== active);
+    rosterState.active = rosterState.students[0] || '';
+    saveRosterState();
+    renderRosterControls();
+    return true;
+  }
+
+  function clearRosterStudents() {
+    rosterState = { students: [], active: '' };
+    saveRosterState();
+    renderRosterControls();
+  }
+
+  function buildProbeSummary(source) {
+    const roundsDone = Math.max(0, Number(source?.roundsDone) || 0);
+    const wins = Math.max(0, Number(source?.wins) || 0);
+    const totalGuesses = Math.max(0, Number(source?.totalGuesses) || 0);
+    const totalDurationMs = Math.max(0, Number(source?.totalDurationMs) || 0);
+    const hintRounds = Math.max(0, Number(source?.hintRounds) || 0);
+    const accuracy = roundsDone ? `${Math.round((wins / roundsDone) * 100)}%` : '--';
+    const avgGuesses = roundsDone ? (totalGuesses / roundsDone).toFixed(1) : '--';
+    const avgTime = roundsDone ? formatDurationLabel(totalDurationMs / roundsDone) : '--';
+    const hintRate = roundsDone ? `${Math.round((hintRounds / roundsDone) * 100)}%` : '--';
+    return { roundsDone, wins, accuracy, avgGuesses, avgTime, hintRate };
+  }
+
+  function getProbeRecencyMeta(studentLabel) {
+    if (probeState.active && matchesProbeRecordStudent(probeState.student, studentLabel)) {
+      return {
+        label: 'Probe Recency: In progress',
+        detail: 'Current probe is active for this student.',
+        tone: ''
+      };
+    }
+    const source = getLatestProbeSourceForStudent(studentLabel);
+    if (!source) {
+      return {
+        label: 'Probe Recency: No baseline',
+        detail: 'No probe has been recorded for this student yet.',
+        tone: 'warn'
+      };
+    }
+    const dayMs = 24 * 60 * 60 * 1000;
+    const completedAt = Math.max(0, Number(source.completedAt || source.startedAt || Date.now()));
+    const sourceDate = new Date(completedAt);
+    const sourceDay = new Date(sourceDate.getFullYear(), sourceDate.getMonth(), sourceDate.getDate()).getTime();
+    const now = new Date();
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const daysAgo = Math.max(0, Math.floor((nowDay - sourceDay) / dayMs));
+    if (daysAgo <= 7) {
+      return {
+        label: `Probe Recency: ${daysAgo}d ago`,
+        detail: 'Probe baseline is current (within 7 days).',
+        tone: 'good'
+      };
+    }
+    if (daysAgo <= 14) {
+      return {
+        label: `Probe Recency: ${daysAgo}d ago`,
+        detail: 'Probe baseline is aging (8-14 days old).',
+        tone: ''
+      };
+    }
+    return {
+      label: `Probe Recency: ${daysAgo}d ago`,
+      detail: 'Probe baseline is overdue (>14 days old).',
+      tone: 'warn'
+    };
+  }
+
+  function getSupportFlagMeta(studentLabel) {
+    const current = getLatestProbePerformance(studentLabel);
+    if (!current || current.roundsDone <= 0) {
+      return {
+        label: 'Support Flag: Collect baseline',
+        detail: 'Run at least one probe to determine risk band.',
+        tone: ''
+      };
+    }
+    const accuracyPct = Math.round(current.accuracyRate * 100);
+    const hintPct = Math.round(current.hintRate * 100);
+    const avgGuesses = Number(current.avgGuesses.toFixed(1));
+    if (accuracyPct < 65 || hintPct >= 60 || avgGuesses >= 5.5) {
+      return {
+        label: 'Support Flag: Intensive check-in',
+        detail: `Accuracy ${accuracyPct}%, hints ${hintPct}%, avg guesses ${avgGuesses}.`,
+        tone: 'warn'
+      };
+    }
+    if (accuracyPct < 80 || hintPct >= 40 || avgGuesses >= 4.5) {
+      return {
+        label: 'Support Flag: Targeted reteach',
+        detail: `Accuracy ${accuracyPct}%, hints ${hintPct}%, avg guesses ${avgGuesses}.`,
+        tone: 'warn'
+      };
+    }
+    if (accuracyPct >= 92 && hintPct <= 20 && avgGuesses <= 3) {
+      return {
+        label: 'Support Flag: Ready to stretch',
+        detail: `Accuracy ${accuracyPct}%, hints ${hintPct}%, avg guesses ${avgGuesses}.`,
+        tone: 'good'
+      };
+    }
+    return {
+      label: 'Support Flag: On track',
+      detail: `Accuracy ${accuracyPct}%, hints ${hintPct}%, avg guesses ${avgGuesses}.`,
+      tone: ''
+    };
+  }
+
+  function renderProbeSupportChips(studentLabel) {
+    const recencyEl = _el('probe-recency-chip');
+    const riskEl = _el('session-risk-chip');
+    const recency = getProbeRecencyMeta(studentLabel);
+    const risk = getSupportFlagMeta(studentLabel);
+    if (recencyEl) {
+      recencyEl.textContent = recency.label;
+      recencyEl.setAttribute('title', recency.detail);
+      applyChipTone(recencyEl, recency.tone);
+    }
+    if (riskEl) {
+      riskEl.textContent = risk.label;
+      riskEl.setAttribute('title', risk.detail);
+      applyChipTone(riskEl, risk.tone);
+    }
+  }
+
+  function renderProbePanel() {
+    const statusEl = _el('probe-status');
+    const accuracyEl = _el('probe-accuracy');
+    const avgGuessesEl = _el('probe-avg-guesses');
+    const avgTimeEl = _el('probe-avg-time');
+    const hintRateEl = _el('probe-hint-rate');
+    const trendLabelEl = _el('probe-trend-label');
+    const trendAccuracyEl = _el('probe-trend-accuracy');
+    const trendGuessesEl = _el('probe-trend-guesses');
+    const trendTimeEl = _el('probe-trend-time');
+    const activeStudent = getActiveStudentLabel();
+    const source = getLatestProbeSourceForStudent(activeStudent);
+    const summary = buildProbeSummary(source || {});
+    const trend = getComparableProbeTrend(activeStudent);
+    renderProbeSupportChips(activeStudent);
+    if (statusEl) {
+      if (probeState.active && matchesProbeRecordStudent(probeState.student, activeStudent)) {
+        statusEl.textContent = `Probe: Active (${probeState.roundsDone}/${probeState.roundsTarget})`;
+      } else if (source) {
+        const when = new Date(source.completedAt || source.startedAt || Date.now());
+        statusEl.textContent = `Probe: Last ${when.toLocaleDateString()}`;
+      } else {
+        statusEl.textContent = 'Probe: Inactive';
+      }
+    }
+    if (accuracyEl) accuracyEl.textContent = `Accuracy: ${summary.accuracy}`;
+    if (avgGuessesEl) avgGuessesEl.textContent = `Avg Guesses: ${summary.avgGuesses}`;
+    if (avgTimeEl) avgTimeEl.textContent = `Avg Time: ${summary.avgTime}`;
+    if (hintRateEl) hintRateEl.textContent = `Hint Rate: ${summary.hintRate}`;
+
+    if (!trend.current || trend.current.roundsDone <= 0) {
+      if (trendLabelEl) {
+        trendLabelEl.textContent = 'Trend: Waiting for baseline';
+        trendLabelEl.setAttribute('title', 'Complete at least one probe to start trend deltas.');
+      }
+      if (trendAccuracyEl) trendAccuracyEl.textContent = 'Accuracy Δ: --';
+      if (trendGuessesEl) trendGuessesEl.textContent = 'Avg Guesses Δ: --';
+      if (trendTimeEl) trendTimeEl.textContent = 'Avg Time Δ: --';
+      [trendLabelEl, trendAccuracyEl, trendGuessesEl, trendTimeEl].forEach((el) => applyChipTone(el, ''));
+      renderStudentGoalPanel();
+      return;
+    }
+
+    if (!trend.previous || trend.previous.roundsDone <= 0) {
+      if (trendLabelEl) {
+        trendLabelEl.textContent = trend.activeMatches ? 'Trend: In-progress baseline' : 'Trend: First baseline';
+        trendLabelEl.setAttribute('title', 'Need one more probe for week-over-week delta.');
+      }
+      if (trendAccuracyEl) trendAccuracyEl.textContent = 'Accuracy Δ: baseline';
+      if (trendGuessesEl) trendGuessesEl.textContent = 'Avg Guesses Δ: baseline';
+      if (trendTimeEl) trendTimeEl.textContent = 'Avg Time Δ: baseline';
+      [trendLabelEl, trendAccuracyEl, trendGuessesEl, trendTimeEl].forEach((el) => applyChipTone(el, ''));
+      renderStudentGoalPanel();
+      return;
+    }
+
+    const accuracyDeltaPts = (trend.current.accuracyRate - trend.previous.accuracyRate) * 100;
+    const guessesDelta = trend.current.avgGuesses - trend.previous.avgGuesses;
+    const timeDeltaSec = trend.current.avgTimeSeconds - trend.previous.avgTimeSeconds;
+
+    if (trendLabelEl) {
+      trendLabelEl.textContent = trend.activeMatches ? 'Trend: Live vs last probe' : 'Trend: Week-over-week';
+      trendLabelEl.setAttribute('title', 'Compares current probe results to the previous probe for this student.');
+    }
+    if (trendAccuracyEl) {
+      trendAccuracyEl.textContent = `Accuracy Δ: ${formatSignedDelta(accuracyDeltaPts)} pts`;
+      applyChipTone(trendAccuracyEl, accuracyDeltaPts > 0 ? 'good' : accuracyDeltaPts < 0 ? 'warn' : '');
+    }
+    if (trendGuessesEl) {
+      trendGuessesEl.textContent = `Avg Guesses Δ: ${formatSignedDelta(guessesDelta)}`;
+      applyChipTone(trendGuessesEl, guessesDelta < 0 ? 'good' : guessesDelta > 0 ? 'warn' : '');
+    }
+    if (trendTimeEl) {
+      trendTimeEl.textContent = `Avg Time Δ: ${formatSignedDelta(timeDeltaSec)}s`;
+      applyChipTone(trendTimeEl, timeDeltaSec < 0 ? 'good' : timeDeltaSec > 0 ? 'warn' : '');
+    }
+    applyChipTone(trendLabelEl, '');
+    renderStudentGoalPanel();
+  }
+
+  function startWeeklyProbe() {
+    if (probeState.active) {
+      WQUI.showToast('Weekly probe is already active.');
+      return;
+    }
+    const targetSelect = _el('s-probe-rounds');
+    const normalizedRounds = normalizeProbeRounds(targetSelect?.value || prefs.probeRounds || DEFAULT_PREFS.probeRounds);
+    if (targetSelect) targetSelect.value = normalizedRounds;
+    setPref('probeRounds', normalizedRounds);
+    probeState = {
+      active: true,
+      startedAt: Date.now(),
+      roundsTarget: Number.parseInt(normalizedRounds, 10),
+      roundsDone: 0,
+      wins: 0,
+      totalGuesses: 0,
+      totalDurationMs: 0,
+      hintRounds: 0,
+      focusLabel: getFocusLabel(_el('setting-focus')?.value || prefs.focus || 'all').replace(/[—]/g, '').trim(),
+      gradeLabel: formatGradeBandLabel(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade),
+      student: getActiveStudentLabel()
+    };
+    renderProbePanel();
+    WQUI.showToast(`Weekly probe started (${probeState.roundsTarget} rounds).`);
+  }
+
+  function finishWeeklyProbe(options = {}) {
+    const silent = !!options.silent;
+    if (!probeState.active) {
+      if (!silent) WQUI.showToast('No active probe to stop.');
+      return;
+    }
+    const record = {
+      startedAt: probeState.startedAt,
+      completedAt: Date.now(),
+      roundsTarget: probeState.roundsTarget,
+      roundsDone: probeState.roundsDone,
+      wins: probeState.wins,
+      totalGuesses: probeState.totalGuesses,
+      totalDurationMs: probeState.totalDurationMs,
+      hintRounds: probeState.hintRounds,
+      focusLabel: probeState.focusLabel,
+      gradeLabel: probeState.gradeLabel,
+      student: probeState.student
+    };
+    probeHistory.unshift(record);
+    probeHistory = probeHistory.slice(0, 24);
+    saveProbeHistory();
+    probeState = createEmptyProbeState();
+    renderProbePanel();
+    if (!silent) {
+      const summary = buildProbeSummary(record);
+      WQUI.showToast(`Probe saved: ${summary.accuracy} accuracy across ${record.roundsDone} rounds.`);
+    }
+  }
+
+  function recordProbeRound(result, roundMetrics) {
+    if (!probeState.active) return;
+    probeState.roundsDone += 1;
+    if (result?.won) probeState.wins += 1;
+    probeState.totalGuesses += Math.max(0, Number(roundMetrics?.guessesUsed) || 0);
+    probeState.totalDurationMs += Math.max(0, Number(roundMetrics?.durationMs) || 0);
+    if (roundMetrics?.hintRequested) probeState.hintRounds += 1;
+    if (probeState.roundsDone >= probeState.roundsTarget) {
+      finishWeeklyProbe();
+      return;
+    }
+    renderProbePanel();
+  }
+
+  function buildProbeSummaryText(options = {}) {
+    const studentLabel = String(options.student || getActiveStudentLabel()).trim() || 'Class';
+    const source = getLatestProbeSourceForStudent(studentLabel);
+    if (!source) return 'No weekly probe results yet.';
+    const summary = buildProbeSummary(source);
+    const startedAt = new Date(source.startedAt || Date.now());
+    const completedAt = source.completedAt ? new Date(source.completedAt) : null;
+    return [
+      'WordQuest Weekly Probe Summary',
+      `Student: ${source.student || studentLabel || 'Class'}`,
+      `Focus: ${source.focusLabel || 'Mixed'}`,
+      `Grade: ${source.gradeLabel || 'All'}`,
+      `Started: ${startedAt.toLocaleString()}`,
+      completedAt ? `Completed: ${completedAt.toLocaleString()}` : 'Completed: In progress',
+      `Rounds: ${source.roundsDone}/${source.roundsTarget}`,
+      `Accuracy: ${summary.accuracy}`,
+      `Avg Guesses: ${summary.avgGuesses}`,
+      `Avg Time: ${summary.avgTime}`,
+      `Hint Rate: ${summary.hintRate}`
+    ].filter(Boolean).join('\n');
+  }
+
+  function buildCurrentCurriculumSnapshot() {
+    const packId = normalizeLessonPackId(prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack);
+    const targetId = normalizeLessonTargetId(packId, prefs.lessonTarget || _el('s-lesson-target')?.value || DEFAULT_PREFS.lessonTarget);
+    const focus = _el('setting-focus')?.value || prefs.focus || DEFAULT_PREFS.focus;
+    const selectedGrade = _el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade;
+    const effectiveGrade = getEffectiveGameplayGradeBand(selectedGrade, focus);
+    const length = _el('s-length')?.value || prefs.length || DEFAULT_PREFS.length;
+    const pack = getLessonPackDefinition(packId);
+    const target = getLessonTarget(packId, targetId);
+    return {
+      packId,
+      targetId,
+      focus,
+      selectedGrade,
+      effectiveGrade,
+      length,
+      packLabel: pack?.label || 'Manual',
+      targetLabel: target?.label || '',
+      pacing: target?.pacing || ''
+    };
+  }
+
+  function buildCurriculumSelectionLabel() {
+    const snapshot = buildCurrentCurriculumSnapshot();
+    if (snapshot.packId === 'custom') return 'Manual mode (no lesson pack)';
+    if (!snapshot.targetLabel) return `${snapshot.packLabel} (target not selected)`;
+    return `${snapshot.packLabel} · ${snapshot.targetLabel}`;
+  }
+
+  function buildMtssIepNoteText() {
+    const student = getActiveStudentLabel();
+    const now = new Date();
+    const topErrorLabel = getTopErrorLabel(sessionSummary.errorTotals);
+    const nextStep = getInstructionalNextStep(sessionSummary.errorTotals);
+    const assignedPlaylist = getAssignedPlaylistForStudent(student);
+    const trend = getComparableProbeTrend(student);
+    const recency = getProbeRecencyMeta(student);
+    const support = getSupportFlagMeta(student);
+    const goalEval = evaluateStudentGoalState(student);
+    const goal = goalEval.goal;
+    const goalStatusText = `Goal: ${goalEval.statusLabel}`;
+    const goalProgressText = `Goal Progress: ${goalEval.progressLabel}`;
+    const currentProbe = trend.current;
+    const previousProbe = trend.previous;
+    const trendLine = (!currentProbe || !previousProbe || currentProbe.roundsDone <= 0 || previousProbe.roundsDone <= 0)
+      ? 'Probe trend: baseline in progress (need two probe points for delta).'
+      : `Probe trend: accuracy ${formatSignedDelta((currentProbe.accuracyRate - previousProbe.accuracyRate) * 100)} pts, avg guesses ${formatSignedDelta(currentProbe.avgGuesses - previousProbe.avgGuesses)}, avg time ${formatSignedDelta(currentProbe.avgTimeSeconds - previousProbe.avgTimeSeconds)}s versus prior probe.`;
+    const sessionWinRate = sessionSummary.rounds
+      ? `${Math.round((sessionSummary.wins / sessionSummary.rounds) * 100)}%`
+      : '--';
+    const sessionAvgGuesses = sessionSummary.rounds
+      ? (sessionSummary.totalGuesses / sessionSummary.rounds).toFixed(1)
+      : '--';
+    const sessionAvgTime = sessionSummary.rounds
+      ? formatDurationLabel(sessionSummary.totalDurationMs / sessionSummary.rounds)
+      : '--';
+
+    return [
+      'WordQuest MTSS/IEP Progress Note',
+      `Student: ${student}`,
+      `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`,
+      `Curriculum: ${buildCurriculumSelectionLabel()}`,
+      assignedPlaylist ? `Assigned Playlist: ${assignedPlaylist.name}` : 'Assigned Playlist: --',
+      '',
+      'Session Snapshot',
+      `Rounds: ${sessionSummary.rounds} | Win Rate: ${sessionWinRate} | Avg Guesses: ${sessionAvgGuesses} | Avg Time: ${sessionAvgTime}`,
+      `Hint Rounds: ${sessionSummary.hintRounds} | Voice Attempts: ${sessionSummary.voiceAttempts}`,
+      `Top Error Pattern: ${topErrorLabel}`,
+      `Instructional Next Step: ${nextStep}`,
+      '',
+      'Weekly Probe Snapshot',
+      buildProbeSummaryText(),
+      recency.label,
+      support.label,
+      trendLine,
+      '',
+      'Student Goal',
+      goal
+        ? `Targets: accuracy >= ${goal.accuracyTarget}% and avg guesses <= ${goal.avgGuessesTarget}.`
+        : 'Targets: no active goal set for this student.',
+      `${goalStatusText} | ${goalProgressText}`,
+      '',
+      'Teacher Interpretation',
+      `Use the next block for targeted reteach: ${nextStep}`
+    ].join('\n');
+  }
+
+  function pickSamplePracticeWords(limit = 8) {
+    const snapshot = buildCurrentCurriculumSnapshot();
+    const focus = snapshot.focus || 'all';
+    const gradeBand = getEffectiveGameplayGradeBand(snapshot.selectedGrade || snapshot.effectiveGrade, focus);
+    const length = snapshot.length || DEFAULT_PREFS.length;
+    const pool = WQData.getPlayableWords({
+      gradeBand,
+      length,
+      focus
+    });
+    if (!Array.isArray(pool) || !pool.length) return [];
+    const copy = [...pool];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy.slice(0, Math.max(1, Math.min(12, limit)));
+  }
+
+  function buildFamilyHandoutText() {
+    const snapshot = buildCurrentCurriculumSnapshot();
+    const student = getActiveStudentLabel();
+    const assignedPlaylist = getAssignedPlaylistForStudent(student);
+    const focusLabel = getFocusLabel(snapshot.focus || 'all').replace(/[—]/g, '').replace(/\s+/g, ' ').trim() || 'Classic';
+    const words = pickSamplePracticeWords(8);
+    const wordLines = words.length
+      ? words.map((word, index) => `${index + 1}. ${String(word || '').toUpperCase()}`).join('\n')
+      : 'No words available for the current filters. Adjust lesson target or grade band.';
+    return [
+      'WordQuest Family Practice Handout',
+      `Student: ${student}`,
+      `Date: ${new Date().toLocaleDateString()}`,
+      `Curriculum Target: ${buildCurriculumSelectionLabel()}`,
+      assignedPlaylist ? `Assigned Playlist: ${assignedPlaylist.name}` : 'Assigned Playlist: --',
+      `Quest Focus: ${focusLabel}`,
+      `Grade Band: ${formatGradeBandLabel(snapshot.effectiveGrade || snapshot.selectedGrade)}`,
+      `Word Length: ${formatLengthPrefLabel(snapshot.length)}`,
+      '',
+      'At-Home Routine (10 minutes)',
+      '1. Read each word out loud.',
+      '2. Tap or stretch sounds/chunks.',
+      '3. Spell the word once from memory.',
+      '4. Use two words in oral sentences.',
+      '',
+      'Practice Word List',
+      wordLines,
+      '',
+      'Family Tip: Keep practice positive and short. Accuracy first, speed second.'
+    ].join('\n');
+  }
+
+  function getMiniLessonKeyFromSession() {
+    return resolveMiniLessonErrorKey(activeMiniLessonKey, sessionSummary.errorTotals);
+  }
+
+  function renderMiniLessonPanel() {
+    const key = getMiniLessonKeyFromSession();
+    const textEl = _el('session-mini-lesson-copy');
+    if (!textEl) return;
+    const planText = buildMiniLessonPlanText(key);
+    textEl.textContent = planText;
+    textEl.setAttribute('title', `Current quick mini-lesson: ${ERROR_PATTERN_LABELS[key] || key}`);
+  }
+
+  async function copyTextToClipboard(text, successMessage, failureMessage) {
+    const value = String(text || '').trim();
+    if (!value) {
+      WQUI.showToast(failureMessage);
+      return;
+    }
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        WQUI.showToast(successMessage);
+        return;
+      }
+    } catch {}
+    const fallback = document.createElement('textarea');
+    fallback.value = value;
+    fallback.setAttribute('readonly', 'true');
+    fallback.style.position = 'fixed';
+    fallback.style.top = '-9999px';
+    document.body.appendChild(fallback);
+    fallback.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch { copied = false; }
+    fallback.remove();
+    WQUI.showToast(copied ? successMessage : failureMessage);
   }
 
   function renderSessionSummary() {
@@ -3690,6 +7273,18 @@
     const winRateEl = _el('session-win-rate');
     const hintRoundsEl = _el('session-hint-rounds');
     const voiceAttemptsEl = _el('session-voice-attempts');
+    const topSkillEl = _el('session-top-skill');
+    const masteryRateEl = _el('session-mastery-rate');
+    const avgGuessesEl = _el('session-avg-guesses');
+    const avgTimeEl = _el('session-avg-time');
+    const topErrorEl = _el('session-top-error');
+    const nextStepEl = _el('session-next-step');
+    const studentEl = _el('session-active-student');
+    const missionCountEl = _el('session-mission-count');
+    const missionScoreEl = _el('session-mission-score');
+    const missionCompletionEl = _el('session-mission-complete');
+    const missionLevelEl = _el('session-mission-level');
+
     if (roundsEl) roundsEl.textContent = `Rounds: ${sessionSummary.rounds}`;
     if (winRateEl) {
       const winRate = sessionSummary.rounds
@@ -3699,63 +7294,773 @@
     }
     if (hintRoundsEl) hintRoundsEl.textContent = `Hint Rounds: ${sessionSummary.hintRounds}`;
     if (voiceAttemptsEl) voiceAttemptsEl.textContent = `Voice Attempts: ${sessionSummary.voiceAttempts}`;
+    if (studentEl) studentEl.textContent = `Student: ${getActiveStudentLabel()}`;
+
+    const topSkill = getTopMasteryEntry();
+    const avgGuesses = sessionSummary.rounds
+      ? (sessionSummary.totalGuesses / sessionSummary.rounds).toFixed(1)
+      : '--';
+    const avgTime = sessionSummary.rounds
+      ? formatDurationLabel(sessionSummary.totalDurationMs / sessionSummary.rounds)
+      : '--';
+    if (topSkillEl) topSkillEl.textContent = `Top Skill: ${topSkill?.label || '--'}`;
+    if (masteryRateEl) {
+      const masteryRate = topSkill?.accuracyLabel || '--';
+      masteryRateEl.textContent = `Mastery: ${masteryRate}`;
+    }
+    if (avgGuessesEl) avgGuessesEl.textContent = `Avg Guesses: ${avgGuesses}`;
+    if (avgTimeEl) avgTimeEl.textContent = `Avg Time: ${avgTime}`;
+    if (topErrorEl) topErrorEl.textContent = `Top Error: ${getTopErrorLabel(sessionSummary.errorTotals)}`;
+    if (nextStepEl) {
+      const chipLabel = getInstructionalNextStepChip(sessionSummary.errorTotals);
+      const nextStep = getInstructionalNextStep(sessionSummary.errorTotals);
+      nextStepEl.textContent = `Next Step: ${chipLabel}`;
+      nextStepEl.setAttribute('title', nextStep);
+    }
+    const activeStudent = getActiveStudentLabel();
+    const missionStats = buildMissionSummaryStats({
+      sessionOnly: true,
+      student: activeStudent === 'Class' ? '' : activeStudent
+    });
+    if (missionCountEl) missionCountEl.textContent = `Mission Rounds: ${missionStats.count}`;
+    if (missionScoreEl) {
+      missionScoreEl.textContent = missionStats.count
+        ? `Mission Avg Score: ${Math.round(missionStats.avgScore)}/100 · Strong+ ${Math.round(missionStats.strongRate * 100)}%`
+        : 'Mission Avg Score: --';
+    }
+    if (missionCompletionEl) {
+      missionCompletionEl.textContent = missionStats.count
+        ? `Mission Completion: ${Math.round(missionStats.completionRate * 100)}% · On-time ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`
+        : 'Mission Completion: --';
+    }
+    if (missionLevelEl) {
+      missionLevelEl.textContent = `Mission Top Level: ${missionStats.topLevelLabel}`;
+    }
+    renderMasteryTable();
+    renderMiniLessonPanel();
   }
 
-  function recordSessionRound(result) {
+  function recordSessionRound(result, roundMetrics = {}) {
     sessionSummary.rounds += 1;
     if (result?.won) sessionSummary.wins += 1;
-    if (getHintMode() === 'on') sessionSummary.hintRounds += 1;
+    if (roundMetrics.hintRequested) sessionSummary.hintRounds += 1;
+    sessionSummary.voiceAttempts += Math.max(0, Number(roundMetrics.voiceAttempts) || 0);
+    sessionSummary.totalGuesses += Math.max(0, Number(roundMetrics.guessesUsed) || 0);
+    sessionSummary.totalDurationMs += Math.max(0, Number(roundMetrics.durationMs) || 0);
+    mergeCounterMaps(sessionSummary.errorTotals, roundMetrics.errorCounts);
+
+    const skillKey = String(roundMetrics.skillKey || 'classic:all').trim();
+    const prior = sessionSummary.masteryBySkill[skillKey] || {
+      label: String(roundMetrics.skillLabel || 'Classic mixed practice'),
+      rounds: 0,
+      wins: 0,
+      hintRounds: 0,
+      voiceAttempts: 0,
+      totalGuesses: 0,
+      totalDurationMs: 0,
+      errorCounts: Object.create(null)
+    };
+    prior.label = String(roundMetrics.skillLabel || prior.label || skillKey);
+    prior.rounds += 1;
+    if (result?.won) prior.wins += 1;
+    if (roundMetrics.hintRequested) prior.hintRounds += 1;
+    prior.voiceAttempts += Math.max(0, Number(roundMetrics.voiceAttempts) || 0);
+    prior.totalGuesses += Math.max(0, Number(roundMetrics.guessesUsed) || 0);
+    prior.totalDurationMs += Math.max(0, Number(roundMetrics.durationMs) || 0);
+    prior.errorCounts = mergeCounterMaps(prior.errorCounts || Object.create(null), roundMetrics.errorCounts);
+    sessionSummary.masteryBySkill[skillKey] = prior;
+
     saveSessionSummaryState();
     renderSessionSummary();
   }
 
   function recordVoiceAttempt() {
-    sessionSummary.voiceAttempts += 1;
-    saveSessionSummaryState();
-    renderSessionSummary();
+    const state = WQGame.getState?.();
+    if (state?.word && !state?.gameOver) {
+      currentRoundVoiceAttempts += 1;
+    } else {
+      sessionSummary.voiceAttempts += 1;
+      saveSessionSummaryState();
+      renderSessionSummary();
+    }
   }
 
   function buildSessionSummaryText() {
     const startedAt = new Date(sessionSummary.startedAt || Date.now());
+    const activeStudent = getActiveStudentLabel();
     const winRate = sessionSummary.rounds
       ? `${Math.round((sessionSummary.wins / sessionSummary.rounds) * 100)}%`
       : '--';
+    const avgGuesses = sessionSummary.rounds
+      ? (sessionSummary.totalGuesses / sessionSummary.rounds).toFixed(1)
+      : '--';
+    const avgTime = sessionSummary.rounds
+      ? formatDurationLabel(sessionSummary.totalDurationMs / sessionSummary.rounds)
+      : '--';
+    const missionStats = buildMissionSummaryStats({
+      sessionOnly: true,
+      student: activeStudent === 'Class' ? '' : activeStudent
+    });
     return [
       'WordQuest Session Summary',
+      `Student: ${activeStudent}`,
       `Started: ${startedAt.toLocaleString()}`,
       `Rounds: ${sessionSummary.rounds}`,
       `Wins: ${sessionSummary.wins}`,
       `Win Rate: ${winRate}`,
       `Hint Rounds: ${sessionSummary.hintRounds}`,
-      `Voice Attempts: ${sessionSummary.voiceAttempts}`
+      `Voice Attempts: ${sessionSummary.voiceAttempts}`,
+      `Avg Guesses: ${avgGuesses}`,
+      `Avg Time: ${avgTime}`,
+      `Top Error Pattern: ${getTopErrorLabel(sessionSummary.errorTotals)}`,
+      `Next Instructional Step: ${getInstructionalNextStep(sessionSummary.errorTotals)}`,
+      `Mission Rounds: ${missionStats.count}`,
+      `Mission Avg Score: ${missionStats.count ? `${Math.round(missionStats.avgScore)}/100` : '--'}`,
+      `Mission Strong+ Rate: ${missionStats.count ? `${Math.round(missionStats.strongRate * 100)}%` : '--'}`,
+      `Mission Completion: ${missionStats.count ? `${Math.round(missionStats.completionRate * 100)}%` : '--'}`,
+      `Mission On-time: ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`,
+      `Mission Top Level: ${missionStats.topLevelLabel}`
     ].join('\n');
   }
 
-  async function copySessionSummary() {
-    const text = buildSessionSummaryText();
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        WQUI.showToast('Session summary copied.');
-        return;
-      }
-    } catch {}
+  function buildSessionSummaryCsvText() {
+    const rounds = Math.max(0, Number(sessionSummary.rounds) || 0);
+    const avgGuesses = rounds
+      ? (sessionSummary.totalGuesses / rounds).toFixed(1)
+      : '--';
+    const avgTimeSeconds = rounds
+      ? Number(((sessionSummary.totalDurationMs / rounds) / 1000).toFixed(1))
+      : 0;
+    const winRate = rounds
+      ? `${Math.round((sessionSummary.wins / rounds) * 100)}%`
+      : '--';
+    const topSkill = getTopMasteryEntry();
+    const activeStudent = getActiveStudentLabel();
+    const missionStats = buildMissionSummaryStats({
+      sessionOnly: true,
+      student: activeStudent === 'Class' ? '' : activeStudent
+    });
+    const lines = [[
+      'Student',
+      'Generated',
+      'Started',
+      'Rounds',
+      'Wins',
+      'Win Rate',
+      'Hint Rounds',
+      'Voice Attempts',
+      'Avg Guesses',
+      'Avg Time (s)',
+      'Top Error Pattern',
+      'Next Instructional Step',
+      'Top Skill',
+      'Top Skill Accuracy',
+      'Mission Rounds',
+      'Mission Avg Score',
+      'Mission Strong+',
+      'Mission Completion',
+      'Mission On-Time',
+      'Mission Top Level'
+    ], [
+      activeStudent,
+      new Date().toLocaleString(),
+      new Date(sessionSummary.startedAt || Date.now()).toLocaleString(),
+      String(rounds),
+      String(Math.max(0, Number(sessionSummary.wins) || 0)),
+      winRate,
+      String(Math.max(0, Number(sessionSummary.hintRounds) || 0)),
+      String(Math.max(0, Number(sessionSummary.voiceAttempts) || 0)),
+      avgGuesses,
+      String(avgTimeSeconds),
+      getTopErrorLabel(sessionSummary.errorTotals),
+      getInstructionalNextStep(sessionSummary.errorTotals),
+      topSkill?.label || '--',
+      topSkill?.accuracyLabel || '--',
+      String(missionStats.count),
+      missionStats.count ? `${Math.round(missionStats.avgScore)}/100` : '--',
+      missionStats.count ? `${Math.round(missionStats.strongRate * 100)}%` : '--',
+      missionStats.count ? `${Math.round(missionStats.completionRate * 100)}%` : '--',
+      missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--',
+      missionStats.topLevelLabel
+    ]];
+    return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+  }
 
-    const fallback = document.createElement('textarea');
-    fallback.value = text;
-    fallback.setAttribute('readonly', 'true');
-    fallback.style.position = 'fixed';
-    fallback.style.top = '-9999px';
-    document.body.appendChild(fallback);
-    fallback.select();
-    let copied = false;
+  function buildMasteryReportText() {
+    const { rows, allRows, sortMode, filterMode } = getVisibleMasteryRows();
+    const header = [
+      'WordQuest Mastery Report',
+      `Student: ${getActiveStudentLabel()}`,
+      `Generated: ${new Date().toLocaleString()}`,
+      `Session rounds: ${sessionSummary.rounds}`,
+      `Filter: ${describeMasteryFilterMode(filterMode)}`,
+      `Sort: ${describeMasterySortMode(sortMode)}`,
+      `Next Instructional Step: ${getInstructionalNextStep(sessionSummary.errorTotals)}`
+    ];
+    if (!allRows.length) return [...header, 'No skill rows yet.'].join('\n');
+    if (!rows.length) return [...header, 'No skill rows match the current filter.'].join('\n');
+    const lines = rows.map((row) => {
+      return `${row.label}: accuracy ${row.accuracyLabel} | attempts ${row.attempts} | hints ${row.hintRounds} (${row.hintRateLabel}) | voice attempts ${row.voiceAttempts} | avg guesses ${row.avgGuessesLabel} | avg time ${row.avgTimeLabel} | top error ${row.topErrorLabel}`;
+    });
+    return [...header, '', ...lines].join('\n');
+  }
+
+  function csvEscapeCell(value) {
+    const text = String(value ?? '');
+    if (!/[",\n]/.test(text)) return text;
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+
+  function sanitizeFilenameToken(value, fallback = 'class') {
+    const normalized = String(value || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    return normalized || fallback;
+  }
+
+  function buildCsvBundlePrefix() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const student = sanitizeFilenameToken(getActiveStudentLabel(), 'class');
+    return `wordquest-${student}-${year}${month}${day}-${hour}${minute}`;
+  }
+
+  function downloadTextFile(filename, content, mimeType = 'text/plain;charset=utf-8') {
     try {
-      copied = document.execCommand('copy');
+      const text = String(content ?? '');
+      const withBom = mimeType.startsWith('text/csv') ? `\uFEFF${text}` : text;
+      const blob = new Blob([withBom], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return true;
     } catch {
-      copied = false;
+      return false;
     }
-    fallback.remove();
-    WQUI.showToast(copied ? 'Session summary copied.' : 'Could not copy summary on this device.');
+  }
+
+  function buildMasteryReportCsvText() {
+    const { rows, allRows, sortMode, filterMode } = getVisibleMasteryRows();
+    const generated = new Date().toLocaleString();
+    const student = getActiveStudentLabel();
+    const lines = [[
+      'Student',
+      'Generated',
+      'Filter',
+      'Sort',
+      'Skill',
+      'Accuracy',
+      'Attempts',
+      'Wins',
+      'Hint Rounds',
+      'Hint Rate',
+      'Voice Attempts',
+      'Avg Guesses',
+      'Avg Time (s)',
+      'Top Error',
+      'Session Next Step'
+    ]];
+    const filterLabel = describeMasteryFilterMode(filterMode);
+    const sortLabel = describeMasterySortMode(sortMode);
+    const nextStep = getInstructionalNextStep(sessionSummary.errorTotals);
+    if (!allRows.length) {
+      lines.push([student, generated, filterLabel, sortLabel, 'No skill rows yet.', '', '', '', '', '', '', '', '', '', nextStep]);
+    } else if (!rows.length) {
+      lines.push([student, generated, filterLabel, sortLabel, 'No skill rows match current filter.', '', '', '', '', '', '', '', '', '', nextStep]);
+    } else {
+      rows.forEach((row) => {
+        lines.push([
+          student,
+          generated,
+          filterLabel,
+          sortLabel,
+          row.label,
+          row.accuracyLabel,
+          String(row.attempts),
+          String(row.wins),
+          String(row.hintRounds),
+          row.hintRateLabel,
+          String(row.voiceAttempts),
+          row.avgGuessesLabel,
+          String(row.avgTimeSeconds),
+          row.topErrorLabel,
+          nextStep
+        ]);
+      });
+    }
+    return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+  }
+
+  function buildProbeSummaryCsvText() {
+    const lines = [[
+      'Student',
+      'Focus',
+      'Grade',
+      'Status',
+      'Started',
+      'Completed',
+      'Rounds Done',
+      'Rounds Target',
+      'Accuracy',
+      'Avg Guesses',
+      'Avg Time (s)',
+      'Hint Rate'
+    ]];
+    const records = [];
+    if (probeState.active) {
+      records.push({
+        ...probeState,
+        completedAt: 0,
+        status: 'Active'
+      });
+    }
+    probeHistory.forEach((record) => {
+      records.push({
+        ...record,
+        status: 'Completed'
+      });
+    });
+    if (!records.length) {
+      lines.push(['Class', '', '', 'No probe records yet', '', '', '', '', '', '', '', '']);
+      return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+    }
+    records.forEach((record) => {
+      const summary = buildProbeSummary(record);
+      const started = new Date(record.startedAt || Date.now()).toLocaleString();
+      const completed = record.completedAt ? new Date(record.completedAt).toLocaleString() : '';
+      lines.push([
+        String(record.student || 'Class'),
+        String(record.focusLabel || 'Mixed'),
+        String(record.gradeLabel || 'All'),
+        String(record.status || 'Completed'),
+        started,
+        completed,
+        String(Math.max(0, Number(record.roundsDone) || 0)),
+        String(Math.max(0, Number(record.roundsTarget) || 0)),
+        summary.accuracy,
+        summary.avgGuesses,
+        String(Math.max(0, Number(record.roundsDone) || 0)
+          ? Number(((Math.max(0, Number(record.totalDurationMs) || 0) / Math.max(1, Number(record.roundsDone) || 1)) / 1000).toFixed(1))
+          : 0),
+        summary.hintRate
+      ]);
+    });
+    return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+  }
+
+  function buildClassRollupCsvText() {
+    const students = new Set();
+    rosterState.students.forEach((name) => {
+      const normalized = String(name || '').trim();
+      if (normalized) students.add(normalized);
+    });
+    probeHistory.forEach((record) => {
+      const normalized = String(record?.student || '').trim() || 'Class';
+      students.add(normalized);
+    });
+    if (probeState.active) {
+      students.add(String(probeState.student || '').trim() || 'Class');
+    }
+    if (!students.size) students.add('Class');
+
+    const lines = [[
+      'Student',
+      'Probe Status',
+      'Probe Date',
+      'Probe Recency',
+      'Accuracy',
+      'Avg Guesses',
+      'Avg Time (s)',
+      'Hint Rate',
+      'Support Flag',
+      'Accuracy Delta (pts)',
+      'Guess Delta',
+      'Time Delta (s)',
+      'Goal Accuracy Target',
+      'Goal Avg Guesses Target',
+      'Goal Status',
+      'Goal Progress'
+    ]];
+
+    Array.from(students).sort((a, b) => a.localeCompare(b)).forEach((student) => {
+      const source = getLatestProbeSourceForStudent(student);
+      const summary = buildProbeSummary(source || {});
+      const trend = getComparableProbeTrend(student);
+      const goalEval = evaluateStudentGoalState(student);
+      const goal = goalEval.goal;
+      const recency = getProbeRecencyMeta(student);
+      const support = getSupportFlagMeta(student);
+
+      const hasTrend = Boolean(trend.current && trend.previous && trend.current.roundsDone > 0 && trend.previous.roundsDone > 0);
+      const accuracyDelta = hasTrend
+        ? formatSignedDelta((trend.current.accuracyRate - trend.previous.accuracyRate) * 100)
+        : '--';
+      const guessesDelta = hasTrend
+        ? formatSignedDelta(trend.current.avgGuesses - trend.previous.avgGuesses)
+        : '--';
+      const timeDelta = hasTrend
+        ? formatSignedDelta(trend.current.avgTimeSeconds - trend.previous.avgTimeSeconds)
+        : '--';
+
+      const probeDate = source
+        ? new Date(source.completedAt || source.startedAt || Date.now()).toLocaleDateString()
+        : '';
+      const probeStatus = source
+        ? (probeState.active && matchesProbeRecordStudent(probeState.student, student) ? 'Active' : 'Recent')
+        : 'No probe data';
+      const avgTimeSeconds = source && Math.max(0, Number(source.roundsDone) || 0) > 0
+        ? Number(((Math.max(0, Number(source.totalDurationMs) || 0) / Math.max(1, Number(source.roundsDone) || 1)) / 1000).toFixed(1))
+        : 0;
+
+      lines.push([
+        student,
+        probeStatus,
+        probeDate,
+        recency.label.replace(/^Probe Recency:\s*/, ''),
+        summary.accuracy,
+        summary.avgGuesses,
+        String(avgTimeSeconds),
+        summary.hintRate,
+        support.label.replace(/^Support Flag:\s*/, ''),
+        accuracyDelta,
+        guessesDelta,
+        timeDelta,
+        goal ? String(goal.accuracyTarget) : '',
+        goal ? String(goal.avgGuessesTarget) : '',
+        goalEval.statusLabel,
+        goalEval.progressLabel
+      ]);
+    });
+    return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+  }
+
+  function getMissionLabRecords(options = {}) {
+    const newestFirst = options.newestFirst !== false;
+    const sessionOnly = !!options.sessionOnly;
+    const startedAt = Math.max(0, Number(options.startedAt || sessionSummary?.startedAt || 0));
+    const studentFilterRaw = String(options.student || '').trim();
+    const studentFilter = studentFilterRaw && studentFilterRaw !== 'Class' ? studentFilterRaw : '';
+    let records = [];
+    try {
+      const raw = JSON.parse(localStorage.getItem(CHALLENGE_REFLECTION_KEY) || '[]');
+      records = Array.isArray(raw) ? raw : [];
+    } catch {
+      records = [];
+    }
+    const normalized = records
+      .filter((record) => record && typeof record === 'object')
+      .map((record) => {
+        const tasks = record.tasks && typeof record.tasks === 'object' ? record.tasks : {};
+        const score = Math.max(0, Number(record.score) || 0);
+        const doneCount = ['listen', 'analyze', 'create']
+          .reduce((count, task) => count + (tasks?.[task] ? 1 : 0), 0);
+        const completed = typeof record.completed === 'boolean'
+          ? !!record.completed
+          : doneCount >= 2;
+        const onTime = completed
+          ? (typeof record.onTime === 'boolean' ? !!record.onTime : false)
+          : false;
+        return {
+          attemptId: String(record.attemptId || '').trim(),
+          source: String(record.source || 'reveal').trim() || 'reveal',
+          student: String(record.student || 'Class').trim() || 'Class',
+          ts: Math.max(0, Number(record.ts) || 0),
+          word: String(record.word || '').trim().toUpperCase(),
+          topic: String(record.topic || '').trim(),
+          grade: String(record.grade || '').trim(),
+          level: normalizeThinkingLevel(record.level, 'apply'),
+          score,
+          scoreBand: String(record.scoreBand || resolveMissionScoreBand(score)).trim() || resolveMissionScoreBand(score),
+          clarity: Math.max(0, Number(record.clarity) || 0),
+          evidence: Math.max(0, Number(record.evidence) || 0),
+          vocabulary: Math.max(0, Number(record.vocabulary) || 0),
+          completed,
+          onTime,
+          secondsLeft: Math.max(0, Number(record.secondsLeft) || 0),
+          analyze: String(record.analyze || '').trim(),
+          create: String(record.create || '').trim(),
+          tasks: {
+            listen: !!tasks.listen,
+            analyze: !!tasks.analyze,
+            create: !!tasks.create
+          }
+        };
+      })
+      .filter((record) => record.ts > 0);
+    const sessionScoped = sessionOnly && startedAt > 0
+      ? normalized.filter((record) => record.ts >= startedAt)
+      : normalized;
+    const studentScoped = studentFilter
+      ? sessionScoped.filter((record) => record.student === studentFilter)
+      : sessionScoped;
+    studentScoped.sort((a, b) => newestFirst ? (b.ts - a.ts) : (a.ts - b.ts));
+    return studentScoped;
+  }
+
+  function buildMissionSummaryStats(options = {}) {
+    const records = getMissionLabRecords(options);
+    if (!records.length) {
+      return {
+        records,
+        count: 0,
+        avgScore: 0,
+        completionRate: 0,
+        completedCount: 0,
+        onTimeRate: 0,
+        strongRate: 0,
+        topLevel: '',
+        topLevelLabel: '--'
+      };
+    }
+    const totalScore = records.reduce((sum, record) => sum + Math.max(0, Number(record.score) || 0), 0);
+    const completedCount = records.reduce((count, record) => count + (record.completed ? 1 : 0), 0);
+    const onTimeCount = records.reduce((count, record) => count + (record.completed && record.onTime ? 1 : 0), 0);
+    const strongCount = records.reduce((count, record) => (
+      count + (record.score >= CHALLENGE_STRONG_SCORE_MIN ? 1 : 0)
+    ), 0);
+    const levelCounts = records.reduce((map, record) => {
+      const level = normalizeThinkingLevel(record.level, '');
+      if (!level) return map;
+      map[level] = (map[level] || 0) + 1;
+      return map;
+    }, Object.create(null));
+    const topLevel = Object.entries(levelCounts)
+      .sort((a, b) => (b[1] - a[1]) || String(a[0]).localeCompare(String(b[0])))
+      .map(([level]) => level)[0] || '';
+    return {
+      records,
+      count: records.length,
+      avgScore: totalScore / records.length,
+      completionRate: completedCount / records.length,
+      completedCount,
+      onTimeRate: completedCount ? (onTimeCount / completedCount) : 0,
+      strongRate: strongCount / records.length,
+      topLevel,
+      topLevelLabel: topLevel ? getChallengeLevelDisplay(topLevel) : '--'
+    };
+  }
+
+  function buildMissionSummaryText() {
+    const activeStudent = getActiveStudentLabel();
+    const stats = buildMissionSummaryStats({
+      sessionOnly: true,
+      student: activeStudent === 'Class' ? '' : activeStudent
+    });
+    const recent = stats.records[0] || null;
+    const lines = [
+      'WordQuest Mission Lab Summary',
+      `Student: ${activeStudent}`,
+      `Generated: ${new Date().toLocaleString()}`,
+      `Session started: ${new Date(sessionSummary.startedAt || Date.now()).toLocaleString()}`,
+      `Mission rounds: ${stats.count}`,
+      `Mission average score: ${stats.count ? `${Math.round(stats.avgScore)}/100` : '--'}`,
+      `Strong+ missions: ${stats.count ? `${Math.round(stats.strongRate * 100)}%` : '--'}`,
+      `Mission completion: ${stats.count ? `${Math.round(stats.completionRate * 100)}%` : '--'}`,
+      `On-time finishes: ${stats.completedCount ? `${Math.round(stats.onTimeRate * 100)}%` : '--'}`,
+      `Most-used Bloom level: ${stats.topLevelLabel}`
+    ];
+    if (recent) {
+      lines.push(
+        '',
+        'Most recent mission',
+        `${new Date(recent.ts).toLocaleString()} · ${recent.word || '--'} · ${recent.topic || '--'} · Grade ${recent.grade || '--'} · Student ${recent.student || 'Class'}`,
+        `Level: ${getChallengeLevelDisplay(recent.level)} · Score: ${recent.score}/100 (${recent.scoreBand}) · On time: ${recent.onTime ? 'yes' : 'no'}`
+      );
+    }
+    return lines.join('\n');
+  }
+
+  function buildMissionLabCsvText() {
+    const records = getMissionLabRecords({ newestFirst: false });
+    const lines = [[
+      'Timestamp',
+      'Mission ID',
+      'Source',
+      'Student',
+      'Word',
+      'Topic',
+      'Grade',
+      'Bloom Level',
+      'Score Band',
+      'Mission Score',
+      'Clarity',
+      'Evidence',
+      'Vocabulary',
+      'Completed',
+      'On Time',
+      'Seconds Left',
+      'Listen Complete',
+      'Analyze Complete',
+      'Create Complete',
+      'Analyze Response',
+      'Create Response'
+    ]];
+    if (!records.length) {
+      lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'No mission records yet.', '']);
+      return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+    }
+    records.forEach((record) => {
+      const tasks = record?.tasks || {};
+      lines.push([
+        new Date(Number(record?.ts) || Date.now()).toLocaleString(),
+        String(record?.attemptId || ''),
+        String(record?.source || ''),
+        String(record?.student || ''),
+        String(record?.word || ''),
+        String(record?.topic || ''),
+        String(record?.grade || ''),
+        String(record?.level || ''),
+        String(record?.scoreBand || ''),
+        String(Math.max(0, Number(record?.score) || 0)),
+        String(Math.max(0, Number(record?.clarity) || 0)),
+        String(Math.max(0, Number(record?.evidence) || 0)),
+        String(Math.max(0, Number(record?.vocabulary) || 0)),
+        record?.completed ? 'yes' : 'no',
+        record?.onTime ? 'yes' : 'no',
+        String(Math.max(0, Number(record?.secondsLeft) || 0)),
+        tasks.listen ? 'yes' : 'no',
+        tasks.analyze ? 'yes' : 'no',
+        tasks.create ? 'yes' : 'no',
+        String(record?.analyze || ''),
+        String(record?.create || '')
+      ]);
+    });
+    return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
+  }
+
+  function downloadClassRollupCsv() {
+    const prefix = buildCsvBundlePrefix();
+    const filename = `${prefix}-class-rollup.csv`;
+    if (downloadTextFile(filename, buildClassRollupCsvText(), 'text/csv;charset=utf-8')) {
+      WQUI.showToast('Class rollup CSV download started.');
+      return;
+    }
+    WQUI.showToast('Could not start class rollup download on this device.');
+  }
+
+  function downloadCsvBundle() {
+    const prefix = buildCsvBundlePrefix();
+    const files = [
+      { name: `${prefix}-session-summary.csv`, content: buildSessionSummaryCsvText() },
+      { name: `${prefix}-mastery.csv`, content: buildMasteryReportCsvText() },
+      { name: `${prefix}-probe.csv`, content: buildProbeSummaryCsvText() },
+      { name: `${prefix}-class-rollup.csv`, content: buildClassRollupCsvText() },
+      { name: `${prefix}-mission-lab.csv`, content: buildMissionLabCsvText() }
+    ];
+    const started = files.reduce((count, file) => (
+      count + (downloadTextFile(file.name, file.content, 'text/csv;charset=utf-8') ? 1 : 0)
+    ), 0);
+    if (started === files.length) {
+      WQUI.showToast(`CSV bundle download started (${files.length} files).`);
+      return;
+    }
+    if (started > 0) {
+      WQUI.showToast(`CSV bundle partially downloaded (${started}/${files.length}).`);
+      return;
+    }
+    WQUI.showToast('Could not start CSV bundle download on this device.');
+  }
+
+  async function copySessionSummary() {
+    await copyTextToClipboard(
+      buildSessionSummaryText(),
+      'Session summary copied.',
+      'Could not copy summary on this device.'
+    );
+  }
+
+  async function copyMasterySummary() {
+    await copyTextToClipboard(
+      buildMasteryReportText(),
+      'Mastery report copied.',
+      'Could not copy mastery report on this device.'
+    );
+  }
+
+  async function copyMasterySummaryCsv() {
+    await copyTextToClipboard(
+      buildMasteryReportCsvText(),
+      'Mastery CSV copied.',
+      'Could not copy mastery CSV on this device.'
+    );
+  }
+
+  async function copyMissionSummary() {
+    await copyTextToClipboard(
+      buildMissionSummaryText(),
+      'Mission summary copied.',
+      'Could not copy mission summary on this device.'
+    );
+  }
+
+  async function copyMissionSummaryCsv() {
+    await copyTextToClipboard(
+      buildMissionLabCsvText(),
+      'Mission CSV copied.',
+      'Could not copy mission CSV on this device.'
+    );
+  }
+
+  async function copyProbeSummary() {
+    await copyTextToClipboard(
+      buildProbeSummaryText(),
+      'Probe summary copied.',
+      'Could not copy probe summary on this device.'
+    );
+  }
+
+  async function copyProbeSummaryCsv() {
+    await copyTextToClipboard(
+      buildProbeSummaryCsvText(),
+      'Probe CSV copied.',
+      'Could not copy probe CSV on this device.'
+    );
+  }
+
+  async function copyMtssIepNote() {
+    await copyTextToClipboard(
+      buildMtssIepNoteText(),
+      'MTSS/IEP note copied.',
+      'Could not copy MTSS/IEP note on this device.'
+    );
+  }
+
+  async function copyMiniLessonPlan() {
+    const key = getMiniLessonKeyFromSession();
+    await copyTextToClipboard(
+      buildMiniLessonPlanText(key),
+      'Mini-lesson plan copied.',
+      'Could not copy mini-lesson plan on this device.'
+    );
+  }
+
+  async function copyFamilyHandout() {
+    await copyTextToClipboard(
+      buildFamilyHandoutText(),
+      'Family handout copied.',
+      'Could not copy family handout on this device.'
+    );
+  }
+
+  function downloadFamilyHandout() {
+    const prefix = buildCsvBundlePrefix();
+    const filename = `${prefix}-family-handout.txt`;
+    if (downloadTextFile(filename, buildFamilyHandoutText(), 'text/plain;charset=utf-8')) {
+      WQUI.showToast('Family handout download started.');
+      return;
+    }
+    WQUI.showToast('Could not start family handout download on this device.');
   }
 
   function resetSessionSummary() {
@@ -3764,10 +8069,15 @@
       wins: 0,
       hintRounds: 0,
       voiceAttempts: 0,
+      totalGuesses: 0,
+      totalDurationMs: 0,
+      errorTotals: Object.create(null),
+      masteryBySkill: Object.create(null),
       startedAt: Date.now()
     };
     saveSessionSummaryState();
     renderSessionSummary();
+    renderProbePanel();
   }
 
   const QUEST_LOOP_KEY = 'wq_v2_quest_loop_v1';
@@ -3900,10 +8210,21 @@
 
   function initQuestLoop() {
     renderQuestLoop(loadQuestLoopState());
+    const probeSelect = _el('s-probe-rounds');
+    if (probeSelect) {
+      const normalized = normalizeProbeRounds(prefs.probeRounds || DEFAULT_PREFS.probeRounds);
+      probeSelect.value = normalized;
+      if (prefs.probeRounds !== normalized) setPref('probeRounds', normalized);
+    }
+    renderRosterControls();
+    renderPlaylistControls();
     renderSessionSummary();
+    renderProbePanel();
+    renderMiniLessonPanel();
+    refreshStandaloneMissionLabHub();
   }
 
-  function awardQuestProgress(result) {
+  function awardQuestProgress(result, roundMetrics = {}) {
     const state = loadQuestLoopState();
     const beforeTier = resolveQuestTier(state.xp);
     const maxGuesses = Math.max(1, Number(WQGame.getState()?.maxGuesses || parseInt(DEFAULT_PREFS.guesses, 10) || 6));
@@ -3929,31 +8250,27 @@
     state.xp += xpEarned;
     state.rounds += 1;
     if (result?.won) state.wins += 1;
-    recordSessionRound(result);
+    recordSessionRound(result, roundMetrics);
+    recordProbeRound(result, roundMetrics);
 
     const afterTier = resolveQuestTier(state.xp);
     const tierUp = afterTier.id !== beforeTier.id;
 
     saveQuestLoopState(state);
     renderQuestLoop(state);
-
-    if (tierUp) {
-      WQUI.showToast(`Tier up: ${afterTier.label}! ${afterTier.reward}.`, 3200);
-    } else if (result?.won && streakIncreased && state.dailyStreak > 1) {
-      WQUI.showToast(`+${xpEarned} XP · ${state.dailyStreak}-day win streak.`, 2400);
-    } else if (result?.won) {
-      WQUI.showToast(`+${xpEarned} XP`, 1800);
-    } else {
-      WQUI.showToast(`+${xpEarned} XP for effort`, 1800);
-    }
   }
 
   function newGame() {
     hideInformantHintCard();
+    closeRevealChallengeModal({ silent: true });
     clearClassroomTurnTimer();
-    if (firstRunSetupPending) {
-      openFirstRunSetupModal();
-      WQUI.showToast('Choose a startup preset first.');
+    resetRoundTracking();
+    if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) {
+      WQUI.showToast('Pick a setup style or skip for now.');
+      return;
+    }
+    if (isMissionLabStandaloneMode()) {
+      startStandaloneMissionLab();
       return;
     }
     if (
@@ -3979,8 +8296,9 @@
 
     const s = WQUI.getSettings();
     const focus = _el('setting-focus')?.value || prefs.focus || 'all';
-    const scope = `${s.gradeBand || 'all'}:${s.length || 'any'}:${focus || 'all'}`;
-    const playableSet = buildPlayableWordSet(s.gradeBand, s.length, focus);
+    const effectiveGradeBand = getEffectiveGameplayGradeBand(s.gradeBand || 'all', focus);
+    const scope = `${effectiveGradeBand}:${s.length || 'any'}:${focus || 'all'}`;
+    const playableSet = buildPlayableWordSet(effectiveGradeBand, s.length, focus);
     const reviewItem = peekDueReviewItemForPool(playableSet);
     if (reviewItem) {
       primeShuffleBagWithWord(scope, reviewItem.word);
@@ -3988,6 +8306,7 @@
 
     const result = WQGame.startGame({
       ...s,
+      gradeBand: effectiveGradeBand,
       focus,
       phonics: focus
     });
@@ -4010,6 +8329,7 @@
       syncAssessmentLockRuntime();
       return;
     }
+    resetRoundTracking(result);
     const startedWord = normalizeReviewWord(result.word);
     const servedReview = Boolean(reviewItem && startedWord && startedWord === reviewItem.word);
     if (servedReview) consumeReviewItem(reviewItem);
@@ -4028,6 +8348,7 @@
       reviewWord: servedReview ? startedWord : '',
       dueCount: countDueReviewWords(playableSet)
     });
+    scheduleStarterCoachHint();
     syncAssessmentLockRuntime();
   }
 
@@ -4040,6 +8361,7 @@
   window.addEventListener('beforeunload', () => {
     stopVoiceCaptureNow();
     clearClassroomTurnTimer();
+    finishWeeklyProbe({ silent: true });
   });
 
   // ─── 8. Input handling ──────────────────────────────
@@ -4078,10 +8400,11 @@
   }
 
   function handleKey(key) {
+    clearStarterCoachTimer();
     if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
       hideInformantHintCard();
     }
-    if (firstRunSetupPending) return;
+    if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) return;
     const s = WQGame.getState();
     if (s.gameOver) return;
 
@@ -4092,6 +8415,7 @@
       if (result.error === 'too_short') {
         WQUI.showToast('Fill in all the letters first');
         WQUI.shakeRow(s.guesses, s.wordLength);
+        updateNextActionLine();
         return;
       }
 
@@ -4112,15 +8436,21 @@
           showMidgameBoost();
         }
         if (result.won || result.lost) {
+          const roundMetrics = buildRoundMetrics(result, s.maxGuesses);
           clearClassroomTurnTimer();
           updateClassroomTurnLine();
-          awardQuestProgress(result);
-          trackRoundForReview(result, s.maxGuesses);
+          awardQuestProgress(result, roundMetrics);
+          trackRoundForReview(result, s.maxGuesses, roundMetrics);
+          resetRoundTracking();
           hideMidgameBoost();
           syncAssessmentLockRuntime();
           const focusNow = _el('setting-focus')?.value || prefs.focus || 'all';
-          const dueCountNow = countDueReviewWords(buildPlayableWordSet(
+          const activeGradeBand = getEffectiveGameplayGradeBand(
             _el('s-grade')?.value || 'all',
+            focusNow
+          );
+          const dueCountNow = countDueReviewWords(buildPlayableWordSet(
+            activeGradeBand,
             _el('s-length')?.value || 'any',
             focusNow
           ));
@@ -4135,7 +8465,9 @@
             }
           }, 520);
         } else {
+          maybeShowErrorCoach(result);
           advanceTeamTurn();
+          updateNextActionLine();
         }
       });
 
@@ -4143,11 +8475,13 @@
       WQGame.deleteLetter();
       const s2 = WQGame.getState();
       WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
+      updateNextActionLine();
 
     } else if (/^[a-zA-Z]$/.test(key)) {
       WQGame.addLetter(key);
       const s2 = WQGame.getState();
       WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
+      updateNextActionLine();
     }
   }
 
@@ -4160,10 +8494,17 @@
 
   // Physical keyboard
   document.addEventListener('keydown', e => {
+    if (e.defaultPrevented) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const challengeOpen = !(_el('challenge-modal')?.classList.contains('hidden'));
+    if (challengeOpen) {
+      if (e.key === 'Escape') closeRevealChallengeModal();
+      return;
+    }
+    if (isMissionLabStandaloneMode()) return;
     const activeEl = document.activeElement;
     const shouldReleaseThemeNavFocus =
-      activeEl?.id === 'wq-theme-select' &&
+      activeEl?.closest?.('#wq-theme-nav') &&
       (e.key === 'Enter' || e.key === 'Backspace' || /^[a-zA-Z]$/.test(e.key));
     if (shouldReleaseThemeNavFocus) {
       activeEl.blur();
@@ -4193,6 +8534,18 @@
   // Buttons
   _el('new-game-btn')?.addEventListener('click',  newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
+  _el('mission-lab-start-btn')?.addEventListener('click', () => {
+    startStandaloneMissionLab();
+  });
+  _el('mission-lab-word-select')?.addEventListener('change', () => {
+    refreshStandaloneMissionLabHub();
+  });
+  _el('mission-lab-level-select')?.addEventListener('change', () => {
+    const note = _el('mission-lab-hub-note');
+    const level = normalizeThinkingLevel(_el('mission-lab-level-select')?.value || '');
+    if (!note || !level) return;
+    note.textContent = `Selected Bloom target: ${getChallengeLevelDisplay(level)}. Start Mission Lab when ready.`;
+  });
   _el('modal-auto-next-cancel')?.addEventListener('click', () => {
     clearRevealAutoAdvanceTimer();
     WQUI.showToast('Auto next canceled for this reveal.');
@@ -4200,6 +8553,57 @@
   _el('modal-overlay')?.addEventListener('pointerdown', (event) => {
     if (event.target?.id !== 'modal-overlay') return;
     newGame();
+  });
+  _el('modal-open-challenge')?.addEventListener('click', () => {
+    openRevealChallengeModal();
+  });
+  _el('challenge-modal-close')?.addEventListener('click', () => closeRevealChallengeModal());
+  _el('challenge-modal')?.addEventListener('pointerdown', (event) => {
+    if (event.target?.id !== 'challenge-modal') return;
+    closeRevealChallengeModal();
+  });
+  _el('challenge-hear-word')?.addEventListener('click', () => {
+    cancelRevealNarration();
+    const current = revealChallengeState?.result?.entry || entry();
+    if (current) void WQAudio.playWord(current);
+    setChallengeTaskComplete('listen', true);
+  });
+  _el('challenge-hear-sentence')?.addEventListener('click', () => {
+    cancelRevealNarration();
+    const current = revealChallengeState?.result?.entry || entry();
+    if (current) void WQAudio.playSentence(current);
+    setChallengeTaskComplete('listen', true);
+  });
+  _el('challenge-open-practice')?.addEventListener('click', () => {
+    closeRevealChallengeModal({ silent: true });
+    openVoicePracticeAndRecord({ autoStart: true });
+    setChallengeTaskComplete('listen', true);
+  });
+  _el('challenge-analyze-input')?.addEventListener('input', (event) => {
+    if (!revealChallengeState) return;
+    revealChallengeState.responses.analyze = String(event.target?.value || '');
+    const met = countWords(revealChallengeState.responses.analyze) >= CHALLENGE_MIN_TEXT_WORDS;
+    setChallengeTaskComplete('analyze', met);
+    updateChallengeWordCountUI();
+  });
+  _el('challenge-create-input')?.addEventListener('input', (event) => {
+    if (!revealChallengeState) return;
+    revealChallengeState.responses.create = String(event.target?.value || '');
+    const met = countWords(revealChallengeState.responses.create) >= CHALLENGE_MIN_TEXT_WORDS;
+    setChallengeTaskComplete('create', met);
+    updateChallengeWordCountUI();
+  });
+  _el('challenge-analyze-starter')?.addEventListener('click', () => {
+    applyChallengeStarter('analyze');
+  });
+  _el('challenge-create-starter')?.addEventListener('click', () => {
+    applyChallengeStarter('create');
+  });
+  _el('challenge-save-reflection')?.addEventListener('click', () => {
+    saveRevealChallengeResponses();
+  });
+  _el('challenge-finish-btn')?.addEventListener('click', () => {
+    finishRevealChallenge();
   });
 
   // ─── 9. Gameplay audio buttons ──────────────────────
@@ -4270,6 +8674,49 @@
       teacher: 'Teacher lens: Bloom Create · expressive language + transfer.'
     })
   });
+  const CHALLENGE_REFLECTION_KEY = 'wq_v2_levelup_reflections_v1';
+  const CHALLENGE_PROGRESS_KEY = 'wq_v2_mission_lab_progress_v1';
+  const CHALLENGE_DRAFT_KEY = 'wq_v2_mission_lab_draft_v1';
+  const CHALLENGE_SPRINT_SECONDS = 90;
+  const CHALLENGE_MIN_TEXT_WORDS = 5;
+  const CHALLENGE_STRONG_SCORE_MIN = 75;
+  const CHALLENGE_COMPLETE_LINES = Object.freeze([
+    'Mission complete. Detective brain unlocked.',
+    'Mission lab complete. You cracked the bonus sprint.',
+    'Quest complete. Your clue power just went up.'
+  ]);
+  const CHALLENGE_TASK_LABELS = Object.freeze({
+    listen: 'Sound Sleuth',
+    analyze: 'Clue Compare',
+    create: 'Create A Clue'
+  });
+  const CHALLENGE_TEXT_STARTERS = Object.freeze({
+    analyze: Object.freeze([
+      'I noticed this word pattern because ',
+      'A helpful strategy was ',
+      'This word is different from _____ because '
+    ]),
+    create: Object.freeze([
+      'I am thinking of a word that ',
+      'My clue is: this word means ',
+      'Riddle: what word can '
+    ])
+  });
+  const CHALLENGE_RANKS = Object.freeze([
+    Object.freeze({ minPoints: 0, label: 'Scout' }),
+    Object.freeze({ minPoints: 40, label: 'Navigator' }),
+    Object.freeze({ minPoints: 90, label: 'Analyst' }),
+    Object.freeze({ minPoints: 160, label: 'Strategist' }),
+    Object.freeze({ minPoints: 260, label: 'Master Sleuth' })
+  ]);
+  const CHALLENGE_LEVELS = Object.freeze([
+    'remember',
+    'understand',
+    'apply',
+    'analyze',
+    'evaluate',
+    'create'
+  ]);
   const REVEAL_PACING_PRESETS = Object.freeze({
     guided: Object.freeze({ introDelay: 260, betweenDelay: 140, postMeaningDelay: 200 }),
     quick: Object.freeze({ introDelay: 140, betweenDelay: 70, postMeaningDelay: 120 }),
@@ -4278,11 +8725,462 @@
   let revealAutoAdvanceTimer = 0;
   let revealAutoCountdownTimer = 0;
   let revealAutoAdvanceEndsAt = 0;
+  let revealChallengeState = null;
+  let challengeSprintTimer = 0;
 
   function pickRandom(items) {
     if (!Array.isArray(items) || !items.length) return '';
     const index = Math.floor(Math.random() * items.length);
     return items[index];
+  }
+
+  function clearChallengeSprintTimer() {
+    if (!challengeSprintTimer) return;
+    clearInterval(challengeSprintTimer);
+    challengeSprintTimer = 0;
+  }
+
+  function loadChallengeProgress() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CHALLENGE_PROGRESS_KEY) || '{}');
+      return {
+        points: Math.max(0, Number(raw?.points) || 0),
+        streak: Math.max(0, Number(raw?.streak) || 0),
+        lastWinDay: String(raw?.lastWinDay || '').trim()
+      };
+    } catch {
+      return { points: 0, streak: 0, lastWinDay: '' };
+    }
+  }
+
+  function saveChallengeProgress(progress) {
+    try {
+      localStorage.setItem(CHALLENGE_PROGRESS_KEY, JSON.stringify({
+        points: Math.max(0, Number(progress?.points) || 0),
+        streak: Math.max(0, Number(progress?.streak) || 0),
+        lastWinDay: String(progress?.lastWinDay || '').trim()
+      }));
+    } catch {}
+  }
+
+  function resolveChallengeRank(points) {
+    const total = Math.max(0, Number(points) || 0);
+    let active = CHALLENGE_RANKS[0];
+    CHALLENGE_RANKS.forEach((rank) => {
+      if (total >= rank.minPoints) active = rank;
+    });
+    return active || CHALLENGE_RANKS[0];
+  }
+
+  function formatChallengeTimer(seconds) {
+    const safe = Math.max(0, Number(seconds) || 0);
+    return `${safe}s left`;
+  }
+
+  function createMissionAttemptId() {
+    const stamp = Date.now().toString(36);
+    const token = Math.random().toString(36).slice(2, 8);
+    return `mission-${stamp}-${token}`;
+  }
+
+  function resolveMissionScoreBand(scoreTotal) {
+    const score = Math.max(0, Number(scoreTotal) || 0);
+    if (score >= 90) return 'Spotlight';
+    if (score >= CHALLENGE_STRONG_SCORE_MIN) return 'Strong';
+    if (score >= 55) return 'Growing';
+    return 'Launch';
+  }
+
+  function countWords(text) {
+    return String(text || '')
+      .trim()
+      .split(/\s+/g)
+      .filter(Boolean)
+      .length;
+  }
+
+  function normalizeThinkingLevel(level, fallback = '') {
+    const normalized = String(level || '').trim().toLowerCase();
+    if (CHALLENGE_LEVELS.includes(normalized)) return normalized;
+    return fallback;
+  }
+
+  function getChallengeLevelDisplay(level) {
+    const normalized = normalizeThinkingLevel(level, 'apply');
+    const meta = THINKING_LEVEL_META[normalized] || THINKING_LEVEL_META.apply;
+    return String(meta?.chip || normalized).replace(/\s*\(.+\)\s*$/, '').trim();
+  }
+
+  function resolveStandaloneAutoChallengeLevel(entry) {
+    const band = String(entry?.grade_band || '').trim().toUpperCase();
+    if (band === 'K-2') {
+      return pickRandom(['remember', 'understand', 'apply']) || 'apply';
+    }
+    if (band === 'G3-5') {
+      return pickRandom(['understand', 'apply', 'analyze']) || 'apply';
+    }
+    if (band === 'G6-8') {
+      return pickRandom(['apply', 'analyze', 'evaluate']) || 'analyze';
+    }
+    return pickRandom(['analyze', 'evaluate', 'create']) || 'evaluate';
+  }
+
+  function getStandaloneMissionWordPool() {
+    const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    const selectedGrade = _el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade;
+    const gradeBand = getEffectiveGameplayGradeBand(selectedGrade, focus);
+    const length = String(_el('s-length')?.value || prefs.length || DEFAULT_PREFS.length).trim() || DEFAULT_PREFS.length;
+    let pool = WQData.getPlayableWords({
+      gradeBand,
+      length,
+      phonics: focus
+    });
+    if (!pool.length && length !== 'any') {
+      pool = WQData.getPlayableWords({
+        gradeBand,
+        length: 'any',
+        phonics: focus
+      });
+    }
+    if (!pool.length) {
+      pool = WQData.getPlayableWords({
+        gradeBand,
+        length: 'any',
+        phonics: 'all'
+      });
+    }
+    return {
+      pool: Array.isArray(pool) ? pool : [],
+      focus,
+      gradeBand,
+      length
+    };
+  }
+
+  function refreshStandaloneMissionLabHub() {
+    const select = _el('mission-lab-word-select');
+    const note = _el('mission-lab-hub-note');
+    const meta = _el('mission-lab-hub-meta');
+    if (!select && !note && !meta) return;
+
+    const { pool, focus, gradeBand, length } = getStandaloneMissionWordPool();
+    const focusLabel = getFocusLabel(focus).replace(/[—]/g, '').replace(/\s+/g, ' ').trim() || 'Classic';
+    const gradeLabel = formatGradeBandLabel(gradeBand);
+    const lengthLabel = String(length || '').toLowerCase() === 'any'
+      ? 'Any word length'
+      : `${String(length)}-letter words`;
+
+    if (select) {
+      const previous = normalizeReviewWord(select.value);
+      select.innerHTML = '';
+      const autoOption = document.createElement('option');
+      autoOption.value = '';
+      autoOption.textContent = 'Auto-pick from current filters';
+      select.appendChild(autoOption);
+      pool
+        .slice()
+        .sort((a, b) => String(a).localeCompare(String(b)))
+        .slice(0, 200)
+        .forEach((word) => {
+          const option = document.createElement('option');
+          const normalizedWord = normalizeReviewWord(word);
+          option.value = normalizedWord;
+          option.textContent = normalizedWord.toUpperCase();
+          select.appendChild(option);
+        });
+      if (previous && pool.includes(previous)) {
+        select.value = previous;
+      } else {
+        select.value = '';
+      }
+    }
+
+    if (meta) {
+      meta.textContent = `${focusLabel} · Grade ${gradeLabel} · ${lengthLabel}`;
+    }
+    if (note) {
+      note.textContent = pool.length
+        ? `${pool.length} mission-ready words in this filter. Launch now or pick a word and Bloom level.`
+        : 'No mission-ready words in this filter. Switch quest or grade, then try again.';
+    }
+  }
+
+  function startStandaloneMissionLab(options = {}) {
+    const { pool } = getStandaloneMissionWordPool();
+    if (!pool.length) {
+      WQUI.showToast('No words match this Mission Lab filter. Adjust grade, quest, or word length.');
+      refreshStandaloneMissionLabHub();
+      return false;
+    }
+
+    const selectedWord = normalizeReviewWord(
+      options.word ||
+      _el('mission-lab-word-select')?.value ||
+      ''
+    );
+    const fallbackWord = normalizeReviewWord(pickRandom(pool) || pool[0] || '');
+    const word = (selectedWord && pool.includes(selectedWord)) ? selectedWord : fallbackWord;
+    if (!word) {
+      WQUI.showToast('Could not pick a mission word. Try again.');
+      return false;
+    }
+
+    const entryData = WQData.getEntry(word);
+    if (!entryData) {
+      WQUI.showToast('Mission word data is missing. Pick another word.');
+      return false;
+    }
+
+    const requestedLevel = normalizeThinkingLevel(
+      options.level ||
+      _el('mission-lab-level-select')?.value ||
+      ''
+    );
+    const level = requestedLevel || resolveStandaloneAutoChallengeLevel(entryData);
+    const result = {
+      word: word.toUpperCase(),
+      entry: entryData,
+      guesses: [word],
+      won: true
+    };
+    const nextState = buildRevealChallengeState(result, {
+      source: 'standalone',
+      level
+    });
+    if (!nextState) {
+      WQUI.showToast('Mission Lab could not start for this word.');
+      return false;
+    }
+
+    revealChallengeState = nextState;
+    revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
+    renderRevealChallengeModal();
+    _el('challenge-modal')?.classList.remove('hidden');
+    startChallengeSprint();
+    return true;
+  }
+
+  function setChallengeFeedback(message, tone = 'default') {
+    const el = _el('challenge-live-feedback');
+    if (!el) return;
+    const text = String(message || '').trim();
+    el.textContent = text;
+    el.classList.toggle('hidden', !text);
+    el.classList.toggle('is-good', tone === 'good');
+    el.classList.toggle('is-warn', tone === 'warn');
+  }
+
+  function getChallengeDraftStorage() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CHALLENGE_DRAFT_KEY) || '{}');
+      return raw && typeof raw === 'object' ? raw : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function setChallengeDraftStorage(storage) {
+    const next = storage && typeof storage === 'object' ? storage : {};
+    const entries = Object.entries(next)
+      .filter(([, value]) => value && typeof value === 'object')
+      .sort((a, b) => (Number(b[1]?.updatedAt) || 0) - (Number(a[1]?.updatedAt) || 0))
+      .slice(0, 48);
+    const trimmed = Object.create(null);
+    entries.forEach(([key, value]) => { trimmed[key] = value; });
+    try { localStorage.setItem(CHALLENGE_DRAFT_KEY, JSON.stringify(trimmed)); } catch {}
+  }
+
+  function getChallengeDraftKey(state) {
+    if (!state) return '';
+    const word = String(state.word || '').trim().toLowerCase();
+    const topic = String(state.topic || '').trim().toLowerCase();
+    if (!word) return '';
+    return `${word}::${topic}`;
+  }
+
+  function loadChallengeDraft(state) {
+    const key = getChallengeDraftKey(state);
+    if (!key) return null;
+    const storage = getChallengeDraftStorage();
+    const draft = storage[key];
+    if (!draft || typeof draft !== 'object') return null;
+    const updatedAt = Math.max(0, Number(draft.updatedAt) || 0);
+    const maxAgeMs = 1000 * 60 * 60 * 24 * 21;
+    if (!updatedAt || Date.now() - updatedAt > maxAgeMs) return null;
+    return {
+      responses: {
+        analyze: String(draft.responses?.analyze || ''),
+        create: String(draft.responses?.create || '')
+      },
+      tasks: {
+        listen: !!draft.tasks?.listen,
+        analyze: !!draft.tasks?.analyze,
+        create: !!draft.tasks?.create
+      }
+    };
+  }
+
+  function saveChallengeDraft(state) {
+    const key = getChallengeDraftKey(state);
+    if (!key) return;
+    const storage = getChallengeDraftStorage();
+    storage[key] = {
+      updatedAt: Date.now(),
+      responses: {
+        analyze: String(state?.responses?.analyze || ''),
+        create: String(state?.responses?.create || '')
+      },
+      tasks: {
+        listen: !!state?.tasks?.listen,
+        analyze: !!state?.tasks?.analyze,
+        create: !!state?.tasks?.create
+      }
+    };
+    setChallengeDraftStorage(storage);
+  }
+
+  function clearChallengeDraft(state) {
+    const key = getChallengeDraftKey(state);
+    if (!key) return;
+    const storage = getChallengeDraftStorage();
+    if (!Object.prototype.hasOwnProperty.call(storage, key)) return;
+    delete storage[key];
+    setChallengeDraftStorage(storage);
+  }
+
+  function updateChallengeWordCountUI() {
+    const analyzeEl = _el('challenge-analyze-count');
+    const createEl = _el('challenge-create-count');
+    if (!revealChallengeState) {
+      if (analyzeEl) analyzeEl.textContent = `0 / ${CHALLENGE_MIN_TEXT_WORDS} words`;
+      if (createEl) createEl.textContent = `0 / ${CHALLENGE_MIN_TEXT_WORDS} words`;
+      return;
+    }
+    const analyzeWords = countWords(revealChallengeState.responses.analyze);
+    const createWords = countWords(revealChallengeState.responses.create);
+    if (analyzeEl) {
+      analyzeEl.textContent = `${analyzeWords} / ${CHALLENGE_MIN_TEXT_WORDS} words`;
+      analyzeEl.classList.toggle('is-complete', analyzeWords >= CHALLENGE_MIN_TEXT_WORDS);
+    }
+    if (createEl) {
+      createEl.textContent = `${createWords} / ${CHALLENGE_MIN_TEXT_WORDS} words`;
+      createEl.classList.toggle('is-complete', createWords >= CHALLENGE_MIN_TEXT_WORDS);
+    }
+  }
+
+  function applyChallengeStarter(task) {
+    if (!revealChallengeState) return;
+    const key = task === 'create' ? 'create' : 'analyze';
+    const starters = CHALLENGE_TEXT_STARTERS[key] || [];
+    if (!starters.length) return;
+    const input = _el(key === 'create' ? 'challenge-create-input' : 'challenge-analyze-input');
+    if (!(input instanceof HTMLTextAreaElement)) return;
+
+    const existing = String(input.value || '').trim();
+    let starter = pickRandom(starters) || starters[0] || '';
+    if (!starter) return;
+    if (existing) {
+      const alreadyHasStarter = starters.some((item) => existing.toLowerCase().startsWith(String(item).toLowerCase()));
+      if (alreadyHasStarter) {
+        starter = starters.find((item) => !existing.toLowerCase().startsWith(String(item).toLowerCase())) || starter;
+      }
+    }
+
+    input.value = existing
+      ? `${existing} ${starter}`.replace(/\s+/g, ' ').trim()
+      : starter;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+    setChallengeFeedback(`${CHALLENGE_TASK_LABELS[key]} starter added. Keep going.`, 'good');
+  }
+
+  function computeChallengeScore(state) {
+    if (!state) return { clarity: 0, evidence: 0, vocabulary: 0, total: 0 };
+    const analyzeText = String(state.responses?.analyze || '').trim();
+    const createText = String(state.responses?.create || '').trim();
+    const analyzeWords = countWords(analyzeText);
+    const createWords = countWords(createText);
+    const mergedText = `${analyzeText} ${createText}`.toLowerCase();
+    const uniqueWords = new Set(mergedText.split(/[^a-z]+/g).filter((token) => token.length >= 3));
+    const evidenceSignals = ['because', 'since', 'so', 'therefore', 'difference', 'pattern', 'strategy']
+      .reduce((count, token) => count + (mergedText.includes(token) ? 1 : 0), 0);
+
+    const clarity = Math.min(
+      100,
+      40 +
+      (state.tasks.listen ? 22 : 0) +
+      Math.min(18, analyzeWords * 2) +
+      Math.min(14, createWords * 2)
+    );
+    const evidence = Math.min(
+      100,
+      30 +
+      Math.min(34, analyzeWords * 4) +
+      (state.tasks.analyze ? 16 : 0) +
+      Math.min(20, evidenceSignals * 5)
+    );
+    const vocabulary = Math.min(
+      100,
+      34 +
+      Math.min(38, uniqueWords.size * 2) +
+      (state.tasks.create ? 18 : 0)
+    );
+    const total = Math.round((clarity + evidence + vocabulary) / 3);
+    return { clarity, evidence, vocabulary, total };
+  }
+
+  function updateChallengeScoreUI() {
+    const scoreLabel = _el('challenge-score-label');
+    const scoreDetail = _el('challenge-score-detail');
+    if (!scoreLabel || !scoreDetail) return;
+    if (!revealChallengeState) {
+      scoreLabel.textContent = 'Mission score: --';
+      scoreDetail.textContent = 'Band -- · Clarity -- · Evidence -- · Vocabulary --';
+      return;
+    }
+    const score = computeChallengeScore(revealChallengeState);
+    const band = resolveMissionScoreBand(score.total);
+    revealChallengeState.score = score;
+    scoreLabel.textContent = `Mission score: ${score.total}/100`;
+    scoreDetail.textContent = `${band} band · Clarity ${score.clarity} · Evidence ${score.evidence} · Vocabulary ${score.vocabulary}`;
+  }
+
+  function updateChallengeSprintUI() {
+    const timerEl = _el('challenge-sprint-timer');
+    const rankEl = _el('challenge-sprint-rank');
+    const streakEl = _el('challenge-sprint-streak');
+    if (!timerEl || !rankEl || !streakEl) return;
+    if (!revealChallengeState) {
+      timerEl.textContent = `${CHALLENGE_SPRINT_SECONDS}s left`;
+      timerEl.classList.remove('is-warning', 'is-expired');
+      const progress = loadChallengeProgress();
+      const rank = resolveChallengeRank(progress.points);
+      rankEl.textContent = `Rank: ${rank.label}`;
+      streakEl.textContent = `Streak: ${progress.streak}`;
+      return;
+    }
+    const progress = loadChallengeProgress();
+    const rank = resolveChallengeRank(progress.points);
+    rankEl.textContent = `Rank: ${rank.label}`;
+    streakEl.textContent = `Streak: ${progress.streak}`;
+
+    const endsAt = Number(revealChallengeState.sprintEndsAt || 0);
+    const remaining = Math.max(0, Math.ceil((endsAt - Date.now()) / 1000));
+    timerEl.textContent = remaining > 0 ? formatChallengeTimer(remaining) : 'Time up';
+    timerEl.classList.toggle('is-warning', remaining > 0 && remaining <= 20);
+    timerEl.classList.toggle('is-expired', remaining <= 0);
+  }
+
+  function startChallengeSprint() {
+    if (!revealChallengeState) return;
+    if (!Number.isFinite(revealChallengeState.sprintEndsAt) || revealChallengeState.sprintEndsAt <= 0) {
+      revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
+    }
+    clearChallengeSprintTimer();
+    updateChallengeSprintUI();
+    challengeSprintTimer = setInterval(() => {
+      updateChallengeSprintUI();
+    }, 300);
   }
 
   function clearRevealAutoAdvanceTimer() {
@@ -4323,7 +9221,6 @@
     if (getVoicePracticeMode() === 'required') return;
     if (_el('modal-overlay')?.classList.contains('hidden')) return;
     revealAutoAdvanceEndsAt = Date.now() + (seconds * 1000);
-    WQUI.showToast(`Auto next word in ${seconds} seconds.`, Math.max(1400, seconds * 1000));
 
     const tickCountdown = () => {
       if (_el('modal-overlay')?.classList.contains('hidden')) {
@@ -4373,20 +9270,54 @@
     return `${text.slice(0, 69).trim()}...`;
   }
 
+  function ensureTerminalPunctuation(text) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return '';
+    return /[.!?]$/.test(clean) ? clean : `${clean}.`;
+  }
+
+  function buildCombinedMeaningLine(definition, funAddOn) {
+    const def = String(definition || '').replace(/\s+/g, ' ').trim();
+    const fun = String(funAddOn || '').replace(/\s+/g, ' ').trim();
+    if (!def && !fun) return '';
+    if (!def) return ensureTerminalPunctuation(fun);
+    if (!fun) return ensureTerminalPunctuation(def);
+    const defBase = def.replace(/[.!?]+$/, '').trim();
+    if (/^[,.;:!?]/.test(fun)) {
+      return ensureTerminalPunctuation(`${defBase}${fun}`);
+    }
+    const funNoLeadPunc = fun.replace(/^[,.;:!?]\s*/, '').trim();
+    return ensureTerminalPunctuation(`${defBase}, ${funNoLeadPunc}`);
+  }
+
+  function getRevealMeaningPayload(nextEntry) {
+    const definition = String(nextEntry?.definition || '').replace(/\s+/g, ' ').trim();
+    const includeFun = shouldIncludeFunInMeaning();
+    const funAddOn = includeFun
+      ? String(nextEntry?.fun_add_on || '').replace(/\s+/g, ' ').trim()
+      : '';
+    const line = buildCombinedMeaningLine(definition, funAddOn);
+    const readDef = String(nextEntry?.text_to_read_definition || '').replace(/\s+/g, ' ').trim()
+      || ensureTerminalPunctuation(
+        nextEntry?.word && definition
+          ? `${nextEntry.word} means ${definition}`
+          : definition
+      );
+    const readFun = includeFun
+      ? String(nextEntry?.text_to_read_fun || '').replace(/\s+/g, ' ').trim() || funAddOn
+      : '';
+    const readAll = [readDef, readFun].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+    return { definition, funAddOn, line, readAll };
+  }
+
   function syncRevealMeaningHighlight(nextEntry) {
     const wrap = _el('modal-meaning-highlight');
-    const defEl = _el('modal-def-highlight');
-    const funEl = _el('modal-fun-highlight');
-    if (!wrap || !defEl || !funEl) return;
+    const lineEl = _el('modal-meaning-highlight-line');
+    if (!wrap || !lineEl) return;
 
-    const definition = String(nextEntry?.definition || '').trim();
-    const funAddOn = shouldIncludeFunInMeaning()
-      ? String(nextEntry?.fun_add_on || '').trim()
-      : '';
-    defEl.textContent = definition;
-    funEl.textContent = funAddOn;
-    funEl.classList.toggle('hidden', !funAddOn);
-    wrap.classList.toggle('hidden', !(definition || funAddOn));
+    const meaning = getRevealMeaningPayload(nextEntry);
+    lineEl.textContent = meaning.line;
+    wrap.classList.toggle('hidden', !meaning.line);
   }
 
   function getRevealFeedbackCopy(result) {
@@ -4442,9 +9373,38 @@
     return 'apply';
   }
 
+  function getChallengeFocusLabel(value) {
+    return getFocusLabel(value)
+      .replace(/[—]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim() || 'Classic (Wordle 5x6)';
+  }
+
+  function getChallengeTopicLabel(result) {
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    const phonics = String(result?.entry?.phonics || '').trim();
+    if (phonics && phonics.toLowerCase() !== 'all') return phonics;
+    if (preset.kind === 'subject') return `${preset.subject.toUpperCase()} vocabulary`;
+    if (preset.kind === 'phonics') return getChallengeFocusLabel(focusValue);
+    return 'Word meaning + sentence clues';
+  }
+
+  function getChallengeGradeLabel(result) {
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const preset = parseFocusPreset(focusValue);
+    if (preset.kind === 'subject' && preset.gradeBand) {
+      return formatGradeBandLabel(preset.gradeBand);
+    }
+    const entryBand = String(result?.entry?.grade_band || '').trim();
+    if (entryBand) return formatGradeBandLabel(entryBand);
+    return formatGradeBandLabel(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade);
+  }
+
   function buildThinkingPrompt(level, result) {
     const word = String(result?.word || '').trim().toUpperCase();
     const sentence = trimPromptText(result?.entry?.sentence, 76);
+    const topic = trimPromptText(getChallengeTopicLabel(result), 44);
     const promptsByLevel = {
       remember: [
         `Say "${word}" and spell it out loud.`,
@@ -4461,8 +9421,8 @@
         `Say a sentence with "${word}" that could happen at school or home.`
       ],
       analyze: [
-        `Compare "${word}" with another word from this topic. What is one key difference?`,
-        `Which clue narrowed "${word}" fastest: beginning, ending, or sentence context?`
+        `Compare "${word}" with another word from this quest focus (${topic}). What is one key difference?`,
+        `In this ${topic} quest, which clue helped most: start, ending, or sentence context? Why?`
       ],
       evaluate: [
         `Which strategy helped most this round and why?`,
@@ -4476,37 +9436,307 @@
     return pickRandom(promptsByLevel[level] || promptsByLevel.apply) || '';
   }
 
-  function buildThinkingChallenge(result) {
+  function buildThinkingChallenge(result, options = {}) {
     if (!result?.word) return null;
-    const level = pickThinkingLevel(result);
+    const forcedLevel = normalizeThinkingLevel(options.level || '');
+    const level = forcedLevel || pickThinkingLevel(result);
     const meta = THINKING_LEVEL_META[level] || THINKING_LEVEL_META.apply;
     const prompt = buildThinkingPrompt(level, result);
     if (!prompt) return null;
     return {
+      level,
       chip: meta.chip,
       prompt,
       teacher: meta.teacher
     };
   }
 
-  function syncRevealThinkingChallenge(result) {
-    const wrap = _el('modal-thinking-challenge');
-    const levelEl = _el('modal-thinking-level');
-    const promptEl = _el('modal-thinking-prompt');
-    const teacherEl = _el('modal-thinking-teacher');
-    if (!wrap || !levelEl || !promptEl || !teacherEl) return;
-    const challenge = buildThinkingChallenge(result);
-    if (!challenge) {
-      levelEl.textContent = '';
-      promptEl.textContent = '';
-      teacherEl.textContent = '';
-      wrap.classList.add('hidden');
+  function updateChallengeProgressUI() {
+    const label = _el('challenge-progress-label');
+    const fill = _el('challenge-progress-fill');
+    const finishBtn = _el('challenge-finish-btn');
+    if (!revealChallengeState) {
+      if (label) label.textContent = '0 / 3 missions complete';
+      if (fill) fill.style.width = '0%';
+      if (finishBtn) finishBtn.disabled = true;
+      if (finishBtn) finishBtn.textContent = 'Finish Mission Lab';
+      setChallengeFeedback('');
+      updateChallengeWordCountUI();
+      updateChallengeScoreUI();
+      updateChallengeSprintUI();
       return;
     }
-    levelEl.textContent = challenge.chip;
-    promptEl.textContent = challenge.prompt;
-    teacherEl.textContent = challenge.teacher;
+    const doneCount = ['listen', 'analyze', 'create']
+      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
+    if (label) label.textContent = `${doneCount} / 3 missions complete`;
+    if (fill) fill.style.width = `${Math.round((doneCount / 3) * 100)}%`;
+    if (finishBtn) {
+      finishBtn.disabled = doneCount < 2;
+      finishBtn.textContent = doneCount >= 2 ? `Finish Mission Lab (${doneCount}/3)` : 'Finish Mission Lab';
+    }
+    updateChallengeWordCountUI();
+    updateChallengeScoreUI();
+    updateChallengeSprintUI();
+  }
+
+  function setChallengeTaskComplete(task, complete) {
+    if (!revealChallengeState || !Object.prototype.hasOwnProperty.call(revealChallengeState.tasks, task)) return;
+    const normalized = !!complete;
+    const wasComplete = !!revealChallengeState.tasks[task];
+    revealChallengeState.tasks[task] = normalized;
+    const card = document.querySelector(`[data-challenge-task="${task}"]`);
+    const statusChip = _el(`challenge-status-${task}`);
+    if (card) card.classList.toggle('is-complete', normalized);
+    if (statusChip) {
+      statusChip.textContent = normalized ? 'Completed' : 'Pending';
+      statusChip.classList.toggle('is-complete', normalized);
+    }
+    if (normalized !== wasComplete) {
+      if (normalized) {
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Mission'} complete.`, 'good');
+      } else {
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Mission'} needs a little more detail.`, 'warn');
+      }
+    }
+    saveChallengeDraft(revealChallengeState);
+    updateChallengeProgressUI();
+  }
+
+  function renderRevealChallengeModal() {
+    const state = revealChallengeState;
+    if (!state) return;
+    const challenge = state.challenge;
+    if (!challenge) return;
+
+    const levelChip = _el('challenge-level-chip');
+    const wordChip = _el('challenge-word-chip');
+    const topicChip = _el('challenge-topic-chip');
+    const gradeChip = _el('challenge-grade-chip');
+    const listenPrompt = _el('challenge-listen-prompt');
+    const analyzePrompt = _el('challenge-analyze-prompt');
+    const createPrompt = _el('challenge-create-prompt');
+    const teacherLens = _el('challenge-teacher-lens');
+    const analyzeInput = _el('challenge-analyze-input');
+    const createInput = _el('challenge-create-input');
+
+    if (levelChip) levelChip.textContent = challenge.chip;
+    if (wordChip) wordChip.textContent = `Word: ${state.word}`;
+    if (topicChip) topicChip.textContent = `Quest focus: ${state.topic}`;
+    if (gradeChip) gradeChip.textContent = `Grade: ${state.grade}`;
+    if (listenPrompt) listenPrompt.textContent = `Hear "${state.word}" and its sentence clue, then say it back with clear pacing.`;
+    if (analyzePrompt) analyzePrompt.textContent = challenge.prompt;
+    if (createPrompt) createPrompt.textContent = `Create a student-friendly clue for "${state.word}" without saying the word itself.`;
+    if (teacherLens) teacherLens.textContent = `${challenge.teacher} Mission Lab score updates live for formative evidence.`;
+    if (analyzeInput && analyzeInput.value !== state.responses.analyze) analyzeInput.value = state.responses.analyze;
+    if (createInput && createInput.value !== state.responses.create) createInput.value = state.responses.create;
+
+    setChallengeTaskComplete('listen', !!state.tasks.listen);
+    setChallengeTaskComplete('analyze', !!state.tasks.analyze);
+    setChallengeTaskComplete('create', !!state.tasks.create);
+    setChallengeFeedback('Tip: complete any 2 missions to bank points.', 'default');
+    updateChallengeProgressUI();
+  }
+
+  function buildRevealChallengeState(result, options = {}) {
+    if (!result?.word) return null;
+    const challenge = buildThinkingChallenge(result, {
+      level: options.level
+    });
+    if (!challenge) return null;
+    const word = String(result.word || '').trim().toUpperCase();
+    const state = {
+      attemptId: createMissionAttemptId(),
+      result,
+      word,
+      topic: getChallengeTopicLabel(result),
+      grade: getChallengeGradeLabel(result),
+      source: String(options.source || 'reveal').trim() || 'reveal',
+      challenge,
+      tasks: { listen: false, analyze: false, create: false },
+      responses: { analyze: '', create: '' },
+      score: { clarity: 0, evidence: 0, vocabulary: 0, total: 0 },
+      sprintEndsAt: 0,
+      completedAt: 0
+    };
+    const draft = loadChallengeDraft(state);
+    if (draft) {
+      state.responses = { ...state.responses, ...draft.responses };
+      state.tasks = { ...state.tasks, ...draft.tasks };
+    }
+    return state;
+  }
+
+  function syncRevealChallengeLaunch(result) {
+    const wrap = _el('modal-challenge-launch');
+    const meta = _el('modal-challenge-launch-meta');
+    const helper = _el('modal-challenge-launch-helper');
+    if (!wrap || !meta) return;
+    const next = buildRevealChallengeState(result);
+    revealChallengeState = next;
+    if (!next) {
+      meta.textContent = '';
+      if (helper) helper.textContent = '';
+      wrap.classList.add('hidden');
+      clearChallengeSprintTimer();
+      updateChallengeProgressUI();
+      return;
+    }
+    meta.textContent = `${next.topic} · Grade ${next.grade} · ${CHALLENGE_SPRINT_SECONDS}s sprint`;
+    if (helper) {
+      helper.textContent = 'Optional extension only: keep practicing this same phonics focus in a quick Mission Lab challenge.';
+    }
     wrap.classList.remove('hidden');
+    const hasDraft = countWords(next.responses.analyze) > 0 || countWords(next.responses.create) > 0;
+    setChallengeFeedback(hasDraft ? 'Draft mission notes restored on this device.' : '');
+    updateChallengeProgressUI();
+  }
+
+  function openRevealChallengeModal() {
+    if (!revealChallengeState) {
+      if (isMissionLabStandaloneMode()) {
+        startStandaloneMissionLab();
+        return;
+      }
+      WQUI.showToast('Finish a word to unlock Mission Lab.');
+      return;
+    }
+    if (!Number.isFinite(revealChallengeState.sprintEndsAt) || revealChallengeState.sprintEndsAt <= Date.now()) {
+      revealChallengeState.sprintEndsAt = Date.now() + (CHALLENGE_SPRINT_SECONDS * 1000);
+    }
+    hideInformantHintCard();
+    renderRevealChallengeModal();
+    _el('challenge-modal')?.classList.remove('hidden');
+    startChallengeSprint();
+  }
+
+  function closeRevealChallengeModal(options = {}) {
+    clearChallengeSprintTimer();
+    _el('challenge-modal')?.classList.add('hidden');
+    if (!options.preserveFeedback) setChallengeFeedback('');
+  }
+
+  function persistRevealChallengeRecord(record) {
+    if (!record || typeof record !== 'object') return false;
+    try {
+      const prior = JSON.parse(localStorage.getItem(CHALLENGE_REFLECTION_KEY) || '[]');
+      const rows = Array.isArray(prior) ? prior : [];
+      const attemptId = String(record.attemptId || '').trim();
+      if (attemptId) {
+        const existingIndex = rows.findIndex((row) => String(row?.attemptId || '').trim() === attemptId);
+        if (existingIndex >= 0) rows.splice(existingIndex, 1);
+      }
+      const duplicate = rows.find((row, index) => {
+        if (index > 4) return false;
+        if (!row || typeof row !== 'object') return false;
+        if (Math.abs((Number(row.ts) || 0) - (Number(record.ts) || 0)) > 1400) return false;
+        return String(row.word || '') === String(record.word || '') &&
+          String(row.level || '') === String(record.level || '') &&
+          String(row.analyze || '') === String(record.analyze || '') &&
+          String(row.create || '') === String(record.create || '');
+      });
+      if (duplicate) return false;
+      rows.unshift(record);
+      localStorage.setItem(CHALLENGE_REFLECTION_KEY, JSON.stringify(rows.slice(0, 80)));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function saveRevealChallengeResponses(options = {}) {
+    if (!revealChallengeState) return false;
+    const requireText = options.requireText !== false;
+    const silent = !!options.silent;
+    const analyzeText = String(_el('challenge-analyze-input')?.value || '').trim();
+    const createText = String(_el('challenge-create-input')?.value || '').trim();
+    revealChallengeState.responses.analyze = analyzeText;
+    revealChallengeState.responses.create = createText;
+    setChallengeTaskComplete('analyze', countWords(analyzeText) >= CHALLENGE_MIN_TEXT_WORDS);
+    setChallengeTaskComplete('create', countWords(createText) >= CHALLENGE_MIN_TEXT_WORDS);
+    if (requireText && !analyzeText && !createText) {
+      setChallengeFeedback('Add at least one response before saving.', 'warn');
+      return false;
+    }
+    const score = computeChallengeScore(revealChallengeState);
+    const scoreBand = resolveMissionScoreBand(score.total);
+    const saveTs = Date.now();
+    const completedAt = Math.max(0, Number(revealChallengeState.completedAt) || 0);
+    const doneCount = ['listen', 'analyze', 'create']
+      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
+    const completed = completedAt > 0 || doneCount >= 2;
+    const completionTs = completedAt || saveTs;
+    const sprintEndsAt = Math.max(0, Number(revealChallengeState.sprintEndsAt) || 0);
+    const secondsLeft = sprintEndsAt > 0 ? Math.max(0, Math.ceil((sprintEndsAt - completionTs) / 1000)) : 0;
+    const onTime = completed ? secondsLeft > 0 : false;
+    const record = {
+      attemptId: String(revealChallengeState.attemptId || ''),
+      source: String(revealChallengeState.source || 'reveal').trim() || 'reveal',
+      student: getActiveStudentLabel(),
+      ts: completionTs,
+      word: revealChallengeState.word,
+      topic: revealChallengeState.topic,
+      grade: revealChallengeState.grade,
+      level: revealChallengeState.challenge.level,
+      score: score.total,
+      scoreBand,
+      clarity: score.clarity,
+      evidence: score.evidence,
+      vocabulary: score.vocabulary,
+      completed,
+      onTime,
+      secondsLeft,
+      analyze: analyzeText,
+      create: createText,
+      tasks: { ...revealChallengeState.tasks }
+    };
+    persistRevealChallengeRecord(record);
+    saveChallengeDraft(revealChallengeState);
+    renderSessionSummary();
+    if (!silent) setChallengeFeedback('Mission notes saved on this device.', 'good');
+    return true;
+  }
+
+  function finishRevealChallenge() {
+    if (!revealChallengeState) return;
+    if (revealChallengeState.completedAt) return;
+    const doneCount = ['listen', 'analyze', 'create']
+      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
+    if (doneCount < 2) {
+      setChallengeFeedback('Complete at least 2 mission steps first.', 'warn');
+      return;
+    }
+    const finishBtn = _el('challenge-finish-btn');
+    if (finishBtn) finishBtn.disabled = true;
+    revealChallengeState.completedAt = Date.now();
+    saveRevealChallengeResponses({ requireText: false, silent: true });
+    const score = computeChallengeScore(revealChallengeState);
+    const secondsLeft = Math.max(
+      0,
+      Math.ceil((Math.max(0, Number(revealChallengeState.sprintEndsAt) || 0) - revealChallengeState.completedAt) / 1000)
+    );
+    const finishedOnTime = secondsLeft > 0;
+    let pointsEarned = Math.max(8, Math.round(score.total / 10) + (doneCount * 3));
+    if (!finishedOnTime) pointsEarned = Math.max(6, pointsEarned - 4);
+    const progress = loadChallengeProgress();
+    progress.points += pointsEarned;
+    const today = localDayKey();
+    if (progress.lastWinDay !== today) {
+      progress.streak = isConsecutiveDay(progress.lastWinDay, today) ? progress.streak + 1 : 1;
+      progress.lastWinDay = today;
+    }
+    saveChallengeProgress(progress);
+    const rank = resolveChallengeRank(progress.points);
+    const line = pickRandom(CHALLENGE_COMPLETE_LINES) || 'Mission complete.';
+    const timingLine = finishedOnTime
+      ? 'On-time sprint bonus secured.'
+      : 'Time was up, but your mission still counts.';
+    setChallengeFeedback(`${line} +${pointsEarned} points · Rank ${rank.label}. ${timingLine}`, 'good');
+    clearChallengeDraft(revealChallengeState);
+    updateChallengeSprintUI();
+    renderSessionSummary();
+    setTimeout(() => {
+      closeRevealChallengeModal({ silent: true });
+    }, 900);
   }
 
   function showRevealWordToast(result) {
@@ -4531,23 +9761,31 @@
 
   async function playMeaningWithFun(nextEntry) {
     if (!nextEntry) return;
+    const meaning = getRevealMeaningPayload(nextEntry);
+    if (!(meaning.definition || meaning.funAddOn)) return;
+
+    if (WQAudio && typeof WQAudio.playMeaningBundle === 'function') {
+      await WQAudio.playMeaningBundle(nextEntry, {
+        includeFun: shouldIncludeFunInMeaning(),
+        allowFallbackInRecorded: true,
+        fallbackText: meaning.readAll
+      });
+      return;
+    }
+
     await WQAudio.playDef(nextEntry);
-    const hasFun = Boolean(nextEntry?.audio?.fun || nextEntry?.fun_add_on);
-    if (!hasFun || !shouldIncludeFunInMeaning()) return;
+    if (!meaning.funAddOn) return;
     await WQAudio.playFun(nextEntry);
   }
 
-  function promptLearnerAfterReveal(options = {}) {
+  function promptLearnerAfterReveal() {
     if (getVoicePracticeMode() === 'off') return;
     if (voiceTakeComplete || voiceIsRecording) return;
     const practiceDetails = _el('modal-practice-details');
     if (!practiceDetails || practiceDetails.classList.contains('hidden')) return;
     const required = getVoicePracticeMode() === 'required';
     if (required) practiceDetails.open = true;
-    setVoicePracticeFeedback('Your turn: tap Start 1-sec Recording, then compare with model audio.', required ? 'warn' : 'default');
-    if (options.toast && !required) {
-      WQUI.showToast('Your turn: open Say It Back and record 1 second.', 2200);
-    }
+    setVoicePracticeFeedback('Your turn: tap Record and compare with model audio.', required ? 'warn' : 'default');
   }
 
   async function runRevealNarration(result) {
@@ -4555,13 +9793,12 @@
     cancelRevealNarration();
     const token = revealNarrationToken;
     const pacing = getRevealPacingPreset();
-    showRevealWordToast(result);
     syncRevealMeaningHighlight(result.entry);
-    syncRevealThinkingChallenge(result);
+    syncRevealChallengeLaunch(result);
     if (!shouldNarrateReveal()) {
       await waitMs(Math.min(220, pacing.postMeaningDelay));
       if (token !== revealNarrationToken) return;
-      promptLearnerAfterReveal({ toast: true });
+      promptLearnerAfterReveal();
       return;
     }
     await waitMs(pacing.introDelay);
@@ -4575,20 +9812,16 @@
       if (token !== revealNarrationToken) return;
       await waitMs(pacing.postMeaningDelay);
       if (token !== revealNarrationToken) return;
-      promptLearnerAfterReveal({ toast: true });
+      promptLearnerAfterReveal();
     } catch {
       if (token !== revealNarrationToken) return;
-      promptLearnerAfterReveal({ toast: true });
+      promptLearnerAfterReveal();
     }
   }
 
   _el('g-hear-word')?.addEventListener('click', () => {
     cancelRevealNarration();
     void WQAudio.playWord(entry());
-  });
-  _el('g-hear-sentence')?.addEventListener('click', () => {
-    cancelRevealNarration();
-    void WQAudio.playSentence(entry());
   });
 
   // Modal audio buttons
@@ -4845,10 +10078,6 @@
   WQMusic.initFromPrefs(prefs);
   syncMusicForTheme();
   initQuestLoop();
-  if (firstRunSetupPending) {
-    openFirstRunSetupModal();
-  } else {
-    newGame();
-  }
+  newGame();
 
 })();
