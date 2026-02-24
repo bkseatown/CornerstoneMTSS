@@ -17,7 +17,7 @@
   // ─── 2. Init UI ────────────────────────────────────
   WQUI.init();
 
-  const SW_RUNTIME_URL = './sw-runtime.js?v=20260223i';
+  const SW_RUNTIME_URL = './sw-runtime.js';
 
   async function registerOfflineRuntime() {
     if (!('serviceWorker' in navigator)) return;
@@ -25,6 +25,11 @@
       return;
     }
     try {
+      const runtimeCheck = await fetch(SW_RUNTIME_URL, { cache: 'no-store' });
+      if (!runtimeCheck.ok) {
+        console.info('[WordQuest] Service worker runtime unavailable; skipping registration.');
+        return;
+      }
       let shouldAttachReloadListener = true;
       try {
         shouldAttachReloadListener = sessionStorage.getItem('wq_sw_controller_reloaded') !== '1';
@@ -338,6 +343,7 @@
   const ThemeRegistry = window.WQThemeRegistry || null;
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
   let musicController = null;
+  let challengeSprintTimer = 0;
 
   function isMissionLabEnabled() {
     return MISSION_LAB_ENABLED;
@@ -8744,7 +8750,6 @@
   let revealAutoCountdownTimer = 0;
   let revealAutoAdvanceEndsAt = 0;
   let revealChallengeState = null;
-  let challengeSprintTimer = 0;
 
   function pickRandom(items) {
     if (!Array.isArray(items) || !items.length) return '';
