@@ -92,6 +92,7 @@
   const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
+    'focus',
     'chill',
     'lofi',
     'coffee',
@@ -107,6 +108,7 @@
   const ALLOWED_VOICE_MODES = new Set(['recorded', 'auto', 'device', 'off']);
   const MUSIC_LABELS = Object.freeze({
     auto: 'Auto',
+    focus: 'Focus Flow',
     chill: 'Chill',
     lofi: 'Lo-fi',
     coffee: 'Coffeehouse',
@@ -653,9 +655,12 @@
       ? resolveAutoMusicMode(normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()))
       : selected));
     const isOn = selected !== 'off';
-    toggleBtn.textContent = isOn ? 'Music On' : 'Music Off';
     toggleBtn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
     toggleBtn.classList.toggle('is-on', isOn);
+    toggleBtn.setAttribute('data-music-state', isOn ? 'on' : 'off');
+    toggleBtn.setAttribute('aria-label', isOn
+      ? `Music on. Tap to turn off. Current vibe: ${MUSIC_LABELS[active] || active}.`
+      : 'Music off. Tap to turn on.');
     toggleBtn.title = isOn ? `Turn music off (currently ${MUSIC_LABELS[active] || active}).` : 'Turn music on.';
     if (labelEl) {
       labelEl.textContent = isOn ? (MUSIC_LABELS[active] || active) : 'Muted';
@@ -4788,9 +4793,45 @@
         return {
           value,
           label: getFocusDisplayLabel(value, option.textContent || value),
-          group: getFocusDisplayGroup(value, rawGroup)
+          group: getFocusDisplayGroup(value, rawGroup),
+          kind: 'focus',
+          questValue: `focus::${value}`
         };
       });
+  }
+
+  function getCurriculumQuestEntries() {
+    const entries = [{
+      value: 'custom::custom',
+      label: 'Manual (no curriculum pack)',
+      group: 'Curriculum',
+      kind: 'curriculum',
+      packId: 'custom',
+      targetId: 'custom',
+      questValue: 'curriculum::custom::custom'
+    }];
+    const orderedPacks = ['ufli', 'fundations', 'wilson', 'justwords'];
+    orderedPacks.forEach((packId) => {
+      const pack = getLessonPackDefinition(packId);
+      if (!pack || !Array.isArray(pack.targets)) return;
+      pack.targets.forEach((target) => {
+        if (!target?.id) return;
+        entries.push({
+          value: `curriculum::${packId}::${target.id}`,
+          label: `${pack.label} · ${target.label}`,
+          group: `Curriculum · ${pack.label}`,
+          kind: 'curriculum',
+          packId,
+          targetId: target.id,
+          questValue: `curriculum::${packId}::${target.id}`
+        });
+      });
+    });
+    return entries;
+  }
+
+  function getQuestEntries() {
+    return [...getFocusEntries(), ...getCurriculumQuestEntries()];
   }
 
   function getFocusLabel(value) {
@@ -4826,15 +4867,23 @@
   function updateFocusSummaryLabel() {
     const inputEl = _el('focus-inline-search');
     const focusValue = _el('setting-focus')?.value || 'all';
-    const currentLabelRaw = getFocusLabel(focusValue).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
+    const activePack = normalizeLessonPackId(prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack);
+    const activeTarget = normalizeLessonTargetId(
+      activePack,
+      prefs.lessonTarget || _el('s-lesson-target')?.value || DEFAULT_PREFS.lessonTarget
+    );
+    const target = activePack !== 'custom' ? getLessonTarget(activePack, activeTarget) : null;
+    const currentLabelRaw = target
+      ? `${getLessonPackDefinition(activePack).label} · ${target.label}`
+      : getFocusLabel(focusValue).replace(/[—]/g, '').replace(/\s+/g, ' ').trim();
     const currentLabel = currentLabelRaw || 'Classic (Wordle 5x6)';
 
     if (!inputEl) return;
     // Keep this as pure search input so intent is clear.
     inputEl.value = '';
     inputEl.placeholder = 'Select your quest';
-    inputEl.setAttribute('title', `Select your quest. Current focus: ${currentLabel}`);
-    inputEl.setAttribute('aria-label', `Select your quest. Current focus: ${currentLabel}`);
+    inputEl.setAttribute('title', `Select your quest. Curriculum tracks are included. Current focus: ${currentLabel}`);
+    inputEl.setAttribute('aria-label', `Select your quest. Curriculum tracks are included. Current focus: ${currentLabel}`);
   }
 
   function formatGradeBandLabel(value) {
@@ -4889,8 +4938,15 @@
     'vowel_team',
     'r_controlled'
   ]);
-  const FOCUS_EMPTY_VISIBLE_LIMIT = 8;
-  const FOCUS_QUERY_VISIBLE_LIMIT = 8;
+  const FOCUS_EMPTY_VISIBLE_LIMIT = 24;
+  const FOCUS_QUERY_VISIBLE_LIMIT = 20;
+  const CURRICULUM_QUICK_VALUES = Object.freeze([
+    'curriculum::ufli::ufli-l2-digraph',
+    'curriculum::ufli::ufli-l4-vowel-team',
+    'curriculum::fundations::fund-l1-u2',
+    'curriculum::wilson::wilson-step-4',
+    'curriculum::justwords::jw-unit-2'
+  ]);
 
   // Prioritize options that are most common for everyday classroom use.
   const FOCUS_POPULARITY = Object.freeze({
@@ -5108,10 +5164,32 @@
     syncThemePreviewStripVisibility();
   }
 
+  function openTeacherWordTools() {
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice();
+      return;
+    }
+    const panel = _el('settings-panel');
+    if (!panel) return;
+    panel.classList.remove('hidden');
+    setSettingsView('advanced');
+    syncHeaderControlsVisibility();
+    requestAnimationFrame(() => {
+      const teacherWrap = _el('wq-teacher-tools');
+      const toggle = _el('wq-teacher-toggle');
+      const body = _el('wq-teacher-body');
+      if (toggle && body?.classList.contains('hidden')) {
+        toggle.click();
+      }
+      teacherWrap?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      _el('wq-teacher-words')?.focus();
+    });
+  }
+
   function getFocusSearchButtons() {
     const listEl = _el('focus-inline-results');
     if (!listEl) return [];
-    return Array.from(listEl.querySelectorAll('.focus-search-item[data-focus-value]'));
+    return Array.from(listEl.querySelectorAll('.focus-search-item[data-quest-value]'));
   }
 
   function setFocusNavIndex(nextIndex, options = {}) {
@@ -5139,7 +5217,7 @@
     const inputEl = _el('focus-inline-search');
     if (!listEl) return;
     const query = String(rawQuery || '').trim().toLowerCase();
-    const entries = getFocusEntries();
+    const entries = getQuestEntries();
     if (!entries.length) {
       listEl.innerHTML = '<div class="focus-search-empty">Focus options are loading...</div>';
       listEl.classList.remove('hidden');
@@ -5156,6 +5234,14 @@
       FOCUS_QUICK_VALUES.forEach((value) => {
         if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT) return;
         const found = entries.find((entry) => entry.value === value);
+        if (found && !used.has(found.value)) {
+          visible.push(found);
+          used.add(found.value);
+        }
+      });
+      CURRICULUM_QUICK_VALUES.forEach((questValue) => {
+        if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT) return;
+        const found = entries.find((entry) => entry.questValue === questValue);
         if (found && !used.has(found.value)) {
           visible.push(found);
           used.add(found.value);
@@ -5180,14 +5266,24 @@
       return;
     }
 
-    const active = _el('setting-focus')?.value || 'all';
+    const activeFocus = _el('setting-focus')?.value || 'all';
+    const activePack = normalizeLessonPackId(prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack);
+    const activeTarget = normalizeLessonTargetId(
+      activePack,
+      prefs.lessonTarget || _el('s-lesson-target')?.value || DEFAULT_PREFS.lessonTarget
+    );
+    const activeQuestValue = (activePack !== 'custom' && activeTarget !== 'custom')
+      ? `curriculum::${activePack}::${activeTarget}`
+      : `focus::${activeFocus}`;
+    const actions = '<button type="button" class="focus-search-action" data-focus-action="teacher-words">✍️ Teacher Word List</button>';
     const guidance = !query
-      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Pick a sound quest to start.</div>'
+      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Explore popular quests and curriculum tracks. Tap any option to launch fast.</div>'
       : '';
-    listEl.innerHTML = guidance + visible.map((entry) => {
-      const activeClass = entry.value === active ? ' is-active' : '';
-      const selected = entry.value === active ? 'true' : 'false';
-      return `<button type="button" class="focus-search-item${activeClass}" data-focus-value="${escapeHtml(entry.value)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span><small>${escapeHtml(entry.group)}</small></button>`;
+    listEl.innerHTML = actions + guidance + visible.map((entry) => {
+      const questValue = entry.questValue || `focus::${entry.value}`;
+      const activeClass = questValue === activeQuestValue ? ' is-active' : '';
+      const selected = questValue === activeQuestValue ? 'true' : 'false';
+      return `<button type="button" class="focus-search-item${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span><small>${escapeHtml(entry.group)}</small></button>`;
     }).join('');
     getFocusSearchButtons().forEach((button, idx) => {
       button.id = `focus-search-option-${idx}`;
@@ -5234,6 +5330,39 @@
       WQUI.showToast(`Focus set: ${getFocusLabel(target)}.`);
     }
     closeFocusSearchList();
+  }
+
+  function setQuestValue(nextValue, options = {}) {
+    const raw = String(nextValue || '').trim();
+    if (!raw) return;
+    if (raw.startsWith('curriculum::')) {
+      if (isAssessmentRoundLocked() && !options.force) {
+        showAssessmentLockNotice('Assessment lock is on. Curriculum changes unlock after this round.');
+        closeFocusSearchList();
+        return;
+      }
+      const [, packRaw = 'custom', targetRaw = 'custom'] = raw.split('::');
+      const packId = normalizeLessonPackId(packRaw);
+      const targetId = normalizeLessonTargetId(packId, targetRaw);
+      if (packId === 'custom') {
+        handleLessonPackSelectionChange('custom');
+        updateFocusSummaryLabel();
+        closeFocusSearchList();
+        return;
+      }
+      handleLessonPackSelectionChange(packId);
+      handleLessonTargetSelectionChange(targetId);
+      if (options.toast) {
+        const pack = getLessonPackDefinition(packId);
+        const target = getLessonTarget(packId, targetId);
+        if (target) WQUI.showToast(`Track set: ${pack.label} · ${target.label}.`);
+      }
+      updateFocusSummaryLabel();
+      closeFocusSearchList();
+      return;
+    }
+    const focusValue = raw.startsWith('focus::') ? raw.slice('focus::'.length) : raw;
+    setFocusValue(focusValue, options);
   }
 
   const SUBJECT_TAG_ALIASES = Object.freeze({
@@ -5429,7 +5558,7 @@
     const buttons = getFocusSearchButtons();
     if (!buttons.length) return;
     const chosen = focusNavIndex >= 0 ? buttons[focusNavIndex] : buttons[0];
-    setFocusValue(chosen.getAttribute('data-focus-value'));
+    setQuestValue(chosen.getAttribute('data-quest-value'));
     updateFocusSummaryLabel();
     event.preventDefault();
   });
@@ -5440,10 +5569,18 @@
       closeFocusSearchList();
       return;
     }
-    const button = event.target?.closest?.('[data-focus-value]');
+    const action = event.target?.closest?.('[data-focus-action]');
+    if (action) {
+      const actionId = String(action.getAttribute('data-focus-action') || '').trim().toLowerCase();
+      if (actionId === 'teacher-words') {
+        openTeacherWordTools();
+      }
+      return;
+    }
+    const button = event.target?.closest?.('[data-quest-value]');
     if (!button) return;
-    const value = button.getAttribute('data-focus-value');
-    setFocusValue(value);
+    const value = button.getAttribute('data-quest-value');
+    setQuestValue(value);
     updateFocusSummaryLabel();
   });
 
@@ -10005,16 +10142,23 @@
   }
 
   
-  // ─── Music (WebAudio, lightweight) ──────────────────
+  // ─── Music (catalog tracks + synth fallback) ───────
   const WQMusic = (() => {
+    const MUSIC_CATALOG_URL = './data/music-catalog.json';
     let ctx = null;
-    let gain = null;
-    let interval = null;
+    let synthGain = null;
+    let synthInterval = null;
     let mode = 'chill';
     let vol = 0.35;
     let resumeBound = false;
+    let audioEl = null;
+    let catalog = null;
+    let catalogPromise = null;
+    let activeTrackId = '';
+    let playbackToken = 0;
 
     const PLAYBACK_PRESETS = Object.freeze({
+      focus:   Object.freeze({ seq: [220, 0, 247, 0, 262, 0, 247, 0], tempo: 430, dur: 0.12, wave: 'triangle', level: 0.11 }),
       chill:   Object.freeze({ seq: [196, 0, 220, 0, 247, 0, 220, 0], tempo: 520, dur: 0.16, wave: 'sine', level: 0.12 }),
       lofi:    Object.freeze({ seq: [220, 0, 247, 0, 196, 0, 220, 0], tempo: 420, dur: 0.13, wave: 'triangle', level: 0.14 }),
       upbeat:  Object.freeze({ seq: [392, 523, 587, 659, 587, 523, 440, 523], tempo: 240, dur: 0.1, wave: 'square', level: 0.12 }),
@@ -10026,7 +10170,9 @@
       stealth: Object.freeze({ seq: [196, 0, 196, 233, 0, 174, 0, 220], tempo: 360, dur: 0.11, wave: 'triangle', level: 0.11 }),
       team:    Object.freeze({ seq: [392, 523, 659, 784, 659, 523, 784, 988], tempo: 220, dur: 0.1, wave: 'square', level: 0.13 })
     });
+
     const ALT_SEQS = Object.freeze({
+      focus:   [196, 0, 220, 0, 247, 0, 220, 0],
       chill:   [220, 0, 247, 0, 262, 0, 247, 0],
       lofi:    [196, 0, 220, 0, 247, 0, 196, 0],
       upbeat:  [440, 523, 659, 587, 523, 440, 392, 440],
@@ -10039,41 +10185,9 @@
       team:    [523, 659, 784, 988, 784, 659, 523, 784]
     });
 
-    const ensure = () => {
-      if (ctx) return;
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      gain = ctx.createGain();
-      gain.gain.value = vol;
-      gain.connect(ctx.destination);
-      bindResumeEvents();
-    };
-
-    const resumeCtx = () => {
-      if (!ctx || ctx.state !== 'suspended') return;
-      ctx.resume().catch(() => {});
-    };
-
-    const bindResumeEvents = () => {
-      if (resumeBound) return;
-      resumeBound = true;
-      ['pointerdown', 'keydown', 'touchstart'].forEach((eventName) => {
-        document.addEventListener(eventName, resumeCtx, { passive: true });
-      });
-    };
-
-    const beep = (freq, dur = 0.12, type = 'sine', peak = 0.12) => {
-      if (!ctx || !gain) return;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = type;
-      o.frequency.value = freq;
-      g.gain.value = 0.0001;
-      o.connect(g); g.connect(gain);
-      const t = ctx.currentTime;
-      g.gain.exponentialRampToValueAtTime(peak, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-      o.start(t);
-      o.stop(t + dur + 0.02);
+    const clamp01 = (value, fallback = 0) => {
+      const next = Number.isFinite(value) ? value : fallback;
+      return Math.max(0, Math.min(1, next));
     };
 
     const normalizePlaybackMode = (value) => {
@@ -10082,41 +10196,212 @@
       return PLAYBACK_PRESETS[normalized] ? normalized : 'chill';
     };
 
-    const start = () => {
-      stop();
-      if (mode === 'off') return;
-      ensure();
-      resumeCtx();
-      const preset = PLAYBACK_PRESETS[mode] || PLAYBACK_PRESETS.chill;
-      let seq = Math.random() < 0.5 ? preset.seq : (ALT_SEQS[mode] || preset.seq);
-      let i = 0;
-      interval = setInterval(() => {
-        if (i > 0 && i % seq.length === 0) {
-          seq = Math.random() < 0.5 ? preset.seq : (ALT_SEQS[mode] || preset.seq);
+    const ensureCtx = () => {
+      if (ctx) return;
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      synthGain = ctx.createGain();
+      synthGain.gain.value = clamp01(vol, parseFloat(DEFAULT_PREFS.musicVol));
+      synthGain.connect(ctx.destination);
+      bindResumeEvents();
+    };
+
+    const resumeAllAudio = () => {
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      if (audioEl && mode !== 'off' && audioEl.paused) {
+        audioEl.play().catch(() => {});
+      }
+    };
+
+    const bindResumeEvents = () => {
+      if (resumeBound) return;
+      resumeBound = true;
+      ['pointerdown', 'keydown', 'touchstart'].forEach((eventName) => {
+        document.addEventListener(eventName, resumeAllAudio, { passive: true });
+      });
+    };
+
+    const beep = (freq, dur = 0.12, type = 'sine', peak = 0.12) => {
+      if (!ctx || !synthGain) return;
+      const oscillator = ctx.createOscillator();
+      const envelope = ctx.createGain();
+      oscillator.type = type;
+      oscillator.frequency.value = freq;
+      envelope.gain.value = 0.0001;
+      oscillator.connect(envelope);
+      envelope.connect(synthGain);
+      const now = ctx.currentTime;
+      envelope.gain.exponentialRampToValueAtTime(peak, now + 0.01);
+      envelope.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      oscillator.start(now);
+      oscillator.stop(now + dur + 0.02);
+    };
+
+    const stopSynth = () => {
+      if (synthInterval) clearInterval(synthInterval);
+      synthInterval = null;
+    };
+
+    const startSynth = (playMode) => {
+      stopSynth();
+      if (playMode === 'off') return;
+      ensureCtx();
+      resumeAllAudio();
+      const preset = PLAYBACK_PRESETS[playMode] || PLAYBACK_PRESETS.chill;
+      let seq = Math.random() < 0.5 ? preset.seq : (ALT_SEQS[playMode] || preset.seq);
+      let index = 0;
+      synthInterval = setInterval(() => {
+        if (index > 0 && index % seq.length === 0) {
+          seq = Math.random() < 0.5 ? preset.seq : (ALT_SEQS[playMode] || preset.seq);
         }
-        const f = seq[i % seq.length];
-        if (f) beep(f, preset.dur, preset.wave, preset.level);
-        i++;
+        const freq = seq[index % seq.length];
+        if (freq) beep(freq, preset.dur, preset.wave, preset.level);
+        index += 1;
       }, preset.tempo);
     };
 
-    const stop = () => { if (interval) clearInterval(interval); interval = null; };
+    const ensureAudioEl = () => {
+      if (audioEl) return audioEl;
+      audioEl = new Audio();
+      audioEl.loop = true;
+      audioEl.preload = 'auto';
+      audioEl.addEventListener('error', () => {
+        if (mode === 'off') return;
+        startSynth(mode);
+      });
+      return audioEl;
+    };
+
+    const stopTrack = () => {
+      if (!audioEl) return;
+      audioEl.pause();
+      audioEl.removeAttribute('src');
+      try { audioEl.load(); } catch {}
+    };
+
+    const normalizeTrack = (rawTrack) => {
+      if (!rawTrack || typeof rawTrack !== 'object') return null;
+      const src = String(rawTrack.src || '').trim();
+      if (!src) return null;
+      const id = String(rawTrack.id || src).trim();
+      const modes = Array.from(new Set(
+        (Array.isArray(rawTrack.modes) ? rawTrack.modes : [])
+          .map(normalizePlaybackMode)
+          .filter((entry) => entry !== 'off')
+      ));
+      if (!modes.length) modes.push('focus');
+      const gain = clamp01(parseFloat(rawTrack.gain), 1);
+      return {
+        id,
+        src,
+        modes,
+        gain
+      };
+    };
+
+    const normalizeCatalog = (payload) => {
+      const tracks = Array.isArray(payload?.tracks)
+        ? payload.tracks.map(normalizeTrack).filter(Boolean)
+        : [];
+      if (!tracks.length) return null;
+      const modeIndex = {};
+      tracks.forEach((track) => {
+        track.modes.forEach((tag) => {
+          if (!modeIndex[tag]) modeIndex[tag] = [];
+          modeIndex[tag].push(track);
+        });
+      });
+      return { tracks, modeIndex };
+    };
+
+    const loadCatalog = async () => {
+      if (catalog) return catalog;
+      if (catalogPromise) return catalogPromise;
+      catalogPromise = fetch(MUSIC_CATALOG_URL, { cache: 'no-store' })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((payload) => normalizeCatalog(payload))
+        .catch(() => null)
+        .then((nextCatalog) => {
+          catalog = nextCatalog;
+          return catalog;
+        });
+      return catalogPromise;
+    };
+
+    const chooseTrack = (playMode) => {
+      const options = catalog?.modeIndex?.[playMode] || [];
+      if (!options.length) return null;
+      if (options.length === 1) return options[0];
+      const pool = options.filter((track) => track.id !== activeTrackId);
+      const source = pool.length ? pool : options;
+      const index = Math.floor(Math.random() * source.length);
+      return source[index];
+    };
+
+    const setTrackVolume = (trackGain = 1) => {
+      if (!audioEl) return;
+      audioEl.volume = clamp01(vol * clamp01(trackGain, 1), vol);
+    };
+
+    const playCatalogTrack = async (playMode, token) => {
+      await loadCatalog();
+      if (token !== playbackToken || playMode !== mode || !catalog) return false;
+      const track = chooseTrack(playMode);
+      if (!track) return false;
+
+      const player = ensureAudioEl();
+      const resolvedTrackUrl = new URL(track.src, window.location.href).toString();
+      if (player.src !== resolvedTrackUrl) player.src = track.src;
+      player.currentTime = 0;
+      setTrackVolume(track.gain);
+      try {
+        await player.play();
+        activeTrackId = track.id;
+        player.dataset.wqTrackGain = String(track.gain || 1);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const start = async () => {
+      const playMode = normalizePlaybackMode(mode);
+      const token = ++playbackToken;
+      stopSynth();
+      if (playMode === 'off') {
+        activeTrackId = '';
+        stopTrack();
+        return;
+      }
+
+      const startedCatalogTrack = await playCatalogTrack(playMode, token);
+      if (token !== playbackToken || playMode !== mode) return;
+      if (!startedCatalogTrack) {
+        activeTrackId = '';
+        stopTrack();
+        startSynth(playMode);
+      }
+    };
 
     return {
-      setMode(m) {
-        mode = normalizePlaybackMode(m);
-        start();
+      setMode(nextMode) {
+        mode = normalizePlaybackMode(nextMode);
+        void start();
       },
-      setVolume(v) {
-        const next = Number.isFinite(v) ? v : parseFloat(DEFAULT_PREFS.musicVol);
-        vol = Math.max(0, Math.min(1, next));
-        if (gain) gain.gain.value = vol;
+      setVolume(value) {
+        const next = Number.isFinite(value) ? value : parseFloat(DEFAULT_PREFS.musicVol);
+        vol = clamp01(next, parseFloat(DEFAULT_PREFS.musicVol));
+        if (synthGain) synthGain.gain.value = vol;
+        const trackGain = parseFloat(audioEl?.dataset?.wqTrackGain || '1');
+        setTrackVolume(Number.isFinite(trackGain) ? trackGain : 1);
       },
-      initFromPrefs(p) {
-        mode = normalizePlaybackMode(p.music || DEFAULT_PREFS.music);
-        vol = parseFloat(p.musicVol ?? DEFAULT_PREFS.musicVol);
-        start();
-        this.setVolume(vol);
+      initFromPrefs(prefState) {
+        mode = normalizePlaybackMode(prefState.music || DEFAULT_PREFS.music);
+        vol = clamp01(parseFloat(prefState.musicVol), parseFloat(DEFAULT_PREFS.musicVol));
+        if (synthGain) synthGain.gain.value = vol;
+        void loadCatalog();
+        void start();
       }
     };
   })();

@@ -6,7 +6,7 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260223-v5';
+const SW_VERSION = '20260224-v1';
 const SHELL_CACHE = `wq-shell-${SW_VERSION}`;
 const DATA_CACHE = `wq-data-${SW_VERSION}`;
 const AUDIO_CACHE = `wq-audio-${SW_VERSION}`;
@@ -21,6 +21,7 @@ const CORE_FILES = [
   './style/components.css',
   './data/words-inline.js',
   './data/audio-manifest.json',
+  './data/music-catalog.json',
   './js/data.js',
   './js/audio.js',
   './js/game.js',
@@ -65,7 +66,8 @@ function isSameOrigin(url) {
 }
 
 function isAudioRequest(url) {
-  return url.pathname.includes('/assets/audio/');
+  return url.pathname.includes('/assets/audio/')
+    || url.pathname.includes('/assets/music/');
 }
 
 function isDataRequest(url) {

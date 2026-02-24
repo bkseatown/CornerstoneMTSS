@@ -82,3 +82,16 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
 - Service worker is registered from `/Users/robertwilliamknaus/Desktop/WordQuest/js/app.js` and defined in `/Users/robertwilliamknaus/Desktop/WordQuest/sw.js`.
 - Audio path inventory is generated to `/Users/robertwilliamknaus/Desktop/WordQuest/data/audio-manifest.json`.
 - Full library offline is browser-storage dependent; app shell and previously used audio are prioritized.
+
+## Music Track Pipeline
+- Drop licensed or self-made files into:
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/assets/music/tracks/`
+- Optional filename metadata pattern:
+  - `track-name__modes-focus+chill__bpm-92__energy-low.wav`
+- Sync catalog + ledger:
+  - `npm run music:catalog`
+- Generated files:
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/data/music-catalog.json`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/data/music-license-ledger.json`
+- Runtime behavior:
+  - File tracks are used first (by mode), with synth fallback if catalog/load/playback fails.

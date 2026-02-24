@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-02-24T05:12:13.360Z",
+  "trackCount": 6,
+  "modeIndex": {
+    "focus": [
+      "pixel-breeze-853f8e5f",
+      "quiet-quest-fdb30e18",
+      "soft-blocks-7c8a60a9",
+      "steady-lanterns-e9e39764",
+      "sunrise-drift-4e39cdd9",
+      "team-spark-lite-984489bf"
+    ],
+    "arcade": [
+      "pixel-breeze-853f8e5f"
+    ],
+    "upbeat": [
+      "pixel-breeze-853f8e5f",
+      "team-spark-lite-984489bf"
+    ],
+    "fantasy": [
+      "quiet-quest-fdb30e18"
+    ],
+    "chill": [
+      "quiet-quest-fdb30e18",
+      "soft-blocks-7c8a60a9",
+      "steady-lanterns-e9e39764",
+      "sunrise-drift-4e39cdd9"
+    ],
+    "lofi": [
+      "soft-blocks-7c8a60a9",
+      "sunrise-drift-4e39cdd9"
+    ],
+    "coffee": [
+      "steady-lanterns-e9e39764",
+      "sunrise-drift-4e39cdd9"
+    ],
+    "team": [
+      "team-spark-lite-984489bf"
+    ],
+    "sports": [
+      "team-spark-lite-984489bf"
+    ]
+  },
+  "tracks": [
+    {
+      "id": "pixel-breeze-853f8e5f",
+      "title": "Pixel Breeze",
+      "src": "/assets/music/tracks/focus-flow/pixel-breeze__modes-focus+arcade+upbeat__bpm-100__energy-mid.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "arcade",
+        "upbeat"
+      ],
+      "bpm": 100,
+      "energy": "mid",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "quiet-quest-fdb30e18",
+      "title": "Quiet Quest",
+      "src": "/assets/music/tracks/focus-flow/quiet-quest__modes-focus+fantasy+chill__bpm-85__energy-low.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "fantasy",
+        "chill"
+      ],
+      "bpm": 85,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "soft-blocks-7c8a60a9",
+      "title": "Soft Blocks",
+      "src": "/assets/music/tracks/focus-flow/soft-blocks__modes-focus+chill+lofi__bpm-100__energy-mid.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi"
+      ],
+      "bpm": 100,
+      "energy": "mid",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "steady-lanterns-e9e39764",
+      "title": "Steady Lanterns",
+      "src": "/assets/music/tracks/focus-flow/steady-lanterns__modes-focus+chill+coffee__bpm-95__energy-low.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "coffee"
+      ],
+      "bpm": 95,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "sunrise-drift-4e39cdd9",
+      "title": "Sunrise Drift",
+      "src": "/assets/music/tracks/focus-flow/sunrise-drift__modes-focus+chill+lofi+coffee__bpm-90__energy-low.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "chill",
+        "lofi",
+        "coffee"
+      ],
+      "bpm": 90,
+      "energy": "low",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "team-spark-lite-984489bf",
+      "title": "Team Spark Lite",
+      "src": "/assets/music/tracks/focus-flow/team-spark-lite__modes-focus+team+sports+upbeat__bpm-105__energy-mid.wav",
+      "format": "wav",
+      "modes": [
+        "focus",
+        "team",
+        "sports",
+        "upbeat"
+      ],
+      "bpm": 105,
+      "energy": "mid",
+      "gain": 1,
+      "collection": "focus-flow",
+      "sourceType": "file-drop",
+      "licenseRef": "original-focus-flow-pack"
+    }
+  ]
+}
