@@ -118,15 +118,35 @@ header {
   height:          var(--header-shell-h, var(--header-h));
   min-height:      var(--header-shell-min-h, 0);
   flex-shrink:     0;
-  padding:         var(--header-shell-pad, 0 16px);
+  padding:         var(--header-shell-pad, 7px 16px 6px);
   display:         flex;
-  align-items:     var(--header-shell-align, center);
-  justify-content: space-between;
-  gap:             var(--header-shell-gap, 0);
+  flex-direction:  column;
+  align-items:     var(--header-shell-align, stretch);
+  justify-content: flex-start;
+  gap:             var(--header-shell-gap, 5px);
   background:      var(--header-bg);
-  border-bottom:   1px solid var(--header-border);
+  border:          1px solid color-mix(in oklab, var(--header-border) 86%, transparent);
+  border-bottom:   0;
+  border-radius:   16px 16px 0 0;
   position:        relative;
   z-index:         20;
+}
+
+.header-main-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+}
+
+.header-support-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 0;
 }
 
 .logo {
@@ -163,16 +183,16 @@ header {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 7px;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .header-quick-controls {
   display: flex;
   align-items: center;
-  gap: 5px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
@@ -213,14 +233,14 @@ header {
 
 header .theme-preview-strip {
   width: auto;
-  min-height: 28px;
-  gap: 4px;
+  min-height: 30px;
+  gap: 5px;
   margin: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  padding: 3px 5px;
+  background: color-mix(in oklab, var(--focusbar-bg) 46%, transparent);
+  border: 1px solid color-mix(in oklab, var(--header-border) 66%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(7, 16, 30, 0.08);
 }
 
 header .theme-preview-slot {
@@ -232,18 +252,18 @@ header .theme-preview-strip .wq-theme-nav {
 }
 
 header .theme-preview-strip .wq-theme-nav-btn {
-  width: 21px;
-  height: 21px;
-  border-radius: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
   background: color-mix(in oklab, var(--brand) 84%, var(--panel-bg) 16%);
   font-size: 0.57rem;
 }
 
 header .theme-preview-strip .wq-theme-label-btn {
-  min-width: 84px;
-  max-width: 122px;
-  min-height: 22px;
-  padding: 1px 8px;
+  min-width: 96px;
+  max-width: 132px;
+  min-height: 24px;
+  padding: 1px 9px;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 80%, transparent);
@@ -255,11 +275,11 @@ header .theme-preview-strip .wq-theme-label {
 }
 
 header .theme-preview-music {
-  min-height: 22px;
-  padding: 1px 8px;
+  min-height: 24px;
+  padding: 1px 9px;
   border-radius: 999px;
-  font-size: 0.6rem;
-  font-weight: 780;
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 
 header .theme-preview-music-label {
@@ -305,15 +325,17 @@ header .theme-preview-music-label {
 /* ── Focus bar ───────────────────────────────────────── */
 .top-control-hub {
   width: min(var(--main-max-width), calc(100vw - 14px));
-  border-radius: 0 0 14px 14px;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--focusbar-bg) 58%, transparent),
-    color-mix(in oklab, var(--focusbar-bg) 34%, transparent)
-  );
-  border: 1px solid color-mix(in oklab, var(--panel-border) 42%, transparent);
+  border-radius: 0 0 18px 18px;
+  background:
+    radial-gradient(160% 110% at 8% -12%, color-mix(in oklab, var(--brand) 12%, transparent) 0%, transparent 56%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--focusbar-bg) 64%, transparent),
+      color-mix(in oklab, var(--focusbar-bg) 44%, transparent)
+    );
+  border: 1px solid color-mix(in oklab, var(--panel-border) 36%, transparent);
   border-top: 0;
-  box-shadow: 0 8px 18px rgba(7, 16, 30, 0.10);
+  box-shadow: 0 12px 24px rgba(7, 16, 30, 0.11);
   overflow: visible;
   flex-shrink: 0;
 }
@@ -326,22 +348,47 @@ header .theme-preview-music-label {
   grid-template-columns: var(--focusbar-cols, auto minmax(0, 1fr) minmax(88px, auto));
   align-items:   var(--focusbar-align, center);
   row-gap:       var(--focusbar-row-gap, 0);
-  gap:           7px;
-  padding:       var(--focusbar-pad-top, 4px) 14px 4px;
+  gap:           8px;
+  padding:       var(--focusbar-pad-top, 5px) 14px 5px;
   background:    transparent;
-  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 40%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 32%, transparent);
   position:      relative;
   z-index:       15;
 }
 
 .focus-search-label {
-  font-size: 0.62rem;
-  font-weight: 760;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.focus-search-label span,
+.curriculum-main-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
+  font-size: 0.61rem;
+  font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--text-muted) 82%, var(--text) 18%);
-  white-space: nowrap;
-  padding-left: 2px;
+  color: color-mix(in oklab, var(--text-muted) 80%, var(--text) 20%);
+}
+
+.focus-search-label span::before {
+  content: '🧭';
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.curriculum-main-label::before {
+  content: '🎒';
+  font-size: 0.72rem;
+  line-height: 1;
 }
 
 .focus-inline-wrap {
@@ -396,6 +443,11 @@ header .theme-preview-music-label {
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: right;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
 }
 
 .curriculum-main-bar {
@@ -403,7 +455,7 @@ header .theme-preview-music-label {
   flex-shrink: 0;
   display: grid;
   align-items: center;
-  padding: 4px 14px 6px;
+  padding: 6px 14px 8px;
   background: transparent;
   border: 0;
 }
@@ -412,29 +464,34 @@ header .theme-preview-music-label {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
-  font-size: 0.63rem;
+  font-size: 0.66rem;
   font-weight: 760;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: color-mix(in oklab, var(--text-muted) 72%, var(--text) 28%);
 }
 
 .curriculum-main-step-field select {
   width: 100%;
   min-width: 0;
-  height: 29px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
-  border-radius: 10px;
-  background: color-mix(in oklab, var(--panel-bg) 94%, #ffffff 6%);
+  height: 33px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 62%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel-bg) 96%, #ffffff 4%) 0%,
+    color-mix(in oklab, var(--panel-bg) 86%, transparent) 100%
+  );
   color: var(--text);
   font-family: var(--font);
-  font-size: 0.73rem;
-  font-weight: 750;
+  font-size: 0.74rem;
+  font-weight: 760;
   text-transform: none;
   letter-spacing: 0.01em;
-  padding: 0 10px;
+  padding: 0 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .curriculum-main-step-field select:hover {
@@ -4284,11 +4341,16 @@ html[data-layout-mode="compact"] .key.key-chunk {
     --header-shell-h: auto;
     --header-shell-min-h: var(--header-h);
     --header-shell-pad: 6px 10px;
-    --header-shell-align: flex-start;
+    --header-shell-align: stretch;
     --header-shell-gap: 6px;
     --focusbar-cols: auto minmax(0, 1fr) minmax(72px, auto);
     --focusbar-row-gap: 5px;
     --focusbar-pad-top: 5px;
+  }
+
+  .header-main-row {
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .logo {
@@ -4302,12 +4364,16 @@ html[data-layout-mode="compact"] .key.key-chunk {
     min-width: 0;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 5px;
+    gap: 6px;
   }
 
   .header-quick-controls {
     gap: 5px;
     max-width: 100%;
+    justify-content: flex-end;
+  }
+
+  .header-support-row {
     justify-content: flex-end;
   }
 
@@ -4321,9 +4387,8 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
   header .theme-preview-strip {
     width: auto;
-    padding: 0;
-    border: 0;
-    background: transparent;
+    max-width: 100%;
+    padding: 2px 4px;
   }
 
   header .theme-preview-strip .wq-theme-label-btn {

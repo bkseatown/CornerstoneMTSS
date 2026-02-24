@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223c">
   <link rel="stylesheet" href="style/themes.css?v=20260223e">
-  <link rel="stylesheet" href="style/components.css?v=20260224m">
+  <link rel="stylesheet" href="style/components.css?v=20260224o">
 </head>
 <body>
 
@@ -18,38 +18,42 @@
 
   <!-- ── Header ───────────────────────────────────── -->
   <header>
-    <div class="logo">Word<span>Quest</span></div>
-    <div class="header-right">
-      <div class="header-quick-controls" role="group" aria-label="Quick play toggles">
-        <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="true" title="Switch play style">
-          Mode: Detective
+    <div class="header-main-row">
+      <div class="logo">Word<span>Quest</span></div>
+      <div class="header-right">
+        <div class="header-quick-controls" role="group" aria-label="Quick play toggles">
+          <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="true" title="Switch play style">
+            Mode: Detective
+          </button>
+          <button id="focus-hint-toggle" class="header-quick-btn focus-hint-toggle" type="button" aria-pressed="false" title="Get a focused clue">
+            Clue
+          </button>
+        </div>
+        <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
         </button>
-        <button id="focus-hint-toggle" class="header-quick-btn focus-hint-toggle" type="button" aria-pressed="false" title="Get a focused clue">
-          Clue
+        <button id="mission-lab-nav-btn" class="header-quick-btn mission-lab-nav-btn" type="button" aria-pressed="false" title="Open Mission Lab as a standalone activity">
+          Mission Lab
         </button>
+        <button id="new-game-btn">New Word</button>
       </div>
-      <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      </button>
+    </div>
+    <div class="header-support-row">
       <div id="theme-preview-strip" class="theme-preview-strip hidden" role="region" aria-label="Quick style controls">
         <div id="theme-preview-slot" class="theme-preview-slot" aria-label="Theme carousel"></div>
         <button id="quick-music-toggle" class="theme-preview-music" type="button" aria-pressed="false">Music Off</button>
         <span id="quick-music-label" class="theme-preview-music-label" aria-live="polite">Muted</span>
       </div>
-      <button id="mission-lab-nav-btn" class="header-quick-btn mission-lab-nav-btn" type="button" aria-pressed="false" title="Open Mission Lab as a standalone activity">
-        Mission Lab
-      </button>
-      <button id="new-game-btn">New Word</button>
     </div>
   </header>
 
   <!-- ── Focus bar ────────────────────────────────── -->
   <div class="top-control-hub" role="region" aria-label="Quest and curriculum controls">
     <div class="focus-bar">
-      <label for="focus-inline-search" class="focus-search-label">Quest</label>
+      <label for="focus-inline-search" class="focus-search-label"><span>Quest</span></label>
       <div id="focus-inline-wrap" class="focus-inline-wrap">
         <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" spellcheck="false" autocomplete="off" placeholder="Select your quest">
         <div id="focus-inline-results" class="focus-inline-results hidden" role="listbox" aria-label="Quest finder results"></div>
@@ -83,7 +87,7 @@
     </div>
     <div id="curriculum-main-bar" class="curriculum-main-bar" role="region" aria-label="Curriculum quick controls">
       <label class="curriculum-main-step-field" for="m-curriculum-step">
-        Track
+        <span class="curriculum-main-label">Track</span>
         <select id="m-curriculum-step" aria-label="Curriculum and lesson target">
           <option value="custom::custom" selected>Manual (no curriculum pack)</option>
         </select>
