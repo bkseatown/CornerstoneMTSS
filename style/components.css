@@ -2346,7 +2346,17 @@ html[data-board-style="clean"] .board-plate {
 }
 
 html[data-board-style="card"] .board-plate {
-  background: var(--plate-bg);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--plate-bg) 94%, #ffffff 6%) 0%,
+      color-mix(in oklab, var(--plate-bg) 84%, #000000 16%) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -2px 0 rgba(12, 22, 40, 0.22),
+    0 8px 0 color-mix(in oklab, var(--plate-border) 76%, #556175 24%),
+    0 22px 34px rgba(5, 12, 24, 0.22);
 }
 
 html[data-board-style="patterned"] .board-plate {
@@ -2423,9 +2433,30 @@ html[data-atmosphere="spark"] .board-plate::after {
     inset 0 -1px 0 rgba(16, 28, 50, 0.2),
     0 9px 0 color-mix(in oklab, var(--plate-border) 76%, #667186 24%),
     0 20px 28px rgba(7, 14, 28, 0.28);
-  transform:             translateY(-7px);
+  transform:             perspective(1200px) rotateX(8deg) translateY(-8px);
+  transform-origin:      center bottom;
+  transform-style:       preserve-3d;
   position:              relative;
   z-index:               2;
+}
+
+#game-board::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -12px;
+  height: 14px;
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--plate-border) 52%, #5d677a 48%) 0%,
+    color-mix(in oklab, var(--plate-border) 76%, #3f495b 24%) 100%
+  );
+  box-shadow: 0 8px 16px rgba(7, 16, 32, 0.26);
+  transform: translateZ(-1px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 html[data-board-style="clean"] #game-board {
@@ -2435,6 +2466,10 @@ html[data-board-style="clean"] #game-board {
   background: transparent;
   box-shadow: none;
   transform: none;
+}
+
+html[data-board-style="clean"] #game-board::before {
+  display: none;
 }
 
 html[data-board-style="soundcard"] #game-board {
