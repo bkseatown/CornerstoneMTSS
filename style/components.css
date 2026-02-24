@@ -2399,6 +2399,7 @@ html[data-atmosphere="spark"] .board-plate::after {
   grid-template-columns: repeat(var(--word-length, 5), var(--tile-size));
   grid-template-rows:    repeat(var(--max-guesses, 6), var(--tile-size));
   gap:                   var(--gap-tile);
+  width:                 max-content;
   margin:                0 auto;
   position:              relative;
   z-index:               1;
