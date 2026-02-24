@@ -45,7 +45,7 @@ jobs:
       - name: Build static artifact
         run: |
           mkdir -p dist
-          cp -R index.html sw.js style js data assets dist/
+          cp -R index.html favicon.ico sw.js sw-runtime.js style js data assets dist/
 
       - uses: actions/upload-pages-artifact@v3
         with:
