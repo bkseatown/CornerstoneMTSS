@@ -362,6 +362,7 @@ header {
 .focus-inline-wrap {
   flex: 1;
   min-width: 120px;
+  max-width: min(520px, 100%);
   position: relative;
 }
 
@@ -667,7 +668,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   transform: none;
   width: 100%;
   max-width: 100%;
-  max-height: min(58vh, 460px);
+  max-height: min(70vh, 560px);
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -705,9 +706,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .focus-search-action {
   grid-column: 1 / -1;
   width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  position: relative;
   border: 1px solid color-mix(in oklab, var(--brand) 48%, var(--panel-border) 52%);
   border-radius: 10px;
   background: color-mix(in oklab, var(--brand) 14%, var(--panel-bg) 86%);
@@ -4870,6 +4869,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
   .focus-inline-wrap {
     min-width: 0;
+    max-width: 100%;
   }
 
   .header-quick-btn {
@@ -4951,7 +4951,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 720px) {
   .focus-inline-results {
     left: 0;
     transform: none;
@@ -4961,13 +4961,13 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 }
 
-@media (min-width: 980px) {
+@media (min-width: 721px) {
   .focus-inline-results {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    width: min(760px, calc(100vw - 24px));
-    max-width: min(760px, calc(100vw - 24px));
+    width: min(700px, calc(100vw - 24px));
+    max-width: min(700px, calc(100vw - 24px));
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

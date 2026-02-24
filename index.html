@@ -36,8 +36,11 @@
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </button>
-        <button id="phonics-clue-open-btn" class="header-quick-btn hidden" type="button" title="Open Phonics Clue Sprint">
-          Clue Sprint
+        <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch listening mode">
+          Audio Game: Off
+        </button>
+        <button id="phonics-clue-open-btn" class="header-quick-btn" type="button" title="Open clue card">
+          Clue
         </button>
         <button id="new-game-btn">New Word</button>
       </div>
@@ -141,10 +144,10 @@
                   <label>Program
                     <select id="s-lesson-pack">
                       <option value="custom" selected>Manual (no pack)</option>
-                      <option value="ufli">UFLI Foundations</option>
+                      <option value="wilson">Wilson Reading System</option>
                       <option value="fundations">Fundations</option>
-                      <option value="wilson">Wilson Reading</option>
                       <option value="justwords">Just Words</option>
+                      <option value="ufli">UFLI</option>
                     </select>
                   </label>
                   <label>Lesson Target
@@ -178,7 +181,7 @@
             <div class="setting-row"><label>Board Style<select id="s-board-style"><option value="clean">Clean</option><option value="card" selected>Card</option><option value="patterned">Patterned</option><option value="soundcard">Sound Card (SoR)</option></select></label></div>
             <div class="setting-row"><label>Atmosphere<select id="s-atmosphere"><option value="minimal" selected>Minimal</option><option value="glow">Glow</option><option value="spark">Spark</option></select></label></div>
             <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
-            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on" selected>On</option><option value="off">Off</option></select></label></div>
+            <div class="setting-row"><label>Engagement Popups<select id="s-boost-popups"><option value="on">On</option><option value="off" selected>Off</option></select></label></div>
           </div>
         </details>
 

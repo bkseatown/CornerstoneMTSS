@@ -90,6 +90,7 @@
   const PAGE_MODE_KEY = 'wq_v2_page_mode_v1';
   const LAST_NON_OFF_MUSIC_KEY = 'wq_v2_last_non_off_music_v1';
   const MISSION_LAB_ENABLED = false;
+  const MIDGAME_BOOST_ENABLED = false;
   const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
     'auto',
@@ -163,7 +164,7 @@
     probeRounds: '3',
     reportCompact: 'off',
     assessmentLock: 'off',
-    boostPopups: 'on',
+    boostPopups: 'off',
     music: 'off',
     musicVol: '0.50',
     voice: 'recorded',
@@ -573,7 +574,7 @@
       ])
     }),
     ufli: Object.freeze({
-      label: 'UFLI Foundations',
+      label: 'UFLI',
       targets: Object.freeze([
         Object.freeze({ id: 'ufli-l1-cvc', label: 'UFLI Lessons 1-8 · CVC and short vowels', focus: 'cvc', gradeBand: 'K-2', length: '3', pacing: 'Weeks 1-4 (Aug-Sep)' }),
         Object.freeze({ id: 'ufli-l2-digraph', label: 'UFLI Lessons 9-24 · Digraphs and blends', focus: 'digraph', gradeBand: 'K-2', length: '4', pacing: 'Weeks 5-11 (Oct-Nov)' }),
@@ -598,7 +599,7 @@
       ])
     }),
     wilson: Object.freeze({
-      label: 'Wilson Reading',
+      label: 'Wilson Reading System',
       targets: Object.freeze([
         Object.freeze({ id: 'wilson-step-1', label: 'Wilson Step 1 · Closed syllable', focus: 'cvc', gradeBand: 'G3-5', length: '4', pacing: 'Weeks 1-3 (Sep)' }),
         Object.freeze({ id: 'wilson-step-2', label: 'Wilson Step 2 · Welded sounds', focus: 'welded', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 4-7 (Sep-Oct)' }),
@@ -623,7 +624,7 @@
       ])
     })
   });
-  const CURRICULUM_PACK_ORDER = Object.freeze(['ufli', 'fundations', 'wilson', 'justwords']);
+  const CURRICULUM_PACK_ORDER = Object.freeze(['wilson', 'fundations', 'justwords', 'ufli']);
 
   const CHUNK_TAB_FOCUS_KEYS = new Set([
     'digraph',
@@ -1240,12 +1241,12 @@
     const toggle = _el('play-style-toggle');
     if (!toggle) return;
     const listening = mode === 'listening';
-    toggle.textContent = listening ? 'Mode: Listening' : 'Mode: Detective';
+    toggle.textContent = listening ? 'Audio Game: On' : 'Audio Game: Off';
     toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('title', listening
-      ? 'Switch to detective mode'
-      : 'Switch to listening mode');
+      ? 'Switch to detective sentence-clue mode'
+      : 'Switch to listening audio game mode');
   }
 
   function syncGameplayAudioStrip(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
@@ -2105,6 +2106,7 @@
   }
 
   function areBoostPopupsEnabled() {
+    if (!MIDGAME_BOOST_ENABLED) return false;
     const select = _el('s-boost-popups');
     const value = String(select?.value || prefs.boostPopups || DEFAULT_PREFS.boostPopups).toLowerCase();
     return value !== 'off';
@@ -3331,8 +3333,8 @@
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
     WQUI.showToast(next === 'listening'
-      ? 'Listening mode on: use Word + Meaning audio support.'
-      : 'Listening mode off: detective sentence clues only.');
+      ? 'Audio game is on: hear word + definition, then spell it.'
+      : 'Audio game is off: detective sentence clues are active.');
   });
   _el('s-reveal-focus')?.addEventListener('change', e => {
     const next = applyRevealFocusMode(e.target.value);
@@ -3399,8 +3401,8 @@
     const next = current === 'listening' ? 'detective' : 'listening';
     applyPlayStyle(next);
     WQUI.showToast(next === 'listening'
-      ? 'Listening mode enabled.'
-      : 'Guess-first mode enabled.');
+      ? 'Audio game is on.'
+      : 'Audio game is off.');
   });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => {
@@ -5193,25 +5195,25 @@
   function getFocusDisplayGroup(value, fallbackGroup = '') {
     const groups = getFocusDisplayGroup._groups || (getFocusDisplayGroup._groups = Object.freeze({
       all: 'Classic',
-      cvc: 'Sound Quest',
-      digraph: 'Sound Quest',
-      ccvc: 'Sound Quest',
-      cvcc: 'Sound Quest',
-      trigraph: 'Sound Quest',
-      cvce: 'Sound Quest',
-      vowel_team: 'Sound Quest',
-      r_controlled: 'Sound Quest',
-      diphthong: 'Sound Quest',
-      floss: 'Sound Quest',
-      welded: 'Sound Quest',
-      schwa: 'Sound Quest',
-      prefix: 'Word Parts',
-      suffix: 'Word Parts',
-      compound: 'Word Parts',
-      multisyllable: 'Word Parts'
+      cvc: 'Phonics',
+      digraph: 'Phonics',
+      ccvc: 'Phonics',
+      cvcc: 'Phonics',
+      trigraph: 'Phonics',
+      cvce: 'Phonics',
+      vowel_team: 'Phonics',
+      r_controlled: 'Phonics',
+      diphthong: 'Phonics',
+      floss: 'Phonics',
+      welded: 'Phonics',
+      schwa: 'Phonics',
+      prefix: 'Word Study',
+      suffix: 'Word Study',
+      compound: 'Word Study',
+      multisyllable: 'Word Study'
     }));
     if (groups[value]) return groups[value];
-    if (String(value || '').startsWith('vocab-')) return 'Subject Words';
+    if (String(value || '').startsWith('vocab-')) return 'Subjects';
     return String(fallbackGroup || 'General').trim() || 'General';
   }
 
@@ -5236,25 +5238,35 @@
       });
   }
 
-  function getCurriculumQuestEntries() {
-    const entries = [{
-      value: 'custom::custom',
-      label: 'Manual (no curriculum pack)',
-      group: 'Curriculum',
-      kind: 'curriculum',
-      packId: 'custom',
-      targetId: 'custom',
-      questValue: 'curriculum::custom::custom'
-    }];
+  function getCurriculumProgramEntries() {
+    return CURRICULUM_PACK_ORDER.map((packId) => {
+      const pack = getLessonPackDefinition(packId);
+      return {
+        value: `curriculum-pack::${packId}`,
+        label: pack.label,
+        group: 'Curriculum',
+        kind: 'curriculum-pack',
+        packId,
+        targetId: 'custom',
+        questValue: `curriculum-pack::${packId}`
+      };
+    });
+  }
+
+  function getCurriculumQuestEntries(packFilter = '') {
+    const normalizedFilter = normalizeLessonPackId(packFilter);
+    const useFilter = normalizedFilter !== 'custom' && normalizedFilter.length > 0;
+    const entries = [];
     CURRICULUM_PACK_ORDER.forEach((packId) => {
+      if (useFilter && packId !== normalizedFilter) return;
       const pack = getLessonPackDefinition(packId);
       if (!pack || !Array.isArray(pack.targets)) return;
       pack.targets.forEach((target) => {
         if (!target?.id) return;
         entries.push({
           value: `curriculum::${packId}::${target.id}`,
-          label: `${pack.label} · ${target.label}`,
-          group: `Curriculum · ${pack.label}`,
+          label: target.label,
+          group: pack.label,
           kind: 'curriculum',
           packId,
           targetId: target.id,
@@ -5266,7 +5278,11 @@
   }
 
   function getQuestEntries() {
-    return [...getFocusEntries(), ...getCurriculumQuestEntries()];
+    return [
+      ...getFocusEntries(),
+      ...getCurriculumProgramEntries(),
+      ...getCurriculumQuestEntries()
+    ];
   }
 
   function getFocusLabel(value) {
@@ -5362,18 +5378,9 @@
     'vowel_team',
     'r_controlled'
   ]);
-  const FOCUS_EMPTY_VISIBLE_LIMIT = 24;
-  const FOCUS_QUERY_VISIBLE_LIMIT = 20;
+  const FOCUS_EMPTY_VISIBLE_LIMIT = 12;
+  const FOCUS_QUERY_VISIBLE_LIMIT = 18;
   const CURRICULUM_QUICK_VALUES = Object.freeze([]);
-  const PHONICS_SEARCH_SHORTCUT = Object.freeze({
-    value: '__phonics_curriculum__',
-    label: 'Phonics Curriculum',
-    group: 'Curriculum',
-    kind: 'curriculum',
-    packId: 'phonics',
-    targetId: 'phonics-k2-cvc',
-    questValue: 'curriculum::phonics::phonics-k2-cvc'
-  });
 
   // Prioritize options that are most common for everyday classroom use.
   const FOCUS_POPULARITY = Object.freeze({
@@ -5581,6 +5588,7 @@
   }
 
   let focusNavIndex = -1;
+  let focusCurriculumPackFilter = '';
 
   function setFocusSearchOpen(isOpen) {
     document.documentElement.setAttribute('data-focus-search-open', isOpen ? 'true' : 'false');
@@ -5635,6 +5643,9 @@
     const inputEl = _el('focus-inline-search');
     if (!listEl) return;
     const query = String(rawQuery || '').trim().toLowerCase();
+    const focusEntries = getFocusEntries();
+    const curriculumProgramEntries = getCurriculumProgramEntries();
+    const curriculumLessonEntries = getCurriculumQuestEntries(focusCurriculumPackFilter);
     const entries = getQuestEntries();
     if (!entries.length) {
       listEl.innerHTML = '<div class="focus-search-empty">Focus options are loading...</div>';
@@ -5651,21 +5662,22 @@
       const used = new Set();
       FOCUS_QUICK_VALUES.forEach((value) => {
         if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT) return;
-        const found = entries.find((entry) => entry.value === value);
+        const found = focusEntries.find((entry) => entry.value === value);
         if (found && !used.has(found.value)) {
           visible.push(found);
           used.add(found.value);
         }
       });
-      entries.forEach((entry) => {
-        if (entry.value === 'all') return;
-        if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT || used.has(entry.value)) return;
-        visible.push(entry);
-        used.add(entry.value);
-      });
-      const hasPhonicsShortcut = visible.some((entry) => entry.questValue === PHONICS_SEARCH_SHORTCUT.questValue);
-      if (!hasPhonicsShortcut) {
-        visible = [...visible, PHONICS_SEARCH_SHORTCUT];
+      if (focusCurriculumPackFilter) {
+        visible = curriculumLessonEntries;
+      } else {
+        focusEntries.forEach((entry) => {
+          if (entry.value === 'all') return;
+          if (visible.length >= FOCUS_EMPTY_VISIBLE_LIMIT || used.has(entry.value)) return;
+          visible.push(entry);
+          used.add(entry.value);
+        });
+        visible = [...visible, ...curriculumProgramEntries];
       }
     } else {
       visible = getRankedFocusMatches(entries, query);
@@ -5690,18 +5702,28 @@
     const activeQuestValue = (activePack !== 'custom' && activeTarget !== 'custom')
       ? `curriculum::${activePack}::${activeTarget}`
       : `focus::${activeFocus}`;
-    const actions = '<button type="button" class="focus-search-action" data-focus-action="teacher-words">👩‍🏫 Open Teacher Hub</button>';
+    const activePackLabel = getLessonPackDefinition(activePack).label;
+    const actions = [
+      '<button type="button" class="focus-search-action" data-focus-action="teacher-words">Open Teacher Hub</button>'
+    ];
+    if (!query && focusCurriculumPackFilter) {
+      actions.push('<button type="button" class="focus-search-action" data-focus-action="curriculum-back">Back to Program List</button>');
+    }
     const guidance = !query
-      ? '<div class="focus-search-empty focus-search-empty-hint">🎯 Start with a sound quest first, then choose curriculum targets below.</div>'
+      ? focusCurriculumPackFilter
+        ? `<div class="focus-search-empty focus-search-empty-hint">${escapeHtml(getLessonPackDefinition(focusCurriculumPackFilter).label)}: choose a lesson group.</div>`
+        : '<div class="focus-search-empty focus-search-empty-hint">Choose a quest, or choose a curriculum program to open lesson groups.</div>'
       : '';
-    listEl.innerHTML = actions + guidance + visible.map((entry) => {
+    listEl.innerHTML = actions.join('') + guidance + visible.map((entry) => {
       const questValue = entry.questValue || `focus::${entry.value}`;
-      const isPhonicsShortcut = entry.packId === 'phonics';
-      const isActive = questValue === activeQuestValue || (isPhonicsShortcut && activePack === 'phonics');
+      const isProgram = entry.kind === 'curriculum-pack';
+      const isActive = isProgram
+        ? (entry.packId === activePack || entry.packId === focusCurriculumPackFilter)
+        : (questValue === activeQuestValue);
       const activeClass = isActive ? ' is-active' : '';
       const selected = isActive ? 'true' : 'false';
-      const meta = entry.value === 'all' ? '' : `<small>${escapeHtml(entry.group)}</small>`;
-      return `<button type="button" class="focus-search-item${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}"><span>${escapeHtml(entry.label)}</span>${meta}</button>`;
+      const label = isProgram ? `${entry.label} · Choose Lesson` : entry.label;
+      return `<button type="button" class="focus-search-item${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}" title="${escapeHtml(isProgram ? `Open ${entry.label} lesson groups` : `${entry.group || activePackLabel}`)}"><span>${escapeHtml(label)}</span></button>`;
     }).join('');
     getFocusSearchButtons().forEach((button, idx) => {
       button.id = `focus-search-option-${idx}`;
@@ -5718,6 +5740,7 @@
     const list = _el('focus-inline-results');
     const inputEl = _el('focus-inline-search');
     if (!list) return;
+    focusCurriculumPackFilter = '';
     focusNavIndex = -1;
     if (inputEl) inputEl.removeAttribute('aria-activedescendant');
     if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
@@ -5753,6 +5776,20 @@
   function setQuestValue(nextValue, options = {}) {
     const raw = String(nextValue || '').trim();
     if (!raw) return;
+    if (raw.startsWith('curriculum-pack::')) {
+      const [, packRaw = 'custom'] = raw.split('::');
+      const packId = normalizeLessonPackId(packRaw);
+      if (packId === 'custom') return;
+      focusCurriculumPackFilter = packId;
+      const inputEl = _el('focus-inline-search');
+      if (inputEl) {
+        const packLabel = getLessonPackDefinition(packId).label;
+        inputEl.value = packLabel;
+        inputEl.dataset.lockedLabel = packLabel.toLowerCase();
+      }
+      renderFocusSearchList('');
+      return;
+    }
     if (raw.startsWith('curriculum::')) {
       if (isAssessmentRoundLocked() && !options.force) {
         showAssessmentLockNotice('Assessment lock is on. Curriculum changes unlock after this round.');
@@ -5992,6 +6029,14 @@
       const actionId = String(action.getAttribute('data-focus-action') || '').trim().toLowerCase();
       if (actionId === 'teacher-words') {
         openTeacherWordTools();
+      } else if (actionId === 'curriculum-back') {
+        focusCurriculumPackFilter = '';
+        const inputEl = _el('focus-inline-search');
+        if (inputEl) {
+          inputEl.value = '';
+          inputEl.dataset.lockedLabel = '';
+        }
+        renderFocusSearchList('');
       }
       return;
     }
@@ -6133,6 +6178,7 @@
   }
 
   function showMidgameBoost() {
+    if (!MIDGAME_BOOST_ENABLED) return;
     if (!areBoostPopupsEnabled()) return;
     if (isAssessmentRoundLocked()) return;
     const boost = _el('midgame-boost');
@@ -9023,6 +9069,7 @@
         WQUI.updateKeyboard(result.result, result.guess);
         checkDuplicates(result);
         if (
+          MIDGAME_BOOST_ENABLED &&
           !result.won &&
           !result.lost &&
           !midgameBoostShown &&
@@ -9138,7 +9185,7 @@
   _el('new-game-btn')?.addEventListener('click',  newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
   _el('phonics-clue-open-btn')?.addEventListener('click', () => {
-    void openPhonicsClueModal();
+    showInformantHintToast();
   });
   _el('phonics-clue-close')?.addEventListener('click', () => closePhonicsClueModal());
   _el('phonics-clue-modal')?.addEventListener('pointerdown', (event) => {
