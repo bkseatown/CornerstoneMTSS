@@ -89,7 +89,7 @@
   const REVIEW_QUEUE_KEY = 'wq_v2_spaced_review_queue_v1';
   const PAGE_MODE_KEY = 'wq_v2_page_mode_v1';
   const LAST_NON_OFF_MUSIC_KEY = 'wq_v2_last_non_off_music_v1';
-  const MISSION_LAB_ENABLED = false;
+  const MISSION_LAB_ENABLED = true;
   const MIDGAME_BOOST_ENABLED = false;
   const REVIEW_QUEUE_MAX_ITEMS = 36;
   const ALLOWED_MUSIC_MODES = new Set([
@@ -2725,7 +2725,7 @@
     let text = '';
 
     if (isMissionLabStandaloneMode()) {
-      text = 'Mission Lab standalone: launch a sprint from the panel below.';
+      text = 'Deep Dive standalone: launch a three-step word unpacking round from the panel below.';
     } else if (firstRunSetupPending) {
       text = 'Open the quick how-to card to learn tile colors, then start your first word.';
     } else if (reviewWord) {
@@ -2821,17 +2821,17 @@
     const navBtn = _el('mission-lab-nav-btn');
     if (navBtn) {
       navBtn.classList.toggle('hidden', !missionEnabled);
-      navBtn.textContent = missionMode ? 'WordQuest' : 'Mission Lab';
+      navBtn.textContent = missionMode ? 'WordQuest' : 'Deep Dive';
       navBtn.setAttribute('aria-pressed', missionMode ? 'true' : 'false');
       navBtn.title = missionMode
         ? 'Return to WordQuest gameplay mode'
-        : 'Open Mission Lab as a standalone activity';
+        : 'Open Deep Dive as a standalone activity';
     }
     const newWordBtn = _el('new-game-btn');
     if (newWordBtn) {
-      newWordBtn.textContent = missionMode ? 'New Mission' : 'New Word';
+      newWordBtn.textContent = missionMode ? 'New Deep Dive' : 'New Word';
       newWordBtn.title = missionMode
-        ? 'Start a standalone Mission Lab sprint'
+        ? 'Start a standalone Deep Dive round'
         : 'Start a new word round';
       if (missionMode) newWordBtn.classList.remove('pulse');
     }
@@ -8012,19 +8012,19 @@
       sessionOnly: true,
       student: activeStudent === 'Class' ? '' : activeStudent
     });
-    if (missionCountEl) missionCountEl.textContent = `Mission Rounds: ${missionStats.count}`;
+    if (missionCountEl) missionCountEl.textContent = `Deep Dive Rounds: ${missionStats.count}`;
     if (missionScoreEl) {
       missionScoreEl.textContent = missionStats.count
-        ? `Mission Avg Score: ${Math.round(missionStats.avgScore)}/100 · Strong+ ${Math.round(missionStats.strongRate * 100)}%`
-        : 'Mission Avg Score: --';
+        ? `Deep Dive Avg Score: ${Math.round(missionStats.avgScore)}/100 · Strong+ ${Math.round(missionStats.strongRate * 100)}%`
+        : 'Deep Dive Avg Score: --';
     }
     if (missionCompletionEl) {
       missionCompletionEl.textContent = missionStats.count
-        ? `Mission Completion: ${Math.round(missionStats.completionRate * 100)}% · On-time ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`
-        : 'Mission Completion: --';
+        ? `Deep Dive Completion: ${Math.round(missionStats.completionRate * 100)}% · On-time ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`
+        : 'Deep Dive Completion: --';
     }
     if (missionLevelEl) {
-      missionLevelEl.textContent = `Mission Top Level: ${missionStats.topLevelLabel}`;
+      missionLevelEl.textContent = `Deep Dive Top Level: ${missionStats.topLevelLabel}`;
     }
     renderMasteryTable();
     renderMiniLessonPanel();
@@ -8104,12 +8104,12 @@
       `Avg Time: ${avgTime}`,
       `Top Error Pattern: ${getTopErrorLabel(sessionSummary.errorTotals)}`,
       `Next Instructional Step: ${getInstructionalNextStep(sessionSummary.errorTotals)}`,
-      `Mission Rounds: ${missionStats.count}`,
-      `Mission Avg Score: ${missionStats.count ? `${Math.round(missionStats.avgScore)}/100` : '--'}`,
-      `Mission Strong+ Rate: ${missionStats.count ? `${Math.round(missionStats.strongRate * 100)}%` : '--'}`,
-      `Mission Completion: ${missionStats.count ? `${Math.round(missionStats.completionRate * 100)}%` : '--'}`,
-      `Mission On-time: ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`,
-      `Mission Top Level: ${missionStats.topLevelLabel}`
+      `Deep Dive Rounds: ${missionStats.count}`,
+      `Deep Dive Avg Score: ${missionStats.count ? `${Math.round(missionStats.avgScore)}/100` : '--'}`,
+      `Deep Dive Strong+ Rate: ${missionStats.count ? `${Math.round(missionStats.strongRate * 100)}%` : '--'}`,
+      `Deep Dive Completion: ${missionStats.count ? `${Math.round(missionStats.completionRate * 100)}%` : '--'}`,
+      `Deep Dive On-time: ${missionStats.completedCount ? `${Math.round(missionStats.onTimeRate * 100)}%` : '--'}`,
+      `Deep Dive Top Level: ${missionStats.topLevelLabel}`
     ].join('\n');
   }
 
@@ -8145,12 +8145,12 @@
       'Next Instructional Step',
       'Top Skill',
       'Top Skill Accuracy',
-      'Mission Rounds',
-      'Mission Avg Score',
-      'Mission Strong+',
-      'Mission Completion',
-      'Mission On-Time',
-      'Mission Top Level'
+      'Deep Dive Rounds',
+      'Deep Dive Avg Score',
+      'Deep Dive Strong+',
+      'Deep Dive Completion',
+      'Deep Dive On-Time',
+      'Deep Dive Top Level'
     ], [
       activeStudent,
       new Date().toLocaleString(),
@@ -8549,21 +8549,21 @@
     });
     const recent = stats.records[0] || null;
     const lines = [
-      'WordQuest Mission Lab Summary',
+      'WordQuest Deep Dive Summary',
       `Student: ${activeStudent}`,
       `Generated: ${new Date().toLocaleString()}`,
       `Session started: ${new Date(sessionSummary.startedAt || Date.now()).toLocaleString()}`,
-      `Mission rounds: ${stats.count}`,
-      `Mission average score: ${stats.count ? `${Math.round(stats.avgScore)}/100` : '--'}`,
-      `Strong+ missions: ${stats.count ? `${Math.round(stats.strongRate * 100)}%` : '--'}`,
-      `Mission completion: ${stats.count ? `${Math.round(stats.completionRate * 100)}%` : '--'}`,
+      `Deep Dive rounds: ${stats.count}`,
+      `Deep Dive average score: ${stats.count ? `${Math.round(stats.avgScore)}/100` : '--'}`,
+      `Strong+ rounds: ${stats.count ? `${Math.round(stats.strongRate * 100)}%` : '--'}`,
+      `Deep Dive completion: ${stats.count ? `${Math.round(stats.completionRate * 100)}%` : '--'}`,
       `On-time finishes: ${stats.completedCount ? `${Math.round(stats.onTimeRate * 100)}%` : '--'}`,
-      `Most-used Bloom level: ${stats.topLevelLabel}`
+      `Most-used thinking level: ${stats.topLevelLabel}`
     ];
     if (recent) {
       lines.push(
         '',
-        'Most recent mission',
+        'Most recent Deep Dive',
         `${new Date(recent.ts).toLocaleString()} · ${recent.word || '--'} · ${recent.topic || '--'} · Grade ${recent.grade || '--'} · Student ${recent.student || 'Class'}`,
         `Level: ${getChallengeLevelDisplay(recent.level)} · Score: ${recent.score}/100 (${recent.scoreBand}) · On time: ${recent.onTime ? 'yes' : 'no'}`
       );
@@ -8575,15 +8575,15 @@
     const records = getMissionLabRecords({ newestFirst: false });
     const lines = [[
       'Timestamp',
-      'Mission ID',
+      'Deep Dive ID',
       'Source',
       'Student',
       'Word',
       'Topic',
       'Grade',
-      'Bloom Level',
+      'Thinking Level',
       'Score Band',
-      'Mission Score',
+      'Deep Dive Score',
       'Clarity',
       'Evidence',
       'Vocabulary',
@@ -8597,7 +8597,7 @@
       'Create Response'
     ]];
     if (!records.length) {
-      lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'No mission records yet.', '']);
+      lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'No Deep Dive records yet.', '']);
       return lines.map((line) => line.map(csvEscapeCell).join(',')).join('\n');
     }
     records.forEach((record) => {
@@ -8646,7 +8646,7 @@
       { name: `${prefix}-mastery.csv`, content: buildMasteryReportCsvText() },
       { name: `${prefix}-probe.csv`, content: buildProbeSummaryCsvText() },
       { name: `${prefix}-class-rollup.csv`, content: buildClassRollupCsvText() },
-      { name: `${prefix}-mission-lab.csv`, content: buildMissionLabCsvText() }
+      { name: `${prefix}-deep-dive.csv`, content: buildMissionLabCsvText() }
     ];
     const started = files.reduce((count, file) => (
       count + (downloadTextFile(file.name, file.content, 'text/csv;charset=utf-8') ? 1 : 0)
@@ -8689,16 +8689,16 @@
   async function copyMissionSummary() {
     await copyTextToClipboard(
       buildMissionSummaryText(),
-      'Mission summary copied.',
-      'Could not copy mission summary on this device.'
+      'Deep Dive summary copied.',
+      'Could not copy Deep Dive summary on this device.'
     );
   }
 
   async function copyMissionSummaryCsv() {
     await copyTextToClipboard(
       buildMissionLabCsvText(),
-      'Mission CSV copied.',
-      'Could not copy mission CSV on this device.'
+      'Deep Dive CSV copied.',
+      'Could not copy Deep Dive CSV on this device.'
     );
   }
 
@@ -9283,7 +9283,7 @@
     const note = _el('mission-lab-hub-note');
     const level = normalizeThinkingLevel(_el('mission-lab-level-select')?.value || '');
     if (!note || !level) return;
-    note.textContent = `Selected Bloom target: ${getChallengeLevelDisplay(level)}. Start Mission Lab when ready.`;
+    note.textContent = `Selected thinking target: ${getChallengeLevelDisplay(level)}. Start Deep Dive when ready.`;
   });
   _el('modal-auto-next-cancel')?.addEventListener('click', () => {
     clearRevealAutoAdvanceTimer();
@@ -9301,42 +9301,27 @@
     if (event.target?.id !== 'challenge-modal') return;
     closeRevealChallengeModal();
   });
+  _el('challenge-modal')?.addEventListener('click', (event) => {
+    const button = event.target?.closest?.('button[data-challenge-choice-task]');
+    if (!button) return;
+    const task = String(button.dataset.challengeChoiceTask || '').trim();
+    const choiceId = String(button.dataset.choiceId || '').trim();
+    if (!task || !choiceId) return;
+    handleChallengeChoiceSelection(task, choiceId);
+  });
   _el('challenge-hear-word')?.addEventListener('click', () => {
     cancelRevealNarration();
     const current = revealChallengeState?.result?.entry || entry();
     if (current) void WQAudio.playWord(current);
-    setChallengeTaskComplete('listen', true);
   });
   _el('challenge-hear-sentence')?.addEventListener('click', () => {
     cancelRevealNarration();
     const current = revealChallengeState?.result?.entry || entry();
     if (current) void WQAudio.playSentence(current);
-    setChallengeTaskComplete('listen', true);
   });
   _el('challenge-open-practice')?.addEventListener('click', () => {
     closeRevealChallengeModal({ silent: true });
     openVoicePracticeAndRecord({ autoStart: true });
-    setChallengeTaskComplete('listen', true);
-  });
-  _el('challenge-analyze-input')?.addEventListener('input', (event) => {
-    if (!revealChallengeState) return;
-    revealChallengeState.responses.analyze = String(event.target?.value || '');
-    const met = countWords(revealChallengeState.responses.analyze) >= CHALLENGE_MIN_TEXT_WORDS;
-    setChallengeTaskComplete('analyze', met);
-    updateChallengeWordCountUI();
-  });
-  _el('challenge-create-input')?.addEventListener('input', (event) => {
-    if (!revealChallengeState) return;
-    revealChallengeState.responses.create = String(event.target?.value || '');
-    const met = countWords(revealChallengeState.responses.create) >= CHALLENGE_MIN_TEXT_WORDS;
-    setChallengeTaskComplete('create', met);
-    updateChallengeWordCountUI();
-  });
-  _el('challenge-analyze-starter')?.addEventListener('click', () => {
-    applyChallengeStarter('analyze');
-  });
-  _el('challenge-create-starter')?.addEventListener('click', () => {
-    applyChallengeStarter('create');
   });
   _el('challenge-save-reflection')?.addEventListener('click', () => {
     saveRevealChallengeResponses();
@@ -9390,56 +9375,43 @@
   const THINKING_LEVEL_META = Object.freeze({
     remember: Object.freeze({
       chip: 'Say It (Remember)',
-      teacher: 'Teacher lens: Bloom Remember · SoR word recognition + retrieval.'
+      teacher: 'Teacher lens: Thinking level Remember · SoR word recognition + retrieval.'
     }),
     understand: Object.freeze({
       chip: 'Explain It (Understand)',
-      teacher: 'Teacher lens: Bloom Understand · SoR semantics + background knowledge.'
+      teacher: 'Teacher lens: Thinking level Understand · SoR semantics + background knowledge.'
     }),
     apply: Object.freeze({
       chip: 'Use It (Apply)',
-      teacher: 'Teacher lens: Bloom Apply · SoR syntax + semantics in context.'
+      teacher: 'Teacher lens: Thinking level Apply · SoR syntax + semantics in context.'
     }),
     analyze: Object.freeze({
       chip: 'Compare It (Analyze)',
-      teacher: 'Teacher lens: Bloom Analyze · SoR pattern analysis + comprehension.'
+      teacher: 'Teacher lens: Thinking level Analyze · SoR pattern analysis + comprehension.'
     }),
     evaluate: Object.freeze({
       chip: 'Defend It (Evaluate)',
-      teacher: 'Teacher lens: Bloom Evaluate · strategy reflection + comprehension.'
+      teacher: 'Teacher lens: Thinking level Evaluate · strategy reflection + comprehension.'
     }),
     create: Object.freeze({
       chip: 'Invent It (Create)',
-      teacher: 'Teacher lens: Bloom Create · expressive language + transfer.'
+      teacher: 'Teacher lens: Thinking level Create · expressive language + transfer.'
     })
   });
   const CHALLENGE_REFLECTION_KEY = 'wq_v2_levelup_reflections_v1';
   const CHALLENGE_PROGRESS_KEY = 'wq_v2_mission_lab_progress_v1';
   const CHALLENGE_DRAFT_KEY = 'wq_v2_mission_lab_draft_v1';
   const CHALLENGE_SPRINT_SECONDS = 90;
-  const CHALLENGE_MIN_TEXT_WORDS = 5;
   const CHALLENGE_STRONG_SCORE_MIN = 75;
   const CHALLENGE_COMPLETE_LINES = Object.freeze([
-    'Mission complete. Detective brain unlocked.',
-    'Mission lab complete. You cracked the bonus sprint.',
-    'Quest complete. Your clue power just went up.'
+    'Deep Dive complete. Pattern and meaning locked in.',
+    'Deep Dive clear. You connected sound, meaning, and sentence use.',
+    'Quest upgrade complete. Great transfer from decoding to comprehension.'
   ]);
   const CHALLENGE_TASK_LABELS = Object.freeze({
-    listen: 'Sound Sleuth',
-    analyze: 'Clue Compare',
-    create: 'Create A Clue'
-  });
-  const CHALLENGE_TEXT_STARTERS = Object.freeze({
-    analyze: Object.freeze([
-      'I noticed this word pattern because ',
-      'A helpful strategy was ',
-      'This word is different from _____ because '
-    ]),
-    create: Object.freeze([
-      'I am thinking of a word that ',
-      'My clue is: this word means ',
-      'Riddle: what word can '
-    ])
+    listen: 'Pattern Pop',
+    analyze: 'Meaning Match',
+    create: 'Sentence Snap'
   });
   const CHALLENGE_RANKS = Object.freeze([
     Object.freeze({ minPoints: 0, label: 'Scout' }),
@@ -9527,14 +9499,6 @@
     if (score >= CHALLENGE_STRONG_SCORE_MIN) return 'Strong';
     if (score >= 55) return 'Growing';
     return 'Launch';
-  }
-
-  function countWords(text) {
-    return String(text || '')
-      .trim()
-      .split(/\s+/g)
-      .filter(Boolean)
-      .length;
   }
 
   function normalizeThinkingLevel(level, fallback = '') {
@@ -9638,15 +9602,15 @@
     }
     if (note) {
       note.textContent = pool.length
-        ? `${pool.length} mission-ready words in this filter. Launch now or pick a word and Bloom level.`
-        : 'No mission-ready words in this filter. Switch quest or grade, then try again.';
+        ? `${pool.length} Deep Dive-ready words in this filter. Launch now or pick a word and level.`
+        : 'No Deep Dive words in this filter. Switch quest or grade, then try again.';
     }
   }
 
   function startStandaloneMissionLab(options = {}) {
     const { pool } = getStandaloneMissionWordPool();
     if (!pool.length) {
-      WQUI.showToast('No words match this Mission Lab filter. Adjust grade, quest, or word length.');
+      WQUI.showToast('No words match this Deep Dive filter. Adjust grade, quest, or word length.');
       refreshStandaloneMissionLabHub();
       return false;
     }
@@ -9659,13 +9623,13 @@
     const fallbackWord = normalizeReviewWord(pickRandom(pool) || pool[0] || '');
     const word = (selectedWord && pool.includes(selectedWord)) ? selectedWord : fallbackWord;
     if (!word) {
-      WQUI.showToast('Could not pick a mission word. Try again.');
+      WQUI.showToast('Could not pick a Deep Dive word. Try again.');
       return false;
     }
 
     const entryData = WQData.getEntry(word);
     if (!entryData) {
-      WQUI.showToast('Mission word data is missing. Pick another word.');
+      WQUI.showToast('Deep Dive word data is missing. Pick another word.');
       return false;
     }
 
@@ -9686,7 +9650,7 @@
       level
     });
     if (!nextState) {
-      WQUI.showToast('Mission Lab could not start for this word.');
+      WQUI.showToast('Deep Dive could not start for this word.');
       return false;
     }
 
@@ -9787,82 +9751,346 @@
   }
 
   function updateChallengeWordCountUI() {
-    const analyzeEl = _el('challenge-analyze-count');
-    const createEl = _el('challenge-create-count');
-    if (!revealChallengeState) {
-      if (analyzeEl) analyzeEl.textContent = `0 / ${CHALLENGE_MIN_TEXT_WORDS} words`;
-      if (createEl) createEl.textContent = `0 / ${CHALLENGE_MIN_TEXT_WORDS} words`;
-      return;
-    }
-    const analyzeWords = countWords(revealChallengeState.responses.analyze);
-    const createWords = countWords(revealChallengeState.responses.create);
-    if (analyzeEl) {
-      analyzeEl.textContent = `${analyzeWords} / ${CHALLENGE_MIN_TEXT_WORDS} words`;
-      analyzeEl.classList.toggle('is-complete', analyzeWords >= CHALLENGE_MIN_TEXT_WORDS);
-    }
-    if (createEl) {
-      createEl.textContent = `${createWords} / ${CHALLENGE_MIN_TEXT_WORDS} words`;
-      createEl.classList.toggle('is-complete', createWords >= CHALLENGE_MIN_TEXT_WORDS);
-    }
+    // Legacy function retained for compatibility with older save/report paths.
   }
 
-  function applyChallengeStarter(task) {
-    if (!revealChallengeState) return;
-    const key = task === 'create' ? 'create' : 'analyze';
-    const starters = CHALLENGE_TEXT_STARTERS[key] || [];
-    if (!starters.length) return;
-    const input = _el(key === 'create' ? 'challenge-create-input' : 'challenge-analyze-input');
-    if (!(input instanceof HTMLTextAreaElement)) return;
+  function shuffleList(values) {
+    const list = Array.isArray(values) ? [...values] : [];
+    for (let i = list.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
+  }
 
-    const existing = String(input.value || '').trim();
-    let starter = pickRandom(starters) || starters[0] || '';
-    if (!starter) return;
-    if (existing) {
-      const alreadyHasStarter = starters.some((item) => existing.toLowerCase().startsWith(String(item).toLowerCase()));
-      if (alreadyHasStarter) {
-        starter = starters.find((item) => !existing.toLowerCase().startsWith(String(item).toLowerCase())) || starter;
-      }
+  function normalizeChallengeWord(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z]/g, '');
+  }
+
+  function escapeForRegExp(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function fallbackPatternPieces(wordValue) {
+    const word = normalizeChallengeWord(wordValue);
+    if (!word) return [];
+    if (word.length <= 3) {
+      return word.split('');
+    }
+    if (word.length <= 5) {
+      return [word.slice(0, 1), word.slice(1, 3), word.slice(3)].filter(Boolean);
+    }
+    return [word.slice(0, 2), word.slice(2, word.length - 2), word.slice(word.length - 2)].filter(Boolean);
+  }
+
+  function resolvePatternPrompt(mark, isPrefixLike) {
+    if (mark === 'team') return 'Tap the sound team chunk.';
+    if (mark === 'silent') return 'Tap the silent letter chunk.';
+    if (mark === 'affix') return isPrefixLike ? 'Tap the prefix chunk.' : 'Tap the suffix chunk.';
+    if (mark === 'schwa') return 'Tap the schwa vowel chunk.';
+    if (mark === 'letter') return 'Tap the vowel anchor chunk.';
+    return 'Tap the target sound chunk.';
+  }
+
+  function buildDeepDivePatternTask(result) {
+    const entryData = result?.entry || null;
+    const word = normalizeChallengeWord(result?.word || entryData?.word || '');
+    if (!word) {
+      return {
+        prompt: 'Tap the target sound chunk.',
+        helper: '',
+        choices: []
+      };
     }
 
-    input.value = existing
-      ? `${existing} ${starter}`.replace(/\s+/g, ' ').trim()
-      : starter;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    input.focus();
-    setChallengeFeedback(`${CHALLENGE_TASK_LABELS[key]} starter added. Keep going.`, 'good');
+    const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
+    const phonicsTag = String(entryData?.phonics || '').trim();
+    let category = normalizeHintCategoryFromFocusTag(focusValue, phonicsTag);
+    if (category === 'general') category = detectHintCategoryFromWord(word);
+    const live = buildLiveHintExample(word, category);
+
+    let choices = Array.isArray(live?.parts)
+      ? live.parts
+        .map((part, index) => {
+          const text = String(part?.text || '').toUpperCase();
+          if (!text) return null;
+          const mark = String(part?.mark || '').trim().toLowerCase();
+          return {
+            id: `pattern-${index}`,
+            label: text,
+            mark,
+            correct: !!mark
+          };
+        })
+        .filter(Boolean)
+      : [];
+
+    if (!choices.length) {
+      const pieces = fallbackPatternPieces(word);
+      choices = pieces.map((piece, index) => ({
+        id: `pattern-${index}`,
+        label: String(piece || '').toUpperCase(),
+        mark: '',
+        correct: false
+      }));
+    }
+
+    if (!choices.length) {
+      choices = [{
+        id: 'pattern-full',
+        label: word.toUpperCase(),
+        mark: '',
+        correct: true
+      }];
+    }
+
+    let correctChoice = choices.find((choice) => choice.correct);
+    if (!correctChoice) {
+      const fallbackIndex = Math.max(0, Math.floor((choices.length - 1) / 2));
+      correctChoice = choices[fallbackIndex];
+      if (correctChoice) correctChoice.correct = true;
+    }
+
+    const prefixLike = !!correctChoice && choices[0] && correctChoice.id === choices[0].id;
+    return {
+      prompt: resolvePatternPrompt(correctChoice?.mark || '', prefixLike),
+      helper: String(live?.note || '').trim(),
+      choices: choices.map((choice) => ({
+        id: choice.id,
+        label: choice.label,
+        correct: !!choice.correct
+      }))
+    };
+  }
+
+  function buildDeepDiveMeaningTask(result) {
+    const entryData = result?.entry || null;
+    const word = String(result?.word || entryData?.word || '').trim().toUpperCase();
+    const correctDefinition = String(entryData?.definition || '').replace(/\s+/g, ' ').trim();
+
+    const selectedGrade = _el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade;
+    const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    const gradeBand = String(entryData?.grade_band || getEffectiveGameplayGradeBand(selectedGrade, focus)).trim() || SAFE_DEFAULT_GRADE_BAND;
+
+    const pool = shuffleList(WQData.getPlayableWords({
+      gradeBand,
+      length: 'any',
+      phonics: 'all'
+    }));
+
+    const distractors = [];
+    const distractorWords = [];
+    pool.forEach((candidateWord) => {
+      if (distractors.length >= 3) return;
+      const normalizedCandidate = normalizeReviewWord(candidateWord);
+      if (!normalizedCandidate || normalizedCandidate === normalizeReviewWord(word)) return;
+      const candidateEntry = WQData.getEntry(normalizedCandidate);
+      const candidateDefinition = String(candidateEntry?.definition || '').replace(/\s+/g, ' ').trim();
+      if (!candidateDefinition || candidateDefinition.toLowerCase() === correctDefinition.toLowerCase()) return;
+      if (distractors.some((item) => item.toLowerCase() === candidateDefinition.toLowerCase())) return;
+      distractors.push(candidateDefinition);
+      distractorWords.push(normalizedCandidate.toUpperCase());
+    });
+
+    const fallbackDistractors = [
+      'A quick sound warm-up pattern.',
+      'A place where words are sorted.',
+      'A strategy for checking letter order.'
+    ];
+    while (distractors.length < 3) {
+      const candidate = fallbackDistractors[distractors.length] || fallbackDistractors[0];
+      if (!candidate) break;
+      distractors.push(candidate);
+      distractorWords.push('—');
+    }
+
+    const compact = (value) => {
+      const clean = String(value || '').replace(/\s+/g, ' ').trim();
+      if (clean.length <= 108) return clean;
+      return `${clean.slice(0, 105).trim()}...`;
+    };
+
+    const choices = shuffleList([
+      { id: 'meaning-correct', label: compact(correctDefinition || `${word} is the target word for this round.`), correct: true },
+      ...distractors.slice(0, 3).map((label, index) => ({
+        id: `meaning-${index + 1}`,
+        label: compact(label),
+        correct: false
+      }))
+    ]);
+
+    return {
+      prompt: `Pick the best meaning for "${word}".`,
+      choices,
+      distractorWords
+    };
+  }
+
+  function buildDeepDiveSyntaxTask(result, meaningTask) {
+    const entryData = result?.entry || null;
+    const word = String(result?.word || entryData?.word || '').trim().toUpperCase();
+    const normalizedWord = normalizeChallengeWord(word);
+    const rawSentence = String(entryData?.sentence || '').replace(/\s+/g, ' ').trim();
+
+    const fallbackSentence = `${word} fits in this sentence because the meaning matches the context.`;
+    const correctSentence = rawSentence || fallbackSentence;
+
+    const distractorWord = normalizeChallengeWord(meaningTask?.distractorWords?.[0] || '')
+      || normalizeChallengeWord(pickRandom(WQData.getPlayableWords({ gradeBand: SAFE_DEFAULT_GRADE_BAND, length: 'any', phonics: 'all' })))
+      || 'banana';
+
+    let wrongSentence = correctSentence;
+    if (normalizedWord && new RegExp(`\\b${escapeForRegExp(normalizedWord)}\\b`, 'i').test(correctSentence)) {
+      wrongSentence = correctSentence.replace(
+        new RegExp(`\\b${escapeForRegExp(normalizedWord)}\\b`, 'i'),
+        distractorWord.toLowerCase()
+      );
+    } else {
+      wrongSentence = `Because ${normalizedWord || 'word'} the students quickly.`;
+    }
+
+    const compact = (value) => {
+      const clean = String(value || '').replace(/\s+/g, ' ').trim();
+      if (clean.length <= 120) return clean;
+      return `${clean.slice(0, 117).trim()}...`;
+    };
+
+    return {
+      prompt: `Which sentence uses "${word}" correctly?`,
+      choices: shuffleList([
+        { id: 'syntax-correct', label: compact(correctSentence), correct: true },
+        { id: 'syntax-wrong', label: compact(wrongSentence), correct: false }
+      ])
+    };
+  }
+
+  function buildDeepDiveState(result) {
+    const patternTask = buildDeepDivePatternTask(result);
+    const meaningTask = buildDeepDiveMeaningTask(result);
+    const syntaxTask = buildDeepDiveSyntaxTask(result, meaningTask);
+    return {
+      prompts: {
+        listen: patternTask.prompt,
+        analyze: meaningTask.prompt,
+        create: syntaxTask.prompt
+      },
+      helpers: {
+        listen: patternTask.helper || 'Find the chunk that carries the key sound.',
+        analyze: 'Pick one meaning choice.',
+        create: 'Pick the sentence where the word fits naturally.'
+      },
+      choices: {
+        listen: patternTask.choices,
+        analyze: meaningTask.choices,
+        create: syntaxTask.choices
+      },
+      selected: {
+        listen: '',
+        analyze: '',
+        create: ''
+      },
+      attempts: {
+        listen: 0,
+        analyze: 0,
+        create: 0
+      }
+    };
+  }
+
+  function getChallengeChoice(task, choiceId, stateOverride = revealChallengeState) {
+    const state = stateOverride;
+    if (!state?.deepDive?.choices) return null;
+    const rows = state.deepDive.choices[task];
+    if (!Array.isArray(rows)) return null;
+    return rows.find((choice) => String(choice?.id || '') === String(choiceId || '')) || null;
+  }
+
+  function syncChallengeResponseSummary(state = revealChallengeState) {
+    if (!state || !state.deepDive) return;
+    const summarize = (task) => {
+      const selectedId = String(state.deepDive.selected?.[task] || '');
+      if (!selectedId) return '';
+      const choice = getChallengeChoice(task, selectedId, state);
+      return String(choice?.label || '').replace(/\s+/g, ' ').trim();
+    };
+    const pattern = summarize('listen');
+    const meaning = summarize('analyze');
+    const syntax = summarize('create');
+    state.responses.analyze = [`Pattern: ${pattern || '—'}`, `Meaning: ${meaning || '—'}`].join(' | ');
+    state.responses.create = `Sentence: ${syntax || '—'}`;
+  }
+
+  function renderChallengeChoiceButtons(containerId, task) {
+    const wrap = _el(containerId);
+    if (!wrap) return;
+    const state = revealChallengeState;
+    const deepDive = state?.deepDive;
+    const choices = Array.isArray(deepDive?.choices?.[task]) ? deepDive.choices[task] : [];
+    const selectedId = String(deepDive?.selected?.[task] || '');
+    wrap.innerHTML = '';
+
+    if (!choices.length) {
+      const empty = document.createElement('div');
+      empty.className = 'challenge-mission-helper';
+      empty.textContent = 'No choices available for this card yet.';
+      wrap.appendChild(empty);
+      return;
+    }
+
+    choices.forEach((choice) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'challenge-choice-btn';
+      button.dataset.challengeChoiceTask = task;
+      button.dataset.choiceId = String(choice.id || '');
+      button.textContent = String(choice.label || '');
+      const selected = selectedId && selectedId === String(choice.id || '');
+      if (selected) {
+        button.classList.add('is-selected');
+        button.classList.add(choice.correct ? 'is-correct' : 'is-wrong');
+      }
+      if (selected && choice.correct) button.disabled = true;
+      wrap.appendChild(button);
+    });
+  }
+
+  function handleChallengeChoiceSelection(task, choiceId) {
+    const state = revealChallengeState;
+    if (!state || !state.deepDive || state.completedAt) return;
+    if (!Object.prototype.hasOwnProperty.call(state.tasks, task)) return;
+
+    const choice = getChallengeChoice(task, choiceId);
+    if (!choice) return;
+
+    state.deepDive.selected[task] = String(choice.id || '');
+    state.deepDive.attempts[task] = Math.max(0, Number(state.deepDive.attempts[task]) || 0) + 1;
+    setChallengeTaskComplete(task, !!choice.correct);
+    syncChallengeResponseSummary(state);
+    renderRevealChallengeModal();
+
+    if (!choice.correct) {
+      setChallengeFeedback('Close. Try another option on this card.', 'warn');
+      return;
+    }
+    setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} complete.`, 'good');
   }
 
   function computeChallengeScore(state) {
     if (!state) return { clarity: 0, evidence: 0, vocabulary: 0, total: 0 };
-    const analyzeText = String(state.responses?.analyze || '').trim();
-    const createText = String(state.responses?.create || '').trim();
-    const analyzeWords = countWords(analyzeText);
-    const createWords = countWords(createText);
-    const mergedText = `${analyzeText} ${createText}`.toLowerCase();
-    const uniqueWords = new Set(mergedText.split(/[^a-z]+/g).filter((token) => token.length >= 3));
-    const evidenceSignals = ['because', 'since', 'so', 'therefore', 'difference', 'pattern', 'strategy']
-      .reduce((count, token) => count + (mergedText.includes(token) ? 1 : 0), 0);
+    const attempts = state.deepDive?.attempts || {};
+    const taskList = ['listen', 'analyze', 'create'];
+    const doneCount = taskList.reduce((count, task) => count + (state.tasks?.[task] ? 1 : 0), 0);
+    const firstTryCount = taskList.reduce((count, task) => (
+      count + (state.tasks?.[task] && Number(attempts?.[task] || 0) <= 1 ? 1 : 0)
+    ), 0);
+    const extraAttempts = taskList.reduce((count, task) => (
+      count + Math.max(0, (Number(attempts?.[task] || 0) || 0) - 1)
+    ), 0);
+    const penalty = Math.min(22, extraAttempts * 4);
 
-    const clarity = Math.min(
-      100,
-      40 +
-      (state.tasks.listen ? 22 : 0) +
-      Math.min(18, analyzeWords * 2) +
-      Math.min(14, createWords * 2)
-    );
-    const evidence = Math.min(
-      100,
-      30 +
-      Math.min(34, analyzeWords * 4) +
-      (state.tasks.analyze ? 16 : 0) +
-      Math.min(20, evidenceSignals * 5)
-    );
-    const vocabulary = Math.min(
-      100,
-      34 +
-      Math.min(38, uniqueWords.size * 2) +
-      (state.tasks.create ? 18 : 0)
-    );
+    const clarity = Math.max(0, Math.min(100, 36 + (doneCount * 18) + (firstTryCount * 5) - penalty));
+    const evidence = Math.max(0, Math.min(100, 34 + (state.tasks?.analyze ? 28 : 0) + (state.tasks?.create ? 22 : 0) + (firstTryCount * 4) - penalty));
+    const vocabulary = Math.max(0, Math.min(100, 32 + (state.tasks?.listen ? 18 : 0) + (state.tasks?.analyze ? 24 : 0) + (state.tasks?.create ? 18 : 0) + (firstTryCount * 4) - penalty));
     const total = Math.round((clarity + evidence + vocabulary) / 3);
     return { clarity, evidence, vocabulary, total };
   }
@@ -9872,15 +10100,15 @@
     const scoreDetail = _el('challenge-score-detail');
     if (!scoreLabel || !scoreDetail) return;
     if (!revealChallengeState) {
-      scoreLabel.textContent = 'Mission score: --';
-      scoreDetail.textContent = 'Band -- · Clarity -- · Evidence -- · Vocabulary --';
+      scoreLabel.textContent = 'Deep Dive score: --';
+      scoreDetail.textContent = 'Band -- · Accuracy -- · Meaning -- · Syntax --';
       return;
     }
     const score = computeChallengeScore(revealChallengeState);
     const band = resolveMissionScoreBand(score.total);
     revealChallengeState.score = score;
-    scoreLabel.textContent = `Mission score: ${score.total}/100`;
-    scoreDetail.textContent = `${band} band · Clarity ${score.clarity} · Evidence ${score.evidence} · Vocabulary ${score.vocabulary}`;
+    scoreLabel.textContent = `Deep Dive score: ${score.total}/100`;
+    scoreDetail.textContent = `${band} band · Accuracy ${score.clarity} · Meaning ${score.evidence} · Syntax ${score.vocabulary}`;
   }
 
   function updateChallengeSprintUI() {
@@ -10194,25 +10422,23 @@
     const fill = _el('challenge-progress-fill');
     const finishBtn = _el('challenge-finish-btn');
     if (!revealChallengeState) {
-      if (label) label.textContent = '0 / 3 missions complete';
+      if (label) label.textContent = '0 / 3 cards complete';
       if (fill) fill.style.width = '0%';
       if (finishBtn) finishBtn.disabled = true;
-      if (finishBtn) finishBtn.textContent = 'Finish Mission Lab';
+      if (finishBtn) finishBtn.textContent = 'Finish Deep Dive';
       setChallengeFeedback('');
-      updateChallengeWordCountUI();
       updateChallengeScoreUI();
       updateChallengeSprintUI();
       return;
     }
     const doneCount = ['listen', 'analyze', 'create']
       .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
-    if (label) label.textContent = `${doneCount} / 3 missions complete`;
+    if (label) label.textContent = `${doneCount} / 3 cards complete`;
     if (fill) fill.style.width = `${Math.round((doneCount / 3) * 100)}%`;
     if (finishBtn) {
       finishBtn.disabled = doneCount < 2;
-      finishBtn.textContent = doneCount >= 2 ? `Finish Mission Lab (${doneCount}/3)` : 'Finish Mission Lab';
+      finishBtn.textContent = doneCount >= 2 ? `Finish Deep Dive (${doneCount}/3)` : 'Finish Deep Dive';
     }
-    updateChallengeWordCountUI();
     updateChallengeScoreUI();
     updateChallengeSprintUI();
   }
@@ -10231,9 +10457,9 @@
     }
     if (normalized !== wasComplete) {
       if (normalized) {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Mission'} complete.`, 'good');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} complete.`, 'good');
       } else {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Mission'} needs a little more detail.`, 'warn');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Card'} still needs one more try.`, 'warn');
       }
     }
     saveChallengeDraft(revealChallengeState);
@@ -10253,25 +10479,33 @@
     const listenPrompt = _el('challenge-listen-prompt');
     const analyzePrompt = _el('challenge-analyze-prompt');
     const createPrompt = _el('challenge-create-prompt');
+    const listenHelper = _el('challenge-listen-helper');
     const teacherLens = _el('challenge-teacher-lens');
-    const analyzeInput = _el('challenge-analyze-input');
-    const createInput = _el('challenge-create-input');
+    const deepDive = state.deepDive || buildDeepDiveState(state.result);
+    state.deepDive = deepDive;
 
-    if (levelChip) levelChip.textContent = challenge.chip;
+    if (levelChip) levelChip.textContent = getChallengeLevelDisplay(challenge.level);
     if (wordChip) wordChip.textContent = `Word: ${state.word}`;
     if (topicChip) topicChip.textContent = `Quest focus: ${state.topic}`;
     if (gradeChip) gradeChip.textContent = `Grade: ${state.grade}`;
-    if (listenPrompt) listenPrompt.textContent = `Hear "${state.word}" and its sentence clue, then say it back with clear pacing.`;
-    if (analyzePrompt) analyzePrompt.textContent = challenge.prompt;
-    if (createPrompt) createPrompt.textContent = `Create a student-friendly clue for "${state.word}" without saying the word itself.`;
-    if (teacherLens) teacherLens.textContent = `${challenge.teacher} Mission Lab score updates live for formative evidence.`;
-    if (analyzeInput && analyzeInput.value !== state.responses.analyze) analyzeInput.value = state.responses.analyze;
-    if (createInput && createInput.value !== state.responses.create) createInput.value = state.responses.create;
+    if (listenPrompt) listenPrompt.textContent = deepDive.prompts.listen || `Tap the key sound chunk in "${state.word}".`;
+    if (analyzePrompt) analyzePrompt.textContent = deepDive.prompts.analyze || `Pick the best meaning for "${state.word}".`;
+    if (createPrompt) createPrompt.textContent = deepDive.prompts.create || `Choose the sentence that uses "${state.word}" correctly.`;
+    if (listenHelper) listenHelper.textContent = deepDive.helpers.listen || '';
+    if (teacherLens) teacherLens.textContent = `${challenge.teacher} Deep Dive score updates live for quick formative evidence.`;
+
+    renderChallengeChoiceButtons('challenge-pattern-options', 'listen');
+    renderChallengeChoiceButtons('challenge-meaning-options', 'analyze');
+    renderChallengeChoiceButtons('challenge-syntax-options', 'create');
+    syncChallengeResponseSummary(state);
 
     setChallengeTaskComplete('listen', !!state.tasks.listen);
     setChallengeTaskComplete('analyze', !!state.tasks.analyze);
     setChallengeTaskComplete('create', !!state.tasks.create);
-    setChallengeFeedback('Tip: complete any 2 missions to bank points.', 'default');
+    const feedbackText = String(_el('challenge-live-feedback')?.textContent || '').trim();
+    if (!feedbackText) {
+      setChallengeFeedback('Pick one answer on each card. Finish any 2 cards to bank a score.', 'default');
+    }
     updateChallengeProgressUI();
   }
 
@@ -10292,15 +10526,12 @@
       challenge,
       tasks: { listen: false, analyze: false, create: false },
       responses: { analyze: '', create: '' },
+      deepDive: buildDeepDiveState(result),
       score: { clarity: 0, evidence: 0, vocabulary: 0, total: 0 },
       sprintEndsAt: 0,
       completedAt: 0
     };
-    const draft = loadChallengeDraft(state);
-    if (draft) {
-      state.responses = { ...state.responses, ...draft.responses };
-      state.tasks = { ...state.tasks, ...draft.tasks };
-    }
+    syncChallengeResponseSummary(state);
     return state;
   }
 
@@ -10328,13 +10559,12 @@
       updateChallengeProgressUI();
       return;
     }
-    meta.textContent = `${next.topic} · Grade ${next.grade} · ${CHALLENGE_SPRINT_SECONDS}s sprint`;
+    meta.textContent = `${next.topic} · Grade ${next.grade} · ${CHALLENGE_SPRINT_SECONDS}s timed deep dive`;
     if (helper) {
-      helper.textContent = 'Optional extension only: keep practicing this same phonics focus in a quick Mission Lab challenge.';
+      helper.textContent = 'Optional extension only: 3 quick cards for pattern, meaning, and sentence use.';
     }
     wrap.classList.remove('hidden');
-    const hasDraft = countWords(next.responses.analyze) > 0 || countWords(next.responses.create) > 0;
-    setChallengeFeedback(hasDraft ? 'Draft mission notes restored on this device.' : '');
+    setChallengeFeedback('');
     updateChallengeProgressUI();
   }
 
@@ -10345,7 +10575,7 @@
         startStandaloneMissionLab();
         return;
       }
-      WQUI.showToast('Finish a word to unlock Mission Lab.');
+      WQUI.showToast('Finish a word to unlock Deep Dive Quest.');
       return;
     }
     if (!Number.isFinite(revealChallengeState.sprintEndsAt) || revealChallengeState.sprintEndsAt <= Date.now()) {
@@ -10393,24 +10623,21 @@
 
   function saveRevealChallengeResponses(options = {}) {
     if (!revealChallengeState) return false;
-    const requireText = options.requireText !== false;
+    const requireProgress = options.requireText !== false;
     const silent = !!options.silent;
-    const analyzeText = String(_el('challenge-analyze-input')?.value || '').trim();
-    const createText = String(_el('challenge-create-input')?.value || '').trim();
-    revealChallengeState.responses.analyze = analyzeText;
-    revealChallengeState.responses.create = createText;
-    setChallengeTaskComplete('analyze', countWords(analyzeText) >= CHALLENGE_MIN_TEXT_WORDS);
-    setChallengeTaskComplete('create', countWords(createText) >= CHALLENGE_MIN_TEXT_WORDS);
-    if (requireText && !analyzeText && !createText) {
-      setChallengeFeedback('Add at least one response before saving.', 'warn');
+    syncChallengeResponseSummary(revealChallengeState);
+    const analyzeText = String(revealChallengeState.responses.analyze || '').trim();
+    const createText = String(revealChallengeState.responses.create || '').trim();
+    const doneCount = ['listen', 'analyze', 'create']
+      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
+    if (requireProgress && doneCount <= 0) {
+      setChallengeFeedback('Complete at least one Deep Dive card before saving.', 'warn');
       return false;
     }
     const score = computeChallengeScore(revealChallengeState);
     const scoreBand = resolveMissionScoreBand(score.total);
     const saveTs = Date.now();
     const completedAt = Math.max(0, Number(revealChallengeState.completedAt) || 0);
-    const doneCount = ['listen', 'analyze', 'create']
-      .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
     const completed = completedAt > 0 || doneCount >= 2;
     const completionTs = completedAt || saveTs;
     const sprintEndsAt = Math.max(0, Number(revealChallengeState.sprintEndsAt) || 0);
@@ -10440,7 +10667,7 @@
     persistRevealChallengeRecord(record);
     saveChallengeDraft(revealChallengeState);
     renderSessionSummary();
-    if (!silent) setChallengeFeedback('Mission notes saved on this device.', 'good');
+    if (!silent) setChallengeFeedback('Deep Dive saved on this device.', 'good');
     return true;
   }
 
@@ -10450,7 +10677,7 @@
     const doneCount = ['listen', 'analyze', 'create']
       .reduce((count, task) => count + (revealChallengeState.tasks[task] ? 1 : 0), 0);
     if (doneCount < 2) {
-      setChallengeFeedback('Complete at least 2 mission steps first.', 'warn');
+      setChallengeFeedback('Complete at least 2 Deep Dive cards first.', 'warn');
       return;
     }
     const finishBtn = _el('challenge-finish-btn');
@@ -10474,10 +10701,10 @@
     }
     saveChallengeProgress(progress);
     const rank = resolveChallengeRank(progress.points);
-    const line = pickRandom(CHALLENGE_COMPLETE_LINES) || 'Mission complete.';
+    const line = pickRandom(CHALLENGE_COMPLETE_LINES) || 'Deep Dive complete.';
     const timingLine = finishedOnTime
       ? 'On-time sprint bonus secured.'
-      : 'Time was up, but your mission still counts.';
+      : 'Time expired, but your Deep Dive still counts.';
     setChallengeFeedback(`${line} +${pointsEarned} points · Rank ${rank.label}. ${timingLine}`, 'good');
     clearChallengeDraft(revealChallengeState);
     updateChallengeSprintUI();

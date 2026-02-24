@@ -349,10 +349,10 @@
                 <span id="session-next-step" class="teacher-session-chip">Next Step: --</span>
               </div>
               <div class="teacher-session-metrics teacher-mission-metrics">
-                <span id="session-mission-count" class="teacher-session-chip">Mission Rounds: 0</span>
-                <span id="session-mission-score" class="teacher-session-chip">Mission Avg Score: --</span>
-                <span id="session-mission-complete" class="teacher-session-chip">Mission Completion: --</span>
-                <span id="session-mission-level" class="teacher-session-chip">Mission Top Level: --</span>
+                <span id="session-mission-count" class="teacher-session-chip">Deep Dive Rounds: 0</span>
+                <span id="session-mission-score" class="teacher-session-chip">Deep Dive Avg Score: --</span>
+                <span id="session-mission-complete" class="teacher-session-chip">Deep Dive Completion: --</span>
+                <span id="session-mission-level" class="teacher-session-chip">Deep Dive Top Level: --</span>
               </div>
               <div class="teacher-session-mini-lesson-row">
                 <div class="setting-row-heading">Quick Mini-Lesson Launcher</div>
@@ -427,8 +427,8 @@
                 <button id="session-copy-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Summary</button>
                 <button id="session-copy-mastery-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mastery</button>
                 <button id="session-copy-mastery-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mastery CSV</button>
-                <button id="session-copy-mission-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mission</button>
-                <button id="session-copy-mission-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Mission CSV</button>
+                <button id="session-copy-mission-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Deep Dive</button>
+                <button id="session-copy-mission-csv-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Deep Dive CSV</button>
                 <button id="session-copy-mtss-note-btn" class="quick-action-btn teacher-session-btn" type="button">Copy MTSS/IEP Note</button>
                 <button id="session-copy-family-handout-btn" class="quick-action-btn teacher-session-btn" type="button">Copy Family Handout</button>
                 <button id="session-download-family-handout-btn" class="quick-action-btn teacher-session-btn" type="button">Download Family Handout</button>
@@ -442,7 +442,7 @@
               <div class="setting-checkbox-help">Tracks this browser session only.</div>
             </div>
             <div class="setting-row setting-row-full setting-row-help teacher-lens-note">
-              Student view stays kid-friendly. Teacher lens: WordQuest builds from decoding + language comprehension (SoR) into higher-order thinking (Bloom: Remember, Understand, Apply, Analyze, Evaluate, Create).
+              Student view stays kid-friendly. Teacher lens: WordQuest builds decoding + language comprehension (SoR) into higher-order thinking (Remember, Understand, Apply, Analyze, Evaluate, Create).
             </div>
           </div>
         </details>
@@ -569,23 +569,23 @@
 
   <!-- ── Main game area ───────────────────────────── -->
   <main id="main">
-    <section id="mission-lab-hub" class="mission-lab-hub hidden" aria-label="Mission Lab standalone activity">
+    <section id="mission-lab-hub" class="mission-lab-hub hidden" aria-label="Deep Dive standalone activity">
       <div class="mission-lab-hub-head">
         <div class="mission-lab-hub-title-wrap">
-          <strong>Mission Lab</strong>
-          <span id="mission-lab-hub-meta" class="mission-lab-hub-meta">Standalone mission mode uses your current quest focus and grade-safe word pool.</span>
+          <strong>Deep Dive Quest</strong>
+          <span id="mission-lab-hub-meta" class="mission-lab-hub-meta">Standalone Deep Dive uses your current quest focus and grade-safe word pool.</span>
         </div>
-        <button id="mission-lab-start-btn" class="quick-action-btn mission-lab-start-btn" type="button">Start Mission Lab</button>
+        <button id="mission-lab-start-btn" class="quick-action-btn mission-lab-start-btn" type="button">Start Deep Dive</button>
       </div>
       <details id="mission-lab-customize" class="mission-lab-customize">
-        <summary>Customize word + Bloom level</summary>
+        <summary>Customize word + level</summary>
         <div class="mission-lab-customize-grid">
           <label>Word
             <select id="mission-lab-word-select">
               <option value="" selected>Auto-pick from current filters</option>
             </select>
           </label>
-          <label>Bloom Level
+          <label>Thinking Level
             <select id="mission-lab-level-select">
               <option value="auto" selected>Auto</option>
               <option value="remember">Remember</option>
@@ -598,7 +598,7 @@
           </label>
         </div>
       </details>
-      <div id="mission-lab-hub-note" class="mission-lab-hub-note">Tip: keep focus + grade aligned to your current lesson target, then launch a mission sprint.</div>
+      <div id="mission-lab-hub-note" class="mission-lab-hub-note">Tip: keep focus + grade aligned to your current lesson target, then launch a three-step Deep Dive.</div>
     </section>
 
     <section id="quest-loop" class="quest-loop hidden" aria-label="Quest progress">
@@ -667,11 +667,11 @@
       </div>
       <div id="modal-challenge-launch" class="modal-challenge-launch hidden" aria-live="polite">
         <div class="modal-challenge-launch-copy">
-          <span class="modal-challenge-launch-title">Mission Lab (Optional)</span>
+          <span class="modal-challenge-launch-title">Deep Dive Quest (Optional)</span>
           <span id="modal-challenge-launch-meta" class="modal-challenge-launch-meta"></span>
-          <span id="modal-challenge-launch-helper" class="modal-challenge-launch-helper">Optional extension after each solved word. Not required to continue.</span>
+          <span id="modal-challenge-launch-helper" class="modal-challenge-launch-helper">Optional extension after each solved word. No typing required.</span>
         </div>
-        <button id="modal-open-challenge" class="audio-btn modal-open-challenge-btn" type="button">Start Mission Lab</button>
+        <button id="modal-open-challenge" class="audio-btn modal-open-challenge-btn" type="button">Start Deep Dive</button>
       </div>
       <div class="modal-syllables-wrap">
         <div id="modal-syllables"></div>
@@ -735,13 +735,13 @@
     </div>
   </div>
 
-  <!-- ── Level Up challenge modal ─────────────────── -->
-  <div id="challenge-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Mission Lab">
+  <!-- ── Deep Dive modal ──────────────────────────── -->
+  <div id="challenge-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Deep Dive Quest">
     <div class="modal-card challenge-modal-card">
       <div class="modal-head challenge-modal-head">
         <div class="challenge-modal-title-wrap">
-          <strong>Mission Lab</strong>
-          <span id="challenge-level-chip" class="challenge-level-chip">Use It (Apply)</span>
+          <strong>Deep Dive Quest</strong>
+          <span id="challenge-level-chip" class="challenge-level-chip">Apply</span>
         </div>
         <button id="challenge-modal-close" class="close-btn" aria-label="Close">✕</button>
       </div>
@@ -756,50 +756,46 @@
           <span id="challenge-topic-chip" class="challenge-meta-chip">Quest focus: —</span>
           <span id="challenge-grade-chip" class="challenge-meta-chip">Grade: —</span>
         </div>
-        <p class="challenge-instruction">Complete this 90-second mission sprint. Finish at least 2 tasks to bank a win.</p>
+        <p class="challenge-instruction">Complete the three quick cards to lock in decoding and meaning.</p>
         <div class="challenge-mission-grid">
           <section class="challenge-mission" data-challenge-task="listen">
-            <h3>Sound Sleuth</h3>
+            <h3>1. Pattern Pop</h3>
             <p id="challenge-listen-prompt" class="challenge-mission-copy"></p>
+            <div id="challenge-pattern-options" class="challenge-choice-grid" role="group" aria-label="Pattern choices"></div>
+            <p id="challenge-listen-helper" class="challenge-mission-helper"></p>
             <div class="challenge-mini-actions">
               <button id="challenge-hear-word" class="audio-btn" type="button">🔊 Hear Word</button>
-              <button id="challenge-hear-sentence" class="audio-btn" type="button">💬 Hear Sentence</button>
-              <button id="challenge-open-practice" class="audio-btn" type="button">🎤 Record in Say It Back</button>
+              <button id="challenge-open-practice" class="audio-btn" type="button">🎤 Say It Back</button>
             </div>
             <div id="challenge-status-listen" class="challenge-task-status">Pending</div>
           </section>
           <section class="challenge-mission" data-challenge-task="analyze">
-            <h3>Clue Compare</h3>
+            <h3>2. Meaning Match</h3>
             <p id="challenge-analyze-prompt" class="challenge-mission-copy"></p>
-            <textarea id="challenge-analyze-input" class="challenge-textarea" rows="2" placeholder="No pressure: start with 'I noticed...' or 'Because...'"></textarea>
-            <div class="challenge-text-meta">
-              <span id="challenge-analyze-count" class="challenge-text-count">0 / 5 words</span>
-              <button id="challenge-analyze-starter" class="challenge-starter-btn" type="button">Use Starter</button>
+            <div id="challenge-meaning-options" class="challenge-choice-grid challenge-choice-grid-meaning" role="group" aria-label="Meaning choices"></div>
+            <div class="challenge-mini-actions">
+              <button id="challenge-hear-sentence" class="audio-btn" type="button">💬 Hear Sentence</button>
             </div>
             <div id="challenge-status-analyze" class="challenge-task-status">Pending</div>
           </section>
           <section class="challenge-mission" data-challenge-task="create">
-            <h3>Create A Clue</h3>
+            <h3>3. Sentence Snap</h3>
             <p id="challenge-create-prompt" class="challenge-mission-copy"></p>
-            <textarea id="challenge-create-input" class="challenge-textarea" rows="2" placeholder="Try a clue starter: 'I am thinking of a word that...'"></textarea>
-            <div class="challenge-text-meta">
-              <span id="challenge-create-count" class="challenge-text-count">0 / 5 words</span>
-              <button id="challenge-create-starter" class="challenge-starter-btn" type="button">Use Starter</button>
-            </div>
+            <div id="challenge-syntax-options" class="challenge-choice-grid challenge-choice-grid-syntax" role="group" aria-label="Sentence choices"></div>
             <div id="challenge-status-create" class="challenge-task-status">Pending</div>
           </section>
         </div>
         <div class="challenge-progress-wrap" aria-live="polite">
-          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 missions complete</div>
+          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 cards complete</div>
           <div class="challenge-progress-track"><div id="challenge-progress-fill" class="challenge-progress-fill"></div></div>
         </div>
         <div class="challenge-score-wrap" aria-live="polite">
-          <div id="challenge-score-label" class="challenge-score-label">Mission score: --</div>
-          <div id="challenge-score-detail" class="challenge-score-detail">Clarity -- · Evidence -- · Vocabulary --</div>
+          <div id="challenge-score-label" class="challenge-score-label">Deep Dive score: --</div>
+          <div id="challenge-score-detail" class="challenge-score-detail">Accuracy -- · Meaning -- · Syntax --</div>
         </div>
         <div class="challenge-actions">
-          <button id="challenge-save-reflection" class="audio-btn" type="button">Save Mission Notes</button>
-          <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish Mission Lab</button>
+          <button id="challenge-save-reflection" class="audio-btn" type="button">Save Deep Dive</button>
+          <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish Deep Dive</button>
         </div>
         <div id="challenge-live-feedback" class="challenge-live-feedback" aria-live="polite"></div>
         <p id="challenge-teacher-lens" class="challenge-teacher-lens"></p>

@@ -3829,7 +3829,7 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 }
 
 .modal-challenge-launch-title::before {
-  content: '🧠 ';
+  content: '🧩 ';
 }
 
 .modal-challenge-launch-meta {
@@ -3936,23 +3936,23 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 }
 
 .challenge-instruction {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: color-mix(in oklab, var(--text-muted) 76%, var(--text) 24%);
+  font-size: 0.8rem;
+  font-weight: 780;
+  color: color-mix(in oklab, var(--text-muted) 80%, var(--text) 20%);
 }
 
 .challenge-mission-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 9px;
 }
 
 .challenge-mission {
   border: 1px solid color-mix(in oklab, var(--panel-border) 78%, transparent);
   border-radius: 13px;
-  padding: 10px;
+  padding: 10px 10px 9px;
   display: grid;
-  gap: 8px;
+  gap: 7px;
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
   transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease, background 0.16s ease;
 }
@@ -3966,9 +3966,78 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 
 .challenge-mission-copy {
   margin: 0;
-  font-size: 0.76rem;
-  line-height: 1.4;
-  color: color-mix(in oklab, var(--text-muted) 72%, var(--text) 28%);
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-muted) 74%, var(--text) 26%);
+}
+
+.challenge-mission-helper {
+  margin: 0;
+  min-height: 17px;
+  font-size: 0.69rem;
+  line-height: 1.3;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+}
+
+.challenge-choice-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.challenge-choice-grid-meaning {
+  grid-template-columns: 1fr;
+}
+
+.challenge-choice-grid-syntax {
+  grid-template-columns: 1fr;
+}
+
+.challenge-choice-btn {
+  width: 100%;
+  min-height: 34px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.72rem;
+  font-weight: 760;
+  line-height: 1.32;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.challenge-choice-btn:hover {
+  border-color: color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
+  background: color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%);
+}
+
+.challenge-choice-btn:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 20%, transparent);
+}
+
+.challenge-choice-btn.is-selected {
+  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--brand) 30%, transparent);
+}
+
+.challenge-choice-btn.is-correct {
+  border-color: color-mix(in oklab, var(--correct) 64%, var(--panel-border) 36%);
+  background: color-mix(in oklab, var(--correct-lt) 32%, var(--panel-bg) 68%);
+}
+
+.challenge-choice-btn.is-wrong {
+  border-color: color-mix(in oklab, #e58824 62%, var(--panel-border) 38%);
+  background: color-mix(in oklab, #f7d9b2 46%, var(--panel-bg) 54%);
+}
+
+.challenge-choice-btn:disabled {
+  cursor: default;
+  opacity: 0.98;
 }
 
 .challenge-mini-actions {
@@ -3980,44 +4049,6 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 .challenge-mini-actions .audio-btn {
   padding: 7px 10px;
   font-size: 0.72rem;
-}
-
-.challenge-textarea {
-  width: 100%;
-  min-height: 64px;
-  resize: vertical;
-  border-radius: 10px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 84%, #ffffff 16%);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.78rem;
-  line-height: 1.35;
-  padding: 9px 10px;
-}
-
-.challenge-textarea:focus-visible {
-  outline: none;
-  border-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 16%, transparent);
-}
-
-.challenge-text-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.challenge-text-count {
-  font-size: 0.69rem;
-  font-weight: 760;
-  color: var(--text-muted);
-}
-
-.challenge-text-count.is-complete {
-  color: color-mix(in oklab, var(--correct) 78%, var(--text) 22%);
 }
 
 .challenge-starter-btn {
@@ -4045,9 +4076,9 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   border-radius: 999px;
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
   color: var(--text-muted);
-  padding: 4px 10px;
+  padding: 3px 9px;
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.69rem;
   font-weight: 780;
 }
 
