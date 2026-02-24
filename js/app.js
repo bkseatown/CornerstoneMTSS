@@ -3972,14 +3972,16 @@
       const audioH = supportH ? 0 : (gameplayAudioEl?.offsetHeight || 36);
       const headerH = headerEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--header-h'), 50);
       const focusH = focusEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--focus-h'), 44);
-      const curriculumH = curriculumEl?.offsetHeight || 0;
+      const curriculumNestedInFocus = Boolean(curriculumEl && focusEl && focusEl.contains(curriculumEl));
+      const curriculumH = curriculumNestedInFocus ? 0 : (curriculumEl?.offsetHeight || 0);
       const nextActionH = nextActionEl && !nextActionEl.classList.contains('hidden')
         ? Math.max(0, nextActionEl.offsetHeight || 0)
         : 0;
       const classroomTurnH = classroomTurnEl && !classroomTurnEl.classList.contains('hidden')
         ? Math.max(0, classroomTurnEl.offsetHeight || 0)
         : 0;
-      const themeH = themeStripEl?.offsetHeight || 0;
+      const themeNestedInHeader = Boolean(themeStripEl && headerEl && headerEl.contains(themeStripEl));
+      const themeH = themeNestedInHeader ? 0 : (themeStripEl?.offsetHeight || 0);
       const viewportH = window.visualViewport?.height || window.innerHeight;
       const viewportW = window.visualViewport?.width || window.innerWidth;
       const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
