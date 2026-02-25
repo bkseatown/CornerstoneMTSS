@@ -6911,10 +6911,11 @@
     const currentLabel = currentLabelRaw || 'Classic (Wordle 5x6)';
 
     if (!inputEl) return;
-    inputEl.value = currentLabel;
-    inputEl.dataset.lockedLabel = currentLabel.toLowerCase();
+    inputEl.value = '';
+    delete inputEl.dataset.lockedLabel;
     inputEl.placeholder = 'Select your quest or track';
     inputEl.setAttribute('aria-label', `Select your quest or track. Current selection: ${currentLabel}`);
+    inputEl.setAttribute('title', `Current selection: ${currentLabel}`);
   }
 
   function formatGradeBandLabel(value) {
