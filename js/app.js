@@ -17,7 +17,8 @@
   // ─── 2. Init UI ────────────────────────────────────
   WQUI.init();
 
-  const SW_RUNTIME_URL = './sw-runtime.js';
+  const SW_RUNTIME_VERSION = '20260225-v9';
+  const SW_RUNTIME_URL = `./sw-runtime.js?v=${encodeURIComponent(SW_RUNTIME_VERSION)}`;
 
   async function registerOfflineRuntime() {
     if (!('serviceWorker' in navigator)) return;
@@ -819,6 +820,51 @@
       } catch {}
     }
   }
+
+  async function runRemoteBuildConsistencyCheck() {
+    const BUILD_REMOTE_CHECK_KEY = 'wq_v2_build_remote_check_v1';
+    const currentBuild = resolveBuildLabel();
+    if (!currentBuild) return;
+
+    const checkMarker = `${location.pathname}::${currentBuild}`;
+    try {
+      if (sessionStorage.getItem(BUILD_REMOTE_CHECK_KEY) === checkMarker) return;
+      sessionStorage.setItem(BUILD_REMOTE_CHECK_KEY, checkMarker);
+    } catch {}
+
+    try {
+      const probeUrl = `./index.html?cb=build-check-${Date.now()}`;
+      const response = await fetch(probeUrl, { cache: 'no-store' });
+      if (!response.ok) return;
+      const html = await response.text();
+      const match = html.match(/js\/app\.js\?v=([^"'&#]+)/i);
+      const deployedBuild = match?.[1] ? decodeURIComponent(match[1]).trim() : '';
+      if (!deployedBuild || deployedBuild === currentBuild) return;
+
+      if ('caches' in window) {
+        try {
+          const names = await caches.keys();
+          const targets = names.filter((name) => String(name || '').startsWith('wq-'));
+          if (targets.length) await Promise.all(targets.map((name) => caches.delete(name)));
+        } catch {}
+      }
+
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map(async (registration) => {
+            registration.waiting?.postMessage({ type: 'WQ_SKIP_WAITING' });
+            await registration.update().catch(() => {});
+          }));
+        } catch {}
+      }
+
+      const params = new URLSearchParams(location.search || '');
+      params.set('cb', `build-sync-${deployedBuild}-${Date.now()}`);
+      const nextUrl = `${location.pathname}${params.toString() ? `?${params.toString()}` : ''}${location.hash || ''}`;
+      location.replace(nextUrl);
+    } catch {}
+  }
   const themeFamilyById = (() => {
     const map = new Map();
     const themes = Array.isArray(ThemeRegistry?.themes) ? ThemeRegistry.themes : [];
@@ -1439,6 +1485,7 @@
   }
   syncBuildBadge();
   void runAutoCacheRepairForBuild();
+  void runRemoteBuildConsistencyCheck();
 
   const themeSelect = _el('s-theme');
   const initialThemeSelection = shouldPersistTheme() ? prefs.theme : getThemeFallback();
