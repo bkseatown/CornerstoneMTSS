@@ -72,10 +72,20 @@ async function run() {
       await page.waitForSelector('#first-run-setup-modal', { state: 'hidden', timeout: 10000 });
     }
 
+    await page.waitForSelector('#teacher-panel-btn', { state: 'visible', timeout: 10000 });
     await page.click('#teacher-panel-btn');
     await page.waitForSelector('#teacher-panel:not(.hidden)', { timeout: 10000 });
-    await page.click('#session-group-assign-target-btn');
-    await page.click('#teacher-panel-close');
+
+    const assignBtn = page.locator('#session-group-assign-target-btn');
+    if (await assignBtn.count()) {
+      await assignBtn.waitFor({ state: 'visible', timeout: 10000 });
+      await assignBtn.click();
+      await page.waitForTimeout(300);
+    }
+
+    const teacherCloseBtn = page.locator('#teacher-panel-close');
+    await teacherCloseBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await teacherCloseBtn.click();
     await page.waitForSelector('#teacher-panel.hidden', { timeout: 10000 });
 
     await page.click('#new-game-btn');
