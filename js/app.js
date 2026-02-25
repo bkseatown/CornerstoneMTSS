@@ -4770,164 +4770,31 @@
     renderProbePanel();
     WQUI.showToast('Roster cleared for this device.');
   });
-  _el('s-group-select')?.addEventListener('change', (event) => {
-    setSelectedGroupPlanId(event.target?.value || '');
-    renderGroupBuilderPanel();
-  });
-  _el('session-group-new-btn')?.addEventListener('click', () => {
-    const nextName = String(_el('s-group-name')?.value || '').trim() || `Group ${groupPlanState.groups.length + 1}`;
-    const nextTier = String(_el('s-group-tier')?.value || 'tier2').trim().toLowerCase();
-    const entry = {
-      id: `group-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      name: nextName,
-      tier: nextTier === 'tier1' || nextTier === 'tier3' ? nextTier : 'tier2',
-      students: [],
-      assignment: { packId: 'custom', targetId: 'custom', updatedAt: 0 },
-      updatedAt: Date.now()
-    };
-    groupPlanState.groups.push(entry);
-    groupPlanState.groups = groupPlanState.groups.slice(-40);
-    setSelectedGroupPlanId(entry.id);
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_created', group: entry } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast('New group created.');
-  });
-  _el('session-group-save-btn')?.addEventListener('click', () => {
-    const selected = getSelectedGroupPlan();
-    if (!selected) {
-      WQUI.showToast('Select or create a group first.');
-      return;
-    }
-    const nextName = String(_el('s-group-name')?.value || '').trim() || selected.name;
-    const nextTierRaw = String(_el('s-group-tier')?.value || selected.tier || 'tier2').trim().toLowerCase();
-    selected.name = nextName;
-    selected.tier = nextTierRaw === 'tier1' || nextTierRaw === 'tier3' ? nextTierRaw : 'tier2';
-    selected.updatedAt = Date.now();
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_saved', group: selected } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast('Group saved.');
-  });
-  _el('session-group-delete-btn')?.addEventListener('click', () => {
-    const selected = getSelectedGroupPlan();
-    if (!selected) {
-      WQUI.showToast('Select a group to delete.');
-      return;
-    }
-    groupPlanState.groups = groupPlanState.groups.filter((entry) => entry.id !== selected.id);
-    setSelectedGroupPlanId(groupPlanState.groups[0]?.id || '');
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_deleted', groupId: selected.id } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast('Group deleted.');
-  });
-  _el('session-group-add-active-btn')?.addEventListener('click', () => {
-    const selected = getSelectedGroupPlan();
-    const student = getActiveStudentLabel();
-    if (!selected) {
-      WQUI.showToast('Select a group first.');
-      return;
-    }
-    if (!student || student === 'Class') {
-      WQUI.showToast('Select a student first.');
-      return;
-    }
-    if (!selected.students.includes(student)) selected.students.push(student);
-    selected.students.sort((a, b) => a.localeCompare(b));
-    selected.updatedAt = Date.now();
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_members_updated', group: selected } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast(`${student} added to ${selected.name}.`);
-  });
-  _el('session-group-remove-active-btn')?.addEventListener('click', () => {
-    const selected = getSelectedGroupPlan();
-    const student = getActiveStudentLabel();
-    if (!selected) {
-      WQUI.showToast('Select a group first.');
-      return;
-    }
-    if (!student || student === 'Class') {
-      WQUI.showToast('Select a student first.');
-      return;
-    }
-    selected.students = selected.students.filter((name) => name !== student);
-    selected.updatedAt = Date.now();
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_members_updated', group: selected } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast(`${student} removed from ${selected.name}.`);
-  });
-  _el('session-group-assign-target-btn')?.addEventListener('click', () => {
-    const selected = getSelectedGroupPlan();
-    if (!selected) {
-      WQUI.showToast('Select a group first.');
-      return;
-    }
-    const snapshot = buildCurrentCurriculumSnapshot();
-    selected.assignment = {
-      packId: snapshot.packId || 'custom',
-      targetId: snapshot.targetId || 'custom',
-      updatedAt: Date.now()
-    };
-    selected.updatedAt = Date.now();
-    saveGroupPlanState();
-    window.dispatchEvent(new CustomEvent('wq:assignment-updated', { detail: { type: 'group_target_assigned', group: selected } }));
-    renderGroupBuilderPanel();
-    WQUI.showToast(`Assigned current target to ${selected.name}.`);
-  });
-  _el('s-lock-pack')?.addEventListener('change', (event) => {
-    const nextPack = normalizeLessonPackId(event.target?.value || 'custom');
-    populateTargetSelectForPack(_el('s-lock-target'), nextPack, 'custom', { includeCustom: true });
-  });
-  _el('session-lock-save-btn')?.addEventListener('click', () => {
-    const student = getActiveStudentLabel();
-    if (!student || student === 'Class') {
-      WQUI.showToast('Select a student first.');
-      return;
-    }
-    const enabled = !!_el('s-lock-enabled')?.checked;
-    const packId = normalizeLessonPackId(_el('s-lock-pack')?.value || 'custom');
-    const targetId = normalizeLessonTargetId(packId, _el('s-lock-target')?.value || 'custom');
-    const duration = String(_el('s-lock-duration')?.value || '1w').trim().toLowerCase();
-    const now = Date.now();
-    let expiresAt = 0;
-    if (duration === '1w') expiresAt = now + (7 * 24 * 60 * 60 * 1000);
-    if (duration === '2w') expiresAt = now + (14 * 24 * 60 * 60 * 1000);
-    if (duration === '4w') expiresAt = now + (28 * 24 * 60 * 60 * 1000);
-    if (duration === 'never') expiresAt = 0;
-    if (!setStudentTargetLock(student, { enabled, packId, targetId, expiresAt, updatedAt: now })) {
-      WQUI.showToast('Could not save lock.');
-      return;
-    }
-    renderStudentLockPanel();
-    WQUI.showToast(`Target lock saved for ${student}.`);
-  });
-  _el('session-lock-apply-btn')?.addEventListener('click', () => {
-    const student = getActiveStudentLabel();
-    if (!student || student === 'Class') {
-      WQUI.showToast('Select a student first.');
-      return;
-    }
-    if (!maybeApplyStudentPlanForActiveStudent({ toast: true })) {
-      WQUI.showToast('No active lock or group assignment to apply.');
-      return;
-    }
-    renderStudentLockPanel();
-  });
-  _el('session-lock-clear-btn')?.addEventListener('click', () => {
-    const student = getActiveStudentLabel();
-    if (!student || student === 'Class') {
-      WQUI.showToast('Select a student first.');
-      return;
-    }
-    if (!clearStudentTargetLock(student)) {
-      WQUI.showToast('No lock set for this student.');
-      return;
-    }
-    renderStudentLockPanel();
-    WQUI.showToast(`Target lock cleared for ${student}.`);
+  window.WQTeacherAssignmentsFeature?.bindUI?.({
+    el: _el,
+    toast: (message) => WQUI.showToast(message),
+    normalizeLessonPackId,
+    normalizeLessonTargetId,
+    populateTargetSelectForPack,
+    buildCurrentCurriculumSnapshot,
+    getActiveStudentLabel,
+    getGroupPlanCount: () => groupPlanState.groups.length,
+    addGroupPlanEntry: (entry) => {
+      groupPlanState.groups.push(entry);
+      groupPlanState.groups = groupPlanState.groups.slice(-40);
+    },
+    removeGroupPlanById: (id) => {
+      groupPlanState.groups = groupPlanState.groups.filter((entry) => entry.id !== id);
+    },
+    getFirstGroupPlanId: () => groupPlanState.groups[0]?.id || '',
+    getSelectedGroupPlan,
+    setSelectedGroupPlanId,
+    saveGroupPlanState,
+    renderGroupBuilderPanel,
+    setStudentTargetLock,
+    clearStudentTargetLock,
+    renderStudentLockPanel,
+    maybeApplyStudentPlanForActiveStudent
   });
   _el('session-goal-save-btn')?.addEventListener('click', () => {
     const student = getActiveStudentLabel();
