@@ -1,0 +1,22 @@
+name: UI Runtime Smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 10 * * *'
+
+jobs:
+  playwright-runtime-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright runtime
+        run: |
+          npm install --no-save playwright
+          npx playwright install chromium
+      - name: Teacher daily flow runtime smoke (Playwright)
+        run: |
+          npm run smoke:teacher-daily-flow:playwright
