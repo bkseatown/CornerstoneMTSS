@@ -48,6 +48,15 @@ function runGitStatus() {
   }
 }
 
+function runGitDiff(base) {
+  try {
+    return execSync(`git diff --name-only ${base}...HEAD`, { encoding: 'utf8' });
+  } catch (error) {
+    console.error(`ERROR: Could not diff against base "${base}".`);
+    process.exit(2);
+  }
+}
+
 function parsePath(line) {
   const raw = line.replace(/^[ MADRCU?!]{1,2}\s+/, '').trim();
   const renameParts = raw.split(' -> ');
@@ -71,14 +80,19 @@ function printGroup(title, paths) {
   paths.forEach((path) => console.log(`- ${path}`));
 }
 
-const status = runGitStatus();
-if (!status) {
-  console.log('No changed files. Scope check passed.');
+const baseRef = process.env.GUARDRAIL_BASE && process.env.GUARDRAIL_BASE.trim();
+const changed = baseRef
+  ? runGitDiff(baseRef).split('\n').map((line) => line.trim()).filter(Boolean)
+  : runGitStatus().split('\n').filter(Boolean).map(parsePath);
+
+if (!changed.length) {
+  if (baseRef) {
+    console.log(`No changed files between ${baseRef} and HEAD. Scope check passed.`);
+  } else {
+    console.log('No changed files. Scope check passed.');
+  }
   process.exit(0);
 }
-
-const lines = status.split('\n').filter(Boolean);
-const changed = lines.map(parsePath);
 
 const groups = {
   green: [],
