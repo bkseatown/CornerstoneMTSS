@@ -53,10 +53,24 @@ async function run() {
   const page = await browser.newPage();
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(String(error?.message || error)));
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('wq_v2_first_run_setup_v1', 'done');
+    } catch {}
+  });
 
   try {
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForSelector('#loading-screen', { state: 'hidden', timeout: 30000 });
+    const firstRunVisible = await page.locator('#first-run-setup-modal:not(.hidden)').count();
+    if (firstRunVisible) {
+      if (await page.locator('#first-run-start-btn').count()) {
+        await page.click('#first-run-start-btn');
+      } else if (await page.locator('#first-run-skip-btn').count()) {
+        await page.click('#first-run-skip-btn');
+      }
+      await page.waitForSelector('#first-run-setup-modal', { state: 'hidden', timeout: 10000 });
+    }
 
     await page.click('#teacher-panel-btn');
     await page.waitForSelector('#teacher-panel:not(.hidden)', { timeout: 10000 });
