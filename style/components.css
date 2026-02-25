@@ -1964,6 +1964,21 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   gap: 6px;
 }
 
+.teacher-session-adoption-row {
+  display: grid;
+  gap: 6px;
+  padding-top: 3px;
+  border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+}
+
+.teacher-session-adoption-overall {
+  padding-bottom: 1px;
+}
+
+.teacher-session-adoption-metrics .teacher-session-chip {
+  min-width: 162px;
+}
+
 .teacher-mastery-metrics {
   padding-top: 2px;
   border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
@@ -2075,6 +2090,11 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .teacher-session-chip.is-warn {
   border-color: color-mix(in oklab, #9a6a11 55%, var(--panel-border) 45%);
   color: color-mix(in oklab, #9a6a11 78%, var(--text) 22%);
+}
+
+.teacher-session-chip.is-bad {
+  border-color: color-mix(in oklab, #b33939 55%, var(--panel-border) 45%);
+  color: color-mix(in oklab, #b33939 82%, var(--text) 18%);
 }
 
 .teacher-session-probe-trend {
