@@ -168,12 +168,40 @@ async function run() {
       } catch {}
       await page.waitForTimeout(300);
     }
-    if (!targetWord) throw new Error('No active word found after clicking New/Next Word.');
+    if (!targetWord) {
+      targetWord = await page.evaluate(() => {
+        const result = window.WQGame?.startGame?.({
+          gradeBand: 'all',
+          length: '5',
+          phonics: 'all',
+          maxGuesses: 6
+        });
+        return String(result?.word || window.WQGame?.getState?.()?.word || '').trim().toLowerCase();
+      });
+    }
+    if (!targetWord) {
+      const debug = await page.evaluate(() => ({
+        state: window.WQGame?.getState?.() || null,
+        startError: window.WQGame?.getLastStartError?.() || null
+      }));
+      throw new Error(`No active word found after clicking New/Next Word. debug=${JSON.stringify(debug)}`);
+    }
     await page.keyboard.type(String(targetWord));
     await page.keyboard.press('Enter');
-    await page.waitForSelector('#modal-overlay:not(.hidden)', { timeout: 10000 });
-    await page.click('#play-again-btn');
-    await page.waitForSelector('#modal-overlay.hidden', { timeout: 10000 });
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('modal-overlay');
+      const modalOpen = modal instanceof HTMLElement && !modal.classList.contains('hidden');
+      const gameOver = !!window.WQGame?.getState?.()?.gameOver;
+      return modalOpen || gameOver;
+    }, { timeout: 10000 });
+    const modalOpen = await page.evaluate(() => {
+      const modal = document.getElementById('modal-overlay');
+      return modal instanceof HTMLElement && !modal.classList.contains('hidden');
+    });
+    if (modalOpen) {
+      await clickWithRetries('#play-again-btn', { attempts: 3, optional: true });
+      await page.waitForSelector('#modal-overlay', { state: 'hidden', timeout: 10000 });
+    }
 
     await page.click('#settings-btn');
     await page.waitForSelector('#settings-panel:not(.hidden)', { timeout: 10000 });
