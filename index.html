@@ -68,10 +68,18 @@
             Mode: Classic
           </button>
           <button id="phonics-clue-open-btn" class="header-quick-btn" type="button" title="Open clue card" aria-label="Open Clue Sprint for detective clue practice">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-              <circle cx="11" cy="11" r="6.5"></circle>
-              <path d="M15.8 15.8L21 21"></path>
-              <path d="M6.3 7.7h0.01"></path>
+            <span class="quick-btn-label">Clue</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M8 4h3a2 2 0 1 1 4 0h1a2 2 0 0 1 2 2v3a2 2 0 1 1 0 4v5a2 2 0 0 1-2 2h-3a2 2 0 1 1-4 0H6a2 2 0 0 1-2-2v-3a2 2 0 1 1 0-4V6a2 2 0 0 1 2-2z"></path>
+            </svg>
+          </button>
+          <button id="starter-word-open-btn" class="header-quick-btn" type="button" title="Show starter word ideas" aria-label="Show try these words list">
+            <span class="quick-btn-label">Need Ideas</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M4.5 7.5h5l2-2h8a1.5 1.5 0 0 1 1.5 1.5v3.6a1.9 1.9 0 0 0-1.9 1.9A1.9 1.9 0 0 0 21 14.4V18a1.5 1.5 0 0 1-1.5 1.5h-8l-2-2h-5A1.5 1.5 0 0 1 3 16V9a1.5 1.5 0 0 1 1.5-1.5z"></path>
+              <path d="M10.7 12h.01"></path>
+              <path d="M13.7 12h.01"></path>
+              <path d="M16.7 12h.01"></path>
             </svg>
           </button>
           <button id="new-game-btn">New Word</button>
@@ -158,6 +166,7 @@
             <div class="setting-row setting-row-internal hidden" aria-hidden="true"><label>Grade Band<select id="s-grade"><option value="all">All grades (K-2 safe)</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
             <div class="setting-row"><label>Word Length<select id="s-length"><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="any">Any</option></select></label></div>
             <div class="setting-row"><label>Max Guesses<select id="s-guesses"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option></select></label></div>
+            <div class="setting-row"><label>Try These Words<select id="s-starter-words"><option value="off">Off</option><option value="on_demand">On demand</option><option value="after_2">Auto after 2 guesses</option><option value="after_3" selected>Auto after 3 guesses</option></select></label></div>
             <div class="setting-row hidden" aria-hidden="true"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
             <div class="setting-row hidden" aria-hidden="true"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Classic Wordle (color + clue strategy)</option><option value="listening">Listening Challenge (hear + spell)</option></select></label></div>
             <div class="setting-row hidden" aria-hidden="true"><label>Keyboard Layout<select id="s-keyboard-layout"><option value="standard" selected>QWERTY</option><option value="alphabet">Alphabet</option></select></label></div>
@@ -605,21 +614,6 @@
           <div id="wq-teacher-msg" class="wq-teacher-msg" aria-live="polite"></div>
         </section>
 
-        <details class="teacher-studio-details">
-          <summary>Audio Studio (optional)</summary>
-          <div class="teacher-studio-grid">
-            <label>Upload background music files
-              <input id="teacher-studio-music-upload" type="file" accept="audio/*" multiple>
-            </label>
-            <label>Upload custom word audio (word/definition/sentence)
-              <input id="teacher-studio-word-audio-upload" type="file" accept="audio/*" multiple>
-            </label>
-            <label>Upload local phoneme voice samples
-              <input id="teacher-studio-phoneme-upload" type="file" accept="audio/*" multiple>
-            </label>
-            <div id="teacher-studio-msg" class="teacher-studio-msg" aria-live="polite">Files stay local on this device for now.</div>
-          </div>
-        </details>
       </div>
     </div>
   </div>
@@ -715,6 +709,18 @@
       <button id="hint-clue-close-btn" class="audio-btn hint-clue-btn hint-clue-btn-muted" type="button">Close</button>
     </div>
   </div>
+  <div id="starter-word-card" class="starter-word-card hidden" role="dialog" aria-label="Try these words">
+    <div class="starter-word-head">
+      <div id="starter-word-title" class="starter-word-title">Try These Words</div>
+      <button id="starter-word-close-icon" class="starter-word-close-icon" type="button" aria-label="Close word ideas">✕</button>
+    </div>
+    <div id="starter-word-message" class="starter-word-message">Pick one to jump-start your next guess.</div>
+    <div id="starter-word-list" class="starter-word-list" role="list"></div>
+    <div class="starter-word-actions">
+      <button id="starter-word-refresh-btn" class="audio-btn starter-word-btn" type="button">New Ideas</button>
+      <button id="starter-word-close-btn" class="audio-btn starter-word-btn starter-word-btn-muted" type="button">Close</button>
+    </div>
+  </div>
   <div id="celebrate-layer" class="celebrate-layer" aria-hidden="true"></div>
   <canvas id="confetti-canvas"></canvas>
 
@@ -755,13 +761,17 @@
             <strong>Practice Pronunciation</strong>
             <span id="voice-practice-target"></span>
           </div>
-          <canvas id="voice-waveform" width="320" height="74" aria-label="Voice waveform"></canvas>
+          <div id="voice-karaoke-guide" class="voice-karaoke-guide" role="group" aria-label="Read-along guide">
+            <div id="voice-karaoke-word" class="voice-karaoke-word" aria-live="polite"></div>
+            <div id="voice-karaoke-hint" class="voice-karaoke-hint">Tap Guide Me to see pacing, then record.</div>
+          </div>
           <div class="voice-practice-actions">
-            <button class="audio-btn" id="voice-record-btn" type="button">Start 1-sec Recording</button>
+            <button class="audio-btn" id="voice-guide-btn" type="button">Guide Me</button>
+            <button class="audio-btn" id="voice-record-btn" type="button">Start Recording (3s countdown)</button>
             <button class="audio-btn" id="voice-play-btn" type="button" disabled>Play My Voice</button>
             <button class="audio-btn" id="voice-save-btn" type="button" disabled>Save Clip</button>
           </div>
-          <div id="voice-practice-feedback" class="voice-practice-feedback" aria-live="polite">Tap Record above to capture a 1-second clip, then compare with model audio.</div>
+          <div id="voice-practice-feedback" class="voice-practice-feedback" aria-live="polite">Tap Record to start a 3-second countdown, then capture your clip.</div>
           <div id="voice-history-strip" class="voice-history-strip">
             <div class="voice-history-head">
               <span>Recent clips</span>

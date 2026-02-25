@@ -166,6 +166,7 @@
     reportCompact: 'off',
     assessmentLock: 'off',
     boostPopups: 'off',
+    starterWords: 'after_3',
     music: 'off',
     musicVol: '0.50',
     voice: 'recorded',
@@ -212,6 +213,7 @@
     standard: 'QWERTY',
     alphabet: 'Alphabet'
   });
+  const STARTER_WORD_SUPPORT_MODES = new Set(['off', 'on_demand', 'after_2', 'after_3']);
   const KEYBOARD_PRESET_CONFIG = Object.freeze({
     'qwerty-bubble': Object.freeze({
       id: 'qwerty-bubble',
@@ -232,6 +234,14 @@
     if (raw === 'qwerty') return 'standard';
     if (raw === 'alpha' || raw === 'abc') return 'alphabet';
     return ALLOWED_KEYBOARD_LAYOUTS.has(raw) ? raw : DEFAULT_PREFS.keyboardLayout;
+  }
+
+  function normalizeStarterWordMode(mode) {
+    const raw = String(mode || '').trim().toLowerCase();
+    if (raw === 'ondemand') return 'on_demand';
+    if (raw === 'auto2' || raw === 'after2') return 'after_2';
+    if (raw === 'auto3' || raw === 'after3') return 'after_3';
+    return STARTER_WORD_SUPPORT_MODES.has(raw) ? raw : DEFAULT_PREFS.starterWords;
   }
 
   function getKeyboardLayoutLabel(mode) {
@@ -310,6 +320,7 @@
     if (prefs.reportCompact === undefined) prefs.reportCompact = DEFAULT_PREFS.reportCompact;
     if (prefs.assessmentLock === undefined) prefs.assessmentLock = DEFAULT_PREFS.assessmentLock;
     if (prefs.boostPopups === undefined) prefs.boostPopups = DEFAULT_PREFS.boostPopups;
+    if (prefs.starterWords === undefined) prefs.starterWords = DEFAULT_PREFS.starterWords;
     if (prefs.themeSave !== 'on') delete prefs.theme;
     savePrefs(prefs);
     localStorage.setItem(PREF_MIGRATION_KEY, 'done');
@@ -394,6 +405,15 @@
   }
   if (prefs.confidenceCoaching === undefined) {
     prefs.confidenceCoaching = DEFAULT_PREFS.confidenceCoaching;
+    savePrefs(prefs);
+  }
+  if (prefs.starterWords === undefined) {
+    prefs.starterWords = DEFAULT_PREFS.starterWords;
+    savePrefs(prefs);
+  }
+  const normalizedStarterWordsMode = normalizeStarterWordMode(prefs.starterWords);
+  if (prefs.starterWords !== normalizedStarterWordsMode) {
+    prefs.starterWords = normalizedStarterWordsMode;
     savePrefs(prefs);
   }
   if (prefs.keyboardLayout !== 'standard' && prefs.keyboardLayout !== 'alphabet') {
@@ -1105,7 +1125,6 @@
 
   function setLocalMusicFiles(fileList) {
     const msgEl = _el('s-music-upload-msg');
-    const teacherMsg = _el('teacher-studio-msg');
     const files = Array.from(fileList || [])
       .filter((file) => file && /^audio\//i.test(String(file.type || '')) && Number(file.size || 0) > 0);
     if (!musicController || typeof musicController.setCustomFiles !== 'function') {
@@ -1128,19 +1147,16 @@
       ? `Loaded ${count} local track${count === 1 ? '' : 's'} for this device.`
       : 'No valid audio files selected.';
     if (msgEl) msgEl.textContent = message;
-    if (teacherMsg) teacherMsg.textContent = message;
     WQUI.showToast(message);
   }
 
   function clearLocalMusicFiles() {
     const msgEl = _el('s-music-upload-msg');
-    const teacherMsg = _el('teacher-studio-msg');
     if (musicController && typeof musicController.clearCustomFiles === 'function') {
       musicController.clearCustomFiles();
     }
     syncMusicForTheme({ toast: false });
     if (msgEl) msgEl.textContent = 'Local MP3 list cleared.';
-    if (teacherMsg) teacherMsg.textContent = 'Local MP3 list cleared.';
     WQUI.showToast('Local MP3 list cleared.');
   }
 
@@ -1186,6 +1202,7 @@
     's-turn-timer': 'turnTimer',
     's-probe-rounds': 'probeRounds',
     's-boost-popups': 'boostPopups',
+    's-starter-words': 'starterWords',
     's-grade': 'grade', 's-length': 'length',
     's-guesses': 'guesses', 's-case': 'caseMode', 's-hint': 'hint',
     's-dupe': 'dupe', 's-confetti': 'confetti',
@@ -1304,6 +1321,7 @@
   applyMotion(prefs.motion || DEFAULT_PREFS.motion);
   applyHint(getHintMode());
   applyPlayStyle(prefs.playStyle || DEFAULT_PREFS.playStyle, { persist: false });
+  applyStarterWordMode(prefs.starterWords || DEFAULT_PREFS.starterWords, { persist: false });
   applyRevealFocusMode(prefs.revealFocus || DEFAULT_PREFS.revealFocus, { persist: false });
   applyFeedback(prefs.feedback || DEFAULT_PREFS.feedback);
   applyBoardStyle(prefs.boardStyle || DEFAULT_PREFS.boardStyle);
@@ -1564,7 +1582,7 @@
     const button = _el('phonics-clue-open-btn');
     if (!button) return;
     const listening = mode === 'listening';
-    button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"></circle><path d="M15.8 15.8L21 21"></path><path d="M6.3 7.7h0.01"></path></svg>';
+    button.innerHTML = '<span class="quick-btn-label">Clue</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 4h3a2 2 0 1 1 4 0h1a2 2 0 0 1 2 2v3a2 2 0 1 1 0 4v5a2 2 0 0 1-2 2h-3a2 2 0 1 1-4 0H6a2 2 0 0 1-2-2v-3a2 2 0 1 1 0-4V6a2 2 0 0 1 2-2z"></path></svg>';
     setHoverNoteForElement(
       button,
       listening
@@ -1574,6 +1592,47 @@
     button.setAttribute('aria-label', listening
       ? 'Open listening coach support'
       : 'Open Clue Sprint for detective clue practice');
+  }
+
+  function getStarterWordMode() {
+    return normalizeStarterWordMode(_el('s-starter-words')?.value || prefs.starterWords || DEFAULT_PREFS.starterWords);
+  }
+
+  function getStarterWordAutoThreshold(mode = getStarterWordMode()) {
+    if (mode === 'after_2') return 2;
+    if (mode === 'after_3') return 3;
+    return 0;
+  }
+
+  function syncStarterWordLauncherUI(mode = getStarterWordMode()) {
+    const button = _el('starter-word-open-btn');
+    if (!button) return;
+    const normalized = normalizeStarterWordMode(mode);
+    const missionMode = isMissionLabStandaloneMode();
+    const hidden = normalized === 'off' || missionMode;
+    button.classList.toggle('hidden', hidden);
+    if (hidden) return;
+    const threshold = getStarterWordAutoThreshold(normalized);
+    button.setAttribute('aria-label', 'Show try these words list');
+    button.title = threshold > 0
+      ? `Show starter word ideas. Auto-opens after ${threshold} guesses if needed.`
+      : 'Show starter word ideas.';
+    setHoverNoteForElement(
+      button,
+      threshold > 0
+        ? `Starter words are available now and auto-open after ${threshold} guesses.`
+        : 'Starter words are available on demand.'
+    );
+  }
+
+  function applyStarterWordMode(mode, options = {}) {
+    const normalized = normalizeStarterWordMode(mode);
+    const select = _el('s-starter-words');
+    if (select && select.value !== normalized) select.value = normalized;
+    if (options.persist !== false) setPref('starterWords', normalized);
+    syncStarterWordLauncherUI(normalized);
+    if (normalized === 'off') hideStarterWordCard();
+    return normalized;
   }
 
   function syncGameplayAudioStrip(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
@@ -1619,6 +1678,7 @@
     if (select && select.value !== normalized) select.value = normalized;
     syncPlayStyleToggleUI(normalized);
     syncHeaderClueLauncherUI(normalized);
+    syncStarterWordLauncherUI();
     syncGameplayAudioStrip(normalized);
     if (options.persist !== false) setPref('playStyle', normalized);
     if (beforeMode !== normalized) {
@@ -2185,7 +2245,7 @@
       general: 'Try one sound clue, then adjust.'
     });
     const rule = ruleByCategory[category] || ruleByCategory.general;
-    return `${focusText}${rule} The sentence clue contains the target word.`;
+    return `${focusText}${rule} The sentence clue uses the secret word.`;
   }
 
   function getHintUnlockMinimum(playStyle) {
@@ -2209,8 +2269,8 @@
       unlocked: false,
       minimum,
       message: mode === 'listening'
-        ? `Submit ${remaining} more ${guessWord} to unlock Phonics Hint.`
-        : `Submit ${remaining} more ${guessWord} to unlock Detective Hint.`
+        ? `Try ${remaining} more ${guessWord} to unlock Sound Help.`
+        : `Try ${remaining} more ${guessWord} to unlock a Clue Hint.`
     };
   }
 
@@ -2239,8 +2299,8 @@
     let message = buildFriendlyHintMessage(category, sourceLabel);
     if (playStyle === 'listening') {
       message = sourceLabel
-        ? `Focus: ${sourceLabel}. Replay audio, tap sounds, then spell. The sentence clue contains the target word.`
-        : 'Replay audio, tap sounds, then spell. The sentence clue contains the target word.';
+        ? `Focus: ${sourceLabel}. Replay audio, tap sounds, then spell. The sentence clue uses the secret word.`
+        : 'Replay audio, tap sounds, then spell. The sentence clue uses the secret word.';
     }
     const actionMode = playStyle === 'detective' && !!entry?.sentence
       ? 'sentence'
@@ -2310,14 +2370,17 @@
     if (titleEl) titleEl.textContent = title;
     if (messageEl) messageEl.textContent = text;
     renderHintExamples(normalized.examples);
+    const hasExamples = Array.isArray(normalized.examples) && normalized.examples.length > 0;
     const sentenceBtn = _el('hint-clue-sentence-btn');
+    let showAction = false;
     if (sentenceBtn) {
       const actionMode = String(normalized.actionMode || '').trim().toLowerCase();
-      const showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
+      showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
       sentenceBtn.dataset.mode = actionMode || 'none';
       sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence (contains word)';
       sentenceBtn.classList.toggle('hidden', !showAction);
     }
+    card.classList.toggle('is-compact', !hasExamples && !showAction);
     clearInformantHintHideTimer();
     card.classList.remove('hidden');
     requestAnimationFrame(() => {
@@ -2326,6 +2389,7 @@
   }
 
   function showInformantHintToast() {
+    hideStarterWordCard();
     const card = _el('hint-clue-card');
     if (card && !card.classList.contains('hidden')) {
       hideInformantHintCard();
@@ -2337,7 +2401,7 @@
     if (!state?.word) {
       showInformantHintCard({
         title: '🔎 Clue Coach',
-        message: 'Tap New Word first, then press Clue for a kid-friendly phonics hint.',
+        message: 'Tap New Word first, then tap Clue for a quick helper tip.',
         examples: [],
         actionMode: 'none'
       });
@@ -2349,8 +2413,8 @@
     const unlock = getHintUnlockCopy(playStyle, guessCount);
     if (!unlock.unlocked) {
       showInformantHintCard({
-        title: playStyle === 'listening' ? '🎧 Hint Unlock' : '🔎 Hint Unlock',
-        message: `${unlock.message} The sentence clue contains the target word.`,
+        title: playStyle === 'listening' ? '🎧 Almost Ready' : '🔎 Almost Ready',
+        message: `${unlock.message} The sentence clue uses the secret word.`,
         examples: [],
         actionMode: 'none'
       });
@@ -2371,6 +2435,154 @@
       guess_count: guessCount
     });
     showInformantHintCard(buildInformantHintPayload(state));
+  }
+
+  function hideStarterWordCard() {
+    const card = _el('starter-word-card');
+    if (!card) return;
+    card.classList.remove('visible');
+    card.classList.add('hidden');
+  }
+
+  function replaceCurrentGuessWithWord(word) {
+    const normalizedWord = String(word || '').toLowerCase().replace(/[^a-z]/g, '');
+    const state = WQGame.getState?.();
+    if (!state?.word || state.gameOver) return false;
+    if (normalizedWord.length !== Number(state.wordLength || 0)) return false;
+    while ((WQGame.getState?.()?.guess || '').length > 0) {
+      WQGame.deleteLetter();
+    }
+    for (const letter of normalizedWord) WQGame.addLetter(letter);
+    const next = WQGame.getState?.();
+    if (next) WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
+    return true;
+  }
+
+  function pickStarterWordsForRound(state, limit = 9) {
+    if (!state?.word || state.gameOver) return [];
+    const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    const selectedGrade = _el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade;
+    const gradeBand = getEffectiveGameplayGradeBand(selectedGrade, focus);
+    const includeLowerBands = shouldExpandGradeBandForFocus(focus);
+    const length = String(Math.max(1, Number(state.wordLength) || 0));
+    const guessedWords = new Set((state.guesses || []).map((guess) => normalizeReviewWord(guess)));
+    const targetWord = normalizeReviewWord(state.word);
+    const addWords = (pool, bucket) => {
+      if (!Array.isArray(pool)) return;
+      pool.forEach((rawWord) => {
+        const normalized = normalizeReviewWord(rawWord);
+        if (!normalized || normalized.length !== Number(state.wordLength || 0)) return;
+        if (normalized === targetWord || guessedWords.has(normalized)) return;
+        bucket.add(normalized);
+      });
+    };
+
+    const prioritized = new Set();
+    addWords(WQData.getPlayableWords({
+      gradeBand,
+      length,
+      phonics: focus,
+      includeLowerBands
+    }), prioritized);
+
+    if (prioritized.size < 6 && state.entry?.phonics) {
+      addWords(WQData.getPlayableWords({
+        gradeBand,
+        length,
+        phonics: String(state.entry.phonics || '').toLowerCase(),
+        includeLowerBands
+      }), prioritized);
+    }
+
+    if (prioritized.size < 6) {
+      addWords(WQData.getPlayableWords({
+        gradeBand,
+        length,
+        phonics: 'all',
+        includeLowerBands
+      }), prioritized);
+    }
+
+    return shuffleList(Array.from(prioritized)).slice(0, Math.max(3, Math.min(12, Number(limit) || 9)));
+  }
+
+  function renderStarterWordList(words) {
+    const list = _el('starter-word-list');
+    if (!list) return;
+    list.innerHTML = '';
+    if (!Array.isArray(words) || !words.length) {
+      const empty = document.createElement('div');
+      empty.className = 'starter-word-message';
+      empty.textContent = 'No starter words found for this filter yet. Try switching focus or word length.';
+      list.appendChild(empty);
+      return;
+    }
+    words.forEach((word) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'starter-word-chip';
+      chip.textContent = String(word || '').toUpperCase();
+      chip.setAttribute('aria-label', `Use ${String(word || '').toUpperCase()} as next guess`);
+      chip.addEventListener('click', () => {
+        const applied = replaceCurrentGuessWithWord(word);
+        if (applied) {
+          hideStarterWordCard();
+          updateNextActionLine();
+          WQUI.showToast(`Try this: ${String(word || '').toUpperCase()}`);
+        }
+      });
+      list.appendChild(chip);
+    });
+  }
+
+  function showStarterWordCard(options = {}) {
+    const card = _el('starter-word-card');
+    if (!card) return false;
+    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
+    hideInformantHintCard();
+
+    const state = WQGame.getState?.() || {};
+    const titleEl = _el('starter-word-title');
+    const messageEl = _el('starter-word-message');
+    const guessCount = Array.isArray(state.guesses) ? state.guesses.length : 0;
+    const source = String(options.source || 'manual').toLowerCase();
+
+    if (!state.word || state.gameOver) {
+      if (titleEl) titleEl.textContent = 'Try These Words';
+      if (messageEl) messageEl.textContent = 'Start a round first, then open this to see starter ideas.';
+      renderStarterWordList([]);
+      card.classList.remove('hidden');
+      card.classList.add('visible');
+      return true;
+    }
+
+    const words = pickStarterWordsForRound(state, 9);
+    currentRoundStarterWordsShown = true;
+    if (titleEl) titleEl.textContent = source === 'auto' ? 'Try These Words' : 'Need Ideas? Try These Words';
+    if (messageEl) {
+      messageEl.textContent = source === 'auto'
+        ? `You have ${guessCount} guesses in. Pick one idea to keep momentum.`
+        : 'Pick one to jump-start your next guess.';
+    }
+    renderStarterWordList(words);
+    card.classList.remove('hidden');
+    card.classList.add('visible');
+    emitTelemetry('wq_support_used', {
+      support_type: 'starter_word_list',
+      guess_count: guessCount,
+      source
+    });
+    return true;
+  }
+
+  function maybeAutoShowStarterWords(state) {
+    const mode = getStarterWordMode();
+    const threshold = getStarterWordAutoThreshold(mode);
+    if (threshold <= 0) return;
+    if (currentRoundStarterWordsShown) return;
+    const guessCount = Array.isArray(state?.guesses) ? state.guesses.length : 0;
+    if (guessCount < threshold) return;
+    showStarterWordCard({ source: 'auto' });
   }
 
   function applyFeedback(mode) {
@@ -2404,7 +2616,7 @@
     if (!headerRight) return;
 
     const iconIds = ['teacher-panel-btn', 'case-toggle-btn', 'keyboard-layout-toggle', 'mission-lab-nav-btn', 'settings-btn'];
-    const quickIds = ['play-style-toggle', 'phonics-clue-open-btn', 'new-game-btn'];
+    const quickIds = ['play-style-toggle', 'phonics-clue-open-btn', 'starter-word-open-btn', 'new-game-btn'];
 
     let iconGroup = headerRight.querySelector('.header-icon-controls');
     if (!iconGroup) {
@@ -3142,6 +3354,7 @@
 
   let activeRoundStartedAt = 0;
   let currentRoundHintRequested = false;
+  let currentRoundStarterWordsShown = false;
   let currentRoundVoiceAttempts = 0;
   let currentRoundErrorCounts = Object.create(null);
   let currentRoundSkillKey = 'classic';
@@ -3529,6 +3742,7 @@
       if (missionMode) newWordBtn.classList.remove('pulse');
     }
     _el('mission-lab-hub')?.classList.toggle('hidden', !missionMode);
+    syncStarterWordLauncherUI();
     syncGameplayAudioStrip();
     if (!missionEnabled) {
       closeRevealChallengeModal({ silent: true, preserveFeedback: false });
@@ -3539,6 +3753,7 @@
     }
     if (missionMode) {
       hideInformantHintCard();
+      hideStarterWordCard();
       _el('toast')?.classList.remove('visible', 'toast-informant');
       refreshStandaloneMissionLabHub();
       closeRevealChallengeModal({ silent: true, preserveFeedback: false });
@@ -4018,6 +4233,17 @@
     }
     WQUI.showToast(`Max guesses saved: ${normalized}.`);
   });
+  _el('s-starter-words')?.addEventListener('change', e => {
+    const mode = applyStarterWordMode(e.target.value);
+    if (mode === 'off') {
+      WQUI.showToast('Try These Words is off.');
+      return;
+    }
+    const threshold = getStarterWordAutoThreshold(mode);
+    WQUI.showToast(threshold > 0
+      ? `Try These Words will auto-open after ${threshold} guesses.`
+      : 'Try These Words is available on demand.');
+  });
   _el('s-confidence-coaching')?.addEventListener('change', e => {
     setConfidenceCoachingMode(!!e.target.checked, { toast: true });
   });
@@ -4443,16 +4669,10 @@
     const files = event.target?.files || [];
     setLocalMusicFiles(files);
   });
-  _el('teacher-studio-music-upload')?.addEventListener('change', (event) => {
-    const files = event.target?.files || [];
-    setLocalMusicFiles(files);
-  });
   _el('s-music-clear-local')?.addEventListener('click', () => {
     clearLocalMusicFiles();
     const settingsInput = _el('s-music-upload');
-    const teacherInput = _el('teacher-studio-music-upload');
     if (settingsInput) settingsInput.value = '';
-    if (teacherInput) teacherInput.value = '';
   });
 
   _el('s-voice')?.addEventListener('change', e => {
@@ -4507,18 +4727,28 @@
   let voiceWaveRaf = 0;
   let voiceIsRecording = false;
   let voiceAutoStopTimer = 0;
+  let voiceCountdownTimer = 0;
+  let voiceCountdownToken = 0;
+  let voiceKaraokeTimer = 0;
+  let voiceKaraokeRunToken = 0;
   let revealNarrationToken = 0;
   const VOICE_PRIVACY_TOAST_KEY = 'wq_voice_privacy_toast_seen_v1';
-  const VOICE_CAPTURE_MS = 1000;
+  const VOICE_CAPTURE_MS = 3000;
+  const VOICE_COUNTDOWN_SECONDS = 3;
   const VOICE_HISTORY_KEY = 'wq_v2_voice_history_v1';
   const VOICE_HISTORY_LIMIT = 3;
 
   function setVoiceRecordingUI(isRecording) {
     const recordBtn = _el('voice-record-btn');
     if (recordBtn) {
-      recordBtn.disabled = !!isRecording;
+      const isCountingDown = !!voiceCountdownTimer;
+      recordBtn.disabled = !!isRecording || isCountingDown;
       recordBtn.classList.toggle('is-recording', !!isRecording);
-      recordBtn.textContent = isRecording ? 'Recording...' : 'Start 1-sec Recording';
+      recordBtn.textContent = isCountingDown
+        ? 'Get Ready...'
+        : isRecording
+          ? 'Recording...'
+          : 'Start Recording (3s countdown)';
     }
     const saveBtn = _el('voice-save-btn');
     if (saveBtn && isRecording) saveBtn.disabled = true;
@@ -4637,6 +4867,86 @@
     voiceAutoStopTimer = 0;
   }
 
+  function clearVoiceCountdownTimer() {
+    if (!voiceCountdownTimer) return;
+    clearInterval(voiceCountdownTimer);
+    voiceCountdownTimer = 0;
+  }
+
+  function resetKaraokeGuide(word = '') {
+    const wordWrap = _el('voice-karaoke-word');
+    const hintEl = _el('voice-karaoke-hint');
+    const normalizedWord = String(word || '').toUpperCase().replace(/[^A-Z]/g, '');
+    if (wordWrap) {
+      wordWrap.innerHTML = normalizedWord
+        ? normalizedWord
+          .split('')
+          .map((ch) => `<span class="voice-karaoke-letter">${ch}</span>`)
+          .join('')
+        : '<span class="voice-karaoke-letter">?</span>';
+    }
+    if (hintEl) hintEl.textContent = normalizedWord
+      ? 'Tap Guide Me to see pacing, then record.'
+      : 'Start a round to load the target word.';
+  }
+
+  function stopKaraokeGuide() {
+    voiceKaraokeRunToken += 1;
+    if (voiceKaraokeTimer) {
+      clearTimeout(voiceKaraokeTimer);
+      voiceKaraokeTimer = 0;
+    }
+  }
+
+  function runKaraokeGuide(entry) {
+    stopKaraokeGuide();
+    const word = String(entry?.word || '').toUpperCase().replace(/[^A-Z]/g, '');
+    const hintEl = _el('voice-karaoke-hint');
+    const wordWrap = _el('voice-karaoke-word');
+    if (!wordWrap) return;
+    resetKaraokeGuide(word);
+    const letters = Array.from(wordWrap.querySelectorAll('.voice-karaoke-letter'));
+    if (!letters.length || !word) return;
+    if (hintEl) hintEl.textContent = 'Follow the highlight and match the pace.';
+    const token = ++voiceKaraokeRunToken;
+    const totalMs = Math.max(900, Math.min(3200, word.length * 300));
+    const perLetter = Math.max(120, Math.floor(totalMs / letters.length));
+    let index = 0;
+    const tick = () => {
+      if (token !== voiceKaraokeRunToken) return;
+      letters.forEach((el, letterIndex) => {
+        el.classList.toggle('is-active', letterIndex === index);
+        el.classList.toggle('is-done', letterIndex < index);
+      });
+      const modalLetters = Array.from(document.querySelectorAll('#modal-word span'));
+      modalLetters.forEach((el, letterIndex) => {
+        el.classList.toggle('is-karaoke-active', letterIndex === index);
+        el.classList.toggle('is-karaoke-done', letterIndex < index);
+      });
+      index += 1;
+      if (index < letters.length) {
+        voiceKaraokeTimer = setTimeout(tick, perLetter);
+        return;
+      }
+      letters.forEach((el) => {
+        el.classList.remove('is-active');
+        el.classList.add('is-done');
+      });
+      modalLetters.forEach((el) => {
+        el.classList.remove('is-karaoke-active');
+        el.classList.add('is-karaoke-done');
+      });
+      voiceKaraokeTimer = setTimeout(() => {
+        if (token !== voiceKaraokeRunToken) return;
+        letters.forEach((el) => el.classList.remove('is-done'));
+        modalLetters.forEach((el) => el.classList.remove('is-karaoke-done'));
+        if (hintEl) hintEl.textContent = 'Nice pacing. Press Record when you are ready.';
+        voiceKaraokeTimer = 0;
+      }, 500);
+    };
+    tick();
+  }
+
   function stopVoiceVisualizer() {
     if (voiceWaveRaf) {
       cancelAnimationFrame(voiceWaveRaf);
@@ -4659,6 +4969,8 @@
 
   function stopVoiceCaptureNow() {
     clearVoiceAutoStopTimer();
+    clearVoiceCountdownTimer();
+    voiceCountdownToken += 1;
     try {
       if (voiceRecorder && voiceRecorder.state !== 'inactive') {
         voiceRecorder.stop();
@@ -4667,41 +4979,11 @@
     stopVoiceVisualizer();
     stopVoiceStream();
     voiceIsRecording = false;
+    stopKaraokeGuide();
     setVoiceRecordingUI(false);
   }
 
-  function drawWaveform(values = null) {
-    const canvas = _el('voice-waveform');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const w = canvas.width;
-    const h = canvas.height;
-    const mid = h / 2;
-
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(255,255,255,0.04)';
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, mid);
-    ctx.lineTo(w, mid);
-    ctx.stroke();
-
-    if (!values?.length) return;
-    ctx.strokeStyle = '#34d399';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    values.forEach((value, index) => {
-      const x = (index / (values.length - 1 || 1)) * w;
-      const y = (value / 255) * h;
-      if (index === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-  }
+  function drawWaveform() {}
 
   function animateLiveWaveform() {
     if (!voiceAnalyser) return;
@@ -4765,18 +5047,33 @@
     }
   }
 
-  function buildVoiceFeedback(analysis) {
+  function buildVoiceFeedback(analysis, entry = null) {
+    const targetWord = String(entry?.word || '').toLowerCase();
+    const hasTh = targetWord.includes('th');
+    const hasV = targetWord.includes('v');
+    const hasR = targetWord.includes('r');
+    const hasL = targetWord.includes('l');
+    const hasShortI = /[bcdfghjklmnpqrstvwxyz]i[bcdfghjklmnpqrstvwxyz]/.test(targetWord);
+    const ealTip = hasTh
+      ? 'EAL tip: keep your tongue gently between teeth for "th".'
+      : hasV
+        ? 'EAL tip: for "v", use voice and touch your bottom lip to upper teeth.'
+        : hasR && hasL
+          ? 'EAL tip: check /r/ vs /l/ contrast and keep sounds distinct.'
+          : hasShortI
+            ? 'EAL tip: keep short /i/ crisp (as in "sit"), not /ee/.'
+            : 'EAL tip: stress the main syllable and keep ending sounds clear.';
     if (!analysis) {
       return {
-        message: '1-second clip captured. Play it back and compare with the model audio.',
+        message: `Clip captured. Play it back, compare with model audio. ${ealTip}`,
         tone: 'default',
         score: 60,
         label: 'Captured'
       };
     }
-    if (analysis.duration < 0.55) {
+    if (analysis.duration < 1.4) {
       return {
-        message: 'Clip was very short. Try tapping Record and speaking right away.',
+        message: `Clip was very short. Speak right after the countdown. ${ealTip}`,
         tone: 'warn',
         score: 35,
         label: 'Short'
@@ -4784,7 +5081,7 @@
     }
     if (analysis.rms < 0.012 || analysis.voicedRatio < 0.05) {
       return {
-        message: 'Clip captured, but very quiet. Try a little louder or closer to the mic.',
+        message: `Clip was very quiet. Try a little louder or closer to the mic. ${ealTip}`,
         tone: 'warn',
         score: 44,
         label: 'Quiet'
@@ -4792,14 +5089,14 @@
     }
     if (analysis.peak > 0.97 || analysis.rms > 0.25) {
       return {
-        message: 'Clip captured, but volume may be too high. Step back slightly and retry.',
+        message: `Volume may be too high. Step back slightly and retry. ${ealTip}`,
         tone: 'warn',
         score: 52,
         label: 'Hot'
       };
     }
     return {
-      message: 'Great clarity. Play it back, then compare with the model audio.',
+      message: `Great clarity. Play it back and compare with model audio. ${ealTip}`,
       tone: 'good',
       score: 86,
       label: 'Clear'
@@ -4938,7 +5235,7 @@
       playAgain.removeAttribute('aria-disabled');
     }
     if (!voiceTakeComplete && !voiceIsRecording) {
-      setVoicePracticeFeedback('Tap Record above to capture a 1-second clip, then compare with model audio.');
+      setVoicePracticeFeedback('Tap Record to start a 3-second countdown, then compare with model audio.');
     }
   }
 
@@ -4960,7 +5257,7 @@
       return true;
     }
     if (!voiceTakeComplete) {
-      setVoicePracticeFeedback('Tap Start 1-sec Recording to capture your voice.');
+      setVoicePracticeFeedback('Tap Record to start a 3-second countdown and capture your voice.');
     }
     return true;
   }
@@ -4971,11 +5268,31 @@
       setVoicePracticeFeedback('Recording is not available on this device.', true);
       return;
     }
+    clearVoiceCountdownTimer();
+    voiceCountdownToken += 1;
+    const countdownToken = voiceCountdownToken;
+    let secondsLeft = VOICE_COUNTDOWN_SECONDS;
+    setVoiceRecordingUI(false);
+    setVoicePracticeFeedback(`Get ready... recording starts in ${secondsLeft}.`);
+    voiceCountdownTimer = setInterval(() => {
+      secondsLeft -= 1;
+      if (!voiceCountdownTimer || countdownToken !== voiceCountdownToken) return;
+      if (secondsLeft > 0) {
+        setVoicePracticeFeedback(`Get ready... recording starts in ${secondsLeft}.`);
+        setVoiceRecordingUI(false);
+        return;
+      }
+      clearVoiceCountdownTimer();
+    }, 1000);
+    setVoiceRecordingUI(false);
+    await waitMs(VOICE_COUNTDOWN_SECONDS * 1000);
+    if (countdownToken !== voiceCountdownToken) return;
     recordVoiceAttempt();
     try {
       clearVoiceClip();
       voiceTakeComplete = false;
       voiceChunks = [];
+      setVoicePracticeFeedback('Recording now...');
       voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       voiceRecorder = new MediaRecorder(voiceStream);
       voiceRecorder.addEventListener('dataavailable', (event) => {
@@ -5004,14 +5321,14 @@
         updateVoicePracticePanel(WQGame.getState());
         void analyzeVoiceClip(blob).then((analysis) => {
           if (!voiceClipBlob || voiceClipBlob !== blob) return;
-          const review = buildVoiceFeedback(analysis);
+          const review = buildVoiceFeedback(analysis, WQGame.getState()?.entry || null);
           setVoicePracticeFeedback(review.message, review.tone);
           appendVoiceHistory(review);
         });
       });
       voiceIsRecording = true;
       setVoiceRecordingUI(true);
-      setVoicePracticeFeedback('Recording for 1 second...');
+      setVoicePracticeFeedback('Recording for 3 seconds...');
       if (localStorage.getItem(VOICE_PRIVACY_TOAST_KEY) !== 'seen') {
         WQUI.showToast('Voice recordings stay on this device only. Nothing is uploaded.');
         localStorage.setItem(VOICE_PRIVACY_TOAST_KEY, 'seen');
@@ -5051,7 +5368,7 @@
     if (voiceRecorder && voiceRecorder.state !== 'inactive') {
       voiceRecorder.stop();
       const reason = String(options.reason || 'manual');
-      setVoicePracticeFeedback(reason === 'auto' ? 'Saving your 1-second clip...' : 'Saving your recording...');
+      setVoicePracticeFeedback(reason === 'auto' ? 'Saving your 3-second clip...' : 'Saving your recording...');
     } else {
       stopVoiceCaptureNow();
     }
@@ -5093,6 +5410,13 @@
 
   function bindVoicePracticeControls() {
     if (document.body.dataset.wqVoicePracticeBound === '1') return;
+    _el('voice-guide-btn')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      runKaraokeGuide(WQGame.getState()?.entry || null);
+      cancelRevealNarration();
+      void WQAudio.playWord(WQGame.getState()?.entry || null);
+    });
     _el('voice-record-btn')?.addEventListener('click', () => { void startVoiceRecording(); });
     _el('voice-play-btn')?.addEventListener('click', () => playVoiceRecording());
     _el('voice-save-btn')?.addEventListener('click', () => saveVoiceRecording());
@@ -5114,11 +5438,11 @@
       const details = event.currentTarget;
       if (!(details instanceof HTMLDetailsElement) || !details.open) return;
       if (voiceTakeComplete || voiceIsRecording) return;
-      setVoicePracticeFeedback('Tap Record to capture a 1-second clip.');
+      setVoicePracticeFeedback('Tap Record to start a 3-second countdown.');
     });
     document.body.dataset.wqVoicePracticeBound = '1';
     setVoiceRecordingUI(false);
-    drawWaveform();
+    resetKaraokeGuide(WQGame.getState()?.word || '');
     renderVoiceHistoryStrip();
   }
 
@@ -5134,7 +5458,7 @@
       voiceTakeComplete = false;
       stopVoiceCaptureNow();
       clearVoiceClip();
-      drawWaveform();
+      resetKaraokeGuide(state?.word || '');
       updateRevealSorBadge(state?.entry);
       syncRevealMeaningHighlight(state?.entry);
       syncRevealChallengeLaunch(state);
@@ -7354,6 +7678,7 @@
     if (nextResult?.word) {
       activeRoundStartedAt = Date.now();
       currentRoundHintRequested = false;
+      currentRoundStarterWordsShown = false;
       currentRoundVoiceAttempts = 0;
       currentRoundErrorCounts = Object.create(null);
       const skill = getSkillDescriptorForRound(nextResult);
@@ -7370,6 +7695,7 @@
     }
     activeRoundStartedAt = 0;
     currentRoundHintRequested = false;
+    currentRoundStarterWordsShown = false;
     currentRoundVoiceAttempts = 0;
     currentRoundErrorCounts = Object.create(null);
     currentRoundSkillKey = 'classic:all';
@@ -10096,6 +10422,7 @@
       source: options.launchMissionLab ? 'mission_lab_new' : 'wordquest_new'
     });
     hideInformantHintCard();
+    hideStarterWordCard();
     closeRevealChallengeModal({ silent: true });
     clearClassroomTurnTimer();
     resetRoundTracking();
@@ -10241,6 +10568,9 @@
     if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
       hideInformantHintCard();
     }
+    if (_el('starter-word-card') && !_el('starter-word-card')?.classList.contains('hidden')) {
+      hideStarterWordCard();
+    }
     if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) return;
     const s = WQGame.getState();
     if (s.gameOver) return;
@@ -10327,6 +10657,7 @@
           }, 520);
         } else {
           maybeShowErrorCoach(result);
+          maybeAutoShowStarterWords(result);
           advanceTeamTurn();
           updateNextActionLine();
         }
@@ -10381,6 +10712,12 @@
       }
       return;
     }
+    const starterWordOpen = !(_el('starter-word-card')?.classList.contains('hidden'));
+    if (starterWordOpen && e.key === 'Escape') {
+      e.preventDefault();
+      hideStarterWordCard();
+      return;
+    }
     if (isMissionLabStandaloneMode()) return;
     const activeEl = document.activeElement;
     const shouldReleaseThemeNavFocus =
@@ -10418,6 +10755,23 @@
   _el('play-again-btn')?.addEventListener('click', newGame);
   _el('phonics-clue-open-btn')?.addEventListener('click', () => {
     showInformantHintToast();
+  });
+  _el('starter-word-open-btn')?.addEventListener('click', () => {
+    const card = _el('starter-word-card');
+    if (card && !card.classList.contains('hidden')) {
+      hideStarterWordCard();
+      return;
+    }
+    showStarterWordCard({ source: 'manual' });
+  });
+  _el('starter-word-refresh-btn')?.addEventListener('click', () => {
+    showStarterWordCard({ source: 'manual' });
+  });
+  _el('starter-word-close-btn')?.addEventListener('click', () => {
+    hideStarterWordCard();
+  });
+  _el('starter-word-close-icon')?.addEventListener('click', () => {
+    hideStarterWordCard();
   });
   _el('phonics-clue-close')?.addEventListener('click', () => closePhonicsClueModal());
   _el('phonics-clue-modal')?.addEventListener('pointerdown', (event) => {
@@ -11648,7 +12002,7 @@
       return ensureTerminalPunctuation(`${defBase}${fun}`);
     }
     const funNoLeadPunc = fun.replace(/^[,.;:!?]\s*/, '').trim();
-    return ensureTerminalPunctuation(`${defBase}, ${funNoLeadPunc}`);
+    return ensureTerminalPunctuation(`${defBase} and ${funNoLeadPunc}`);
   }
 
   function getRevealMeaningPayload(nextEntry) {
@@ -11667,7 +12021,14 @@
     const readFun = includeFun
       ? String(nextEntry?.text_to_read_fun || '').replace(/\s+/g, ' ').trim() || funAddOn
       : '';
-    const readAll = [readDef, readFun].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+    const readAll = (() => {
+      if (readDef && readFun) {
+        const smoothDef = readDef.replace(/[.!?]+$/, '').trim();
+        const smoothFun = readFun.replace(/^[,.;:!?]\s*/, '').trim();
+        return ensureTerminalPunctuation(`${smoothDef} and ${smoothFun}`);
+      }
+      return [readDef, readFun].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+    })();
     return { definition, funAddOn, line, readAll };
   }
 
@@ -12703,6 +13064,7 @@
     await waitMs(pacing.introDelay);
     if (token !== revealNarrationToken) return;
     try {
+      runKaraokeGuide(result.entry);
       await WQAudio.playWord(result.entry);
       if (token !== revealNarrationToken) return;
       await waitMs(pacing.betweenDelay);

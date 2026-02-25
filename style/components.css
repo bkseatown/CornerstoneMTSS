@@ -275,14 +275,47 @@ header {
 #phonics-clue-open-btn {
   border-color: color-mix(in oklab, #2d8cbf 54%, var(--panel-border) 46%);
   background: color-mix(in oklab, #2d8cbf 18%, var(--panel-bg) 82%);
-  min-width: 50px;
-  padding: 4px 10px;
+  min-width: 88px;
+  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
 }
 
 #phonics-clue-open-btn svg {
   width: 16px;
   height: 16px;
   display: block;
+  flex: 0 0 auto;
+}
+
+#phonics-clue-open-btn .quick-btn-label {
+  font-weight: 800;
+  line-height: 1;
+}
+
+#starter-word-open-btn {
+  border-color: color-mix(in oklab, #2e9a63 52%, var(--panel-border) 48%);
+  background: color-mix(in oklab, #2e9a63 16%, var(--panel-bg) 84%);
+  min-width: 122px;
+  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+#starter-word-open-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+#starter-word-open-btn .quick-btn-label {
+  font-weight: 800;
+  line-height: 1;
 }
 
 #mission-lab-nav-btn {
@@ -1552,44 +1585,6 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .wq-teacher-msg.is-error {
   color: #b91c1c;
-}
-
-.teacher-studio-details {
-  border: 1px solid color-mix(in oklab, var(--panel-border) 64%, transparent);
-  border-radius: 12px;
-  padding: 0;
-  background: color-mix(in oklab, var(--panel-bg) 84%, transparent);
-}
-
-.teacher-studio-details > summary {
-  cursor: pointer;
-  list-style: none;
-  padding: 10px;
-  font-size: 0.78rem;
-  font-weight: 820;
-}
-
-.teacher-studio-details > summary::-webkit-details-marker {
-  display: none;
-}
-
-.teacher-studio-grid {
-  display: grid;
-  gap: 8px;
-  padding: 0 10px 10px;
-}
-
-.teacher-studio-grid label {
-  display: grid;
-  gap: 4px;
-  font-size: 0.72rem;
-  font-weight: 780;
-}
-
-.teacher-studio-msg {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
 }
 
 .settings-grid {
@@ -3684,8 +3679,8 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   top: calc(var(--header-h) + var(--focus-h) + 12px);
   left: 50%;
   transform: translateX(-50%) translateY(-10px) scale(0.985);
-  width: min(920px, calc(100vw - 24px));
-  max-height: min(78vh, 680px);
+  width: min(740px, calc(100vw - 24px));
+  max-height: min(70vh, 540px);
   overflow: auto;
   padding: 18px 20px 16px;
   border-radius: 24px;
@@ -3707,6 +3702,21 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   z-index: 204;
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hint-clue-card.is-compact {
+  width: min(620px, calc(100vw - 24px));
+  max-height: min(56vh, 360px);
+}
+
+.hint-clue-card.is-compact .hint-clue-message {
+  max-width: 34ch;
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+}
+
+.hint-clue-card.is-compact .hint-clue-actions {
+  padding-top: 4px;
+  border-top: 0;
 }
 
 .hint-clue-card.visible {
@@ -3870,14 +3880,142 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   color: #355064;
 }
 
+.starter-word-card {
+  position: fixed;
+  top: calc(var(--header-h) + var(--focus-h) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px) scale(0.985);
+  width: min(840px, calc(100vw - 24px));
+  max-height: min(72vh, 560px);
+  overflow: auto;
+  padding: 16px 18px 15px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(164, 244, 209, 0.26), transparent 46%),
+    radial-gradient(circle at 8% 6%, rgba(182, 226, 255, 0.23), transparent 44%),
+    linear-gradient(165deg, #f5fff7 0%, #ecfbf4 58%, #f3fcff 100%);
+  border: 2px solid color-mix(in oklab, #57b885 54%, var(--panel-border) 46%);
+  color: #173a2a;
+  box-shadow:
+    0 20px 42px rgba(12, 30, 22, 0.24),
+    inset 0 1px 0 rgba(255,255,255,0.82);
+  display: grid;
+  gap: 12px;
+  pointer-events: auto;
+  z-index: 205;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.starter-word-card.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.starter-word-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.starter-word-title {
+  font-size: clamp(1.18rem, 2vw, 1.52rem);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  color: #1f4a36;
+}
+
+.starter-word-message {
+  font-size: clamp(0.9rem, 1.2vw, 1.02rem);
+  font-weight: 760;
+  line-height: 1.36;
+  color: #2a5a43;
+}
+
+.starter-word-close-icon {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  border: 1px solid color-mix(in oklab, #8fd7b2 58%, var(--panel-border) 42%);
+  background: color-mix(in oklab, #ffffff 86%, #d8f8e9 14%);
+  color: #2f6046;
+  font-size: 1.02rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.starter-word-close-icon:hover {
+  border-color: color-mix(in oklab, #69bf92 64%, var(--panel-border) 36%);
+  background: color-mix(in oklab, #ffffff 70%, #cbf5df 30%);
+}
+
+.starter-word-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 9px;
+}
+
+.starter-word-chip {
+  min-height: 42px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, #82caa2 56%, var(--panel-border) 44%);
+  background: linear-gradient(155deg, #ffffff 0%, #ecfdf4 100%);
+  color: #214d38;
+  font-size: 1rem;
+  font-weight: 880;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(24, 58, 44, 0.12);
+}
+
+.starter-word-chip:hover {
+  border-color: color-mix(in oklab, #4db07c 62%, var(--panel-border) 38%);
+  background: linear-gradient(155deg, #f8fff9 0%, #def7ea 100%);
+}
+
+.starter-word-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in oklab, #b7dfca 70%, transparent 30%);
+}
+
+.starter-word-btn {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, #60ba8d 54%, var(--panel-border) 46%);
+  background: linear-gradient(145deg, #d8f9e9 0%, #d6f4ef 100%);
+  color: #1f4d38;
+  font-size: 0.92rem;
+  font-weight: 840;
+}
+
+.starter-word-btn-muted {
+  border-color: color-mix(in oklab, #b9d2c6 58%, var(--panel-border) 42%);
+  background: linear-gradient(145deg, #f5faf7 0%, #ecf3ef 100%);
+  color: #355245;
+}
+
 @media (max-width: 760px) {
   .hint-clue-card {
     top: calc(var(--header-h) + var(--focus-h) + 10px);
     width: calc(100vw - 16px);
-    max-height: min(84vh, 620px);
+    max-height: min(76vh, 520px);
     padding: 13px 13px 12px;
     border-radius: 20px;
     gap: 10px;
+  }
+
+  .hint-clue-card.is-compact {
+    max-height: min(48vh, 300px);
   }
 
   .hint-clue-title {
@@ -3916,6 +4054,20 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
     min-height: 42px;
     font-size: 0.9rem;
   }
+
+  .starter-word-card {
+    top: calc(var(--header-h) + var(--focus-h) + 10px);
+    width: calc(100vw - 16px);
+    max-height: min(80vh, 560px);
+    padding: 12px 12px 11px;
+    border-radius: 18px;
+    gap: 10px;
+  }
+
+  .starter-word-list {
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: 8px;
+  }
 }
 
 @media (max-width: 460px) {
@@ -3926,6 +4078,17 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   }
 
   .hint-clue-btn {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .starter-word-close-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .starter-word-btn {
     flex-basis: 100%;
     width: 100%;
   }
@@ -4406,6 +4569,14 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   font-weight: 800;
   box-shadow:  0 4px 0 var(--correct-dk);
   animation:   pop-in 0.3s ease calc(var(--i, 0) * 0.07s) both;
+}
+#modal-word span.is-karaoke-active {
+  transform: translateY(-2px) scale(1.06);
+  background: color-mix(in oklab, #f59e0b 74%, var(--correct) 26%);
+  box-shadow: 0 6px 0 color-mix(in oklab, #b45309 72%, var(--correct-dk) 28%);
+}
+#modal-word span.is-karaoke-done {
+  background: color-mix(in oklab, #10b981 72%, var(--correct) 28%);
 }
 #end-modal.loss #modal-word span { background: var(--absent); box-shadow: 0 4px 0 var(--absent-dk); }
 
@@ -5157,12 +5328,61 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   color: var(--text-muted);
 }
 
-#voice-waveform {
+.voice-karaoke-guide {
   width: 100%;
-  height: 74px;
-  border: 1px solid var(--panel-border);
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, var(--brand) 28%);
   border-radius: 10px;
-  background: color-mix(in oklab, var(--panel-bg) 68%, #000000 8%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%) 0%,
+    color-mix(in oklab, var(--brand) 16%, var(--panel-bg) 84%) 100%
+  );
+}
+
+.voice-karaoke-word {
+  min-height: 42px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.voice-karaoke-letter {
+  min-width: 26px;
+  height: 34px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
+  color: var(--text);
+  font-size: 1.12rem;
+  font-weight: 900;
+  transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.voice-karaoke-letter.is-active {
+  transform: translateY(-1px) scale(1.08);
+  border-color: color-mix(in oklab, #b45309 70%, var(--brand) 30%);
+  background: color-mix(in oklab, #f59e0b 78%, #ffffff 22%);
+  color: #1f2937;
+}
+
+.voice-karaoke-letter.is-done {
+  border-color: color-mix(in oklab, #15803d 66%, var(--panel-border) 34%);
+  background: color-mix(in oklab, #22c55e 34%, var(--panel-bg) 66%);
+}
+
+.voice-karaoke-hint {
+  text-align: center;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .voice-practice-actions {
