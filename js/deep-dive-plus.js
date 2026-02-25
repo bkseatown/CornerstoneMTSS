@@ -55,6 +55,13 @@
   }
 
   function setFeedback(text, tone) {
+    var bridge = window.WQDeepDive;
+    if (bridge && typeof bridge.setFeedback === 'function') {
+      try {
+        bridge.setFeedback(String(text || ''), String(tone || 'default'));
+        return;
+      } catch (_error) {}
+    }
     var target = byId('challenge-feedback') || byId('challenge-live-feedback');
     if (!target) return;
     target.textContent = String(text || '');
@@ -65,6 +72,29 @@
       target.classList.add('is-warn', 'wq-plus-warn');
     }
     if (target.classList.contains('hidden')) target.classList.remove('hidden');
+  }
+
+  function completeListenStation() {
+    var bridge = window.WQDeepDive;
+    if (bridge && typeof bridge.completeTask === 'function') {
+      try {
+        return !!bridge.completeTask('listen', true, { render: true });
+      } catch (_error) {}
+    }
+    if (typeof window.setChallengeTaskComplete === 'function') {
+      try {
+        window.setChallengeTaskComplete('listen', true);
+        return true;
+      } catch (_error) {}
+    }
+    try {
+      document.dispatchEvent(new CustomEvent('wq:deep-dive-complete-task', {
+        detail: { task: 'listen', complete: true, render: true, source: 'deep-dive-plus' }
+      }));
+      return true;
+    } catch (_error) {
+      return false;
+    }
   }
 
   function ensureHandwritingPanel() {
@@ -289,14 +319,7 @@
           setFeedback('Try again: mark every vowel you see.', 'warn');
           return;
         }
-        var completeHook = (typeof window.setChallengeTaskComplete === 'function')
-          ? window.setChallengeTaskComplete
-          : null;
-        if (completeHook) {
-          try {
-            completeHook('listen', true);
-          } catch (_error) {}
-        }
+        completeListenStation();
         setFeedback('Sound Mark complete. Nice work.', 'good');
       });
     }

@@ -12308,6 +12308,76 @@
     updateChallengeProgressUI();
   }
 
+  const DEEP_DIVE_TASK_SET = new Set(CHALLENGE_TASK_FLOW);
+
+  function getDeepDiveBridgeState() {
+    const modalOpen = !(_el('challenge-modal')?.classList.contains('hidden'));
+    if (!revealChallengeState) {
+      return {
+        open: modalOpen,
+        word: '',
+        topic: '',
+        grade: '',
+        level: '',
+        activeTask: '',
+        doneCount: 0,
+        tasks: { listen: false, analyze: false, create: false },
+        attemptId: '',
+        deepDiveSchemaVersion: 1
+      };
+    }
+    return {
+      open: modalOpen,
+      word: String(revealChallengeState.word || ''),
+      topic: String(revealChallengeState.topic || ''),
+      grade: String(revealChallengeState.grade || ''),
+      level: String(revealChallengeState.challenge?.level || ''),
+      activeTask: String(revealChallengeState.activeTask || ''),
+      doneCount: getChallengeDoneCount(revealChallengeState),
+      tasks: {
+        listen: !!revealChallengeState.tasks?.listen,
+        analyze: !!revealChallengeState.tasks?.analyze,
+        create: !!revealChallengeState.tasks?.create
+      },
+      attemptId: String(revealChallengeState.attemptId || ''),
+      deepDiveSchemaVersion: 1
+    };
+  }
+
+  function deepDiveBridgeSetFeedback(message, tone = 'default') {
+    setChallengeFeedback(message, tone);
+    return true;
+  }
+
+  function deepDiveBridgeCompleteTask(task, complete = true, options = {}) {
+    const normalizedTask = String(task || '').trim().toLowerCase();
+    if (!DEEP_DIVE_TASK_SET.has(normalizedTask)) return false;
+    if (!revealChallengeState) return false;
+    setChallengeTaskComplete(normalizedTask, !!complete);
+    if (options && options.render !== false) renderRevealChallengeModal();
+    return true;
+  }
+
+  function deepDiveBridgeRender() {
+    if (!revealChallengeState) return false;
+    renderRevealChallengeModal();
+    return true;
+  }
+
+  function publishDeepDiveBridge() {
+    const bridge = {
+      version: '1.1.0',
+      deepDiveSchemaVersion: 1,
+      getState: getDeepDiveBridgeState,
+      isOpen: () => !(_el('challenge-modal')?.classList.contains('hidden')),
+      getActiveWord: () => String(revealChallengeState?.word || ''),
+      completeTask: deepDiveBridgeCompleteTask,
+      setFeedback: deepDiveBridgeSetFeedback,
+      render: deepDiveBridgeRender
+    };
+    window.WQDeepDive = Object.freeze(bridge);
+  }
+
   function renderRevealChallengeModal() {
     const state = revealChallengeState;
     if (!state) return;
@@ -12561,6 +12631,8 @@
     const record = {
       attemptId: String(revealChallengeState.attemptId || ''),
       source: String(revealChallengeState.source || 'reveal').trim() || 'reveal',
+      deepDiveVersion: '1.1.0',
+      deepDiveSchemaVersion: 1,
       student: getActiveStudentLabel(),
       ts: completionTs,
       word: revealChallengeState.word,
@@ -12577,7 +12649,12 @@
       secondsLeft,
       analyze: analyzeText,
       create: createText,
-      tasks: { ...revealChallengeState.tasks }
+      tasks: { ...revealChallengeState.tasks },
+      taskOutcomes: CHALLENGE_TASK_FLOW.map((task) => ({
+        task,
+        complete: !!revealChallengeState.tasks?.[task],
+        attempts: Math.max(0, Number(revealChallengeState.deepDive?.attempts?.[task]) || 0)
+      }))
     };
     persistRevealChallengeRecord(record);
     saveChallengeDraft(revealChallengeState);
@@ -12628,6 +12705,22 @@
       closeRevealChallengeModal({ silent: true });
     }, 900);
   }
+
+  publishDeepDiveBridge();
+  document.addEventListener('wq:deep-dive-complete-task', (event) => {
+    const detail = event?.detail && typeof event.detail === 'object' ? event.detail : {};
+    const task = String(detail.task || '').trim();
+    const complete = detail.complete !== false;
+    const render = detail.render !== false;
+    deepDiveBridgeCompleteTask(task, complete, { render });
+  });
+  document.addEventListener('wq:deep-dive-feedback', (event) => {
+    const detail = event?.detail && typeof event.detail === 'object' ? event.detail : {};
+    const message = String(detail.message || '').trim();
+    const tone = String(detail.tone || 'default').trim();
+    if (!message) return;
+    deepDiveBridgeSetFeedback(message, tone);
+  });
 
   const PHONICS_CLUE_DECKS_URL = './data/taboo-phonics-starter-decks.json';
   const PHONICS_CLUE_DECK_OPTIONS = Object.freeze([
