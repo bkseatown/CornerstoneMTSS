@@ -38,6 +38,15 @@
   gap: 8px;
 }
 
+.wq-hw-markup {
+  display: grid;
+  gap: 8px;
+  border: 1px dashed var(--panel-border, rgba(120, 136, 165, 0.36));
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--panel-bg, #fff) 88%, var(--page-bg, #f7f9fc) 12%);
+  padding: 8px;
+}
+
 .wq-hw-btn[aria-pressed="true"] {
   outline: 2px solid color-mix(in oklab, var(--accent, #2f7fff) 50%, transparent);
   outline-offset: 1px;

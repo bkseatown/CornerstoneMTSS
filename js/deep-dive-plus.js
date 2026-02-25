@@ -74,24 +74,12 @@
     if (target.classList.contains('hidden')) target.classList.remove('hidden');
   }
 
-  function completeListenStation() {
+  function isListenTaskAlreadyComplete() {
     var bridge = window.WQDeepDive;
-    if (bridge && typeof bridge.completeTask === 'function') {
-      try {
-        return !!bridge.completeTask('listen', true, { render: true });
-      } catch (_error) {}
-    }
-    if (typeof window.setChallengeTaskComplete === 'function') {
-      try {
-        window.setChallengeTaskComplete('listen', true);
-        return true;
-      } catch (_error) {}
-    }
+    if (!bridge || typeof bridge.getState !== 'function') return false;
     try {
-      document.dispatchEvent(new CustomEvent('wq:deep-dive-complete-task', {
-        detail: { task: 'listen', complete: true, render: true, source: 'deep-dive-plus' }
-      }));
-      return true;
+      var snapshot = bridge.getState();
+      return !!snapshot?.tasks?.listen;
     } catch (_error) {
       return false;
     }
@@ -114,6 +102,7 @@
       '  <h3 class="wq-hw-title">✍️ Write It (Optional)</h3>',
       '  <span id="wq-hw-word" class="wq-hw-word">—</span>',
       '</div>',
+      '<div id="wq-hw-markup" class="wq-hw-markup" role="group" aria-label="Optional sound lab"></div>',
       '<div class="wq-hw-controls" role="group" aria-label="Handwriting tools">',
       '  <button id="wq-hw-trace-btn" class="audio-btn wq-hw-btn" type="button" aria-pressed="true">Trace</button>',
       '  <button id="wq-hw-write-btn" class="audio-btn wq-hw-btn" type="button" aria-pressed="false">Write</button>',
@@ -233,7 +222,7 @@
   }
 
   function renderMarkup(word) {
-    var wrap = byId('challenge-pattern-options');
+    var wrap = byId('wq-hw-markup');
     if (!wrap) return;
     var letters = String(word || '').split('');
     var validIndexes = new Set();
@@ -249,7 +238,7 @@
     var row = document.createElement('div');
     row.className = 'wq-markup-row';
     row.setAttribute('role', 'group');
-    row.setAttribute('aria-label', 'Tap letters to mark vowels');
+    row.setAttribute('aria-label', 'Tap letters to mark vowel sounds');
 
     letters.forEach(function (letter, index) {
       var lower = letter.toLowerCase();
@@ -272,7 +261,7 @@
 
     var help = document.createElement('p');
     help.className = 'wq-markup-help';
-    help.textContent = 'Mark every vowel (a, e, i, o, u).';
+    help.textContent = 'Optional sound lab: mark every vowel (a, e, i, o, u).';
 
     root.appendChild(row);
     root.appendChild(actions);
@@ -300,7 +289,7 @@
         row.querySelectorAll('.wq-markup-letter.is-marked').forEach(function (node) {
           node.classList.remove('is-marked');
         });
-        setFeedback('Marks reset. Tap each vowel.', 'default');
+        setFeedback('Reset done. Tap each vowel.', 'default');
       });
     }
     if (checkBtn) {
@@ -316,11 +305,14 @@
           });
         }
         if (!correct) {
-          setFeedback('Try again: mark every vowel you see.', 'warn');
+          setFeedback('Nice try. Mark every vowel you see.', 'warn');
           return;
         }
-        completeListenStation();
-        setFeedback('Sound Mark complete. Nice work.', 'good');
+        if (isListenTaskAlreadyComplete()) {
+          setFeedback('Great sound check. This step is already complete.', 'good');
+          return;
+        }
+        setFeedback('Great sound check. Now finish the Sound step above.', 'good');
       });
     }
 
@@ -341,7 +333,7 @@
       clearCanvas();
       return;
     }
-    if (state.markupWord !== word || !byId('challenge-pattern-options')?.querySelector('.wq-markup-root')) {
+    if (state.markupWord !== word || !byId('wq-hw-markup')?.querySelector('.wq-markup-root')) {
       renderMarkup(word);
     }
   }

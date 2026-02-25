@@ -4825,6 +4825,24 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   color: color-mix(in oklab, var(--text-muted) 80%, var(--text) 20%);
 }
 
+.challenge-quickstart {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid color-mix(in oklab, var(--brand) 52%, var(--panel-border) 48%);
+  background: color-mix(in oklab, var(--brand) 11%, var(--panel-bg) 89%);
+  border-radius: 10px;
+  padding: 7px 10px;
+}
+
+.challenge-quickstart-copy {
+  font-size: 0.73rem;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text) 88%, var(--text-muted) 12%);
+  font-weight: 760;
+}
+
 .challenge-station-progress {
   display: flex;
   flex-wrap: wrap;
@@ -5072,6 +5090,12 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 
 .challenge-actions .audio-btn {
   padding: 8px 12px;
+}
+
+.challenge-actions .audio-btn.is-primary-action {
+  border-color: color-mix(in oklab, var(--brand) 64%, var(--panel-border) 36%);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--brand) 70%, #ffffff 30%), color-mix(in oklab, var(--accent) 68%, var(--brand) 32%));
+  color: #ffffff;
 }
 
 .challenge-actions #challenge-next-station:disabled,

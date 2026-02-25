@@ -917,15 +917,19 @@
           <span id="challenge-grade-chip" class="challenge-meta-chip">Grade: —</span>
           <span id="challenge-role-chip" class="challenge-meta-chip">Word type: —</span>
         </div>
-        <p id="challenge-instruction" class="challenge-instruction">One station at a time. Complete all 3 stations to finish Deep Dive.</p>
-        <div id="challenge-station-progress" class="challenge-station-progress" role="tablist" aria-label="Deep Dive stations">
-          <button class="challenge-station-pill is-active" type="button" data-challenge-station="listen" role="tab" aria-selected="true">1. Sound Mark</button>
-          <button class="challenge-station-pill" type="button" data-challenge-station="analyze" role="tab" aria-selected="false">2. Meaning Match</button>
-          <button class="challenge-station-pill" type="button" data-challenge-station="create" role="tab" aria-selected="false">3. Use in Context</button>
+        <p id="challenge-instruction" class="challenge-instruction">One step at a time. Finish all 3 steps.</p>
+        <div id="challenge-quickstart" class="challenge-quickstart hidden" aria-live="polite">
+          <div id="challenge-quickstart-copy" class="challenge-quickstart-copy">Quick start: finish Sound, Meaning, and Context in order.</div>
+          <button id="challenge-quickstart-dismiss" class="challenge-starter-btn" type="button">Got it</button>
+        </div>
+        <div id="challenge-station-progress" class="challenge-station-progress" role="tablist" aria-label="Deep Dive steps">
+          <button class="challenge-station-pill is-active" type="button" data-challenge-station="listen" role="tab" aria-selected="true">1. Sound</button>
+          <button class="challenge-station-pill" type="button" data-challenge-station="analyze" role="tab" aria-selected="false">2. Meaning</button>
+          <button class="challenge-station-pill" type="button" data-challenge-station="create" role="tab" aria-selected="false">3. Context</button>
         </div>
         <div class="challenge-mission-grid">
           <section class="challenge-mission is-active" data-challenge-task="listen" role="tabpanel" aria-hidden="false">
-            <h3 id="challenge-listen-title">1. Sound Mark</h3>
+            <h3 id="challenge-listen-title">1. Sound</h3>
             <p id="challenge-listen-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-pattern-options" class="challenge-choice-grid" role="group" aria-label="Pattern choices"></div>
             <p id="challenge-listen-helper" class="challenge-mission-helper"></p>
@@ -936,7 +940,7 @@
             <div id="challenge-status-listen" class="challenge-task-status">Pending</div>
           </section>
           <section class="challenge-mission" data-challenge-task="analyze" role="tabpanel" aria-hidden="true">
-            <h3 id="challenge-analyze-title">2. Meaning Match</h3>
+            <h3 id="challenge-analyze-title">2. Meaning</h3>
             <p id="challenge-analyze-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-meaning-options" class="challenge-choice-grid challenge-choice-grid-meaning" role="group" aria-label="Meaning choices"></div>
             <p id="challenge-analyze-helper" class="challenge-mission-helper"></p>
@@ -946,7 +950,7 @@
             <div id="challenge-status-analyze" class="challenge-task-status">Pending</div>
           </section>
           <section class="challenge-mission" data-challenge-task="create" role="tabpanel" aria-hidden="true">
-            <h3 id="challenge-create-title">3. Use in Context</h3>
+            <h3 id="challenge-create-title">3. Context</h3>
             <p id="challenge-create-prompt" class="challenge-mission-copy"></p>
             <div id="challenge-syntax-options" class="challenge-choice-grid challenge-choice-grid-syntax" role="group" aria-label="Sentence choices"></div>
             <p id="challenge-create-helper" class="challenge-mission-helper"></p>
@@ -954,7 +958,7 @@
           </section>
         </div>
         <div class="challenge-progress-wrap" aria-live="polite">
-          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 stations complete</div>
+          <div id="challenge-progress-label" class="challenge-progress-label">0 / 3 steps complete</div>
           <div class="challenge-progress-track"><div id="challenge-progress-fill" class="challenge-progress-fill"></div></div>
         </div>
         <div class="challenge-score-wrap" aria-live="polite">
@@ -962,9 +966,9 @@
           <div id="challenge-score-detail" class="challenge-score-detail">Accuracy -- · Meaning -- · Syntax --</div>
         </div>
         <div class="challenge-actions">
-          <button id="challenge-next-station" class="audio-btn" type="button" disabled>Next Station</button>
+          <button id="challenge-next-station" class="audio-btn" type="button" disabled>Next Step</button>
           <button id="challenge-save-reflection" class="audio-btn" type="button">Save Deep Dive</button>
-          <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish Deep Dive</button>
+          <button id="challenge-finish-btn" class="audio-btn" type="button" disabled>Finish</button>
         </div>
         <div id="challenge-live-feedback" class="challenge-live-feedback" aria-live="polite"></div>
         <p id="challenge-teacher-lens" class="challenge-teacher-lens"></p>
@@ -1176,10 +1180,13 @@
   <script src="js/theme-registry.js?v=20260223c"></script>
   <script src="data/curriculum-taxonomy.js?v=20260225a"></script>
   <script src="data/assignment-schema.js?v=20260225a"></script>
-  <script src="js/contracts/teacher-assignments-contract.js?v=20260225b"></script>
-  <script src="js/features/teacher-assignments.js?v=20260225b"></script>
-  <script src="js/app.js?v=20260225b"></script>
-  <script src="js/deep-dive-plus.js"></script>
-  <script src="js/theme-nav.js?v=20260224e"></script>
+  <script src="js/contracts/event-bus-contract.js?v=20260225d"></script>
+  <script src="js/contracts/teacher-assignments-contract.js?v=20260225d"></script>
+  <script src="js/contracts/deep-dive-contract.js?v=20260225d"></script>
+  <script src="js/features/teacher-assignments.js?v=20260225d"></script>
+  <script src="js/features/deep-dive-core.js?v=20260225d"></script>
+  <script src="js/app.js?v=20260225d"></script>
+  <script src="js/deep-dive-plus.js?v=20260225d"></script>
+  <script src="js/theme-nav.js?v=20260225d"></script>
 </body>
 </html>

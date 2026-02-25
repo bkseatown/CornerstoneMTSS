@@ -6,6 +6,9 @@
   'use strict';
 
   const TEACHER_POOL_KEY = 'wq_teacher_words';
+  const EVENT_BUS_EVENTS = window.WQEventBusContract?.events || {};
+  const TEACHER_PANEL_TOGGLE_EVENT = EVENT_BUS_EVENTS.teacherPanelToggle || 'wq:teacher-panel-toggle';
+  const OPEN_TEACHER_HUB_EVENT = EVENT_BUS_EVENTS.openTeacherHub || 'wq:open-teacher-hub';
 
   const byId = (id) => document.getElementById(id);
 
@@ -266,7 +269,7 @@
     syncTeacherHubSelectsFromSettings();
     byId('settings-panel')?.classList.add('hidden');
     panel.classList.remove('hidden');
-    window.dispatchEvent(new CustomEvent('wq:teacher-panel-toggle', { detail: { open: true } }));
+    window.dispatchEvent(new CustomEvent(TEACHER_PANEL_TOGGLE_EVENT, { detail: { open: true } }));
     byId('wq-teacher-words')?.focus();
   }
 
@@ -274,7 +277,7 @@
     const panel = byId('teacher-panel');
     if (!panel) return;
     panel.classList.add('hidden');
-    window.dispatchEvent(new CustomEvent('wq:teacher-panel-toggle', { detail: { open: false } }));
+    window.dispatchEvent(new CustomEvent(TEACHER_PANEL_TOGGLE_EVENT, { detail: { open: false } }));
   }
 
   function bindTeacherPanel() {
@@ -290,7 +293,7 @@
       if (!panel || panel.classList.contains('hidden')) return;
       closeTeacherPanel();
     });
-    window.addEventListener('wq:open-teacher-hub', openTeacherPanel);
+    window.addEventListener(OPEN_TEACHER_HUB_EVENT, openTeacherPanel);
     document.body.dataset.wqTeacherPanelBound = '1';
   }
 

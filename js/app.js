@@ -85,7 +85,9 @@
   const PROBE_HISTORY_KEY = 'wq_v2_weekly_probe_history_v1';
   const STUDENT_GOALS_KEY = 'wq_v2_student_goals_v1';
   const PLAYLIST_STATE_KEY = 'wq_v2_assignment_playlists_v1';
+  const EVENT_BUS_EVENTS = window.WQEventBusContract?.events || {};
   const TEACHER_ASSIGNMENTS_CONTRACT = window.WQTeacherAssignmentsContract || {};
+  const DEEP_DIVE_CONTRACT = window.WQDeepDiveContract || {};
   const SHUFFLE_BAG_KEY = 'wq_v2_shuffle_bag';
   const REVIEW_QUEUE_KEY = 'wq_v2_spaced_review_queue_v1';
   const TELEMETRY_QUEUE_KEY = 'wq_v2_telemetry_queue_v1';
@@ -288,9 +290,23 @@
     try { return JSON.parse(localStorage.getItem(PREF_KEY) || '{}'); } catch { return {}; }
   }
   function savePrefs(p) {
-    try { localStorage.setItem(PREF_KEY, JSON.stringify(p)); } catch {}
+    const normalized = p && typeof p === 'object' ? { ...p } : {};
+    delete normalized.lessonPack;
+    delete normalized.lessonTarget;
+    try { localStorage.setItem(PREF_KEY, JSON.stringify(normalized)); } catch {}
   }
   const prefs = loadPrefs();
+
+  if (Object.prototype.hasOwnProperty.call(prefs, 'lessonPack') || Object.prototype.hasOwnProperty.call(prefs, 'lessonTarget')) {
+    delete prefs.lessonPack;
+    delete prefs.lessonTarget;
+    savePrefs(prefs);
+  }
+
+  // Curriculum pack/target are session-only: always start from defaults on load.
+  prefs.lessonPack = DEFAULT_PREFS.lessonPack;
+  prefs.lessonTarget = DEFAULT_PREFS.lessonTarget;
+
   function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
   let autoPhysicalKeyboardSwitchApplied = false;
   let firstRunSetupPending = false;
@@ -3203,6 +3219,12 @@
     cancelRevealNarration();
     stopVoiceCaptureNow();
 
+    // Hard-reset appearance prefs first so stale keyboard/layout values cannot survive.
+    try {
+      localStorage.removeItem(PREF_KEY);
+    } catch {}
+    Object.keys(prefs).forEach((key) => { delete prefs[key]; });
+
     const fallbackTheme = getThemeFallback();
     const normalizedTheme = applyTheme(fallbackTheme);
     delete prefs.theme;
@@ -3995,14 +4017,16 @@
   if (firstRunSetupPending) {
     openFirstRunSetupModal();
   }
-  window.addEventListener('wq:teacher-panel-toggle', () => {
+  const teacherPanelToggleEvent = EVENT_BUS_EVENTS.teacherPanelToggle || 'wq:teacher-panel-toggle';
+  const openTeacherHubEvent = EVENT_BUS_EVENTS.openTeacherHub || 'wq:open-teacher-hub';
+  window.addEventListener(teacherPanelToggleEvent, () => {
     const isOpen = !_el('teacher-panel')?.classList.contains('hidden');
     emitTelemetry(isOpen ? 'wq_teacher_hub_open' : 'wq_teacher_hub_close', {
       source: 'teacher_panel_toggle_event'
     });
     syncHeaderControlsVisibility();
   });
-  window.addEventListener('wq:open-teacher-hub', () => {
+  window.addEventListener(openTeacherHubEvent, () => {
     _el('teacher-panel-btn')?.click();
   });
   window.addEventListener('resize', () => {
@@ -7081,7 +7105,7 @@
       teacherBtn.click();
       return;
     }
-    window.dispatchEvent(new CustomEvent('wq:open-teacher-hub'));
+    window.dispatchEvent(new CustomEvent(openTeacherHubEvent));
   }
 
   function getFocusSearchButtons() {
@@ -7189,24 +7213,50 @@
     return out;
   }
 
+  function getCurriculumFocusChipLabel(focusValue) {
+    const focus = String(focusValue || 'all').trim().toLowerCase() || 'all';
+    const shortLabels = Object.freeze({
+      cvc: 'cvc (short vowels)',
+      digraph: 'digraphs',
+      ccvc: 'initial blends',
+      cvcc: 'final blends',
+      trigraph: 'trigraphs',
+      cvce: 'magic e',
+      vowel_team: 'vowel teams',
+      r_controlled: 'r-controlled',
+      diphthong: 'diphthongs',
+      welded: 'welded sounds',
+      prefix: 'prefixes',
+      suffix: 'suffixes',
+      multisyllable: 'multisyllable',
+      schwa: 'schwa',
+      floss: 'floss'
+    });
+    return shortLabels[focus] || focus;
+  }
+
   function formatCurriculumLessonLabel(entry) {
     const label = String(entry?.label || '').trim();
     if (!label || entry?.kind !== 'curriculum') return label;
     if (entry.packId === 'fundations') {
       const match = label.match(/Fundations\\s+Level\\s+([A-Za-z0-9]+)\\s+Unit\\s+([A-Za-z0-9]+)/i);
-      if (match) return `Fundations L.${match[1]} U.${match[2]}`;
+      if (match) return `Fundations ${match[1]}.${match[2]}`;
+      const compactMatch = label.match(/Fundations\\s+L\\.\\s*([A-Za-z0-9]+)\\s+U\\.\\s*([A-Za-z0-9]+)/i);
+      if (compactMatch) return `Fundations ${compactMatch[1]}.${compactMatch[2]}`;
     }
     if (entry.packId === 'ufli') {
       const match = label.match(/Lesson\\s+(\\d+)/i);
-      if (match) return `UFLI L.${match[1]}`;
+      if (match) return `UFLI ${match[1]}`;
     }
     if (entry.packId === 'wilson') {
+      const mappedMatch = label.match(/Wilson\\s+Reading\\s+System\\s+([0-9]+(?:\\.[0-9]+)?)/i);
+      if (mappedMatch) return `Wilson ${mappedMatch[1]}`;
       const match = label.match(/Step\\s+(\\d+)\\s+Lesson\\s+(\\d+)/i);
-      if (match) return `Wilson S.${match[1]} L.${match[2]}`;
+      if (match) return `Wilson ${match[1]}.${match[2]}`;
     }
     if (entry.packId === 'justwords') {
       const match = label.match(/Unit\\s+([A-Za-z0-9]+)/i);
-      if (match) return `Just Words U.${match[1]}`;
+      if (match) return `Just Words ${match[1]}`;
     }
     return label;
   }
@@ -7218,7 +7268,8 @@
     const target = getLessonTarget(entry.packId, entry.targetId);
     if (!target) return '';
     const examples = getCurriculumExampleWordsForTarget(target, cacheKey);
-    const text = examples.length ? `Examples: ${examples.join(', ')}` : '';
+    const focusLabel = getCurriculumFocusChipLabel(target.focus);
+    const text = examples.length ? `${focusLabel}: ${examples.join(', ')}` : '';
     curriculumEntryExampleCache.set(cacheKey, text);
     return text;
   }
@@ -11402,7 +11453,7 @@
     const lockedIndex = CHALLENGE_TASK_FLOW.indexOf(firstIncomplete);
     const requestedIndex = CHALLENGE_TASK_FLOW.indexOf(task);
     if (lockedIndex >= 0 && requestedIndex > lockedIndex) {
-      setChallengeFeedback('Finish the current station first to unlock the next one.', 'warn');
+      setChallengeFeedback('Finish this step first.', 'warn');
       return;
     }
     revealChallengeState.activeTask = task;
@@ -11414,7 +11465,7 @@
     if (!nextTask) return;
     revealChallengeState.activeTask = nextTask;
     renderRevealChallengeModal();
-    setChallengeFeedback('Next station ready.', 'default');
+    setChallengeFeedback('Next step is ready.', 'default');
   });
   _el('challenge-hear-word')?.addEventListener('click', () => {
     cancelRevealNarration();
@@ -11432,6 +11483,13 @@
   });
   _el('challenge-save-reflection')?.addEventListener('click', () => {
     saveRevealChallengeResponses();
+  });
+  _el('challenge-quickstart-dismiss')?.addEventListener('click', () => {
+    saveChallengeOnboardingState({
+      seenCount: Math.max(CHALLENGE_ONBOARDING_MAX_VIEWS, challengeOnboardingState.seenCount),
+      dismissed: true
+    });
+    _el('challenge-quickstart')?.classList.add('hidden');
   });
   _el('challenge-finish-btn')?.addEventListener('click', () => {
     finishRevealChallenge();
@@ -11508,6 +11566,8 @@
   const CHALLENGE_REFLECTION_KEY = 'wq_v2_levelup_reflections_v1';
   const CHALLENGE_PROGRESS_KEY = 'wq_v2_mission_lab_progress_v1';
   const CHALLENGE_DRAFT_KEY = 'wq_v2_mission_lab_draft_v1';
+  const CHALLENGE_ONBOARDING_KEY = 'wq_v2_deep_dive_onboarding_v1';
+  const CHALLENGE_ONBOARDING_MAX_VIEWS = 2;
   const CHALLENGE_STRONG_SCORE_MIN = 75;
   const CHALLENGE_COMPLETE_LINES = Object.freeze([
     'Deep Dive complete. Pattern and meaning locked in.',
@@ -11516,9 +11576,9 @@
   ]);
   const CHALLENGE_TASK_FLOW = Object.freeze(['listen', 'analyze', 'create']);
   const CHALLENGE_TASK_LABELS = Object.freeze({
-    listen: 'Sound Mark',
-    analyze: 'Meaning Match',
-    create: 'Use in Context'
+    listen: 'Sound',
+    analyze: 'Meaning',
+    create: 'Context'
   });
   const DEEP_DIVE_VARIANTS = Object.freeze({
     listen: Object.freeze(['chunk', 'anchor']),
@@ -11578,6 +11638,32 @@
     'evaluate',
     'create'
   ]);
+  const CHALLENGE_SCAFFOLD_PROFILE = Object.freeze({
+    k2: Object.freeze({
+      instructionActive: (station) => `Step ${station} of 3. Finish this step, then move on.`,
+      instructionDone: 'Great work. All 3 steps are done. Tap Finish.',
+      listen: 'Say the sounds as you tap.',
+      analyze: 'Pick the meaning that fits best.',
+      create: 'Pick the sentence that sounds right.',
+      pace: 'Take about 20-45 seconds on each step, then keep moving.'
+    }),
+    g35: Object.freeze({
+      instructionActive: (station) => `Step ${station} of 3. Finish this step, then move on.`,
+      instructionDone: 'All 3 steps are complete. Tap Finish.',
+      listen: 'Look for the strongest sound chunk.',
+      analyze: 'Use definition and context clues together.',
+      create: 'Choose the sentence with precise meaning.',
+      pace: 'Aim for 30-60 seconds per step, then move on.'
+    }),
+    older: Object.freeze({
+      instructionActive: (station) => `Step ${station} of 3. Finish this step, then move on.`,
+      instructionDone: 'All 3 steps are complete. Tap Finish.',
+      listen: 'Anchor your choice in the key phonics chunk.',
+      analyze: 'Test meaning against both definition and sentence context.',
+      create: 'Select the sentence with strongest semantic fit.',
+      pace: 'Keep each step to about 30-60 seconds.'
+    })
+  });
   const REVEAL_PACING_PRESETS = Object.freeze({
     guided: Object.freeze({ introDelay: 260, betweenDelay: 140, postMeaningDelay: 200 }),
     quick: Object.freeze({ introDelay: 140, betweenDelay: 70, postMeaningDelay: 120 }),
@@ -11587,6 +11673,7 @@
   let revealAutoCountdownTimer = 0;
   let revealAutoAdvanceEndsAt = 0;
   let revealChallengeState = null;
+  let challengeOnboardingState = loadChallengeOnboardingState();
 
   function pickRandom(items) {
     if (!Array.isArray(items) || !items.length) return '';
@@ -11641,6 +11728,65 @@
       if (total >= rank.minPoints) active = rank;
     });
     return active || CHALLENGE_RANKS[0];
+  }
+
+  function loadChallengeOnboardingState() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CHALLENGE_ONBOARDING_KEY) || '{}');
+      return {
+        seenCount: Math.max(0, Number(raw?.seenCount) || 0),
+        dismissed: !!raw?.dismissed
+      };
+    } catch {
+      return { seenCount: 0, dismissed: false };
+    }
+  }
+
+  function saveChallengeOnboardingState(nextState) {
+    const normalized = {
+      seenCount: Math.max(0, Number(nextState?.seenCount) || 0),
+      dismissed: !!nextState?.dismissed
+    };
+    challengeOnboardingState = normalized;
+    try { localStorage.setItem(CHALLENGE_ONBOARDING_KEY, JSON.stringify(normalized)); } catch {}
+  }
+
+  function resolveChallengeGradeTier(gradeLabel) {
+    const value = String(gradeLabel || '').toUpperCase().replace(/\s+/g, '');
+    if (!value) return 'g35';
+    if (value.includes('K-2') || value.includes('K2')) return 'k2';
+    if (value.includes('G3-5') || value.includes('3-5')) return 'g35';
+    return 'older';
+  }
+
+  function getChallengeScaffoldProfile(state = revealChallengeState) {
+    const tier = resolveChallengeGradeTier(state?.grade || '');
+    return CHALLENGE_SCAFFOLD_PROFILE[tier] || CHALLENGE_SCAFFOLD_PROFILE.g35;
+  }
+
+  function buildChallengeQuickstartCopy(state = revealChallengeState) {
+    const source = String(state?.source || '').trim().toLowerCase();
+    const launchHint = source === 'standalone'
+      ? 'You launched from Activities.'
+      : 'You launched from the end-of-round card.';
+    return `Quick start: finish Sound, Meaning, and Context in order. ${launchHint}`;
+  }
+
+  function syncChallengeQuickstartCard(state = revealChallengeState) {
+    const wrap = _el('challenge-quickstart');
+    const copy = _el('challenge-quickstart-copy');
+    if (!wrap || !copy || !state) return;
+    const shouldShow = !challengeOnboardingState.dismissed && challengeOnboardingState.seenCount < CHALLENGE_ONBOARDING_MAX_VIEWS;
+    if (!shouldShow) {
+      wrap.classList.add('hidden');
+      return;
+    }
+    copy.textContent = buildChallengeQuickstartCopy(state);
+    wrap.classList.remove('hidden');
+    saveChallengeOnboardingState({
+      seenCount: challengeOnboardingState.seenCount + 1,
+      dismissed: false
+    });
   }
 
   function createMissionAttemptId() {
@@ -11820,6 +11966,7 @@
       : null;
     renderRevealChallengeModal();
     _el('challenge-modal')?.classList.remove('hidden');
+    syncChallengeQuickstartCard(revealChallengeState);
     focusChallengeModalStart();
     emitTelemetry('wq_deep_dive_start', {
       source: 'standalone',
@@ -12324,9 +12471,64 @@
     return fallback;
   }
 
+  function getChallengeInstructionText(state = revealChallengeState) {
+    const profile = getChallengeScaffoldProfile(state);
+    const doneCount = getChallengeDoneCount(state);
+    if (doneCount >= 3) return profile.instructionDone;
+    const activeTask = setChallengeActiveTask(state?.activeTask, state);
+    const stationIndex = Math.max(0, CHALLENGE_TASK_FLOW.indexOf(activeTask)) + 1;
+    return profile.instructionActive(stationIndex);
+  }
+
+  function syncChallengeActionButtons(state = revealChallengeState) {
+    const nextBtn = _el('challenge-next-station');
+    const saveBtn = _el('challenge-save-reflection');
+    const finishBtn = _el('challenge-finish-btn');
+    const buttons = [nextBtn, saveBtn, finishBtn].filter(Boolean);
+    buttons.forEach((button) => button.classList.remove('is-primary-action'));
+
+    if (!state) {
+      if (nextBtn) {
+        nextBtn.classList.remove('hidden');
+        nextBtn.disabled = true;
+        nextBtn.textContent = 'Next Step';
+      }
+      if (saveBtn) saveBtn.classList.add('hidden');
+      if (finishBtn) {
+        finishBtn.classList.add('hidden');
+        finishBtn.disabled = true;
+        finishBtn.textContent = 'Finish';
+      }
+      return;
+    }
+
+    const doneCount = getChallengeDoneCount(state);
+    const activeTask = setChallengeActiveTask(state.activeTask, state);
+    const nextTask = getNextChallengeTask(state, activeTask);
+    const canAdvance = !!nextTask && !!state.tasks?.[activeTask] && !state.completedAt;
+
+    if (nextBtn) {
+      nextBtn.classList.toggle('hidden', doneCount >= 3);
+      nextBtn.disabled = !canAdvance;
+      nextBtn.textContent = canAdvance ? 'Next Step' : 'Finish This Step';
+      if (doneCount < 3) nextBtn.classList.add('is-primary-action');
+    }
+
+    if (saveBtn) {
+      saveBtn.classList.toggle('hidden', doneCount <= 0);
+      saveBtn.textContent = doneCount >= 3 ? 'Save Progress' : 'Save Checkpoint';
+    }
+
+    if (finishBtn) {
+      finishBtn.classList.toggle('hidden', doneCount < 3);
+      finishBtn.disabled = doneCount < 3;
+      finishBtn.textContent = doneCount >= 3 ? 'Finish' : `Finish (${doneCount}/3)`;
+      if (doneCount >= 3) finishBtn.classList.add('is-primary-action');
+    }
+  }
+
   function updateChallengeStationUI(state = revealChallengeState) {
     const instruction = _el('challenge-instruction');
-    const nextBtn = _el('challenge-next-station');
 
     if (!state) {
       document.querySelectorAll('[data-challenge-task]').forEach((panel) => {
@@ -12343,11 +12545,8 @@
       const firstPill = document.querySelector('[data-challenge-station="listen"]');
       firstPill?.classList.add('is-active');
       firstPill?.setAttribute('aria-selected', 'true');
-      if (instruction) instruction.textContent = 'One station at a time. Complete all 3 stations to finish Deep Dive.';
-      if (nextBtn) {
-        nextBtn.disabled = true;
-        nextBtn.textContent = 'Next Station';
-      }
+      if (instruction) instruction.textContent = 'One step at a time. Finish all 3 steps.';
+      syncChallengeActionButtons(null);
       return;
     }
 
@@ -12369,18 +12568,8 @@
       }
     });
 
-    const doneCount = getChallengeDoneCount(state);
-    const nextTask = getNextChallengeTask(state, activeTask);
-    if (instruction) {
-      instruction.textContent = doneCount >= 3
-        ? 'All 3 stations complete. Tap Finish Deep Dive.'
-        : `Station ${activeIndex + 1} of 3. Complete this station to unlock the next one.`;
-    }
-    if (nextBtn) {
-      const canAdvance = !!nextTask && !!state.tasks?.[activeTask] && !state.completedAt;
-      nextBtn.disabled = !canAdvance;
-      nextBtn.textContent = doneCount >= 3 ? 'All Stations Complete' : 'Next Station';
-    }
+    if (instruction) instruction.textContent = getChallengeInstructionText(state);
+    syncChallengeActionButtons(state);
     syncChallengePacingTimer(state);
   }
 
@@ -12430,7 +12619,8 @@
       if (revealChallengeState.tasks?.[currentTask]) return;
       if (revealChallengeState.pacing.nudged) return;
       revealChallengeState.pacing.nudged = true;
-      setChallengeFeedback('Quick pace check: spend about 30-60 seconds on this station, then keep moving.', 'default');
+      const profile = getChallengeScaffoldProfile(revealChallengeState);
+      setChallengeFeedback(profile.pace, 'default');
     }, remainingMs);
   }
 
@@ -12469,7 +12659,7 @@
     if (!choices.length) {
       const empty = document.createElement('div');
       empty.className = 'challenge-mission-helper';
-      empty.textContent = 'No choices available for this station yet.';
+      empty.textContent = 'Choices are loading for this step.';
       wrap.appendChild(empty);
       return;
     }
@@ -12507,7 +12697,7 @@
 
     if (!choice.correct) {
       renderRevealChallengeModal();
-      setChallengeFeedback('Close. Try another option on this station.', 'warn');
+      setChallengeFeedback('Nice try. Pick another choice.', 'warn');
       return;
     }
 
@@ -12518,10 +12708,10 @@
     renderRevealChallengeModal();
     const remainingTask = getFirstIncompleteChallengeTask(state);
     if (remainingTask) {
-      setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} complete. Next station unlocked.`, 'good');
+      setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Step'} complete. Next step unlocked.`, 'good');
       return;
     }
-    setChallengeFeedback('All 3 stations complete. Tap Finish Deep Dive.', 'good');
+    setChallengeFeedback('All 3 steps are done. Tap Finish.', 'good');
   }
 
   function computeChallengeScore(state) {
@@ -12840,21 +13030,21 @@
     const fill = _el('challenge-progress-fill');
     const finishBtn = _el('challenge-finish-btn');
     if (!revealChallengeState) {
-      if (label) label.textContent = '0 / 3 stations complete';
+      if (label) label.textContent = '0 / 3 steps complete';
       if (fill) fill.style.width = '0%';
       if (finishBtn) finishBtn.disabled = true;
-      if (finishBtn) finishBtn.textContent = 'Finish Deep Dive';
+      if (finishBtn) finishBtn.textContent = 'Finish';
       setChallengeFeedback('');
       updateChallengeScoreUI();
       updateChallengeStationUI(null);
       return;
     }
     const doneCount = getChallengeDoneCount(revealChallengeState);
-    if (label) label.textContent = `${doneCount} / 3 stations complete`;
+    if (label) label.textContent = `${doneCount} / 3 steps complete`;
     if (fill) fill.style.width = `${Math.round((doneCount / 3) * 100)}%`;
     if (finishBtn) {
       finishBtn.disabled = doneCount < 3;
-      finishBtn.textContent = doneCount >= 3 ? 'Finish Deep Dive (3/3)' : `Finish Deep Dive (${doneCount}/3)`;
+      finishBtn.textContent = doneCount >= 3 ? 'Finish (3/3)' : `Finish (${doneCount}/3)`;
     }
     updateChallengeScoreUI();
     updateChallengeStationUI(revealChallengeState);
@@ -12874,84 +13064,24 @@
     }
     if (normalized !== wasComplete) {
       if (normalized) {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} complete.`, 'good');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Step'} complete.`, 'good');
       } else {
-        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Station'} still needs one more try.`, 'warn');
+        setChallengeFeedback(`${CHALLENGE_TASK_LABELS[task] || 'Step'} needs one more try.`, 'warn');
       }
     }
     saveChallengeDraft(revealChallengeState);
     updateChallengeProgressUI();
   }
 
-  const DEEP_DIVE_TASK_SET = new Set(CHALLENGE_TASK_FLOW);
-
-  function getDeepDiveBridgeState() {
-    const modalOpen = !(_el('challenge-modal')?.classList.contains('hidden'));
-    if (!revealChallengeState) {
-      return {
-        open: modalOpen,
-        word: '',
-        topic: '',
-        grade: '',
-        level: '',
-        activeTask: '',
-        doneCount: 0,
-        tasks: { listen: false, analyze: false, create: false },
-        attemptId: '',
-        deepDiveSchemaVersion: 1
-      };
-    }
-    return {
-      open: modalOpen,
-      word: String(revealChallengeState.word || ''),
-      topic: String(revealChallengeState.topic || ''),
-      grade: String(revealChallengeState.grade || ''),
-      level: String(revealChallengeState.challenge?.level || ''),
-      activeTask: String(revealChallengeState.activeTask || ''),
-      doneCount: getChallengeDoneCount(revealChallengeState),
-      tasks: {
-        listen: !!revealChallengeState.tasks?.listen,
-        analyze: !!revealChallengeState.tasks?.analyze,
-        create: !!revealChallengeState.tasks?.create
-      },
-      attemptId: String(revealChallengeState.attemptId || ''),
-      deepDiveSchemaVersion: 1
-    };
-  }
-
-  function deepDiveBridgeSetFeedback(message, tone = 'default') {
-    setChallengeFeedback(message, tone);
-    return true;
-  }
-
-  function deepDiveBridgeCompleteTask(task, complete = true, options = {}) {
-    const normalizedTask = String(task || '').trim().toLowerCase();
-    if (!DEEP_DIVE_TASK_SET.has(normalizedTask)) return false;
-    if (!revealChallengeState) return false;
-    setChallengeTaskComplete(normalizedTask, !!complete);
-    if (options && options.render !== false) renderRevealChallengeModal();
-    return true;
-  }
-
-  function deepDiveBridgeRender() {
-    if (!revealChallengeState) return false;
-    renderRevealChallengeModal();
-    return true;
-  }
-
-  function publishDeepDiveBridge() {
-    const bridge = {
-      version: '1.1.0',
-      deepDiveSchemaVersion: 1,
-      getState: getDeepDiveBridgeState,
-      isOpen: () => !(_el('challenge-modal')?.classList.contains('hidden')),
-      getActiveWord: () => String(revealChallengeState?.word || ''),
-      completeTask: deepDiveBridgeCompleteTask,
-      setFeedback: deepDiveBridgeSetFeedback,
-      render: deepDiveBridgeRender
-    };
-    window.WQDeepDive = Object.freeze(bridge);
-  }
+  const deepDiveCoreFeature = window.WQDeepDiveCoreFeature?.createFeature?.({
+    contract: DEEP_DIVE_CONTRACT,
+    el: _el,
+    getRevealChallengeState: () => revealChallengeState,
+    getDoneCount: getChallengeDoneCount,
+    setTaskComplete: setChallengeTaskComplete,
+    setFeedback: setChallengeFeedback,
+    renderModal: renderRevealChallengeModal
+  }) || null;
 
   function renderRevealChallengeModal() {
     const state = revealChallengeState;
@@ -12975,6 +13105,7 @@
     const createHelper = _el('challenge-create-helper');
     const teacherLens = _el('challenge-teacher-lens');
     const deepDive = state.deepDive || buildDeepDiveState(state.result);
+    const scaffold = getChallengeScaffoldProfile(state);
     state.deepDive = deepDive;
 
     if (levelChip) levelChip.textContent = getChallengeLevelDisplay(challenge.level);
@@ -12988,10 +13119,10 @@
     if (listenPrompt) listenPrompt.textContent = deepDive.prompts.listen || `Tap the key sound chunk in "${state.word}".`;
     if (analyzePrompt) analyzePrompt.textContent = deepDive.prompts.analyze || `Pick the best meaning for "${state.word}".`;
     if (createPrompt) createPrompt.textContent = deepDive.prompts.create || `Choose the sentence that uses "${state.word}" correctly.`;
-    if (listenHelper) listenHelper.textContent = deepDive.helpers.listen || '';
-    if (analyzeHelper) analyzeHelper.textContent = deepDive.helpers.analyze || '';
-    if (createHelper) createHelper.textContent = deepDive.helpers.create || '';
-    if (teacherLens) teacherLens.textContent = `${challenge.teacher} Deep Dive score updates live for quick formative evidence.`;
+    if (listenHelper) listenHelper.textContent = `${deepDive.helpers.listen || ''} ${scaffold.listen}`.trim();
+    if (analyzeHelper) analyzeHelper.textContent = `${deepDive.helpers.analyze || ''} ${scaffold.analyze}`.trim();
+    if (createHelper) createHelper.textContent = `${deepDive.helpers.create || ''} ${scaffold.create}`.trim();
+    if (teacherLens) teacherLens.textContent = `${challenge.teacher} Score updates appear in Teacher Hub.`;
 
     renderChallengeChoiceButtons('challenge-pattern-options', 'listen');
     renderChallengeChoiceButtons('challenge-meaning-options', 'analyze');
@@ -13003,7 +13134,7 @@
     setChallengeTaskComplete('create', !!state.tasks.create);
     const feedbackText = String(_el('challenge-live-feedback')?.textContent || '').trim();
     if (!feedbackText) {
-      setChallengeFeedback('One station at a time. Complete all 3 stations to finish.', 'default');
+      setChallengeFeedback(getChallengeInstructionText(state), 'default');
     }
     updateChallengeProgressUI();
     syncChallengePacingTimer(state);
@@ -13061,9 +13192,9 @@
       updateChallengeProgressUI();
       return;
     }
-    meta.textContent = `${next.topic} · Grade ${next.grade} · 3 stations`;
+    meta.textContent = `${next.topic} · Grade ${next.grade} · 3 steps`;
     if (helper) {
-      helper.textContent = 'Optional extension only: one station at a time. Finish all 3 to complete Deep Dive.';
+      helper.textContent = 'Optional extension: finish 3 steps in order. You can also launch from Activities > Deep Dive.';
     }
     wrap.classList.remove('hidden');
     setChallengeFeedback('');
@@ -13132,6 +13263,7 @@
     hideInformantHintCard();
     renderRevealChallengeModal();
     _el('challenge-modal')?.classList.remove('hidden');
+    syncChallengeQuickstartCard(revealChallengeState);
     focusChallengeModalStart();
     emitTelemetry('wq_deep_dive_open', {
       source: revealChallengeState?.source || 'reveal'
@@ -13143,6 +13275,7 @@
     const modal = _el('challenge-modal');
     const wasOpen = !!modal && !modal.classList.contains('hidden');
     modal?.classList.add('hidden');
+    _el('challenge-quickstart')?.classList.add('hidden');
     const returnFocusEl = challengeModalReturnFocusEl;
     challengeModalReturnFocusEl = null;
     if (wasOpen && options.restoreFocus !== false && returnFocusEl && document.contains(returnFocusEl)) {
@@ -13194,7 +13327,7 @@
     const createText = String(revealChallengeState.responses.create || '').trim();
     const doneCount = getChallengeDoneCount(revealChallengeState);
     if (requireProgress && doneCount <= 0) {
-      setChallengeFeedback('Complete at least one Deep Dive station before saving.', 'warn');
+      setChallengeFeedback('Complete at least one step before saving.', 'warn');
       return false;
     }
     const score = computeChallengeScore(revealChallengeState);
@@ -13245,7 +13378,7 @@
     if (revealChallengeState.completedAt) return;
     const doneCount = getChallengeDoneCount(revealChallengeState);
     if (doneCount < 3) {
-      setChallengeFeedback('Complete all 3 Deep Dive stations first.', 'warn');
+      setChallengeFeedback('Finish all 3 steps first.', 'warn');
       return;
     }
     const finishBtn = _el('challenge-finish-btn');
@@ -13283,21 +13416,8 @@
     }, 900);
   }
 
-  publishDeepDiveBridge();
-  document.addEventListener('wq:deep-dive-complete-task', (event) => {
-    const detail = event?.detail && typeof event.detail === 'object' ? event.detail : {};
-    const task = String(detail.task || '').trim();
-    const complete = detail.complete !== false;
-    const render = detail.render !== false;
-    deepDiveBridgeCompleteTask(task, complete, { render });
-  });
-  document.addEventListener('wq:deep-dive-feedback', (event) => {
-    const detail = event?.detail && typeof event.detail === 'object' ? event.detail : {};
-    const message = String(detail.message || '').trim();
-    const tone = String(detail.tone || 'default').trim();
-    if (!message) return;
-    deepDiveBridgeSetFeedback(message, tone);
-  });
+  deepDiveCoreFeature?.publishBridge?.();
+  deepDiveCoreFeature?.bindEvents?.();
 
   const PHONICS_CLUE_DECKS_URL = './data/taboo-phonics-starter-decks.json';
   const PHONICS_CLUE_DECK_OPTIONS = Object.freeze([
