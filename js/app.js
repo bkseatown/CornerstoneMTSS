@@ -17,7 +17,7 @@
   // ─── 2. Init UI ────────────────────────────────────
   WQUI.init();
 
-  const SW_RUNTIME_VERSION = '20260225-v9';
+  const SW_RUNTIME_VERSION = '20260225-v10';
   const SW_RUNTIME_URL = `./sw-runtime.js?v=${encodeURIComponent(SW_RUNTIME_VERSION)}`;
 
   async function registerOfflineRuntime() {
@@ -3356,6 +3356,45 @@
     }
   }
 
+  async function forceUpdateNow() {
+    const approved = window.confirm('Force update now? This clears offline cache and reloads the latest build.');
+    if (!approved) return;
+
+    cancelRevealNarration();
+    stopVoiceCaptureNow();
+
+    try { sessionStorage.removeItem('wq_sw_controller_reloaded'); } catch {}
+    try { sessionStorage.removeItem('wq_v2_build_remote_check_v1'); } catch {}
+    try { localStorage.removeItem('wq_v2_cache_repair_build_v1'); } catch {}
+
+    let clearedCaches = 0;
+    if ('caches' in window) {
+      try {
+        const names = await caches.keys();
+        const targets = names.filter((name) => String(name || '').startsWith('wq-'));
+        if (targets.length) {
+          await Promise.all(targets.map((name) => caches.delete(name)));
+          clearedCaches = targets.length;
+        }
+      } catch {}
+    }
+
+    let unregistered = 0;
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        if (registrations.length) {
+          const results = await Promise.all(registrations.map((registration) => registration.unregister().catch(() => false)));
+          unregistered = results.filter(Boolean).length;
+        }
+      } catch {}
+    }
+
+    WQUI.showToast(`Force update: cleared ${clearedCaches} cache bucket(s), reset ${unregistered} service worker(s). Reloading...`);
+    const nextUrl = `${location.pathname}?cb=force-update-${Date.now()}${location.hash || ''}`;
+    setTimeout(() => { location.replace(nextUrl); }, 280);
+  }
+
   function rerunOnboardingSetup() {
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice('Finish this round before re-running setup.');
@@ -4692,6 +4731,9 @@
   });
   _el('s-reset-look-cache')?.addEventListener('click', () => {
     void resetAppearanceAndCache();
+  });
+  _el('s-force-update-now')?.addEventListener('click', () => {
+    void forceUpdateNow();
   });
   _el('session-copy-btn')?.addEventListener('click', () => {
     void copySessionSummary();

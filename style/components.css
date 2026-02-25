@@ -1443,6 +1443,10 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border-radius: 14px;
 }
 
+.settings-inline-actions {
+  margin-top: 8px;
+}
+
 .teacher-panel {
   position: fixed;
   inset: 0;
