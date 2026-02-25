@@ -29,3 +29,6 @@ jobs:
         if: github.event_name == 'push'
         run: |
           npm run scope:check
+      - name: Teacher daily flow smoke test
+        run: |
+          npm run smoke:teacher-daily-flow
