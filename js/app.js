@@ -1632,7 +1632,6 @@
   const PREF_SELECTS = {
     'setting-focus': 'focus',
     's-lesson-pack': 'lessonPack',
-    'm-lesson-pack': 'lessonPack',
     's-theme-save': 'themeSave',
     's-board-style': 'boardStyle',
     's-key-style': 'keyStyle',
@@ -4603,23 +4602,6 @@
     }
   }
 
-  _el('s-keyboard-preset')?.addEventListener('change', e => {
-    if (isAssessmentRoundLocked()) {
-      showAssessmentLockNotice();
-      syncKeyboardPresetControl();
-      return;
-    }
-    const state = WQGame.getState?.();
-    const hasActiveProgress = Boolean(state?.word && !state?.gameOver && (state?.guesses?.length || 0) > 0);
-    const applied = applyKeyboardPreset(e.target.value, { persist: true });
-    if (hasActiveProgress) {
-      WQUI.showToast(`${applied.label} saved. It applies next word.`);
-      return;
-    }
-    refreshKeyboardLayoutPreview();
-    WQUI.showToast(`Keyboard: ${applied.label}.`);
-  });
-
   _el('s-board-style')?.addEventListener('change', e => {
     const next = applyBoardStyle(e.target.value);
     setPref('boardStyle', next);
@@ -4738,7 +4720,7 @@
       return false;
     }
     const currentPack = normalizeLessonPackId(
-      prefs.lessonPack || _el('s-lesson-pack')?.value || _el('m-lesson-pack')?.value || DEFAULT_PREFS.lessonPack
+      prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack
     );
     const nextTarget = normalizeLessonTargetId(currentPack, rawValue);
     getLessonTargetSelectElements().forEach((select) => { select.value = nextTarget; });
@@ -4755,38 +4737,6 @@
   });
   _el('s-lesson-target')?.addEventListener('change', e => {
     handleLessonTargetSelectionChange(e.target.value);
-  });
-  _el('m-curriculum-step')?.addEventListener('change', e => {
-    if (isAssessmentRoundLocked()) {
-      showAssessmentLockNotice('Finish this round before changing curriculum targets.');
-      syncLessonPackControlsFromPrefs();
-      return;
-    }
-    const next = parseMainCurriculumStepValue(e.target.value);
-    if (next.packId === 'custom') {
-      handleLessonPackSelectionChange('custom');
-      updateLessonPackNote('custom', 'custom');
-      refreshStandaloneMissionLabHub();
-      return;
-    }
-    const preferredTarget = next.targetId === 'custom'
-      ? resolveDefaultLessonTargetId(next.packId)
-      : next.targetId;
-    getLessonPackSelectElements().forEach((select) => { select.value = next.packId; });
-    lessonPackApplying = true;
-    let normalizedTarget = 'custom';
-    try {
-      normalizedTarget = populateLessonTargetSelect(next.packId, preferredTarget);
-    } finally {
-      lessonPackApplying = false;
-    }
-    getLessonTargetSelectElements().forEach((select) => { select.value = normalizedTarget; });
-    setLessonPackPrefs(next.packId, normalizedTarget);
-    updateLessonPackNote(next.packId, normalizedTarget);
-    refreshStandaloneMissionLabHub();
-    if (normalizedTarget !== 'custom') {
-      applyLessonTargetConfig(next.packId, normalizedTarget, { toast: false });
-    }
   });
   _el('lesson-pack-apply-week-btn')?.addEventListener('click', () => {
     if (isAssessmentRoundLocked()) {
@@ -6368,12 +6318,12 @@
   let lessonPackApplying = false;
 
   function getLessonPackSelectElements() {
-    return [_el('s-lesson-pack'), _el('m-lesson-pack')]
+    return [_el('s-lesson-pack')]
       .filter(Boolean);
   }
 
   function getLessonTargetSelectElements() {
-    return [_el('s-lesson-target'), _el('m-lesson-target')]
+    return [_el('s-lesson-target')]
       .filter(Boolean);
   }
 
@@ -6543,99 +6493,6 @@
     return { packId: normalizedPack, targetId: normalizedTarget };
   }
 
-  function formatMainCurriculumStepValue(packId, targetId) {
-    const normalizedPack = normalizeLessonPackId(packId);
-    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
-    return `${normalizedPack}::${normalizedTarget}`;
-  }
-
-  function parseMainCurriculumStepValue(value) {
-    const [packRaw = 'custom', targetRaw = 'custom'] = String(value || '').split('::');
-    const packId = normalizeLessonPackId(packRaw);
-    const targetId = normalizeLessonTargetId(packId, targetRaw);
-    return { packId, targetId };
-  }
-
-  function buildMainCurriculumStepOptions() {
-    const options = [{ value: 'custom::custom', label: 'Manual (no curriculum pack)', group: '' }];
-    CURRICULUM_PACK_ORDER.forEach((packId) => {
-      const pack = getLessonPackDefinition(packId);
-      const recommendedId = getCurrentWeekRecommendedLessonTarget(packId)?.target?.id || '';
-      pack.targets.forEach((target) => {
-        const prefix = target.id === recommendedId ? '★ ' : '';
-        options.push({
-          value: `${packId}::${target.id}`,
-          label: `${prefix}${target.label}`,
-          group: pack.label
-        });
-      });
-    });
-    return options;
-  }
-
-  function syncMainCurriculumStepSelect(packId, targetId) {
-    const select = _el('m-curriculum-step');
-    if (!select) return;
-    const options = buildMainCurriculumStepOptions();
-    const byGroup = new Map();
-    select.innerHTML = '';
-    options.forEach((option) => {
-      if (!option.group) {
-        const node = document.createElement('option');
-        node.value = option.value;
-        node.textContent = option.label;
-        select.appendChild(node);
-        return;
-      }
-      let group = byGroup.get(option.group);
-      if (!group) {
-        group = document.createElement('optgroup');
-        group.label = option.group;
-        byGroup.set(option.group, group);
-        select.appendChild(group);
-      }
-      const node = document.createElement('option');
-      node.value = option.value;
-      node.textContent = option.label;
-      group.appendChild(node);
-    });
-
-    const preferredValue = formatMainCurriculumStepValue(packId, targetId);
-    const fallbackValue = formatMainCurriculumStepValue(packId, resolveDefaultLessonTargetId(packId));
-    const hasPreferred = options.some((option) => option.value === preferredValue);
-    const hasFallback = options.some((option) => option.value === fallbackValue);
-    const selectedValue = hasPreferred
-      ? preferredValue
-      : hasFallback
-        ? fallbackValue
-        : 'custom::custom';
-    select.value = selectedValue;
-    const selectedLabel = select.selectedOptions?.[0]?.textContent || 'Manual (no curriculum pack)';
-    select.setAttribute('title', selectedLabel);
-  }
-
-  function updateMainLessonPackSummary(packId, targetId) {
-    const summaryEl = _el('curriculum-main-summary');
-    const normalizedPack = normalizeLessonPackId(packId);
-    const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
-    syncMainCurriculumStepSelect(normalizedPack, normalizedTarget);
-    if (!summaryEl) return;
-    if (normalizedPack === 'custom') {
-      summaryEl.textContent = 'Curriculum: Manual mode';
-      summaryEl.setAttribute('title', 'Manual mode keeps quest focus and word safety under teacher control.');
-      return;
-    }
-    const pack = getLessonPackDefinition(normalizedPack);
-    const target = getLessonTarget(normalizedPack, normalizedTarget);
-    if (!target) {
-      summaryEl.textContent = `Curriculum: ${pack.label} selected`;
-      summaryEl.setAttribute('title', `${pack.label} selected. Choose a lesson target from the curriculum menu.`);
-      return;
-    }
-    summaryEl.textContent = `Curriculum: ${pack.label} · ${target.label}`;
-    summaryEl.setAttribute('title', `${pack.label} · ${target.label} (${formatLessonTargetPacing(target)})`);
-  }
-
   function updateLessonPackWeekRecommendation(packId, targetId) {
     const weekEl = _el('lesson-pack-week');
     const applyBtn = _el('lesson-pack-apply-week-btn');
@@ -6689,11 +6546,10 @@
   }
 
   function updateLessonPackNote(packId, targetId) {
-    const noteEls = [_el('lesson-pack-note'), _el('main-lesson-pack-note')].filter(Boolean);
-    const pacingEls = [_el('lesson-pack-pacing'), _el('main-lesson-pack-pacing')].filter(Boolean);
+    const noteEls = [_el('lesson-pack-note')].filter(Boolean);
+    const pacingEls = [_el('lesson-pack-pacing')].filter(Boolean);
     const normalizedPack = normalizeLessonPackId(packId);
     const normalizedTarget = normalizeLessonTargetId(normalizedPack, targetId);
-    updateMainLessonPackSummary(normalizedPack, normalizedTarget);
     updateLessonPackWeekRecommendation(normalizedPack, normalizedTarget);
     if (!noteEls.length && !pacingEls.length) return;
     if (normalizedPack === 'custom') {
