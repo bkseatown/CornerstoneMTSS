@@ -1966,17 +1966,44 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .teacher-session-adoption-row {
   display: grid;
-  gap: 6px;
-  padding-top: 3px;
+  gap: 8px;
+  padding: 8px 9px 7px;
   border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--panel-bg) 95%, #ffffff 5%) 0%,
+      color-mix(in oklab, var(--panel-bg) 89%, var(--brand) 11%) 100%
+    );
 }
 
 .teacher-session-adoption-overall {
   padding-bottom: 1px;
 }
 
+.teacher-session-adoption-overall .teacher-session-chip {
+  font-size: 0.74rem;
+  padding: 4px 11px;
+}
+
+.teacher-session-adoption-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(162px, 1fr));
+  gap: 6px;
+}
+
 .teacher-session-adoption-metrics .teacher-session-chip {
-  min-width: 162px;
+  min-width: 0;
+  justify-content: flex-start;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#session-adoption-note {
+  line-height: 1.35;
 }
 
 .teacher-mastery-metrics {
@@ -5709,6 +5736,15 @@ html[data-layout-mode="compact"] .key.key-chunk {
   .teacher-panel-grid {
     grid-template-columns: 1fr;
   }
+
+  .teacher-session-adoption-row {
+    padding: 7px 8px 6px;
+  }
+
+  .teacher-session-adoption-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+  }
+
 
   .quick-popover {
     width: min(320px, calc(100vw - 12px));
