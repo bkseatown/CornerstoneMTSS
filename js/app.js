@@ -5255,12 +5255,14 @@
       const isFullscreen = Boolean(document.fullscreenElement);
       let layoutMode = 'default';
       if (viewportW >= 1040 && viewportH >= 760) layoutMode = 'wide';
-      else if (viewportH <= 700 || (isLandscape && viewportH <= 740)) layoutMode = 'compact';
-      else if (viewportH <= 860) layoutMode = 'tight';
-      const tileGap = layoutMode === 'compact' ? Math.max(7, baseTileGap - 1) : baseTileGap;
+      else if (viewportH <= 560 || (isLandscape && viewportH <= 620)) layoutMode = 'compact';
+      else if (viewportH <= 760) layoutMode = 'tight';
+      const tileGap = baseTileGap;
       const keyboardBottomGap = layoutMode === 'compact'
         ? (isFullscreen ? 6 : 8)
-        : (isFullscreen ? 8 : 10);
+        : layoutMode === 'tight'
+          ? (isFullscreen ? 7 : 9)
+          : (isFullscreen ? 8 : 10);
       document.documentElement.setAttribute('data-layout-mode', layoutMode);
       document.documentElement.setAttribute('data-viewport-orientation', isLandscape ? 'landscape' : 'portrait');
 
@@ -5289,7 +5291,7 @@
         : 4;
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const extraSafetyH = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 28 : layoutMode === 'wide' ? 16 : 24;
+      const extraSafetyH = layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 22 : layoutMode === 'wide' ? 14 : 18;
       const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + keyboardBottomGap + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
@@ -5298,12 +5300,13 @@
       const availableBoardW = Math.max(220, mainInnerW);
       const byWidth = Math.floor((availableBoardW - platePadX - tileGap * (wordLength - 1)) / wordLength);
 
-      const sizeCap = layoutMode === 'wide' ? 104 : layoutMode === 'tight' ? 86 : layoutMode === 'compact' ? 66 : 94;
-      const sizeFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 40 : 44;
+      const sizeCap = layoutMode === 'wide' ? 102 : layoutMode === 'tight' ? 92 : layoutMode === 'compact' ? 84 : 98;
+      const sizeFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 38 : 42;
       let size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
       if (layoutMode !== 'compact' && size < sizeCap && byHeight > size + 1 && byWidth > size + 1) {
         size = Math.min(sizeCap, size + 4);
       }
+      const tileRadius = Math.max(10, Math.min(19, Math.round(size * 0.24)));
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const boardHeight = maxGuesses * size + (maxGuesses - 1) * tileGap;
       const playfieldW = Math.ceil(boardWidth);
@@ -5324,6 +5327,7 @@
       }
 
       document.documentElement.style.setProperty('--tile-size', `${size}px`);
+      document.documentElement.style.setProperty('--radius-tile', `${tileRadius}px`);
       document.documentElement.style.setProperty('--gap-tile', `${tileGap}px`);
       document.documentElement.style.setProperty('--playfield-width', `${playfieldW}px`);
       document.documentElement.style.setProperty('--playfield-height', `${playfieldH}px`);
