@@ -176,7 +176,7 @@ const WQData = (() => {
     _loaded = true;
     console.log(`[WQData] ${_playable.length} words are game-playable`);
     if (quarantined > 0) {
-      console.warn(`[WQData] ${quarantined} entries quarantined due to invalid grade band metadata.`);
+      console.info(`[WQData] ${quarantined} entries quarantined due to invalid grade band metadata.`);
     }
   }
 

@@ -5254,9 +5254,9 @@
       const isLandscape = viewportW >= viewportH;
       const isFullscreen = Boolean(document.fullscreenElement);
       let layoutMode = 'default';
-      if (viewportW >= 1040 && viewportH >= 680) layoutMode = 'wide';
-      else if (viewportH <= 600 || (isLandscape && viewportH <= 660)) layoutMode = 'compact';
-      else if (viewportH <= 740) layoutMode = 'tight';
+      if (viewportW >= 1040 && viewportH >= 760) layoutMode = 'wide';
+      else if (viewportH <= 700 || (isLandscape && viewportH <= 740)) layoutMode = 'compact';
+      else if (viewportH <= 860) layoutMode = 'tight';
       const tileGap = layoutMode === 'compact' ? Math.max(7, baseTileGap - 1) : baseTileGap;
       const keyboardBottomGap = layoutMode === 'compact'
         ? (isFullscreen ? 6 : 8)
@@ -5289,7 +5289,7 @@
         : 4;
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const extraSafetyH = layoutMode === 'compact' ? 28 : layoutMode === 'tight' ? 18 : layoutMode === 'wide' ? 8 : 10;
+      const extraSafetyH = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 28 : layoutMode === 'wide' ? 16 : 24;
       const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + keyboardBottomGap + boardZoneGap + hintH + supportReserveH + extraSafetyH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
@@ -5298,11 +5298,11 @@
       const availableBoardW = Math.max(220, mainInnerW);
       const byWidth = Math.floor((availableBoardW - platePadX - tileGap * (wordLength - 1)) / wordLength);
 
-      const sizeCap = layoutMode === 'wide' ? 112 : layoutMode === 'tight' ? 90 : layoutMode === 'compact' ? 66 : 102;
+      const sizeCap = layoutMode === 'wide' ? 104 : layoutMode === 'tight' ? 86 : layoutMode === 'compact' ? 66 : 94;
       const sizeFloor = layoutMode === 'compact' ? 34 : layoutMode === 'tight' ? 40 : 44;
       let size = Math.max(sizeFloor, Math.min(byHeight, byWidth, sizeCap));
       if (layoutMode !== 'compact' && size < sizeCap && byHeight > size + 1 && byWidth > size + 1) {
-        size = Math.min(sizeCap, size + 6);
+        size = Math.min(sizeCap, size + 4);
       }
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const boardHeight = maxGuesses * size + (maxGuesses - 1) * tileGap;
