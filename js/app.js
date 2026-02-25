@@ -11087,6 +11087,14 @@
     const rounds = Math.max(0, Number(sessionSummary.rounds) || 0);
     const masteryRows = getSortedMasteryRows();
     const topSkill = masteryRows[0] || null;
+    const generatedAt = new Date().toLocaleString();
+    const focusValue = String(_el('setting-focus')?.value || prefs.focus || DEFAULT_PREFS.focus || 'all').trim() || 'all';
+    const focusLabel = getFocusLabel(focusValue).replace(/[—]/g, '').replace(/\s+/g, ' ').trim() || 'Classic';
+    const presetId = detectTeacherPreset();
+    const presetBtn = presetId ? document.querySelector(`[data-teacher-preset="${presetId}"]`) : null;
+    const presetLabel = presetBtn instanceof HTMLElement
+      ? String(presetBtn.textContent || '').replace(/\s+/g, ' ').trim()
+      : 'Custom';
     const missionStats = buildMissionSummaryStats({
       sessionOnly: true,
       student: getActiveStudentLabel() === 'Class' ? '' : getActiveStudentLabel()
@@ -11099,6 +11107,9 @@
     const startedAt = new Date(sessionSummary.startedAt || Date.now()).toLocaleString();
     return [
       `Session outcomes (${startedAt})`,
+      `Timestamp: ${generatedAt}`,
+      `Active focus: ${focusLabel}`,
+      `Active preset: ${presetLabel}`,
       `Attempts: ${rounds}`,
       `Mastery trend: ${topSkill ? `${topSkill.label} at ${topSkill.accuracyLabel} across ${topSkill.attempts} attempts` : 'No mastery rows yet.'}`,
       `Probe trend: ${trendLabel}`,
