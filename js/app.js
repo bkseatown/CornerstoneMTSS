@@ -4735,6 +4735,9 @@
   _el('s-force-update-now')?.addEventListener('click', () => {
     void forceUpdateNow();
   });
+  _el('s-force-update-now-top')?.addEventListener('click', () => {
+    void forceUpdateNow();
+  });
   _el('session-copy-btn')?.addEventListener('click', () => {
     void copySessionSummary();
   });
