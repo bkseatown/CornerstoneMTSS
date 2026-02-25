@@ -132,15 +132,40 @@ async function run() {
       return panel.classList.contains('hidden') || panel.hidden || panel.getAttribute('aria-hidden') === 'true';
     }, { timeout: 15000 });
 
-    await clickWithRetries('#new-game-btn', { attempts: 4, settleMs: 300 });
-    await page.waitForFunction(() => {
-      const word = window.WQGame?.getState?.()?.word;
-      return typeof word === 'string' && word.trim().length > 0;
-    }, { timeout: 10000 });
-    const targetWord = await page.evaluate(() => {
-      const word = window.WQGame?.getState?.()?.word || '';
-      return String(word).trim().toLowerCase();
+    await page.evaluate(() => {
+      const focus = document.getElementById('setting-focus');
+      if (focus instanceof HTMLSelectElement) {
+        focus.value = 'all';
+        focus.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const grade = document.getElementById('s-grade');
+      if (grade instanceof HTMLSelectElement) {
+        grade.value = 'all';
+        grade.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const length = document.getElementById('s-length');
+      if (length instanceof HTMLSelectElement) {
+        length.value = '5';
+        length.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     });
+
+    let targetWord = '';
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await clickWithRetries('#new-game-btn', { attempts: 3, settleMs: 250 });
+      try {
+        await page.waitForFunction(() => {
+          const word = window.WQGame?.getState?.()?.word;
+          return typeof word === 'string' && word.trim().length > 0;
+        }, { timeout: 5000 });
+        targetWord = await page.evaluate(() => {
+          const word = window.WQGame?.getState?.()?.word || '';
+          return String(word).trim().toLowerCase();
+        });
+        if (targetWord) break;
+      } catch {}
+      await page.waitForTimeout(300);
+    }
     if (!targetWord) throw new Error('No active word found after clicking New/Next Word.');
     await page.keyboard.type(String(targetWord));
     await page.keyboard.press('Enter');
