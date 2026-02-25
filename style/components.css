@@ -3170,6 +3170,12 @@ html[data-play-style="listening"] .play-support-row {
   align-items: center;
   gap: 6px;
   width: min(var(--keyboard-max-width, 540px), calc(100vw - 18px));
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+html[data-play-style="listening"] .board-zone {
+  gap: 8px;
 }
 
 html[data-play-style="listening"] .gameplay-audio {
@@ -4329,51 +4335,54 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 }
 
 .first-run-setup-card {
-  width: min(620px, 100%);
+  width: min(560px, calc(100vw - 18px));
+  max-height: min(90vh, 860px);
+  overflow: auto;
   border: 1px solid #cfd5dd;
-  background: #f8fafc;
-  color: #111827;
+  background: #f6f9fc;
+  color: #162b3d;
   box-shadow: 0 24px 48px rgba(15, 23, 42, 0.2);
 }
 
 .first-run-setup-card .modal-head {
-  padding: 14px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid #d3d8de;
 }
 
 .first-run-setup-card .modal-head strong {
-  font-size: 1.5rem;
+  font-size: 1.24rem;
   font-weight: 900;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
+  color: #1a3348;
 }
 
 .first-run-setup-card .modal-body {
-  gap: 12px;
-  padding: 14px 16px 18px;
-  font-size: 0.94rem;
+  gap: 9px;
+  padding: 11px 14px 14px;
+  font-size: 0.9rem;
 }
 
 .first-run-lead {
-  font-size: 1.03rem;
-  font-weight: 820;
-  line-height: 1.35;
-  color: color-mix(in oklab, var(--text) 88%, var(--text-muted) 12%);
+  font-size: 0.99rem;
+  font-weight: 860;
+  line-height: 1.3;
+  color: #243f56;
 }
 
 .first-run-skip-btn {
-  font-size: 0.76rem;
-  padding: 6px 11px;
+  font-size: 0.74rem;
+  padding: 5px 10px;
   border: 1px solid #c4cad2;
   background: #ffffff;
-  color: #1f2937;
+  color: #1d3346;
   box-shadow: none;
 }
 
 .first-run-start-btn {
   width: 100%;
-  min-height: 48px;
-  border-radius: 14px;
-  font-size: 1.04rem;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 0.98rem;
   font-weight: 880;
   border: 1px solid color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
   box-shadow: 0 8px 18px rgba(12, 30, 48, 0.22);
@@ -4385,86 +4394,88 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 
 .first-run-wordle-legend {
   display: grid;
-  gap: 10px;
-  padding: 2px 0;
+  gap: 7px;
+  padding: 0;
 }
 
 .first-run-grade-row {
   display: grid;
-  gap: 8px;
-  font-size: 0.82rem;
+  gap: 6px;
+  font-size: 0.78rem;
   font-weight: 860;
-  color: var(--text);
-  padding: 10px;
-  border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
+  color: #223a52;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid #cfd9e4;
+  background: #f0f5fb;
 }
 
 .first-run-grade-row select {
-  min-height: 40px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
-  color: var(--text);
+  min-height: 36px;
+  border-radius: 10px;
+  border: 1px solid #c7d4e1;
+  background: #ffffff;
+  color: #1a3348;
   font-family: var(--font);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  padding: 0 11px;
+  padding: 0 10px;
 }
 
 .first-run-grade-note {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 720;
-  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+  color: #4d6478;
 }
 
 .first-run-mode-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .first-run-mode-btn {
-  min-height: 42px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
-  color: color-mix(in oklab, var(--text) 88%, var(--text-muted) 12%);
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid #c5d3e2;
+  background: #f7fbff;
+  color: #203a4f;
   font-family: var(--font);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 860;
   cursor: pointer;
   transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
 }
 
 .first-run-mode-btn.is-active {
-  border-color: color-mix(in oklab, var(--accent) 58%, var(--panel-border) 42%);
-  background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 28%, #ffffff 72%) 0%, color-mix(in oklab, var(--brand) 20%, #ffffff 80%) 100%);
-  color: color-mix(in oklab, var(--text) 92%, var(--brand) 8%);
+  border-color: #7bb9e5;
+  background: linear-gradient(145deg, #deefff 0%, #e8f2ff 100%);
+  color: #153851;
   transform: translateY(-1px);
 }
 
 .first-run-mode-help {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 760;
-  color: color-mix(in oklab, var(--text-muted) 80%, var(--text) 20%);
+  color: #38536c;
 }
 
 .first-run-wordle-item {
   display: grid;
-  gap: 6px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #dde2e8;
-  font-size: 0.84rem;
-  font-weight: 720;
-  line-height: 1.35;
-  color: #1f2937;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  font-size: 0.79rem;
+  font-weight: 760;
+  line-height: 1.3;
+  color: #1d354a;
+  background: #f8fbff;
 }
 
 .first-run-wordle-item:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
+  border-bottom: 1px solid #d9e2ec;
+  padding-bottom: 6px;
 }
 
 .first-run-wordle-row {
@@ -4475,8 +4486,8 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 }
 
 .first-run-wordle-tile {
-  width: 36px;
-  height: 36px;
+  width: 33px;
+  height: 33px;
   border-radius: 3px;
   border: 2px solid #d3d6da;
   background: #ffffff;
@@ -4484,7 +4495,7 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 900;
   text-transform: uppercase;
   box-shadow: none;
@@ -4514,21 +4525,22 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 
 .first-run-help {
   margin-left: 0;
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 760;
+  color: #34526a;
 }
 
 .first-run-hide-row {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
-  font-size: 0.83rem;
-  font-weight: 760;
-  color: color-mix(in oklab, var(--text) 86%, var(--text-muted) 14%);
+  gap: 7px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid #cfd9e4;
+  background: #f0f5fb;
+  font-size: 0.79rem;
+  font-weight: 780;
+  color: #2d465c;
 }
 
 .first-run-hide-row input[type="checkbox"] {

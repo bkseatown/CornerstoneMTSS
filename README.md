@@ -37,6 +37,7 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/HANDOVER.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/NONCODER_SAFETY_GUIDE.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/AUDIO_OFFLINE_DEPLOY_CHECKLIST.md`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/CAPACITY_PROOF_PLAYBOOK.md`
 
 ## Key Architecture Files
 - Entry/UI wiring:

@@ -975,13 +975,13 @@
   <div id="first-run-setup-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="How to play WordQuest">
     <div class="modal-card first-run-setup-card">
       <div class="modal-head">
-        <strong>How To Play WordQuest</strong>
+        <strong>How to Play</strong>
         <button id="first-run-skip-btn" class="quick-action-btn first-run-skip-btn" type="button" aria-label="Close tutorial">Got it</button>
       </div>
       <div class="modal-body">
-        <p class="first-run-lead">Pick your grade, choose a game style, then crack the word in 6 tries.</p>
+        <p class="first-run-lead">Pick a grade and game style, then solve the word in 6 tries.</p>
         <label class="first-run-grade-row" for="first-run-grade-band">
-          <span>Start with grade band</span>
+          <span>Choose grade band</span>
           <select id="first-run-grade-band">
             <option value="all">All grades (K-2 safe)</option>
             <option value="K-2">K–2</option>
@@ -989,13 +989,13 @@
             <option value="G6-8">Grades 6–8</option>
             <option value="G9-12">Grades 9–12</option>
           </select>
-          <span class="first-run-grade-note">You can change grade later in Teacher Hub.</span>
+          <span class="first-run-grade-note">You can change this anytime in Teacher Hub.</span>
         </label>
         <div class="first-run-mode-row" role="group" aria-label="Choose game style">
           <button id="first-run-mode-detective" class="first-run-mode-btn" type="button" data-play-style-choice="detective" aria-pressed="false">🔎 Classic</button>
           <button id="first-run-mode-listening" class="first-run-mode-btn" type="button" data-play-style-choice="listening" aria-pressed="false">🎧 Listening</button>
         </div>
-        <p id="first-run-mode-help" class="first-run-mode-help">Classic mode: use color feedback and clue support.</p>
+        <p id="first-run-mode-help" class="first-run-mode-help">Classic: use color clues. Listening: hear the word and spell it.</p>
         <div class="first-run-wordle-legend" aria-label="Tile color legend">
           <div class="first-run-wordle-item">
             <div class="first-run-wordle-row" aria-hidden="true">
@@ -1005,7 +1005,7 @@
               <span class="first-run-wordle-tile">R</span>
               <span class="first-run-wordle-tile">Y</span>
             </div>
-            <span><b>Green</b>: letter is in the word and in the correct spot.</span>
+            <span><b>Green</b>: right letter, right spot.</span>
           </div>
           <div class="first-run-wordle-item">
             <div class="first-run-wordle-row" aria-hidden="true">
@@ -1015,7 +1015,7 @@
               <span class="first-run-wordle-tile">O</span>
               <span class="first-run-wordle-tile">T</span>
             </div>
-            <span><b>Yellow</b>: letter is in the word but in the wrong spot.</span>
+            <span><b>Yellow</b>: right letter, wrong spot.</span>
           </div>
           <div class="first-run-wordle-item">
             <div class="first-run-wordle-row" aria-hidden="true">
@@ -1025,10 +1025,10 @@
               <span class="first-run-wordle-tile is-absent">U</span>
               <span class="first-run-wordle-tile">E</span>
             </div>
-            <span><b>Gray</b>: letter is not in the word.</span>
+            <span><b>Gray</b>: this letter is not in the word.</span>
           </div>
         </div>
-        <p class="setting-checkbox-help first-run-help">Tip: tap <b>Clue</b> anytime for quick support.</p>
+        <p class="setting-checkbox-help first-run-help">Tip: tap <b>Clue</b> for help anytime.</p>
         <label class="first-run-hide-row">
           <input id="first-run-hide-again" type="checkbox" checked>
           <span>Don’t show this welcome card again</span>

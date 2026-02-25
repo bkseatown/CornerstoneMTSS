@@ -5607,6 +5607,7 @@
       const themeH = (themeNestedInHeader || themeStripOverlay) ? 0 : (themeStripEl?.offsetHeight || 0);
       const viewportH = window.visualViewport?.height || window.innerHeight;
       const viewportW = window.visualViewport?.width || window.innerWidth;
+      const playStyle = document.documentElement.getAttribute('data-play-style') || 'detective';
       const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
       const chunkTabsOn = document.documentElement.getAttribute('data-chunk-tabs') !== 'off';
       const isLandscape = viewportW >= viewportH;
@@ -5617,10 +5618,10 @@
       else if (viewportH <= 760) layoutMode = 'tight';
       const tileGap = baseTileGap;
       const keyboardBottomGap = layoutMode === 'compact'
-        ? (isFullscreen ? 6 : 8)
+        ? (isFullscreen ? 2 : 4)
         : layoutMode === 'tight'
-          ? (isFullscreen ? 7 : 9)
-          : (isFullscreen ? 8 : 10);
+          ? (isFullscreen ? 3 : 5)
+          : (isFullscreen ? 4 : 0);
       document.documentElement.setAttribute('data-layout-mode', layoutMode);
       document.documentElement.setAttribute('data-viewport-orientation', isLandscape ? 'landscape' : 'portrait');
 
@@ -5650,7 +5651,8 @@
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
       const extraSafetyH = layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 22 : layoutMode === 'wide' ? 14 : 18;
-      const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + keyboardBottomGap + boardZoneGap + hintH + supportReserveH + extraSafetyH;
+      const listeningReserveH = playStyle === 'listening' ? 12 : 0;
+      const reservedH = headerH + focusH + curriculumH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + keyboardBottomGap + boardZoneGap + hintH + supportReserveH + extraSafetyH + listeningReserveH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
       const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) + 2) / maxGuesses);
