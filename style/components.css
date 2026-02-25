@@ -1226,8 +1226,8 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .settings-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
   background: linear-gradient(
     180deg,
     color-mix(in oklab, var(--panel-bg) 92%, var(--page-bg) 8%),
@@ -1335,7 +1335,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .settings-group > summary {
   list-style: none;
   cursor: pointer;
-  padding: 9px 12px;
+  padding: 8px 11px;
   font-size: 0.82rem;
   font-weight: 800;
   color: var(--text);
@@ -1364,8 +1364,8 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .settings-group-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 10px;
-  padding: 10px 12px 12px;
+  gap: 7px 9px;
+  padding: 8px 10px 10px;
   background: transparent;
 }
 
@@ -1593,7 +1593,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .setting-row {
   min-height: 0;
-  padding: 2px 1px 8px;
+  padding: 1px 1px 6px;
   border: 0;
   border-bottom: 1px dashed color-mix(in oklab, var(--panel-border) 62%, transparent);
   border-radius: 0;
@@ -1645,15 +1645,15 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .setting-row label {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   font-size: 0.72rem;
   font-weight: 780;
   color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
 }
 
 .setting-row select {
-  min-height: 34px;
-  padding: 6px 10px;
+  min-height: 31px;
+  padding: 4px 9px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
   border-radius: 10px;
   background: color-mix(in oklab, var(--panel-bg) 88%, var(--page-bg) 12%);
@@ -1685,7 +1685,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   grid-column: 1 / -1;
   border: 0;
   border-radius: 11px;
-  padding: 9px 10px;
+  padding: 7px 9px;
   background: color-mix(in oklab, var(--panel-bg) 84%, var(--brand) 16%);
   font-size: 0.72rem;
 }
@@ -1859,10 +1859,10 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 }
 
 .teacher-session-panel {
-  gap: 8px;
+  gap: 6px;
   border: 1px solid var(--panel-border);
   border-radius: 12px;
-  padding: 9px 10px;
+  padding: 7px 8px;
   background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
 }
 
@@ -1875,18 +1875,18 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .teacher-report-controls label {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .teacher-report-compact-toggle {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 34px;
+  min-height: 31px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
   border-radius: 9px;
   background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
-  padding: 6px 8px;
+  padding: 5px 7px;
 }
 
 .teacher-report-filter-note {
@@ -1895,12 +1895,12 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .teacher-session-roster-row {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .teacher-session-roster-row label {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .teacher-session-roster-actions {
@@ -1911,12 +1911,12 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .teacher-session-playlist-row {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .teacher-session-playlist-row label {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .teacher-session-playlist-actions {
@@ -1932,12 +1932,12 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .teacher-session-goal-row {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .teacher-session-goal-row label {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .teacher-session-goal-actions {
@@ -1948,7 +1948,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .settings-text-input {
   width: 100%;
-  padding: 6px 9px;
+  padding: 5px 8px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 68%, transparent);
   border-radius: 9px;
   background: color-mix(in oklab, var(--panel-bg) 78%, var(--page-bg) 22%);
@@ -1961,7 +1961,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 .teacher-session-metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
 }
 
 .teacher-session-adoption-row {
@@ -2104,9 +2104,9 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border: 1px solid color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
   background: color-mix(in oklab, var(--panel-bg) 92%, transparent);
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  padding: 3px 9px;
+  padding: 2px 8px;
 }
 
 .teacher-session-chip.is-good {
