@@ -495,6 +495,7 @@
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
   let musicController = null;
   let challengeSprintTimer = 0;
+  let challengePacingTimer = 0;
   let challengeModalReturnFocusEl = null;
 
   function readTelemetryEnabled() {
@@ -11353,9 +11354,20 @@
   }
 
   function clearChallengeSprintTimer() {
-    if (!challengeSprintTimer) return;
-    clearInterval(challengeSprintTimer);
-    challengeSprintTimer = 0;
+    if (challengeSprintTimer) {
+      clearInterval(challengeSprintTimer);
+      challengeSprintTimer = 0;
+    }
+    if (challengePacingTimer) {
+      clearTimeout(challengePacingTimer);
+      challengePacingTimer = 0;
+    }
+  }
+
+  function clearChallengePacingTimer() {
+    if (!challengePacingTimer) return;
+    clearTimeout(challengePacingTimer);
+    challengePacingTimer = 0;
   }
 
   function loadChallengeProgress() {
@@ -12128,6 +12140,7 @@
       nextBtn.disabled = !canAdvance;
       nextBtn.textContent = doneCount >= 3 ? 'All Stations Complete' : 'Next Station';
     }
+    syncChallengePacingTimer(state);
   }
 
   function syncChallengePacingTimer(state = revealChallengeState) {
@@ -12142,7 +12155,10 @@
       return;
     }
     const activeTask = setChallengeActiveTask(state.activeTask, state);
-    if (!activeTask || state.tasks?.[activeTask]) return;
+    if (!activeTask || state.tasks?.[activeTask]) {
+      clearChallengePacingTimer();
+      return;
+    }
     if (!state.pacing || typeof state.pacing !== 'object') {
       state.pacing = { task: activeTask, startedAt: Date.now(), nudged: false };
     } else if (state.pacing.task !== activeTask) {
@@ -12150,35 +12166,31 @@
       state.pacing.startedAt = Date.now();
       state.pacing.nudged = false;
     }
-    if (challengeSprintTimer) return;
-    challengeSprintTimer = setInterval(() => {
-      if (!revealChallengeState || revealChallengeState.completedAt || getChallengeDoneCount(revealChallengeState) >= CHALLENGE_TASK_FLOW.length) {
-        clearChallengeSprintTimer();
-        return;
-      }
+    if (state.pacing.nudged) {
+      clearChallengePacingTimer();
+      return;
+    }
+    const startedAt = Math.max(0, Number(state.pacing.startedAt) || 0);
+    if (!startedAt) {
+      state.pacing.startedAt = Date.now();
+    }
+    const elapsed = Math.max(0, Date.now() - Math.max(1, Number(state.pacing.startedAt) || 0));
+    const remainingMs = Math.max(300, CHALLENGE_PACING_NUDGE_MS - elapsed);
+    clearChallengePacingTimer();
+    challengePacingTimer = setTimeout(() => {
+      challengePacingTimer = 0;
+      if (!revealChallengeState || revealChallengeState.completedAt || getChallengeDoneCount(revealChallengeState) >= CHALLENGE_TASK_FLOW.length) return;
       const liveModal = _el('challenge-modal');
-      if (!liveModal || liveModal.classList.contains('hidden')) {
-        clearChallengeSprintTimer();
-        return;
-      }
+      if (!liveModal || liveModal.classList.contains('hidden')) return;
       const currentTask = setChallengeActiveTask(revealChallengeState.activeTask, revealChallengeState);
       if (!currentTask) return;
-      if (!revealChallengeState.pacing || typeof revealChallengeState.pacing !== 'object') {
-        revealChallengeState.pacing = { task: currentTask, startedAt: Date.now(), nudged: false };
-      } else if (revealChallengeState.pacing.task !== currentTask) {
-        revealChallengeState.pacing.task = currentTask;
-        revealChallengeState.pacing.startedAt = Date.now();
-        revealChallengeState.pacing.nudged = false;
-      }
+      if (!revealChallengeState.pacing || typeof revealChallengeState.pacing !== 'object') return;
+      if (revealChallengeState.pacing.task !== currentTask) return;
       if (revealChallengeState.tasks?.[currentTask]) return;
-      const startedAt = Math.max(0, Number(revealChallengeState.pacing.startedAt) || 0);
-      if (!startedAt) return;
-      const elapsed = Math.max(0, Date.now() - startedAt);
-      if (!revealChallengeState.pacing.nudged && elapsed >= CHALLENGE_PACING_NUDGE_MS) {
-        revealChallengeState.pacing.nudged = true;
-        setChallengeFeedback('Quick pace check: spend about 30-60 seconds on this station, then keep moving.', 'default');
-      }
-    }, 1000);
+      if (revealChallengeState.pacing.nudged) return;
+      revealChallengeState.pacing.nudged = true;
+      setChallengeFeedback('Quick pace check: spend about 30-60 seconds on this station, then keep moving.', 'default');
+    }, remainingMs);
   }
 
   function getChallengeChoice(task, choiceId, stateOverride = revealChallengeState) {
