@@ -1,9 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="default">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Writing Studio</title>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style/themes.css?v=20260224v">
   <link rel="stylesheet" href="./writing-studio.css">
 </head>
 <body class="cs-page-writing cs-hv2-theme-default">
@@ -50,14 +55,15 @@
 
         <div class="ws-rail-block">
           <div class="ws-h2">Checklist</div>
-          <label class="ws-check"><input type="checkbox"> Topic is clear</label>
-          <label class="ws-check"><input type="checkbox"> I added details</label>
-          <label class="ws-check"><input type="checkbox"> I reread it</label>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-1">Topic sentence is clear</span></label>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-2">I added two details</span></label>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-3">I used because/so/but</span></label>
         </div>
       </aside>
     </main>
   </div>
 
+  <script src="./js/theme-registry.js?v=20260223c"></script>
   <script src="./writing-studio.js" defer></script>
 </body>
 </html>
