@@ -74,6 +74,17 @@ body.cs-page-writing {
   margin-top: var(--ws-gap-1);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .ws-dot {
+    animation: wsDotPulse 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes wsDotPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(122, 167, 255, 0.34); }
+  50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(122, 167, 255, 0.52); }
+}
+
 .ws-brand {
   display: flex;
   gap: var(--ws-gap-3);
@@ -171,6 +182,21 @@ body.cs-page-writing {
   grid-template-columns: 1.55fr 0.95fr;
   gap: var(--ws-gap-4);
   min-height: calc(100dvh - 172px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #ws-stage {
+    animation: wsBreath 9s ease-in-out infinite;
+  }
+}
+
+@keyframes wsBreath {
+  0%, 100% { box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 24px 66px rgba(0, 0, 0, 0.46); }
+}
+
+#ws-stage.ws-saved {
+  box-shadow: 0 24px 70px rgba(26, 92, 196, 0.35), 0 0 0 1px rgba(122, 167, 255, 0.35) inset;
 }
 
 #ws-stage::before {
@@ -307,6 +333,31 @@ body.cs-page-writing {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ws-gap-2);
+}
+
+.ws-more-actions {
+  margin-top: 2px;
+}
+
+.ws-more-actions summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 6px 0;
+  list-style: none;
+}
+
+.ws-more-actions summary::-webkit-details-marker {
+  display: none;
+}
+
+.ws-more-actions summary::before {
+  content: "+ ";
+  color: rgba(122, 167, 255, 0.95);
+}
+
+.ws-more-actions[open] summary::before {
+  content: "- ";
 }
 
 .ws-plan {

@@ -13,6 +13,8 @@
   var PRESET_KEY = "ws_preset_pack_v1";
   var RETURN_KEY = "ws_return_to_wordquest_v1";
   var CASELOAD_KEY = "ws_caseload_v1";
+  var ROI_KEY = "ws_roi_v1";
+  var ENGAGE_KEY = "ws_engage_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -247,6 +249,32 @@
       cue: "LS flow: one small step, immediate feedback, then repeat."
     }
   };
+  var PLAYBOOKS = {
+    "ms-ef": {
+      gradeBand: "68",
+      mode: "sentence",
+      profile: "one",
+      organizer: "sequence",
+      cue: "EF routine: plan 3 bullets, draft 1 line, pause-check, then continue.",
+      nextAction: "Use one-step chunking with timer and immediate check-in."
+    },
+    "ms-eal": {
+      gradeBand: "68",
+      mode: "sentence",
+      profile: "small",
+      organizer: "sequence",
+      cue: "EAL routine: oral rehearsal, sentence frame, one expansion sentence.",
+      nextAction: "Use oral rehearsal + frame before independent writing."
+    },
+    "hs-analysis": {
+      gradeBand: "912",
+      mode: "paragraph",
+      profile: "small",
+      organizer: "cer",
+      cue: "HS routine: thesis line, evidence line, analysis line, then revise precision.",
+      nextAction: "Draft one analytical paragraph with claim-evidence-analysis."
+    }
+  };
   var FISHTANK_SCOPE = {
     es: {
       label: "Elementary School",
@@ -377,6 +405,7 @@
   var launchContextEl = document.getElementById("ws-launch-context");
   var editor = document.getElementById("ws-editor");
   var metrics = document.getElementById("ws-metrics");
+  var liveHintEl = document.getElementById("ws-live-hint");
   var coach = document.getElementById("ws-coach");
   var vocab = document.getElementById("ws-vocab");
   var checklist1 = document.getElementById("ws-check-1");
@@ -456,6 +485,11 @@
   var showcaseCloseBtn = document.getElementById("ws-showcase-close");
   var showcaseLineEl = document.getElementById("ws-showcase-line");
   var modelBtn = document.getElementById("ws-model");
+  var impactToggleBtn = document.getElementById("ws-impact-toggle");
+  var impactOverlayEl = document.getElementById("ws-impact");
+  var impactCloseBtn = document.getElementById("ws-impact-close");
+  var impactLineEl = document.getElementById("ws-impact-line");
+  var impactSubEl = document.getElementById("ws-impact-sub");
   var flowButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-step[data-step]"));
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
@@ -477,9 +511,15 @@
   var caseNameInput = document.getElementById("ws-case-name");
   var caseGoalInput = document.getElementById("ws-case-goal");
   var caseNextInput = document.getElementById("ws-case-next");
+  var playbookSelect = document.getElementById("ws-playbook");
+  var playbookApplyBtn = document.getElementById("ws-playbook-apply");
   var caseAddBtn = document.getElementById("ws-case-add");
   var caseCopyBtn = document.getElementById("ws-case-copy");
   var caseListEl = document.getElementById("ws-case-list");
+  var roiMinutesEl = document.getElementById("ws-roi-minutes");
+  var roiArtifactsEl = document.getElementById("ws-roi-artifacts");
+  var roiTopEl = document.getElementById("ws-roi-top");
+  var qualityStreakEl = document.getElementById("ws-quality-streak");
   var quickWholeBtn = document.getElementById("ws-quick-whole");
   var quickSmallBtn = document.getElementById("ws-quick-small");
   var quickOneBtn = document.getElementById("ws-quick-one");
@@ -541,6 +581,10 @@
   var isDictating = false;
   var imagePromptLabel = "";
   var currentFishTankLesson = null;
+  var roiState = { totalMinutes: 0, artifacts: 0, counts: {} };
+  var qualityStreak = 0;
+  var bestQualityStreak = 0;
+  var impactOpen = false;
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
@@ -882,6 +926,27 @@
       ? " Teacher cue: " + MODEL_STEMS[currentMode][currentStep]
       : "";
     goalEl.textContent = (complete ? "Complete. " : "") + base + (teacherModel ? modelCue : "");
+  }
+
+  function renderLiveHint(words, sentenceCount) {
+    if (!liveHintEl) return;
+    if (words === 0) {
+      liveHintEl.textContent = "Ready to start.";
+      return;
+    }
+    if (currentStep === "plan") {
+      liveHintEl.textContent = "Nice planning energy.";
+      return;
+    }
+    if (currentStep === "draft") {
+      liveHintEl.textContent = sentenceCount >= 3 ? "Strong drafting flow." : "Build one more sentence.";
+      return;
+    }
+    if (currentStep === "revise") {
+      liveHintEl.textContent = "Revision in progress.";
+      return;
+    }
+    liveHintEl.textContent = "Polish and publish.";
   }
 
   function renderCoachTips(text, words, sentenceCount) {
@@ -1533,6 +1598,7 @@
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () {
+        trackArtifactCopy(successMessage || "Copied");
         showToast(successMessage || "Copied");
       }).catch(function () {
         showToast("Copy blocked by browser");
@@ -1540,6 +1606,142 @@
       return;
     }
     showToast("Clipboard not available");
+  }
+
+  function getArtifactMinutes(label) {
+    var text = String(label || "").toLowerCase();
+    if (text.indexOf("ls team packet") >= 0) return 8;
+    if (text.indexOf("iesp") >= 0) return 6;
+    if (text.indexOf("ssm") >= 0) return 5;
+    if (text.indexOf("teacher handoff") >= 0) return 4;
+    if (text.indexOf("parent") >= 0) return 3;
+    if (text.indexOf("evidence") >= 0) return 3;
+    if (text.indexOf("plc") >= 0) return 4;
+    return 2;
+  }
+
+  function loadROIState() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(ROI_KEY) || "{}");
+      roiState.totalMinutes = Number(parsed.totalMinutes) > 0 ? Number(parsed.totalMinutes) : 0;
+      roiState.artifacts = Number(parsed.artifacts) > 0 ? Number(parsed.artifacts) : 0;
+      roiState.counts = parsed && typeof parsed.counts === "object" && parsed.counts ? parsed.counts : {};
+    } catch (_error) {
+      roiState = { totalMinutes: 0, artifacts: 0, counts: {} };
+    }
+  }
+
+  function saveROIState() {
+    try {
+      localStorage.setItem(ROI_KEY, JSON.stringify(roiState));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+  }
+
+  function getTopArtifactLabel() {
+    var counts = roiState.counts || {};
+    var best = "No exports yet";
+    var bestValue = 0;
+    Object.keys(counts).forEach(function (key) {
+      if (counts[key] > bestValue) {
+        bestValue = counts[key];
+        best = key;
+      }
+    });
+    return best;
+  }
+
+  function renderROIDashboard() {
+    if (roiMinutesEl) roiMinutesEl.textContent = String(Math.round(roiState.totalMinutes));
+    if (roiArtifactsEl) roiArtifactsEl.textContent = String(Math.round(roiState.artifacts));
+    if (roiTopEl) roiTopEl.textContent = getTopArtifactLabel();
+    if (qualityStreakEl) qualityStreakEl.textContent = String(qualityStreak);
+  }
+
+  function trackArtifactCopy(label) {
+    var clean = String(label || "Artifact");
+    roiState.totalMinutes += getArtifactMinutes(clean);
+    roiState.artifacts += 1;
+    roiState.counts[clean] = (roiState.counts[clean] || 0) + 1;
+    saveROIState();
+    renderROIDashboard();
+    renderImpactSnapshot();
+  }
+
+  function loadEngagementState() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(ENGAGE_KEY) || "{}");
+      qualityStreak = Number(parsed.qualityStreak) > 0 ? Number(parsed.qualityStreak) : 0;
+      bestQualityStreak = Number(parsed.bestQualityStreak) > 0 ? Number(parsed.bestQualityStreak) : 0;
+    } catch (_error) {
+      qualityStreak = 0;
+      bestQualityStreak = 0;
+    }
+  }
+
+  function saveEngagementState() {
+    try {
+      localStorage.setItem(ENGAGE_KEY, JSON.stringify({
+        qualityStreak: qualityStreak,
+        bestQualityStreak: bestQualityStreak
+      }));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+  }
+
+  function updateQualityStreak(text, words, sentenceCount) {
+    var scores = getDomainScores(text, words, sentenceCount);
+    var qualityHit = scores.total >= 6 || (scores.structure >= 2 && scores.detail >= 2);
+    if (qualityHit) {
+      qualityStreak += 1;
+      bestQualityStreak = Math.max(bestQualityStreak, qualityStreak);
+    } else {
+      qualityStreak = 0;
+    }
+    saveEngagementState();
+    renderROIDashboard();
+    renderImpactSnapshot();
+  }
+
+  function getCaseloadTrendSummary() {
+    if (!caseloadItems.length) return "No student trend data yet.";
+    var withHistory = caseloadItems.filter(function (item) {
+      return Array.isArray(item.history) && item.history.length >= 2;
+    });
+    if (!withHistory.length) return "Collect at least two samples per student for trend lines.";
+    var improved = 0;
+    withHistory.forEach(function (item) {
+      var first = item.history[0];
+      var last = item.history[item.history.length - 1];
+      if ((last.score || 0) > (first.score || 0) || (last.words || 0) > (first.words || 0)) improved += 1;
+    });
+    return improved + " of " + withHistory.length + " students show positive trend.";
+  }
+
+  function renderImpactSnapshot() {
+    if (!impactLineEl || !impactSubEl) return;
+    var totalStudents = caseloadItems.length;
+    var active = caseloadItems.filter(function (item) { return item.status === "active"; }).length;
+    var trend = getCaseloadTrendSummary();
+    impactSubEl.textContent = "Artifacts: " + roiState.artifacts + " | Est. minutes saved: " + Math.round(roiState.totalMinutes) + " | Quality streak: " + qualityStreak;
+    impactLineEl.textContent = "Caseload " + totalStudents + " (" + active + " active). " + trend + " Top artifact: " + getTopArtifactLabel() + ".";
+  }
+
+  function setImpactOpen(open) {
+    if (!impactOverlayEl || !impactToggleBtn) return;
+    impactOpen = !!open;
+    if (impactOpen) closeShowcase();
+    impactOverlayEl.classList.toggle("is-open", impactOpen);
+    impactOverlayEl.setAttribute("aria-hidden", impactOpen ? "false" : "true");
+    impactToggleBtn.classList.toggle("is-active", impactOpen);
+    impactToggleBtn.setAttribute("aria-pressed", impactOpen ? "true" : "false");
+    impactToggleBtn.textContent = impactOpen ? "Impact: On" : "Impact Mode";
+  }
+
+  function toggleImpact() {
+    setImpactOpen(!impactOpen);
   }
 
   function getLessonSummaryLine() {
@@ -1594,15 +1796,52 @@
     ].join("\n");
   }
 
+  function inferBarrierCategory() {
+    var text = String(growEl && growEl.textContent || "").toLowerCase();
+    if (text.indexOf("claim") >= 0 || text.indexOf("topic") >= 0 || text.indexOf("start") >= 0) return "initiation";
+    if (text.indexOf("detail") >= 0 || text.indexOf("evidence") >= 0 || text.indexOf("why") >= 0) return "elaboration";
+    if (text.indexOf("word") >= 0 || text.indexOf("language") >= 0 || text.indexOf("precision") >= 0) return "language";
+    return "organization";
+  }
+
+  function getHomePlanByBarrier(barrier) {
+    var frame = currentFishTankLesson ? currentFishTankLesson.frame : "I think __ because __.";
+    if (barrier === "initiation") {
+      return {
+        prompt: "Have your child say one sentence first, then write it with frame \"" + frame + "\".",
+        routine: "1 minute oral rehearsal, 2 minutes writing one line, 2 minutes read aloud + praise."
+      };
+    }
+    if (barrier === "elaboration") {
+      return {
+        prompt: "Ask: What detail proves your point? Then add one sentence starting with 'For example...'.",
+        routine: "Read one line, add one detail sentence, explain why it matters."
+      };
+    }
+    if (barrier === "language") {
+      return {
+        prompt: "Replace one simple word with a stronger word from the vocab list.",
+        routine: "Circle one vague word, swap it, reread the sentence."
+      };
+    }
+    return {
+      prompt: "Use three mini-steps: claim/topic, support detail, closing line.",
+      routine: "Plan 3 bullets, write 3 lines, then quick read aloud."
+    };
+  }
+
   function buildParentUpdate() {
     var snap = getWritingSnapshot();
+    var barrier = inferBarrierCategory();
+    var homePlan = getHomePlanByBarrier(barrier);
     return [
       "Family Update",
       "Today we worked on: " + (currentFishTankLesson ? currentFishTankLesson.target : "clear writing structure"),
       "Your child produced " + snap.sentences + " sentence(s) and " + snap.words + " word(s).",
       "One strength: " + (glowEl ? glowEl.textContent : "They began the task independently."),
       "One next step: " + (growEl ? growEl.textContent : "Add one more detail sentence."),
-      "At home prompt: Ask them to read one line aloud, then help add one more sentence using \"" + (currentFishTankLesson ? currentFishTankLesson.frame : "because ___.") + "\""
+      "At home prompt: " + homePlan.prompt,
+      "5-minute routine: " + homePlan.routine
     ].join("\n");
   }
 
@@ -1764,7 +2003,19 @@
   function loadCaseload() {
     try {
       var raw = JSON.parse(localStorage.getItem(CASELOAD_KEY) || "[]");
-      caseloadItems = Array.isArray(raw) ? raw : [];
+      caseloadItems = Array.isArray(raw) ? raw.map(function (item) {
+        return {
+          id: item.id || ("c" + Math.random().toString(36).slice(2, 8)),
+          name: item.name || "Student",
+          goal: item.goal || "Writing growth",
+          next: item.next || "Plan next writing move.",
+          status: item.status || "active",
+          lastSample: item.lastSample || "",
+          lastWords: Number(item.lastWords) || 0,
+          lastScore: item.lastScore || "",
+          history: Array.isArray(item.history) ? item.history : []
+        };
+      }) : [];
     } catch (_error) {
       caseloadItems = [];
     }
@@ -1781,14 +2032,32 @@
       var words = item.lastWords ? (item.lastWords + " words") : "no sample words yet";
       var score = item.lastScore || "no score yet";
       var sample = item.lastSample || "no sample date";
+      var trend = getCaseTrendText(item);
       return (index + 1) + ". " + item.name +
         " | Status: " + formatCaseStatus(item.status) +
         " | Goal: " + item.goal +
         " | Next: " + item.next +
         " | Last sample: " + sample +
         " | " + words +
-        " | " + score;
+        " | " + score +
+        " | Trend: " + trend;
     })).join("\n");
+  }
+
+  function parseScoreValue(scoreText) {
+    var match = String(scoreText || "").match(/^(\d+)/);
+    return match ? Number(match[1]) : 0;
+  }
+
+  function getCaseTrendText(item) {
+    if (!item || !Array.isArray(item.history) || item.history.length < 2) return "collecting";
+    var first = item.history[0];
+    var last = item.history[item.history.length - 1];
+    var scoreDelta = (last.score || 0) - (first.score || 0);
+    var wordDelta = (last.words || 0) - (first.words || 0);
+    var scorePart = scoreDelta === 0 ? "score flat" : (scoreDelta > 0 ? ("score +" + scoreDelta) : ("score " + scoreDelta));
+    var wordPart = wordDelta === 0 ? "words flat" : (wordDelta > 0 ? ("words +" + wordDelta) : ("words " + wordDelta));
+    return scorePart + ", " + wordPart;
   }
 
   function renderCaseload() {
@@ -1828,7 +2097,8 @@
       sample.className = "ws-case-sample";
       sample.textContent = "Sample: " + (item.lastSample || "none") +
         " | " + (item.lastWords ? item.lastWords + " words" : "no words") +
-        " | " + (item.lastScore || "no rubric");
+        " | " + (item.lastScore || "no rubric") +
+        " | Trend: " + getCaseTrendText(item);
 
       var actions = document.createElement("div");
       actions.className = "ws-case-actions";
@@ -1847,6 +2117,27 @@
       cycleBtn.setAttribute("data-case-id", item.id);
       cycleBtn.textContent = "Cycle Status";
 
+      var assignBtn = document.createElement("button");
+      assignBtn.className = "ws-secondary";
+      assignBtn.type = "button";
+      assignBtn.setAttribute("data-case-action", "assign");
+      assignBtn.setAttribute("data-case-id", item.id);
+      assignBtn.textContent = "Assign Next";
+
+      var taskBtn = document.createElement("button");
+      taskBtn.className = "ws-secondary";
+      taskBtn.type = "button";
+      taskBtn.setAttribute("data-case-action", "task");
+      taskBtn.setAttribute("data-case-id", item.id);
+      taskBtn.textContent = "Copy Task";
+
+      var homeBtn = document.createElement("button");
+      homeBtn.className = "ws-secondary";
+      homeBtn.type = "button";
+      homeBtn.setAttribute("data-case-action", "home");
+      homeBtn.setAttribute("data-case-id", item.id);
+      homeBtn.textContent = "Copy Home";
+
       var deleteBtn = document.createElement("button");
       deleteBtn.className = "ws-secondary";
       deleteBtn.type = "button";
@@ -1856,6 +2147,9 @@
 
       actions.appendChild(fromDraftBtn);
       actions.appendChild(cycleBtn);
+      actions.appendChild(assignBtn);
+      actions.appendChild(taskBtn);
+      actions.appendChild(homeBtn);
       actions.appendChild(deleteBtn);
 
       card.appendChild(head);
@@ -1882,13 +2176,15 @@
       status: "active",
       lastSample: "",
       lastWords: 0,
-      lastScore: ""
+      lastScore: "",
+      history: []
     });
     if (caseNameInput) caseNameInput.value = "";
     if (caseGoalInput) caseGoalInput.value = "";
     if (caseNextInput) caseNextInput.value = "";
     saveCaseload();
     renderCaseload();
+    renderImpactSnapshot();
     showToast("Student added to caseload");
   }
 
@@ -1905,6 +2201,46 @@
     item.lastSample = new Date().toLocaleDateString();
     item.lastWords = snap.words;
     item.lastScore = snap.scores.total + "/9";
+    if (!Array.isArray(item.history)) item.history = [];
+    item.history.push({
+      at: Date.now(),
+      words: snap.words,
+      score: snap.scores.total,
+      planning: getPlanningStatus(snap.text, snap.words, snap.sentences).percent
+    });
+    if (item.history.length > 12) item.history = item.history.slice(-12);
+  }
+
+  function deriveNextTask(item) {
+    var history = Array.isArray(item.history) ? item.history : [];
+    var latest = history.length ? history[history.length - 1] : null;
+    if (!latest || latest.planning < 60) return "Plan: complete 3 bullets before drafting.";
+    if ((latest.score || 0) < 5) return "Draft: write claim/topic + 2 support lines.";
+    if ((latest.score || 0) < 7) return "Revise: add evidence and one why-it-matters line.";
+    return "Publish: final read aloud + one precision upgrade.";
+  }
+
+  function buildCaseTaskCard(item) {
+    var task = item && item.next ? item.next : deriveNextTask(item);
+    return [
+      "Student Task Card",
+      "Student: " + (item ? item.name : "Student"),
+      "Goal focus: " + (item ? item.goal : "Writing growth"),
+      "Next step: " + task,
+      "Success check: complete task and update from draft."
+    ].join("\n");
+  }
+
+  function buildCaseHomePlan(item) {
+    var barrier = inferBarrierCategory();
+    var homePlan = getHomePlanByBarrier(barrier);
+    return [
+      "Home Writing Plan",
+      "Student: " + (item ? item.name : "Student"),
+      "Current goal: " + (item ? item.goal : "Writing confidence"),
+      "Prompt: " + homePlan.prompt,
+      "Routine: " + homePlan.routine
+    ].join("\n");
   }
 
   function handleCaseloadAction(event) {
@@ -1921,16 +2257,43 @@
     } else if (action === "cycle") {
       cycleCaseStatus(item);
       showToast("Status updated");
+    } else if (action === "assign") {
+      item.next = deriveNextTask(item);
+      showToast("Next task assigned");
+    } else if (action === "task") {
+      copyTextPayload(buildCaseTaskCard(item), "Task card copied");
+    } else if (action === "home") {
+      copyTextPayload(buildCaseHomePlan(item), "Home plan copied");
     } else if (action === "delete") {
       caseloadItems = caseloadItems.filter(function (entry) { return entry.id !== id; });
       showToast("Student removed");
     }
     saveCaseload();
     renderCaseload();
+    renderImpactSnapshot();
   }
 
   function copyCaseloadBoard() {
     copyTextPayload(buildCaseloadBoardText(), "Caseload board copied");
+  }
+
+  function applyPlaybook() {
+    var id = String(playbookSelect && playbookSelect.value || "ms-ef");
+    var pack = PLAYBOOKS[id];
+    if (!pack) return;
+    withMutedToasts(function () {
+      if (pack.gradeBand) setGradeBand(pack.gradeBand);
+      if (pack.mode) setMode(pack.mode);
+      if (pack.profile) setProfile(pack.profile);
+      if (pack.organizer && organizerTypeSelect) {
+        organizerTypeSelect.value = pack.organizer;
+        renderOrganizerPreview();
+      }
+    });
+    setScaffoldCue(pack.cue || "Use one focused intervention routine.");
+    if (caseNextInput) caseNextInput.value = pack.nextAction || "";
+    renderImpactSnapshot();
+    showToast("Playbook applied");
   }
 
   function normalizeWordQuestGrade(rawGrade) {
@@ -2276,6 +2639,7 @@
     var prompt = "Family 5-Minute Writing Prompt\n1) Ask your child to read this line: \"" + line + "\"\n2) Praise one strength you hear.\n3) Do one next move together: " + goal;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(prompt).then(function () {
+        trackArtifactCopy("Family prompt copied");
         showToast("Family prompt copied");
       }).catch(function () {
         showToast("Copy blocked by browser");
@@ -2372,15 +2736,23 @@
     if (typed === target) {
       warmupStreak += 1;
       warmupBest = Math.max(warmupBest, warmupStreak);
+      qualityStreak += 1;
+      bestQualityStreak = Math.max(bestQualityStreak, qualityStreak);
       if (warmupRoundTimer) warmupRoundScore += 1;
       saveWarmupStats();
+      saveEngagementState();
       renderWarmupArcade();
+      renderROIDashboard();
+      renderImpactSnapshot();
       if (warmupStatusEl) warmupStatusEl.textContent = "Correct. Nice fix.";
       showToast("Warm-up correct");
       return;
     }
     warmupStreak = 0;
+    qualityStreak = 0;
     saveWarmupStats();
+    saveEngagementState();
+    renderROIDashboard();
     renderWarmupArcade();
     if (warmupStatusEl) warmupStatusEl.textContent = "Almost. Check capitalization, punctuation, and connectors.";
   }
@@ -2694,6 +3066,7 @@
     var words = getWordCount(text);
     var sentences = splitSentences(text).length;
     metrics.textContent = sentences + " sentence" + (sentences === 1 ? "" : "s") + " • " + words + " word" + (words === 1 ? "" : "s");
+    renderLiveHint(words, sentences);
     renderFlowState(text, words, sentences);
     renderGoal(text, words, sentences);
     renderCoachTips(text, words, sentences);
@@ -2701,6 +3074,7 @@
     renderConferenceCopilot(text, words, sentences);
     renderMasterySnapshot(text, words, sentences);
     renderPlanningMeter(text, words, sentences);
+    renderImpactSnapshot();
   }
 
   function renderVocabPills() {
@@ -2780,6 +3154,12 @@
 
   function saveDraft() {
     localStorage.setItem(DRAFT_KEY, editor.value);
+    updateQualityStreak(editor.value, getWordCount(editor.value), splitSentences(editor.value).length);
+    var stage = document.getElementById("ws-stage");
+    if (stage) {
+      stage.classList.add("ws-saved");
+      window.setTimeout(function () { stage.classList.remove("ws-saved"); }, 420);
+    }
     showToast("Draft saved");
   }
 
@@ -3031,6 +3411,8 @@
     });
   });
   if (modelBtn) modelBtn.addEventListener("click", toggleTeacherModel);
+  if (impactToggleBtn) impactToggleBtn.addEventListener("click", toggleImpact);
+  if (impactCloseBtn) impactCloseBtn.addEventListener("click", function () { setImpactOpen(false); });
   if (nextStepBtn) nextStepBtn.addEventListener("click", handleNextMove);
   if (quickWholeBtn) quickWholeBtn.addEventListener("click", function () { runQuickLaunch("whole"); });
   if (quickSmallBtn) quickSmallBtn.addEventListener("click", function () { runQuickLaunch("small"); });
@@ -3082,6 +3464,7 @@
   });
   if (caseAddBtn) caseAddBtn.addEventListener("click", addCaseloadStudent);
   if (caseCopyBtn) caseCopyBtn.addEventListener("click", copyCaseloadBoard);
+  if (playbookApplyBtn) playbookApplyBtn.addEventListener("click", applyPlaybook);
   if (caseListEl) caseListEl.addEventListener("click", handleCaseloadAction);
   if (frameworkSelect) frameworkSelect.addEventListener("change", function () { setFramework(frameworkSelect.value); });
   if (dictateBtn) dictateBtn.addEventListener("click", toggleDictation);
@@ -3145,8 +3528,26 @@
       closeShowcase();
       return;
     }
+    if (event.key === "Escape" && impactOpen) {
+      setImpactOpen(false);
+      return;
+    }
     if (event.key === "Escape" && setupToggleBtn && setupToggleBtn.getAttribute("aria-expanded") === "true") {
       setSetupPanelOpen(false);
+    }
+  });
+  document.addEventListener("click", function (event) {
+    var target = event.target;
+    if (setupToggleBtn && controlsPanelEl && setupToggleBtn.getAttribute("aria-expanded") === "true") {
+      if (!controlsPanelEl.contains(target) && target !== setupToggleBtn) {
+        setSetupPanelOpen(false);
+      }
+    }
+    if (impactOpen && impactOverlayEl && target === impactOverlayEl) {
+      setImpactOpen(false);
+    }
+    if (showcaseOpen && showcaseEl && target === showcaseEl) {
+      closeShowcase();
     }
   });
 
@@ -3162,6 +3563,10 @@
   renderPublishWall();
   loadCaseload();
   renderCaseload();
+  loadROIState();
+  loadEngagementState();
+  renderROIDashboard();
+  renderImpactSnapshot();
   loadStepUpMode();
   loadAudience();
   loadFramework();
