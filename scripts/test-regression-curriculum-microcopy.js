@@ -27,8 +27,8 @@ requireText(
   'Fundations chip microcopy regressed for closed syllables format.'
 );
 requireText(
-  /cvce:\s*'V-e syllable'/,
-  'Wilson chip microcopy regressed for V-e syllable format.'
+  /cvce:\s*'V-e syllable \(a_e\/i_e\/o_e\/u_e\)'/,
+  'Wilson chip microcopy regressed for V-e syllable notation format.'
 );
 requireText(
   /useCuratedPatternOnly = \['ufli', 'fundations', 'wilson'\]/,
