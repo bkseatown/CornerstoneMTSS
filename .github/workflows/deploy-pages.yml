@@ -60,7 +60,7 @@ jobs:
           set -euo pipefail
           markers=(
             'id="settings-build-badge"'
-            'src="./js/app.js?v='
+            'src="js/app.js?v='
             'id="s-reveal-focus"'
             'id="s-assessment-lock"'
             'id="voice-history-strip"'
