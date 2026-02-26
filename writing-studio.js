@@ -469,6 +469,8 @@
   var fishTankEvidenceBtn = document.getElementById("ws-ft-evidence");
   var fishTankParentBtn = document.getElementById("ws-ft-parent");
   var fishTankHandoffBtn = document.getElementById("ws-ft-handoff");
+  var fishTankSsmBtn = document.getElementById("ws-ft-ssm");
+  var fishTankIespBtn = document.getElementById("ws-ft-iesp");
   var fishTankTargetEl = document.getElementById("ws-ft-target");
   var quickWholeBtn = document.getElementById("ws-quick-whole");
   var quickSmallBtn = document.getElementById("ws-quick-small");
@@ -1605,6 +1607,76 @@
       "Successful scaffold: " + (scaffoldCueEl ? scaffoldCueEl.textContent : "Sentence frame and one-step prompt."),
       "Data snapshot: " + snap.scores.total + "/9 rubric, " + snap.sentences + " sentences, " + snap.words + " words",
       "Requested classroom carryover: give 2-minute pre-write with frame \"" + (currentFishTankLesson ? currentFishTankLesson.frame : "I think __ because __.") + "\" before independent draft."
+    ].join("\n");
+  }
+
+  function buildSSMAgenda() {
+    var snap = getWritingSnapshot();
+    var profileLabel = currentProfile === "whole" ? "Whole class" : currentProfile === "small" ? "Small group" : "1:1 intensive";
+    var benchmark = benchmarkLevelEl ? benchmarkLevelEl.textContent : "Local estimate pending";
+    var barrier = growEl ? growEl.textContent : "Writing initiation and planning";
+    var scaffold = scaffoldCueEl ? scaffoldCueEl.textContent : "Sentence frame + chunked prompt";
+    return [
+      "Student Support Meeting Agenda (Writing)",
+      "Date: " + new Date().toLocaleDateString(),
+      getLessonSummaryLine(),
+      "",
+      "1) Current Baseline",
+      "- Writing output: " + snap.sentences + " sentence(s), " + snap.words + " word(s)",
+      "- Rubric snapshot: " + snap.scores.total + "/9 (" + benchmark + ")",
+      "- Support setting used: " + profileLabel,
+      "",
+      "2) Barrier Summary",
+      "- Primary barrier: " + barrier,
+      "- Evidence span: " + snap.evidence,
+      "",
+      "3) Effective Supports",
+      "- Scaffold that worked: " + scaffold,
+      "- Prompt frame: " + (currentFishTankLesson ? currentFishTankLesson.frame : "I think __ because __."),
+      "",
+      "4) 3-4 Week Target",
+      "- Increase to " + Math.max(3, snap.sentences + 1) + " sentence(s) with clear claim/topic + support",
+      "- Raise rubric from " + snap.scores.total + "/9 to " + Math.min(9, snap.scores.total + 2) + "/9",
+      "",
+      "5) Team Actions",
+      "- Classroom teacher: 2-minute pre-write + frame before independent writing.",
+      "- LS/EAL support: run one gap-rescue cycle per week and track output.",
+      "- Family: 5-minute read-aloud + add one sentence routine."
+    ].join("\n");
+  }
+
+  function buildIESPGoalDraft() {
+    var snap = getWritingSnapshot();
+    var startSentences = Math.max(1, snap.sentences);
+    var targetSentences = Math.max(3, startSentences + 2);
+    var startScore = snap.scores.total;
+    var targetScore = Math.min(9, startScore + 2);
+    var frame = currentFishTankLesson ? currentFishTankLesson.frame : "I think __ because __.";
+    return [
+      "IESP/IP Writing Goal Draft",
+      "Date: " + new Date().toLocaleDateString(),
+      getLessonSummaryLine(),
+      "",
+      "Present Level Snapshot",
+      "- Current baseline: " + startSentences + " sentence(s), " + snap.words + " word(s), rubric " + startScore + "/9",
+      "- Primary need: planning + elaboration with consistent structure.",
+      "",
+      "Annual/Term Goal (Draft)",
+      "- Given a planning scaffold and sentence frame, student will produce a structured paragraph with at least " + targetSentences + " sentences and rubric score of " + targetScore + "/9 or higher in 3 of 4 collected samples.",
+      "",
+      "Short-Term Objectives",
+      "1) Planning: complete organizer with at least 3 idea bullets before drafting.",
+      "2) Drafting: write claim/topic sentence + at least 2 support sentences.",
+      "3) Revising: add one connector and one precise vocabulary upgrade.",
+      "",
+      "Accommodations/Supports",
+      "- Chunked writing timer (2-3 minute bursts), explicit model, immediate feedback, oral rehearsal.",
+      "- Frame for transfer: \"" + frame + "\"",
+      "",
+      "Progress Monitoring",
+      "- Frequency: weekly quick-write sample.",
+      "- Data points: sentence count, word count, rubric /9, checklist completion.",
+      "- Review cycle: every 4 weeks at team check-in."
     ].join("\n");
   }
 
@@ -2745,6 +2817,12 @@
   });
   if (fishTankHandoffBtn) fishTankHandoffBtn.addEventListener("click", function () {
     copyTextPayload(buildTeacherHandoff(), "Teacher handoff copied");
+  });
+  if (fishTankSsmBtn) fishTankSsmBtn.addEventListener("click", function () {
+    copyTextPayload(buildSSMAgenda(), "SSM agenda copied");
+  });
+  if (fishTankIespBtn) fishTankIespBtn.addEventListener("click", function () {
+    copyTextPayload(buildIESPGoalDraft(), "IESP goal draft copied");
   });
   if (frameworkSelect) frameworkSelect.addEventListener("change", function () { setFramework(frameworkSelect.value); });
   if (dictateBtn) dictateBtn.addEventListener("click", toggleDictation);
