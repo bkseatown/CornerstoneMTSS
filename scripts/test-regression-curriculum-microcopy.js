@@ -19,20 +19,24 @@ requireText(
   'Curated pattern labels are missing for UFLI/Fundations/Wilson.'
 );
 requireText(
-  /pattern-first:\s*cvc short-vowel words/,
-  'Pattern-first chip microcopy for core phonics labels is missing.'
+  /cvc:\s*'short-vowel CVC words'/,
+  'Core phonics chip microcopy regressed for UFLI CVC labels.'
 );
 requireText(
-  /pattern-first:\s*closed syllables \(cvc\)/,
-  'Fundations pattern-first chip labels regressed.'
+  /cvc:\s*'closed syllables \(CVC\)'/,
+  'Fundations chip microcopy regressed for closed syllables format.'
 );
 requireText(
-  /pattern-first:\s*v-e syllable/,
-  'Wilson pattern-first chip labels regressed.'
+  /cvce:\s*'V-e syllable'/,
+  'Wilson chip microcopy regressed for V-e syllable format.'
 );
 requireText(
   /useCuratedPatternOnly = \['ufli', 'fundations', 'wilson'\]/,
   'Curriculum meta copy no longer enforces curated chips for top-used packs.'
+);
+requireText(
+  /`\$\{focusLabel\} \(\$\{examples\.join\(', '\)\}\)`/,
+  'Curriculum chip meta no longer formats examples in parentheses.'
 );
 
 console.log('regression check passed: curriculum chip microcopy');
