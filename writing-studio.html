@@ -137,6 +137,19 @@
         <div class="ws-rail-block">
           <div class="ws-h2">Step Up Toolkit</div>
           <div class="ws-tip"><strong>Target:</strong> <span id="ws-stepup-grade-target">3-5 sentence focus: topic + 2 details + transition.</span></div>
+          <div class="ws-plan-row">
+            <input id="ws-code-topic" class="ws-plan-input" type="text" maxlength="6" placeholder="Topic code">
+            <input id="ws-code-detail" class="ws-plan-input" type="text" maxlength="6" placeholder="Detail code">
+            <button class="ws-secondary" id="ws-codes-save" type="button">Save Codes</button>
+          </div>
+          <div class="ws-plan-row">
+            <input id="ws-code-explain" class="ws-plan-input" type="text" maxlength="6" placeholder="Explain code">
+            <input id="ws-code-transition" class="ws-plan-input" type="text" maxlength="6" placeholder="Transition code">
+            <button class="ws-secondary" id="ws-codes-reset" type="button">Reset</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-code-vocab" class="ws-plan-input" type="text" maxlength="6" placeholder="Vocab code">
+          </div>
           <div class="ws-pills">
             <button class="ws-pill" id="ws-mark-topic" type="button">Mark Topic</button>
             <button class="ws-pill" id="ws-mark-detail" type="button">Mark Detail</button>
@@ -145,6 +158,20 @@
             <button class="ws-pill" id="ws-mark-vocab" type="button">Mark Vocab</button>
           </div>
           <button class="ws-secondary" id="ws-stepup-copy" type="button">Copy Marked Draft</button>
+        </div>
+
+        <div class="ws-rail-block">
+          <div class="ws-h2">Warm-Up: Fix It</div>
+          <div class="ws-tip"><strong>Broken:</strong> <span id="ws-warmup-broken">he run to school because late</span></div>
+          <div class="ws-tip"><strong>Hint:</strong> <span id="ws-warmup-hint">Add capitals, punctuation, and missing words.</span></div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-warmup-input" class="ws-plan-input" type="text" placeholder="Type your fixed sentence">
+            <button class="ws-secondary" id="ws-warmup-check" type="button">Check</button>
+          </div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-warmup-next" type="button">Next Warm-Up</button>
+            <div class="ws-meta" id="ws-warmup-status">Try one fix.</div>
+          </div>
         </div>
 
         <div class="ws-rail-block">

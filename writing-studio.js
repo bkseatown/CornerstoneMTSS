@@ -7,6 +7,7 @@
   var FRAMEWORK_KEY = "ws_framework_v1";
   var AUDIENCE_KEY = "ws_audience_v1";
   var STEPUP_KEY = "ws_stepup_mode_v1";
+  var STEPUP_CODES_KEY = "ws_stepup_codes_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -202,6 +203,25 @@
       paragraph: "9-12 paragraph focus: thesis move -> integrated evidence -> analysis -> synthesis."
     }
   };
+  var DEFAULT_MARK_CODES = { topic: "T", detail: "D", explain: "E", transition: "TR", vocab: "V" };
+  var BROKEN_SENTENCES = {
+    k2: [
+      { broken: "the dog run fast", fixed: "The dog runs fast.", hint: "Add capital letter, verb ending, and period." },
+      { broken: "i like apples because sweet", fixed: "I like apples because they are sweet.", hint: "Add a subject and punctuation." }
+    ],
+    "35": [
+      { broken: "we went to the museum it was fun", fixed: "We went to the museum, and it was fun.", hint: "Fix run-on with connector and punctuation." },
+      { broken: "the book was good because had details", fixed: "The book was good because it had details.", hint: "Add missing subject pronoun." }
+    ],
+    "68": [
+      { broken: "uniforms help students however some disagree", fixed: "Uniforms help students; however, some disagree.", hint: "Use punctuation around transition word." },
+      { broken: "the evidence is strong it proves the claim", fixed: "The evidence is strong, and it proves the claim.", hint: "Split or connect the ideas correctly." }
+    ],
+    "912": [
+      { broken: "social media influences teens therefore schools should teach digital literacy", fixed: "Social media influences teens; therefore, schools should teach digital literacy.", hint: "Use punctuation for conjunctive adverb." },
+      { broken: "the argument seems valid the evidence is limited", fixed: "The argument seems valid, but the evidence is limited.", hint: "Clarify relationship with a connector." }
+    ]
+  };
 
   var body = document.body;
   var subtitleEl = document.getElementById("ws-subtitle");
@@ -244,6 +264,19 @@
   var markTransitionBtn = document.getElementById("ws-mark-transition");
   var markVocabBtn = document.getElementById("ws-mark-vocab");
   var stepUpCopyBtn = document.getElementById("ws-stepup-copy");
+  var codeTopicInput = document.getElementById("ws-code-topic");
+  var codeDetailInput = document.getElementById("ws-code-detail");
+  var codeExplainInput = document.getElementById("ws-code-explain");
+  var codeTransitionInput = document.getElementById("ws-code-transition");
+  var codeVocabInput = document.getElementById("ws-code-vocab");
+  var codesSaveBtn = document.getElementById("ws-codes-save");
+  var codesResetBtn = document.getElementById("ws-codes-reset");
+  var warmupBrokenEl = document.getElementById("ws-warmup-broken");
+  var warmupHintEl = document.getElementById("ws-warmup-hint");
+  var warmupInput = document.getElementById("ws-warmup-input");
+  var warmupCheckBtn = document.getElementById("ws-warmup-check");
+  var warmupNextBtn = document.getElementById("ws-warmup-next");
+  var warmupStatusEl = document.getElementById("ws-warmup-status");
   var scaffoldNextBtn = document.getElementById("ws-scaffold-next");
   var scaffoldStemBtn = document.getElementById("ws-scaffold-stem");
   var scaffoldIdeaBtn = document.getElementById("ws-scaffold-idea");
@@ -290,6 +323,9 @@
   var currentFramework = "ccss";
   var currentAudience = "student";
   var stepUpEnabled = true;
+  var markCodes = { topic: "T", detail: "D", explain: "E", transition: "TR", vocab: "V" };
+  var warmupIndex = 0;
+  var currentWarmup = null;
   var teacherModel = false;
   var sprintTotalSeconds = PROFILE_CONFIG.whole.sprintSeconds;
   var sprintRemaining = sprintTotalSeconds;
@@ -1121,6 +1157,121 @@
     renderStepUpMode();
   }
 
+  function normalizeCode(value, fallback) {
+    var raw = String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (!raw) return fallback;
+    return raw.slice(0, 6);
+  }
+
+  function loadMarkCodes() {
+    var parsed = null;
+    try {
+      parsed = JSON.parse(localStorage.getItem(STEPUP_CODES_KEY) || "null");
+    } catch (_error) {
+      parsed = null;
+    }
+    markCodes = {
+      topic: normalizeCode(parsed && parsed.topic, DEFAULT_MARK_CODES.topic),
+      detail: normalizeCode(parsed && parsed.detail, DEFAULT_MARK_CODES.detail),
+      explain: normalizeCode(parsed && parsed.explain, DEFAULT_MARK_CODES.explain),
+      transition: normalizeCode(parsed && parsed.transition, DEFAULT_MARK_CODES.transition),
+      vocab: normalizeCode(parsed && parsed.vocab, DEFAULT_MARK_CODES.vocab)
+    };
+  }
+
+  function renderMarkCodes() {
+    if (codeTopicInput) codeTopicInput.value = markCodes.topic;
+    if (codeDetailInput) codeDetailInput.value = markCodes.detail;
+    if (codeExplainInput) codeExplainInput.value = markCodes.explain;
+    if (codeTransitionInput) codeTransitionInput.value = markCodes.transition;
+    if (codeVocabInput) codeVocabInput.value = markCodes.vocab;
+    if (markTopicBtn) markTopicBtn.textContent = "Mark Topic [" + markCodes.topic + "]";
+    if (markDetailBtn) markDetailBtn.textContent = "Mark Detail [" + markCodes.detail + "]";
+    if (markExplainBtn) markExplainBtn.textContent = "Mark Explain [" + markCodes.explain + "]";
+    if (markTransitionBtn) markTransitionBtn.textContent = "Mark Transition [" + markCodes.transition + "]";
+    if (markVocabBtn) markVocabBtn.textContent = "Mark Vocab [" + markCodes.vocab + "]";
+  }
+
+  function saveMarkCodes() {
+    markCodes = {
+      topic: normalizeCode(codeTopicInput && codeTopicInput.value, DEFAULT_MARK_CODES.topic),
+      detail: normalizeCode(codeDetailInput && codeDetailInput.value, DEFAULT_MARK_CODES.detail),
+      explain: normalizeCode(codeExplainInput && codeExplainInput.value, DEFAULT_MARK_CODES.explain),
+      transition: normalizeCode(codeTransitionInput && codeTransitionInput.value, DEFAULT_MARK_CODES.transition),
+      vocab: normalizeCode(codeVocabInput && codeVocabInput.value, DEFAULT_MARK_CODES.vocab)
+    };
+    renderMarkCodes();
+    try {
+      localStorage.setItem(STEPUP_CODES_KEY, JSON.stringify(markCodes));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+    showToast("Marking codes saved");
+  }
+
+  function resetMarkCodes() {
+    markCodes = {
+      topic: DEFAULT_MARK_CODES.topic,
+      detail: DEFAULT_MARK_CODES.detail,
+      explain: DEFAULT_MARK_CODES.explain,
+      transition: DEFAULT_MARK_CODES.transition,
+      vocab: DEFAULT_MARK_CODES.vocab
+    };
+    renderMarkCodes();
+    try {
+      localStorage.setItem(STEPUP_CODES_KEY, JSON.stringify(markCodes));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+    showToast("Marking codes reset");
+  }
+
+  function normalizeSentenceCompare(text) {
+    return String(text || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function getWarmupPool() {
+    return BROKEN_SENTENCES[currentGradeBand] || BROKEN_SENTENCES["35"];
+  }
+
+  function renderWarmup() {
+    var pool = getWarmupPool();
+    if (!pool.length) return;
+    if (warmupIndex >= pool.length) warmupIndex = 0;
+    currentWarmup = pool[warmupIndex];
+    if (warmupBrokenEl) warmupBrokenEl.textContent = currentWarmup.broken;
+    if (warmupHintEl) warmupHintEl.textContent = currentWarmup.hint;
+    if (warmupInput) warmupInput.value = "";
+    if (warmupStatusEl) warmupStatusEl.textContent = "Try one fix.";
+  }
+
+  function nextWarmup() {
+    var pool = getWarmupPool();
+    if (!pool.length) return;
+    warmupIndex = (warmupIndex + 1) % pool.length;
+    renderWarmup();
+  }
+
+  function checkWarmup() {
+    if (!currentWarmup || !warmupInput) return;
+    var typed = normalizeSentenceCompare(warmupInput.value);
+    var target = normalizeSentenceCompare(currentWarmup.fixed);
+    if (!typed) {
+      if (warmupStatusEl) warmupStatusEl.textContent = "Type your fix first.";
+      return;
+    }
+    if (typed === target) {
+      if (warmupStatusEl) warmupStatusEl.textContent = "Correct. Nice fix.";
+      showToast("Warm-up correct");
+      return;
+    }
+    if (warmupStatusEl) warmupStatusEl.textContent = "Almost. Check capitalization, punctuation, and connectors.";
+  }
+
   function insertMarker(code, label) {
     if (!stepUpEnabled) {
       showToast("Enable Step Up Mode first");
@@ -1150,7 +1301,7 @@
       return;
     }
     var header = "Step Up Marked Draft (" + (currentGradeBand === "k2" ? "K-2" : currentGradeBand === "35" ? "3-5" : currentGradeBand === "68" ? "6-8" : "9-12") + ", " + currentMode + ")\n";
-    var key = "Marking Key: [T]=Topic [D]=Detail [E]=Explain [TR]=Transition [V]=Vocab\n";
+    var key = "Marking Key: [" + markCodes.topic + "]=Topic [" + markCodes.detail + "]=Detail [" + markCodes.explain + "]=Explain [" + markCodes.transition + "]=Transition [" + markCodes.vocab + "]=Vocab\n";
     var payload = header + key + text;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(payload).then(function () {
@@ -1419,6 +1570,7 @@
     renderChecklist();
     renderVocabPills();
     renderStepUpMode();
+    renderWarmup();
     updateMetricsAndCoach();
     showToast("Grade band: " + (normalized === "k2" ? "K-2" : normalized === "35" ? "3-5" : normalized === "68" ? "6-8" : "9-12"));
   }
@@ -1707,12 +1859,22 @@
   if (sprintStartBtn) sprintStartBtn.addEventListener("click", toggleSprint);
   if (sprintResetBtn) sprintResetBtn.addEventListener("click", resetSprint);
   if (stepUpToggleBtn) stepUpToggleBtn.addEventListener("click", toggleStepUpMode);
-  if (markTopicBtn) markTopicBtn.addEventListener("click", function () { insertMarker("T", "Topic"); });
-  if (markDetailBtn) markDetailBtn.addEventListener("click", function () { insertMarker("D", "Detail"); });
-  if (markExplainBtn) markExplainBtn.addEventListener("click", function () { insertMarker("E", "Explain"); });
-  if (markTransitionBtn) markTransitionBtn.addEventListener("click", function () { insertMarker("TR", "Transition"); });
-  if (markVocabBtn) markVocabBtn.addEventListener("click", function () { insertMarker("V", "Vocab"); });
+  if (markTopicBtn) markTopicBtn.addEventListener("click", function () { insertMarker(markCodes.topic, "Topic"); });
+  if (markDetailBtn) markDetailBtn.addEventListener("click", function () { insertMarker(markCodes.detail, "Detail"); });
+  if (markExplainBtn) markExplainBtn.addEventListener("click", function () { insertMarker(markCodes.explain, "Explain"); });
+  if (markTransitionBtn) markTransitionBtn.addEventListener("click", function () { insertMarker(markCodes.transition, "Transition"); });
+  if (markVocabBtn) markVocabBtn.addEventListener("click", function () { insertMarker(markCodes.vocab, "Vocab"); });
   if (stepUpCopyBtn) stepUpCopyBtn.addEventListener("click", copyMarkedDraft);
+  if (codesSaveBtn) codesSaveBtn.addEventListener("click", saveMarkCodes);
+  if (codesResetBtn) codesResetBtn.addEventListener("click", resetMarkCodes);
+  if (warmupCheckBtn) warmupCheckBtn.addEventListener("click", checkWarmup);
+  if (warmupNextBtn) warmupNextBtn.addEventListener("click", nextWarmup);
+  if (warmupInput) warmupInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      checkWarmup();
+    }
+  });
   if (scaffoldNextBtn) scaffoldNextBtn.addEventListener("click", applyNextSmallStep);
   if (scaffoldStemBtn) scaffoldStemBtn.addEventListener("click", insertStem);
   if (scaffoldIdeaBtn) scaffoldIdeaBtn.addEventListener("click", insertIdeaPrompt);
@@ -1732,6 +1894,8 @@
   renderOrganizerPreview();
   renderPlanItems();
   renderSprint();
+  loadMarkCodes();
+  renderMarkCodes();
   loadStepUpMode();
   loadAudience();
   loadFramework();
