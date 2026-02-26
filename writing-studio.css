@@ -878,6 +878,15 @@ body.cs-page-writing {
   border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
+.ws-impact-review {
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.45;
+  max-height: 38vh;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   #ws-bg::before {
     animation: ws-float-a 9s ease-in-out infinite alternate;

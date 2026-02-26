@@ -490,6 +490,8 @@
   var impactCloseBtn = document.getElementById("ws-impact-close");
   var impactLineEl = document.getElementById("ws-impact-line");
   var impactSubEl = document.getElementById("ws-impact-sub");
+  var mtssReviewEl = document.getElementById("ws-mtss-review");
+  var mtssCopyBtn = document.getElementById("ws-mtss-copy");
   var flowButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-step[data-step]"));
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
@@ -1720,6 +1722,79 @@
     return improved + " of " + withHistory.length + " students show positive trend.";
   }
 
+  function getCaseTrendWindow(item) {
+    var history = Array.isArray(item && item.history) ? item.history : [];
+    var latest = history.length ? history[history.length - 1] : null;
+    var previous = history.length > 1 ? history[history.length - 2] : null;
+    return { latest: latest, previous: previous, count: history.length };
+  }
+
+  function getCaseWeeklyStatus(item) {
+    var windowData = getCaseTrendWindow(item);
+    if (windowData.count < 2 || !windowData.latest || !windowData.previous) {
+      return {
+        level: "Monitor",
+        reason: "Need at least two samples for reliable trend.",
+        action: "Collect two writing samples this week and review again."
+      };
+    }
+    var latest = windowData.latest;
+    var prev = windowData.previous;
+    var scoreDelta = Number(latest.score || 0) - Number(prev.score || 0);
+    var wordDelta = Number(latest.words || 0) - Number(prev.words || 0);
+    var planningDelta = Number(latest.planning || 0) - Number(prev.planning || 0);
+
+    if (Number(latest.score || 0) <= 3 || Number(latest.planning || 0) < 50 || (scoreDelta < 0 && wordDelta <= 0)) {
+      return {
+        level: "Intensify",
+        reason: "Low/declining output (" + scoreDelta + " score, " + wordDelta + " words).",
+        action: "Increase support frequency, shrink chunk size, and add co-teacher check-in."
+      };
+    }
+    if (scoreDelta > 0 || wordDelta >= 8 || planningDelta >= 15 || (Number(latest.score || 0) >= 6 && Number(latest.planning || 0) >= 75)) {
+      return {
+        level: "Improving",
+        reason: "Upward trend (" + (scoreDelta >= 0 ? "+" : "") + scoreDelta + " score, " + (wordDelta >= 0 ? "+" : "") + wordDelta + " words).",
+        action: "Maintain support and fade one scaffold while transferring to core task."
+      };
+    }
+    return {
+      level: "Monitor",
+      reason: "Performance is stable without clear growth.",
+      action: "Keep current scaffold and add one explicit mid-week check."
+    };
+  }
+
+  function buildMTSSWeeklyReview() {
+    if (!caseloadItems.length) {
+      return [
+        "MTSS Weekly Progress Review",
+        "Date: " + new Date().toLocaleDateString(),
+        "No caseload students added yet."
+      ].join("\n");
+    }
+    var buckets = { Improving: 0, Monitor: 0, Intensify: 0 };
+    var lines = caseloadItems.map(function (item) {
+      var status = getCaseWeeklyStatus(item);
+      buckets[status.level] += 1;
+      return "- " + item.name + ": " + status.level + " | " + status.reason + " Next: " + status.action;
+    });
+    return [
+      "MTSS Weekly Progress Review (Writing)",
+      "Date: " + new Date().toLocaleDateString(),
+      getLessonSummaryLine(),
+      "Caseload: " + caseloadItems.length + " | Improving: " + buckets.Improving + " | Monitor: " + buckets.Monitor + " | Intensify: " + buckets.Intensify,
+      "",
+      "Student Decisions",
+      lines.join("\n"),
+      "",
+      "Next Week Team Priorities",
+      "1) Intensify group: increase intervention dosage and shorten task chunks.",
+      "2) Monitor group: keep scaffold and run one mid-week progress check.",
+      "3) Improving group: fade one support and increase transfer to grade-level tasks."
+    ].join("\n");
+  }
+
   function renderImpactSnapshot() {
     if (!impactLineEl || !impactSubEl) return;
     var totalStudents = caseloadItems.length;
@@ -1727,6 +1802,10 @@
     var trend = getCaseloadTrendSummary();
     impactSubEl.textContent = "Artifacts: " + roiState.artifacts + " | Est. minutes saved: " + Math.round(roiState.totalMinutes) + " | Quality streak: " + qualityStreak;
     impactLineEl.textContent = "Caseload " + totalStudents + " (" + active + " active). " + trend + " Top artifact: " + getTopArtifactLabel() + ".";
+    if (mtssReviewEl) {
+      var review = buildMTSSWeeklyReview();
+      mtssReviewEl.textContent = review;
+    }
   }
 
   function setImpactOpen(open) {
@@ -3413,6 +3492,9 @@
   if (modelBtn) modelBtn.addEventListener("click", toggleTeacherModel);
   if (impactToggleBtn) impactToggleBtn.addEventListener("click", toggleImpact);
   if (impactCloseBtn) impactCloseBtn.addEventListener("click", function () { setImpactOpen(false); });
+  if (mtssCopyBtn) mtssCopyBtn.addEventListener("click", function () {
+    copyTextPayload(buildMTSSWeeklyReview(), "MTSS weekly review copied");
+  });
   if (nextStepBtn) nextStepBtn.addEventListener("click", handleNextMove);
   if (quickWholeBtn) quickWholeBtn.addEventListener("click", function () { runQuickLaunch("whole"); });
   if (quickSmallBtn) quickSmallBtn.addEventListener("click", function () { runQuickLaunch("small"); });
