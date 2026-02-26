@@ -354,6 +354,10 @@
   var flowButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-step[data-step]"));
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
+  var launchpadCopyEl = document.getElementById("ws-launchpad-copy");
+  var quickWholeBtn = document.getElementById("ws-quick-whole");
+  var quickSmallBtn = document.getElementById("ws-quick-small");
+  var quickOneBtn = document.getElementById("ws-quick-one");
   var planTopicInput = document.getElementById("ws-plan-topic");
   var planDetailInput = document.getElementById("ws-plan-detail");
   var planAddBtn = document.getElementById("ws-plan-add");
@@ -1782,13 +1786,13 @@
     });
 
     if (subtitleEl) {
-      if (normalized === "teacher") subtitleEl.textContent = "Lead high-impact writing moves with less prep load.";
+      if (normalized === "teacher") subtitleEl.textContent = "Launch writing in 60 seconds, then coach live.";
       else if (normalized === "family") subtitleEl.textContent = "Support writing at home with calm, clear next steps.";
       else subtitleEl.textContent = "Build ideas with structure — not stress.";
     }
 
     if (welcomeEl) {
-      if (normalized === "teacher") welcomeEl.textContent = "Teacher view: model, coach, and conference with confidence.";
+      if (normalized === "teacher") welcomeEl.textContent = "Teacher view: pick launch mode, model one move, and circulate.";
       else if (normalized === "family") welcomeEl.textContent = "Family view: praise effort, then prompt one next move.";
       else welcomeEl.textContent = "Student view: one small step at a time.";
     }
@@ -1806,6 +1810,7 @@
     } catch (_error) {
       // Ignore storage write errors.
     }
+    renderLaunchpadCopy();
     if (!(options && options.silent)) showToast("Audience: " + (normalized === "teacher" ? "Teacher" : normalized === "family" ? "Family" : "Student"));
   }
 
@@ -1817,6 +1822,58 @@
       stored = "student";
     }
     setAudience(stored, { silent: true });
+  }
+
+  function renderLaunchpadCopy() {
+    if (!launchpadCopyEl) return;
+    if (currentAudience === "teacher") {
+      if (currentProfile === "whole") {
+        launchpadCopyEl.textContent = "Whole class: model one claim, build two details, then release students.";
+      } else if (currentProfile === "small") {
+        launchpadCopyEl.textContent = "Small group: oral rehearse, write one sentence, then immediate feedback.";
+      } else {
+        launchpadCopyEl.textContent = "1:1: one tiny step, one line written, then celebrate and repeat.";
+      }
+      return;
+    }
+    if (currentAudience === "family") {
+      launchpadCopyEl.textContent = "Family: read one line aloud, praise one strength, add one next sentence.";
+      return;
+    }
+    launchpadCopyEl.textContent = "Students: pick a start mode, write one line now, then press Next Move.";
+  }
+
+  function runQuickLaunch(kind) {
+    var target = kind === "small" || kind === "one" ? kind : "whole";
+    withMutedToasts(function () {
+      if (target === "whole") {
+        setAudience("teacher", { silent: true });
+        setPresetPack("fishtank", { silent: true });
+        setProfile("whole");
+        setMode("paragraph");
+      } else if (target === "small") {
+        setAudience("teacher", { silent: true });
+        setPresetPack("stepup", { silent: true });
+        setProfile("small");
+        setMode("sentence");
+      } else {
+        setAudience("teacher", { silent: true });
+        setPresetPack("ls", { silent: true });
+        setProfile("one");
+        setMode("sentence");
+      }
+    });
+    setStep("plan");
+    if (planTopicInput) planTopicInput.focus();
+    if (setupToggleBtn && setupToggleBtn.getAttribute("aria-expanded") === "true") {
+      setSetupPanelOpen(false);
+    }
+    renderLaunchpadCopy();
+    showToast(target === "whole"
+      ? "Launch ready: whole class routine"
+      : target === "small"
+        ? "Launch ready: small group routine"
+        : "Launch ready: 1:1 intensive routine");
   }
 
   function getMicroStepCue() {
@@ -1977,8 +2034,9 @@
       currentStep = "plan";
     }
     if (modelBtn) modelBtn.disabled = next === "whole";
-    if (nextStepBtn) nextStepBtn.textContent = next === "whole" ? "Advance Step" : "Next Move";
+    if (nextStepBtn) nextStepBtn.textContent = next === "whole" ? "Advance Step" : "Do This Next";
     updateMetricsAndCoach();
+    renderLaunchpadCopy();
     showToast("Profile: " + (next === "whole" ? "Whole Class" : next === "small" ? "Small Group" : "1:1"));
   }
 
@@ -2118,6 +2176,7 @@
     renderVocabPills();
     setImagePrompts(imagePromptItems.length ? buildImagePrompts(imagePromptLabel || "this image") : []);
     updateMetricsAndCoach();
+    renderLaunchpadCopy();
   }
 
   function setStep(step) {
@@ -2318,6 +2377,9 @@
   });
   if (modelBtn) modelBtn.addEventListener("click", toggleTeacherModel);
   if (nextStepBtn) nextStepBtn.addEventListener("click", handleNextMove);
+  if (quickWholeBtn) quickWholeBtn.addEventListener("click", function () { runQuickLaunch("whole"); });
+  if (quickSmallBtn) quickSmallBtn.addEventListener("click", function () { runQuickLaunch("small"); });
+  if (quickOneBtn) quickOneBtn.addEventListener("click", function () { runQuickLaunch("one"); });
   if (planAddBtn) planAddBtn.addEventListener("click", addPlanItem);
   if (planUseBtn) planUseBtn.addEventListener("click", usePlanInDraft);
   if (organizerTypeSelect) organizerTypeSelect.addEventListener("change", renderOrganizerPreview);
@@ -2405,4 +2467,5 @@
   loadPresetPack();
   applyWordQuestContext();
   setSetupPanelOpen(false);
+  renderLaunchpadCopy();
 })();
