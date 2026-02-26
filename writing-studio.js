@@ -153,6 +153,7 @@
   var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition || null;
   var recognition = null;
   var isDictating = false;
+  var imagePromptLabel = "";
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
@@ -198,6 +199,16 @@
       return checklistInputs.length > 0 && checklistInputs.every(function (input) { return input.checked; });
     }
     return false;
+  }
+
+  function getPlanningReadiness(text, words, sentenceCount) {
+    var claimSignal = CLAIM_RE.test(text);
+    var hasPlanItems = planItems.length >= 2;
+    var hasOrganizer = Boolean(ORGANIZER_TEMPLATES[getOrganizerType()]);
+    if (currentMode === "paragraph") {
+      return hasPlanItems && (claimSignal || words >= 12) && hasOrganizer;
+    }
+    return hasPlanItems && (sentenceCount >= 1 || words >= 6);
   }
 
   function renderFlowState(text, words, sentenceCount) {
@@ -311,6 +322,7 @@
     currentImageUrl = URL.createObjectURL(file);
     renderImagePreview(file, currentImageUrl);
     var label = normalizeImageLabel(file.name);
+    imagePromptLabel = label;
     setImagePrompts(buildImagePrompts(label));
     if (currentStep === "plan") showToast("Image prompts ready");
   }
@@ -339,6 +351,15 @@
         dictateBtn.setAttribute("aria-pressed", "false");
         dictateBtn.textContent = "Dictate";
       }
+    };
+    recognition.onerror = function () {
+      isDictating = false;
+      if (dictateBtn) {
+        dictateBtn.classList.remove("is-active");
+        dictateBtn.setAttribute("aria-pressed", "false");
+        dictateBtn.textContent = "Dictate";
+      }
+      showToast("Dictation error");
     };
   }
 
@@ -418,6 +439,18 @@
       updateMetricsAndCoach();
     }
     showToast("Plan inserted");
+  }
+
+  function enforcePlanGate(nextStep) {
+    if (currentStep !== "plan") return true;
+    if (nextStep === "plan") return true;
+    var text = editor.value;
+    var words = getWordCount(text);
+    var sentences = splitSentences(text).length;
+    var ready = getPlanningReadiness(text, words, sentences);
+    if (ready) return true;
+    showToast("Complete Idea Builder before drafting");
+    return false;
   }
 
   function renderGoal(text, words, sentenceCount) {
@@ -628,13 +661,18 @@
       btn.classList.toggle("is-active", btn.getAttribute("data-profile") === next);
     });
     sprintTotalSeconds = PROFILE_CONFIG[next].sprintSeconds;
-    teacherModel = next === "one" ? true : teacherModel;
+    teacherModel = next === "one";
     if (modelBtn) {
       modelBtn.classList.toggle("is-active", teacherModel);
       modelBtn.setAttribute("aria-pressed", teacherModel ? "true" : "false");
       modelBtn.textContent = teacherModel ? "Teacher Model: On" : "Teacher Model: Off";
     }
     resetSprint();
+    if (next === "whole") {
+      currentStep = "plan";
+    }
+    if (modelBtn) modelBtn.disabled = next === "whole";
+    if (nextStepBtn) nextStepBtn.textContent = next === "whole" ? "Advance Step" : "Next Move";
     updateMetricsAndCoach();
     showToast("Profile: " + (next === "whole" ? "Whole Class" : next === "small" ? "Small Group" : "1:1"));
   }
@@ -729,12 +767,13 @@
     }
     renderChecklist();
     renderVocabPills();
-    setImagePrompts(imagePromptItems.length ? buildImagePrompts("this image") : []);
+    setImagePrompts(imagePromptItems.length ? buildImagePrompts(imagePromptLabel || "this image") : []);
     updateMetricsAndCoach();
   }
 
   function setStep(step) {
     if (STEP_ORDER.indexOf(step) === -1) return;
+    if (!enforcePlanGate(step)) return;
     currentStep = step;
     updateMetricsAndCoach();
   }
@@ -761,7 +800,9 @@
   function advanceToNextStep() {
     var idx = STEP_ORDER.indexOf(currentStep);
     if (idx < 0 || idx === STEP_ORDER.length - 1) return;
-    setStep(STEP_ORDER[idx + 1]);
+    var next = STEP_ORDER[idx + 1];
+    if (!enforcePlanGate(next)) return;
+    setStep(next);
   }
 
   function handleNextMove() {
