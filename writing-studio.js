@@ -8,6 +8,7 @@
   var AUDIENCE_KEY = "ws_audience_v1";
   var STEPUP_KEY = "ws_stepup_mode_v1";
   var STEPUP_CODES_KEY = "ws_stepup_codes_v1";
+  var WARMUP_STATS_KEY = "ws_warmup_stats_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -277,6 +278,12 @@
   var warmupCheckBtn = document.getElementById("ws-warmup-check");
   var warmupNextBtn = document.getElementById("ws-warmup-next");
   var warmupStatusEl = document.getElementById("ws-warmup-status");
+  var warmupStreakEl = document.getElementById("ws-warmup-streak");
+  var warmupBestEl = document.getElementById("ws-warmup-best");
+  var warmupRoundTimeEl = document.getElementById("ws-warmup-round-time");
+  var warmupRoundScoreEl = document.getElementById("ws-warmup-round-score");
+  var warmupRoundStartBtn = document.getElementById("ws-warmup-round-start");
+  var warmupClassToggleBtn = document.getElementById("ws-warmup-class-toggle");
   var scaffoldNextBtn = document.getElementById("ws-scaffold-next");
   var scaffoldStemBtn = document.getElementById("ws-scaffold-stem");
   var scaffoldIdeaBtn = document.getElementById("ws-scaffold-idea");
@@ -326,6 +333,12 @@
   var markCodes = { topic: "T", detail: "D", explain: "E", transition: "TR", vocab: "V" };
   var warmupIndex = 0;
   var currentWarmup = null;
+  var warmupStreak = 0;
+  var warmupBest = 0;
+  var warmupRoundScore = 0;
+  var warmupRoundSeconds = 0;
+  var warmupRoundTimer = null;
+  var warmupClassMode = false;
   var teacherModel = false;
   var sprintTotalSeconds = PROFILE_CONFIG.whole.sprintSeconds;
   var sprintRemaining = sprintTotalSeconds;
@@ -1234,6 +1247,85 @@
       .trim();
   }
 
+  function loadWarmupStats() {
+    var parsed = null;
+    try {
+      parsed = JSON.parse(localStorage.getItem(WARMUP_STATS_KEY) || "null");
+    } catch (_error) {
+      parsed = null;
+    }
+    warmupStreak = Number(parsed && parsed.streak) > 0 ? Number(parsed.streak) : 0;
+    warmupBest = Number(parsed && parsed.best) > 0 ? Number(parsed.best) : 0;
+  }
+
+  function saveWarmupStats() {
+    try {
+      localStorage.setItem(WARMUP_STATS_KEY, JSON.stringify({ streak: warmupStreak, best: warmupBest }));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+  }
+
+  function formatRoundTime(seconds) {
+    var safe = Math.max(0, Number(seconds) || 0);
+    var mins = String(Math.floor(safe / 60)).padStart(2, "0");
+    var secs = String(safe % 60).padStart(2, "0");
+    return mins + ":" + secs;
+  }
+
+  function renderWarmupArcade() {
+    if (warmupStreakEl) warmupStreakEl.textContent = String(warmupStreak);
+    if (warmupBestEl) warmupBestEl.textContent = String(warmupBest);
+    if (warmupRoundTimeEl) warmupRoundTimeEl.textContent = warmupRoundTimer ? formatRoundTime(warmupRoundSeconds) : "--:--";
+    if (warmupRoundScoreEl) warmupRoundScoreEl.textContent = String(warmupRoundScore);
+    if (warmupRoundStartBtn) warmupRoundStartBtn.textContent = warmupRoundTimer ? "Stop Round" : "Start Timed Round";
+    if (warmupClassToggleBtn) {
+      warmupClassToggleBtn.classList.toggle("is-active", warmupClassMode);
+      warmupClassToggleBtn.setAttribute("aria-pressed", warmupClassMode ? "true" : "false");
+      warmupClassToggleBtn.textContent = warmupClassMode ? "Class Challenge: On" : "Class Challenge: Off";
+    }
+  }
+
+  function stopWarmupRound(complete) {
+    if (warmupRoundTimer) {
+      window.clearInterval(warmupRoundTimer);
+      warmupRoundTimer = null;
+    }
+    if (complete && warmupStatusEl) {
+      warmupStatusEl.textContent = "Round complete: " + warmupRoundScore + " correct.";
+    }
+    renderWarmupArcade();
+  }
+
+  function tickWarmupRound() {
+    warmupRoundSeconds = Math.max(0, warmupRoundSeconds - 1);
+    renderWarmupArcade();
+    if (warmupRoundSeconds <= 0) {
+      stopWarmupRound(true);
+      showToast("Round complete");
+    }
+  }
+
+  function toggleWarmupRound() {
+    if (warmupRoundTimer) {
+      stopWarmupRound(false);
+      showToast("Round stopped");
+      return;
+    }
+    warmupRoundScore = 0;
+    warmupRoundSeconds = warmupClassMode ? 180 : 120;
+    renderWarmupArcade();
+    if (warmupStatusEl) warmupStatusEl.textContent = warmupClassMode ? "Class round live. Keep the pace." : "Round live. Fix fast and accurately.";
+    warmupRoundTimer = window.setInterval(tickWarmupRound, 1000);
+    showToast("Timed round started");
+  }
+
+  function toggleWarmupClassMode() {
+    warmupClassMode = !warmupClassMode;
+    renderWarmupArcade();
+    if (warmupStatusEl) warmupStatusEl.textContent = warmupClassMode ? "Class challenge mode on." : "Class challenge mode off.";
+  }
+
   function getWarmupPool() {
     return BROKEN_SENTENCES[currentGradeBand] || BROKEN_SENTENCES["35"];
   }
@@ -1247,6 +1339,7 @@
     if (warmupHintEl) warmupHintEl.textContent = currentWarmup.hint;
     if (warmupInput) warmupInput.value = "";
     if (warmupStatusEl) warmupStatusEl.textContent = "Try one fix.";
+    renderWarmupArcade();
   }
 
   function nextWarmup() {
@@ -1265,10 +1358,18 @@
       return;
     }
     if (typed === target) {
+      warmupStreak += 1;
+      warmupBest = Math.max(warmupBest, warmupStreak);
+      if (warmupRoundTimer) warmupRoundScore += 1;
+      saveWarmupStats();
+      renderWarmupArcade();
       if (warmupStatusEl) warmupStatusEl.textContent = "Correct. Nice fix.";
       showToast("Warm-up correct");
       return;
     }
+    warmupStreak = 0;
+    saveWarmupStats();
+    renderWarmupArcade();
     if (warmupStatusEl) warmupStatusEl.textContent = "Almost. Check capitalization, punctuation, and connectors.";
   }
 
@@ -1869,6 +1970,8 @@
   if (codesResetBtn) codesResetBtn.addEventListener("click", resetMarkCodes);
   if (warmupCheckBtn) warmupCheckBtn.addEventListener("click", checkWarmup);
   if (warmupNextBtn) warmupNextBtn.addEventListener("click", nextWarmup);
+  if (warmupRoundStartBtn) warmupRoundStartBtn.addEventListener("click", toggleWarmupRound);
+  if (warmupClassToggleBtn) warmupClassToggleBtn.addEventListener("click", toggleWarmupClassMode);
   if (warmupInput) warmupInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -1896,6 +1999,8 @@
   renderSprint();
   loadMarkCodes();
   renderMarkCodes();
+  loadWarmupStats();
+  renderWarmupArcade();
   loadStepUpMode();
   loadAudience();
   loadFramework();
