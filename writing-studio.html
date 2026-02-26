@@ -14,25 +14,33 @@
 <body class="cs-page-writing cs-hv2-theme-default">
   <div id="ws-bg">
     <header id="ws-topbar">
-      <div class="ws-brand">
-        <div class="ws-dot"></div>
-        <div>
-          <div class="ws-title">Writing Studio</div>
-          <div class="ws-subtitle" id="ws-subtitle">Build ideas with structure — not stress.</div>
-          <div class="ws-welcome" id="ws-welcome">Student view: one small step at a time.</div>
-          <div class="ws-launch-context" id="ws-launch-context" hidden></div>
+        <div class="ws-brand">
+          <div class="ws-dot"></div>
+          <div>
+            <div class="ws-title">Writing Studio</div>
+            <div class="ws-subtitle" id="ws-subtitle">Guided writing for class, support, and home.</div>
+            <div class="ws-welcome" id="ws-welcome">How it works: Launch -> Write -> Feedback.</div>
+            <div class="ws-start-here" id="ws-start-here">
+              <div class="ws-start-kicker">Today</div>
+              <div class="ws-start-title" id="ws-start-title">Choose a starting routine.</div>
+              <button class="ws-primary" id="ws-start-cta" type="button">Begin</button>
+            </div>
+            <div class="ws-launch-search-wrap">
+              <input id="ws-launch-search" class="ws-plan-input ws-launch-search" type="search" placeholder="Find a routine or command (e.g., warm-up, small group, teacher)">
+              <div id="ws-launch-results" class="ws-launch-results hidden" role="listbox" aria-label="Writing Studio launcher"></div>
+            </div>
+            <div class="ws-launch-context" id="ws-launch-context" hidden></div>
+          </div>
         </div>
-      </div>
 
       <div class="ws-controls">
         <div class="ws-controls-primary">
           <button class="ws-chip is-active" data-mode="sentence" type="button">Sentence</button>
           <button class="ws-chip" data-mode="paragraph" type="button">Paragraph</button>
-          <button class="ws-chip" id="ws-showcase-toggle" type="button" aria-pressed="false">Showcase</button>
-          <button class="ws-ghost" id="ws-setup-toggle" type="button" aria-expanded="false" aria-controls="ws-controls-panel">Class Setup</button>
-          <button class="ws-ghost" id="ws-back" type="button">Back to WordQuest</button>
+          <button class="ws-ghost ws-icon-btn" id="ws-setup-toggle" type="button" aria-expanded="false" aria-controls="ws-controls-panel" aria-label="Open command menu" title="Open command menu">...</button>
         </div>
         <div class="ws-controls-panel" id="ws-controls-panel" hidden>
+          <div class="ws-controls-advanced" id="ws-controls-advanced">
           <div class="ws-controls-row">
             <button class="ws-chip is-active" data-audience="student" type="button">Student</button>
             <button class="ws-chip" data-audience="teacher" type="button">Teacher</button>
@@ -61,6 +69,7 @@
             <button class="ws-chip" id="ws-impact-toggle" type="button" aria-pressed="false">Impact Mode</button>
             <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
           </div>
+          </div>
         </div>
       </div>
     </header>
@@ -68,7 +77,7 @@
     <main id="ws-stage">
       <section id="ws-canvas">
         <div class="ws-canvas-head">
-          <div class="ws-h2">Draft</div>
+          <div class="ws-h2">Writing</div>
           <div class="ws-meta"><span id="ws-metrics">0 sentences • 0 words</span> • <span id="ws-live-hint">Ready to start.</span></div>
         </div>
         <div id="ws-flow" class="ws-flow" role="tablist" aria-label="Writing workflow">
@@ -83,20 +92,26 @@
           <button class="ws-secondary" id="ws-next-step" type="button">Do This Next</button>
         </div>
         <div class="ws-missions" aria-label="Quick missions">
-          <button class="ws-secondary" id="ws-mission-warmup" type="button">Mission 1: Fix It Warm-Up</button>
-          <button class="ws-secondary" id="ws-mission-plan" type="button">Mission 2: Build a Plan</button>
+          <button class="ws-secondary" id="ws-mission-warmup" type="button">Mission 1: Fix-It Sprint</button>
+          <button class="ws-secondary" id="ws-mission-plan" type="button">Mission 2: Plan It</button>
           <button class="ws-secondary" id="ws-mission-power" type="button">Mission 3: Power Paragraph</button>
+          <button class="ws-secondary" id="ws-mission-masters" type="button">Mission 4: Masters Move</button>
         </div>
         <div class="ws-launchpad" id="ws-launchpad" aria-label="60 second class launch">
           <div class="ws-launchpad-head">
-            <div class="ws-h2">Class Launch (60 sec)</div>
-            <div class="ws-meta" id="ws-launchpad-copy">Choose your teaching context, then run the first move.</div>
+            <div class="ws-h2">Quick Start (60 sec)</div>
+            <div class="ws-meta" id="ws-launchpad-copy">Pick a path, then run your first move.</div>
           </div>
           <div class="ws-launchpad-actions">
-            <button class="ws-secondary" id="ws-quick-whole" type="button">Whole Class Start</button>
-            <button class="ws-secondary" id="ws-quick-small" type="button">Small Group Start</button>
-            <button class="ws-secondary" id="ws-quick-one" type="button">1:1 Intensive Start</button>
+            <button class="ws-secondary" id="ws-quick-whole" type="button">Whole Class</button>
+            <button class="ws-secondary" id="ws-quick-small" type="button">Small Group</button>
+            <button class="ws-secondary" id="ws-quick-one" type="button">1:1 Boost</button>
           </div>
+          <div class="ws-launchpad-actions">
+            <button class="ws-secondary" id="ws-quick-core" type="button">Start Lesson</button>
+            <button class="ws-secondary" id="ws-quick-full" type="button">Show All Tools</button>
+          </div>
+          <div class="ws-meta" id="ws-quickstart-note">Pick one mission, model one line, celebrate one win.</div>
         </div>
         <details class="ws-advanced-canvas" id="ws-advanced-canvas">
           <summary>Advanced Tools</summary>
@@ -300,6 +315,37 @@
           </div>
         </div>
 
+        <div class="ws-rail-block" id="ws-block-masters" data-role-group="all">
+          <div class="ws-h2">Masters Series</div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-master-strand" class="ws-plan-input" aria-label="Masters strand">
+              <option value="storytelling" selected>Strand: Storytelling</option>
+              <option value="persuasion">Strand: Persuasion</option>
+              <option value="humor">Strand: Humor</option>
+              <option value="communication">Strand: Communication</option>
+            </select>
+            <button class="ws-secondary" id="ws-master-load" type="button">Load Master Move</button>
+          </div>
+          <div class="ws-pills" id="ws-master-mentors" aria-label="Mentor picks"></div>
+          <div class="ws-tip"><strong>One Point:</strong> <span id="ws-master-point">Select a strand to load a model move.</span></div>
+          <div class="ws-tip"><strong>One Example:</strong> <span id="ws-master-example">A short mentor-style example appears here.</span></div>
+          <div class="ws-tip"><strong>Your Try:</strong> <span id="ws-master-try">Use this move in one sentence first.</span></div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-master-insert" type="button">Insert Try Prompt</button>
+            <button class="ws-secondary" id="ws-master-speak" type="button">Hear Example</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-master-length" class="ws-plan-input" aria-label="Playlist length">
+              <option value="10">10 min lesson</option>
+              <option value="15" selected>15 min lesson</option>
+              <option value="20">20 min lesson</option>
+            </select>
+            <button class="ws-secondary" id="ws-master-build-playlist" type="button">Build Playlist</button>
+            <button class="ws-secondary" id="ws-master-copy-playlist" type="button">Copy Sub Script</button>
+          </div>
+          <div class="ws-tip"><strong>Class Playlist:</strong> <span id="ws-master-playlist">Build a playlist to get a substitute-ready script.</span></div>
+        </div>
+
         <div class="ws-rail-block" data-role-group="student,support,teacher">
           <div class="ws-h2">Feedback</div>
           <div id="ws-feedback" class="ws-feedback">
@@ -422,6 +468,43 @@
       <button class="ws-secondary" id="ws-tour-prev" type="button">Back</button>
       <button class="ws-secondary" id="ws-tour-next" type="button">Next</button>
       <button class="ws-primary" id="ws-tour-start" type="button">Start</button>
+    </div>
+  </div>
+
+  <div id="ws-onboard" class="ws-showcase" aria-hidden="true">
+    <button class="ws-ghost ws-showcase-close" id="ws-onboard-skip" type="button">Skip</button>
+    <div class="ws-showcase-title">Quick Setup (90 sec)</div>
+    <div class="ws-showcase-sub">Pick your defaults and jump right in.</div>
+    <div class="ws-onboard-grid">
+      <label class="ws-onboard-field">
+        <span>Role</span>
+        <select id="ws-onboard-role" class="ws-plan-input">
+          <option value="teacher" selected>Teacher</option>
+          <option value="student">Student</option>
+          <option value="support">LS/EAL</option>
+          <option value="family">Family</option>
+        </select>
+      </label>
+      <label class="ws-onboard-field">
+        <span>Grade Band</span>
+        <select id="ws-onboard-grade" class="ws-plan-input">
+          <option value="k2">K-2</option>
+          <option value="35" selected>3-5</option>
+          <option value="68">6-8</option>
+          <option value="912">9-12</option>
+        </select>
+      </label>
+      <label class="ws-onboard-field">
+        <span>Default Lesson Length</span>
+        <select id="ws-onboard-length" class="ws-plan-input">
+          <option value="10">10 min</option>
+          <option value="15" selected>15 min</option>
+          <option value="20">20 min</option>
+        </select>
+      </label>
+    </div>
+    <div class="ws-canvas-foot">
+      <button class="ws-primary" id="ws-onboard-start" type="button">Start Studio</button>
     </div>
   </div>
 </body>

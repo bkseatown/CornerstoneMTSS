@@ -16,6 +16,9 @@
   var ROI_KEY = "ws_roi_v1";
   var ENGAGE_KEY = "ws_engage_v1";
   var TOUR_KEY = "ws_tour_done_v1";
+  var CORE_VIEW_KEY = "ws_core_view_v1";
+  var ONBOARD_KEY = "ws_onboard_v1";
+  var LAUNCH_DEFAULTS_KEY = "ws_launch_defaults_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -157,6 +160,15 @@
       publish: "Final check: claim, evidence, explanation are all clear."
     }
   };
+  var CORE_RAIL_IDS = [
+    "ws-block-coach",
+    "ws-block-scaffold",
+    "ws-block-warmup",
+    "ws-block-masters",
+    "ws-block-caseload",
+    "ws-block-mastery",
+    "ws-block-publish"
+  ];
   var CONFERENCE_PROMPTS = {
     sentence: {
       plan: "Tell me your topic in one sentence.",
@@ -399,10 +411,122 @@
       { broken: "the argument seems valid the evidence is limited", fixed: "The argument seems valid, but the evidence is limited.", hint: "Clarify relationship with a connector." }
     ]
   };
+  var MASTERS_SERIES = {
+    storytelling: {
+      label: "Storytelling",
+      mentors: [
+        {
+          id: "lewis",
+          name: "Michael Lewis style",
+          point: "Open with a specific scene, then reveal why it matters.",
+          example: "At 6:12 a.m., the hallway was already loud, and that was when she realized the test score was gone from her notebook.",
+          tryPrompt: "Start with a time/place scene, then add one sentence that reveals the real problem."
+        },
+        {
+          id: "dicks",
+          name: "Matthew Dicks style",
+          point: "Use one clear change moment so the story has a visible before/after.",
+          example: "Before the speech, he hid in the back row. After one question from the audience, he stepped forward and owned the room.",
+          tryPrompt: "Write one 'before' sentence and one 'after' sentence for the same character."
+        },
+        {
+          id: "pixar",
+          name: "Pixar beat style",
+          point: "Use a simple story arc: setup, disruption, response, and change.",
+          example: "Every day she took the same bus. One day the route changed, so she had to ask for help and found a new friend.",
+          tryPrompt: "Write 4 short lines: every day..., one day..., because of that..., finally...."
+        }
+      ]
+    },
+    persuasion: {
+      label: "Persuasion",
+      mentors: [
+        {
+          id: "aristotle",
+          name: "Logos + Ethos + Pathos",
+          point: "Blend logic, credibility, and human impact in one short paragraph.",
+          example: "Later school starts improve attention (logic), pediatric sleep research supports this (credibility), and students report feeling less exhausted in first period (human impact).",
+          tryPrompt: "Write 3 lines: one fact, one trusted source, one real student impact."
+        },
+        {
+          id: "booth",
+          name: "They Say / I Say",
+          point: "Name a counterpoint clearly, then answer it with evidence.",
+          example: "Some people argue uniforms remove individuality; however, survey data show uniforms can reduce social pressure and improve focus.",
+          tryPrompt: "Write 'Some argue __; however, __ because __.'"
+        },
+        {
+          id: "cialdini",
+          name: "Influence move",
+          point: "Anchor your claim in one strong principle like social proof or reciprocity.",
+          example: "When three classes piloted reading sprints, participation rose, so adopting this routine school-wide is a practical next step.",
+          tryPrompt: "Use one line that starts: 'When others did __, the result was __, so we should __.'"
+        }
+      ]
+    },
+    humor: {
+      label: "Humor",
+      mentors: [
+        {
+          id: "setup-twist",
+          name: "Setup + twist",
+          point: "Build a clear expectation, then flip it with a specific surprise.",
+          example: "I studied all night for the vocabulary quiz, then realized I had memorized next week’s list.",
+          tryPrompt: "Write one setup sentence and one twist sentence that reverses it."
+        },
+        {
+          id: "rule-three",
+          name: "Rule of three",
+          point: "List two normal items and a third unexpected one.",
+          example: "For my backpack I packed pencils, my notebook, and a full-size frying pan for absolutely no reason.",
+          tryPrompt: "Write a list of three where the third item is absurd but school-appropriate."
+        },
+        {
+          id: "voice",
+          name: "Narrator voice",
+          point: "Use a confident narrator voice that comments on events.",
+          example: "As your humble expert in bad decisions, I can confirm that sprinting to class with untied shoes is not a strategy.",
+          tryPrompt: "Write one sentence in a bold narrator voice about a minor classroom moment."
+        }
+      ]
+    },
+    communication: {
+      label: "Communication",
+      mentors: [
+        {
+          id: "bluf",
+          name: "BLUF clarity",
+          point: "Put the bottom line up front, then give two support points.",
+          example: "Our group should split roles now. It saves time and helps everyone prepare a stronger final product.",
+          tryPrompt: "Write one BLUF sentence: recommendation first, then why it helps."
+        },
+        {
+          id: "nonviolent",
+          name: "Observation -> need -> request",
+          point: "Separate what happened from what you need and ask for.",
+          example: "When side conversations start during instructions, I miss key details, so I need one quiet minute to write the steps down.",
+          tryPrompt: "Write: 'When __, I need __, so I request __.'"
+        },
+        {
+          id: "bridge",
+          name: "Bridge statement",
+          point: "Acknowledge both sides, then bridge to shared purpose.",
+          example: "You want creativity and I want structure, so let’s use a short outline first and then open drafting time.",
+          tryPrompt: "Write one bridge sentence that starts: 'You want __, I want __, so __.'"
+        }
+      ]
+    }
+  };
 
   var body = document.body;
   var subtitleEl = document.getElementById("ws-subtitle");
   var welcomeEl = document.getElementById("ws-welcome");
+  var valueLineEl = document.getElementById("ws-value-line");
+  var threeSecEl = document.getElementById("ws-three-sec");
+  var startTitleEl = document.getElementById("ws-start-title");
+  var startCtaBtn = document.getElementById("ws-start-cta");
+  var launchSearchInput = document.getElementById("ws-launch-search");
+  var launchResultsEl = document.getElementById("ws-launch-results");
   var launchContextEl = document.getElementById("ws-launch-context");
   var editor = document.getElementById("ws-editor");
   var metrics = document.getElementById("ws-metrics");
@@ -482,6 +606,8 @@
   var presetSelect = document.getElementById("ws-preset-pack");
   var profileButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-profile]"));
   var showcaseToggleBtn = document.getElementById("ws-showcase-toggle");
+  var coreToggleBtn = document.getElementById("ws-core-toggle");
+  var coreTogglePanelBtn = document.getElementById("ws-core-toggle-panel");
   var showcaseEl = document.getElementById("ws-showcase");
   var showcaseCloseBtn = document.getElementById("ws-showcase-close");
   var showcaseLineEl = document.getElementById("ws-showcase-line");
@@ -501,12 +627,31 @@
   var tourStartBtn = document.getElementById("ws-tour-start");
   var tourStepEl = document.getElementById("ws-tour-step");
   var tourTextEl = document.getElementById("ws-tour-text");
+  var onboardEl = document.getElementById("ws-onboard");
+  var onboardRoleSelect = document.getElementById("ws-onboard-role");
+  var onboardGradeSelect = document.getElementById("ws-onboard-grade");
+  var onboardLengthSelect = document.getElementById("ws-onboard-length");
+  var onboardStartBtn = document.getElementById("ws-onboard-start");
+  var onboardSkipBtn = document.getElementById("ws-onboard-skip");
   var flowButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-step[data-step]"));
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
   var missionWarmupBtn = document.getElementById("ws-mission-warmup");
   var missionPlanBtn = document.getElementById("ws-mission-plan");
   var missionPowerBtn = document.getElementById("ws-mission-power");
+  var missionMastersBtn = document.getElementById("ws-mission-masters");
+  var masterStrandSelect = document.getElementById("ws-master-strand");
+  var masterMentorsEl = document.getElementById("ws-master-mentors");
+  var masterPointEl = document.getElementById("ws-master-point");
+  var masterExampleEl = document.getElementById("ws-master-example");
+  var masterTryEl = document.getElementById("ws-master-try");
+  var masterLoadBtn = document.getElementById("ws-master-load");
+  var masterInsertBtn = document.getElementById("ws-master-insert");
+  var masterSpeakBtn = document.getElementById("ws-master-speak");
+  var masterLengthSelect = document.getElementById("ws-master-length");
+  var masterBuildPlaylistBtn = document.getElementById("ws-master-build-playlist");
+  var masterCopyPlaylistBtn = document.getElementById("ws-master-copy-playlist");
+  var masterPlaylistEl = document.getElementById("ws-master-playlist");
   var launchpadCopyEl = document.getElementById("ws-launchpad-copy");
   var fishTankGradeSelect = document.getElementById("ws-ft-division");
   var fishTankPathSelect = document.getElementById("ws-ft-path");
@@ -540,6 +685,9 @@
   var quickWholeBtn = document.getElementById("ws-quick-whole");
   var quickSmallBtn = document.getElementById("ws-quick-small");
   var quickOneBtn = document.getElementById("ws-quick-one");
+  var quickCoreBtn = document.getElementById("ws-quick-core");
+  var quickFullBtn = document.getElementById("ws-quick-full");
+  var quickstartNoteEl = document.getElementById("ws-quickstart-note");
   var planTopicInput = document.getElementById("ws-plan-topic");
   var planDetailInput = document.getElementById("ws-plan-detail");
   var planAddBtn = document.getElementById("ws-plan-add");
@@ -561,12 +709,15 @@
   var backBtn = document.getElementById("ws-back");
   var setupToggleBtn = document.getElementById("ws-setup-toggle");
   var controlsPanelEl = document.getElementById("ws-controls-panel");
+  var controlsMoreBtn = document.getElementById("ws-controls-more");
+  var controlsAdvancedEl = document.getElementById("ws-controls-advanced");
   var railEl = document.getElementById("ws-rail");
   var railPrevBtn = document.getElementById("ws-rail-prev");
   var railNextBtn = document.getElementById("ws-rail-next");
   var railToggleBtn = document.getElementById("ws-rail-toggle");
   var railTitleEl = document.getElementById("ws-rail-title");
   var advancedCanvasEl = document.getElementById("ws-advanced-canvas");
+  var stageEl = document.getElementById("ws-stage");
   var settingsBtn = document.getElementById("ws-settings");
   var gradeBandSelect = document.getElementById("ws-grade-band");
   var currentMode = "sentence";
@@ -597,6 +748,9 @@
   var planItems = [];
   var imagePromptItems = [];
   var currentImageUrl = "";
+  var currentMasterStrand = "storytelling";
+  var currentMasterMentor = "lewis";
+  var masterPlaylistText = "";
   var caseloadItems = [];
   var wordQuestContext = null;
   var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition || null;
@@ -613,6 +767,10 @@
   var impactOpen = false;
   var tourOpen = false;
   var tourIndex = 0;
+  var onboardOpen = false;
+  var coreView = true;
+  var controlsAdvancedOpen = false;
+  var launcherOptions = [];
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
@@ -1930,6 +2088,7 @@
   }
 
   function maybeStartTour() {
+    if (onboardOpen) return;
     var seen = "1";
     try {
       seen = localStorage.getItem(TOUR_KEY) || "0";
@@ -1949,6 +2108,61 @@
     }
     setTourOpen(false, { silent: true });
     showToast("You are ready");
+  }
+
+  function setOnboardingOpen(open) {
+    if (!onboardEl) return;
+    onboardOpen = !!open;
+    if (onboardOpen) {
+      closeShowcase();
+      setImpactOpen(false);
+      setTourOpen(false, { silent: true });
+      if (setupToggleBtn && setupToggleBtn.getAttribute("aria-expanded") === "true") {
+        setSetupPanelOpen(false);
+      }
+    }
+    onboardEl.classList.toggle("is-open", onboardOpen);
+    onboardEl.setAttribute("aria-hidden", onboardOpen ? "false" : "true");
+  }
+
+  function maybeStartOnboarding() {
+    var seen = "1";
+    try {
+      seen = localStorage.getItem(ONBOARD_KEY) || "0";
+    } catch (_error) {
+      seen = "0";
+    }
+    if (seen === "1") return;
+    var defaults = getLaunchDefaults();
+    if (onboardRoleSelect) onboardRoleSelect.value = defaults.role;
+    if (onboardGradeSelect) onboardGradeSelect.value = defaults.gradeBand;
+    if (onboardLengthSelect) onboardLengthSelect.value = String(defaults.lessonLength);
+    setOnboardingOpen(true);
+  }
+
+  function finishOnboarding(saveChoice) {
+    if (saveChoice) {
+      var role = String(onboardRoleSelect && onboardRoleSelect.value || "teacher");
+      var gradeBand = String(onboardGradeSelect && onboardGradeSelect.value || "35");
+      var lessonLength = Number(onboardLengthSelect && onboardLengthSelect.value || 15);
+      var defaults = { role: role, gradeBand: gradeBand, lessonLength: lessonLength };
+      saveLaunchDefaults(defaults);
+      withMutedToasts(function () {
+        setAudience(defaults.role, { silent: true });
+        setGradeBand(defaults.gradeBand);
+        setProfile(defaults.role === "support" ? "small" : "whole");
+        setMode(defaults.role === "teacher" || defaults.role === "support" ? "paragraph" : "sentence");
+        setMasterLessonLength(defaults.lessonLength, { silent: true });
+        setCoreView(true, { silent: true });
+      });
+    }
+    try {
+      localStorage.setItem(ONBOARD_KEY, "1");
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+    setOnboardingOpen(false);
+    if (saveChoice) showToast("Setup saved");
   }
 
   function applyTaskHandoffFromHash() {
@@ -1974,10 +2188,7 @@
     });
     if (planTopicInput && goal) planTopicInput.value = goal;
     if (planDetailInput && task) planDetailInput.value = task;
-    if (student && launchContextEl) {
-      launchContextEl.textContent = "Task handoff for " + student;
-      launchContextEl.hidden = false;
-    }
+    if (launchContextEl) launchContextEl.hidden = true;
     setScaffoldCue("Handoff task loaded: complete this step first.");
     if (task) {
       editor.value = "Task: " + task + "\n\n" + (editor.value || "");
@@ -2720,6 +2931,17 @@
       showToast("Mission loaded: Build a Plan");
       return;
     }
+    if (type === "masters") {
+      withMutedToasts(function () {
+        setMode("paragraph");
+        setStep("plan");
+      });
+      goToRailPanelById("ws-block-masters");
+      applyMasterLesson();
+      setScaffoldCue("Mission: study one master move, then write one line in that style.");
+      showToast("Mission loaded: Masters Move");
+      return;
+    }
     withMutedToasts(function () {
       setMode("paragraph");
       setStep("draft");
@@ -2737,6 +2959,215 @@
     if (value === "G6-8" || value === "6-8") return "68";
     if (value === "G9-12" || value === "9-12") return "912";
     return "";
+  }
+
+  function getMasterStrandConfig() {
+    var strand = String(currentMasterStrand || "storytelling");
+    return MASTERS_SERIES[strand] || MASTERS_SERIES.storytelling;
+  }
+
+  function getCurrentMasterMentor() {
+    var strandConfig = getMasterStrandConfig();
+    var mentors = Array.isArray(strandConfig.mentors) ? strandConfig.mentors : [];
+    var found = mentors.find(function (item) { return item.id === currentMasterMentor; });
+    return found || mentors[0] || null;
+  }
+
+  function renderMasterMentors() {
+    if (!masterMentorsEl) return;
+    var strandConfig = getMasterStrandConfig();
+    var mentors = Array.isArray(strandConfig.mentors) ? strandConfig.mentors : [];
+    if (!mentors.length) {
+      masterMentorsEl.innerHTML = "";
+      return;
+    }
+    if (!mentors.find(function (item) { return item.id === currentMasterMentor; })) {
+      currentMasterMentor = mentors[0].id;
+    }
+    masterMentorsEl.innerHTML = "";
+    mentors.forEach(function (mentor) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "ws-pill ws-master-mentor" + (mentor.id === currentMasterMentor ? " is-active" : "");
+      button.textContent = mentor.name;
+      button.setAttribute("data-master-mentor", mentor.id);
+      button.addEventListener("click", function () {
+        currentMasterMentor = mentor.id;
+        renderMasterMentors();
+        renderMasterLesson();
+      });
+      masterMentorsEl.appendChild(button);
+    });
+  }
+
+  function renderMasterLesson() {
+    var mentor = getCurrentMasterMentor();
+    if (!mentor) return;
+    if (masterPointEl) masterPointEl.textContent = mentor.point;
+    if (masterExampleEl) masterExampleEl.textContent = mentor.example;
+    if (masterTryEl) masterTryEl.textContent = mentor.tryPrompt;
+    buildMasterPlaylistPreview();
+  }
+
+  function applyMasterLesson() {
+    if (!masterStrandSelect) return;
+    currentMasterStrand = String(masterStrandSelect.value || "storytelling");
+    var strandConfig = getMasterStrandConfig();
+    if (!strandConfig.mentors.find(function (item) { return item.id === currentMasterMentor; })) {
+      currentMasterMentor = strandConfig.mentors[0].id;
+    }
+    renderMasterMentors();
+    renderMasterLesson();
+  }
+
+  function insertMasterTryPrompt() {
+    var mentor = getCurrentMasterMentor();
+    if (!mentor) return;
+    var strandConfig = getMasterStrandConfig();
+    var header = "Masters Series - " + strandConfig.label + " (" + mentor.name + ")";
+    var block = header + "\nMove: " + mentor.point + "\nTry: " + mentor.tryPrompt + "\n";
+    editor.value = (editor.value ? editor.value + "\n\n" : "") + block;
+    if (currentStep === "plan") setStep("draft");
+    updateMetricsAndCoach();
+    showToast("Master prompt inserted");
+  }
+
+  function speakMasterExample() {
+    var mentor = getCurrentMasterMentor();
+    if (!mentor || !window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+      showToast("Audio not available");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    var utterance = new SpeechSynthesisUtterance(mentor.example);
+    utterance.rate = 0.97;
+    utterance.pitch = 1.02;
+    window.speechSynthesis.speak(utterance);
+    showToast("Master example playing");
+  }
+
+  function getMasterLessonLength() {
+    var minutes = Number(masterLengthSelect && masterLengthSelect.value || 15);
+    if (minutes !== 10 && minutes !== 15 && minutes !== 20) return 15;
+    return minutes;
+  }
+
+  function setMasterLessonLength(minutes, options) {
+    var normalized = Number(minutes);
+    if (normalized !== 10 && normalized !== 15 && normalized !== 20) normalized = 15;
+    if (masterLengthSelect) masterLengthSelect.value = String(normalized);
+    buildMasterPlaylistPreview();
+    if (!(options && options.silent)) showToast("Lesson length: " + normalized + " min");
+  }
+
+  function getMasterTimingBlocks(minutes) {
+    if (minutes === 10) {
+      return [
+        { label: "Warm-Up", mins: 2, move: "Run one quick Fix-It sentence." },
+        { label: "Model Move", mins: 3, move: "Teach one point + read one example aloud." },
+        { label: "Your Try", mins: 3, move: "Students write one line in mentor style." },
+        { label: "Share + Exit", mins: 2, move: "Call on 2 students and name one strength." }
+      ];
+    }
+    if (minutes === 20) {
+      return [
+        { label: "Warm-Up", mins: 3, move: "Run one quick Fix-It sentence." },
+        { label: "Model Move", mins: 5, move: "Teach one point + read one example aloud." },
+        { label: "Guided Try", mins: 5, move: "Co-write one class line, then students write." },
+        { label: "Independent Try", mins: 4, move: "Students expand to 2-3 lines." },
+        { label: "Share + Exit", mins: 3, move: "Peer share + one clear next step." }
+      ];
+    }
+    return [
+      { label: "Warm-Up", mins: 3, move: "Run one quick Fix-It sentence." },
+      { label: "Model Move", mins: 4, move: "Teach one point + read one example aloud." },
+      { label: "Your Try", mins: 5, move: "Students write one line, then one expansion line." },
+      { label: "Share + Exit", mins: 3, move: "Call on 3 students and name one strength each." }
+    ];
+  }
+
+  function buildMasterPlaylistText() {
+    var mentor = getCurrentMasterMentor();
+    if (!mentor) return "";
+    var strand = getMasterStrandConfig();
+    var minutes = getMasterLessonLength();
+    var blocks = getMasterTimingBlocks(minutes);
+    var lines = [
+      "Masters Series Substitute Script (" + minutes + " min)",
+      "Strand: " + strand.label,
+      "Mentor: " + mentor.name,
+      "Focus move: " + mentor.point,
+      "",
+      "Teacher Script",
+      "Say: \"Today we are practicing one move: " + mentor.point + "\"",
+      "Read this example: \"" + mentor.example + "\"",
+      "Say: \"Now your turn: " + mentor.tryPrompt + "\"",
+      ""
+    ];
+    blocks.forEach(function (block, idx) {
+      lines.push((idx + 1) + ") " + block.label + " (" + block.mins + " min): " + block.move);
+    });
+    lines.push("");
+    lines.push("Success Check");
+    lines.push("- Every student writes at least one complete line using the move.");
+    lines.push("- Teacher names one strength and one next step.");
+    return lines.join("\n");
+  }
+
+  function buildMasterPlaylistPreview() {
+    masterPlaylistText = buildMasterPlaylistText();
+    if (!masterPlaylistEl) return;
+    if (!masterPlaylistText) {
+      masterPlaylistEl.textContent = "Build a playlist to get a substitute-ready script.";
+      return;
+    }
+    var firstLines = masterPlaylistText.split("\n").slice(0, 4).join(" | ");
+    masterPlaylistEl.textContent = firstLines;
+  }
+
+  function copyMasterPlaylist() {
+    if (!masterPlaylistText) buildMasterPlaylistPreview();
+    copyTextPayload(masterPlaylistText, "Masters substitute script copied");
+  }
+
+  function getLaunchDefaults() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(LAUNCH_DEFAULTS_KEY) || "{}");
+      return {
+        role: parsed.role === "teacher" || parsed.role === "student" || parsed.role === "support" || parsed.role === "family" ? parsed.role : "teacher",
+        gradeBand: parsed.gradeBand === "k2" || parsed.gradeBand === "35" || parsed.gradeBand === "68" || parsed.gradeBand === "912" ? parsed.gradeBand : "35",
+        lessonLength: parsed.lessonLength === 10 || parsed.lessonLength === 15 || parsed.lessonLength === 20 ? parsed.lessonLength : 15
+      };
+    } catch (_error) {
+      return { role: "teacher", gradeBand: "35", lessonLength: 15 };
+    }
+  }
+
+  function saveLaunchDefaults(defaults) {
+    if (!defaults) return;
+    var payload = {
+      role: defaults.role === "teacher" || defaults.role === "student" || defaults.role === "support" || defaults.role === "family" ? defaults.role : "teacher",
+      gradeBand: defaults.gradeBand === "k2" || defaults.gradeBand === "35" || defaults.gradeBand === "68" || defaults.gradeBand === "912" ? defaults.gradeBand : "35",
+      lessonLength: defaults.lessonLength === 10 || defaults.lessonLength === 15 || defaults.lessonLength === 20 ? defaults.lessonLength : 15
+    };
+    try {
+      localStorage.setItem(LAUNCH_DEFAULTS_KEY, JSON.stringify(payload));
+    } catch (_error) {
+      // Ignore storage errors.
+    }
+  }
+
+  function applyLaunchDefaults(options) {
+    var defaults = getLaunchDefaults();
+    withMutedToasts(function () {
+      setAudience(defaults.role, { silent: true });
+      setGradeBand(defaults.gradeBand);
+      setProfile(defaults.role === "support" ? "small" : "whole");
+      setMode(defaults.role === "teacher" || defaults.role === "support" ? "paragraph" : "sentence");
+      setMasterLessonLength(defaults.lessonLength, { silent: true });
+      setCoreView(true, { silent: true });
+    });
+    if (!(options && options.silent)) showToast("Launch defaults applied");
   }
 
   function isWordQuestContentFocus(focusValue) {
@@ -2762,12 +3193,7 @@
 
   function renderWordQuestContextBadge(context) {
     if (!launchContextEl) return;
-    var focusLabel = String(context && context.focusLabel || "").trim();
-    var word = String(context && context.word || "").trim();
-    var tag = focusLabel || "WordQuest";
-    if (word) tag += " • " + word;
-    launchContextEl.textContent = "From WordQuest: " + tag;
-    launchContextEl.hidden = false;
+    launchContextEl.hidden = true;
   }
 
   function storeReturnSummaryForWordQuest() {
@@ -2806,19 +3232,6 @@
       if (isWordQuestContentFocus(context.focus)) setMode("paragraph");
     });
 
-    var topic = context.focusLabel || (context.focus ? context.focus.toUpperCase() : "");
-    var detailA = context.word ? ("Use target word: " + context.word) : "";
-    var detailB = context.clue ? context.clue : "";
-
-    if (planTopicInput && topic) planTopicInput.value = topic;
-    if (planDetailInput && detailA) planDetailInput.value = detailA;
-
-    if (!planItems.length) {
-      if (topic && detailA) planItems.push({ topic: topic, detail: detailA });
-      if (topic && detailB) planItems.push({ topic: "Sentence clue", detail: detailB });
-      if (planItems.length) renderPlanItems();
-    }
-
     if (context.word) {
       var wordPrompt = currentMode === "paragraph"
         ? "Use \"" + context.word + "\" in your claim and evidence."
@@ -2829,7 +3242,9 @@
     }
 
     updateMetricsAndCoach();
-    showToast("WordQuest context loaded");
+    if (currentAudience === "teacher" || currentAudience === "support") {
+      showToast("WordQuest context loaded");
+    }
   }
 
   function normalizeCode(value, fallback) {
@@ -3237,13 +3652,62 @@
     var blocks = Array.prototype.slice.call(document.querySelectorAll("#ws-rail .ws-rail-block"));
     blocks.forEach(function (block) {
       var groups = String(block.getAttribute("data-role-group") || "all").split(",").map(function (t) { return t.trim(); });
-      var visible = groups.indexOf("all") >= 0 || groups.indexOf(currentAudience) >= 0;
+      var roleVisible = groups.indexOf("all") >= 0 || groups.indexOf(currentAudience) >= 0;
+      var coreVisible = !coreView || CORE_RAIL_IDS.indexOf(block.id) >= 0;
+      var visible = roleVisible && coreVisible;
       block.hidden = !visible;
     });
     if (advancedCanvasEl) {
-      advancedCanvasEl.open = currentAudience === "teacher" || currentAudience === "support";
+      advancedCanvasEl.open = !coreView && (currentAudience === "teacher" || currentAudience === "support");
     }
     initRailPager();
+  }
+
+  function renderCoreViewState() {
+    if (coreToggleBtn) {
+      coreToggleBtn.classList.toggle("is-active", coreView);
+      coreToggleBtn.setAttribute("aria-pressed", coreView ? "true" : "false");
+      coreToggleBtn.textContent = coreView ? "◎" : "◉";
+      coreToggleBtn.title = coreView ? "Core view" : "Full view";
+      coreToggleBtn.setAttribute("aria-label", coreView ? "Core view" : "Full view");
+    }
+    if (coreTogglePanelBtn) {
+      coreTogglePanelBtn.classList.toggle("is-active", coreView);
+      coreTogglePanelBtn.setAttribute("aria-pressed", coreView ? "true" : "false");
+      coreTogglePanelBtn.textContent = coreView ? "Focus View" : "Full View";
+    }
+    if (quickstartNoteEl) {
+      quickstartNoteEl.textContent = coreView
+        ? "Pick one mission, model one line, celebrate one win."
+        : "Full Studio: all tools are open for deeper planning + support.";
+    }
+  }
+
+  function setCoreView(enabled, options) {
+    coreView = !!enabled;
+    renderCoreViewState();
+    applyRoleVisibility();
+    try {
+      localStorage.setItem(CORE_VIEW_KEY, coreView ? "on" : "off");
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+    if (!(options && options.silent)) showToast(coreView ? "Core view on" : "Full studio on");
+    if (wordQuestContext) renderWordQuestContextBadge(wordQuestContext);
+  }
+
+  function toggleCoreView() {
+    setCoreView(!coreView);
+  }
+
+  function loadCoreView() {
+    var stored = "on";
+    try {
+      stored = localStorage.getItem(CORE_VIEW_KEY) || "on";
+    } catch (_error) {
+      stored = "on";
+    }
+    setCoreView(stored !== "off", { silent: true });
   }
 
   function setAudience(audience, options) {
@@ -3254,17 +3718,27 @@
     });
 
     if (subtitleEl) {
-      if (normalized === "teacher") subtitleEl.textContent = "Launch writing in 60 seconds, then coach live.";
-      else if (normalized === "support") subtitleEl.textContent = "Run targeted LS/EAL support with clear intervention steps.";
-      else if (normalized === "family") subtitleEl.textContent = "Support writing at home with calm, clear next steps.";
-      else subtitleEl.textContent = "Build ideas with structure — not stress.";
+      if (normalized === "teacher") subtitleEl.textContent = "Guided writing for whole class and intervention.";
+      else if (normalized === "support") subtitleEl.textContent = "Guided writing for targeted LS/EAL support.";
+      else if (normalized === "family") subtitleEl.textContent = "Guided writing for quick, calm home support.";
+      else subtitleEl.textContent = "Guided writing for class, support, and home.";
     }
 
     if (welcomeEl) {
-      if (normalized === "teacher") welcomeEl.textContent = "Teacher view: pick launch mode, model one move, and circulate.";
-      else if (normalized === "support") welcomeEl.textContent = "LS/EAL view: assign one step, update from draft, track growth.";
-      else if (normalized === "family") welcomeEl.textContent = "Family view: praise effort, then prompt one next move.";
-      else welcomeEl.textContent = "Student view: one small step at a time.";
+      if (normalized === "teacher") welcomeEl.textContent = "How it works: Launch -> Model -> Coach.";
+      else if (normalized === "support") welcomeEl.textContent = "How it works: Assign -> Write -> Track.";
+      else if (normalized === "family") welcomeEl.textContent = "How it works: Read -> Praise -> Add one line.";
+      else welcomeEl.textContent = "How it works: Launch -> Write -> Feedback.";
+    }
+
+    if (startTitleEl) {
+      if (normalized === "teacher") startTitleEl.textContent = "Choose your class starting routine.";
+      else if (normalized === "support") startTitleEl.textContent = "Choose your support starting routine.";
+      else if (normalized === "family") startTitleEl.textContent = "Choose your home starting routine.";
+      else startTitleEl.textContent = "Choose your writing starting routine.";
+    }
+    if (startCtaBtn) {
+      startCtaBtn.textContent = "Begin";
     }
 
     if (normalized === "teacher") {
@@ -3284,6 +3758,13 @@
     }
     applyRoleVisibility();
     renderLaunchpadCopy();
+    if (wordQuestContext) {
+      if (normalized === "teacher" || normalized === "support" || normalized === "family") {
+        renderWordQuestContextBadge(wordQuestContext);
+      } else if (launchContextEl) {
+        launchContextEl.hidden = true;
+      }
+    }
     if (!(options && options.silent)) showToast("Audience: " + (normalized === "teacher" ? "Teacher" : normalized === "support" ? "LS/EAL" : normalized === "family" ? "Family" : "Student"));
   }
 
@@ -3301,28 +3782,29 @@
     if (!launchpadCopyEl) return;
     if (currentAudience === "teacher") {
       if (currentProfile === "whole") {
-        launchpadCopyEl.textContent = "Whole class: model one claim, build two details, then release students.";
+        launchpadCopyEl.textContent = "Whole class: model one claim, then students build two details.";
       } else if (currentProfile === "small") {
-        launchpadCopyEl.textContent = "Small group: oral rehearse, write one sentence, then immediate feedback.";
+        launchpadCopyEl.textContent = "Small group: rehearse aloud, write one line, quick feedback.";
       } else {
-        launchpadCopyEl.textContent = "1:1: one tiny step, one line written, then celebrate and repeat.";
+        launchpadCopyEl.textContent = "1:1: one tiny step, one line, quick win.";
       }
       return;
     }
     if (currentAudience === "family") {
-      launchpadCopyEl.textContent = "Family: read one line aloud, praise one strength, add one next sentence.";
+      launchpadCopyEl.textContent = "At home: read one line, praise one win, add one sentence.";
       return;
     }
     if (currentAudience === "support") {
-      launchpadCopyEl.textContent = "LS/EAL: assign one micro-task, write one line, then update caseload.";
+      launchpadCopyEl.textContent = "LS/EAL: assign one micro-task, write one line, log progress.";
       return;
     }
-    launchpadCopyEl.textContent = "Students: pick a start mode, write one line now, then press Next Move.";
+    launchpadCopyEl.textContent = "Students: choose a start, write one line, then press Next Move.";
   }
 
   function runQuickLaunch(kind) {
     var target = kind === "small" || kind === "one" ? kind : "whole";
     withMutedToasts(function () {
+      setCoreView(true, { silent: true });
       if (target === "whole") {
         setAudience("teacher", { silent: true });
         setPresetPack("fishtank", { silent: true });
@@ -3351,6 +3833,133 @@
       : target === "small"
         ? "Launch ready: small group routine"
         : "Launch ready: 1:1 intensive routine");
+  }
+
+  function runCoreLessonQuickstart() {
+    withMutedToasts(function () {
+      setCoreView(true, { silent: true });
+      setAudience("teacher", { silent: true });
+      setProfile("whole");
+      setMode("paragraph");
+      setStep("plan");
+    });
+    goToRailPanelById("ws-block-masters");
+    setScaffoldCue("Teach one master move, then have every student write one line.");
+    if (planTopicInput) planTopicInput.focus();
+    showToast("Core lesson quickstart ready");
+  }
+
+  function startStudioSession() {
+    if (!body.classList.contains("ws-started")) body.classList.add("ws-started");
+    if (stageEl) stageEl.hidden = false;
+  }
+
+  function runStartHere() {
+    startStudioSession();
+    if (currentAudience === "teacher") {
+      runCoreLessonQuickstart();
+      return;
+    }
+    if (currentAudience === "support") {
+      withMutedToasts(function () {
+        setCoreView(true, { silent: true });
+        setProfile("small");
+        setMode("sentence");
+        setStep("plan");
+      });
+      goToRailPanelById("ws-block-scaffold");
+      setScaffoldCue("Pick one scaffold, write one line, then track progress.");
+      if (planTopicInput) planTopicInput.focus();
+      showToast("Support block ready");
+      return;
+    }
+    if (currentAudience === "family") {
+      withMutedToasts(function () {
+        setCoreView(true, { silent: true });
+        setMode("sentence");
+        setStep("plan");
+      });
+      goToRailPanelById("ws-block-scaffold");
+      setScaffoldCue("Read one line, praise one win, then add one sentence.");
+      if (editor) editor.focus();
+      showToast("Home routine ready");
+      return;
+    }
+    withMutedToasts(function () {
+      setCoreView(true, { silent: true });
+      setMode("sentence");
+      setStep("plan");
+    });
+    goToRailPanelById("ws-block-warmup");
+    setScaffoldCue("Complete one warm-up, then write one strong line.");
+    if (warmupInput) warmupInput.focus();
+    showToast("Writing start ready");
+  }
+
+  function buildLauncherOptions() {
+    launcherOptions = [
+      { id: "quick-whole", label: "Whole Class Start", keywords: "whole class launch teacher", run: function () { runQuickLaunch("whole"); } },
+      { id: "quick-small", label: "Small Group Start", keywords: "small group support", run: function () { runQuickLaunch("small"); } },
+      { id: "quick-one", label: "1:1 Boost Start", keywords: "one to one intervention", run: function () { runQuickLaunch("one"); } },
+      { id: "mission-warmup", label: "Mission: Fix-It Sprint", keywords: "warmup fix it sentence", run: function () { runMission("warmup"); } },
+      { id: "mission-plan", label: "Mission: Plan It", keywords: "plan idea builder", run: function () { runMission("plan"); } },
+      { id: "mission-power", label: "Mission: Power Paragraph", keywords: "paragraph claim evidence", run: function () { runMission("power"); } },
+      { id: "mission-masters", label: "Mission: Masters Move", keywords: "masters storytelling persuasion", run: function () { runMission("masters"); } },
+      { id: "aud-teacher", label: "Switch to Teacher View", keywords: "teacher role", run: function () { setAudience("teacher"); } },
+      { id: "aud-student", label: "Switch to Student View", keywords: "student role", run: function () { setAudience("student"); } },
+      { id: "aud-support", label: "Switch to LS/EAL View", keywords: "support eal ls", run: function () { setAudience("support"); } },
+      { id: "aud-family", label: "Switch to Family View", keywords: "family home", run: function () { setAudience("family"); } },
+      { id: "grade-k2", label: "Set Grade Band: K-2", keywords: "grade k2", run: function () { setGradeBand("k2"); } },
+      { id: "grade-35", label: "Set Grade Band: 3-5", keywords: "grade 3 5", run: function () { setGradeBand("35"); } },
+      { id: "grade-68", label: "Set Grade Band: 6-8", keywords: "grade 6 8", run: function () { setGradeBand("68"); } },
+      { id: "grade-912", label: "Set Grade Band: 9-12", keywords: "grade 9 12", run: function () { setGradeBand("912"); } },
+      { id: "profile-whole", label: "Profile: Whole Class", keywords: "profile whole class", run: function () { setProfile("whole"); } },
+      { id: "profile-small", label: "Profile: Small Group", keywords: "profile small group", run: function () { setProfile("small"); } },
+      { id: "profile-one", label: "Profile: 1:1", keywords: "profile one to one", run: function () { setProfile("one"); } },
+      { id: "stepup-toggle", label: "Toggle Step Up Mode", keywords: "step up mode", run: function () { toggleStepUpMode(); } },
+      { id: "teacher-model", label: "Toggle Teacher Model", keywords: "teacher model", run: function () { toggleTeacherModel(); } },
+      { id: "impact-toggle", label: "Toggle Impact Mode", keywords: "impact mode", run: function () { toggleImpact(); } },
+      { id: "theme-next", label: "Change Theme", keywords: "theme color", run: function () { cycleTheme(); } },
+      { id: "showcase-open", label: "Open Spotlight", keywords: "spotlight showcase display", run: function () { openShowcase(); } },
+      { id: "showcase-close", label: "Close Spotlight", keywords: "spotlight showcase hide", run: function () { closeShowcase(); showToast("Showcase off"); } },
+      { id: "view-focus", label: "Focus View", keywords: "focus view simple", run: function () { setCoreView(true); } },
+      { id: "view-full", label: "Full View", keywords: "full view all tools", run: function () { setCoreView(false); } },
+      { id: "back-quest", label: "Back to Quest", keywords: "back wordquest return", run: function () { goBackToWordQuest(); } }
+    ];
+  }
+
+  function setLauncherOpen(open) {
+    if (!launchResultsEl || !launchSearchInput) return;
+    launchResultsEl.classList.toggle("hidden", !open);
+    launchSearchInput.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function renderLauncherResults(query) {
+    if (!launchResultsEl) return;
+    var q = String(query || "").trim().toLowerCase();
+    var options = launcherOptions.filter(function (item) {
+      if (!q) return true;
+      return item.label.toLowerCase().indexOf(q) >= 0 || item.keywords.indexOf(q) >= 0;
+    }).slice(0, 12);
+    launchResultsEl.innerHTML = "";
+    options.forEach(function (item) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ws-launch-option";
+      btn.textContent = item.label;
+      btn.setAttribute("data-launch-id", item.id);
+      launchResultsEl.appendChild(btn);
+    });
+    setLauncherOpen(options.length > 0);
+  }
+
+  function runLauncherAction(id) {
+    var action = launcherOptions.find(function (item) { return item.id === id; });
+    if (!action) return;
+    startStudioSession();
+    action.run();
+    setLauncherOpen(false);
+    if (launchSearchInput) launchSearchInput.value = "";
   }
 
   function getMicroStepCue() {
@@ -3819,16 +4428,27 @@
 
   function setSetupPanelOpen(open) {
     if (!setupToggleBtn || !controlsPanelEl) return;
-    var expanded = !!open;
-    controlsPanelEl.hidden = !expanded;
-    setupToggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
-    setupToggleBtn.textContent = expanded ? "Hide Setup" : "Class Setup";
+    controlsPanelEl.hidden = true;
+    setupToggleBtn.setAttribute("aria-expanded", "false");
+    setupToggleBtn.classList.remove("is-active");
+    setupToggleBtn.title = "Open command menu";
+    setControlsAdvancedOpen(false);
+  }
+
+  function setControlsAdvancedOpen(open) {
+    if (!controlsAdvancedEl || !controlsMoreBtn) return;
+    controlsAdvancedOpen = !!open;
+    controlsAdvancedEl.hidden = !controlsAdvancedOpen;
+    controlsMoreBtn.setAttribute("aria-expanded", controlsAdvancedOpen ? "true" : "false");
+    controlsMoreBtn.textContent = controlsAdvancedOpen ? "Less Options" : "More Options";
   }
 
   function toggleSetupPanel() {
-    if (!setupToggleBtn || !controlsPanelEl) return;
-    var expanded = setupToggleBtn.getAttribute("aria-expanded") === "true";
-    setSetupPanelOpen(!expanded);
+    setSetupPanelOpen(false);
+    if (!launchSearchInput) return;
+    launchSearchInput.focus();
+    renderLauncherResults(launchSearchInput.value || "");
+    setLauncherOpen(true);
   }
 
   function goBackToWordQuest() {
@@ -3875,10 +4495,41 @@
   if (missionWarmupBtn) missionWarmupBtn.addEventListener("click", function () { runMission("warmup"); });
   if (missionPlanBtn) missionPlanBtn.addEventListener("click", function () { runMission("plan"); });
   if (missionPowerBtn) missionPowerBtn.addEventListener("click", function () { runMission("power"); });
+  if (missionMastersBtn) missionMastersBtn.addEventListener("click", function () { runMission("masters"); });
+  if (masterStrandSelect) masterStrandSelect.addEventListener("change", applyMasterLesson);
+  if (masterLoadBtn) masterLoadBtn.addEventListener("click", applyMasterLesson);
+  if (masterInsertBtn) masterInsertBtn.addEventListener("click", insertMasterTryPrompt);
+  if (masterSpeakBtn) masterSpeakBtn.addEventListener("click", speakMasterExample);
+  if (masterLengthSelect) masterLengthSelect.addEventListener("change", buildMasterPlaylistPreview);
+  if (masterBuildPlaylistBtn) masterBuildPlaylistBtn.addEventListener("click", function () {
+    buildMasterPlaylistPreview();
+    showToast("Playlist ready");
+  });
+  if (masterCopyPlaylistBtn) masterCopyPlaylistBtn.addEventListener("click", copyMasterPlaylist);
   if (nextStepBtn) nextStepBtn.addEventListener("click", handleNextMove);
   if (quickWholeBtn) quickWholeBtn.addEventListener("click", function () { runQuickLaunch("whole"); });
   if (quickSmallBtn) quickSmallBtn.addEventListener("click", function () { runQuickLaunch("small"); });
   if (quickOneBtn) quickOneBtn.addEventListener("click", function () { runQuickLaunch("one"); });
+  if (quickCoreBtn) quickCoreBtn.addEventListener("click", runCoreLessonQuickstart);
+  if (quickFullBtn) quickFullBtn.addEventListener("click", function () { setCoreView(false); });
+  if (startCtaBtn) startCtaBtn.addEventListener("click", runStartHere);
+  if (launchSearchInput) {
+    launchSearchInput.addEventListener("focus", function () {
+      renderLauncherResults(launchSearchInput.value || "");
+    });
+    launchSearchInput.addEventListener("input", function () {
+      renderLauncherResults(launchSearchInput.value || "");
+    });
+  }
+  if (launchResultsEl) {
+    launchResultsEl.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!target || !target.getAttribute) return;
+      var id = target.getAttribute("data-launch-id");
+      if (!id) return;
+      runLauncherAction(id);
+    });
+  }
   if (planAddBtn) planAddBtn.addEventListener("click", addPlanItem);
   if (planUseBtn) planUseBtn.addEventListener("click", usePlanInDraft);
   if (organizerTypeSelect) organizerTypeSelect.addEventListener("change", renderOrganizerPreview);
@@ -3961,11 +4612,15 @@
   if (pinLineBtn) pinLineBtn.addEventListener("click", pinBestLine);
   if (wallClearBtn) wallClearBtn.addEventListener("click", clearPublishWall);
   if (showcaseToggleBtn) showcaseToggleBtn.addEventListener("click", toggleShowcase);
+  if (coreToggleBtn) coreToggleBtn.addEventListener("click", toggleCoreView);
+  if (coreTogglePanelBtn) coreTogglePanelBtn.addEventListener("click", toggleCoreView);
   if (showcaseCloseBtn) showcaseCloseBtn.addEventListener("click", closeShowcase);
   if (tourCloseBtn) tourCloseBtn.addEventListener("click", finishTour);
   if (tourPrevBtn) tourPrevBtn.addEventListener("click", prevTourStep);
   if (tourNextBtn) tourNextBtn.addEventListener("click", nextTourStep);
   if (tourStartBtn) tourStartBtn.addEventListener("click", finishTour);
+  if (onboardStartBtn) onboardStartBtn.addEventListener("click", function () { finishOnboarding(true); });
+  if (onboardSkipBtn) onboardSkipBtn.addEventListener("click", function () { finishOnboarding(false); });
   if (familyCopyBtn) familyCopyBtn.addEventListener("click", copyFamilyPrompt);
   if (warmupInput) warmupInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
@@ -3993,6 +4648,9 @@
   });
   if (backBtn) backBtn.addEventListener("click", goBackToWordQuest);
   if (setupToggleBtn) setupToggleBtn.addEventListener("click", toggleSetupPanel);
+  if (controlsMoreBtn) controlsMoreBtn.addEventListener("click", function () {
+    setControlsAdvancedOpen(!controlsAdvancedOpen);
+  });
   settingsBtn.addEventListener("click", cycleTheme);
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && showcaseOpen) {
@@ -4007,6 +4665,10 @@
       finishTour();
       return;
     }
+    if (event.key === "Escape" && onboardOpen) {
+      finishOnboarding(false);
+      return;
+    }
     if (event.key === "Escape" && setupToggleBtn && setupToggleBtn.getAttribute("aria-expanded") === "true") {
       setSetupPanelOpen(false);
     }
@@ -4018,6 +4680,9 @@
         setSetupPanelOpen(false);
       }
     }
+    if (launchResultsEl && launchSearchInput && !launchResultsEl.contains(target) && target !== launchSearchInput) {
+      setLauncherOpen(false);
+    }
     if (impactOpen && impactOverlayEl && target === impactOverlayEl) {
       setImpactOpen(false);
     }
@@ -4027,9 +4692,13 @@
     if (tourOpen && tourEl && target === tourEl) {
       finishTour();
     }
+    if (onboardOpen && onboardEl && target === onboardEl) {
+      finishOnboarding(false);
+    }
   });
 
   applyTheme(resolveInitialTheme());
+  buildLauncherOptions();
   renderOrganizerPreview();
   renderPlanItems();
   renderSprint();
@@ -4039,6 +4708,8 @@
   renderWarmupArcade();
   loadPublishWall();
   renderPublishWall();
+  loadCoreView();
+  applyMasterLesson();
   loadCaseload();
   renderCaseload();
   buildAndRenderWeeklyPlan();
@@ -4051,9 +4722,7 @@
   loadAudience();
   loadFramework();
   loadDraft();
-  setGradeBand("35");
-  setProfile("whole");
-  setMode("sentence");
+  applyLaunchDefaults({ silent: true });
   if (fishTankGradeSelect) {
     fishTankGradeSelect.value = getFishTankBand();
     renderFishTankPaths();
@@ -4063,7 +4732,11 @@
   loadPresetPack();
   applyTaskHandoffFromHash();
   applyWordQuestContext();
+  maybeStartOnboarding();
   maybeStartTour();
   setSetupPanelOpen(false);
+  setControlsAdvancedOpen(false);
+  if (stageEl) stageEl.hidden = true;
+  body.classList.remove("ws-started");
   renderLaunchpadCopy();
 })();
