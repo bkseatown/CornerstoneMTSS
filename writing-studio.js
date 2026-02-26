@@ -17,6 +17,64 @@
   var CONJUNCTION_RE = /\b(and|but|or|so|because|although|however|therefore|while|if)\b/i;
   var EVIDENCE_RE = /\b(according to|for example|for instance|the text says|in the text|evidence)\b/i;
   var CLAIM_RE = /\b(i think|i believe|this shows|the author|the text)\b/i;
+  var STEP_ORDER = ["plan", "draft", "revise", "publish"];
+  var GOALS_BY_MODE = {
+    sentence: {
+      plan: "Write one clear topic sentence.",
+      draft: "Build 2-3 sentences with details.",
+      revise: "Add a connector and one precise word.",
+      publish: "Check all boxes, then read it out loud."
+    },
+    paragraph: {
+      plan: "Write a claim that answers the prompt.",
+      draft: "Add evidence and explanation.",
+      revise: "Strengthen academic language and clarity.",
+      publish: "Check all boxes, then share final paragraph."
+    }
+  };
+  var STEP_TIPS_BY_MODE = {
+    sentence: {
+      plan: "Plan move: decide exactly what your sentence is teaching.",
+      draft: "Draft move: add details that make your idea easy to picture.",
+      revise: "Revise move: add one stronger word and one connector.",
+      publish: "Publish move: read aloud and fix one confusing part."
+    },
+    paragraph: {
+      plan: "Plan move: claim first, then choose one piece of evidence.",
+      draft: "Draft move: explain how your evidence proves your claim.",
+      revise: "Revise move: tighten word choice and sentence flow.",
+      publish: "Publish move: final read for claim, evidence, and explanation."
+    }
+  };
+  var MODEL_STEMS = {
+    sentence: {
+      plan: "My topic is ___ and I want readers to know ___.",
+      draft: "First, ___. Next, ___ because ___.",
+      revise: "I can make this clearer by adding ___.",
+      publish: "Final read: each sentence matches my topic."
+    },
+    paragraph: {
+      plan: "Claim: ___ because ___.",
+      draft: "According to the text, ___. This shows ___.",
+      revise: "I can strengthen this by replacing ___ with ___.",
+      publish: "Final check: claim, evidence, explanation are all clear."
+    }
+  };
+  var CONFERENCE_PROMPTS = {
+    sentence: {
+      plan: "Tell me your topic in one sentence.",
+      draft: "Show me one detail you can add next.",
+      revise: "Which connector will make this clearer?",
+      publish: "Read it aloud and point to your best sentence."
+    },
+    paragraph: {
+      plan: "Say your claim in one clear line.",
+      draft: "Where is your evidence from the text?",
+      revise: "How does your evidence prove your claim?",
+      publish: "Read your final paragraph and check claim/evidence/explanation."
+    }
+  };
+  var SPRINT_SECONDS = 180;
 
   var body = document.body;
   var editor = document.getElementById("ws-editor");
@@ -26,12 +84,31 @@
   var checklist1 = document.getElementById("ws-check-1");
   var checklist2 = document.getElementById("ws-check-2");
   var checklist3 = document.getElementById("ws-check-3");
+  var glowEl = document.getElementById("ws-glow");
+  var growEl = document.getElementById("ws-grow");
+  var goEl = document.getElementById("ws-go");
+  var conferenceStrengthEl = document.getElementById("ws-conference-strength");
+  var conferenceTargetEl = document.getElementById("ws-conference-target");
+  var conferencePromptEl = document.getElementById("ws-conference-prompt");
+  var sprintTimeEl = document.getElementById("ws-sprint-time");
+  var sprintStartBtn = document.getElementById("ws-sprint-start");
+  var sprintResetBtn = document.getElementById("ws-sprint-reset");
   var saveBtn = document.getElementById("ws-save");
   var clearBtn = document.getElementById("ws-clear");
   var modeButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-mode]"));
+  var modelBtn = document.getElementById("ws-model");
+  var flowButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-step[data-step]"));
+  var goalEl = document.getElementById("ws-goal");
+  var nextStepBtn = document.getElementById("ws-next-step");
+  var checklistInputs = Array.prototype.slice.call(document.querySelectorAll(".ws-check input"));
   var backBtn = document.getElementById("ws-back");
   var settingsBtn = document.getElementById("ws-settings");
   var currentMode = "sentence";
+  var currentStep = "plan";
+  var teacherModel = false;
+  var sprintRemaining = SPRINT_SECONDS;
+  var sprintTimer = null;
+  var sprintChunkIndex = 0;
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
@@ -56,6 +133,49 @@
     }).length;
   }
 
+  function evaluateStep(step, text, words, sentenceCount) {
+    var academicCount = countAcademicWords(text);
+    if (step === "plan") {
+      return currentMode === "paragraph"
+        ? (CLAIM_RE.test(text) || (sentenceCount >= 1 && words >= 12))
+        : (sentenceCount >= 1 || words >= 6);
+    }
+    if (step === "draft") {
+      return currentMode === "paragraph"
+        ? (sentenceCount >= 3 && words >= 36)
+        : (sentenceCount >= 2 && words >= 16);
+    }
+    if (step === "revise") {
+      return currentMode === "paragraph"
+        ? (EVIDENCE_RE.test(text) && academicCount >= 1 && words >= 42)
+        : (CONJUNCTION_RE.test(text) && words >= 20);
+    }
+    if (step === "publish") {
+      return checklistInputs.length > 0 && checklistInputs.every(function (input) { return input.checked; });
+    }
+    return false;
+  }
+
+  function renderFlowState(text, words, sentenceCount) {
+    flowButtons.forEach(function (btn) {
+      var step = btn.getAttribute("data-step");
+      var done = evaluateStep(step, text, words, sentenceCount);
+      btn.classList.toggle("is-active", step === currentStep);
+      btn.classList.toggle("is-done", done && step !== currentStep);
+    });
+  }
+
+  function renderGoal(text, words, sentenceCount) {
+    if (!goalEl) return;
+    var goals = GOALS_BY_MODE[currentMode] || GOALS_BY_MODE.sentence;
+    var base = goals[currentStep] || goals.plan;
+    var complete = evaluateStep(currentStep, text, words, sentenceCount);
+    var modelCue = MODEL_STEMS[currentMode] && MODEL_STEMS[currentMode][currentStep]
+      ? " Teacher cue: " + MODEL_STEMS[currentMode][currentStep]
+      : "";
+    goalEl.textContent = (complete ? "Complete. " : "") + base + (teacherModel ? modelCue : "");
+  }
+
   function renderCoachTips(text, words, sentenceCount) {
     var tips = [];
     var avgLength = sentenceCount > 0 ? words / sentenceCount : 0;
@@ -63,6 +183,12 @@
     var academicCount = countAcademicWords(text);
     var hasEvidenceSignal = EVIDENCE_RE.test(text);
     var hasClaimSignal = CLAIM_RE.test(text);
+    var stepTips = STEP_TIPS_BY_MODE[currentMode] || STEP_TIPS_BY_MODE.sentence;
+
+    tips.push(stepTips[currentStep] || stepTips.plan);
+    if (teacherModel && MODEL_STEMS[currentMode] && MODEL_STEMS[currentMode][currentStep]) {
+      tips.push("Model aloud: " + MODEL_STEMS[currentMode][currentStep]);
+    }
 
     if (currentMode === "paragraph") {
       if (!hasClaimSignal) {
@@ -111,12 +237,139 @@
     });
   }
 
+  function renderGlowGrowGo(text, words, sentenceCount) {
+    if (!glowEl || !growEl || !goEl) return;
+    var stepTips = STEP_TIPS_BY_MODE[currentMode] || STEP_TIPS_BY_MODE.sentence;
+    var goals = GOALS_BY_MODE[currentMode] || GOALS_BY_MODE.sentence;
+    var hasConjunction = CONJUNCTION_RE.test(text);
+    var hasEvidence = EVIDENCE_RE.test(text);
+    var academicCount = countAcademicWords(text);
+
+    if (currentMode === "paragraph") {
+      glowEl.textContent = hasEvidence
+        ? "You included evidence in your paragraph."
+        : "Your claim frame is building.";
+      growEl.textContent = hasEvidence
+        ? "Add one sentence that explains why the evidence matters."
+        : "Add one evidence sentence from the text.";
+    } else {
+      glowEl.textContent = hasConjunction
+        ? "You connected ideas with transition words."
+        : "You have a clear start to your writing.";
+      growEl.textContent = hasConjunction
+        ? "Upgrade one verb for stronger detail."
+        : "Add because, so, or but to connect ideas.";
+    }
+
+    if (sentenceCount === 0 || words === 0) {
+      glowEl.textContent = "You are ready to write.";
+      growEl.textContent = "Start with one clear sentence.";
+    }
+    if (academicCount >= 2) {
+      glowEl.textContent = "Academic vocabulary is showing up clearly.";
+    }
+
+    goEl.textContent = goals[currentStep] || stepTips[currentStep] || goals.plan;
+  }
+
+  function renderConferenceCopilot(text, words, sentenceCount) {
+    if (!conferenceStrengthEl || !conferenceTargetEl || !conferencePromptEl) return;
+    var hasClaim = CLAIM_RE.test(text);
+    var hasEvidence = EVIDENCE_RE.test(text);
+    var hasConnector = CONJUNCTION_RE.test(text);
+    var prompt = (CONFERENCE_PROMPTS[currentMode] && CONFERENCE_PROMPTS[currentMode][currentStep]) || "Tell me your next writing move.";
+
+    if (currentMode === "paragraph") {
+      conferenceStrengthEl.textContent = hasClaim
+        ? "Student can state a claim."
+        : "Student has started writing and can build toward a claim.";
+      conferenceTargetEl.textContent = hasEvidence
+        ? "Explain how evidence supports the claim."
+        : "Add one evidence sentence using a text stem.";
+    } else {
+      conferenceStrengthEl.textContent = sentenceCount >= 2
+        ? "Student is producing multiple sentences."
+        : "Student has a starting sentence.";
+      conferenceTargetEl.textContent = hasConnector
+        ? "Strengthen detail and word precision."
+        : "Add one connector to link ideas.";
+    }
+    if (words === 0) {
+      conferenceStrengthEl.textContent = "Student is ready to begin.";
+      conferenceTargetEl.textContent = "Co-construct the first sentence together.";
+    }
+    conferencePromptEl.textContent = prompt;
+  }
+
+  function formatSprint(seconds) {
+    var safe = Math.max(0, seconds);
+    var mins = String(Math.floor(safe / 60)).padStart(2, "0");
+    var secs = String(safe % 60).padStart(2, "0");
+    return mins + ":" + secs;
+  }
+
+  function renderSprint() {
+    if (sprintTimeEl) sprintTimeEl.textContent = formatSprint(sprintRemaining);
+    if (sprintStartBtn) sprintStartBtn.textContent = sprintTimer ? "Pause Sprint" : "Start Sprint";
+  }
+
+  function stopSprint() {
+    if (sprintTimer) {
+      window.clearInterval(sprintTimer);
+      sprintTimer = null;
+    }
+    renderSprint();
+  }
+
+  function setStepByChunk() {
+    var elapsed = SPRINT_SECONDS - sprintRemaining;
+    var chunk = Math.min(3, Math.floor(elapsed / 45));
+    if (chunk !== sprintChunkIndex) {
+      sprintChunkIndex = chunk;
+      setStep(STEP_ORDER[sprintChunkIndex] || "plan");
+      showToast("Sprint move: " + (GOALS_BY_MODE[currentMode][currentStep] || "Next step"));
+    }
+  }
+
+  function tickSprint() {
+    sprintRemaining = Math.max(0, sprintRemaining - 1);
+    setStepByChunk();
+    renderSprint();
+    if (sprintRemaining <= 0) {
+      stopSprint();
+      setStep("publish");
+      showToast("Sprint complete");
+    }
+  }
+
+  function toggleSprint() {
+    if (sprintTimer) {
+      stopSprint();
+      return;
+    }
+    sprintTimer = window.setInterval(tickSprint, 1000);
+    renderSprint();
+    showToast("Sprint started");
+  }
+
+  function resetSprint() {
+    stopSprint();
+    sprintRemaining = SPRINT_SECONDS;
+    sprintChunkIndex = 0;
+    setStep("plan");
+    renderSprint();
+  }
+
   function updateMetricsAndCoach() {
     var text = editor.value;
     var words = getWordCount(text);
     var sentences = splitSentences(text).length;
     metrics.textContent = sentences + " sentence" + (sentences === 1 ? "" : "s") + " • " + words + " word" + (words === 1 ? "" : "s");
+    renderFlowState(text, words, sentences);
+    renderGoal(text, words, sentences);
     renderCoachTips(text, words, sentences);
+    renderGlowGrowGo(text, words, sentences);
+    renderConferenceCopilot(text, words, sentences);
   }
 
   function renderVocabPills() {
@@ -166,6 +419,8 @@
   function clearDraft() {
     editor.value = "";
     localStorage.removeItem(DRAFT_KEY);
+    checklistInputs.forEach(function (input) { input.checked = false; });
+    currentStep = "plan";
     updateMetricsAndCoach();
     showToast("Draft cleared");
   }
@@ -179,6 +434,7 @@
   }
 
   function setMode(mode) {
+    var previousMode = currentMode;
     currentMode = mode === "paragraph" ? "paragraph" : "sentence";
     modeButtons.forEach(function (btn) {
       var isActive = btn.getAttribute("data-mode") === currentMode;
@@ -187,9 +443,65 @@
     editor.placeholder = currentMode === "paragraph"
       ? "Write a focused Fish Tank paragraph: claim, evidence, explanation…"
       : "Start a Step Up sentence set: topic + details + connector…";
+    if (previousMode !== currentMode) {
+      checklistInputs.forEach(function (input) { input.checked = false; });
+      currentStep = "plan";
+    }
     renderChecklist();
     renderVocabPills();
     updateMetricsAndCoach();
+  }
+
+  function setStep(step) {
+    if (STEP_ORDER.indexOf(step) === -1) return;
+    currentStep = step;
+    updateMetricsAndCoach();
+  }
+
+  function toggleTeacherModel() {
+    teacherModel = !teacherModel;
+    if (modelBtn) {
+      modelBtn.classList.toggle("is-active", teacherModel);
+      modelBtn.setAttribute("aria-pressed", teacherModel ? "true" : "false");
+      modelBtn.textContent = teacherModel ? "Teacher Model: On" : "Teacher Model: Off";
+    }
+    updateMetricsAndCoach();
+  }
+
+  function injectModelStem() {
+    var stem = (MODEL_STEMS[currentMode] && MODEL_STEMS[currentMode][currentStep]) || "";
+    if (!stem) return;
+    var prefix = editor.value.trim().length === 0 ? "" : "\n";
+    editor.value += prefix + stem;
+    editor.focus();
+    updateMetricsAndCoach();
+  }
+
+  function advanceToNextStep() {
+    var idx = STEP_ORDER.indexOf(currentStep);
+    if (idx < 0 || idx === STEP_ORDER.length - 1) return;
+    setStep(STEP_ORDER[idx + 1]);
+  }
+
+  function handleNextMove() {
+    var text = editor.value;
+    var words = getWordCount(text);
+    var sentences = splitSentences(text).length;
+    if (evaluateStep(currentStep, text, words, sentences)) {
+      if (currentStep === "publish") {
+        showToast("Publishing ready");
+        return;
+      }
+      advanceToNextStep();
+      showToast("Next move loaded");
+      return;
+    }
+    if (teacherModel) {
+      injectModelStem();
+      showToast("Model stem added");
+      return;
+    }
+    showToast("Finish current move first");
   }
 
   function getThemeList() {
@@ -302,14 +614,27 @@
       setMode(btn.getAttribute("data-mode"));
     });
   });
+  flowButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      setStep(btn.getAttribute("data-step"));
+    });
+  });
+  if (modelBtn) modelBtn.addEventListener("click", toggleTeacherModel);
+  if (nextStepBtn) nextStepBtn.addEventListener("click", handleNextMove);
+  if (sprintStartBtn) sprintStartBtn.addEventListener("click", toggleSprint);
+  if (sprintResetBtn) sprintResetBtn.addEventListener("click", resetSprint);
 
   editor.addEventListener("input", updateMetricsAndCoach);
   saveBtn.addEventListener("click", saveDraft);
   clearBtn.addEventListener("click", clearDraft);
+  checklistInputs.forEach(function (input) {
+    input.addEventListener("change", updateMetricsAndCoach);
+  });
   if (backBtn) backBtn.addEventListener("click", goBackToWordQuest);
   settingsBtn.addEventListener("click", cycleTheme);
 
   applyTheme(resolveInitialTheme());
+  renderSprint();
   loadDraft();
   setMode("sentence");
 })();

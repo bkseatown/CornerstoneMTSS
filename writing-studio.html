@@ -25,6 +25,7 @@
       <div class="ws-controls">
         <button class="ws-chip is-active" data-mode="sentence" type="button">Sentence</button>
         <button class="ws-chip" data-mode="paragraph" type="button">Paragraph</button>
+        <button class="ws-chip" id="ws-model" type="button" aria-pressed="false">Teacher Model: Off</button>
         <button class="ws-ghost" id="ws-back" type="button">Back to WordQuest</button>
         <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
       </div>
@@ -35,6 +36,17 @@
         <div class="ws-canvas-head">
           <div class="ws-h2">Draft</div>
           <div class="ws-meta"><span id="ws-metrics">0 sentences • 0 words</span></div>
+        </div>
+        <div id="ws-flow" class="ws-flow" role="tablist" aria-label="Writing workflow">
+          <button class="ws-step is-active" type="button" data-step="plan">1. Plan</button>
+          <button class="ws-step" type="button" data-step="draft">2. Draft</button>
+          <button class="ws-step" type="button" data-step="revise">3. Revise</button>
+          <button class="ws-step" type="button" data-step="publish">4. Publish</button>
+        </div>
+        <div id="ws-guidance" class="ws-guidance" aria-live="polite">
+          <div class="ws-meta">Current move</div>
+          <div id="ws-goal" class="ws-goal">Plan your first idea.</div>
+          <button class="ws-secondary" id="ws-next-step" type="button">Next Move</button>
         </div>
         <textarea id="ws-editor" placeholder="Start here…"></textarea>
         <div class="ws-canvas-foot">
@@ -50,8 +62,37 @@
         </div>
 
         <div class="ws-rail-block">
+          <div class="ws-h2">Feedback</div>
+          <div id="ws-feedback" class="ws-feedback">
+            <div class="ws-tip"><strong>Glow:</strong> <span id="ws-glow">You are getting started.</span></div>
+            <div class="ws-tip"><strong>Grow:</strong> <span id="ws-grow">Add one clear idea.</span></div>
+            <div class="ws-tip"><strong>Go:</strong> <span id="ws-go">Plan your first idea.</span></div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block">
+          <div class="ws-h2">Sprint</div>
+          <div class="ws-sprint">
+            <div id="ws-sprint-time" class="ws-sprint-time" aria-live="polite">03:00</div>
+            <div class="ws-canvas-foot">
+              <button class="ws-secondary" id="ws-sprint-start" type="button">Start Sprint</button>
+              <button class="ws-secondary" id="ws-sprint-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block">
           <div class="ws-h2">Vocabulary</div>
           <div class="ws-pills" id="ws-vocab"></div>
+        </div>
+
+        <div class="ws-rail-block">
+          <div class="ws-h2">Conference Copilot</div>
+          <div id="ws-conference" class="ws-conference">
+            <div class="ws-tip"><strong>Strength:</strong> <span id="ws-conference-strength">Student has started.</span></div>
+            <div class="ws-tip"><strong>Target:</strong> <span id="ws-conference-target">Build one clear idea.</span></div>
+            <div class="ws-tip"><strong>Teacher Prompt:</strong> <span id="ws-conference-prompt">Tell me your claim in one sentence.</span></div>
+          </div>
         </div>
 
         <div class="ws-rail-block">

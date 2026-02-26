@@ -133,6 +133,51 @@ body.cs-page-writing {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.ws-flow {
+  display: flex;
+  gap: var(--ws-gap-1);
+  flex-wrap: wrap;
+}
+
+.ws-step {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.86);
+  padding: var(--ws-gap-1) var(--ws-gap-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ws-step.is-active {
+  border-color: rgba(122, 167, 255, 0.55);
+  background: rgba(122, 167, 255, 0.22);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.ws-step.is-done {
+  border-color: rgba(87, 210, 153, 0.45);
+  background: rgba(87, 210, 153, 0.16);
+}
+
+.ws-guidance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ws-gap-2);
+  padding: var(--ws-gap-2);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ws-goal {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+}
+
 #ws-editor {
   width: 100%;
   min-height: 46vh;
@@ -198,6 +243,28 @@ body.cs-page-writing {
   flex-direction: column;
   gap: var(--ws-gap-2);
   margin-top: var(--ws-gap-2);
+}
+
+.ws-feedback,
+.ws-conference {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+  margin-top: var(--ws-gap-2);
+}
+
+.ws-sprint {
+  margin-top: var(--ws-gap-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+}
+
+.ws-sprint-time {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .ws-tip {
@@ -296,5 +363,10 @@ body.cs-page-writing {
 
   #ws-editor {
     min-height: 40vh;
+  }
+
+  .ws-guidance {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
