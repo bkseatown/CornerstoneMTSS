@@ -660,6 +660,74 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
 }
 
+.ws-case-list {
+  margin-top: var(--ws-gap-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+}
+
+.ws-case-item {
+  padding: var(--ws-gap-2);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-1);
+}
+
+.ws-case-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ws-gap-2);
+}
+
+.ws-case-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.ws-case-meta,
+.ws-case-sample {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.4;
+}
+
+.ws-case-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-gap-1);
+  margin-top: 2px;
+}
+
+.ws-case-actions .ws-secondary {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.ws-case-status {
+  margin-top: 0;
+}
+
+.ws-case-status-active {
+  background: rgba(122, 167, 255, 0.18);
+  border-color: rgba(122, 167, 255, 0.42);
+}
+
+.ws-case-status-watch {
+  background: rgba(255, 186, 92, 0.2);
+  border-color: rgba(255, 186, 92, 0.45);
+}
+
+.ws-case-status-ready {
+  background: rgba(125, 227, 170, 0.2);
+  border-color: rgba(125, 227, 170, 0.45);
+}
+
 .ws-wall-item {
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);

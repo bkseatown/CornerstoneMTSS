@@ -177,6 +177,7 @@
         <nav class="ws-rail-nav" aria-label="Studio sections">
           <a class="ws-rail-link" href="#ws-block-coach">Coach</a>
           <a class="ws-rail-link" href="#ws-block-scaffold">Scaffold</a>
+          <a class="ws-rail-link" href="#ws-block-caseload">Caseload</a>
           <a class="ws-rail-link" href="#ws-block-warmup">Warm-Up</a>
           <a class="ws-rail-link" href="#ws-block-mastery">Mastery</a>
           <a class="ws-rail-link" href="#ws-block-publish">Publish</a>
@@ -196,6 +197,21 @@
             <button class="ws-pill" id="ws-scaffold-calm" type="button">Calm Reset</button>
           </div>
           <div class="ws-tip"><strong>Support Cue:</strong> <span id="ws-scaffold-cue">Use one tool, then write one line.</span></div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-caseload">
+          <div class="ws-h2">Caseload Board</div>
+          <div class="ws-plan-row">
+            <input id="ws-case-name" class="ws-plan-input" type="text" placeholder="Student">
+            <input id="ws-case-goal" class="ws-plan-input" type="text" placeholder="Goal focus">
+            <button class="ws-secondary" id="ws-case-add" type="button">Add</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-case-next" class="ws-plan-input" type="text" placeholder="Next action">
+            <button class="ws-secondary" id="ws-case-copy" type="button">Copy PLC Board</button>
+          </div>
+          <div class="ws-tip"><strong>Tip:</strong> Click <em>From Draft</em> to update sample date, score, and words for a student.</div>
+          <div id="ws-case-list" class="ws-case-list"></div>
         </div>
 
         <div class="ws-rail-block">

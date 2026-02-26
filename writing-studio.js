@@ -12,6 +12,7 @@
   var WALL_KEY = "ws_publish_wall_v1";
   var PRESET_KEY = "ws_preset_pack_v1";
   var RETURN_KEY = "ws_return_to_wordquest_v1";
+  var CASELOAD_KEY = "ws_caseload_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -473,6 +474,12 @@
   var fishTankIespBtn = document.getElementById("ws-ft-iesp");
   var fishTankPacketBtn = document.getElementById("ws-ft-packet");
   var fishTankTargetEl = document.getElementById("ws-ft-target");
+  var caseNameInput = document.getElementById("ws-case-name");
+  var caseGoalInput = document.getElementById("ws-case-goal");
+  var caseNextInput = document.getElementById("ws-case-next");
+  var caseAddBtn = document.getElementById("ws-case-add");
+  var caseCopyBtn = document.getElementById("ws-case-copy");
+  var caseListEl = document.getElementById("ws-case-list");
   var quickWholeBtn = document.getElementById("ws-quick-whole");
   var quickSmallBtn = document.getElementById("ws-quick-small");
   var quickOneBtn = document.getElementById("ws-quick-one");
@@ -527,6 +534,7 @@
   var planItems = [];
   var imagePromptItems = [];
   var currentImageUrl = "";
+  var caseloadItems = [];
   var wordQuestContext = null;
   var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition || null;
   var recognition = null;
@@ -1739,6 +1747,192 @@
     ].join("\n");
   }
 
+  function formatCaseStatus(status) {
+    if (status === "watch") return "Watch";
+    if (status === "ready") return "Ready";
+    return "Active";
+  }
+
+  function saveCaseload() {
+    try {
+      localStorage.setItem(CASELOAD_KEY, JSON.stringify(caseloadItems || []));
+    } catch (_error) {
+      // Ignore storage write failures.
+    }
+  }
+
+  function loadCaseload() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(CASELOAD_KEY) || "[]");
+      caseloadItems = Array.isArray(raw) ? raw : [];
+    } catch (_error) {
+      caseloadItems = [];
+    }
+  }
+
+  function buildCaseloadBoardText() {
+    if (!caseloadItems.length) return "";
+    return [
+      "Caseload Board Snapshot",
+      "Date: " + new Date().toLocaleDateString(),
+      getLessonSummaryLine(),
+      ""
+    ].concat(caseloadItems.map(function (item, index) {
+      var words = item.lastWords ? (item.lastWords + " words") : "no sample words yet";
+      var score = item.lastScore || "no score yet";
+      var sample = item.lastSample || "no sample date";
+      return (index + 1) + ". " + item.name +
+        " | Status: " + formatCaseStatus(item.status) +
+        " | Goal: " + item.goal +
+        " | Next: " + item.next +
+        " | Last sample: " + sample +
+        " | " + words +
+        " | " + score;
+    })).join("\n");
+  }
+
+  function renderCaseload() {
+    if (!caseListEl) return;
+    caseListEl.innerHTML = "";
+    if (!caseloadItems.length) {
+      var empty = document.createElement("div");
+      empty.className = "ws-tip";
+      empty.textContent = "No students added yet.";
+      caseListEl.appendChild(empty);
+      return;
+    }
+    caseloadItems.forEach(function (item) {
+      var card = document.createElement("div");
+      card.className = "ws-case-item";
+      card.setAttribute("data-case-id", item.id);
+
+      var head = document.createElement("div");
+      head.className = "ws-case-head";
+
+      var name = document.createElement("div");
+      name.className = "ws-case-name";
+      name.textContent = item.name;
+
+      var status = document.createElement("span");
+      status.className = "ws-pill ws-case-status ws-case-status-" + (item.status || "active");
+      status.textContent = formatCaseStatus(item.status);
+
+      head.appendChild(name);
+      head.appendChild(status);
+
+      var meta = document.createElement("div");
+      meta.className = "ws-case-meta";
+      meta.textContent = "Goal: " + item.goal + " | Next: " + item.next;
+
+      var sample = document.createElement("div");
+      sample.className = "ws-case-sample";
+      sample.textContent = "Sample: " + (item.lastSample || "none") +
+        " | " + (item.lastWords ? item.lastWords + " words" : "no words") +
+        " | " + (item.lastScore || "no rubric");
+
+      var actions = document.createElement("div");
+      actions.className = "ws-case-actions";
+
+      var fromDraftBtn = document.createElement("button");
+      fromDraftBtn.className = "ws-secondary";
+      fromDraftBtn.type = "button";
+      fromDraftBtn.setAttribute("data-case-action", "draft");
+      fromDraftBtn.setAttribute("data-case-id", item.id);
+      fromDraftBtn.textContent = "From Draft";
+
+      var cycleBtn = document.createElement("button");
+      cycleBtn.className = "ws-secondary";
+      cycleBtn.type = "button";
+      cycleBtn.setAttribute("data-case-action", "cycle");
+      cycleBtn.setAttribute("data-case-id", item.id);
+      cycleBtn.textContent = "Cycle Status";
+
+      var deleteBtn = document.createElement("button");
+      deleteBtn.className = "ws-secondary";
+      deleteBtn.type = "button";
+      deleteBtn.setAttribute("data-case-action", "delete");
+      deleteBtn.setAttribute("data-case-id", item.id);
+      deleteBtn.textContent = "Remove";
+
+      actions.appendChild(fromDraftBtn);
+      actions.appendChild(cycleBtn);
+      actions.appendChild(deleteBtn);
+
+      card.appendChild(head);
+      card.appendChild(meta);
+      card.appendChild(sample);
+      card.appendChild(actions);
+      caseListEl.appendChild(card);
+    });
+  }
+
+  function addCaseloadStudent() {
+    var name = String(caseNameInput && caseNameInput.value || "").trim();
+    var goal = String(caseGoalInput && caseGoalInput.value || "").trim();
+    var next = String(caseNextInput && caseNextInput.value || "").trim();
+    if (!name || !goal || !next) {
+      showToast("Add student, goal, and next action");
+      return;
+    }
+    caseloadItems.unshift({
+      id: "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      name: name,
+      goal: goal,
+      next: next,
+      status: "active",
+      lastSample: "",
+      lastWords: 0,
+      lastScore: ""
+    });
+    if (caseNameInput) caseNameInput.value = "";
+    if (caseGoalInput) caseGoalInput.value = "";
+    if (caseNextInput) caseNextInput.value = "";
+    saveCaseload();
+    renderCaseload();
+    showToast("Student added to caseload");
+  }
+
+  function cycleCaseStatus(item) {
+    if (!item) return;
+    if (item.status === "active") item.status = "watch";
+    else if (item.status === "watch") item.status = "ready";
+    else item.status = "active";
+  }
+
+  function updateCaseFromDraft(item) {
+    if (!item) return;
+    var snap = getWritingSnapshot();
+    item.lastSample = new Date().toLocaleDateString();
+    item.lastWords = snap.words;
+    item.lastScore = snap.scores.total + "/9";
+  }
+
+  function handleCaseloadAction(event) {
+    var target = event.target;
+    if (!target || !target.getAttribute) return;
+    var action = target.getAttribute("data-case-action");
+    var id = target.getAttribute("data-case-id");
+    if (!action || !id) return;
+    var item = caseloadItems.find(function (entry) { return entry.id === id; });
+    if (!item && action !== "delete") return;
+    if (action === "draft") {
+      updateCaseFromDraft(item);
+      showToast("Student updated from draft");
+    } else if (action === "cycle") {
+      cycleCaseStatus(item);
+      showToast("Status updated");
+    } else if (action === "delete") {
+      caseloadItems = caseloadItems.filter(function (entry) { return entry.id !== id; });
+      showToast("Student removed");
+    }
+    saveCaseload();
+    renderCaseload();
+  }
+
+  function copyCaseloadBoard() {
+    copyTextPayload(buildCaseloadBoardText(), "Caseload board copied");
+  }
+
   function normalizeWordQuestGrade(rawGrade) {
     var value = String(rawGrade || "").trim().toUpperCase();
     if (value === "K-2") return "k2";
@@ -2886,6 +3080,9 @@
   if (fishTankPacketBtn) fishTankPacketBtn.addEventListener("click", function () {
     copyTextPayload(buildLSTeamPacket(), "LS team packet copied");
   });
+  if (caseAddBtn) caseAddBtn.addEventListener("click", addCaseloadStudent);
+  if (caseCopyBtn) caseCopyBtn.addEventListener("click", copyCaseloadBoard);
+  if (caseListEl) caseListEl.addEventListener("click", handleCaseloadAction);
   if (frameworkSelect) frameworkSelect.addEventListener("change", function () { setFramework(frameworkSelect.value); });
   if (dictateBtn) dictateBtn.addEventListener("click", toggleDictation);
   if (readBtn) readBtn.addEventListener("click", readDraftAloud);
@@ -2920,6 +3117,12 @@
     if (event.key === "Enter") {
       event.preventDefault();
       checkWarmup();
+    }
+  });
+  if (caseNextInput) caseNextInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addCaseloadStudent();
     }
   });
   if (scaffoldNextBtn) scaffoldNextBtn.addEventListener("click", applyNextSmallStep);
@@ -2957,6 +3160,8 @@
   renderWarmupArcade();
   loadPublishWall();
   renderPublishWall();
+  loadCaseload();
+  renderCaseload();
   loadStepUpMode();
   loadAudience();
   loadFramework();
