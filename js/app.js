@@ -99,7 +99,7 @@
   const PAGE_MODE_KEY = 'wq_v2_page_mode_v1';
   const LAST_NON_OFF_MUSIC_KEY = 'wq_v2_last_non_off_music_v1';
   const FEATURE_FLAGS = window.WQFeatureFlags || {};
-  const WRITING_STUDIO_ENABLED = FEATURE_FLAGS.writingStudio !== false;
+  const WRITING_STUDIO_ENABLED = FEATURE_FLAGS.writingStudio === true;
   const MISSION_LAB_ENABLED = true;
   const MIDGAME_BOOST_ENABLED = false;
   const REVIEW_QUEUE_MAX_ITEMS = 36;
