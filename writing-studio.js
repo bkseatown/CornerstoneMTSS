@@ -85,6 +85,24 @@
       { min: 7, level: "B2", note: "Can present clear, detailed text and support viewpoints with control." }
     ]
   };
+  var ANCHOR_PROFILES = {
+    k2: {
+      sentence: { minWords: 6, minSentences: 1, stretchWords: 14, stretchSentences: 2, evidencePreferred: false },
+      paragraph: { minWords: 14, minSentences: 2, stretchWords: 26, stretchSentences: 3, evidencePreferred: true }
+    },
+    "35": {
+      sentence: { minWords: 12, minSentences: 2, stretchWords: 24, stretchSentences: 3, evidencePreferred: false },
+      paragraph: { minWords: 28, minSentences: 3, stretchWords: 46, stretchSentences: 5, evidencePreferred: true }
+    },
+    "68": {
+      sentence: { minWords: 16, minSentences: 2, stretchWords: 30, stretchSentences: 4, evidencePreferred: false },
+      paragraph: { minWords: 38, minSentences: 4, stretchWords: 62, stretchSentences: 6, evidencePreferred: true }
+    },
+    "912": {
+      sentence: { minWords: 20, minSentences: 3, stretchWords: 36, stretchSentences: 5, evidencePreferred: false },
+      paragraph: { minWords: 48, minSentences: 4, stretchWords: 78, stretchSentences: 7, evidencePreferred: true }
+    }
+  };
   var STEP_ORDER = ["plan", "draft", "revise", "publish"];
   var GOALS_BY_MODE = {
     sentence: {
@@ -186,6 +204,8 @@
   var frameworkSelect = document.getElementById("ws-framework");
   var benchmarkLevelEl = document.getElementById("ws-benchmark-level");
   var benchmarkNoteEl = document.getElementById("ws-benchmark-note");
+  var calibrationEl = document.getElementById("ws-calibration");
+  var benchmarkConfidenceEl = document.getElementById("ws-benchmark-confidence");
   var miniLessonEl = document.getElementById("ws-mini-lesson");
   var sprintTimeEl = document.getElementById("ws-sprint-time");
   var sprintStartBtn = document.getElementById("ws-sprint-start");
@@ -777,17 +797,54 @@
     return current;
   }
 
-  function renderBenchmarkLens(total, scores) {
+  function getAnchorProfile() {
+    var byBand = ANCHOR_PROFILES[currentGradeBand] || ANCHOR_PROFILES["35"];
+    return byBand[currentMode] || byBand.sentence;
+  }
+
+  function getAnchorAdjustment(text, words, sentenceCount, scores) {
+    var profile = getAnchorProfile();
+    var severeLow = words < Math.max(1, Math.floor(profile.minWords * 0.65)) || sentenceCount < Math.max(1, profile.minSentences - 1);
+    var strongHigh = words >= profile.stretchWords && sentenceCount >= profile.stretchSentences;
+    var hasEvidence = EVIDENCE_RE.test(text);
+    var balanced = scores.structure >= 2 && scores.detail >= 2 && scores.language >= 2;
+
+    if (severeLow) return -1;
+    if (currentMode === "paragraph" && profile.evidencePreferred && !hasEvidence && scores.detail < 2) return -1;
+    if (strongHigh && balanced) return 1;
+    return 0;
+  }
+
+  function getBenchmarkConfidence(text, words, sentenceCount) {
+    var profile = getAnchorProfile();
+    var hasEvidence = EVIDENCE_RE.test(text);
+    if (words < profile.minWords || sentenceCount < profile.minSentences) {
+      return "Low (build more writing)";
+    }
+    if (currentMode === "paragraph" && profile.evidencePreferred && !hasEvidence) {
+      return "Medium (add evidence to stabilize)";
+    }
+    if (words >= profile.stretchWords || sentenceCount >= profile.stretchSentences) {
+      return "High (anchor-aligned sample)";
+    }
+    return "Medium (developing sample)";
+  }
+
+  function renderBenchmarkLens(text, total, scores, words, sentenceCount) {
     if (!benchmarkLevelEl || !benchmarkNoteEl) return;
-    var band = resolveBenchmarkBand(total);
+    var adjustedTotal = Math.max(0, Math.min(9, total + getAnchorAdjustment(text, words, sentenceCount, scores)));
+    var band = resolveBenchmarkBand(adjustedTotal);
     var weak = getWeakestDomain(scores);
     var target = weak === "structure"
       ? "Prioritize organization and claim clarity next."
       : (weak === "detail"
         ? "Prioritize evidence/detail elaboration next."
         : "Prioritize vocabulary precision and sentence control next.");
+    var gradeLabel = currentGradeBand === "k2" ? "K-2" : (currentGradeBand === "35" ? "3-5" : (currentGradeBand === "68" ? "6-8" : "9-12"));
     benchmarkLevelEl.textContent = band.level + " (local estimate)";
     benchmarkNoteEl.textContent = band.note + " " + target;
+    if (calibrationEl) calibrationEl.textContent = gradeLabel + " " + currentMode + " anchor set";
+    if (benchmarkConfidenceEl) benchmarkConfidenceEl.textContent = getBenchmarkConfidence(text, words, sentenceCount);
   }
 
   function renderMasterySnapshot(text, words, sentenceCount) {
@@ -822,7 +879,7 @@
     rubric2El.textContent = detail + "/3";
     rubric3El.textContent = language + "/3";
     rubricScoreEl.textContent = total + "/9";
-    renderBenchmarkLens(total, { structure: structure, detail: detail, language: language });
+    renderBenchmarkLens(text, total, { structure: structure, detail: detail, language: language }, words, sentenceCount);
     miniLessonEl.textContent = getMiniLessonRecommendation({ structure: structure, detail: detail, language: language });
   }
 
