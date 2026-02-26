@@ -25,32 +25,41 @@
       </div>
 
       <div class="ws-controls">
-        <button class="ws-chip is-active" data-mode="sentence" type="button">Sentence</button>
-        <button class="ws-chip" data-mode="paragraph" type="button">Paragraph</button>
-        <button class="ws-chip is-active" data-audience="student" type="button">Student</button>
-        <button class="ws-chip" data-audience="teacher" type="button">Teacher</button>
-        <button class="ws-chip" data-audience="family" type="button">Family</button>
-        <select id="ws-preset-pack" class="ws-plan-input" aria-label="Instruction preset pack">
-          <option value="custom" selected>Preset: Custom</option>
-          <option value="fishtank">Preset: Fish Tank</option>
-          <option value="stepup">Preset: Step Up</option>
-          <option value="eal">Preset: EAL Support</option>
-          <option value="ls">Preset: LS Intervention</option>
-        </select>
-        <select id="ws-grade-band" class="ws-plan-input" aria-label="Grade band">
-          <option value="k2">K-2</option>
-          <option value="35" selected>3-5</option>
-          <option value="68">6-8</option>
-          <option value="912">9-12</option>
-        </select>
-        <button class="ws-chip is-active" data-profile="whole" type="button">Whole Class</button>
-        <button class="ws-chip" data-profile="small" type="button">Small Group</button>
-        <button class="ws-chip" data-profile="one" type="button">1:1</button>
-        <button class="ws-chip is-active" id="ws-stepup-toggle" type="button" aria-pressed="true">Step Up Mode</button>
-        <button class="ws-chip" id="ws-showcase-toggle" type="button" aria-pressed="false">Showcase</button>
-        <button class="ws-chip" id="ws-model" type="button" aria-pressed="false">Teacher Model: Off</button>
-        <button class="ws-ghost" id="ws-back" type="button">Back to WordQuest</button>
-        <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
+        <div class="ws-controls-primary">
+          <button class="ws-chip is-active" data-mode="sentence" type="button">Sentence</button>
+          <button class="ws-chip" data-mode="paragraph" type="button">Paragraph</button>
+          <button class="ws-chip" id="ws-showcase-toggle" type="button" aria-pressed="false">Showcase</button>
+          <button class="ws-ghost" id="ws-setup-toggle" type="button" aria-expanded="false" aria-controls="ws-controls-panel">Class Setup</button>
+          <button class="ws-ghost" id="ws-back" type="button">Back to WordQuest</button>
+        </div>
+        <div class="ws-controls-panel" id="ws-controls-panel" hidden>
+          <div class="ws-controls-row">
+            <button class="ws-chip is-active" data-audience="student" type="button">Student</button>
+            <button class="ws-chip" data-audience="teacher" type="button">Teacher</button>
+            <button class="ws-chip" data-audience="family" type="button">Family</button>
+            <button class="ws-chip is-active" data-profile="whole" type="button">Whole Class</button>
+            <button class="ws-chip" data-profile="small" type="button">Small Group</button>
+            <button class="ws-chip" data-profile="one" type="button">1:1</button>
+          </div>
+          <div class="ws-controls-row">
+            <select id="ws-preset-pack" class="ws-plan-input" aria-label="Instruction preset pack">
+              <option value="custom" selected>Preset: Custom</option>
+              <option value="fishtank">Preset: Fish Tank</option>
+              <option value="stepup">Preset: Step Up</option>
+              <option value="eal">Preset: EAL Support</option>
+              <option value="ls">Preset: LS Intervention</option>
+            </select>
+            <select id="ws-grade-band" class="ws-plan-input" aria-label="Grade band">
+              <option value="k2">K-2</option>
+              <option value="35" selected>3-5</option>
+              <option value="68">6-8</option>
+              <option value="912">9-12</option>
+            </select>
+            <button class="ws-chip is-active" id="ws-stepup-toggle" type="button" aria-pressed="true">Step Up Mode</button>
+            <button class="ws-chip" id="ws-model" type="button" aria-pressed="false">Teacher Model: Off</button>
+            <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -126,12 +135,19 @@
       </section>
 
       <aside id="ws-rail">
-        <div class="ws-rail-block">
+        <nav class="ws-rail-nav" aria-label="Studio sections">
+          <a class="ws-rail-link" href="#ws-block-coach">Coach</a>
+          <a class="ws-rail-link" href="#ws-block-scaffold">Scaffold</a>
+          <a class="ws-rail-link" href="#ws-block-warmup">Warm-Up</a>
+          <a class="ws-rail-link" href="#ws-block-mastery">Mastery</a>
+          <a class="ws-rail-link" href="#ws-block-publish">Publish</a>
+        </nav>
+        <div class="ws-rail-block" id="ws-block-coach">
           <div class="ws-h2">Coach</div>
           <div class="ws-coach" id="ws-coach"></div>
         </div>
 
-        <div class="ws-rail-block">
+        <div class="ws-rail-block" id="ws-block-scaffold">
           <div class="ws-h2">Scaffold Tools</div>
           <div class="ws-pills" id="ws-scaffold-tools">
             <button class="ws-pill" id="ws-scaffold-next" type="button">Next Small Step</button>
@@ -169,7 +185,7 @@
           <button class="ws-secondary" id="ws-stepup-copy" type="button">Copy Marked Draft</button>
         </div>
 
-        <div class="ws-rail-block">
+        <div class="ws-rail-block" id="ws-block-warmup">
           <div class="ws-h2">Warm-Up: Fix It</div>
           <div class="ws-pills">
             <span class="ws-pill">Streak: <span id="ws-warmup-streak">0</span></span>
@@ -230,7 +246,7 @@
           </div>
         </div>
 
-        <div class="ws-rail-block">
+        <div class="ws-rail-block" id="ws-block-mastery">
           <div class="ws-h2">Mastery Snapshot</div>
           <div class="ws-plan-row ws-plan-row-organizer ws-benchmark-controls">
             <select id="ws-framework" class="ws-plan-input" aria-label="Benchmark framework">
@@ -259,7 +275,7 @@
           <div id="ws-exemplars" class="ws-coach"></div>
         </div>
 
-        <div class="ws-rail-block">
+        <div class="ws-rail-block" id="ws-block-publish">
           <div class="ws-h2">Publishing Wall</div>
           <div class="ws-canvas-foot">
             <button class="ws-secondary" id="ws-pin-line" type="button">Pin Best Line</button>

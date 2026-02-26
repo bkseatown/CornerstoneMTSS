@@ -373,6 +373,8 @@
   var imagePreviewEl = document.getElementById("ws-image-preview");
   var checklistInputs = Array.prototype.slice.call(document.querySelectorAll(".ws-check input"));
   var backBtn = document.getElementById("ws-back");
+  var setupToggleBtn = document.getElementById("ws-setup-toggle");
+  var controlsPanelEl = document.getElementById("ws-controls-panel");
   var settingsBtn = document.getElementById("ws-settings");
   var gradeBandSelect = document.getElementById("ws-grade-band");
   var currentMode = "sentence";
@@ -2265,6 +2267,20 @@
     showToast("Theme: " + next);
   }
 
+  function setSetupPanelOpen(open) {
+    if (!setupToggleBtn || !controlsPanelEl) return;
+    var expanded = !!open;
+    controlsPanelEl.hidden = !expanded;
+    setupToggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    setupToggleBtn.textContent = expanded ? "Hide Setup" : "Class Setup";
+  }
+
+  function toggleSetupPanel() {
+    if (!setupToggleBtn || !controlsPanelEl) return;
+    var expanded = setupToggleBtn.getAttribute("aria-expanded") === "true";
+    setSetupPanelOpen(!expanded);
+  }
+
   function goBackToWordQuest() {
     var current = normalizeTheme(document.documentElement.getAttribute("data-theme") || "default");
     var prefs = loadPrefs();
@@ -2357,9 +2373,16 @@
     input.addEventListener("change", updateMetricsAndCoach);
   });
   if (backBtn) backBtn.addEventListener("click", goBackToWordQuest);
+  if (setupToggleBtn) setupToggleBtn.addEventListener("click", toggleSetupPanel);
   settingsBtn.addEventListener("click", cycleTheme);
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && showcaseOpen) closeShowcase();
+    if (event.key === "Escape" && showcaseOpen) {
+      closeShowcase();
+      return;
+    }
+    if (event.key === "Escape" && setupToggleBtn && setupToggleBtn.getAttribute("aria-expanded") === "true") {
+      setSetupPanelOpen(false);
+    }
   });
 
   applyTheme(resolveInitialTheme());
@@ -2381,4 +2404,5 @@
   setMode("sentence");
   loadPresetPack();
   applyWordQuestContext();
+  setSetupPanelOpen(false);
 })();

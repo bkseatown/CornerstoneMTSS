@@ -115,9 +115,27 @@ body.cs-page-writing {
 
 .ws-controls {
   display: flex;
+  flex-direction: column;
   gap: var(--ws-gap-2);
-  align-items: center;
+  align-items: flex-end;
+}
+
+.ws-controls-primary,
+.ws-controls-row {
+  display: flex;
   flex-wrap: wrap;
+  gap: var(--ws-gap-2);
+  justify-content: flex-end;
+}
+
+.ws-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+  padding: var(--ws-gap-2);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .ws-chip,
@@ -152,6 +170,7 @@ body.cs-page-writing {
   display: grid;
   grid-template-columns: 1.55fr 0.95fr;
   gap: var(--ws-gap-4);
+  min-height: calc(100dvh - 172px);
 }
 
 #ws-stage::before {
@@ -171,6 +190,9 @@ body.cs-page-writing {
   display: flex;
   flex-direction: column;
   gap: var(--ws-gap-3);
+  max-height: calc(100dvh - 236px);
+  overflow: auto;
+  padding-right: var(--ws-gap-1);
 }
 
 .ws-h2 {
@@ -180,8 +202,8 @@ body.cs-page-writing {
 }
 
 .ws-meta {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .ws-canvas-head {
@@ -204,7 +226,7 @@ body.cs-page-writing {
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.86);
   padding: var(--ws-gap-1) var(--ws-gap-2);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -439,6 +461,32 @@ body.cs-page-writing {
   flex-direction: column;
   gap: var(--ws-gap-4);
   padding-top: var(--ws-gap-1);
+  max-height: calc(100dvh - 236px);
+  overflow: auto;
+  padding-right: var(--ws-gap-1);
+}
+
+.ws-rail-nav {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-gap-1);
+  padding-bottom: var(--ws-gap-2);
+  margin-bottom: var(--ws-gap-1);
+  background: linear-gradient(180deg, rgba(20, 30, 44, 0.95), rgba(20, 30, 44, 0.78));
+  backdrop-filter: blur(6px);
+}
+
+.ws-rail-link {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.94);
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 #ws-rail .ws-h2 {
@@ -540,7 +588,8 @@ body.cs-page-writing {
   padding: var(--ws-gap-1) var(--ws-gap-2);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .ws-check {
@@ -578,6 +627,17 @@ body.cs-page-writing {
   margin-top: var(--ws-gap-1);
   font-size: 12px;
   color: rgba(255, 255, 255, 0.74);
+}
+
+#ws-canvas::-webkit-scrollbar,
+#ws-rail::-webkit-scrollbar {
+  width: 10px;
+}
+
+#ws-canvas::-webkit-scrollbar-thumb,
+#ws-rail::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
 #ws-toast {
@@ -744,10 +804,32 @@ body.cs-page-writing {
 
   #ws-stage {
     grid-template-columns: 1fr;
+    min-height: auto;
   }
 
   #ws-editor {
     min-height: 40vh;
+  }
+
+  #ws-canvas,
+  #ws-rail {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .ws-controls {
+    align-items: flex-start;
+  }
+
+  .ws-controls-primary,
+  .ws-controls-row {
+    justify-content: flex-start;
+  }
+
+  .ws-rail-nav {
+    position: static;
+    background: transparent;
+    padding-bottom: 0;
   }
 
   .ws-guidance {
