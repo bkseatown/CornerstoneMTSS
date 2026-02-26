@@ -7500,53 +7500,53 @@
     if (pack === 'ufli' || pack === 'fundations' || pack === 'wilson') {
       const curatedByPack = Object.freeze({
         ufli: Object.freeze({
-          cvc: 'pattern-first: cvc short-vowel words',
-          digraph: 'pattern-first: digraph spellings (sh/ch/th/wh)',
-          ccvc: 'pattern-first: initial blends',
-          cvcc: 'pattern-first: final blends',
-          cvce: 'pattern-first: vce (magic e)',
-          vowel_team: 'pattern-first: vowel teams (ai/ay, ee/ea, oa/ow)',
-          r_controlled: 'pattern-first: r-controlled vowels (ar/or/er/ir/ur)',
-          welded: 'pattern-first: welded sounds (ang/ing/ank/ink)',
-          diphthong: 'pattern-first: diphthongs (oi/oy, ou/ow)',
-          prefix: 'pattern-first: prefixes',
-          suffix: 'pattern-first: suffixes',
-          multisyllable: 'pattern-first: syllable division',
-          all: 'pattern-first: mixed review'
+          cvc: 'short-vowel CVC words',
+          digraph: 'digraph spellings (sh/ch/th/wh)',
+          ccvc: 'initial blends',
+          cvcc: 'final blends',
+          cvce: 'VCe (magic e)',
+          vowel_team: 'vowel teams (ai/ay, ee/ea, oa/ow)',
+          r_controlled: 'r-controlled vowels (ar/or/er/ir/ur)',
+          welded: 'welded sounds (ang/ing/ank/ink)',
+          diphthong: 'diphthongs (oi/oy, ou/ow)',
+          prefix: 'prefixes',
+          suffix: 'suffixes',
+          multisyllable: 'syllable division',
+          all: 'mixed review'
         }),
         fundations: Object.freeze({
-          cvc: 'pattern-first: closed syllables (cvc)',
-          digraph: 'pattern-first: digraph spellings',
-          ccvc: 'pattern-first: blend starters',
-          cvcc: 'pattern-first: blend endings',
-          cvce: 'pattern-first: vce words',
-          vowel_team: 'pattern-first: vowel team spellings',
-          r_controlled: 'pattern-first: r-controlled spellings',
-          welded: 'pattern-first: welded chunks',
-          diphthong: 'pattern-first: diphthong spellings',
-          prefix: 'pattern-first: prefixes',
-          suffix: 'pattern-first: suffixes',
-          multisyllable: 'pattern-first: syllable division',
-          all: 'pattern-first: mixed review'
+          cvc: 'closed syllables (CVC)',
+          digraph: 'digraph spellings',
+          ccvc: 'blend starters',
+          cvcc: 'blend endings',
+          cvce: 'VCe words',
+          vowel_team: 'vowel team spellings',
+          r_controlled: 'r-controlled spellings',
+          welded: 'welded chunks',
+          diphthong: 'diphthong spellings',
+          prefix: 'prefixes',
+          suffix: 'suffixes',
+          multisyllable: 'syllable division',
+          all: 'mixed review'
         }),
         wilson: Object.freeze({
-          cvc: 'pattern-first: closed syllable words',
-          digraph: 'pattern-first: digraph/spelling patterns',
-          ccvc: 'pattern-first: blend openings',
-          cvcc: 'pattern-first: blend endings',
-          cvce: 'pattern-first: v-e syllable',
-          vowel_team: 'pattern-first: vowel team syllable',
-          r_controlled: 'pattern-first: r-controlled syllable',
-          welded: 'pattern-first: welded sounds',
-          diphthong: 'pattern-first: diphthong syllable',
-          prefix: 'pattern-first: prefix + base',
-          suffix: 'pattern-first: suffix + base',
-          multisyllable: 'pattern-first: multisyllable decoding',
-          all: 'pattern-first: mixed review'
+          cvc: 'closed syllable words',
+          digraph: 'digraph/spelling patterns',
+          ccvc: 'blend openings',
+          cvcc: 'blend endings',
+          cvce: 'V-e syllable',
+          vowel_team: 'vowel team syllable',
+          r_controlled: 'r-controlled syllable',
+          welded: 'welded sounds',
+          diphthong: 'diphthong syllable',
+          prefix: 'prefix + base',
+          suffix: 'suffix + base',
+          multisyllable: 'multisyllable decoding',
+          all: 'mixed review'
         })
       });
       const curated = curatedByPack[pack] || curatedByPack.ufli;
-      return curated[focus] || `pattern-first: ${focus.replaceAll('_', ' ')}`;
+      return curated[focus] || focus.replaceAll('_', ' ');
     }
     const shortLabels = Object.freeze({
       cvc: 'cvc (short vowels)',
@@ -7610,11 +7610,9 @@
     const focusLabel = getCurriculumFocusChipLabel(target.focus, entry.packId);
     const packId = String(entry.packId || '').toLowerCase();
     const useCuratedPatternOnly = ['ufli', 'fundations', 'wilson'].includes(packId);
-    const text = packId === 'fundations'
-      ? (examples.length ? `${focusLabel} · ex: ${examples.join(', ')}` : focusLabel)
-      : useCuratedPatternOnly
-        ? focusLabel
-        : (examples.length ? `${focusLabel}: ${examples.join(', ')}` : '');
+    const text = examples.length
+      ? `${focusLabel} (${examples.join(', ')})`
+      : (useCuratedPatternOnly ? focusLabel : '');
     curriculumEntryExampleCache.set(cacheKey, text);
     return text;
   }
