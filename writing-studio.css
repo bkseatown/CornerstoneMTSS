@@ -427,6 +427,13 @@ body.cs-page-writing {
   padding-top: var(--ws-gap-1);
 }
 
+#ws-rail .ws-h2 {
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: var(--ws-gap-1);
+}
+
 .ws-rail-block {
   padding: var(--ws-gap-3) 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -472,6 +479,11 @@ body.cs-page-writing {
   border: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 14px;
   line-height: 1.45;
+}
+
+#ws-rail .ws-tip {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.11);
 }
 
 .ws-exemplar {
@@ -526,6 +538,32 @@ body.cs-page-writing {
 
 .ws-check input {
   margin-right: var(--ws-gap-1);
+}
+
+.ws-publish-wall {
+  margin-top: var(--ws-gap-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+}
+
+.ws-wall-item {
+  padding: var(--ws-gap-2);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ws-wall-line {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.94);
+  line-height: 1.45;
+}
+
+.ws-wall-meta {
+  margin-top: var(--ws-gap-1);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.74);
 }
 
 #ws-toast {
@@ -583,6 +621,35 @@ body.cs-page-writing {
   .ws-secondary:active {
     transform: translateY(0) scale(0.99);
   }
+
+  #ws-canvas > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: ws-reveal 360ms ease forwards;
+  }
+
+  #ws-canvas > *:nth-child(1) { animation-delay: 40ms; }
+  #ws-canvas > *:nth-child(2) { animation-delay: 90ms; }
+  #ws-canvas > *:nth-child(3) { animation-delay: 130ms; }
+  #ws-canvas > *:nth-child(4) { animation-delay: 170ms; }
+  #ws-canvas > *:nth-child(5) { animation-delay: 210ms; }
+
+  #ws-rail .ws-rail-block {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: ws-reveal 420ms ease forwards;
+  }
+
+  #ws-rail .ws-rail-block:nth-child(1) { animation-delay: 90ms; }
+  #ws-rail .ws-rail-block:nth-child(2) { animation-delay: 130ms; }
+  #ws-rail .ws-rail-block:nth-child(3) { animation-delay: 170ms; }
+  #ws-rail .ws-rail-block:nth-child(4) { animation-delay: 210ms; }
+  #ws-rail .ws-rail-block:nth-child(5) { animation-delay: 250ms; }
+  #ws-rail .ws-rail-block:nth-child(6) { animation-delay: 290ms; }
+  #ws-rail .ws-rail-block:nth-child(7) { animation-delay: 330ms; }
+  #ws-rail .ws-rail-block:nth-child(8) { animation-delay: 370ms; }
+  #ws-rail .ws-rail-block:nth-child(9) { animation-delay: 410ms; }
+  #ws-rail .ws-rail-block:nth-child(10) { animation-delay: 450ms; }
 }
 
 @keyframes ws-float-a {
@@ -593,6 +660,17 @@ body.cs-page-writing {
 @keyframes ws-float-b {
   from { transform: translateY(0px) translateX(0px); }
   to { transform: translateY(-10px) translateX(8px); }
+}
+
+@keyframes ws-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 980px) {

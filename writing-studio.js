@@ -9,6 +9,7 @@
   var STEPUP_KEY = "ws_stepup_mode_v1";
   var STEPUP_CODES_KEY = "ws_stepup_codes_v1";
   var WARMUP_STATS_KEY = "ws_warmup_stats_v1";
+  var WALL_KEY = "ws_publish_wall_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
   var ACADEMIC_WORDS = {
     k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
@@ -284,6 +285,9 @@
   var warmupRoundScoreEl = document.getElementById("ws-warmup-round-score");
   var warmupRoundStartBtn = document.getElementById("ws-warmup-round-start");
   var warmupClassToggleBtn = document.getElementById("ws-warmup-class-toggle");
+  var pinLineBtn = document.getElementById("ws-pin-line");
+  var wallClearBtn = document.getElementById("ws-wall-clear");
+  var publishWallEl = document.getElementById("ws-publish-wall");
   var scaffoldNextBtn = document.getElementById("ws-scaffold-next");
   var scaffoldStemBtn = document.getElementById("ws-scaffold-stem");
   var scaffoldIdeaBtn = document.getElementById("ws-scaffold-idea");
@@ -339,6 +343,7 @@
   var warmupRoundSeconds = 0;
   var warmupRoundTimer = null;
   var warmupClassMode = false;
+  var publishWall = [];
   var teacherModel = false;
   var sprintTotalSeconds = PROFILE_CONFIG.whole.sprintSeconds;
   var sprintRemaining = sprintTotalSeconds;
@@ -1273,6 +1278,102 @@
     return mins + ":" + secs;
   }
 
+  function loadPublishWall() {
+    var parsed = null;
+    try {
+      parsed = JSON.parse(localStorage.getItem(WALL_KEY) || "[]");
+    } catch (_error) {
+      parsed = [];
+    }
+    if (!Array.isArray(parsed)) parsed = [];
+    publishWall = parsed
+      .filter(function (item) {
+        return item && typeof item.line === "string" && item.line.trim().length > 0;
+      })
+      .slice(0, 12);
+  }
+
+  function savePublishWall() {
+    try {
+      localStorage.setItem(WALL_KEY, JSON.stringify(publishWall.slice(0, 12)));
+    } catch (_error) {
+      // Ignore storage write errors.
+    }
+  }
+
+  function renderPublishWall() {
+    if (!publishWallEl) return;
+    publishWallEl.innerHTML = "";
+    if (!publishWall.length) {
+      var empty = document.createElement("div");
+      empty.className = "ws-wall-meta";
+      empty.textContent = "No lines pinned yet. Pin one strong sentence.";
+      publishWallEl.appendChild(empty);
+      return;
+    }
+    publishWall.slice(0, 8).forEach(function (entry) {
+      var item = document.createElement("div");
+      item.className = "ws-wall-item";
+
+      var line = document.createElement("div");
+      line.className = "ws-wall-line";
+      line.textContent = "\"" + entry.line + "\"";
+
+      var meta = document.createElement("div");
+      meta.className = "ws-wall-meta";
+      var stamp = entry.ts ? new Date(entry.ts).toLocaleDateString() : "";
+      var grade = entry.grade || "";
+      var mode = entry.mode || "";
+      meta.textContent = [stamp, grade, mode].filter(Boolean).join(" • ");
+
+      item.appendChild(line);
+      item.appendChild(meta);
+      publishWallEl.appendChild(item);
+    });
+  }
+
+  function selectBestLineFromText(text) {
+    var lines = getTextSentences(text);
+    if (!lines.length) return "";
+    var scored = lines.map(function (line) {
+      var score = 0;
+      if (EVIDENCE_RE.test(line)) score += 2;
+      if (CLAIM_RE.test(line)) score += 1;
+      if (CONJUNCTION_RE.test(line)) score += 1;
+      score += Math.min(2, Math.floor(line.split(/\s+/).length / 8));
+      return { line: line, score: score };
+    });
+    scored.sort(function (a, b) { return b.score - a.score; });
+    return scored[0].line;
+  }
+
+  function pinBestLine() {
+    var text = editor.value || "";
+    var line = selectBestLineFromText(text);
+    if (!line) {
+      showToast("Write at least one sentence first");
+      return;
+    }
+    var grade = currentGradeBand === "k2" ? "K-2" : (currentGradeBand === "35" ? "3-5" : (currentGradeBand === "68" ? "6-8" : "9-12"));
+    publishWall.unshift({
+      line: line,
+      ts: Date.now(),
+      grade: grade,
+      mode: currentMode
+    });
+    publishWall = publishWall.slice(0, 12);
+    savePublishWall();
+    renderPublishWall();
+    showToast("Best line pinned");
+  }
+
+  function clearPublishWall() {
+    publishWall = [];
+    savePublishWall();
+    renderPublishWall();
+    showToast("Publishing wall cleared");
+  }
+
   function renderWarmupArcade() {
     if (warmupStreakEl) warmupStreakEl.textContent = String(warmupStreak);
     if (warmupBestEl) warmupBestEl.textContent = String(warmupBest);
@@ -1972,6 +2073,8 @@
   if (warmupNextBtn) warmupNextBtn.addEventListener("click", nextWarmup);
   if (warmupRoundStartBtn) warmupRoundStartBtn.addEventListener("click", toggleWarmupRound);
   if (warmupClassToggleBtn) warmupClassToggleBtn.addEventListener("click", toggleWarmupClassMode);
+  if (pinLineBtn) pinLineBtn.addEventListener("click", pinBestLine);
+  if (wallClearBtn) wallClearBtn.addEventListener("click", clearPublishWall);
   if (warmupInput) warmupInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -2001,6 +2104,8 @@
   renderMarkCodes();
   loadWarmupStats();
   renderWarmupArcade();
+  loadPublishWall();
+  renderPublishWall();
   loadStepUpMode();
   loadAudience();
   loadFramework();
