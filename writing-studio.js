@@ -29,6 +29,7 @@
   var saveBtn = document.getElementById("ws-save");
   var clearBtn = document.getElementById("ws-clear");
   var modeButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-mode]"));
+  var backBtn = document.getElementById("ws-back");
   var settingsBtn = document.getElementById("ws-settings");
   var currentMode = "sentence";
 
@@ -283,6 +284,19 @@
     showToast("Theme: " + next);
   }
 
+  function goBackToWordQuest() {
+    var current = normalizeTheme(document.documentElement.getAttribute("data-theme") || "default");
+    var prefs = loadPrefs();
+    localStorage.setItem(STUDIO_THEME_KEY, current);
+    if (shouldPersistTheme(prefs)) {
+      prefs.theme = current;
+      savePrefs(prefs);
+    }
+    var url = new URL("index.html", window.location.href);
+    url.searchParams.set("theme", current);
+    window.location.href = url.toString();
+  }
+
   modeButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       setMode(btn.getAttribute("data-mode"));
@@ -292,6 +306,7 @@
   editor.addEventListener("input", updateMetricsAndCoach);
   saveBtn.addEventListener("click", saveDraft);
   clearBtn.addEventListener("click", clearDraft);
+  if (backBtn) backBtn.addEventListener("click", goBackToWordQuest);
   settingsBtn.addEventListener("click", cycleTheme);
 
   applyTheme(resolveInitialTheme());

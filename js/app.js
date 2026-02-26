@@ -1417,6 +1417,18 @@
     return theme || fallback;
   }
 
+  function readThemeFromQuery() {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      const raw = params.get('theme') || '';
+      const normalized = String(raw || '').trim();
+      if (!normalized) return '';
+      return normalizeTheme(normalized, getThemeFallback());
+    } catch {
+      return '';
+    }
+  }
+
   function normalizeMusicMode(mode) {
     const normalized = String(mode || '').trim().toLowerCase();
     return ALLOWED_MUSIC_MODES.has(normalized) ? normalized : DEFAULT_PREFS.music;
@@ -1775,7 +1787,8 @@
   void runRemoteBuildConsistencyCheck();
 
   const themeSelect = _el('s-theme');
-  const initialThemeSelection = shouldPersistTheme() ? prefs.theme : getThemeFallback();
+  const queryTheme = readThemeFromQuery();
+  const initialThemeSelection = queryTheme || (shouldPersistTheme() ? prefs.theme : getThemeFallback());
   if (themeSelect && ThemeRegistry && typeof ThemeRegistry.renderThemeOptions === 'function') {
     ThemeRegistry.renderThemeOptions(themeSelect, initialThemeSelection || getThemeFallback());
   } else if (themeSelect && initialThemeSelection) {
