@@ -5,14 +5,47 @@
   var PREF_KEY = "wq_v2_prefs";
   var STUDIO_THEME_KEY = "ws_theme_v1";
   var FALLBACK_ACCENT = "#7aa7ff";
-  var ACADEMIC_WORDS = ["analyze", "evidence", "infer", "structure", "contrast", "precise", "context", "impact", "support", "sequence"];
+  var ACADEMIC_WORDS = {
+    k2: ["detail", "clear", "because", "first", "next", "then", "show", "explain"],
+    "35": ["analyze", "evidence", "infer", "structure", "contrast", "precise", "context", "impact", "support", "sequence"],
+    "68": ["analyze", "evidence", "reasoning", "cohesion", "counterclaim", "evaluate", "context", "synthesize", "justify", "impact"],
+    "912": ["thesis", "synthesis", "nuance", "coherence", "counterclaim", "qualify", "evaluate", "implication", "rhetoric", "precision"]
+  };
   var VOCAB_BY_MODE = {
-    sentence: ["because", "detail", "first", "next", "so", "but", "describe", "clarify", "revise", "conclude"],
-    paragraph: ["claim", "evidence", "analyze", "infer", "contrast", "context", "impact", "support", "sequence", "precise"]
+    k2: {
+      sentence: ["because", "first", "next", "then", "detail", "show", "tell", "feel", "see", "learn"],
+      paragraph: ["claim", "evidence", "because", "detail", "first", "next", "then", "show", "explain", "conclude"]
+    },
+    "35": {
+      sentence: ["because", "detail", "first", "next", "so", "but", "describe", "clarify", "revise", "conclude"],
+      paragraph: ["claim", "evidence", "analyze", "infer", "contrast", "context", "impact", "support", "sequence", "precise"]
+    },
+    "68": {
+      sentence: ["transition", "precise", "evidence", "reasoning", "cohesion", "clarify", "revise", "justify", "connect", "evaluate"],
+      paragraph: ["claim", "counterclaim", "evidence", "reasoning", "cohesion", "synthesize", "justify", "evaluate", "context", "impact"]
+    },
+    "912": {
+      sentence: ["thesis", "nuance", "precision", "coherence", "qualify", "synthesize", "rhetoric", "evidence", "evaluate", "implication"],
+      paragraph: ["thesis", "counterclaim", "synthesis", "coherence", "qualify", "evidence", "rhetoric", "evaluate", "implication", "precision"]
+    }
   };
   var CHECKLIST_BY_MODE = {
-    sentence: ["Topic sentence is clear", "I added two details", "I used because/so/but"],
-    paragraph: ["Claim answers the prompt", "I cited text evidence", "I explained why evidence matters"]
+    k2: {
+      sentence: ["My topic is clear", "I added details", "I used because/and"],
+      paragraph: ["My main idea is clear", "I used a detail from text/image", "I explained my thinking"]
+    },
+    "35": {
+      sentence: ["Topic sentence is clear", "I added two details", "I used because/so/but"],
+      paragraph: ["Claim answers the prompt", "I cited text evidence", "I explained why evidence matters"]
+    },
+    "68": {
+      sentence: ["Sentence has a precise point", "I used academic language", "I linked ideas clearly"],
+      paragraph: ["Claim is arguable", "Evidence is specific", "Reasoning explains how evidence supports claim"]
+    },
+    "912": {
+      sentence: ["Sentence is precise and purposeful", "Word choice matches academic register", "Sentence flow is coherent"],
+      paragraph: ["Thesis is nuanced", "Evidence is integrated and cited", "Reasoning addresses complexity or counterclaim"]
+    }
   };
   var CONJUNCTION_RE = /\b(and|but|or|so|because|although|however|therefore|while|if)\b/i;
   var EVIDENCE_RE = /\b(according to|for example|for instance|the text says|in the text|evidence)\b/i;
@@ -142,7 +175,9 @@
   var checklistInputs = Array.prototype.slice.call(document.querySelectorAll(".ws-check input"));
   var backBtn = document.getElementById("ws-back");
   var settingsBtn = document.getElementById("ws-settings");
+  var gradeBandSelect = document.getElementById("ws-grade-band");
   var currentMode = "sentence";
+  var currentGradeBand = "35";
   var currentProfile = "whole";
   var currentStep = "plan";
   var teacherModel = false;
@@ -176,7 +211,8 @@
 
   function countAcademicWords(text) {
     var lower = text.toLowerCase();
-    return ACADEMIC_WORDS.filter(function (word) {
+    var source = ACADEMIC_WORDS[currentGradeBand] || ACADEMIC_WORDS["35"];
+    return source.filter(function (word) {
       return lower.indexOf(word) !== -1;
     }).length;
   }
@@ -526,7 +562,8 @@
         tips.push("You included evidence. Add one sentence explaining why it matters.");
       }
 
-      if (academicCount < (currentProfile === "whole" ? 2 : 1)) {
+      var paragraphAcademicTarget = currentGradeBand === "k2" ? 1 : (currentGradeBand === "35" ? 2 : 3);
+      if (academicCount < (currentProfile === "whole" ? paragraphAcademicTarget : Math.max(1, paragraphAcademicTarget - 1))) {
         tips.push("Use academic words: evidence, analyze, and impact.");
       } else {
         tips.push("Academic language is strong. Keep your explanation precise.");
@@ -544,7 +581,8 @@
         tips.push("Great connectors. Check that each one strengthens meaning.");
       }
 
-      if (academicCount === 0) {
+      var sentenceAcademicTarget = currentGradeBand === "k2" ? 0 : 1;
+      if (academicCount <= sentenceAcademicTarget) {
         tips.push("Upgrade one word: try precise, sequence, or context.");
       } else {
         tips.push("Word choice is growing. Keep adding one stronger term.");
@@ -726,7 +764,8 @@
   }
 
   function renderVocabPills() {
-    var source = VOCAB_BY_MODE[currentMode] || VOCAB_BY_MODE.sentence;
+    var byBand = VOCAB_BY_MODE[currentGradeBand] || VOCAB_BY_MODE["35"];
+    var source = byBand[currentMode] || byBand.sentence;
     vocab.innerHTML = "";
     source.slice(0, 10).forEach(function (word) {
       var pill = document.createElement("button");
@@ -744,10 +783,21 @@
   }
 
   function renderChecklist() {
-    var labels = CHECKLIST_BY_MODE[currentMode] || CHECKLIST_BY_MODE.sentence;
+    var byBand = CHECKLIST_BY_MODE[currentGradeBand] || CHECKLIST_BY_MODE["35"];
+    var labels = byBand[currentMode] || byBand.sentence;
     if (checklist1) checklist1.textContent = labels[0];
     if (checklist2) checklist2.textContent = labels[1];
     if (checklist3) checklist3.textContent = labels[2];
+  }
+
+  function setGradeBand(band) {
+    var normalized = ["k2", "35", "68", "912"].indexOf(String(band)) >= 0 ? String(band) : "35";
+    currentGradeBand = normalized;
+    if (gradeBandSelect) gradeBandSelect.value = normalized;
+    renderChecklist();
+    renderVocabPills();
+    updateMetricsAndCoach();
+    showToast("Grade band: " + (normalized === "k2" ? "K-2" : normalized === "35" ? "3-5" : normalized === "68" ? "6-8" : "9-12"));
   }
 
   function showToast(message) {
@@ -988,6 +1038,7 @@
   if (planUseBtn) planUseBtn.addEventListener("click", usePlanInDraft);
   if (organizerTypeSelect) organizerTypeSelect.addEventListener("change", renderOrganizerPreview);
   if (organizerApplyBtn) organizerApplyBtn.addEventListener("click", applyOrganizerTemplate);
+  if (gradeBandSelect) gradeBandSelect.addEventListener("change", function () { setGradeBand(gradeBandSelect.value); });
   if (dictateBtn) dictateBtn.addEventListener("click", toggleDictation);
   if (readBtn) readBtn.addEventListener("click", readDraftAloud);
   if (imageBtn && imageInput) {
@@ -1014,6 +1065,7 @@
   renderPlanItems();
   renderSprint();
   loadDraft();
+  setGradeBand("35");
   setProfile("whole");
   setMode("sentence");
 })();
