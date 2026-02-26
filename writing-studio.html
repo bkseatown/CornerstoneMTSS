@@ -91,6 +91,30 @@
             <button class="ws-secondary" id="ws-quick-one" type="button">1:1 Intensive Start</button>
           </div>
         </div>
+        <div class="ws-fishtank" id="ws-fishtank" aria-label="Fish Tank lesson launcher">
+          <div class="ws-fishtank-head">
+            <div class="ws-h2">Fish Tank Lesson Launcher</div>
+            <div class="ws-meta">Align to today, then run a gap-rescue if needed.</div>
+          </div>
+          <div class="ws-fishtank-row">
+            <select id="ws-ft-grade" class="ws-plan-input" aria-label="Fish Tank grade band">
+              <option value="35">Fish Tank 3-5</option>
+              <option value="68">Fish Tank 6-8</option>
+              <option value="912">Fish Tank 9-12</option>
+            </select>
+            <select id="ws-ft-unit" class="ws-plan-input" aria-label="Fish Tank unit"></select>
+            <select id="ws-ft-lesson" class="ws-plan-input" aria-label="Fish Tank lesson"></select>
+          </div>
+          <div class="ws-fishtank-actions">
+            <button class="ws-secondary" id="ws-ft-load" type="button">Load Today</button>
+            <button class="ws-secondary" id="ws-ft-gap" type="button">Run Gap Rescue</button>
+            <button class="ws-secondary" id="ws-ft-note" type="button">Copy Session Note</button>
+            <button class="ws-secondary" id="ws-ft-evidence" type="button">Copy Evidence Log</button>
+            <button class="ws-secondary" id="ws-ft-parent" type="button">Copy Parent Update</button>
+            <button class="ws-secondary" id="ws-ft-handoff" type="button">Copy Teacher Handoff</button>
+          </div>
+          <div class="ws-tip"><strong>Today:</strong> <span id="ws-ft-target">Select a lesson to load writing targets.</span></div>
+        </div>
         <div class="ws-tip ws-stepup-seq" id="ws-stepup-seq">
           <strong>Step Up Sequence:</strong> <span id="ws-stepup-target">3-5 sentence focus: topic sentence -> detail sentences -> transition.</span>
         </div>

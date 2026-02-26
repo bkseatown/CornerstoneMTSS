@@ -281,6 +281,34 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
 }
 
+.ws-fishtank {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-2);
+  padding: var(--ws-gap-2);
+  border-radius: var(--ws-radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ws-fishtank-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-1);
+}
+
+.ws-fishtank-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ws-gap-2);
+}
+
+.ws-fishtank-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ws-gap-2);
+}
+
 .ws-plan {
   display: flex;
   flex-direction: column;
@@ -860,6 +888,15 @@ body.cs-page-writing {
   }
 
   .ws-launchpad-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ws-fishtank-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ws-fishtank-actions {
     flex-direction: column;
     align-items: stretch;
   }

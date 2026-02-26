@@ -246,6 +246,43 @@
       cue: "LS flow: one small step, immediate feedback, then repeat."
     }
   };
+  var FISHTANK_SCOPE = {
+    "35": {
+      units: [
+        {
+          id: "35-u1", label: "Gr 3-5 Unit 1: Opinion and Evidence", lessons: [
+            { id: "35-u1-l1", label: "Lesson 1: State a clear opinion", mode: "paragraph", target: "Write a focused opinion claim and support with one reason.", criteria: "Claim is clear, reason is relevant, connector used.", frame: "I think __ because __.", gap: "5-minute rescue: write one topic sentence and one because sentence." },
+            { id: "35-u1-l2", label: "Lesson 2: Add text evidence", mode: "paragraph", target: "Use one text detail to support your claim.", criteria: "Evidence sentence references text, explanation follows.", frame: "According to the text, __. This shows __.", gap: "5-minute rescue: match one claim to one evidence line from class text." }
+          ]
+        },
+        {
+          id: "35-u2", label: "Gr 3-5 Unit 2: Informational Sequence", lessons: [
+            { id: "35-u2-l1", label: "Lesson 1: Sequence clearly", mode: "sentence", target: "Write sequence sentences using first/next/then.", criteria: "At least 3 ordered steps, transition words present.", frame: "First __. Next __. Then __.", gap: "5-minute rescue: reorder 3 mixed steps and rewrite with transitions." }
+          ]
+        }
+      ]
+    },
+    "68": {
+      units: [
+        {
+          id: "68-u1", label: "Gr 6-8 Unit 1: Claim-Evidence-Reasoning", lessons: [
+            { id: "68-u1-l1", label: "Lesson 1: Arguable claim", mode: "paragraph", target: "Develop an arguable claim and one supporting reason.", criteria: "Claim is debatable, reason is specific.", frame: "My claim is __ because __.", gap: "5-minute rescue: convert a fact statement into an arguable claim." },
+            { id: "68-u1-l2", label: "Lesson 2: Evidence and reasoning", mode: "paragraph", target: "Use evidence and explain how it proves your claim.", criteria: "Evidence cited, reasoning links evidence to claim.", frame: "For example, __. This matters because __.", gap: "5-minute rescue: complete one CER mini-frame (claim, evidence, reasoning)." }
+          ]
+        }
+      ]
+    },
+    "912": {
+      units: [
+        {
+          id: "912-u1", label: "Gr 9-12 Unit 1: Analytical Writing", lessons: [
+            { id: "912-u1-l1", label: "Lesson 1: Thesis move", mode: "paragraph", target: "Write a nuanced thesis with one qualification.", criteria: "Thesis is precise and acknowledges complexity.", frame: "Although __, __ because __.", gap: "5-minute rescue: revise an overgeneralized claim into a nuanced thesis." },
+            { id: "912-u1-l2", label: "Lesson 2: Counterclaim and rebuttal", mode: "paragraph", target: "Integrate a counterclaim and rebuttal move.", criteria: "Counterpoint is fair, rebuttal is evidence-based.", frame: "Some argue __; however, __.", gap: "5-minute rescue: add one counterclaim sentence and one rebuttal sentence." }
+          ]
+        }
+      ]
+    }
+  };
   var DEFAULT_MARK_CODES = { topic: "T", detail: "D", explain: "E", transition: "TR", vocab: "V" };
   var BROKEN_SENTENCES = {
     k2: [
@@ -355,6 +392,16 @@
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
   var launchpadCopyEl = document.getElementById("ws-launchpad-copy");
+  var fishTankGradeSelect = document.getElementById("ws-ft-grade");
+  var fishTankUnitSelect = document.getElementById("ws-ft-unit");
+  var fishTankLessonSelect = document.getElementById("ws-ft-lesson");
+  var fishTankLoadBtn = document.getElementById("ws-ft-load");
+  var fishTankGapBtn = document.getElementById("ws-ft-gap");
+  var fishTankNoteBtn = document.getElementById("ws-ft-note");
+  var fishTankEvidenceBtn = document.getElementById("ws-ft-evidence");
+  var fishTankParentBtn = document.getElementById("ws-ft-parent");
+  var fishTankHandoffBtn = document.getElementById("ws-ft-handoff");
+  var fishTankTargetEl = document.getElementById("ws-ft-target");
   var quickWholeBtn = document.getElementById("ws-quick-whole");
   var quickSmallBtn = document.getElementById("ws-quick-small");
   var quickOneBtn = document.getElementById("ws-quick-one");
@@ -414,6 +461,7 @@
   var recognition = null;
   var isDictating = false;
   var imagePromptLabel = "";
+  var currentFishTankLesson = null;
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
@@ -1284,6 +1332,183 @@
     setPresetPack(stored, { silent: true });
   }
 
+  function getFishTankBand() {
+    var band = ["35", "68", "912"].indexOf(currentGradeBand) >= 0 ? currentGradeBand : "35";
+    return Object.prototype.hasOwnProperty.call(FISHTANK_SCOPE, band) ? band : "35";
+  }
+
+  function getSelectedFishTankUnit() {
+    var band = String(fishTankGradeSelect && fishTankGradeSelect.value || getFishTankBand());
+    var unitId = String(fishTankUnitSelect && fishTankUnitSelect.value || "");
+    var units = (FISHTANK_SCOPE[band] && FISHTANK_SCOPE[band].units) || [];
+    return units.find(function (u) { return u.id === unitId; }) || units[0] || null;
+  }
+
+  function getSelectedFishTankLesson() {
+    var unit = getSelectedFishTankUnit();
+    if (!unit) return null;
+    var lessonId = String(fishTankLessonSelect && fishTankLessonSelect.value || "");
+    return unit.lessons.find(function (l) { return l.id === lessonId; }) || unit.lessons[0] || null;
+  }
+
+  function renderFishTankLessons() {
+    if (!fishTankLessonSelect) return;
+    var unit = getSelectedFishTankUnit();
+    fishTankLessonSelect.innerHTML = "";
+    if (!unit || !Array.isArray(unit.lessons)) return;
+    unit.lessons.forEach(function (lesson) {
+      var option = document.createElement("option");
+      option.value = lesson.id;
+      option.textContent = lesson.label;
+      fishTankLessonSelect.appendChild(option);
+    });
+  }
+
+  function renderFishTankUnits() {
+    if (!fishTankUnitSelect || !fishTankGradeSelect) return;
+    var band = String(fishTankGradeSelect.value || getFishTankBand());
+    var units = (FISHTANK_SCOPE[band] && FISHTANK_SCOPE[band].units) || [];
+    fishTankUnitSelect.innerHTML = "";
+    units.forEach(function (unit) {
+      var option = document.createElement("option");
+      option.value = unit.id;
+      option.textContent = unit.label;
+      fishTankUnitSelect.appendChild(option);
+    });
+    renderFishTankLessons();
+  }
+
+  function renderFishTankTarget(lesson) {
+    if (!fishTankTargetEl) return;
+    if (!lesson) {
+      fishTankTargetEl.textContent = "Select a lesson to load writing targets.";
+      return;
+    }
+    fishTankTargetEl.textContent = lesson.target + " Success: " + lesson.criteria;
+  }
+
+  function applyFishTankLesson() {
+    var lesson = getSelectedFishTankLesson();
+    if (!lesson) return;
+    currentFishTankLesson = lesson;
+    withMutedToasts(function () {
+      setAudience("teacher", { silent: true });
+      setMode(lesson.mode === "sentence" ? "sentence" : "paragraph");
+      setStep("plan");
+    });
+    if (planTopicInput) planTopicInput.value = lesson.label;
+    if (planDetailInput) planDetailInput.value = lesson.target;
+    setScaffoldCue(lesson.frame);
+    renderFishTankTarget(lesson);
+    updateMetricsAndCoach();
+    showToast("Fish Tank lesson loaded");
+  }
+
+  function runFishTankGapRescue() {
+    var lesson = getSelectedFishTankLesson();
+    if (!lesson) return;
+    currentFishTankLesson = lesson;
+    var rescue = "Gap Rescue Mission (5-8 min)\n1) " + lesson.gap + "\n2) Use this frame: " + lesson.frame + "\n3) Write one line only, then continue today’s lesson.";
+    editor.value = rescue + "\n\n" + (editor.value || "");
+    setStep("plan");
+    setScaffoldCue("Complete the rescue mission first, then press Do This Next.");
+    renderFishTankTarget(lesson);
+    updateMetricsAndCoach();
+    showToast("Gap rescue loaded");
+  }
+
+  function copyTextPayload(payload, successMessage) {
+    var text = String(payload || "").trim();
+    if (!text) {
+      showToast("Nothing to copy");
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showToast(successMessage || "Copied");
+      }).catch(function () {
+        showToast("Copy blocked by browser");
+      });
+      return;
+    }
+    showToast("Clipboard not available");
+  }
+
+  function getLessonSummaryLine() {
+    var lesson = currentFishTankLesson || getSelectedFishTankLesson();
+    if (!lesson) return "Fish Tank lesson: not selected";
+    return "Fish Tank lesson: " + lesson.label;
+  }
+
+  function getWritingSnapshot() {
+    var text = String(editor.value || "");
+    var words = getWordCount(text);
+    var sentences = splitSentences(text).length;
+    var scores = getDomainScores(text, words, sentences);
+    return {
+      text: text,
+      words: words,
+      sentences: sentences,
+      scores: scores,
+      evidence: pickEvidenceSpan(text) || "No clear evidence span yet."
+    };
+  }
+
+  function buildSessionNote() {
+    var snap = getWritingSnapshot();
+    var nextMove = getMiniLessonRecommendation(snap.scores);
+    return [
+      "Session Note",
+      new Date().toLocaleString(),
+      getLessonSummaryLine(),
+      "Mode/Profile: " + currentMode + " / " + currentProfile,
+      "Output: " + snap.sentences + " sentences, " + snap.words + " words",
+      "Rubric: S " + snap.scores.structure + "/3, D " + snap.scores.detail + "/3, L " + snap.scores.language + "/3 (Total " + snap.scores.total + "/9)",
+      "Strength observed: " + (glowEl ? glowEl.textContent : "Student started writing."),
+      "Targeted next move: " + nextMove
+    ].join("\n");
+  }
+
+  function buildEvidenceLog() {
+    var snap = getWritingSnapshot();
+    var benchmark = benchmarkLevelEl ? benchmarkLevelEl.textContent : "Local estimate pending";
+    return [
+      "Goal Evidence Log",
+      getLessonSummaryLine(),
+      "Date: " + new Date().toLocaleDateString(),
+      "Student writing sample metrics: " + snap.sentences + " sentences, " + snap.words + " words",
+      "Rubric trend point: " + snap.scores.total + "/9 (" + benchmark + ")",
+      "Evidence span: " + snap.evidence,
+      "Checkpoint goal: " + (goalEl ? goalEl.textContent : "Build one clear idea."),
+      "Next intervention move: " + getMiniLessonRecommendation(snap.scores)
+    ].join("\n");
+  }
+
+  function buildParentUpdate() {
+    var snap = getWritingSnapshot();
+    return [
+      "Family Update",
+      "Today we worked on: " + (currentFishTankLesson ? currentFishTankLesson.target : "clear writing structure"),
+      "Your child produced " + snap.sentences + " sentence(s) and " + snap.words + " word(s).",
+      "One strength: " + (glowEl ? glowEl.textContent : "They began the task independently."),
+      "One next step: " + (growEl ? growEl.textContent : "Add one more detail sentence."),
+      "At home prompt: Ask them to read one line aloud, then help add one more sentence using \"" + (currentFishTankLesson ? currentFishTankLesson.frame : "because ___.") + "\""
+    ].join("\n");
+  }
+
+  function buildTeacherHandoff() {
+    var snap = getWritingSnapshot();
+    return [
+      "Teacher Handoff",
+      getLessonSummaryLine(),
+      "Current support profile: " + (currentProfile === "whole" ? "Whole class" : currentProfile === "small" ? "Small group" : "1:1 intensive"),
+      "Observed barrier: " + (growEl ? growEl.textContent : "Needs support with writing initiation."),
+      "Successful scaffold: " + (scaffoldCueEl ? scaffoldCueEl.textContent : "Sentence frame and one-step prompt."),
+      "Data snapshot: " + snap.scores.total + "/9 rubric, " + snap.sentences + " sentences, " + snap.words + " words",
+      "Requested classroom carryover: give 2-minute pre-write with frame \"" + (currentFishTankLesson ? currentFishTankLesson.frame : "I think __ because __.") + "\" before independent draft."
+    ].join("\n");
+  }
+
   function normalizeWordQuestGrade(rawGrade) {
     var value = String(rawGrade || "").trim().toUpperCase();
     if (value === "K-2") return "k2";
@@ -2085,6 +2310,11 @@
     var normalized = ["k2", "35", "68", "912"].indexOf(String(band)) >= 0 ? String(band) : "35";
     currentGradeBand = normalized;
     if (gradeBandSelect) gradeBandSelect.value = normalized;
+    if (fishTankGradeSelect && (normalized === "35" || normalized === "68" || normalized === "912")) {
+      fishTankGradeSelect.value = normalized;
+      renderFishTankUnits();
+      renderFishTankTarget(getSelectedFishTankLesson());
+    }
     renderChecklist();
     renderVocabPills();
     renderStepUpMode();
@@ -2386,6 +2616,28 @@
   if (organizerApplyBtn) organizerApplyBtn.addEventListener("click", applyOrganizerTemplate);
   if (presetSelect) presetSelect.addEventListener("change", function () { setPresetPack(presetSelect.value); });
   if (gradeBandSelect) gradeBandSelect.addEventListener("change", function () { setGradeBand(gradeBandSelect.value); });
+  if (fishTankGradeSelect) fishTankGradeSelect.addEventListener("change", renderFishTankUnits);
+  if (fishTankUnitSelect) fishTankUnitSelect.addEventListener("change", function () {
+    renderFishTankLessons();
+    renderFishTankTarget(getSelectedFishTankLesson());
+  });
+  if (fishTankLessonSelect) fishTankLessonSelect.addEventListener("change", function () {
+    renderFishTankTarget(getSelectedFishTankLesson());
+  });
+  if (fishTankLoadBtn) fishTankLoadBtn.addEventListener("click", applyFishTankLesson);
+  if (fishTankGapBtn) fishTankGapBtn.addEventListener("click", runFishTankGapRescue);
+  if (fishTankNoteBtn) fishTankNoteBtn.addEventListener("click", function () {
+    copyTextPayload(buildSessionNote(), "Session note copied");
+  });
+  if (fishTankEvidenceBtn) fishTankEvidenceBtn.addEventListener("click", function () {
+    copyTextPayload(buildEvidenceLog(), "Evidence log copied");
+  });
+  if (fishTankParentBtn) fishTankParentBtn.addEventListener("click", function () {
+    copyTextPayload(buildParentUpdate(), "Parent update copied");
+  });
+  if (fishTankHandoffBtn) fishTankHandoffBtn.addEventListener("click", function () {
+    copyTextPayload(buildTeacherHandoff(), "Teacher handoff copied");
+  });
   if (frameworkSelect) frameworkSelect.addEventListener("change", function () { setFramework(frameworkSelect.value); });
   if (dictateBtn) dictateBtn.addEventListener("click", toggleDictation);
   if (readBtn) readBtn.addEventListener("click", readDraftAloud);
@@ -2464,6 +2716,11 @@
   setGradeBand("35");
   setProfile("whole");
   setMode("sentence");
+  if (fishTankGradeSelect) {
+    fishTankGradeSelect.value = getFishTankBand();
+    renderFishTankUnits();
+    renderFishTankTarget(getSelectedFishTankLesson());
+  }
   loadPresetPack();
   applyWordQuestContext();
   setSetupPanelOpen(false);
