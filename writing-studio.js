@@ -247,37 +247,74 @@
     }
   };
   var FISHTANK_SCOPE = {
-    "35": {
-      units: [
+    es: {
+      label: "Elementary School",
+      paths: [
         {
-          id: "35-u1", label: "Gr 3-5 Unit 1: Opinion and Evidence", lessons: [
-            { id: "35-u1-l1", label: "Lesson 1: State a clear opinion", mode: "paragraph", target: "Write a focused opinion claim and support with one reason.", criteria: "Claim is clear, reason is relevant, connector used.", frame: "I think __ because __.", gap: "5-minute rescue: write one topic sentence and one because sentence." },
-            { id: "35-u1-l2", label: "Lesson 2: Add text evidence", mode: "paragraph", target: "Use one text detail to support your claim.", criteria: "Evidence sentence references text, explanation follows.", frame: "According to the text, __. This shows __.", gap: "5-minute rescue: match one claim to one evidence line from class text." }
+          id: "es-literacy", label: "Literacy Workshop", units: [
+            {
+              id: "es-u1", label: "Unit 1: Opinion and Evidence", lessons: [
+                { id: "es-u1-l1", label: "Lesson 1: State a clear opinion", mode: "paragraph", gradeBand: "35", target: "Write a focused opinion claim and support with one reason.", criteria: "Claim is clear, reason is relevant, connector used.", frame: "I think __ because __.", gap: "write one topic sentence and one because sentence." },
+                { id: "es-u1-l2", label: "Lesson 2: Add text evidence", mode: "paragraph", gradeBand: "35", target: "Use one text detail to support your claim.", criteria: "Evidence sentence references text, explanation follows.", frame: "According to the text, __. This shows __.", gap: "match one claim to one evidence line from class text." }
+              ]
+            }
           ]
         },
         {
-          id: "35-u2", label: "Gr 3-5 Unit 2: Informational Sequence", lessons: [
-            { id: "35-u2-l1", label: "Lesson 1: Sequence clearly", mode: "sentence", target: "Write sequence sentences using first/next/then.", criteria: "At least 3 ordered steps, transition words present.", frame: "First __. Next __. Then __.", gap: "5-minute rescue: reorder 3 mixed steps and rewrite with transitions." }
+          id: "es-ss", label: "Integrated Social Studies Writing", units: [
+            {
+              id: "es-u2", label: "Unit 2: Sequence and Explanation", lessons: [
+                { id: "es-u2-l1", label: "Lesson 1: Sequence clearly", mode: "sentence", gradeBand: "35", target: "Write sequence sentences using first/next/then.", criteria: "At least 3 ordered steps, transition words present.", frame: "First __. Next __. Then __.", gap: "reorder 3 mixed steps and rewrite with transitions." }
+              ]
+            }
           ]
         }
       ]
     },
-    "68": {
-      units: [
+    ms: {
+      label: "Middle School",
+      paths: [
         {
-          id: "68-u1", label: "Gr 6-8 Unit 1: Claim-Evidence-Reasoning", lessons: [
-            { id: "68-u1-l1", label: "Lesson 1: Arguable claim", mode: "paragraph", target: "Develop an arguable claim and one supporting reason.", criteria: "Claim is debatable, reason is specific.", frame: "My claim is __ because __.", gap: "5-minute rescue: convert a fact statement into an arguable claim." },
-            { id: "68-u1-l2", label: "Lesson 2: Evidence and reasoning", mode: "paragraph", target: "Use evidence and explain how it proves your claim.", criteria: "Evidence cited, reasoning links evidence to claim.", frame: "For example, __. This matters because __.", gap: "5-minute rescue: complete one CER mini-frame (claim, evidence, reasoning)." }
+          id: "ms-english", label: "English / Humanities", units: [
+            {
+              id: "ms-u1", label: "Unit 1: Claim-Evidence-Reasoning", lessons: [
+                { id: "ms-u1-l1", label: "Lesson 1: Arguable claim", mode: "paragraph", gradeBand: "68", target: "Develop an arguable claim and one supporting reason.", criteria: "Claim is debatable, reason is specific.", frame: "My claim is __ because __.", gap: "convert a fact statement into an arguable claim." },
+                { id: "ms-u1-l2", label: "Lesson 2: Evidence and reasoning", mode: "paragraph", gradeBand: "68", target: "Use evidence and explain how it proves your claim.", criteria: "Evidence cited, reasoning links evidence to claim.", frame: "For example, __. This matters because __.", gap: "complete one CER mini-frame (claim, evidence, reasoning)." }
+              ]
+            }
+          ]
+        },
+        {
+          id: "ms-science", label: "Science Writing", units: [
+            {
+              id: "ms-u2", label: "Unit 2: Lab Explanation", lessons: [
+                { id: "ms-u2-l1", label: "Lesson 1: Explain a result", mode: "paragraph", gradeBand: "68", target: "Explain a scientific result using data language.", criteria: "Claim references result, evidence includes data point, reasoning links cause/effect.", frame: "The data show __. This suggests __ because __.", gap: "write one sentence that names result + one sentence that explains why." }
+              ]
+            }
           ]
         }
       ]
     },
-    "912": {
-      units: [
+    hs: {
+      label: "High School",
+      paths: [
         {
-          id: "912-u1", label: "Gr 9-12 Unit 1: Analytical Writing", lessons: [
-            { id: "912-u1-l1", label: "Lesson 1: Thesis move", mode: "paragraph", target: "Write a nuanced thesis with one qualification.", criteria: "Thesis is precise and acknowledges complexity.", frame: "Although __, __ because __.", gap: "5-minute rescue: revise an overgeneralized claim into a nuanced thesis." },
-            { id: "912-u1-l2", label: "Lesson 2: Counterclaim and rebuttal", mode: "paragraph", target: "Integrate a counterclaim and rebuttal move.", criteria: "Counterpoint is fair, rebuttal is evidence-based.", frame: "Some argue __; however, __.", gap: "5-minute rescue: add one counterclaim sentence and one rebuttal sentence." }
+          id: "hs-english", label: "English / Humanities", units: [
+            {
+              id: "hs-u1", label: "Unit 1: Analytical Writing", lessons: [
+                { id: "hs-u1-l1", label: "Lesson 1: Thesis move", mode: "paragraph", gradeBand: "912", target: "Write a nuanced thesis with one qualification.", criteria: "Thesis is precise and acknowledges complexity.", frame: "Although __, __ because __.", gap: "revise an overgeneralized claim into a nuanced thesis." },
+                { id: "hs-u1-l2", label: "Lesson 2: Counterclaim and rebuttal", mode: "paragraph", gradeBand: "912", target: "Integrate a counterclaim and rebuttal move.", criteria: "Counterpoint is fair, rebuttal is evidence-based.", frame: "Some argue __; however, __.", gap: "add one counterclaim sentence and one rebuttal sentence." }
+              ]
+            }
+          ]
+        },
+        {
+          id: "hs-science", label: "Science and Technical Writing", units: [
+            {
+              id: "hs-u2", label: "Unit 2: Scientific Argument", lessons: [
+                { id: "hs-u2-l1", label: "Lesson 1: Claim with evidence set", mode: "paragraph", gradeBand: "912", target: "Develop a scientific claim using two evidence points.", criteria: "Claim is testable, evidence is specific, reasoning addresses validity.", frame: "Based on __ and __, the claim is __ because __.", gap: "choose the strongest evidence pair and explain why it supports the claim." }
+              ]
+            }
           ]
         }
       ]
@@ -392,7 +429,8 @@
   var goalEl = document.getElementById("ws-goal");
   var nextStepBtn = document.getElementById("ws-next-step");
   var launchpadCopyEl = document.getElementById("ws-launchpad-copy");
-  var fishTankGradeSelect = document.getElementById("ws-ft-grade");
+  var fishTankGradeSelect = document.getElementById("ws-ft-division");
+  var fishTankPathSelect = document.getElementById("ws-ft-path");
   var fishTankUnitSelect = document.getElementById("ws-ft-unit");
   var fishTankLessonSelect = document.getElementById("ws-ft-lesson");
   var fishTankLoadBtn = document.getElementById("ws-ft-load");
@@ -1333,15 +1371,23 @@
   }
 
   function getFishTankBand() {
-    var band = ["35", "68", "912"].indexOf(currentGradeBand) >= 0 ? currentGradeBand : "35";
-    return Object.prototype.hasOwnProperty.call(FISHTANK_SCOPE, band) ? band : "35";
+    if (currentGradeBand === "68") return "ms";
+    if (currentGradeBand === "912") return "hs";
+    return "es";
+  }
+
+  function getSelectedFishTankPath() {
+    var division = String(fishTankGradeSelect && fishTankGradeSelect.value || getFishTankBand());
+    var pathId = String(fishTankPathSelect && fishTankPathSelect.value || "");
+    var paths = (FISHTANK_SCOPE[division] && FISHTANK_SCOPE[division].paths) || [];
+    return paths.find(function (p) { return p.id === pathId; }) || paths[0] || null;
   }
 
   function getSelectedFishTankUnit() {
-    var band = String(fishTankGradeSelect && fishTankGradeSelect.value || getFishTankBand());
+    var path = getSelectedFishTankPath();
+    if (!path) return null;
     var unitId = String(fishTankUnitSelect && fishTankUnitSelect.value || "");
-    var units = (FISHTANK_SCOPE[band] && FISHTANK_SCOPE[band].units) || [];
-    return units.find(function (u) { return u.id === unitId; }) || units[0] || null;
+    return path.units.find(function (u) { return u.id === unitId; }) || path.units[0] || null;
   }
 
   function getSelectedFishTankLesson() {
@@ -1364,10 +1410,23 @@
     });
   }
 
+  function renderFishTankPaths() {
+    if (!fishTankPathSelect || !fishTankGradeSelect) return;
+    var division = String(fishTankGradeSelect.value || getFishTankBand());
+    var paths = (FISHTANK_SCOPE[division] && FISHTANK_SCOPE[division].paths) || [];
+    fishTankPathSelect.innerHTML = "";
+    paths.forEach(function (path) {
+      var option = document.createElement("option");
+      option.value = path.id;
+      option.textContent = path.label;
+      fishTankPathSelect.appendChild(option);
+    });
+  }
+
   function renderFishTankUnits() {
-    if (!fishTankUnitSelect || !fishTankGradeSelect) return;
-    var band = String(fishTankGradeSelect.value || getFishTankBand());
-    var units = (FISHTANK_SCOPE[band] && FISHTANK_SCOPE[band].units) || [];
+    if (!fishTankUnitSelect) return;
+    var path = getSelectedFishTankPath();
+    var units = (path && path.units) || [];
     fishTankUnitSelect.innerHTML = "";
     units.forEach(function (unit) {
       var option = document.createElement("option");
@@ -1384,7 +1443,9 @@
       fishTankTargetEl.textContent = "Select a lesson to load writing targets.";
       return;
     }
-    fishTankTargetEl.textContent = lesson.target + " Success: " + lesson.criteria;
+    var path = getSelectedFishTankPath();
+    var prefix = path ? path.label + ": " : "";
+    fishTankTargetEl.textContent = prefix + lesson.target + " Success: " + lesson.criteria;
   }
 
   function applyFishTankLesson() {
@@ -1394,6 +1455,7 @@
     withMutedToasts(function () {
       setAudience("teacher", { silent: true });
       setMode(lesson.mode === "sentence" ? "sentence" : "paragraph");
+      if (lesson.gradeBand) setGradeBand(lesson.gradeBand);
       setStep("plan");
     });
     if (planTopicInput) planTopicInput.value = lesson.label;
@@ -1401,7 +1463,7 @@
     setScaffoldCue(lesson.frame);
     renderFishTankTarget(lesson);
     updateMetricsAndCoach();
-    showToast("Fish Tank lesson loaded");
+    showToast("Curriculum lesson loaded");
   }
 
   function runFishTankGapRescue() {
@@ -1436,8 +1498,9 @@
 
   function getLessonSummaryLine() {
     var lesson = currentFishTankLesson || getSelectedFishTankLesson();
-    if (!lesson) return "Fish Tank lesson: not selected";
-    return "Fish Tank lesson: " + lesson.label;
+    var path = getSelectedFishTankPath();
+    if (!lesson) return "Curriculum lesson: not selected";
+    return "Curriculum lesson: " + (path ? path.label + " - " : "") + lesson.label;
   }
 
   function getWritingSnapshot() {
@@ -2310,8 +2373,9 @@
     var normalized = ["k2", "35", "68", "912"].indexOf(String(band)) >= 0 ? String(band) : "35";
     currentGradeBand = normalized;
     if (gradeBandSelect) gradeBandSelect.value = normalized;
-    if (fishTankGradeSelect && (normalized === "35" || normalized === "68" || normalized === "912")) {
-      fishTankGradeSelect.value = normalized;
+    if (fishTankGradeSelect) {
+      fishTankGradeSelect.value = getFishTankBand();
+      renderFishTankPaths();
       renderFishTankUnits();
       renderFishTankTarget(getSelectedFishTankLesson());
     }
@@ -2616,7 +2680,15 @@
   if (organizerApplyBtn) organizerApplyBtn.addEventListener("click", applyOrganizerTemplate);
   if (presetSelect) presetSelect.addEventListener("change", function () { setPresetPack(presetSelect.value); });
   if (gradeBandSelect) gradeBandSelect.addEventListener("change", function () { setGradeBand(gradeBandSelect.value); });
-  if (fishTankGradeSelect) fishTankGradeSelect.addEventListener("change", renderFishTankUnits);
+  if (fishTankGradeSelect) fishTankGradeSelect.addEventListener("change", function () {
+    renderFishTankPaths();
+    renderFishTankUnits();
+    renderFishTankTarget(getSelectedFishTankLesson());
+  });
+  if (fishTankPathSelect) fishTankPathSelect.addEventListener("change", function () {
+    renderFishTankUnits();
+    renderFishTankTarget(getSelectedFishTankLesson());
+  });
   if (fishTankUnitSelect) fishTankUnitSelect.addEventListener("change", function () {
     renderFishTankLessons();
     renderFishTankTarget(getSelectedFishTankLesson());
@@ -2718,6 +2790,7 @@
   setMode("sentence");
   if (fishTankGradeSelect) {
     fishTankGradeSelect.value = getFishTankBand();
+    renderFishTankPaths();
     renderFishTankUnits();
     renderFishTankTarget(getSelectedFishTankLesson());
   }
