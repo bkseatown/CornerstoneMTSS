@@ -2376,6 +2376,15 @@ html[data-page-mode="mission-lab"] #focus-hint-toggle {
   display: none !important;
 }
 
+html[data-page-mode="mission-lab"] #teacher-panel-btn,
+html[data-page-mode="mission-lab"] #case-toggle-btn,
+html[data-page-mode="mission-lab"] #keyboard-layout-toggle,
+html[data-page-mode="mission-lab"] #theme-dock-toggle-btn,
+html[data-page-mode="mission-lab"] #music-dock-toggle-btn,
+html[data-page-mode="mission-lab"] #mission-lab-nav-btn {
+  display: none !important;
+}
+
 /* ── Quest loop ─────────────────────────────────────── */
 .quest-loop {
   width: min(var(--quest-max-width), calc(100vw - 24px));

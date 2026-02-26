@@ -189,7 +189,8 @@
     keyStyle: 'bubble',
     keyboardLayout: 'standard',
     chunkTabs: 'auto',
-    atmosphere: 'minimal'
+    atmosphere: 'minimal',
+    uiSkin: 'premium'
   });
   const SAFE_DEFAULT_GRADE_BAND = 'K-2';
   const ALLOWED_MASTERY_SORT_MODES = new Set([
@@ -228,6 +229,7 @@
     alphabet: 'Alphabet'
   });
   const STARTER_WORD_SUPPORT_MODES = new Set(['off', 'on_demand', 'after_2', 'after_3']);
+  const ALLOWED_UI_SKINS = new Set(['premium', 'classic']);
   const KEYBOARD_PRESET_CONFIG = Object.freeze({
     'qwerty-bubble': Object.freeze({
       id: 'qwerty-bubble',
@@ -256,6 +258,11 @@
     if (raw === 'auto2' || raw === 'after2') return 'after_2';
     if (raw === 'auto3' || raw === 'after3') return 'after_3';
     return STARTER_WORD_SUPPORT_MODES.has(raw) ? raw : DEFAULT_PREFS.starterWords;
+  }
+
+  function normalizeUiSkin(mode) {
+    const raw = String(mode || '').trim().toLowerCase();
+    return ALLOWED_UI_SKINS.has(raw) ? raw : DEFAULT_PREFS.uiSkin;
   }
 
   function getKeyboardLayoutLabel(mode) {
@@ -349,9 +356,17 @@
     if (prefs.assessmentLock === undefined) prefs.assessmentLock = DEFAULT_PREFS.assessmentLock;
     if (prefs.boostPopups === undefined) prefs.boostPopups = DEFAULT_PREFS.boostPopups;
     if (prefs.starterWords === undefined) prefs.starterWords = DEFAULT_PREFS.starterWords;
+    if (prefs.uiSkin === undefined) prefs.uiSkin = DEFAULT_PREFS.uiSkin;
     if (prefs.themeSave !== 'on') delete prefs.theme;
     savePrefs(prefs);
     localStorage.setItem(PREF_MIGRATION_KEY, 'done');
+  }
+  {
+    const normalizedUiSkin = normalizeUiSkin(prefs.uiSkin);
+    if (prefs.uiSkin !== normalizedUiSkin) {
+      prefs.uiSkin = normalizedUiSkin;
+      savePrefs(prefs);
+    }
   }
   if (localStorage.getItem(PREF_MUSIC_AUTO_MIGRATION_KEY) !== 'done') {
     const currentMusic = String(prefs.music || '').toLowerCase();
@@ -786,12 +801,22 @@
     return '';
   }
 
+  function resolveRuntimeChannel() {
+    const host = String(location.hostname || '').toLowerCase();
+    if (!host || host === 'localhost' || host === '127.0.0.1' || host === '::1') return 'LOCAL';
+    if (host === 'bkseatown.github.io') return 'LIVE';
+    if (host === 'cdn.jsdelivr.net' || host === 'htmlpreview.github.io') return 'PREVIEW';
+    return 'CUSTOM';
+  }
+
   function syncBuildBadge() {
     const badge = _el('settings-build-badge');
     if (!badge) return;
     const label = resolveBuildLabel();
-    badge.textContent = label ? `Build ${label}` : 'Build local';
-    badge.title = label ? `WordQuest build ${label}` : 'WordQuest local build';
+    const channel = resolveRuntimeChannel();
+    const buildLabel = label || 'local';
+    badge.textContent = `${channel} · Build ${buildLabel}`;
+    badge.title = `${channel} source: ${location.origin}${location.pathname} · build ${buildLabel}`;
   }
 
   function formatDiagnosticDate(ts) {
@@ -1638,6 +1663,7 @@
     's-keyboard-layout': 'keyboardLayout',
     's-chunk-tabs': 'chunkTabs',
     's-atmosphere': 'atmosphere',
+    's-ui-skin': 'uiSkin',
     's-reveal-focus': 'revealFocus',
     's-play-style': 'playStyle',
     's-reveal-pacing': 'revealPacing',
@@ -1760,6 +1786,7 @@
   });
 
   // Apply theme + modes immediately
+  applyUiSkin(prefs.uiSkin || DEFAULT_PREFS.uiSkin, { persist: false });
   const initialTheme = applyTheme(initialThemeSelection || getThemeFallback());
   if (shouldPersistTheme()) {
     if (prefs.theme !== initialTheme) setPref('theme', initialTheme);
@@ -1833,6 +1860,15 @@
 
   function applyProjector(mode) {
     document.documentElement.setAttribute('data-projector', mode);
+  }
+
+  function applyUiSkin(mode, options = {}) {
+    const normalized = normalizeUiSkin(mode);
+    document.documentElement.setAttribute('data-ui-skin', normalized);
+    const select = _el('s-ui-skin');
+    if (select && select.value !== normalized) select.value = normalized;
+    if (options.persist !== false) setPref('uiSkin', normalized);
+    return normalized;
   }
 
   function applyMotion(mode) {
@@ -3598,6 +3634,7 @@
     setPref('chunkTabs', applyChunkTabsMode(DEFAULT_PREFS.chunkTabs));
     syncChunkTabsVisibility();
     setPref('atmosphere', applyAtmosphere(DEFAULT_PREFS.atmosphere));
+    setPref('uiSkin', applyUiSkin(DEFAULT_PREFS.uiSkin, { persist: false }));
     setPref('motion', DEFAULT_PREFS.motion);
     setPref('feedback', DEFAULT_PREFS.feedback);
     setPref('projector', DEFAULT_PREFS.projector);
@@ -3611,6 +3648,7 @@
     setPref('confidenceCoaching', DEFAULT_PREFS.confidenceCoaching);
 
     _el('s-theme-save').value = DEFAULT_PREFS.themeSave;
+    _el('s-ui-skin').value = DEFAULT_PREFS.uiSkin;
     _el('s-motion').value = DEFAULT_PREFS.motion;
     _el('s-feedback').value = DEFAULT_PREFS.feedback;
     _el('s-projector').value = DEFAULT_PREFS.projector;
@@ -3625,6 +3663,7 @@
     if (confidenceToggle) confidenceToggle.checked = DEFAULT_PREFS.confidenceCoaching === 'on';
 
     applyProjector(DEFAULT_PREFS.projector);
+    applyUiSkin(DEFAULT_PREFS.uiSkin, { persist: false });
     applyMotion(DEFAULT_PREFS.motion);
     applyFeedback(DEFAULT_PREFS.feedback);
     WQUI.setCaseMode(DEFAULT_PREFS.caseMode);
@@ -4547,6 +4586,10 @@
       savePrefs(prefs);
       WQUI.showToast('Theme save is off. App will start on default theme next time.');
     }
+  });
+  _el('s-ui-skin')?.addEventListener('change', e => {
+    const normalized = applyUiSkin(e.target.value, { persist: true });
+    WQUI.showToast(`Visual skin: ${normalized === 'premium' ? 'Premium' : 'Classic'}.`);
   });
 
   function evaluateGuessForKeyboard(guess, targetWord) {
@@ -7523,10 +7566,16 @@
     const label = String(entry?.label || '').trim();
     if (!label || entry?.kind !== 'curriculum') return label;
     if (entry.packId === 'fundations') {
-      const match = label.match(/Fundations\\s+Level\\s+([A-Za-z0-9]+)\\s+Unit\\s+([A-Za-z0-9]+)/i);
-      if (match) return `Lesson ${match[1]} Unit ${match[2]}`;
-      const compactMatch = label.match(/Fundations\\s+L\\.\\s*([A-Za-z0-9]+)\\s+U\\.\\s*([A-Za-z0-9]+)/i);
-      if (compactMatch) return `Lesson ${compactMatch[1]} Unit ${compactMatch[2]}`;
+      const bonusMatch = label.match(/Fundations\s+Level\s+([A-Za-z0-9]+)\s+Bonus\s+Unit/i);
+      if (bonusMatch) return `L${bonusMatch[1]} Bonus`;
+      const match = label.match(/Fundations\s+Level\s+([A-Za-z0-9]+)\s+Unit\s+([A-Za-z0-9]+)/i);
+      if (match) return `L${match[1]} U${match[2]}`;
+      const compactMatch = label.match(/Fundations\s+L\.\s*([A-Za-z0-9]+)\s+U\.\s*([A-Za-z0-9]+)/i);
+      if (compactMatch) return `L${compactMatch[1]} U${compactMatch[2]}`;
+      if (/^Fundations\b/i.test(label)) {
+        const stripped = label.replace(/^Fundations\s*/i, '').trim();
+        return stripped || 'Fundations Lesson';
+      }
     }
     if (entry.packId === 'ufli') {
       const match = label.match(/Lesson\\s+(\\d+)/i);
@@ -7553,10 +7602,13 @@
     if (!target) return '';
     const examples = getCurriculumExampleWordsForTarget(target, cacheKey);
     const focusLabel = getCurriculumFocusChipLabel(target.focus, entry.packId);
-    const useCuratedPatternOnly = ['ufli', 'fundations', 'wilson'].includes(String(entry.packId || '').toLowerCase());
-    const text = useCuratedPatternOnly
-      ? focusLabel
-      : (examples.length ? `${focusLabel}: ${examples.join(', ')}` : '');
+    const packId = String(entry.packId || '').toLowerCase();
+    const useCuratedPatternOnly = ['ufli', 'fundations', 'wilson'].includes(packId);
+    const text = packId === 'fundations'
+      ? (examples.length ? `${focusLabel} · ex: ${examples.join(', ')}` : focusLabel)
+      : useCuratedPatternOnly
+        ? focusLabel
+        : (examples.length ? `${focusLabel}: ${examples.join(', ')}` : '');
     curriculumEntryExampleCache.set(cacheKey, text);
     return text;
   }
