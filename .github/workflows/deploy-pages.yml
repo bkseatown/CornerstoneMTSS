@@ -90,7 +90,7 @@ jobs:
               html="$(curl -fsSL --max-time 15 "${target}" || true)"
               missing=()
               for marker in "${markers[@]}"; do
-                if ! echo "${html}" | grep -q "${marker}"; then
+                if [[ "${html}" != *"${marker}"* ]]; then
                   missing+=("${marker}")
                 fi
               done
