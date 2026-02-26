@@ -251,28 +251,28 @@
       label: "Elementary School",
       paths: [
         {
-          id: "es-ela", label: "ES ELA Workshop", units: [
+          id: "es-ela", label: "ES Reading/Writing Workshop (Units of Study)", units: [
             {
-              id: "es-u1", label: "Unit: Opinion / Informational Foundations", lessons: [
-                { id: "es-u1-l1", label: "Lesson 1: State a clear opinion", mode: "paragraph", gradeBand: "35", target: "Write a focused opinion claim and support with one reason.", criteria: "Claim is clear, reason is relevant, connector used.", frame: "I think __ because __.", gap: "write one topic sentence and one because sentence." },
-                { id: "es-u1-l2", label: "Lesson 2: Add text evidence", mode: "paragraph", gradeBand: "35", target: "Use one text detail to support your claim.", criteria: "Evidence sentence references text, explanation follows.", frame: "According to the text, __. This shows __.", gap: "match one claim to one evidence line from class text." }
+              id: "es-u1", label: "K-5 Writing Workshop Progressions", lessons: [
+                { id: "es-u1-l1", label: "Lesson 1: Opinion/Information claim", mode: "paragraph", gradeBand: "35", target: "Write a focused opinion or information claim and support with one reason.", criteria: "Claim is clear, reason is relevant, connector used.", frame: "I think __ because __.", gap: "write one topic sentence and one because sentence." },
+                { id: "es-u1-l2", label: "Lesson 2: Narrative detail and sequence", mode: "paragraph", gradeBand: "35", target: "Use sequence and details to build a short narrative paragraph.", criteria: "Sequence is clear, detail is specific, ending sentence closes idea.", frame: "First __. Next __. Finally __.", gap: "reorder three events, then write sequence sentences." }
               ]
             }
           ]
         },
         {
-          id: "es-content", label: "ES Integrated Content Writing", units: [
+          id: "es-content", label: "ES Content-Area Writing (Science/Social Studies)", units: [
             {
-              id: "es-u2", label: "Unit 2: Sequence and Explanation", lessons: [
-                { id: "es-u2-l1", label: "Lesson 1: Sequence clearly", mode: "sentence", gradeBand: "35", target: "Write sequence sentences using first/next/then.", criteria: "At least 3 ordered steps, transition words present.", frame: "First __. Next __. Then __.", gap: "reorder 3 mixed steps and rewrite with transitions." }
+              id: "es-u2", label: "Unit: Explain from Content Text", lessons: [
+                { id: "es-u2-l1", label: "Lesson 1: Explain with text detail", mode: "sentence", gradeBand: "35", target: "Write sequence or explanation sentences using content vocabulary.", criteria: "At least 3 ordered steps or one clear cause/effect explanation.", frame: "First __. Next __. Then __.", gap: "reorder 3 mixed steps and rewrite with transitions." }
               ]
             }
           ]
         },
         {
-          id: "es-support", label: "ES Learning Support / EAL", units: [
+          id: "es-support", label: "ES Learning Support / EAL (Tiered Support)", units: [
             {
-              id: "es-u3", label: "Unit 3: Strategic Writing Intervention", lessons: [
+              id: "es-u3", label: "Language and Learning Services Writing Routines", lessons: [
                 { id: "es-u3-l1", label: "Lesson 1: Oral rehearsal to sentence", mode: "sentence", gradeBand: "35", target: "Rehearse orally, then write one complete sentence.", criteria: "One complete sentence with capital and period.", frame: "I can say: __. I can write: __.", gap: "say the sentence out loud 2x before writing." },
                 { id: "es-u3-l2", label: "Lesson 2: Expand one sentence", mode: "sentence", gradeBand: "35", target: "Expand a base sentence with one detail phrase.", criteria: "Adds who/what/where detail without run-on.", frame: "__ happened __.", gap: "choose one detail from who/what/where and add it." }
               ]
@@ -285,11 +285,11 @@
       label: "Middle School",
       paths: [
         {
-          id: "ms-english", label: "MS English / Humanities", units: [
+          id: "ms-english", label: "MS English Language Arts 6-8", units: [
             {
-              id: "ms-u1", label: "Unit 1: Claim-Evidence-Reasoning", lessons: [
-                { id: "ms-u1-l1", label: "Lesson 1: Arguable claim", mode: "paragraph", gradeBand: "68", target: "Develop an arguable claim and one supporting reason.", criteria: "Claim is debatable, reason is specific.", frame: "My claim is __ because __.", gap: "convert a fact statement into an arguable claim." },
-                { id: "ms-u1-l2", label: "Lesson 2: Evidence and reasoning", mode: "paragraph", gradeBand: "68", target: "Use evidence and explain how it proves your claim.", criteria: "Evidence cited, reasoning links evidence to claim.", frame: "For example, __. This matters because __.", gap: "complete one CER mini-frame (claim, evidence, reasoning)." }
+              id: "ms-u1", label: "ELA 6/7 Argument and Analysis", lessons: [
+                { id: "ms-u1-l1", label: "Lesson 1: Arguable claim (ELA 6/7)", mode: "paragraph", gradeBand: "68", target: "Develop an arguable claim and one supporting reason.", criteria: "Claim is debatable, reason is specific.", frame: "My claim is __ because __.", gap: "convert a fact statement into an arguable claim." },
+                { id: "ms-u1-l2", label: "Lesson 2: Evidence and reasoning (ELA 6/7)", mode: "paragraph", gradeBand: "68", target: "Use evidence and explain how it proves your claim.", criteria: "Evidence cited, reasoning links evidence to claim.", frame: "For example, __. This matters because __.", gap: "complete one CER mini-frame (claim, evidence, reasoning)." }
               ]
             }
           ]
@@ -304,9 +304,9 @@
           ]
         },
         {
-          id: "ms-support", label: "MS Strategic Learning / Learning Support", units: [
+          id: "ms-support", label: "MS Strategic Learning / Learning Support Services", units: [
             {
-              id: "ms-u3", label: "Unit 3: Executive Function Writing Routines", lessons: [
+              id: "ms-u3", label: "Strategic Learning Writing Routines", lessons: [
                 { id: "ms-u3-l1", label: "Lesson 1: Plan in 3 bullets", mode: "sentence", gradeBand: "68", target: "Generate a 3-point plan before drafting.", criteria: "Plan includes claim/topic + two support points.", frame: "Point 1 __ / Point 2 __ / Point 3 __", gap: "fill the 3 bullets before any draft sentence." },
                 { id: "ms-u3-l2", label: "Lesson 2: Draft in chunks", mode: "paragraph", gradeBand: "68", target: "Draft one chunk at a time with check-ins.", criteria: "Completes claim chunk, evidence chunk, reasoning chunk.", frame: "Chunk 1: __. Chunk 2: __. Chunk 3: __.", gap: "write only chunk 1, pause, then continue." }
               ]
@@ -319,17 +319,17 @@
       label: "High School",
       paths: [
         {
-          id: "hs-english", label: "HS English / Humanities", units: [
+          id: "hs-english", label: "HS Humanities 9 / American Studies / ELA Electives", units: [
             {
-              id: "hs-u1", label: "Unit 1: Analytical Writing", lessons: [
-                { id: "hs-u1-l1", label: "Lesson 1: Thesis move", mode: "paragraph", gradeBand: "912", target: "Write a nuanced thesis with one qualification.", criteria: "Thesis is precise and acknowledges complexity.", frame: "Although __, __ because __.", gap: "revise an overgeneralized claim into a nuanced thesis." },
+              id: "hs-u1", label: "Humanities 9 and American Studies Analytical Writing", lessons: [
+                { id: "hs-u1-l1", label: "Lesson 1: Thesis move (Humanities 9/AS)", mode: "paragraph", gradeBand: "912", target: "Write a nuanced thesis with one qualification.", criteria: "Thesis is precise and acknowledges complexity.", frame: "Although __, __ because __.", gap: "revise an overgeneralized claim into a nuanced thesis." },
                 { id: "hs-u1-l2", label: "Lesson 2: Counterclaim and rebuttal", mode: "paragraph", gradeBand: "912", target: "Integrate a counterclaim and rebuttal move.", criteria: "Counterpoint is fair, rebuttal is evidence-based.", frame: "Some argue __; however, __.", gap: "add one counterclaim sentence and one rebuttal sentence." }
               ]
             }
           ]
         },
         {
-          id: "hs-science", label: "HS Science and Technical Writing", units: [
+          id: "hs-science", label: "HS Science and Technical Writing (Lab/Research)", units: [
             {
               id: "hs-u2", label: "Unit 2: Scientific Argument", lessons: [
                 { id: "hs-u2-l1", label: "Lesson 1: Claim with evidence set", mode: "paragraph", gradeBand: "912", target: "Develop a scientific claim using two evidence points.", criteria: "Claim is testable, evidence is specific, reasoning addresses validity.", frame: "Based on __ and __, the claim is __ because __.", gap: "choose the strongest evidence pair and explain why it supports the claim." }
@@ -338,9 +338,9 @@
           ]
         },
         {
-          id: "hs-support", label: "HS Learning Support / EAL / Co-Taught Support", units: [
+          id: "hs-support", label: "HS Learning Lab I / Learning Support II / EAL", units: [
             {
-              id: "hs-u3", label: "Unit 3: High School Support Routines", lessons: [
+              id: "hs-u3", label: "High School Support-Service Writing Routines", lessons: [
                 { id: "hs-u3-l1", label: "Lesson 1: Thesis to paragraph bridge", mode: "paragraph", gradeBand: "912", target: "Bridge from thesis statement to a full analytical paragraph.", criteria: "Thesis aligns with paragraph claim and evidence.", frame: "Thesis: __. Paragraph claim: __. Evidence: __. Analysis: __.", gap: "write thesis + one claim sentence only, then expand." },
                 { id: "hs-u3-l2", label: "Lesson 2: Assignment unpack protocol", mode: "sentence", gradeBand: "912", target: "Unpack prompt demands before drafting.", criteria: "Identifies task verbs, evidence expectations, and output structure.", frame: "Task verb: __. Evidence needed: __. Structure: __.", gap: "fill prompt-unpack template before writing response." }
               ]
