@@ -7,6 +7,15 @@
   --ws-gap-3: 16px;
   --ws-gap-4: 24px;
   --ws-gap-5: 32px;
+  /* 60-30-10 visual system */
+  --ws-60-base: #f4f7fb;
+  --ws-30-surface: #1e2d3e;
+  --ws-30-surface-2: #26384d;
+  --ws-10-accent: #5ec8ff;
+  --ws-10-warm: #ffbf69;
+  --ws-ink-dark: #132236;
+  --ws-ink-light: rgba(255, 255, 255, 0.94);
+  --ws-muted: rgba(226, 237, 252, 0.78);
 }
 
 *,
@@ -19,10 +28,41 @@ body.cs-page-writing {
   min-height: 100dvh;
   margin: 0;
   background:
-    radial-gradient(1200px 700px at 20% 10%, rgba(122, 167, 255, 0.18) 0%, rgba(0, 0, 0, 0) 55%),
-    linear-gradient(135deg, #0e141d 0%, #1b2736 45%, #0f1a24 100%);
-  color: rgba(255, 255, 255, 0.92);
+    radial-gradient(1200px 700px at 20% 10%, rgba(94, 200, 255, 0.2) 0%, rgba(0, 0, 0, 0) 55%),
+    linear-gradient(135deg, #101824 0%, #1b2a3c 45%, #121e2d 100%);
+  color: var(--ws-ink-light);
   font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+}
+
+/* Seahawks accessibility pass: keep team palette, raise working brightness */
+body.cs-page-writing.cs-hv2-theme-seahawks {
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(105, 190, 40, 0.18) 0%, rgba(0, 0, 0, 0) 55%),
+    linear-gradient(135deg, #244768 0%, #2a5379 45%, #1d3f60 100%);
+}
+
+body.cs-page-writing.cs-hv2-theme-seahawks #ws-stage {
+  background: rgba(36, 71, 104, 0.72);
+  border-color: rgba(197, 221, 242, 0.36);
+}
+
+body.cs-page-writing.cs-hv2-theme-seahawks #ws-canvas {
+  background: rgba(238, 246, 252, 0.2);
+}
+
+body.cs-page-writing.cs-hv2-theme-seahawks .ws-secondary,
+body.cs-page-writing.cs-hv2-theme-seahawks .ws-chip,
+body.cs-page-writing.cs-hv2-theme-seahawks .ws-ghost,
+body.cs-page-writing.cs-hv2-theme-seahawks .ws-rail-link,
+body.cs-page-writing.cs-hv2-theme-seahawks .ws-pill {
+  background: rgba(52, 85, 116, 0.72);
+  border-color: rgba(210, 232, 249, 0.3);
+  color: rgba(247, 252, 255, 0.96);
+}
+
+body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
+  background: #f8fbff;
+  color: #13263f;
 }
 
 #ws-bg {
@@ -101,7 +141,7 @@ body.cs-page-writing {
 
 .ws-subtitle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--ws-muted);
   margin-top: var(--ws-gap-1);
 }
 
@@ -145,24 +185,24 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(38, 56, 77, 0.55);
+  border: 1px solid rgba(94, 200, 255, 0.2);
 }
 
 .ws-chip,
 .ws-ghost {
   border-radius: 999px;
   padding: var(--ws-gap-2) 16px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(216, 233, 255, 0.24);
+  background: rgba(38, 56, 77, 0.62);
+  color: var(--ws-ink-light);
   cursor: pointer;
   font-size: 14px;
 }
 
 .ws-chip.is-active {
-  background: rgba(122, 167, 255, 0.22);
-  border-color: rgba(122, 167, 255, 0.45);
+  background: rgba(94, 200, 255, 0.18);
+  border-color: rgba(94, 200, 255, 0.52);
 }
 
 .ws-ghost {
@@ -173,8 +213,8 @@ body.cs-page-writing {
   margin: 0 var(--ws-gap-5) var(--ws-gap-5);
   padding: var(--ws-gap-5);
   border-radius: var(--ws-radius-lg);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(30, 45, 62, 0.78);
+  border: 1px solid rgba(94, 200, 255, 0.2);
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   position: relative;
@@ -210,8 +250,8 @@ body.cs-page-writing {
 
 #ws-canvas {
   border-radius: var(--ws-radius-lg);
-  background: rgba(255, 255, 255, 0.11);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  background: rgba(244, 247, 251, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
   padding: var(--ws-gap-4);
   display: flex;
   flex-direction: column;
@@ -229,7 +269,7 @@ body.cs-page-writing {
 
 .ws-meta {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--ws-muted);
 }
 
 .ws-canvas-head {
@@ -274,8 +314,8 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(38, 56, 77, 0.42);
+  border: 1px solid rgba(94, 200, 255, 0.24);
 }
 
 .ws-missions {
@@ -297,8 +337,8 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(122, 167, 255, 0.14);
-  border: 1px solid rgba(122, 167, 255, 0.32);
+  background: linear-gradient(120deg, rgba(94, 200, 255, 0.16), rgba(255, 191, 105, 0.14));
+  border: 1px solid rgba(94, 200, 255, 0.36);
 }
 
 .ws-launchpad-head {
@@ -319,8 +359,8 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(38, 56, 77, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ws-fishtank-head {
@@ -372,8 +412,8 @@ body.cs-page-writing {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(38, 56, 77, 0.28);
+  border: 1px solid rgba(94, 200, 255, 0.14);
 }
 
 .ws-plan-meter-wrap {
@@ -419,16 +459,16 @@ body.cs-page-writing {
 
 .ws-plan-input {
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(10, 14, 20, 0.3);
-  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(223, 236, 255, 0.36);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ws-ink-light);
   padding: var(--ws-gap-1) var(--ws-gap-2);
   font-size: 13px;
   outline: none;
 }
 
 .ws-plan-input:focus {
-  border-color: rgba(122, 167, 255, 0.55);
+  border-color: rgba(94, 200, 255, 0.85);
 }
 
 .ws-plan-list {
@@ -486,9 +526,9 @@ body.cs-page-writing {
   min-height: 46vh;
   resize: vertical;
   border-radius: var(--ws-radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(10, 14, 20, 0.35);
-  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(19, 34, 54, 0.18);
+  background: var(--ws-60-base);
+  color: var(--ws-ink-dark);
   padding: var(--ws-gap-2) var(--ws-gap-2);
   font-size: 15px;
   line-height: 1.55;
@@ -496,8 +536,12 @@ body.cs-page-writing {
 }
 
 #ws-editor:focus {
-  border-color: rgba(122, 167, 255, 0.55);
-  box-shadow: 0 0 0 4px rgba(122, 167, 255, 0.18);
+  border-color: rgba(94, 200, 255, 0.85);
+  box-shadow: 0 0 0 4px rgba(94, 200, 255, 0.2);
+}
+
+#ws-editor::placeholder {
+  color: rgba(32, 52, 78, 0.58);
 }
 
 .ws-canvas-foot {
@@ -509,20 +553,20 @@ body.cs-page-writing {
 .ws-secondary {
   border-radius: 999px;
   padding: var(--ws-gap-2) var(--ws-gap-3);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(223, 236, 255, 0.26);
   cursor: pointer;
   font-size: 14px;
 }
 
 .ws-primary {
-  background: var(--hv2-accent, #7aa7ff);
-  color: #0b1220;
-  border-color: rgba(122, 167, 255, 0.55);
+  background: var(--ws-10-accent);
+  color: #0d1a2a;
+  border-color: rgba(94, 200, 255, 0.76);
 }
 
 .ws-secondary {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
+  background: rgba(38, 56, 77, 0.55);
+  color: var(--ws-ink-light);
 }
 
 .ws-secondary.is-active {
@@ -568,8 +612,8 @@ body.cs-page-writing {
   flex-direction: column;
   gap: var(--ws-gap-4);
   padding-top: var(--ws-gap-1);
-  max-height: calc(100dvh - 236px);
-  overflow: auto;
+  max-height: none;
+  overflow: visible;
   padding-right: var(--ws-gap-1);
 }
 
@@ -593,8 +637,8 @@ body.cs-page-writing {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.94);
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(210, 230, 255, 0.26);
+  background: rgba(38, 56, 77, 0.62);
 }
 
 .ws-rail-title {
@@ -609,7 +653,7 @@ body.cs-page-writing {
 #ws-rail .ws-h2 {
   font-size: 16px;
   letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(234, 244, 255, 0.98);
   margin-bottom: var(--ws-gap-1);
 }
 
@@ -656,17 +700,18 @@ body.cs-page-writing {
 }
 
 .ws-tip {
-  padding: var(--ws-gap-2) var(--ws-gap-2);
-  border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 0 6px var(--ws-gap-2);
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-left: 3px solid rgba(94, 200, 255, 0.45);
   font-size: 14px;
   line-height: 1.45;
 }
 
 #ws-rail .ws-tip {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.11);
+  background: transparent;
+  border-left-color: rgba(94, 200, 255, 0.36);
 }
 
 .ws-exemplar {
@@ -707,10 +752,10 @@ body.cs-page-writing {
 .ws-pill {
   border-radius: 999px;
   padding: var(--ws-gap-1) var(--ws-gap-2);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(38, 56, 77, 0.52);
+  border: 1px solid rgba(214, 232, 255, 0.22);
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(243, 249, 255, 0.94);
 }
 
 .ws-check {
@@ -741,8 +786,8 @@ body.cs-page-writing {
 .ws-case-item {
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(38, 56, 77, 0.35);
+  border: 1px solid rgba(214, 232, 255, 0.2);
   display: flex;
   flex-direction: column;
   gap: var(--ws-gap-1);
@@ -802,8 +847,8 @@ body.cs-page-writing {
 .ws-wall-item {
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(38, 56, 77, 0.35);
+  border: 1px solid rgba(214, 232, 255, 0.2);
 }
 
 .ws-wall-line {
@@ -826,7 +871,7 @@ body.cs-page-writing {
 #ws-canvas::-webkit-scrollbar-thumb,
 #ws-rail::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(166, 205, 243, 0.35);
 }
 
 #ws-toast {
