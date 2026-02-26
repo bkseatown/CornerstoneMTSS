@@ -396,6 +396,34 @@ body.cs-page-writing {
   line-height: 1.45;
 }
 
+.ws-exemplar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ws-gap-1);
+}
+
+.ws-exemplar.is-active {
+  border-color: rgba(122, 167, 255, 0.52);
+  background: rgba(122, 167, 255, 0.14);
+}
+
+.ws-exemplar-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.ws-exemplar-sample {
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.ws-exemplar-strength {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
 .ws-pills {
   display: flex;
   flex-wrap: wrap;

@@ -206,6 +206,7 @@
   var benchmarkNoteEl = document.getElementById("ws-benchmark-note");
   var calibrationEl = document.getElementById("ws-calibration");
   var benchmarkConfidenceEl = document.getElementById("ws-benchmark-confidence");
+  var exemplarListEl = document.getElementById("ws-exemplars");
   var miniLessonEl = document.getElementById("ws-mini-lesson");
   var sprintTimeEl = document.getElementById("ws-sprint-time");
   var sprintStartBtn = document.getElementById("ws-sprint-start");
@@ -847,6 +848,108 @@
     if (benchmarkConfidenceEl) benchmarkConfidenceEl.textContent = getBenchmarkConfidence(text, words, sentenceCount);
   }
 
+  function getExemplarLevelLabels() {
+    var bands = FRAMEWORK_BANDS[currentFramework] || FRAMEWORK_BANDS.ccss;
+    return [
+      bands[0] ? bands[0].level : "Emerging",
+      bands[1] ? bands[1].level : "Developing",
+      bands[bands.length - 1] ? bands[bands.length - 1].level : "Strong"
+    ];
+  }
+
+  function getExemplarBank() {
+    if (currentMode === "paragraph") {
+      if (currentGradeBand === "k2") {
+        return [
+          { sample: "I think recess is good. Kids run. We play.", strength: "States a clear opinion with simple complete sentences." },
+          { sample: "I think recess is important because our bodies need movement. For example, we run and our hearts get stronger.", strength: "Adds a reason and a simple evidence phrase." },
+          { sample: "Recess should stay in our school day because movement improves focus. For example, after running we return calmer and ready to learn, so recess helps both health and class learning.", strength: "Strong claim-evidence-explanation flow with clear connection to learning." }
+        ];
+      }
+      if (currentGradeBand === "35") {
+        return [
+          { sample: "I believe school gardens help students. Plants grow and we learn outside.", strength: "Introduces a claim and stays on one topic." },
+          { sample: "School gardens help students learn science in real ways. According to our class notes, we measured plant growth each week and explained changes.", strength: "Uses relevant classroom evidence and basic academic language." },
+          { sample: "School gardens should be part of every elementary campus because they build science knowledge and responsibility. According to our data table, plants in the sunny bed grew faster, which helped us analyze cause and effect.", strength: "Precise claim, embedded evidence, and explanation of significance." }
+        ];
+      }
+      if (currentGradeBand === "68") {
+        return [
+          { sample: "Uniforms can help schools. They make students look the same.", strength: "Simple claim and topic control." },
+          { sample: "School uniforms can improve focus by reducing clothing-based distraction. For instance, our advisory survey showed many students felt morning routines were easier.", strength: "Relevant evidence with basic reasoning." },
+          { sample: "Uniform policies can support learning climate when implemented fairly. Although some students argue uniforms reduce expression, survey evidence and attendance patterns suggest fewer social distractions and smoother transitions into class.", strength: "Balanced reasoning, counterpoint, and evidence-based analysis." }
+        ];
+      }
+      return [
+        { sample: "Social media affects teens. It changes communication and attention.", strength: "Clear claim with focused topic." },
+        { sample: "Social media platforms influence adolescent communication patterns in both positive and negative ways. For example, students report quicker collaboration, yet many also describe shortened attention spans during homework.", strength: "Nuanced claim with relevant examples." },
+        { sample: "Social media's educational impact is conditional rather than uniformly harmful or beneficial. While critics cite distraction, structured classroom integration can improve collaboration and feedback cycles, suggesting policy should emphasize guided use over blanket restriction.", strength: "Sophisticated qualification, counterargument, and policy-oriented reasoning." }
+      ];
+    }
+
+    if (currentGradeBand === "k2") {
+      return [
+        { sample: "The dog is big. It runs.", strength: "Writes complete short sentences." },
+        { sample: "The brown dog runs fast because it wants the red ball.", strength: "Uses detail and a connector to extend meaning." },
+        { sample: "First the brown dog waits, then it sprints across the grass because it sees the red ball, and everyone cheers.", strength: "Strong sequencing and expanded detail in connected sentences." }
+      ];
+    }
+    if (currentGradeBand === "35") {
+      return [
+        { sample: "Rainforest animals live in trees. They need safe places.", strength: "Clear topic and basic support." },
+        { sample: "Rainforest animals often live in layers of the forest, so each animal can find food and shelter.", strength: "Uses domain vocabulary and cause/effect connection." },
+        { sample: "Rainforest animals adapt to specific canopy layers because food, light, and protection vary by height; therefore, each species occupies a niche that supports survival.", strength: "Precise vocabulary, sentence complexity, and logical linking." }
+      ];
+    }
+    if (currentGradeBand === "68") {
+      return [
+        { sample: "Renewable energy helps the environment. It can reduce pollution.", strength: "States a central idea clearly." },
+        { sample: "Renewable energy reduces long-term emissions because solar and wind systems produce power without burning fossil fuels.", strength: "Clear reasoning with accurate content terms." },
+        { sample: "Renewable energy transitions reduce emissions and diversify energy security; however, effective implementation requires grid modernization and storage planning.", strength: "Complex sentence control with concession and technical precision." }
+      ];
+    }
+    return [
+      { sample: "Literature can shape culture by influencing language and values.", strength: "Focused claim with formal tone." },
+      { sample: "Literature shapes cultural norms by modeling values, conflict, and social critique, allowing readers to evaluate beliefs through narrative distance.", strength: "Abstract reasoning with controlled syntax." },
+      { sample: "Literature not only mirrors culture but also reconstitutes it by reframing moral language, legitimizing dissent, and extending the boundaries of collective imagination.", strength: "High conceptual density, rhetorical control, and precise diction." }
+    ];
+  }
+
+  function resolveExemplarIndex(total) {
+    if (total <= 3) return 0;
+    if (total <= 6) return 1;
+    return 2;
+  }
+
+  function renderExemplars(total) {
+    if (!exemplarListEl) return;
+    var labels = getExemplarLevelLabels();
+    var bank = getExemplarBank();
+    var activeIdx = resolveExemplarIndex(total);
+    exemplarListEl.innerHTML = "";
+    bank.forEach(function (entry, idx) {
+      var card = document.createElement("div");
+      card.className = "ws-tip ws-exemplar" + (idx === activeIdx ? " is-active" : "");
+
+      var title = document.createElement("div");
+      title.className = "ws-exemplar-title";
+      title.textContent = labels[idx] || "Range";
+
+      var sample = document.createElement("div");
+      sample.className = "ws-exemplar-sample";
+      sample.textContent = "\"" + entry.sample + "\"";
+
+      var strength = document.createElement("div");
+      strength.className = "ws-exemplar-strength";
+      strength.textContent = "Strength: " + entry.strength;
+
+      card.appendChild(title);
+      card.appendChild(sample);
+      card.appendChild(strength);
+      exemplarListEl.appendChild(card);
+    });
+  }
+
   function renderMasterySnapshot(text, words, sentenceCount) {
     if (!rubric1El || !rubric2El || !rubric3El || !rubricScoreEl || !miniLessonEl) return;
     var t = getBandThresholds();
@@ -880,6 +983,7 @@
     rubric3El.textContent = language + "/3";
     rubricScoreEl.textContent = total + "/9";
     renderBenchmarkLens(text, total, { structure: structure, detail: detail, language: language }, words, sentenceCount);
+    renderExemplars(total);
     miniLessonEl.textContent = getMiniLessonRecommendation({ structure: structure, detail: detail, language: language });
   }
 
