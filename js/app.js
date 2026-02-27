@@ -7,12 +7,15 @@
  */
 
 (async () => {
-  const DEMO_TARGET_WORD = 'blend';
+  const DEMO_WORDS = Object.freeze(['plant', 'crane', 'shine', 'brave', 'grasp']);
+  const DEMO_TARGET_WORD = DEMO_WORDS[0];
   function detectDemoMode() {
     let fromQuery = false;
     try {
       const params = new URLSearchParams(window.location.search || '');
-      fromQuery = String(params.get('demo') || '').trim().toLowerCase() === 'true';
+      const demoParam = String(params.get('demo') || '').trim().toLowerCase();
+      const modeParam = String(params.get('mode') || '').trim().toLowerCase();
+      fromQuery = demoParam === '1' || demoParam === 'true' || modeParam === 'demo';
     } catch {}
     return fromQuery || window.WQ_DEMO === true;
   }
@@ -710,22 +713,60 @@
   let challengeModalReturnFocusEl = null;
   let demoRoundComplete = false;
   let demoEndOverlayEl = null;
+  let demoBannerEl = null;
+  let demoCoachEl = null;
+  const demoState = {
+    step: 0,
+    guessCount: 0,
+    suggestions: ['slate', 'plain', 'plant'],
+    discoveredCore: new Set(),
+    keyPulseTimer: 0,
+    keyPulseIndex: 0,
+    hintUsed: false
+  };
 
   function createDemoBanner() {
     if (!DEMO_MODE || document.getElementById('wq-demo-banner')) return;
     const banner = document.createElement('div');
     banner.id = 'wq-demo-banner';
     banner.className = 'wq-demo-banner';
-    banner.textContent = 'Live Demo — Try One Round';
+    banner.innerHTML =
+      '<div class=\"wq-demo-banner-left\">Live Demo (60 sec) - Try one round</div>' +
+      '<div class=\"wq-demo-banner-actions\">' +
+        '<button type=\"button\" id=\"wq-demo-skip-btn\">Skip demo</button>' +
+        '<button type=\"button\" id=\"wq-demo-restart-btn\">Restart demo</button>' +
+      '</div>';
     document.body.prepend(banner);
+    demoBannerEl = banner;
+    document.body.classList.add('wq-demo-active');
+    _el('wq-demo-skip-btn')?.addEventListener('click', () => {
+      window.WQ_DEMO = false;
+      window.location.href = removeDemoParams(window.location.href);
+    });
+    _el('wq-demo-restart-btn')?.addEventListener('click', () => {
+      window.location.href = ensureDemoParam(window.location.href);
+    });
   }
 
   function setDemoControlsDisabled() {
     if (!DEMO_MODE) return;
+    const focusInput = _el('focus-inline-search');
+    const focusSelect = _el('setting-focus');
+    const lengthSelect = _el('s-length');
+    const guessesSelect = _el('s-guesses');
+    if (focusSelect) focusSelect.value = 'all';
+    if (lengthSelect) lengthSelect.value = '5';
+    if (guessesSelect) guessesSelect.value = '6';
+    if (focusInput) {
+      focusInput.value = 'Classic (Demo Locked)';
+      focusInput.setAttribute('readonly', 'true');
+      focusInput.setAttribute('aria-readonly', 'true');
+    }
     const targets = [
-      _el('setting-focus'),
-      _el('s-length'),
-      _el('s-guesses'),
+      focusSelect,
+      lengthSelect,
+      guessesSelect,
+      focusInput,
       _el('wq-teacher-words')
     ];
     targets.forEach((node) => {
@@ -739,21 +780,200 @@
       node.setAttribute('aria-disabled', 'true');
       node.setAttribute('title', 'Disabled in Live Demo');
     });
+    const teacherTools = _el('wq-teacher-tools');
+    if (teacherTools) teacherTools.classList.add('hidden');
   }
 
-  function removeDemoQueryParam(url) {
+  function ensureDemoParam(url) {
+    const next = new URL(url || window.location.href, window.location.href);
+    next.searchParams.set('demo', '1');
+    next.searchParams.delete('mode');
+    return next.toString();
+  }
+
+  function removeDemoParams(url) {
     const next = new URL(url || window.location.href, window.location.href);
     next.searchParams.delete('demo');
+    next.searchParams.delete('mode');
     return next.toString();
+  }
+
+  function stopDemoKeyPulse() {
+    if (!demoState.keyPulseTimer) return;
+    clearInterval(demoState.keyPulseTimer);
+    demoState.keyPulseTimer = 0;
+  }
+
+  function pulseDemoKey(letter) {
+    const key = document.querySelector(`.key[data-key=\"${String(letter || '').toLowerCase()}\"]`);
+    if (!(key instanceof HTMLElement)) return;
+    key.classList.remove('wq-demo-key-pulse');
+    void key.offsetWidth;
+    key.classList.add('wq-demo-key-pulse');
+  }
+
+  function startDemoKeyPulse(word) {
+    stopDemoKeyPulse();
+    const letters = String(word || '').toLowerCase().replace(/[^a-z]/g, '').split('');
+    if (!letters.length) return;
+    demoState.keyPulseIndex = 0;
+    demoState.keyPulseTimer = setInterval(() => {
+      pulseDemoKey(letters[demoState.keyPulseIndex % letters.length]);
+      demoState.keyPulseIndex += 1;
+    }, 360);
+  }
+
+  function fillGuessWithWord(word) {
+    const normalizedWord = String(word || '').trim().toLowerCase();
+    const current = WQGame.getState?.() || {};
+    if (!normalizedWord || !current.wordLength || normalizedWord.length !== current.wordLength) return false;
+    while ((WQGame.getState?.()?.guess || '').length > 0) WQGame.deleteLetter();
+    for (const letter of normalizedWord) WQGame.addLetter(letter);
+    const next = WQGame.getState?.();
+    if (next) WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
+    return true;
+  }
+
+  function ensureDemoCoach() {
+    if (demoCoachEl) return demoCoachEl;
+    const coach = document.createElement('div');
+    coach.id = 'wq-demo-coach';
+    coach.className = 'wq-demo-coach hidden';
+    coach.innerHTML =
+      '<div class=\"wq-demo-coach-copy\" id=\"wq-demo-coach-copy\"></div>' +
+      '<div class=\"wq-demo-coach-actions\">' +
+        '<button type=\"button\" id=\"wq-demo-coach-primary\">Got it</button>' +
+        '<button type=\"button\" id=\"wq-demo-coach-suggest\" class=\"hidden\">Use suggested word</button>' +
+        '<button type=\"button\" id=\"wq-demo-coach-hint\" class=\"hidden\">Hint: reveal 2 letters</button>' +
+        '<button type=\"button\" id=\"wq-demo-coach-skip\">Skip</button>' +
+      '</div>';
+    document.body.appendChild(coach);
+    demoCoachEl = coach;
+    return coach;
+  }
+
+  function hideDemoCoach() {
+    if (!demoCoachEl) return;
+    demoCoachEl.classList.add('hidden');
+    stopDemoKeyPulse();
+  }
+
+  function showDemoCoach(config) {
+    if (!DEMO_MODE) return;
+    const coach = ensureDemoCoach();
+    const copyEl = _el('wq-demo-coach-copy');
+    const primaryBtn = _el('wq-demo-coach-primary');
+    const suggestBtn = _el('wq-demo-coach-suggest');
+    const hintBtn = _el('wq-demo-coach-hint');
+    const skipBtn = _el('wq-demo-coach-skip');
+    if (!copyEl || !primaryBtn || !suggestBtn || !hintBtn || !skipBtn) return;
+
+    copyEl.textContent = String(config?.text || '').trim();
+    primaryBtn.textContent = String(config?.primaryLabel || 'Got it').trim() || 'Got it';
+    primaryBtn.onclick = () => {
+      if (typeof config?.onPrimary === 'function') config.onPrimary();
+      hideDemoCoach();
+    };
+    skipBtn.onclick = () => hideDemoCoach();
+
+    const suggestedWord = String(config?.suggestedWord || '').trim().toLowerCase();
+    if (suggestedWord) {
+      suggestBtn.classList.remove('hidden');
+      suggestBtn.onclick = () => {
+        fillGuessWithWord(suggestedWord);
+        hideDemoCoach();
+      };
+      startDemoKeyPulse(suggestedWord);
+    } else {
+      suggestBtn.classList.add('hidden');
+      stopDemoKeyPulse();
+    }
+
+    if (config?.showHint === true) {
+      hintBtn.classList.remove('hidden');
+      hintBtn.onclick = () => {
+        demoState.hintUsed = true;
+        showDemoCoach({
+          text: 'Hint: the word starts with P and has L as the second letter.',
+          primaryLabel: 'Got it'
+        });
+      };
+    } else {
+      hintBtn.classList.add('hidden');
+    }
+
+    const anchor = config?.anchor || _el('keyboard') || document.body;
+    const rect = (anchor && anchor.getBoundingClientRect) ? anchor.getBoundingClientRect() : { top: 84, left: 20, width: 300 };
+    coach.style.top = `${Math.max(72, rect.top - 90)}px`;
+    coach.style.left = `${Math.max(12, rect.left + (rect.width / 2) - 170)}px`;
+    coach.classList.remove('hidden');
+  }
+
+  function resetDemoScriptState() {
+    demoState.step = 0;
+    demoState.guessCount = 0;
+    demoState.discoveredCore = new Set();
+    demoState.hintUsed = false;
+    stopDemoKeyPulse();
+    hideDemoCoach();
+  }
+
+  function runDemoCoachForStart() {
+    showDemoCoach({
+      anchor: _el('keyboard'),
+      text: 'Try SLATE first. Colors will teach the rule instantly.',
+      primaryLabel: 'Got it',
+      suggestedWord: demoState.suggestions[0]
+    });
+  }
+
+  function updateDemoDiscovered(result) {
+    const guess = String(result?.guess || '').toUpperCase();
+    const statuses = Array.isArray(result?.result) ? result.result : [];
+    ['P', 'L', 'A'].forEach((targetLetter) => {
+      for (let i = 0; i < guess.length; i += 1) {
+        if (guess[i] !== targetLetter) continue;
+        if (statuses[i] === 'correct' || statuses[i] === 'present') {
+          demoState.discoveredCore.add(targetLetter);
+          return;
+        }
+      }
+    });
+  }
+
+  function runDemoCoachAfterGuess(result) {
+    if (!DEMO_MODE || !result || result.error || result.won || result.lost) return;
+    demoState.guessCount = Math.max(0, Number(result.guesses?.length || 0));
+    updateDemoDiscovered(result);
+    if (demoState.guessCount === 1) {
+      showDemoCoach({
+        anchor: _el('game-board'),
+        text: 'Grey = not in word, yellow = wrong spot, green = right spot. Next try PLAIN.',
+        suggestedWord: demoState.suggestions[1]
+      });
+      return;
+    }
+    if (demoState.guessCount === 2) {
+      const coreFound = demoState.discoveredCore.has('P') && demoState.discoveredCore.has('L') && demoState.discoveredCore.has('A');
+      showDemoCoach({
+        anchor: _el('game-board'),
+        text: 'Now finish with PLANT. You are one guess from the win.',
+        suggestedWord: demoState.suggestions[2],
+        showHint: !coreFound
+      });
+    }
   }
 
   function closeDemoEndOverlay() {
     if (!demoEndOverlayEl) return;
     demoEndOverlayEl.classList.add('hidden');
+    hideDemoCoach();
   }
 
   function showDemoEndOverlay() {
     if (!DEMO_MODE) return;
+    stopDemoKeyPulse();
+    hideDemoCoach();
     if (!demoEndOverlayEl) {
       const overlay = document.createElement('div');
       overlay.id = 'wq-demo-end-overlay';
@@ -761,18 +981,24 @@
       overlay.innerHTML =
         '<div class=\"wq-demo-end-card\">' +
           '<h2>That&rsquo;s Word Quest.</h2>' +
+          '<ul>' +
+            '<li>Instant feedback on phonics patterns</li>' +
+            '<li>Audio support built in</li>' +
+            '<li>Ready for Tier 2/3 practice</li>' +
+          '</ul>' +
           '<div class=\"wq-demo-end-actions\">' +
-            '<button type=\"button\" id=\"wq-demo-full-btn\" class=\"audio-btn\">Play Full Version</button>' +
-            '<button type=\"button\" id=\"wq-demo-retry-btn\" class=\"audio-btn\">Try Again</button>' +
+            '<button type=\"button\" id=\"wq-demo-full-btn\" class=\"audio-btn\">Play full Word Quest</button>' +
+            '<button type=\"button\" id=\"wq-demo-retry-btn\" class=\"audio-btn\">Try demo again</button>' +
           '</div>' +
         '</div>';
       document.body.appendChild(overlay);
       _el('wq-demo-full-btn')?.addEventListener('click', () => {
         window.WQ_DEMO = false;
-        window.location.href = removeDemoQueryParam(window.location.href);
+        window.location.href = removeDemoParams(window.location.href);
       });
       _el('wq-demo-retry-btn')?.addEventListener('click', () => {
         demoRoundComplete = false;
+        resetDemoScriptState();
         closeDemoEndOverlay();
         newGame({ forceDemoReplay: true, launchMissionLab: false });
       });
@@ -12259,7 +12485,10 @@
       showDemoEndOverlay();
       return;
     }
-    if (DEMO_MODE) closeDemoEndOverlay();
+    if (DEMO_MODE) {
+      closeDemoEndOverlay();
+      if (options.forceDemoReplay) resetDemoScriptState();
+    }
     emitTelemetry('wq_new_word_click', {
       source: options.launchMissionLab ? 'mission_lab_new' : 'wordquest_new'
     });
@@ -12302,7 +12531,12 @@
     midgameBoostShown = false;
 
     const s = WQUI.getSettings();
-    const focus = _el('setting-focus')?.value || prefs.focus || 'all';
+    if (DEMO_MODE) {
+      s.length = '5';
+      s.maxGuesses = 6;
+      s.focus = 'all';
+    }
+    const focus = DEMO_MODE ? 'all' : (_el('setting-focus')?.value || prefs.focus || 'all');
     const effectiveGradeBand = getEffectiveGameplayGradeBand(s.gradeBand || 'all', focus);
     const playableSet = buildPlayableWordSet(effectiveGradeBand, s.length, focus);
 
@@ -12354,6 +12588,7 @@
     updateNextActionLine({ dueCount: countDueReviewWords(playableSet) });
     scheduleStarterCoachHint();
     syncAssessmentLockRuntime();
+    if (DEMO_MODE) runDemoCoachForStart();
   }
 
   const reflowLayout = () => {
@@ -12510,6 +12745,7 @@
             }
           }, 520);
         } else {
+          if (DEMO_MODE) runDemoCoachAfterGuess(result);
           maybeShowErrorCoach(result);
           maybeAutoShowStarterWords(result);
           advanceTeamTurn();
