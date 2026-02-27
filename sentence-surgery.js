@@ -125,20 +125,33 @@
       blankId + '" aria-label="' + escapeHtml(ariaLabel) + '">' + escapeHtml(value) + '</span>';
   }
 
+  function whySlotSpan() {
+    var value = sanitizeText(state.blankValues.why1);
+    var classes = ["ss-slot", "ss-slot-why", "ss-blank"];
+    var text = value;
+    if (!value) {
+      classes.push("placeholder");
+      text = "because";
+    }
+    if (state.blankCompletePulse.why1) classes.push("scaffold-complete");
+    return '<span id="ss-why" class="' + classes.join(" ") + '" contenteditable="true" data-slot="why" data-blank-id="why1" aria-label="Fill in reason">' +
+      escapeHtml(text) + "</span>";
+  }
+
   function buildSentenceHtml(pulseClause) {
     var model = baseModel();
     var nounPart = state.hasDetail
       ? blankSpan("detailAdj", "Fill in detail adjective") + " " + escapeHtml(model.noun)
       : escapeHtml(model.noun);
 
-    var body = escapeHtml(model.subject) + " " + nounPart + " " + escapeHtml(state.verb);
+    var body = '<span class="ss-token ss-prefix">' + escapeHtml(model.subject) + " " + nounPart + " " + escapeHtml(state.verb) + " </span>";
     var trail = escapeHtml(model.trail);
 
     if (state.hasWhy) {
       var clauseClass = pulseClause ? "clause clause-pulse" : "clause";
-      body += ' <span class="' + clauseClass + '">because ' + blankSpan("why1", "Fill in reason") + " " + trail + "</span>.";
+      body += '<span class="' + clauseClass + '">' + whySlotSpan() + ' <span class="ss-token ss-suffix">' + trail + "</span></span><span class=\"ss-token ss-period\">.</span>";
     } else {
-      body += " " + trail + ".";
+      body += '<span class="ss-token ss-suffix">' + trail + ".</span>";
     }
 
     return body;
@@ -316,6 +329,61 @@
     });
   }
 
+  function focusSlotReplaceAll(slotEl) {
+    if (!slotEl) return;
+    requestAnimationFrame(function () {
+      slotEl.focus();
+      var range = document.createRange();
+      range.selectNodeContents(slotEl);
+      var sel = window.getSelection && window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  }
+
+  function setCaretToEnd(el) {
+    if (!el) return;
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    var sel = window.getSelection && window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+
+  function normalizeWhySlotPlaceholder(slotEl) {
+    if (!slotEl) return;
+    var next = sanitizeText(slotEl.textContent);
+    if (!next) {
+      slotEl.textContent = "because";
+      slotEl.classList.add("placeholder");
+      state.blankValues.why1 = "";
+    }
+  }
+
+  function showWhyHint() {
+    var slotEl = sentenceEl.querySelector("#ss-why");
+    if (!slotEl) return;
+    var old = document.getElementById("ssWhyHint");
+    if (old) old.remove();
+    var hint = document.createElement("div");
+    hint.id = "ssWhyHint";
+    hint.className = "ss-why-hint";
+    hint.textContent = "Type your reason after because.";
+    document.body.appendChild(hint);
+    var rect = slotEl.getBoundingClientRect();
+    hint.style.left = Math.max(12, Math.round(rect.left)) + "px";
+    hint.style.top = Math.max(12, Math.round(rect.bottom + 8)) + "px";
+    window.setTimeout(function () {
+      hint.classList.add("hide");
+      window.setTimeout(function () { hint.remove(); }, 220);
+    }, 1500);
+  }
+
   function pulseBlank(blankId) {
     requestAnimationFrame(function () {
       var blankEl = sentenceEl.querySelector('[data-blank-id="' + blankId + '"]');
@@ -345,7 +413,12 @@
     updateActionLabels();
     updateProgressAndTraits();
     if (opts.focusBlankId) focusBlank(opts.focusBlankId);
+    if (opts.focusWhySlot) {
+      var slotEl = sentenceEl.querySelector("#ss-why");
+      if (slotEl) focusSlotReplaceAll(slotEl);
+    }
     if (opts.pulseBlankId) pulseBlank(opts.pulseBlankId);
+    if (opts.showWhyHint) showWhyHint();
   }
 
   function showVerbMenu(anchorButton) {
@@ -378,13 +451,14 @@
 
     if (actionType === "why") {
       if (state.hasWhy) {
-        renderOpts.focusBlankId = "why1";
+        renderOpts.focusWhySlot = true;
         renderOpts.pulseBlankId = "why1";
       } else {
         state.hasWhy = true;
         markActionApplied("why");
-        renderOpts.focusBlankId = "why1";
+        renderOpts.focusWhySlot = true;
         renderOpts.pulseClause = true;
+        renderOpts.showWhyHint = true;
         showBadge("Reason clause added");
       }
     }
@@ -414,6 +488,7 @@
     var firstInvalid = null;
     blanks.forEach(function (blankEl) {
       var value = sanitizeText(blankEl.textContent);
+      if (blankEl.id === "ss-why" && blankEl.classList.contains("placeholder")) value = "";
       blankEl.classList.remove("is-invalid");
       if (!value) {
         if (!firstInvalid) firstInvalid = blankEl;
@@ -497,8 +572,19 @@
     var blankId = blankEl.getAttribute("data-blank-id");
     if (!blankId) return;
 
+    if (blankId === "why1" && blankEl.classList.contains("placeholder")) {
+      var raw = sanitizeText(blankEl.textContent).replace(/^because\s*/i, "");
+      blankEl.textContent = raw;
+      blankEl.classList.remove("placeholder");
+      setCaretToEnd(blankEl);
+    }
+
     var value = sanitizeText(blankEl.textContent);
     var prior = sanitizeText(state.blankValues[blankId]);
+    if (blankId === "why1" && !value) {
+      normalizeWhySlotPlaceholder(blankEl);
+      value = "";
+    }
     state.blankValues[blankId] = value;
     blankEl.classList.remove("is-invalid");
 
@@ -514,6 +600,45 @@
     updateProgressAndTraits();
     window.__SS_DEBUG = { state: state };
   });
+
+  sentenceEl.addEventListener("beforeinput", function (event) {
+    var slotEl = event.target && event.target.closest && event.target.closest("#ss-why");
+    if (!slotEl) return;
+    var type = String(event.inputType || "");
+    var isTextInsert = type === "insertText" || type === "insertCompositionText";
+    if (!slotEl.classList.contains("placeholder") || !isTextInsert) return;
+    event.preventDefault();
+    slotEl.classList.remove("placeholder");
+    slotEl.textContent = String(event.data || "");
+    state.blankValues.why1 = sanitizeText(slotEl.textContent);
+    setCaretToEnd(slotEl);
+    updateProgressAndTraits();
+  });
+
+  sentenceEl.addEventListener("paste", function (event) {
+    var slotEl = event.target && event.target.closest && event.target.closest("#ss-why");
+    if (!slotEl) return;
+    var pasted = "";
+    try {
+      pasted = (event.clipboardData && event.clipboardData.getData("text")) || "";
+    } catch (_e) {
+      pasted = "";
+    }
+    if (!slotEl.classList.contains("placeholder")) return;
+    event.preventDefault();
+    slotEl.classList.remove("placeholder");
+    slotEl.textContent = sanitizeText(pasted);
+    state.blankValues.why1 = sanitizeText(slotEl.textContent);
+    setCaretToEnd(slotEl);
+    updateProgressAndTraits();
+  });
+
+  sentenceEl.addEventListener("blur", function (event) {
+    var slotEl = event.target && event.target.closest && event.target.closest("#ss-why");
+    if (!slotEl) return;
+    normalizeWhySlotPlaceholder(slotEl);
+    updateProgressAndTraits();
+  }, true);
 
   if (doneBtn) doneBtn.addEventListener("click", handleDone);
   if (tryAnotherBtn) tryAnotherBtn.addEventListener("click", resetProgressForSameSentence);

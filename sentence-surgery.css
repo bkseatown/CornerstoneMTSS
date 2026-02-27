@@ -280,6 +280,28 @@ body.teacher-mode .ss-breakdown {
   animation: ss-blank-pulse 240ms ease;
 }
 
+.ss-sentence .ss-slot.placeholder {
+  color: rgba(233, 240, 248, 0.56);
+}
+
+.ss-why-hint {
+  position: fixed;
+  z-index: 30;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 219, 236, 0.48);
+  background: rgba(17, 29, 41, 0.92);
+  color: rgba(238, 247, 255, 0.95);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.ss-why-hint.hide {
+  opacity: 0;
+}
+
 @media (max-width: 640px) {
   .ss-container {
     padding: 28px 16px;
