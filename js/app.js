@@ -1095,6 +1095,39 @@
     stopDemoKeyPulse();
   }
 
+  function positionDemoCoach(coachEl, preferredAnchor) {
+    if (!(coachEl instanceof HTMLElement)) return;
+    const board = _el('game-board');
+    const anchor = preferredAnchor || board || _el('keyboard') || document.body;
+    const anchorRect = (anchor && anchor.getBoundingClientRect)
+      ? anchor.getBoundingClientRect()
+      : { top: 84, left: 20, width: 300, height: 220, right: 320, bottom: 304 };
+    const boardRect = (board && board.getBoundingClientRect)
+      ? board.getBoundingClientRect()
+      : anchorRect;
+    const coachWidth = Math.max(260, Math.min(360, coachEl.offsetWidth || 340));
+    const gap = 12;
+    const viewportPadding = 10;
+    const maxLeft = Math.max(viewportPadding, window.innerWidth - coachWidth - viewportPadding);
+    const rightCandidate = Math.round(boardRect.right + gap);
+    const leftCandidate = Math.round(boardRect.left - coachWidth - gap);
+    let nextLeft = rightCandidate;
+    if (rightCandidate > maxLeft) {
+      if (leftCandidate >= viewportPadding) nextLeft = leftCandidate;
+      else nextLeft = maxLeft;
+    }
+    const anchorMidY = anchorRect.top + (anchorRect.height / 2);
+    const coachHeight = Math.max(112, coachEl.offsetHeight || 150);
+    let nextTop = Math.round(anchorMidY - (coachHeight / 2));
+    const keyboardTop = (_el('keyboard') && _el('keyboard').getBoundingClientRect)
+      ? _el('keyboard').getBoundingClientRect().top
+      : window.innerHeight;
+    const maxTop = Math.min(window.innerHeight - coachHeight - viewportPadding, keyboardTop - coachHeight - gap);
+    nextTop = Math.max(72, Math.min(maxTop, nextTop));
+    coachEl.style.left = `${Math.max(viewportPadding, Math.min(maxLeft, nextLeft))}px`;
+    coachEl.style.top = `${nextTop}px`;
+  }
+
   function showDemoCoach(config) {
     if (!DEMO_MODE) return;
     const demoStateRuntime = getDemoState();
@@ -1158,11 +1191,9 @@
       hintBtn.classList.add('hidden');
     }
 
-    const anchor = config?.anchor || _el('keyboard') || document.body;
+    const anchor = config?.anchor || _el('game-board') || _el('keyboard') || document.body;
+    positionDemoCoach(coach, anchor);
     if (!wasVisible) {
-      const rect = (anchor && anchor.getBoundingClientRect) ? anchor.getBoundingClientRect() : { top: 84, left: 20, width: 300 };
-      coach.style.top = `${Math.max(72, rect.top - 90)}px`;
-      coach.style.left = `${Math.max(12, rect.left + (rect.width / 2) - 170)}px`;
       coach.classList.remove('cs-hidden');
       coach.classList.add('cs-visible');
     }

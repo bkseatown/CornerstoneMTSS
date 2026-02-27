@@ -6628,8 +6628,8 @@ html[data-layout-mode="compact"] .key.key-chunk {
   padding: 7px 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
-  background: color-mix(in oklab, var(--brand) 32%, #fff5d6 68%);
-  color: color-mix(in oklab, var(--text) 80%, #1f2c38 20%);
+  background: color-mix(in oklab, var(--brand-dk) 46%, #1d2d3c 54%);
+  color: #f4fbff;
   font-size: 0.76rem;
   font-weight: 820;
   letter-spacing: 0.01em;
@@ -6671,8 +6671,8 @@ html[data-layout-mode="compact"] .key.key-chunk {
 .wq-demo-banner-actions button {
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 56%, transparent);
-  background: rgba(255, 255, 255, 0.76);
-  color: color-mix(in oklab, var(--text) 82%, #1f2c38 18%);
+  background: #f1f6fc;
+  color: #1d3042;
   font-size: 0.7rem;
   font-weight: 780;
   padding: 4px 9px;
@@ -6699,8 +6699,8 @@ body.wq-demo .quest-overlay {
   width: min(340px, calc(100vw - 14px));
   border-radius: 14px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 62%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 78%, #e5ecf5 22%);
-  color: color-mix(in oklab, var(--text) 84%, #ffffff 16%);
+  background: #33495f;
+  color: #f6fbff;
   box-shadow: var(--panel-shadow);
   padding: 10px 11px;
   display: grid;
@@ -6726,7 +6726,7 @@ body.wq-demo .quest-overlay {
 .wq-demo-coach-copy {
   font-size: 0.86rem;
   line-height: 1.35;
-  font-weight: 740;
+  font-weight: 760;
   transition: none !important;
   animation: none !important;
 }
@@ -6740,8 +6740,8 @@ body.wq-demo .quest-overlay {
 .wq-demo-coach-actions button {
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
-  background: rgba(255, 255, 255, 0.82);
-  color: color-mix(in oklab, var(--text) 84%, #1f2c38 16%);
+  background: #eef5fc;
+  color: #163047;
   font-size: 0.73rem;
   font-weight: 770;
   padding: 4px 9px;
