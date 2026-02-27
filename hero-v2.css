@@ -110,6 +110,10 @@
   position: relative;
 }
 
+html[data-home-mode="home"] #home-demo-preview {
+  display: block;
+}
+
 .hero-preview-pane {
   position: absolute;
   inset: 12px;

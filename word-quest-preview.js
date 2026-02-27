@@ -1,9 +1,11 @@
 (function wordQuestPreviewModule() {
   "use strict";
 
-  function create(container) {
+  function create(container, options) {
     if (!(container instanceof HTMLElement)) return null;
 
+    var opts = options && typeof options === "object" ? options : {};
+    var shouldLoop = opts.loop !== false;
     var timers = [];
     var running = false;
 
@@ -98,7 +100,7 @@
               animateGuess(2, 'PLANT', ['is-green', 'is-green', 'is-green', 'is-green', 'is-green'], function () {
                 setTimer(function () {
                   if (!running || document.hidden) return;
-                  playRound();
+                  if (shouldLoop) playRound();
                 }, 1500);
               });
             }, 380);
