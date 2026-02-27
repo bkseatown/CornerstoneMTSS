@@ -204,6 +204,7 @@
       chooseVerb: chooseVerb,
       getRenderModel: getRenderModel,
       getSentenceText: getSentenceText,
+      getSnapshot: getSnapshot,
       finalizeSentence: finalizeSentence,
       nextSentence: nextSentence,
       getHistory: getHistory
