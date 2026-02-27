@@ -8,14 +8,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./sentence-surgery.css?v=20260227b">
+  <link rel="stylesheet" href="./sentence-surgery.css?v=20260227c">
 </head>
 <body class="cs-page-surgery">
   <main class="ss-container" aria-label="Sentence Surgery practice">
     <h1 class="ss-header">Sentence Surgery</h1>
 
     <section class="ss-sentence-wrapper" aria-label="Editable sentence">
-      <div contenteditable="true" id="ssSentence" class="ss-sentence" role="textbox" aria-multiline="false" aria-label="Edit your sentence">
+      <div id="ssSentence" class="ss-sentence" role="textbox" aria-multiline="false" aria-label="Edit your sentence">
         The dog ran.
       </div>
     </section>
@@ -25,6 +25,7 @@
       <button type="button" data-action="detail">Add Detail</button>
       <button type="button" data-action="verb">Upgrade Verb</button>
       <button type="button" id="ssTeacherToggle" class="ss-teacher-toggle" aria-pressed="false">Teacher Lens</button>
+      <div class="ss-verb-menu hidden" id="ssVerbMenu" role="menu" aria-label="Choose a verb"></div>
     </section>
 
     <section class="ss-meter" aria-label="Complexity meter">
@@ -32,6 +33,7 @@
     </section>
 
     <div class="ss-level" id="ssLevel">Level 1</div>
+    <div class="ss-dev-label hidden" id="ssDevLabel" aria-live="polite"></div>
 
     <section class="ss-traits" aria-label="Writing traits">
       <div class="ss-trait">
@@ -63,12 +65,20 @@
     </aside>
 
     <div class="ss-badge" id="ssBadge" role="status" aria-live="polite"></div>
+    <div class="ss-footer hidden" id="ssFooterCta">
+      <button type="button" id="ssDoneBtn">Done</button>
+      <button type="button" id="ssTryAnotherBtn">Try another</button>
+    </div>
     <div class="ss-compare" id="ssCompare" aria-hidden="true">
       <div class="before" id="ssCompareBefore"></div>
       <div class="after" id="ssCompareAfter"></div>
     </div>
+    <div class="ss-complete-actions hidden" id="ssCompleteActions">
+      <button type="button" id="ssNextSentenceBtn">Next sentence</button>
+      <button type="button" id="ssExitStudioBtn">Exit to Studio</button>
+    </div>
   </main>
 
-  <script src="./sentence-surgery.js?v=20260227b" defer></script>
+  <script src="./sentence-surgery.js?v=20260227c" defer></script>
 </body>
 </html>

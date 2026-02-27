@@ -9,75 +9,72 @@
   var compareBeforeEl = document.getElementById("ssCompareBefore");
   var compareAfterEl = document.getElementById("ssCompareAfter");
   var teacherToggleBtn = document.getElementById("ssTeacherToggle");
+  var verbMenuEl = document.getElementById("ssVerbMenu");
+  var footerCtaEl = document.getElementById("ssFooterCta");
+  var doneBtn = document.getElementById("ssDoneBtn");
+  var tryAnotherBtn = document.getElementById("ssTryAnotherBtn");
+  var completeActionsEl = document.getElementById("ssCompleteActions");
+  var nextSentenceBtn = document.getElementById("ssNextSentenceBtn");
+  var exitStudioBtn = document.getElementById("ssExitStudioBtn");
   var breakdownBodyEl = document.getElementById("ssBreakdownBody");
   var skillTagEl = document.getElementById("ssSkillTag");
   var groupingEl = document.getElementById("ssGrouping");
+  var devLabelEl = document.getElementById("ssDevLabel");
   var actionButtons = Array.prototype.slice.call(document.querySelectorAll(".ss-actions button[data-action]"));
 
   if (!sentenceEl || !meterBarEl || !levelEl) return;
 
   var traitEls = {
-    clarity: {
-      fill: document.getElementById("ssTraitClarity"),
-      value: document.getElementById("ssTraitClarityValue")
-    },
-    detail: {
-      fill: document.getElementById("ssTraitDetail"),
-      value: document.getElementById("ssTraitDetailValue")
-    },
-    reasoning: {
-      fill: document.getElementById("ssTraitReasoning"),
-      value: document.getElementById("ssTraitReasoningValue")
-    },
-    control: {
-      fill: document.getElementById("ssTraitControl"),
-      value: document.getElementById("ssTraitControlValue")
+    clarity: { fill: document.getElementById("ssTraitClarity"), value: document.getElementById("ssTraitClarityValue") },
+    detail: { fill: document.getElementById("ssTraitDetail"), value: document.getElementById("ssTraitDetailValue") },
+    reasoning: { fill: document.getElementById("ssTraitReasoning"), value: document.getElementById("ssTraitReasoningValue") },
+    control: { fill: document.getElementById("ssTraitControl"), value: document.getElementById("ssTraitControlValue") }
+  };
+
+  var STRONG_VERBS = ["sprinted", "dashed", "raced", "bolted", "hurried", "charged", "darted"];
+  var ADJECTIVE_BANK = ["tired", "small", "big", "quick", "slow", "loud", "quiet", "bright", "dark", "happy", "sad", "brave", "careful"];
+  var CLAUSE_REGEX = /\b(because|although|when|if)\b[^.!?]*/gi;
+  var VERB_OPTIONS = ["sprinted", "dashed", "raced", "bolted", "hurried"];
+  var DEBUG_ON = (function () {
+    try {
+      return new URLSearchParams(window.location.search || "").get("debug") === "1";
+    } catch (_e) {
+      return false;
     }
+  })();
+
+  var sentenceBank = [
+    { subject: "The", noun: "dog", verb: "ran", trail: "across the yard" },
+    { subject: "The", noun: "student", verb: "wrote", trail: "during class" },
+    { subject: "The", noun: "team", verb: "worked", trail: "on the project" }
+  ];
+  var sentenceIndex = 0;
+
+  var state = {
+    baseSentence: "",
+    currentSentenceHTML: "",
+    appliedActions: new Set(),
+    maxActions: 4,
+    step: 0,
+    activeBlankId: null,
+    verb: "ran",
+    hasWhy: false,
+    hasDetail: false,
+    blankValues: { why1: "", detailAdj: "" },
+    blankCompletePulse: { why1: false, detailAdj: false },
+    beforeSnapshot: "",
+    previousLevel: 1,
+    previousClauseCount: 0
   };
 
-  var WEAK_TO_STRONG = {
-    ran: "sprinted",
-    run: "dash",
-    went: "traveled",
-    go: "move",
-    said: "announced",
-    make: "construct",
-    made: "crafted",
-    got: "obtained",
-    get: "secure",
-    looked: "glanced",
-    look: "observe"
-  };
-
-  var STRONG_VERBS = [
-    "sprinted", "darted", "marched", "charged", "glanced", "observed", "insisted", "announced",
-    "constructed", "crafted", "generated", "examined", "investigated", "calculated", "persuaded"
-  ];
-
-  var ADJECTIVE_BANK = [
-    "small", "big", "quick", "slow", "loud", "quiet", "bright", "dark", "happy", "sad", "brave",
-    "careful", "strong", "gentle", "curious", "fierce", "warm", "cold", "tall", "short"
-  ];
-
-  var CLAUSE_REGEX = /\b(because|although|when|if)\b[^,.!?;]*/gi;
-  var SCAFFOLD_TOKEN_REGEX = /\b(?:because|to|with)\s+_{2,}\b/gi;
-
-  var previousLevel = 1;
-  var previousClauseCount = 0;
-  var previousText = "";
-  var recentCompletedStem = "";
-  var badgeTimer = 0;
-  var compareTimer = 0;
+  window.__SS_DEBUG = { state: state };
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
 
-  function sanitizeSentence(raw) {
-    return String(raw || "")
-      .replace(/[\n\r]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+  function sanitizeText(text) {
+    return String(text || "").replace(/[\n\r]+/g, " ").replace(/\s+/g, " ").trim();
   }
 
   function escapeHtml(text) {
@@ -89,8 +86,70 @@
       .replace(/'/g, "&#39;");
   }
 
+  function baseModel() {
+    return sentenceBank[sentenceIndex % sentenceBank.length];
+  }
+
+  function computeBaseSentence() {
+    var model = baseModel();
+    return model.subject + " " + model.noun + " " + model.verb + " " + model.trail + ".";
+  }
+
+  function snapshotState() {
+    return {
+      baseSentence: state.baseSentence,
+      currentSentenceHTML: state.currentSentenceHTML,
+      appliedActions: Array.from(state.appliedActions),
+      maxActions: state.maxActions,
+      step: state.step,
+      activeBlankId: state.activeBlankId,
+      verb: state.verb,
+      hasWhy: state.hasWhy,
+      hasDetail: state.hasDetail,
+      blankValues: { why1: state.blankValues.why1, detailAdj: state.blankValues.detailAdj }
+    };
+  }
+
+  function debugLog(actionType) {
+    var snap = snapshotState();
+    console.log("[SentenceSurgery] applyAction", actionType, snap);
+    window.__SS_DEBUG = { state: state };
+  }
+
+  function blankSpan(blankId, ariaLabel) {
+    var value = sanitizeText(state.blankValues[blankId]);
+    var classes = ["ss-blank"];
+    if (!value) classes.push("scaffold");
+    if (state.blankCompletePulse[blankId]) classes.push("scaffold-complete");
+    return '<span class="' + classes.join(" ") + '" contenteditable="true" data-blank-id="' +
+      blankId + '" aria-label="' + escapeHtml(ariaLabel) + '">' + escapeHtml(value) + '</span>';
+  }
+
+  function buildSentenceHtml(pulseClause) {
+    var model = baseModel();
+    var nounPart = state.hasDetail
+      ? blankSpan("detailAdj", "Fill in detail adjective") + " " + escapeHtml(model.noun)
+      : escapeHtml(model.noun);
+
+    var body = escapeHtml(model.subject) + " " + nounPart + " " + escapeHtml(state.verb);
+    var trail = escapeHtml(model.trail);
+
+    if (state.hasWhy) {
+      var clauseClass = pulseClause ? "clause clause-pulse" : "clause";
+      body += ' <span class="' + clauseClass + '">because ' + blankSpan("why1", "Fill in reason") + " " + trail + "</span>.";
+    } else {
+      body += " " + trail + ".";
+    }
+
+    return body;
+  }
+
+  function getPlainSentence() {
+    return sanitizeText(sentenceEl.textContent || "");
+  }
+
   function splitWords(text) {
-    var clean = sanitizeSentence(text).replace(/[^a-zA-Z'\-\s]/g, " ");
+    var clean = sanitizeText(text).replace(/[^a-zA-Z'\-\s]/g, " ");
     if (!clean) return [];
     return clean.split(/\s+/).filter(Boolean);
   }
@@ -117,32 +176,22 @@
   }
 
   function getLevel(wordCount, clausePresent, strongVerbPresent) {
-    var level;
-    if (wordCount <= 5) level = 1;
-    else if (wordCount <= 10) level = 2;
-    else level = 3;
+    var level = wordCount <= 5 ? 1 : wordCount <= 10 ? 2 : 3;
     if (clausePresent) level = Math.max(level, 4);
     if (strongVerbPresent) level = Math.max(level, 5);
     return level;
   }
 
-  function computeScore(wordCount, adjectiveCount, clauseCount, strongVerbPresent) {
-    var score = Math.min(wordCount * 5, 55);
-    score += Math.min(adjectiveCount * 6, 18);
-    score += Math.min(clauseCount * 14, 21);
-    if (strongVerbPresent) score += 18;
-    return Math.min(100, Math.max(8, score));
-  }
-
-  function computeTraits(text, words) {
+  function computeTraits(text) {
+    var words = splitWords(text);
     var wordCount = words.length;
     var adjectiveCount = countAdjectives(words);
     var clauseCount = countClauses(text);
     var strongVerbPresent = hasStrongVerb(words);
 
     var clarity = clamp(Math.round((wordCount >= 4 ? 2 : 1) + (wordCount <= 16 ? 2 : 1) + (strongVerbPresent ? 1 : 0)), 0, 5);
-    var detail = clamp(Math.round(Math.min(3, adjectiveCount) + (wordCount >= 8 ? 1 : 0) + (/\b(with|across|through|near|under|over|inside|outside)\b/i.test(text) ? 1 : 0)), 0, 5);
-    var reasoning = clamp(Math.round(Math.min(3, clauseCount * 2) + (/\bbecause\b/i.test(text) ? 1 : 0) + (wordCount >= 10 ? 1 : 0)), 0, 5);
+    var detail = clamp(Math.round(Math.min(3, adjectiveCount) + (state.hasDetail ? 1 : 0) + (wordCount >= 8 ? 1 : 0)), 0, 5);
+    var reasoning = clamp(Math.round(Math.min(3, clauseCount * 2) + (state.hasWhy ? 1 : 0) + (wordCount >= 10 ? 1 : 0)), 0, 5);
     var control = clamp(Math.round((/^[A-Z]/.test(text) ? 1 : 0) + (/[.!?]$/.test(text) ? 2 : 0) + (strongVerbPresent ? 1 : 0) + (wordCount > 0 ? 1 : 0)), 0, 5);
 
     return {
@@ -153,109 +202,20 @@
       adjectiveCount: adjectiveCount,
       clauseCount: clauseCount,
       strongVerbPresent: strongVerbPresent,
-      wordCount: wordCount
+      wordCount: wordCount,
+      blanksEmpty: countEmptyBlanks()
     };
   }
 
-  function getCaretOffset(root) {
-    var selection = window.getSelection && window.getSelection();
-    if (!selection || !selection.rangeCount) return null;
-    var range = selection.getRangeAt(0);
-    if (!root.contains(range.startContainer)) return null;
-    var pre = range.cloneRange();
-    pre.selectNodeContents(root);
-    pre.setEnd(range.startContainer, range.startOffset);
-    return pre.toString().length;
-  }
-
-  function setCaretOffset(root, offset) {
-    if (offset == null) return;
-    var selection = window.getSelection && window.getSelection();
-    if (!selection) return;
-    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-    var node;
-    var remaining = offset;
-    while ((node = walker.nextNode())) {
-      var length = node.textContent.length;
-      if (remaining <= length) {
-        var range = document.createRange();
-        range.setStart(node, Math.max(0, remaining));
-        range.collapse(true);
-        selection.removeAllRanges();
-        selection.addRange(range);
-        return;
-      }
-      remaining -= length;
-    }
-  }
-
-  function applyScaffoldMarkup(chunk) {
-    return escapeHtml(chunk).replace(SCAFFOLD_TOKEN_REGEX, function (match) {
-      var stem = String(match).trim().split(/\s+/)[0].toLowerCase();
-      var classes = "scaffold" + (recentCompletedStem && stem === recentCompletedStem ? " scaffold-complete" : "");
-      return '<span class="' + classes + '">' + escapeHtml(match) + '</span>';
-    });
-  }
-
-  function renderSentenceMarkup(text, pulseClauses) {
-    var clean = sanitizeSentence(text);
-    if (!clean) clean = "The dog ran.";
-
-    var ranges = [];
-    var regex = new RegExp(CLAUSE_REGEX.source, "gi");
-    var match;
-    while ((match = regex.exec(clean))) {
-      ranges.push({ start: match.index, end: match.index + match[0].length });
-    }
-
-    var html = "";
-    var cursor = 0;
-    ranges.forEach(function (range) {
-      html += applyScaffoldMarkup(clean.slice(cursor, range.start));
-      var clauseClass = pulseClauses ? "clause clause-pulse" : "clause";
-      html += '<span class="' + clauseClass + '">' + applyScaffoldMarkup(clean.slice(range.start, range.end)) + '</span>';
-      cursor = range.end;
-    });
-    html += applyScaffoldMarkup(clean.slice(cursor));
-
-    var caret = getCaretOffset(sentenceEl);
-    sentenceEl.innerHTML = html;
-    setCaretOffset(sentenceEl, caret);
-
-    if (recentCompletedStem) {
-      window.setTimeout(function () {
-        recentCompletedStem = "";
-      }, 260);
-    }
-
-    return clean;
-  }
-
-  function showBadge(text) {
-    if (!badgeEl) return;
-    badgeEl.textContent = text;
-    badgeEl.classList.add("show");
-    window.clearTimeout(badgeTimer);
-    badgeTimer = window.setTimeout(function () {
-      badgeEl.classList.remove("show");
-    }, 1200);
-  }
-
-  function showCompare(beforeText, afterText) {
-    if (!compareEl || !compareBeforeEl || !compareAfterEl) return;
-    compareBeforeEl.textContent = beforeText;
-    compareAfterEl.textContent = afterText;
-    compareEl.classList.remove("show");
-    void compareEl.offsetWidth;
-    compareEl.classList.add("show");
-    window.clearTimeout(compareTimer);
-    compareTimer = window.setTimeout(function () {
-      compareEl.classList.remove("show");
-    }, 2000);
+  function countEmptyBlanks() {
+    var count = 0;
+    if (state.hasWhy && !sanitizeText(state.blankValues.why1)) count += 1;
+    if (state.hasDetail && !sanitizeText(state.blankValues.detailAdj)) count += 1;
+    return count;
   }
 
   function updateTraitBars(traits) {
-    Object.keys(traitEls).forEach(function (key) {
+    ["clarity", "detail", "reasoning", "control"].forEach(function (key) {
       var value = clamp(Number(traits[key]) || 0, 0, 5);
       var row = traitEls[key];
       if (row.fill) row.fill.style.width = String(value * 20) + "%";
@@ -281,122 +241,297 @@
     }
   }
 
-  function detectCompletedStem(prev, next) {
-    if (!/\b(because|with|to)\s+_{2,}\b/i.test(prev)) return "";
-    var stems = ["because", "with", "to"];
-    for (var i = 0; i < stems.length; i += 1) {
-      var stem = stems[i];
-      var priorHasBlank = new RegExp("\\b" + stem + "\\s+_{2,}\\b", "i").test(prev);
-      var nowHasBlank = new RegExp("\\b" + stem + "\\s+_{2,}\\b", "i").test(next);
-      var nowHasCompleted = new RegExp("\\b" + stem + "\\s+[a-zA-Z]", "i").test(next);
-      if (priorHasBlank && !nowHasBlank && nowHasCompleted) return stem;
-    }
-    return "";
+  function showBadge(text) {
+    if (!badgeEl) return;
+    badgeEl.textContent = text;
+    badgeEl.classList.add("show");
+    window.clearTimeout(showBadge._timer || 0);
+    showBadge._timer = window.setTimeout(function () {
+      badgeEl.classList.remove("show");
+    }, 1200);
   }
 
-  function readPlainSentence() {
-    return sanitizeSentence(sentenceEl.textContent || sentenceEl.innerText || "");
+  function showCompare(beforeText, afterText) {
+    if (!compareEl || !compareBeforeEl || !compareAfterEl) return;
+    compareBeforeEl.textContent = beforeText;
+    compareAfterEl.textContent = afterText;
+    compareEl.classList.remove("show");
+    void compareEl.offsetWidth;
+    compareEl.classList.add("show");
+    window.clearTimeout(showCompare._timer || 0);
+    showCompare._timer = window.setTimeout(function () {
+      compareEl.classList.remove("show");
+    }, 2000);
   }
 
-  function ensurePeriod(text) {
-    var trimmed = sanitizeSentence(text);
-    if (!trimmed) return "";
-    return /[.!?]$/.test(trimmed) ? trimmed : trimmed + ".";
+  function updateActionLabels() {
+    actionButtons.forEach(function (btn) {
+      var type = btn.getAttribute("data-action");
+      if (type === "why") btn.textContent = state.hasWhy ? "Edit Why" : "Add Why";
+      if (type === "detail") btn.textContent = state.hasDetail ? "Edit Detail" : "Add Detail";
+      if (type === "verb") btn.textContent = state.appliedActions.has("verb") ? "Change Verb" : "Upgrade Verb";
+    });
   }
 
-  function applySentence(next) {
-    var text = sanitizeSentence(next) || "The dog ran.";
-    var nextClauseCount = countClauses(text);
-    var pulseClauses = nextClauseCount > previousClauseCount;
-    var renderedText = renderSentenceMarkup(text, pulseClauses);
-    var words = splitWords(renderedText);
-    var traits = computeTraits(renderedText, words);
+  function updateProgressAndTraits() {
+    var sentenceText = getPlainSentence();
+    var traits = computeTraits(sentenceText);
     var level = getLevel(traits.wordCount, traits.clauseCount > 0, traits.strongVerbPresent);
-    var score = computeScore(traits.wordCount, traits.adjectiveCount, traits.clauseCount, traits.strongVerbPresent);
+    var stepProgress = Math.round((state.step / state.maxActions) * 100);
 
-    if (pulseClauses) showBadge("Reason clause added");
-    if (level > previousLevel && previousText && previousText !== renderedText) {
-      showCompare(previousText, renderedText);
-    }
-
-    meterBarEl.style.width = String(score) + "%";
-    levelEl.textContent = "Level " + level + " · " + traits.wordCount + " words";
+    meterBarEl.style.width = String(clamp(stepProgress, 8, 100)) + "%";
+    levelEl.textContent = "Level " + level + " • Step " + state.step + "/" + state.maxActions;
     updateTraitBars(traits);
     updateTeacherLens(traits);
 
-    previousLevel = level;
-    previousClauseCount = traits.clauseCount;
-    previousText = renderedText;
+    if (DEBUG_ON && devLabelEl) {
+      devLabelEl.classList.remove("hidden");
+      devLabelEl.textContent = "step: " + state.step + " | actions: " + state.appliedActions.size + " | blanksEmpty: " + traits.blanksEmpty;
+    }
+
+    if (footerCtaEl) {
+      var canFinish = state.appliedActions.size >= 2 || state.step >= state.maxActions;
+      footerCtaEl.classList.toggle("hidden", !canFinish);
+    }
+
+    state.previousLevel = level;
+    state.previousClauseCount = traits.clauseCount;
   }
 
-  function addWhy() {
-    var text = readPlainSentence();
-    if (!text) return "I wrote this because ___.";
-    if (/\bbecause\b/i.test(text)) return text;
-    return text.replace(/[.!?]+$/, "") + " because ___.";
-  }
-
-  function addDetail() {
-    var text = readPlainSentence();
-    if (!text) return "The dog ran with ___ detail.";
-    if (/\bwith\s+_{2,}\b/i.test(text)) return text;
-    return text.replace(/[.!?]+$/, "") + " with ___ detail.";
-  }
-
-  function upgradeVerb() {
-    var text = readPlainSentence();
-    if (!text) return text;
-    var upgraded = text;
-    Object.keys(WEAK_TO_STRONG).some(function (weak) {
-      var re = new RegExp("\\b" + weak + "\\b", "i");
-      if (!re.test(upgraded)) return false;
-      upgraded = upgraded.replace(re, WEAK_TO_STRONG[weak]);
-      return true;
+  function focusBlank(blankId) {
+    if (!blankId) return;
+    state.activeBlankId = blankId;
+    requestAnimationFrame(function () {
+      var blankEl = sentenceEl.querySelector('[data-blank-id="' + blankId + '"]');
+      if (!blankEl) return;
+      blankEl.focus();
+      var range = document.createRange();
+      range.selectNodeContents(blankEl);
+      range.collapse(false);
+      var sel = window.getSelection && window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     });
-    return ensurePeriod(upgraded);
   }
 
-  function runAction(action) {
-    var next = readPlainSentence();
-    if (action === "why") next = addWhy();
-    if (action === "detail") next = addDetail();
-    if (action === "verb") next = upgradeVerb();
-    recentCompletedStem = "";
-    applySentence(next);
-    sentenceEl.focus();
+  function pulseBlank(blankId) {
+    requestAnimationFrame(function () {
+      var blankEl = sentenceEl.querySelector('[data-blank-id="' + blankId + '"]');
+      if (!blankEl) return;
+      blankEl.classList.remove("ss-pulse");
+      void blankEl.offsetWidth;
+      blankEl.classList.add("ss-pulse");
+      window.setTimeout(function () { blankEl.classList.remove("ss-pulse"); }, 260);
+    });
+  }
+
+  function render(options) {
+    var opts = options || {};
+    var pulseClause = !!opts.pulseClause;
+    sentenceEl.innerHTML = buildSentenceHtml(pulseClause);
+    state.currentSentenceHTML = sentenceEl.innerHTML;
+    window.__SS_DEBUG = { state: state };
+
+    if (state.blankCompletePulse.why1 || state.blankCompletePulse.detailAdj) {
+      window.setTimeout(function () {
+        state.blankCompletePulse.why1 = false;
+        state.blankCompletePulse.detailAdj = false;
+        render();
+      }, 220);
+    }
+
+    updateActionLabels();
+    updateProgressAndTraits();
+    if (opts.focusBlankId) focusBlank(opts.focusBlankId);
+    if (opts.pulseBlankId) pulseBlank(opts.pulseBlankId);
+  }
+
+  function showVerbMenu(anchorButton) {
+    if (!verbMenuEl || !anchorButton) return;
+    var optionsHtml = VERB_OPTIONS.map(function (verb) {
+      return '<button type="button" class="ss-verb-option" data-verb-choice="' + verb + '">' + verb + '</button>';
+    }).join("");
+    verbMenuEl.innerHTML = optionsHtml;
+    verbMenuEl.classList.remove("hidden");
+
+    var wrapRect = anchorButton.closest(".ss-actions").getBoundingClientRect();
+    var btnRect = anchorButton.getBoundingClientRect();
+    var left = (btnRect.left + btnRect.width / 2) - wrapRect.left;
+    verbMenuEl.style.left = String(left) + "px";
+  }
+
+  function hideVerbMenu() {
+    if (!verbMenuEl) return;
+    verbMenuEl.classList.add("hidden");
+    verbMenuEl.innerHTML = "";
+  }
+
+  function markActionApplied(actionType) {
+    if (!state.appliedActions.has(actionType)) state.appliedActions.add(actionType);
+    state.step = clamp(state.step + 1, 0, state.maxActions);
+  }
+
+  function applyAction(actionType, triggerEl) {
+    var renderOpts = {};
+
+    if (actionType === "why") {
+      if (state.hasWhy) {
+        renderOpts.focusBlankId = "why1";
+        renderOpts.pulseBlankId = "why1";
+      } else {
+        state.hasWhy = true;
+        markActionApplied("why");
+        renderOpts.focusBlankId = "why1";
+        renderOpts.pulseClause = true;
+        showBadge("Reason clause added");
+      }
+    }
+
+    if (actionType === "detail") {
+      if (state.hasDetail) {
+        renderOpts.focusBlankId = "detailAdj";
+        renderOpts.pulseBlankId = "detailAdj";
+      } else {
+        state.hasDetail = true;
+        markActionApplied("detail");
+        renderOpts.focusBlankId = "detailAdj";
+      }
+    }
+
+    if (actionType === "verb") {
+      showVerbMenu(triggerEl);
+      if (!state.appliedActions.has("verb")) markActionApplied("verb");
+    }
+
+    debugLog(actionType);
+    render(renderOpts);
+  }
+
+  function validateBlanks() {
+    var blanks = Array.prototype.slice.call(sentenceEl.querySelectorAll(".ss-blank"));
+    var firstInvalid = null;
+    blanks.forEach(function (blankEl) {
+      var value = sanitizeText(blankEl.textContent);
+      blankEl.classList.remove("is-invalid");
+      if (!value) {
+        if (!firstInvalid) firstInvalid = blankEl;
+        blankEl.classList.add("is-invalid");
+      }
+    });
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return false;
+    }
+    return true;
+  }
+
+  function handleDone() {
+    if (!validateBlanks()) return;
+    var before = state.baseSentence;
+    var after = getPlainSentence();
+    showCompare(before, after);
+    if (completeActionsEl) completeActionsEl.classList.add("hidden");
+    window.setTimeout(function () {
+      if (completeActionsEl) completeActionsEl.classList.remove("hidden");
+    }, 2000);
+  }
+
+  function resetProgressForSameSentence() {
+    var model = baseModel();
+    state.baseSentence = computeBaseSentence();
+    state.beforeSnapshot = state.baseSentence;
+    state.currentSentenceHTML = "";
+    state.appliedActions = new Set();
+    state.step = 0;
+    state.activeBlankId = null;
+    state.verb = model.verb;
+    state.hasWhy = false;
+    state.hasDetail = false;
+    state.blankValues = { why1: "", detailAdj: "" };
+    state.blankCompletePulse = { why1: false, detailAdj: false };
+    state.previousLevel = 1;
+    state.previousClauseCount = 0;
+    if (completeActionsEl) completeActionsEl.classList.add("hidden");
+    hideVerbMenu();
+    render();
+  }
+
+  function loadNextSentence() {
+    sentenceIndex = (sentenceIndex + 1) % sentenceBank.length;
+    resetProgressForSameSentence();
   }
 
   actionButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      runAction(button.getAttribute("data-action"));
+      applyAction(button.getAttribute("data-action"), button);
     });
   });
 
-  if (teacherToggleBtn) {
-    teacherToggleBtn.addEventListener("click", function () {
-      var nextPressed = teacherToggleBtn.getAttribute("aria-pressed") !== "true";
-      teacherToggleBtn.setAttribute("aria-pressed", nextPressed ? "true" : "false");
-      document.body.classList.toggle("teacher-mode", nextPressed);
+  if (verbMenuEl) {
+    verbMenuEl.addEventListener("click", function (event) {
+      var btn = event.target.closest("[data-verb-choice]");
+      if (!btn) return;
+      var choice = String(btn.getAttribute("data-verb-choice") || "").trim().toLowerCase();
+      if (!choice) return;
+      state.verb = choice;
+      state.appliedActions.add("verb");
+      state.step = clamp(state.step + 1, 0, state.maxActions);
+      hideVerbMenu();
+      debugLog("verb:choose:" + choice);
+      render();
     });
   }
 
-  sentenceEl.addEventListener("input", function () {
-    var current = readPlainSentence();
-    recentCompletedStem = detectCompletedStem(previousText, current);
-    applySentence(current);
+  document.addEventListener("click", function (event) {
+    if (!verbMenuEl || verbMenuEl.classList.contains("hidden")) return;
+    if (verbMenuEl.contains(event.target)) return;
+    if (event.target.closest('[data-action="verb"]')) return;
+    hideVerbMenu();
   });
 
-  sentenceEl.addEventListener("blur", function () {
-    recentCompletedStem = detectCompletedStem(previousText, ensurePeriod(readPlainSentence()));
-    applySentence(ensurePeriod(readPlainSentence()));
-  });
+  sentenceEl.addEventListener("input", function (event) {
+    var blankEl = event.target && event.target.closest(".ss-blank");
+    if (!blankEl) return;
+    var blankId = blankEl.getAttribute("data-blank-id");
+    if (!blankId) return;
 
-  sentenceEl.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      sentenceEl.blur();
+    var value = sanitizeText(blankEl.textContent);
+    var prior = sanitizeText(state.blankValues[blankId]);
+    state.blankValues[blankId] = value;
+    blankEl.classList.remove("is-invalid");
+
+    if (!prior && value) {
+      state.blankCompletePulse[blankId] = true;
+      blankEl.classList.add("scaffold-complete");
+      window.setTimeout(function () {
+        blankEl.classList.remove("scaffold");
+        blankEl.classList.remove("scaffold-complete");
+      }, 220);
     }
+
+    updateProgressAndTraits();
+    window.__SS_DEBUG = { state: state };
   });
 
-  applySentence(ensurePeriod(readPlainSentence()));
+  if (doneBtn) doneBtn.addEventListener("click", handleDone);
+  if (tryAnotherBtn) tryAnotherBtn.addEventListener("click", resetProgressForSameSentence);
+  if (nextSentenceBtn) nextSentenceBtn.addEventListener("click", loadNextSentence);
+  if (exitStudioBtn) {
+    exitStudioBtn.addEventListener("click", function () {
+      window.location.href = "writing-studio.html";
+    });
+  }
+
+  if (teacherToggleBtn) {
+    teacherToggleBtn.addEventListener("click", function () {
+      var on = teacherToggleBtn.getAttribute("aria-pressed") !== "true";
+      teacherToggleBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      document.body.classList.toggle("teacher-mode", on);
+    });
+  }
+
+  if (DEBUG_ON && devLabelEl) devLabelEl.classList.remove("hidden");
+  resetProgressForSameSentence();
 })();
