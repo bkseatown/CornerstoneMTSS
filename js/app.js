@@ -29,8 +29,16 @@
     }
   })();
   if (DEMO_MODE) {
+    if (window.__CS_DEMO_INIT_DONE) return;
+    window.__CS_DEMO_INIT_DONE = true;
     window.WQ_DEMO = true;
     document.documentElement.setAttribute('data-wq-demo', 'on');
+    window.__CS_DEMO_STATE = window.__CS_DEMO_STATE || {
+      step: 0,
+      active: true,
+      started: false
+    };
+    window.__CS_DEMO_TIMERS = window.__CS_DEMO_TIMERS || new Set();
   }
 
   function normalizeDemoRoute() {
@@ -55,6 +63,29 @@
     }
   }
   if (normalizeDemoRoute()) return;
+
+  function getDemoState() {
+    if (!window.__CS_DEMO_STATE) {
+      window.__CS_DEMO_STATE = { step: 0, active: true, started: false };
+    }
+    return window.__CS_DEMO_STATE;
+  }
+
+  function demoSetTimeout(callback, ms) {
+    const timers = window.__CS_DEMO_TIMERS || (window.__CS_DEMO_TIMERS = new Set());
+    const id = window.setTimeout(() => {
+      timers.delete(id);
+      callback();
+    }, ms);
+    timers.add(id);
+    return id;
+  }
+
+  function demoClearTimers() {
+    const timers = window.__CS_DEMO_TIMERS || (window.__CS_DEMO_TIMERS = new Set());
+    timers.forEach((id) => clearTimeout(id));
+    timers.clear();
+  }
 
   function installDemoStorageGuard() {
     if (!DEMO_MODE || window.__WQ_DEMO_STORAGE_GUARD__) return;
@@ -749,8 +780,8 @@
   let demoCoachEl = null;
   let demoCoachReadyTimer = 0;
   let demoDebugLabelEl = null;
-  const DEMO_COACH_READY_MAX_TRIES = 30;
-  const DEMO_COACH_READY_DELAY_MS = 100;
+  const DEMO_COACH_READY_MAX_TRIES = 25;
+  const DEMO_COACH_READY_DELAY_MS = 120;
   const demoState = {
     step: 0,
     guessCount: 0,
@@ -790,6 +821,9 @@
     demoBannerEl = banner;
     document.body.classList.add('wq-demo-active');
     _el('wq-demo-skip-btn')?.addEventListener('click', () => {
+      const demoStateRuntime = getDemoState();
+      demoStateRuntime.active = false;
+      demoClearTimers();
       window.WQ_DEMO = false;
       window.location.href = removeDemoParams(window.location.href);
     });
@@ -927,6 +961,9 @@
   function stopDemoCoachReadyLoop() {
     if (!demoCoachReadyTimer) return;
     clearTimeout(demoCoachReadyTimer);
+    if (window.__CS_DEMO_TIMERS && typeof window.__CS_DEMO_TIMERS.delete === 'function') {
+      window.__CS_DEMO_TIMERS.delete(demoCoachReadyTimer);
+    }
     demoCoachReadyTimer = 0;
   }
 
@@ -1015,17 +1052,25 @@
   }
 
   function ensureDemoCoach() {
-    if (demoCoachEl) return demoCoachEl;
+    if (demoCoachEl instanceof HTMLElement) return demoCoachEl;
+    const existing = document.getElementById('csDemoCoach') || document.getElementById('wq-demo-coach');
+    if (existing instanceof HTMLElement) {
+      demoCoachEl = existing;
+      window.__CS_DEMO_COACH_MOUNTED = true;
+      return demoCoachEl;
+    }
+    if (window.__CS_DEMO_COACH_MOUNTED) return null;
+    window.__CS_DEMO_COACH_MOUNTED = true;
     const coach = document.createElement('div');
-    coach.id = 'wq-demo-coach';
-    coach.className = 'wq-demo-coach hidden';
+    coach.id = 'csDemoCoach';
+    coach.className = 'wq-demo-coach cs-hidden';
     coach.innerHTML =
-      '<div class=\"wq-demo-coach-copy\" id=\"wq-demo-coach-copy\"></div>' +
+      '<div class=\"wq-demo-coach-copy\" id=\"csCoachText\"></div>' +
       '<div class=\"wq-demo-coach-actions\">' +
-        '<button type=\"button\" id=\"wq-demo-coach-primary\">Got it</button>' +
-        '<button type=\"button\" id=\"wq-demo-coach-suggest\" class=\"hidden\">Use suggested word</button>' +
-        '<button type=\"button\" id=\"wq-demo-coach-hint\" class=\"hidden\">Hint: reveal 2 letters</button>' +
-        '<button type=\"button\" id=\"wq-demo-coach-skip\">Skip</button>' +
+        '<button type=\"button\" id=\"csCoachPrimary\">Got it</button>' +
+        '<button type=\"button\" id=\"csCoachSuggest\" class=\"hidden\">Use suggested word</button>' +
+        '<button type=\"button\" id=\"csCoachHint\" class=\"hidden\">Hint: reveal 2 letters</button>' +
+        '<button type=\"button\" id=\"csCoachSkip\">Skip</button>' +
       '</div>';
     document.body.appendChild(coach);
     demoCoachEl = coach;
@@ -1033,28 +1078,41 @@
   }
 
   function hideDemoCoach() {
-    if (!demoCoachEl) return;
-    demoCoachEl.classList.add('hidden');
+    if (!(demoCoachEl instanceof HTMLElement)) return;
+    demoCoachEl.classList.remove('cs-visible');
+    demoCoachEl.classList.add('cs-hidden');
     stopDemoKeyPulse();
   }
 
   function showDemoCoach(config) {
     if (!DEMO_MODE) return;
+    const demoStateRuntime = getDemoState();
+    if (!demoStateRuntime.active) return;
     const coach = ensureDemoCoach();
-    const copyEl = _el('wq-demo-coach-copy');
-    const primaryBtn = _el('wq-demo-coach-primary');
-    const suggestBtn = _el('wq-demo-coach-suggest');
-    const hintBtn = _el('wq-demo-coach-hint');
-    const skipBtn = _el('wq-demo-coach-skip');
+    const copyEl = _el('csCoachText');
+    const primaryBtn = _el('csCoachPrimary');
+    const suggestBtn = _el('csCoachSuggest');
+    const hintBtn = _el('csCoachHint');
+    const skipBtn = _el('csCoachSkip');
     if (!copyEl || !primaryBtn || !suggestBtn || !hintBtn || !skipBtn) return;
+    window.__CS_DEMO_RENDER_COUNT = (window.__CS_DEMO_RENDER_COUNT || 0) + 1;
+    console.log('[demo] coach render', window.__CS_DEMO_RENDER_COUNT, 'step', String(config?.id || 'unknown'));
 
     copyEl.textContent = String(config?.text || '').trim();
     primaryBtn.textContent = String(config?.primaryLabel || 'Got it').trim() || 'Got it';
     primaryBtn.onclick = () => {
+      if (config?.deactivateOnPrimary) {
+        demoStateRuntime.active = false;
+        demoClearTimers();
+      }
       if (typeof config?.onPrimary === 'function') config.onPrimary();
       hideDemoCoach();
     };
-    skipBtn.onclick = () => hideDemoCoach();
+    skipBtn.onclick = () => {
+      demoStateRuntime.active = false;
+      demoClearTimers();
+      hideDemoCoach();
+    };
 
     const suggestedWord = String(config?.suggestedWord || '').trim().toLowerCase();
     if (suggestedWord) {
@@ -1074,6 +1132,7 @@
       hintBtn.onclick = () => {
         demoState.hintUsed = true;
         showDemoCoach({
+          id: 'hint',
           text: 'Hint: the word starts with P and has L as the second letter.',
           primaryLabel: 'Got it'
         });
@@ -1086,18 +1145,24 @@
     const rect = (anchor && anchor.getBoundingClientRect) ? anchor.getBoundingClientRect() : { top: 84, left: 20, width: 300 };
     coach.style.top = `${Math.max(72, rect.top - 90)}px`;
     coach.style.left = `${Math.max(12, rect.left + (rect.width / 2) - 170)}px`;
-    coach.classList.remove('hidden');
+    coach.classList.remove('cs-hidden');
+    coach.classList.add('cs-visible');
   }
 
   function resetDemoScriptState() {
+    const demoStateRuntime = getDemoState();
+    demoStateRuntime.step = 0;
+    demoStateRuntime.active = true;
+    demoStateRuntime.started = false;
     demoState.step = 0;
     demoState.guessCount = 0;
     demoState.discoveredCore = new Set();
     demoState.hintUsed = false;
     demoState.overlaysClosed = false;
     demoState.coachMounted = false;
-    window.__WQ_DEMO_COACH_MOUNTED = false;
+    window.__CS_DEMO_RENDER_COUNT = 0;
     stopDemoCoachReadyLoop();
+    demoClearTimers();
     stopDemoKeyPulse();
     hideDemoCoach();
     renderDemoDebugReadout();
@@ -1105,21 +1170,24 @@
 
   function runDemoCoachForStart() {
     if (!DEMO_MODE) return;
-    if (window.__WQ_DEMO_COACH_MOUNTED) return;
+    const demoStateRuntime = getDemoState();
+    if (!demoStateRuntime.active || demoStateRuntime.started) return;
+    demoStateRuntime.started = true;
+    demoStateRuntime.step = 1;
     let tries = 0;
     stopDemoCoachReadyLoop();
     const waitForGameplayThenShowCoach = () => {
-      if (!DEMO_MODE || demoRoundComplete) return;
+      if (!DEMO_MODE || demoRoundComplete || !demoStateRuntime.active) return;
       closeAllOverlaysForDemo();
       const keyboard = _el('keyboard');
       const board = _el('game-board');
       const overlaysOpen = listOpenOverlays().length > 0;
       const ready = Boolean(keyboard && board && !overlaysOpen);
       if (ready) {
-        window.__WQ_DEMO_COACH_MOUNTED = true;
         demoState.coachMounted = true;
         renderDemoDebugReadout();
         showDemoCoach({
+          id: 'start',
           anchor: keyboard,
           text: 'Try SLATE first. Colors will teach the rule instantly.',
           primaryLabel: 'Got it',
@@ -1133,7 +1201,7 @@
         renderDemoDebugReadout();
         return;
       }
-      demoCoachReadyTimer = setTimeout(waitForGameplayThenShowCoach, DEMO_COACH_READY_DELAY_MS);
+      demoCoachReadyTimer = demoSetTimeout(waitForGameplayThenShowCoach, DEMO_COACH_READY_DELAY_MS);
     };
     waitForGameplayThenShowCoach();
   }
@@ -1154,10 +1222,14 @@
 
   function runDemoCoachAfterGuess(result) {
     if (!DEMO_MODE || !result || result.error || result.won || result.lost) return;
+    const demoStateRuntime = getDemoState();
+    if (!demoStateRuntime.active) return;
     demoState.guessCount = Math.max(0, Number(result.guesses?.length || 0));
     updateDemoDiscovered(result);
     if (demoState.guessCount === 1) {
+      demoStateRuntime.step = 2;
       showDemoCoach({
+        id: 'after_guess_1',
         anchor: _el('game-board'),
         text: 'Grey = not in word, yellow = wrong spot, green = right spot. Next try PLAIN.',
         suggestedWord: demoState.suggestions[1]
@@ -1165,8 +1237,10 @@
       return;
     }
     if (demoState.guessCount === 2) {
+      demoStateRuntime.step = 3;
       const coreFound = demoState.discoveredCore.has('P') && demoState.discoveredCore.has('L') && demoState.discoveredCore.has('A');
       showDemoCoach({
+        id: 'after_guess_2',
         anchor: _el('game-board'),
         text: 'Now finish with PLANT. You are one guess from the win.',
         suggestedWord: demoState.suggestions[2],
@@ -1183,6 +1257,9 @@
 
   function showDemoEndOverlay() {
     if (!DEMO_MODE) return;
+    const demoStateRuntime = getDemoState();
+    demoStateRuntime.active = false;
+    demoClearTimers();
     stopDemoCoachReadyLoop();
     stopDemoKeyPulse();
     hideDemoCoach();

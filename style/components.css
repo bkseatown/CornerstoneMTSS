@@ -6711,6 +6711,18 @@ body.wq-demo .quest-overlay {
   padding: 10px 11px;
   display: grid;
   gap: 8px;
+  transition: none !important;
+  animation: none !important;
+}
+
+.wq-demo-coach.cs-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wq-demo-coach.cs-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .wq-demo-coach.hidden {
@@ -6721,6 +6733,8 @@ body.wq-demo .quest-overlay {
   font-size: 0.86rem;
   line-height: 1.35;
   font-weight: 740;
+  transition: none !important;
+  animation: none !important;
 }
 
 .wq-demo-coach-actions {
@@ -6738,6 +6752,8 @@ body.wq-demo .quest-overlay {
   font-weight: 770;
   padding: 4px 9px;
   cursor: pointer;
+  transition: none !important;
+  animation: none !important;
 }
 
 .wq-demo-coach-actions .hidden {
