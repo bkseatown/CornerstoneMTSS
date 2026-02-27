@@ -815,6 +815,15 @@ html[data-home-mode="play"] main {
   overflow: hidden;
 }
 
+html[data-home-mode="play"] .board-zone {
+  min-height: 0;
+  gap: 8px;
+}
+
+html[data-home-mode="play"] .gameplay-audio {
+  margin-bottom: 6px;
+}
+
 html[data-home-mode="play"] .header-main-row {
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: 'logo mode icons';
