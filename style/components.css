@@ -1085,8 +1085,8 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border-radius: 13px;
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--modal-bg) 92%, #ffffff 8%) 0%,
-    color-mix(in oklab, var(--modal-bg) 80%, #d2d9e2 20%) 100%
+    color-mix(in oklab, var(--modal-bg) 58%, #e2e8ef 42%) 0%,
+    color-mix(in oklab, var(--modal-bg) 48%, #cdd6e0 52%) 100%
   );
   box-shadow: var(--panel-shadow);
   z-index: 50;
@@ -1094,6 +1094,19 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
 
 .focus-inline-results.is-curriculum-list {
   grid-template-columns: 1fr !important;
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  transform: none;
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+  overflow: visible;
+  margin-top: 8px;
+  z-index: auto;
+  overscroll-behavior: auto;
+  scrollbar-gutter: auto;
 }
 
 .focus-inline-results.is-curriculum-list .focus-search-subheading {
@@ -1778,24 +1791,26 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   inset: 0;
   z-index: 210;
   display: grid;
-  place-items: center;
+  place-items: start center;
   padding: 14px;
-  background: rgba(8, 16, 30, 0.42);
+  overflow-y: auto;
+  background: rgba(16, 24, 34, 0.34);
   backdrop-filter: blur(8px);
 }
 
 .teacher-panel-card {
   width: min(760px, 96vw);
-  max-height: min(86vh, 820px);
-  overflow: auto;
+  max-height: none;
+  overflow: visible;
   border-radius: 16px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 56%, transparent);
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--modal-bg) 94%, var(--panel-bg) 6%),
-    color-mix(in oklab, var(--modal-bg) 97%, #ffffff 3%)
+    color-mix(in oklab, var(--modal-bg) 56%, #dfe6ee 44%),
+    color-mix(in oklab, var(--modal-bg) 44%, #c9d4df 56%)
   );
   box-shadow: var(--panel-shadow);
+  margin: auto 0;
 }
 
 .teacher-panel-head {
@@ -1805,7 +1820,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   gap: 10px;
   padding: 12px 14px;
   border-bottom: 1px solid color-mix(in oklab, var(--panel-border) 60%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 68%, var(--brand) 32%);
+  background: color-mix(in oklab, var(--panel-bg) 48%, #8aa39b 52%);
 }
 
 .teacher-panel-body {
@@ -1832,7 +1847,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   min-height: 34px;
   border-radius: 11px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
+  background: color-mix(in oklab, var(--panel-bg) 58%, #d6dee8 42%);
   color: var(--text);
   font-family: var(--font);
   font-size: 0.8rem;
@@ -6537,6 +6552,12 @@ html[data-layout-mode="compact"] .key.key-chunk {
     max-width: 100%;
     grid-template-columns: 1fr;
   }
+
+  .focus-inline-results.is-curriculum-list {
+    left: auto;
+    right: auto;
+    transform: none;
+  }
 }
 
 @media (min-width: 721px) {
@@ -6547,6 +6568,15 @@ html[data-layout-mode="compact"] .key.key-chunk {
     width: min(700px, calc(100vw - 24px));
     max-width: min(700px, calc(100vw - 24px));
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .focus-inline-results.is-curriculum-list {
+    left: auto;
+    right: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 1fr;
   }
 }
 

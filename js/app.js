@@ -8858,8 +8858,7 @@
   updateFocusGradeNote();
   syncChunkTabsVisibility();
   updateFocusSummaryLabel();
-  closeFocusSearchList();
-  setFocusSearchOpen(false);
+  renderFocusSearchList('');
 
   // ─── 7. New game ────────────────────────────────────
   const MIDGAME_BOOST_KEY = 'wq_v2_midgame_boost_state_v1';
