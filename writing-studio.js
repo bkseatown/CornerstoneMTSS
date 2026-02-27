@@ -17,7 +17,6 @@
   var ENGAGE_KEY = "ws_engage_v1";
   var TOUR_KEY = "ws_tour_done_v1";
   var CORE_VIEW_KEY = "ws_core_view_v1";
-  var GREETING_KEY = "ws_greeting_dismissed_v3";
   var LAUNCH_DEFAULTS_KEY = "ws_launch_defaults_v1";
   var APP_SEMVER = "1.0.0";
   var FEATURE_FLAGS = window.WQFeatureFlags || {};
@@ -2230,13 +2229,6 @@
   }
 
   function maybeStartGreeting() {
-    var seen = "1";
-    try {
-      seen = localStorage.getItem(GREETING_KEY) || "0";
-    } catch (_error) {
-      seen = "0";
-    }
-    if (seen === "1") return;
     var defaults = getLaunchDefaults();
     if (greetingRoleSelect) greetingRoleSelect.value = defaults.role === "student" ? "student" : "teacher";
     if (greetingGradeSelect) {
@@ -2247,11 +2239,6 @@
   }
 
   function dismissGreeting() {
-    try {
-      localStorage.setItem(GREETING_KEY, "1");
-    } catch (_error) {
-      // Ignore storage write errors.
-    }
     setGreetingOpen(false);
   }
 

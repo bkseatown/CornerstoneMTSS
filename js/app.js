@@ -768,6 +768,7 @@
   let hoverNoteTimer = 0;
   let hoverNoteTarget = null;
   let hoverNoteEl = null;
+  let focusSearchReopenGuardUntil = 0;
   const ThemeRegistry = window.WQThemeRegistry || null;
   const shouldPersistTheme = () => (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
   let musicController = null;
@@ -2281,6 +2282,14 @@
 
   function consumeWritingStudioReturnSummary() {
     if (!readWritingStudioReturnFlag()) return;
+    focusSearchReopenGuardUntil = Date.now() + 1500;
+    closeFocusSearchList();
+    const focusInput = _el('focus-inline-search');
+    if (focusInput) {
+      focusInput.blur();
+      focusInput.setAttribute('aria-expanded', 'false');
+    }
+    setFocusSearchOpen(false);
     let payload = null;
     try {
       payload = JSON.parse(localStorage.getItem(WRITING_STUDIO_RETURN_KEY) || 'null');
@@ -2308,6 +2317,14 @@
       studio_plan_items: planItems,
       studio_focus: focus || null
     });
+    setTimeout(() => {
+      closeFocusSearchList();
+      setFocusSearchOpen(false);
+    }, 0);
+    setTimeout(() => {
+      closeFocusSearchList();
+      setFocusSearchOpen(false);
+    }, 220);
   }
 
   function consumeWritingStudioHiddenNotice() {
@@ -9047,10 +9064,15 @@
     return output;
   }
 
-  function renderFocusSearchList(rawQuery = '') {
+  function renderFocusSearchList(rawQuery = '', options = {}) {
     const listEl = _el('focus-inline-results');
     const inputEl = _el('focus-inline-search');
     if (!listEl) return;
+    const userInitiated = options && options.userInitiated === true;
+    if (!userInitiated && Date.now() < focusSearchReopenGuardUntil) {
+      closeFocusSearchList();
+      return;
+    }
     const query = String(rawQuery || '').trim().toLowerCase();
     const isCurriculumLessonListMode = !query && Boolean(focusCurriculumPackFilter);
     const isFundationsLessonMode = isCurriculumLessonListMode && focusCurriculumPackFilter === 'fundations';
@@ -9243,7 +9265,7 @@
         inputEl.value = packLabel;
         inputEl.dataset.lockedLabel = packLabel.toLowerCase();
       }
-      renderFocusSearchList('');
+      renderFocusSearchList('', { userInitiated: true });
       return;
     }
     if (raw.startsWith('curriculum::')) {
@@ -9452,7 +9474,7 @@
     }
     clearPinnedFocusSearchValue(event.target);
     const query = String(event.target?.value || '').trim();
-    renderFocusSearchList(query);
+    renderFocusSearchList(query, { userInitiated: true });
   });
 
   _el('focus-inline-search')?.addEventListener('input', (event) => {
@@ -9467,7 +9489,7 @@
     }
     clearPinnedFocusSearchValue(event.target);
     const query = String(event.target?.value || '').trim();
-    renderFocusSearchList(query);
+    renderFocusSearchList(query, { userInitiated: true });
   });
 
   _el('focus-inline-search')?.addEventListener('keydown', (event) => {
@@ -9492,7 +9514,7 @@
       const query = String(event.target?.value || '').trim();
       const listEl = _el('focus-inline-results');
       if (listEl?.classList.contains('hidden')) {
-        renderFocusSearchList(query);
+        renderFocusSearchList(query, { userInitiated: true });
       }
       const buttons = getFocusSearchButtons();
       if (!buttons.length) return;
@@ -9549,7 +9571,7 @@
           inputEl.value = '';
           inputEl.dataset.lockedLabel = '';
         }
-        renderFocusSearchList('');
+        renderFocusSearchList('', { userInitiated: true });
       }
       return;
     }
