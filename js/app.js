@@ -2204,8 +2204,10 @@
     const toggle = _el('play-style-toggle');
     if (!toggle) return;
     const listening = mode === 'listening';
-    toggle.textContent = listening ? 'Hear & Spell' : 'Guess & Check';
-    toggle.style.whiteSpace = 'nowrap';
+    toggle.innerHTML = `
+      <span class="play-style-toggle-mode">${listening ? 'Hear & Spell' : 'Guess & Check'}</span>
+      <span class="play-style-toggle-switch">Toggle Mode</span>
+    `;
     toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('aria-label', listening
@@ -3142,6 +3144,142 @@
     return true;
   }
 
+  function evaluateGuessPattern(guess, target) {
+    const safeGuess = String(guess || '').toLowerCase().replace(/[^a-z]/g, '');
+    const safeTarget = String(target || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (!safeGuess || !safeTarget || safeGuess.length !== safeTarget.length) return [];
+    const result = Array(safeTarget.length).fill('absent');
+    const targetLetters = safeTarget.split('');
+    const guessLetters = safeGuess.split('');
+    for (let index = 0; index < guessLetters.length; index += 1) {
+      if (guessLetters[index] === targetLetters[index]) {
+        result[index] = 'correct';
+        targetLetters[index] = null;
+        guessLetters[index] = null;
+      }
+    }
+    for (let index = 0; index < guessLetters.length; index += 1) {
+      const letter = guessLetters[index];
+      if (!letter) continue;
+      const foundAt = targetLetters.indexOf(letter);
+      if (foundAt >= 0) {
+        result[index] = 'present';
+        targetLetters[foundAt] = null;
+      }
+    }
+    return result;
+  }
+
+  function buildStarterWordConstraint(state) {
+    const length = Math.max(1, Number(state?.wordLength || state?.word?.length || 0));
+    const guesses = Array.isArray(state?.guesses) ? state.guesses.map((guess) => normalizeReviewWord(guess)) : [];
+    const target = normalizeReviewWord(state?.word || '');
+    const fixedLetters = Array.from({ length }, () => '');
+    const excludedByPosition = Array.from({ length }, () => new Set());
+    const minCounts = {};
+    const maxCounts = {};
+    const guessedLetters = new Set();
+    const positiveLetters = new Set();
+
+    guesses.forEach((guessWord) => {
+      if (!guessWord || guessWord.length !== length) return;
+      const marks = evaluateGuessPattern(guessWord, target);
+      const guessCounts = {};
+      const positiveCounts = {};
+      for (let index = 0; index < guessWord.length; index += 1) {
+        const letter = guessWord[index];
+        const mark = marks[index];
+        if (!letter) continue;
+        guessedLetters.add(letter);
+        guessCounts[letter] = (guessCounts[letter] || 0) + 1;
+        if (mark === 'correct') {
+          fixedLetters[index] = letter;
+        } else {
+          excludedByPosition[index].add(letter);
+        }
+        if (mark === 'present' || mark === 'correct') {
+          positiveLetters.add(letter);
+          positiveCounts[letter] = (positiveCounts[letter] || 0) + 1;
+        }
+      }
+      Object.entries(positiveCounts).forEach(([letter, count]) => {
+        minCounts[letter] = Math.max(minCounts[letter] || 0, count);
+      });
+      Object.entries(guessCounts).forEach(([letter, count]) => {
+        const positiveCount = positiveCounts[letter] || 0;
+        if (positiveCount < count) {
+          if (maxCounts[letter] === undefined) maxCounts[letter] = positiveCount;
+          else maxCounts[letter] = Math.min(maxCounts[letter], positiveCount);
+        }
+      });
+    });
+
+    const absentLetters = new Set();
+    guessedLetters.forEach((letter) => {
+      if (!positiveLetters.has(letter)) absentLetters.add(letter);
+    });
+
+    return {
+      length,
+      guessCount: guesses.length,
+      fixedLetters,
+      excludedByPosition,
+      minCounts,
+      maxCounts,
+      absentLetters,
+      guessedLetters
+    };
+  }
+
+  function wordMatchesStarterConstraint(word, constraint, options = {}) {
+    const normalizedWord = normalizeReviewWord(word);
+    const length = Math.max(1, Number(constraint?.length || 0));
+    if (!normalizedWord || normalizedWord.length !== length) return false;
+    const enforceMaxCounts = options.enforceMaxCounts !== false;
+    const letterCounts = {};
+    for (let index = 0; index < normalizedWord.length; index += 1) {
+      const letter = normalizedWord[index];
+      if (constraint.fixedLetters[index] && constraint.fixedLetters[index] !== letter) return false;
+      if (constraint.excludedByPosition[index]?.has(letter)) return false;
+      letterCounts[letter] = (letterCounts[letter] || 0) + 1;
+    }
+    for (const letter of constraint.absentLetters) {
+      if ((letterCounts[letter] || 0) > 0) return false;
+    }
+    for (const [letter, minimum] of Object.entries(constraint.minCounts || {})) {
+      if ((letterCounts[letter] || 0) < minimum) return false;
+    }
+    if (enforceMaxCounts) {
+      for (const [letter, maximum] of Object.entries(constraint.maxCounts || {})) {
+        if ((letterCounts[letter] || 0) > maximum) return false;
+      }
+    }
+    return true;
+  }
+
+  function scoreStarterWordCandidate(word, constraint) {
+    const normalizedWord = normalizeReviewWord(word);
+    if (!normalizedWord) return 0;
+    let score = 0;
+    const counted = new Set();
+    for (let index = 0; index < normalizedWord.length; index += 1) {
+      const letter = normalizedWord[index];
+      if (constraint.fixedLetters[index] && constraint.fixedLetters[index] === letter) score += 4;
+      if (!constraint.guessedLetters.has(letter) && !counted.has(letter)) {
+        score += 2;
+        counted.add(letter);
+      }
+      if ((constraint.minCounts[letter] || 0) > 0) score += 1;
+    }
+    return score;
+  }
+
+  function formatStarterPattern(constraint) {
+    if (!constraint || !Array.isArray(constraint.fixedLetters)) return '';
+    const token = constraint.fixedLetters.map((letter) => (letter ? letter.toUpperCase() : '_')).join('');
+    return token.includes('_') ? token : '';
+  }
+
   function pickStarterWordsForRound(state, limit = 9) {
     if (!state?.word || state.gameOver) return [];
     const focus = _el('setting-focus')?.value || prefs.focus || 'all';
@@ -3187,7 +3325,22 @@
       }), prioritized);
     }
 
-    return shuffleList(Array.from(prioritized)).slice(0, Math.max(3, Math.min(12, Number(limit) || 9)));
+    const constraint = buildStarterWordConstraint(state);
+    const candidates = Array.from(prioritized);
+    let filtered = candidates;
+    if (constraint.guessCount >= 2) {
+      const strict = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: true }));
+      if (strict.length >= 3) filtered = strict;
+      else {
+        const soft = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: false }));
+        if (soft.length >= 3) filtered = soft;
+      }
+    }
+
+    const ranked = shuffleList(filtered).sort((left, right) => (
+      scoreStarterWordCandidate(right, constraint) - scoreStarterWordCandidate(left, constraint)
+    ));
+    return ranked.slice(0, Math.max(3, Math.min(12, Number(limit) || 9)));
   }
 
   function renderStarterWordList(words) {
@@ -3230,6 +3383,8 @@
     const messageEl = _el('starter-word-message');
     const guessCount = Array.isArray(state.guesses) ? state.guesses.length : 0;
     const source = String(options.source || 'manual').toLowerCase();
+    const constraint = buildStarterWordConstraint(state);
+    const knownPattern = formatStarterPattern(constraint);
 
     if (!state.word || state.gameOver) {
       if (titleEl) titleEl.textContent = 'Try a Starter Word';
@@ -3242,11 +3397,16 @@
 
     const words = pickStarterWordsForRound(state, 9);
     currentRoundStarterWordsShown = true;
-    if (titleEl) titleEl.textContent = source === 'auto' ? 'Try a Starter Word' : 'Need Ideas? Try a Starter Word';
+    if (titleEl) titleEl.textContent = guessCount >= 2 ? 'Try a Pattern Match' : (source === 'auto' ? 'Try a Starter Word' : 'Need Ideas? Try a Starter Word');
     if (messageEl) {
-      messageEl.textContent = source === 'auto'
-        ? `You are ${guessCount} guesses in. Pick one idea to keep momentum.`
-        : 'Pick one to test your next guess.';
+      if (guessCount >= 2) {
+        const patternHint = knownPattern ? ` Pattern: ${knownPattern}.` : '';
+        messageEl.textContent = `These options fit what you already know.${patternHint} Pick one to test next.`;
+      } else {
+        messageEl.textContent = source === 'auto'
+          ? `You are ${guessCount} guesses in. Pick one idea to keep momentum.`
+          : 'Pick one to test your next guess.';
+      }
     }
     renderStarterWordList(words);
     card.classList.remove('hidden');
@@ -3265,7 +3425,7 @@
     if (threshold <= 0) return;
     if (currentRoundStarterWordsShown) return;
     const guessCount = Array.isArray(state?.guesses) ? state.guesses.length : 0;
-    if (guessCount < threshold) return;
+    if (guessCount !== threshold) return;
     showStarterWordCard({ source: 'auto' });
   }
 
