@@ -999,28 +999,17 @@
     );
   }
 
-  function buildReviewLinkUrl() {
+  function buildStableShareLinkUrl() {
     const url = new URL(window.location.href);
-    const stamp = new Date();
-    const parts = [
-      String(stamp.getFullYear()),
-      String(stamp.getMonth() + 1).padStart(2, '0'),
-      String(stamp.getDate()).padStart(2, '0'),
-      String(stamp.getHours()).padStart(2, '0'),
-      String(stamp.getMinutes()).padStart(2, '0'),
-      String(stamp.getSeconds()).padStart(2, '0')
-    ];
-    const runtime = resolveRuntimeChannel().toLowerCase();
-    const build = (resolveBuildLabel() || 'local').toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
-    url.searchParams.set('cb', `review-${parts.join('')}-${runtime}-${build}`);
+    url.searchParams.delete('cb');
     return url.toString();
   }
 
   async function copyReviewLink() {
     await copyTextToClipboard(
-      buildReviewLinkUrl(),
-      'Review link copied with fresh cache-buster.',
-      'Could not copy review link on this device.'
+      buildStableShareLinkUrl(),
+      'Share link copied. This link always points to the latest deployed version.',
+      'Could not copy share link on this device.'
     );
   }
 
@@ -1224,6 +1213,16 @@
       const nextUrl = `${location.pathname}${params.toString() ? `?${params.toString()}` : ''}${location.hash || ''}`;
       location.replace(nextUrl);
     } catch {}
+  }
+
+  function installBuildConsistencyHeartbeat() {
+    const HEARTBEAT_MS = 5 * 60 * 1000;
+    setInterval(() => { void runRemoteBuildConsistencyCheck(); }, HEARTBEAT_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        void runRemoteBuildConsistencyCheck();
+      }
+    });
   }
   const themeFamilyById = (() => {
     const map = new Map();
@@ -1921,6 +1920,7 @@
   syncPersistentVersionChip();
   void runAutoCacheRepairForBuild();
   void runRemoteBuildConsistencyCheck();
+  installBuildConsistencyHeartbeat();
 
   const themeSelect = _el('s-theme');
   const queryTheme = readThemeFromQuery();
