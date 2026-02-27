@@ -48,6 +48,9 @@ jobs:
             writing-studio.html \
             writing-studio.css \
             writing-studio.js \
+            sentence-surgery.html \
+            sentence-surgery.css \
+            sentence-surgery.js \
             favicon.ico \
             sw.js \
             sw-runtime.js \
