@@ -56,6 +56,7 @@ jobs:
             data \
             assets \
             dist/
+          node scripts/stamp-build-version.js dist "${GITHUB_SHA::12}-${GITHUB_RUN_NUMBER}"
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -111,6 +111,60 @@ body {
   z-index:         100;
   color:           var(--text-muted);
 }
+
+.loading-recovery-panel {
+  width: min(92vw, 420px);
+  display: grid;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 74%, #9ba9b9 26%);
+  background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
+  box-shadow: 0 10px 22px rgba(12, 20, 32, 0.14);
+}
+
+.loading-recovery-text {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 720;
+  color: color-mix(in oklab, var(--text-muted) 84%, var(--text) 16%);
+  text-align: center;
+  line-height: 1.35;
+}
+
+.loading-recovery-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.loading-recovery-btn {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, #8d9daf 24%);
+  background: color-mix(in oklab, var(--panel-bg) 88%, #e1e6ed 12%);
+  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
+  font-family: var(--font);
+  font-size: 0.74rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.loading-recovery-btn:hover {
+  background: color-mix(in oklab, var(--panel-bg) 74%, #cfd8e3 26%);
+}
+
+.loading-recovery-btn:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+
+.loading-recovery-btn-primary {
+  border-color: color-mix(in oklab, var(--panel-border) 54%, #7288a1 46%);
+  background: color-mix(in oklab, var(--panel-bg) 66%, #bccadb 34%);
+}
 .spinner {
   width:         34px;
   height:        34px;
