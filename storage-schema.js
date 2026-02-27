@@ -167,6 +167,8 @@
       var entry = {
         analysis: undefined,
         coach: undefined,
+        pedagogy: undefined,
+        miniLesson: undefined,
         timestamp: Math.max(0, Math.floor(Number(row.timestamp || 0)))
       };
       if (row.analysis && typeof row.analysis === "object" && !Array.isArray(row.analysis)) {
@@ -177,7 +179,13 @@
       if (typeof row.coach === "string") {
         entry.coach = safeString(row.coach, "");
       }
-      if (!entry.analysis && !entry.coach) return;
+      if (row.pedagogy && typeof row.pedagogy === "object" && !Array.isArray(row.pedagogy)) {
+        entry.pedagogy = row.pedagogy;
+      }
+      if (row.miniLesson && typeof row.miniLesson === "object" && !Array.isArray(row.miniLesson)) {
+        entry.miniLesson = row.miniLesson;
+      }
+      if (!entry.analysis && !entry.coach && !entry.pedagogy && !entry.miniLesson) return;
       out[String(hash)] = entry;
     });
     return out;

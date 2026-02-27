@@ -210,6 +210,38 @@
     return shaped;
   }
 
+  function fallbackMiniLesson(input) {
+    var src = input && typeof input === "object" ? input : {};
+    var skill = String(src.targetSkill || "reasoning");
+    var gradeBand = String(src.gradeBand || "3-5");
+    return {
+      objective: "Students will improve " + skill.replace(/_/g, " ") + " in one revised sentence.",
+      teacherModel: "Model: Because the roads were flooded, buses arrived late.",
+      guidedPrompt: "Revise: The buses were late. Show " + skill.replace(/_/g, " ") + ".",
+      commonErrors: ["No explicit connector", "Vague language", "Missing punctuation"],
+      quickPractice: "Students revise one sentence and share the exact change they made.",
+      exitTicket: "Write one grade-" + gradeBand + " sentence that shows " + skill.replace(/_/g, " ") + "."
+    };
+  }
+
+  function parseMiniLessonShape(payload) {
+    if (!payload || typeof payload !== "object") throw new Error("invalid_json");
+    var commonErrors = Array.isArray(payload.commonErrors) ? payload.commonErrors : [];
+    var shaped = {
+      objective: compactWords(String(payload.objective || ""), 45),
+      teacherModel: compactWords(String(payload.teacherModel || ""), 45),
+      guidedPrompt: compactWords(String(payload.guidedPrompt || ""), 45),
+      commonErrors: commonErrors.slice(0, 4).map(function (x) { return compactWords(String(x || ""), 12); }).filter(Boolean),
+      quickPractice: compactWords(String(payload.quickPractice || ""), 45),
+      exitTicket: compactWords(String(payload.exitTicket || ""), 45)
+    };
+    if (!shaped.objective || !shaped.teacherModel || !shaped.guidedPrompt || !shaped.quickPractice || !shaped.exitTicket) {
+      throw new Error("schema_mismatch");
+    }
+    if (!shaped.commonErrors.length) shaped.commonErrors = ["Vague language", "Missing connector"];
+    return shaped;
+  }
+
   function sleep(ms) {
     return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
   }
@@ -457,10 +489,76 @@
     }
   }
 
+  async function generateMiniLesson(input) {
+    var req = input && typeof input === "object" ? input : {};
+    var targetSkill = String(req.targetSkill || "reasoning");
+    var gradeBand = String(req.gradeBand || "3-5");
+    var tier = clampTierLevel(req.tier);
+    var channel = String(req.channel || "global-mini-lesson");
+    var endpoint = req.lessonEndpoint || req.coachEndpoint || window.WS_COACH_ENDPOINT || window.PB_COACH_ENDPOINT || "";
+
+    var hash = await hashSentence("mini-lesson::" + targetSkill + "::" + gradeBand + "::tier" + tier);
+    var cache = window.CSCacheEngine && window.CSCacheEngine.get ? window.CSCacheEngine.get(hash) : null;
+    if (cache && cache.miniLesson) {
+      usageBump("cache_hits");
+      return cache.miniLesson;
+    }
+
+    if (shouldSkipAI(endpoint)) {
+      usageBump("fallback_count");
+      return fallbackMiniLesson(req);
+    }
+
+    await runDebounce(hash);
+    if (!claimRateLimitSlot()) {
+      usageBump("rate_limited");
+      return fallbackMiniLesson(req);
+    }
+
+    var skillKeys = Object.keys((window.CSPedagogyEngine && window.CSPedagogyEngine.CS_SKILLS) || {
+      reasoning: true,
+      detail: true,
+      verb_precision: true,
+      cohesion: true,
+      sentence_control: true
+    });
+    var systemPrompt = [
+      "You are a literacy intervention assistant.",
+      "Return ONLY valid JSON with keys: objective, teacherModel, guidedPrompt, commonErrors, quickPractice, exitTicket.",
+      "Total output under 250 words.",
+      "Structured concise language only. No fluff.",
+      "Include one explicit modeling sentence in teacherModel.",
+      "Tier-aware supports: Tier 3 include stem support; Tier 2 guided revision; Tier 1 extension challenge.",
+      "Align to skill taxonomy: " + skillKeys.join(", ") + "."
+    ].join(" ");
+    try {
+      var json = await fetchJsonWithTimeout(endpoint, {
+        response_format: "json",
+        mode: "mini_lesson",
+        target_skill: targetSkill,
+        grade_band: gradeBand,
+        tier_level: tier,
+        system_prompt: systemPrompt
+      }, channel);
+      var shaped = parseMiniLessonShape(json);
+      if (window.CSCacheEngine && window.CSCacheEngine.set) {
+        window.CSCacheEngine.set(hash, { miniLesson: shaped });
+      }
+      usageBump("ai_calls");
+      logDebug("generateMiniLesson ai", { channel: channel, hash: hash.slice(0, 8) });
+      return shaped;
+    } catch (err) {
+      usageBump("fallback_count");
+      logDebug("generateMiniLesson fallback", err && err.message ? err.message : err);
+      return fallbackMiniLesson(req);
+    }
+  }
+
   window.CSAIService = {
     hashSentence: hashSentence,
     analyzeSentence: analyzeSentence,
     generatePedagogyFeedback: generatePedagogyFeedback,
+    generateMiniLesson: generateMiniLesson,
     generateMicroCoach: generateMicroCoach,
     heuristicAnalyze: heuristic,
     isDemoMode: isDemoMode,

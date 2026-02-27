@@ -46,6 +46,12 @@
     <div class="td-grouping ss-card">
       <h2>Suggested Intervention Groups</h2>
       <div id="td-groups"></div>
+      <div class="td-tools-row">
+        <button id="td-generate-session-plan" class="td-tool-btn" type="button">Generate Session Plan</button>
+      </div>
+      <div id="td-session-plan-panel" class="td-panel hidden">
+        <div id="td-session-plan-content"></div>
+      </div>
     </div>
 
     <div class="td-heatmap ss-card">
@@ -56,10 +62,24 @@
     <div class="td-suggestion ss-card">
       <h2>Recommended Mini-Lesson</h2>
       <div id="td-lesson-suggestion"></div>
+      <div class="td-tools-row">
+        <div id="td-selected-student">No student selected</div>
+        <button id="td-generate-report" class="td-tool-btn" type="button">Generate Growth Report</button>
+        <button id="td-generate-mini-lesson" class="td-tool-btn" type="button">Generate Mini-Lesson</button>
+      </div>
+      <div id="td-mini-lesson-card" class="td-panel hidden">
+        <div id="td-mini-lesson-content"></div>
+      </div>
     </div>
   </main>
 
   <script src="./analytics-engine.js?v=20260227a" defer></script>
-  <script src="./teacher-dashboard.js?v=20260227b" defer></script>
+  <script src="./pedagogy-engine.js?v=20260227a" defer></script>
+  <script src="./ai-service.js?v=20260227a" defer></script>
+  <script src="./progression-engine.js?v=20260227a" defer></script>
+  <script src="./growth-report-engine.js?v=20260227a" defer></script>
+  <script src="./intervention-planner.js?v=20260227a" defer></script>
+  <script src="./lesson-generator.js?v=20260227a" defer></script>
+  <script src="./teacher-dashboard.js?v=20260227c" defer></script>
 </body>
 </html>

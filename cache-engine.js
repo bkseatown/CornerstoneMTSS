@@ -54,6 +54,8 @@
     store[hash] = {
       analysis: payload && payload.analysis !== undefined ? payload.analysis : prev.analysis,
       coach: payload && payload.coach !== undefined ? payload.coach : prev.coach,
+      pedagogy: payload && payload.pedagogy !== undefined ? payload.pedagogy : prev.pedagogy,
+      miniLesson: payload && payload.miniLesson !== undefined ? payload.miniLesson : prev.miniLesson,
       timestamp: now()
     };
     writeStore(store);

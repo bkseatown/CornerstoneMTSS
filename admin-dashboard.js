@@ -93,6 +93,22 @@
     }).join("");
   }
 
+  function progressionSummary(snapshot) {
+    var p = window.CSProgressionEngine;
+    if (!p || typeof p.computeSkillLevel !== "function") return "";
+    var metrics = {
+      reasoningRate: snapshot.reasoningRate,
+      avgDetail: snapshot.avgDetail,
+      verbStrengthRate: snapshot.verbStrengthRate,
+      avgCohesion: snapshot.avgCohesion
+    };
+    var reasoning = p.computeSkillLevel("reasoning", metrics) + 1;
+    var detail = p.computeSkillLevel("detail", metrics) + 1;
+    var verb = p.computeSkillLevel("verb_precision", metrics) + 1;
+    var cohesion = p.computeSkillLevel("cohesion", metrics) + 1;
+    return "Progression levels — Reasoning L" + reasoning + ", Detail L" + detail + ", Verb Precision L" + verb + ", Cohesion L" + cohesion + ".";
+  }
+
   function run() {
     renderStorageWarningIfNeeded();
     var demo = window.CSMultiClassEngine.isDemoMode();
@@ -102,7 +118,10 @@
       var snapshot = window.CSMultiClassEngine.aggregate(rows);
       renderSnapshot(snapshot, rows.length, school.lastUpdated);
       renderClasses(rows);
-      renderTrends(window.CSMultiClassEngine.trends(snapshot, rows));
+      var trends = window.CSMultiClassEngine.trends(snapshot, rows);
+      var extra = progressionSummary(snapshot);
+      if (extra) trends.push(extra);
+      renderTrends(trends);
     };
 
     if (typeof window.requestIdleCallback === "function") {

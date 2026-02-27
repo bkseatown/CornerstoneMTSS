@@ -90,6 +90,20 @@
     return "Reasoning";
   }
 
+  function computeSkillLevelBadge(ai, pedagogyFocus) {
+    var p = window.CSProgressionEngine;
+    if (!p || typeof p.computeSkillLevel !== "function") return "Level 1";
+    var focus = String(pedagogyFocus || "reasoning");
+    var metrics = {
+      reasoningPct: ai && ai.has_reasoning ? 100 : 0,
+      detailAvg: Number(ai && ai.detail_score || 0),
+      strongPct: String(ai && ai.verb_strength || "").toLowerCase() === "strong" ? 100 : 0,
+      cohesionAvg: ai && ai.has_reasoning ? 3 : 1
+    };
+    var level = p.computeSkillLevel(focus, metrics);
+    return "Level " + String(Math.max(1, Math.min(3, Number(level || 0) + 1)));
+  }
+
   function setCoachText(text) {
     if (!coachEl) return;
     var line = sanitize(text);
@@ -203,7 +217,7 @@
       : null);
     if (token !== activeAnalysisToken) return;
     if (pedagogy && skillTagEl) {
-      skillTagEl.textContent = "Skill: " + skillLabel(pedagogy.primary_focus);
+      skillTagEl.textContent = "Skill: " + skillLabel(pedagogy.primary_focus) + " • " + computeSkillLevelBadge(ai, pedagogy.primary_focus);
     }
     if (pedagogy && pedagogy.coach_prompt) {
       var coachText = pedagogy.coach_prompt;

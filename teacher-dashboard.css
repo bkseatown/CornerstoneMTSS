@@ -118,6 +118,58 @@ body.cs-page-teacher {
   line-height: 1.45;
 }
 
+.td-student-btn {
+  border: 0;
+  background: transparent;
+  color: #e8edf2;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.td-level-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+}
+
+.td-tools-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.td-tool-btn {
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(12,23,34,0.6);
+  color: #e8edf2;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.td-panel {
+  margin-top: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.hidden { display: none !important; }
+
 @media (max-width: 860px) {
   #td-root { width: 96vw; }
 }

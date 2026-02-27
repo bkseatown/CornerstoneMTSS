@@ -3,6 +3,7 @@
 
   var KEY = "cs_analytics";
   var SCHOOL_KEY = "cs_school_analytics";
+  var PROGRESS_HISTORY_KEY = "cs_progress_history";
   var schema = window.CSStorageSchema || null;
 
   if (schema && typeof schema.migrateStorageIfNeeded === "function") {
@@ -113,6 +114,68 @@
     return clean || "Unassigned Class";
   }
 
+  function readProgressHistory() {
+    var parsed = schema && typeof schema.safeLoadJSON === "function"
+      ? schema.safeLoadJSON(PROGRESS_HISTORY_KEY, {})
+      : (function () {
+          try { return JSON.parse(localStorage.getItem(PROGRESS_HISTORY_KEY) || "null"); } catch (_e) { return null; }
+        })();
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  }
+
+  function writeProgressHistory(payload) {
+    if (schema && typeof schema.safeSaveJSON === "function") {
+      schema.safeSaveJSON(PROGRESS_HISTORY_KEY, payload || {});
+      return;
+    }
+    try { localStorage.setItem(PROGRESS_HISTORY_KEY, JSON.stringify(payload || {})); } catch (_e) {}
+  }
+
+  function sanitizeSkillLevels(levels) {
+    var src = levels && typeof levels === "object" ? levels : {};
+    var clampLevel = function (value) {
+      var n = Number(value);
+      if (Number.isNaN(n)) n = 0;
+      return Math.max(0, Math.min(3, Math.round(n)));
+    };
+    return {
+      reasoning: clampLevel(src.reasoning),
+      detail: clampLevel(src.detail),
+      verb_precision: clampLevel(src.verb_precision),
+      cohesion: clampLevel(src.cohesion)
+    };
+  }
+
+  function appendStudentProgress(studentId, skillLevels, timestamp) {
+    if (isDemoMode()) return readProgressHistory();
+    if (!studentId) return readProgressHistory();
+    if (window.CS_CONFIG && window.CS_CONFIG.enableAnalytics === false) return readProgressHistory();
+
+    var history = readProgressHistory();
+    var key = String(studentId).trim();
+    if (!key) return history;
+    var rows = Array.isArray(history[key]) ? history[key] : [];
+    var next = {
+      timestamp: Math.max(0, Number(timestamp || Date.now())),
+      skillLevels: sanitizeSkillLevels(skillLevels)
+    };
+    var prev = rows.length ? rows[rows.length - 1] : null;
+    var sameAsPrev = !!(prev
+      && prev.skillLevels
+      && Number(prev.skillLevels.reasoning) === next.skillLevels.reasoning
+      && Number(prev.skillLevels.detail) === next.skillLevels.detail
+      && Number(prev.skillLevels.verb_precision) === next.skillLevels.verb_precision
+      && Number(prev.skillLevels.cohesion) === next.skillLevels.cohesion);
+    var recent = !!(prev && (next.timestamp - Number(prev.timestamp || 0)) < (15 * 60 * 1000));
+    if (!(sameAsPrev && recent)) {
+      rows.push(next);
+    }
+    if (rows.length > 30) rows = rows.slice(rows.length - 30);
+    history[key] = rows;
+    writeProgressHistory(history);
+    return history;
+  }
+
   function updateSchoolAnalytics(classId, metrics) {
     if (isDemoMode()) return readSchoolAnalytics();
     if (!metrics || typeof metrics !== "object") return readSchoolAnalytics();
@@ -143,6 +206,10 @@
     updateFromAnalysis: updateFromAnalysis,
     readSchoolAnalytics: readSchoolAnalytics,
     writeSchoolAnalytics: writeSchoolAnalytics,
-    updateSchoolAnalytics: updateSchoolAnalytics
+    updateSchoolAnalytics: updateSchoolAnalytics,
+    PROGRESS_HISTORY_KEY: PROGRESS_HISTORY_KEY,
+    readProgressHistory: readProgressHistory,
+    writeProgressHistory: writeProgressHistory,
+    appendStudentProgress: appendStudentProgress
   };
 })();
