@@ -2179,18 +2179,18 @@
     const toggle = _el('play-style-toggle');
     if (!toggle) return;
     const listening = mode === 'listening';
-    toggle.textContent = listening ? 'Listening' : 'Classic';
+    toggle.textContent = listening ? 'Hear & Spell' : 'Guess & Check';
     toggle.style.whiteSpace = 'nowrap';
     toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('aria-label', listening
-      ? 'Listening mode on. Hear meaning and encode what you hear.'
-      : 'Classic mode on. Use tile colors and clues to encode.');
+      ? 'Hear and Spell mode on. Hear meaning and encode what you hear.'
+      : 'Guess and Check mode on. Use tile colors and clues to encode.');
     setHoverNoteForElement(
       toggle,
       listening
-        ? 'Listening mode: hear word plus meaning, then spell by sound.'
-        : 'Classic mode: use color feedback and clues.'
+        ? 'Hear and Spell mode: hear word plus meaning, then spell by sound.'
+        : 'Guess and Check mode: use color feedback and clues.'
     );
   }
 

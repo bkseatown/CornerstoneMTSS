@@ -298,12 +298,16 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 }
 
 #play-style-toggle {
-  min-width: 104px;
+  min-width: 116px;
+  border-style: solid;
+  border-color: color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
+  background: color-mix(in oklab, var(--panel-bg) 92%, transparent);
+  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
 }
 
 #play-style-toggle:not(.is-listening) {
-  border-color: color-mix(in oklab, #d38e35 54%, var(--panel-border) 46%);
-  background: color-mix(in oklab, #d38e35 22%, var(--panel-bg) 78%);
+  border-color: color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
+  background: color-mix(in oklab, var(--panel-bg) 92%, transparent);
 }
 
 #phonics-clue-open-btn {
@@ -3466,8 +3470,8 @@ html[data-board-style="soundcard"] .tile.flip {
   align-items: center;
   gap:         5px;
   padding:     6px 11px;
-  background:  color-mix(in oklab, var(--panel-bg) 90%, var(--brand) 10%);
-  border:      1.3px solid color-mix(in oklab, var(--brand) 44%, var(--panel-border) 56%);
+  background:  linear-gradient(145deg, color-mix(in oklab, var(--accent) 44%, var(--brand) 56%), color-mix(in oklab, var(--brand-dk) 68%, #000000 32%));
+  border:      1.3px solid color-mix(in oklab, var(--accent) 56%, var(--panel-border) 44%);
   border-radius: 99px;
   color:       #ffffff;
   font-family: var(--font);
@@ -3478,8 +3482,8 @@ html[data-board-style="soundcard"] .tile.flip {
   transition:  background 0.15s, color 0.15s, border-color 0.15s;
 }
 .audio-ghost-btn:hover {
-  background:   color-mix(in oklab, var(--panel-bg) 72%, var(--brand) 28%);
-  border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
+  background:   linear-gradient(145deg, color-mix(in oklab, var(--accent) 54%, var(--brand) 46%), color-mix(in oklab, var(--brand-dk) 74%, #000000 26%));
+  border-color: color-mix(in oklab, var(--accent) 62%, var(--panel-border) 38%);
   color:        #ffffff;
 }
 .audio-ghost-btn svg { flex-shrink: 0; }
@@ -3521,13 +3525,13 @@ html[data-play-style="listening"] .gameplay-audio .audio-ghost-btn {
 }
 
 html[data-play-style="listening"] #focus-hint-toggle {
-  border-color: color-mix(in oklab, var(--accent) 66%, var(--panel-border) 34%);
-  background: color-mix(in oklab, var(--panel-bg) 70%, var(--accent) 30%);
+  border-color: color-mix(in oklab, var(--accent) 56%, var(--panel-border) 44%);
+  background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 44%, var(--brand) 56%), color-mix(in oklab, var(--brand-dk) 68%, #000000 32%));
 }
 
 html[data-play-style="listening"] #g-hear-word {
-  border-color: color-mix(in oklab, var(--brand) 66%, var(--panel-border) 34%);
-  background: color-mix(in oklab, var(--panel-bg) 68%, var(--brand) 32%);
+  border-color: color-mix(in oklab, var(--accent) 56%, var(--panel-border) 44%);
+  background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 44%, var(--brand) 56%), color-mix(in oklab, var(--brand-dk) 68%, #000000 32%));
   min-width: 0;
   width: auto;
   justify-content: center;
@@ -6280,7 +6284,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   .header-main-row {
-    align-items: center;
+    align-items: start;
     column-gap: 6px;
     row-gap: 5px;
   }
@@ -6292,7 +6296,11 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   .header-right {
-    display: contents;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-self: end;
+    gap: 4px;
   }
 
   .header-icon-controls {
@@ -6302,10 +6310,12 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
   .header-quick-controls {
     gap: 5px;
-    max-width: 100%;
+    width: auto;
+    max-width: min(52vw, 248px);
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: flex-end;
     padding: 0;
+    overflow-x: auto;
   }
 
   .focus-inline-wrap {
@@ -6314,9 +6324,9 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   .header-quick-btn {
-    font-size: 0.62rem;
-    padding: 4px 8px;
-    min-height: 30px;
+    font-size: 0.58rem;
+    padding: 3px 7px;
+    min-height: 27px;
   }
 
   .mission-lab-nav-btn {
@@ -6335,8 +6345,12 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   #new-game-btn {
-    font-size: 0.72rem;
-    padding: 6px 10px;
+    font-size: 0.66rem;
+    padding: 4px 8px;
+  }
+
+  #play-style-toggle {
+    min-width: 98px;
   }
 
   .grade-target-inline {

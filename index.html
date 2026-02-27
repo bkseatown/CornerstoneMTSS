@@ -54,7 +54,7 @@
           </button>
         </div>
         <div class="header-quick-controls">
-          <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch listening mode">
+          <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch game mode">
             Mode: Classic
           </button>
           <button id="phonics-clue-open-btn" class="header-quick-btn hidden" type="button" title="Open clue card" aria-label="Open Clue Sprint for detective clue practice">
@@ -177,11 +177,11 @@
               <button id="s-force-update-now-top" class="quick-action-btn quick-action-btn-warning" type="button">Force Update Now</button>
             </div>
             <div class="setting-row hidden" aria-hidden="true"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
-            <div class="setting-row hidden" aria-hidden="true"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Classic Wordle (color + clue strategy)</option><option value="listening">Listening Challenge (hear + spell)</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Guess &amp; Check Mode (color + clue strategy)</option><option value="listening">Hear &amp; Spell Mode (hear + spell)</option></select></label></div>
             <div class="setting-row"><label>Keyboard Layout<select id="s-keyboard-layout"><option value="standard" selected>QWERTY</option><option value="alphabet">Alphabet</option></select></label></div>
             <div class="setting-row"><label>Text Size<select id="s-text-size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option></select></label></div>
             <div class="setting-row hidden" aria-hidden="true"><label>Keyboard Style<select id="s-key-style"><option value="bubble" selected>Puffy Rounded</option></select></label></div>
-            <div class="setting-row setting-row-full setting-row-help hidden" aria-hidden="true">Listening mode gives direct Word + Meaning support. Detective mode keeps sentence-only clue hints.</div>
+            <div class="setting-row setting-row-full setting-row-help hidden" aria-hidden="true">Hear &amp; Spell Mode gives direct Word + Meaning support. Guess &amp; Check Mode keeps sentence-only clue hints.</div>
             <div class="setting-row setting-row-full quick-preset-row hidden">
               <label class="setting-checkbox-label">
                 <input id="s-confidence-coaching" type="checkbox" checked>
@@ -835,13 +835,13 @@
   </main>
 
   <div id="toast" role="alert" aria-live="polite"></div>
-  <div id="listening-mode-overlay" class="listening-mode-overlay hidden" role="dialog" aria-modal="true" aria-label="Listening mode helper">
+  <div id="listening-mode-overlay" class="listening-mode-overlay hidden" role="dialog" aria-modal="true" aria-label="Hear and Spell mode helper">
     <div id="listening-mode-card" class="listening-mode-card">
       <div class="listening-mode-head">
-        <div class="listening-mode-title">Listening Mode</div>
-        <button id="listening-mode-close" class="listening-mode-close" type="button" aria-label="Close listening mode helper">✕</button>
+        <div class="listening-mode-title">Hear &amp; Spell Mode</div>
+        <button id="listening-mode-close" class="listening-mode-close" type="button" aria-label="Close Hear and Spell mode helper">✕</button>
       </div>
-      <p class="listening-mode-copy">In Listening Mode, hear the word, hear what it means, then spell what you hear.</p>
+      <p class="listening-mode-copy">In Hear &amp; Spell Mode, hear the word, hear what it means, then spell what you hear.</p>
       <p class="listening-mode-copy">Tap outside this card or press close when you are ready to begin.</p>
     </div>
   </div>
@@ -1135,10 +1135,10 @@
           <span class="first-run-grade-note">You can change this anytime in Teacher Hub.</span>
         </label>
         <div class="first-run-mode-row" role="group" aria-label="Choose game style">
-          <button id="first-run-mode-detective" class="first-run-mode-btn" type="button" data-play-style-choice="detective" aria-pressed="false">🔎 Classic</button>
-          <button id="first-run-mode-listening" class="first-run-mode-btn" type="button" data-play-style-choice="listening" aria-pressed="false">🎧 Listening</button>
+          <button id="first-run-mode-detective" class="first-run-mode-btn" type="button" data-play-style-choice="detective" aria-pressed="false">🔎 Guess &amp; Check</button>
+          <button id="first-run-mode-listening" class="first-run-mode-btn" type="button" data-play-style-choice="listening" aria-pressed="false">🎧 Hear &amp; Spell</button>
         </div>
-        <p id="first-run-mode-help" class="first-run-mode-help">Classic: use color clues. Listening: hear the word and spell it.</p>
+        <p id="first-run-mode-help" class="first-run-mode-help">Guess &amp; Check: use color clues. Hear &amp; Spell: hear the word and spell it.</p>
         <div class="first-run-wordle-legend" aria-label="Tile color legend">
           <div class="first-run-wordle-item">
             <div class="first-run-wordle-row" aria-hidden="true">
