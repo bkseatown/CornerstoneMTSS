@@ -1,6 +1,11 @@
 (function teacherDashboardV1() {
   "use strict";
 
+  var schema = window.CSStorageSchema || null;
+  if (schema && typeof schema.migrateStorageIfNeeded === "function") {
+    schema.migrateStorageIfNeeded();
+  }
+
   var STORAGE_KEY = 'cs_student_data';
   var complexFill = document.getElementById('td-complex');
   var reasoningFill = document.getElementById('td-reasoning');
@@ -11,6 +16,19 @@
   var lessonEl = document.getElementById('td-lesson-suggestion');
 
   if (!complexFill || !reasoningFill || !verbsFill || !cohesionFill || !groupsEl || !heatmapTable || !lessonEl) return;
+
+  function renderStorageWarningIfNeeded() {
+    if (!schema || typeof schema.getMigrationStatus !== "function") return;
+    var status = schema.getMigrationStatus();
+    if (!status || !status.corruptionDetected || !Array.isArray(status.backups) || !status.backups.length) return;
+    if (document.getElementById("cs-storage-warning")) return;
+    var banner = document.createElement("div");
+    banner.id = "cs-storage-warning";
+    banner.className = "td-group";
+    banner.textContent = "Storage was reset due to invalid data. A backup was saved.";
+    var root = document.getElementById("td-root");
+    if (root) root.insertBefore(banner, root.firstChild);
+  }
 
   function isDemoMode() {
     try {
@@ -41,13 +59,16 @@
   }
 
   function loadData() {
-    var parsed = [];
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      parsed = raw ? JSON.parse(raw) : [];
-    } catch (_e) {
-      parsed = [];
-    }
+    var parsed = schema && typeof schema.safeLoadJSON === "function"
+      ? schema.safeLoadJSON(STORAGE_KEY, [])
+      : (function () {
+          try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+          } catch (_e) {
+            return [];
+          }
+        })();
     if (!Array.isArray(parsed) || !parsed.length) {
       if (isDemoMode()) return buildDemoData();
       return [];
@@ -229,6 +250,7 @@
   }
 
   function render() {
+    renderStorageWarningIfNeeded();
     var data = loadData();
     var analytics = loadAnalytics();
     if (!data.length) {

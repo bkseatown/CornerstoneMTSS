@@ -12,6 +12,14 @@
     requestTimeoutMs: 4000
   };
 
+  function hasDevUnlock() {
+    try {
+      return localStorage.getItem("cs_allow_dev") === "1";
+    } catch (_e) {
+      return false;
+    }
+  }
+
   function detectDevEnvironment() {
     try {
       var host = String(window.location.hostname || "");
@@ -22,8 +30,8 @@
   }
 
   function canUseDevOverrides(baseConfig) {
-    var env = String((baseConfig && baseConfig.environment) || defaults.environment).toLowerCase();
-    return env === "dev" || detectDevEnvironment() || DEV_OVERRIDE_UNLOCK;
+    if (DEV_OVERRIDE_UNLOCK) return true;
+    return hasDevUnlock();
   }
 
   function parseBooleanFlag(value, fallback) {
@@ -66,8 +74,6 @@
 
   function buildConfig() {
     var base = Object.assign({}, defaults, window.CS_CONFIG || {});
-    if (detectDevEnvironment() && !base.environment) base.environment = "dev";
-
     var storageOverride = canUseDevOverrides(base) ? parseOverrideStorage() : null;
     if (storageOverride) base = Object.assign({}, base, storageOverride);
 
@@ -89,4 +95,5 @@
   }
 
   window.CS_CONFIG = buildConfig();
+  window.CS_CONFIG.devUnlocked = hasDevUnlock();
 })();

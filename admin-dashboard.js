@@ -1,11 +1,29 @@
 (function adminDashboardRuntime() {
   "use strict";
 
+  var schema = window.CSStorageSchema || null;
+  if (schema && typeof schema.migrateStorageIfNeeded === "function") {
+    schema.migrateStorageIfNeeded();
+  }
+
   var schoolMetricsEl = document.getElementById("admin-school-metrics");
   var classBarsEl = document.getElementById("admin-class-bars");
   var trendInsightsEl = document.getElementById("admin-trend-insights");
 
   if (!schoolMetricsEl || !classBarsEl || !trendInsightsEl || !window.CSMultiClassEngine) return;
+
+  function renderStorageWarningIfNeeded() {
+    if (!schema || typeof schema.getMigrationStatus !== "function") return;
+    var status = schema.getMigrationStatus();
+    if (!status || !status.corruptionDetected || !Array.isArray(status.backups) || !status.backups.length) return;
+    if (document.getElementById("cs-storage-warning")) return;
+    var banner = document.createElement("div");
+    banner.id = "cs-storage-warning";
+    banner.className = "admin-trend";
+    banner.textContent = "Storage was reset due to invalid data. A backup was saved.";
+    var root = document.getElementById("admin-root");
+    if (root) root.insertBefore(banner, root.firstChild);
+  }
 
   function pct(rate) {
     return window.CSMultiClassEngine.toPercent(rate);
@@ -76,6 +94,7 @@
   }
 
   function run() {
+    renderStorageWarningIfNeeded();
     var demo = window.CSMultiClassEngine.isDemoMode();
     var school = demo ? window.CSMultiClassEngine.buildDemoSchool() : window.CSMultiClassEngine.readSchoolAnalytics();
     var rows = window.CSMultiClassEngine.classRows(school);

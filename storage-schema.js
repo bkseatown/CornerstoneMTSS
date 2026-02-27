@@ -1,0 +1,250 @@
+(function storageSchemaModule() {
+  "use strict";
+
+  var CS_SCHEMA_VERSION = 1;
+  var SCHEMA_KEY = "cs_schema_version";
+  var MIGRATION_STATE = {
+    ran: false,
+    backups: [],
+    corruptionDetected: false
+  };
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function hasDevUnlock() {
+    try {
+      return localStorage.getItem("cs_allow_dev") === "1";
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function clampNumber(value, min, max, fallback) {
+    var num = Number(value);
+    if (Number.isNaN(num)) num = Number(fallback || 0);
+    return Math.max(min, Math.min(max, num));
+  }
+
+  function toBool(value) {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value !== 0;
+    var text = String(value || "").toLowerCase().trim();
+    return text === "1" || text === "true" || text === "yes" || text === "on";
+  }
+
+  function safeString(value, fallback) {
+    var out = String(value === undefined || value === null ? "" : value).trim();
+    return out || String(fallback || "");
+  }
+
+  function backupCorruptKey(key, rawValue) {
+    try {
+      var backupKey = key + "_backup_" + Date.now();
+      localStorage.setItem(backupKey, String(rawValue || ""));
+      localStorage.removeItem(key);
+      MIGRATION_STATE.backups.push(key);
+      MIGRATION_STATE.corruptionDetected = true;
+    } catch (_e) {
+      // ignore storage failures
+    }
+  }
+
+  function safeLoadJSON(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return clone(fallback);
+      return JSON.parse(raw);
+    } catch (_e) {
+      try {
+        var rawValue = localStorage.getItem(key);
+        if (rawValue !== null) backupCorruptKey(key, rawValue);
+      } catch (_e2) {
+        // ignore
+      }
+      return clone(fallback);
+    }
+  }
+
+  function safeSaveJSON(key, obj) {
+    try {
+      localStorage.setItem(key, JSON.stringify(obj));
+      return true;
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function getSchemaVersion() {
+    try {
+      return Number(localStorage.getItem(SCHEMA_KEY) || "0");
+    } catch (_e) {
+      return 0;
+    }
+  }
+
+  function setSchemaVersion(v) {
+    try {
+      localStorage.setItem(SCHEMA_KEY, String(Number(v) || 0));
+    } catch (_e) {
+      // ignore
+    }
+  }
+
+  function defaultAnalytics() {
+    return {
+      totalSentences: 0,
+      reasoningRate: 0,
+      complexRate: 0,
+      avgDetail: 0,
+      avgCohesion: 0
+    };
+  }
+
+  function normalizeSentenceRow(row) {
+    var src = row && typeof row === "object" ? row : {};
+    var sentenceType = String(src.sentence_type || "simple").toLowerCase();
+    if (sentenceType !== "simple" && sentenceType !== "compound" && sentenceType !== "complex") sentenceType = "simple";
+    var verb = String(src.verb_strength || "adequate").toLowerCase();
+    if (verb !== "weak" && verb !== "adequate" && verb !== "strong") verb = "adequate";
+    return {
+      sentence_type: sentenceType,
+      has_reasoning: toBool(src.has_reasoning),
+      verb_strength: verb,
+      detail_score: Number(clampNumber(src.detail_score, 0, 5, 0).toFixed(3)),
+      cohesion: Number(clampNumber(src.cohesion, 0, 5, 0).toFixed(3))
+    };
+  }
+
+  function normalizeStudentData(raw) {
+    if (!Array.isArray(raw)) return null;
+    return raw.map(function (student) {
+      var src = student && typeof student === "object" ? student : {};
+      var rows = Array.isArray(src.sentences) ? src.sentences : [];
+      return {
+        name: safeString(src.name, "Student"),
+        sentences: rows.map(normalizeSentenceRow)
+      };
+    });
+  }
+
+  function normalizeAnalyticsShape(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    return {
+      totalSentences: Math.max(0, Math.floor(Number(raw.totalSentences || 0))),
+      reasoningRate: Number(clampNumber(raw.reasoningRate, 0, 1, 0).toFixed(6)),
+      complexRate: Number(clampNumber(raw.complexRate, 0, 1, 0).toFixed(6)),
+      avgDetail: Number(clampNumber(raw.avgDetail, 0, 5, 0).toFixed(6)),
+      avgCohesion: Number(clampNumber(raw.avgCohesion, 0, 5, 0).toFixed(6))
+    };
+  }
+
+  function normalizeSchoolAnalytics(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    var srcClasses = raw.classes && typeof raw.classes === "object" && !Array.isArray(raw.classes)
+      ? raw.classes
+      : {};
+    var outClasses = {};
+    Object.keys(srcClasses).forEach(function (classId) {
+      var cleanId = safeString(classId, "").replace(/\s+/g, " ").trim();
+      if (!cleanId) return;
+      var metrics = normalizeAnalyticsShape(srcClasses[classId]) || defaultAnalytics();
+      outClasses[cleanId] = metrics;
+    });
+    return {
+      classes: outClasses,
+      lastUpdated: Math.max(0, Math.floor(Number(raw.lastUpdated || 0)))
+    };
+  }
+
+  function normalizeAICache(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    var out = {};
+    Object.keys(raw).forEach(function (hash) {
+      var row = raw[hash];
+      if (!row || typeof row !== "object" || Array.isArray(row)) return;
+      var entry = {
+        analysis: undefined,
+        coach: undefined,
+        timestamp: Math.max(0, Math.floor(Number(row.timestamp || 0)))
+      };
+      if (row.analysis && typeof row.analysis === "object" && !Array.isArray(row.analysis)) {
+        entry.analysis = normalizeSentenceRow(row.analysis);
+        entry.analysis.word_count = Math.max(0, Math.floor(Number(row.analysis.word_count || 0)));
+        entry.analysis.suggested_focus = safeString(row.analysis.suggested_focus, "reasoning");
+      }
+      if (typeof row.coach === "string") {
+        entry.coach = safeString(row.coach, "");
+      }
+      if (!entry.analysis && !entry.coach) return;
+      out[String(hash)] = entry;
+    });
+    return out;
+  }
+
+  function migrateKey(key, fallback, normalizeFn, options) {
+    var opts = options || {};
+    var rawValue = null;
+    try { rawValue = localStorage.getItem(key); } catch (_e) { rawValue = null; }
+    if (rawValue === null) {
+      if (opts.initializeMissing) safeSaveJSON(key, clone(fallback));
+      return;
+    }
+
+    var parsed;
+    try {
+      parsed = JSON.parse(rawValue);
+    } catch (_e2) {
+      backupCorruptKey(key, rawValue);
+      safeSaveJSON(key, clone(fallback));
+      return;
+    }
+
+    var normalized = normalizeFn(parsed);
+    if (normalized === null) {
+      backupCorruptKey(key, rawValue);
+      safeSaveJSON(key, clone(fallback));
+      return;
+    }
+
+    safeSaveJSON(key, normalized);
+  }
+
+  function migrateStorageIfNeeded() {
+    var current = getSchemaVersion();
+    if (current === CS_SCHEMA_VERSION) return clone(MIGRATION_STATE);
+
+    MIGRATION_STATE.ran = true;
+    MIGRATION_STATE.backups = [];
+    MIGRATION_STATE.corruptionDetected = false;
+
+    migrateKey("cs_student_data", [], normalizeStudentData, { initializeMissing: true });
+    migrateKey("cs_analytics", defaultAnalytics(), normalizeAnalyticsShape, { initializeMissing: true });
+    migrateKey("cs_school_analytics", { classes: {}, lastUpdated: 0 }, normalizeSchoolAnalytics, { initializeMissing: true });
+    migrateKey("cs_ai_cache", {}, normalizeAICache, { initializeMissing: true });
+
+    if (hasDevUnlock()) {
+      migrateKey("cs_config_override", {}, function (raw) {
+        return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : null;
+      }, { initializeMissing: false });
+    } else {
+      try { localStorage.removeItem("cs_config_override"); } catch (_e3) {}
+    }
+
+    setSchemaVersion(CS_SCHEMA_VERSION);
+    return clone(MIGRATION_STATE);
+  }
+
+  window.CSStorageSchema = {
+    CS_SCHEMA_VERSION: CS_SCHEMA_VERSION,
+    getSchemaVersion: getSchemaVersion,
+    setSchemaVersion: setSchemaVersion,
+    migrateStorageIfNeeded: migrateStorageIfNeeded,
+    safeLoadJSON: safeLoadJSON,
+    safeSaveJSON: safeSaveJSON,
+    backupCorruptKey: backupCorruptKey,
+    defaultAnalytics: defaultAnalytics,
+    getMigrationStatus: function () { return clone(MIGRATION_STATE); }
+  };
+})();

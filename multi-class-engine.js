@@ -1,6 +1,10 @@
 (function multiClassEngineModule() {
   "use strict";
 
+  if (window.CSStorageSchema && typeof window.CSStorageSchema.migrateStorageIfNeeded === "function") {
+    window.CSStorageSchema.migrateStorageIfNeeded();
+  }
+
   function isDemoMode() {
     try {
       var params = new URLSearchParams(window.location.search || "");
@@ -22,16 +26,16 @@
     if (window.CSAnalyticsEngine && typeof window.CSAnalyticsEngine.readSchoolAnalytics === "function") {
       return window.CSAnalyticsEngine.readSchoolAnalytics();
     }
-    try {
-      var parsed = JSON.parse(localStorage.getItem("cs_school_analytics") || "null");
-      if (!parsed || typeof parsed !== "object") return { classes: {}, lastUpdated: 0 };
-      return {
-        classes: parsed.classes && typeof parsed.classes === "object" ? parsed.classes : {},
-        lastUpdated: Number(parsed.lastUpdated || 0)
-      };
-    } catch (_e) {
-      return { classes: {}, lastUpdated: 0 };
-    }
+    var parsed = window.CSStorageSchema && typeof window.CSStorageSchema.safeLoadJSON === "function"
+      ? window.CSStorageSchema.safeLoadJSON("cs_school_analytics", { classes: {}, lastUpdated: 0 })
+      : (function () {
+          try { return JSON.parse(localStorage.getItem("cs_school_analytics") || "null"); } catch (_e) { return null; }
+        })();
+    if (!parsed || typeof parsed !== "object") return { classes: {}, lastUpdated: 0 };
+    return {
+      classes: parsed.classes && typeof parsed.classes === "object" ? parsed.classes : {},
+      lastUpdated: Number(parsed.lastUpdated || 0)
+    };
   }
 
   function buildDemoSchool() {

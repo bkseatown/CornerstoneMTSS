@@ -7,12 +7,20 @@
   var KEY_TRIGGER_COUNT = 5;
   var pressTimes = [];
 
+  function hasDevUnlock() {
+    try {
+      return localStorage.getItem("cs_allow_dev") === "1";
+    } catch (_e) {
+      return false;
+    }
+  }
+
   function isDev() {
     return !!(window.CS_CONFIG && window.CS_CONFIG.environment === "dev");
   }
 
   function allowDiagByQuery() {
-    if (!isDev()) return false;
+    if (!isDev() || !hasDevUnlock()) return false;
     try {
       return new URLSearchParams(window.location.search || "").get("diag") === "1";
     } catch (_e) {
@@ -147,6 +155,7 @@
     });
 
     document.addEventListener("keydown", function (event) {
+      if (!isDev() || !hasDevUnlock()) return;
       if (!event || String(event.key || "").toLowerCase() !== "d") return;
       var now = Date.now();
       pressTimes.push(now);
@@ -165,10 +174,26 @@
 
   function smokeChecks() {
     var path = String(window.location.pathname || "");
+    var migration = window.CSStorageSchema && typeof window.CSStorageSchema.getMigrationStatus === "function"
+      ? window.CSStorageSchema.getMigrationStatus()
+      : { ran: false, backups: [] };
+    var schemaVersion = window.CSStorageSchema && typeof window.CSStorageSchema.getSchemaVersion === "function"
+      ? window.CSStorageSchema.getSchemaVersion()
+      : 0;
     var checks = {
       version: window.CS_BUILD && window.CS_BUILD.version ? window.CS_BUILD.version : "unknown",
+      schemaVersion: schemaVersion,
+      migration: {
+        ran: !!migration.ran,
+        backups: Array.isArray(migration.backups) ? migration.backups.slice() : []
+      },
       page: path,
       mounts: {},
+      storageKeys: {
+        studentData: false,
+        analytics: false,
+        schoolAnalytics: false
+      },
       guard: {
         localVersion: (function () { try { return localStorage.getItem("cs_app_version") || ""; } catch (_e) { return ""; } })(),
         sessionReloaded: (function () { try { return sessionStorage.getItem("cs_app_version_reloaded_once") || ""; } catch (_e2) { return ""; } })()
@@ -193,11 +218,38 @@
       checks.mounts.paragraphBuilder = has("pb-root") && has("pb-metrics");
     }
 
+    try {
+      checks.storageKeys.studentData = localStorage.getItem("cs_student_data") !== null;
+      checks.storageKeys.analytics = localStorage.getItem("cs_analytics") !== null;
+      checks.storageKeys.schoolAnalytics = localStorage.getItem("cs_school_analytics") !== null;
+    } catch (_e3) {
+      // ignore
+    }
+
     console.log("[CS_SMOKE]", checks);
     return checks;
   }
 
+  function registerCorruptTest() {
+    window.CS_CORRUPT_TEST = function () {
+      if (!isDev() || !hasDevUnlock()) {
+        return { ok: false, reason: "Dev unlock required: set localStorage.cs_allow_dev=1" };
+      }
+      try {
+        localStorage.setItem("cs_student_data", "{invalid-json");
+        localStorage.setItem("cs_school_analytics", "{invalid-json");
+        localStorage.removeItem("cs_schema_version");
+        sessionStorage.setItem("cs_corrupt_test_pending", "1");
+        window.location.reload();
+      } catch (e) {
+        return { ok: false, reason: String(e && e.message ? e.message : e) };
+      }
+      return { ok: true };
+    };
+  }
+
   ensureState();
   attachHandlers();
+  registerCorruptTest();
   window.CS_SMOKE = smokeChecks;
 })();

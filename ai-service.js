@@ -49,6 +49,11 @@
   var requestControllers = {};
   var lastCallByHash = {};
   var usageKey = "cs_ai_usage";
+  var schema = window.CSStorageSchema || null;
+
+  if (schema && typeof schema.migrateStorageIfNeeded === "function") {
+    schema.migrateStorageIfNeeded();
+  }
 
   function logDebug() {
     if (!window.CS_CONFIG || window.CS_CONFIG.environment !== "dev") return;
@@ -134,10 +139,13 @@
 
   function usageBump(field) {
     try {
-      var row = JSON.parse(localStorage.getItem(usageKey) || "{}");
+      var row = schema && typeof schema.safeLoadJSON === "function"
+        ? schema.safeLoadJSON(usageKey, {})
+        : JSON.parse(localStorage.getItem(usageKey) || "{}");
       row[field] = Number(row[field] || 0) + 1;
       row.lastAt = Date.now();
-      localStorage.setItem(usageKey, JSON.stringify(row));
+      if (schema && typeof schema.safeSaveJSON === "function") schema.safeSaveJSON(usageKey, row);
+      else localStorage.setItem(usageKey, JSON.stringify(row));
     } catch (_e) {
       // ignore
     }

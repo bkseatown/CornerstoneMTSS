@@ -3,6 +3,11 @@
 
   var KEY = "cs_analytics";
   var SCHOOL_KEY = "cs_school_analytics";
+  var schema = window.CSStorageSchema || null;
+
+  if (schema && typeof schema.migrateStorageIfNeeded === "function") {
+    schema.migrateStorageIfNeeded();
+  }
 
   function isDemoMode() {
     try {
@@ -14,35 +19,32 @@
   }
 
   function defaults() {
-    return {
-      totalSentences: 0,
-      avgDetail: 0,
-      avgCohesion: 0,
-      reasoningRate: 0
-    };
+    if (schema && typeof schema.defaultAnalytics === "function") return schema.defaultAnalytics();
+    return { totalSentences: 0, avgDetail: 0, avgCohesion: 0, reasoningRate: 0, complexRate: 0 };
   }
 
   function read() {
-    try {
-      var parsed = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (!parsed || typeof parsed !== "object") return defaults();
-      return {
-        totalSentences: Number(parsed.totalSentences || 0),
-        avgDetail: Number(parsed.avgDetail || 0),
-        avgCohesion: Number(parsed.avgCohesion || 0),
-        reasoningRate: Number(parsed.reasoningRate || 0)
-      };
-    } catch (_e) {
-      return defaults();
-    }
+    var parsed = schema && typeof schema.safeLoadJSON === "function"
+      ? schema.safeLoadJSON(KEY, defaults())
+      : (function () {
+          try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (_e) { return null; }
+        })();
+    if (!parsed || typeof parsed !== "object") return defaults();
+    return {
+      totalSentences: Number(parsed.totalSentences || 0),
+      avgDetail: Number(parsed.avgDetail || 0),
+      avgCohesion: Number(parsed.avgCohesion || 0),
+      reasoningRate: Number(parsed.reasoningRate || 0),
+      complexRate: Number(parsed.complexRate || 0)
+    };
   }
 
   function write(snapshot) {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(snapshot));
-    } catch (_e) {
-      // ignore storage write failures
+    if (schema && typeof schema.safeSaveJSON === "function") {
+      schema.safeSaveJSON(KEY, snapshot);
+      return;
     }
+    try { localStorage.setItem(KEY, JSON.stringify(snapshot)); } catch (_e) {}
   }
 
   function clamp(n, min, max) {
@@ -59,9 +61,11 @@
 
     var detail = clamp(Number(analysis.detail_score || 0), 0, 5);
     var reasoning = analysis.has_reasoning ? 1 : 0;
+    var complex = String(analysis.sentence_type || "").toLowerCase() === "complex" ? 1 : 0;
 
     var nextAvgDetail = ((existing.avgDetail * existing.totalSentences) + detail) / nextCount;
     var nextReasoningRate = ((existing.reasoningRate * existing.totalSentences) + reasoning) / nextCount;
+    var nextComplexRate = ((existing.complexRate * existing.totalSentences) + complex) / nextCount;
 
     var hasCohesion = options && typeof options.cohesion === "number" && !Number.isNaN(options.cohesion);
     var nextAvgCohesion = existing.avgCohesion;
@@ -74,7 +78,8 @@
       totalSentences: nextCount,
       avgDetail: Number(nextAvgDetail.toFixed(3)),
       avgCohesion: Number(nextAvgCohesion.toFixed(3)),
-      reasoningRate: Number(nextReasoningRate.toFixed(3))
+      reasoningRate: Number(nextReasoningRate.toFixed(3)),
+      complexRate: Number(nextComplexRate.toFixed(3))
     };
 
     write(next);
@@ -82,27 +87,25 @@
   }
 
   function readSchoolAnalytics() {
-    try {
-      var parsed = JSON.parse(localStorage.getItem(SCHOOL_KEY) || "null");
-      if (!parsed || typeof parsed !== "object") {
-        return { classes: {}, lastUpdated: 0 };
-      }
-      var classes = parsed.classes && typeof parsed.classes === "object" ? parsed.classes : {};
-      return {
-        classes: classes,
-        lastUpdated: Number(parsed.lastUpdated || 0)
-      };
-    } catch (_e) {
-      return { classes: {}, lastUpdated: 0 };
-    }
+    var parsed = schema && typeof schema.safeLoadJSON === "function"
+      ? schema.safeLoadJSON(SCHOOL_KEY, { classes: {}, lastUpdated: 0 })
+      : (function () {
+          try { return JSON.parse(localStorage.getItem(SCHOOL_KEY) || "null"); } catch (_e) { return null; }
+        })();
+    if (!parsed || typeof parsed !== "object") return { classes: {}, lastUpdated: 0 };
+    var classes = parsed.classes && typeof parsed.classes === "object" ? parsed.classes : {};
+    return {
+      classes: classes,
+      lastUpdated: Number(parsed.lastUpdated || 0)
+    };
   }
 
   function writeSchoolAnalytics(payload) {
-    try {
-      localStorage.setItem(SCHOOL_KEY, JSON.stringify(payload || { classes: {}, lastUpdated: Date.now() }));
-    } catch (_e) {
-      // ignore storage write failures
+    if (schema && typeof schema.safeSaveJSON === "function") {
+      schema.safeSaveJSON(SCHOOL_KEY, payload || { classes: {}, lastUpdated: Date.now() });
+      return;
     }
+    try { localStorage.setItem(SCHOOL_KEY, JSON.stringify(payload || { classes: {}, lastUpdated: Date.now() })); } catch (_e) {}
   }
 
   function normalizeClassId(classId) {
