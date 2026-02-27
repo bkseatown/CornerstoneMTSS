@@ -19,12 +19,14 @@
   var state = {
     values: { topic: '', body1: '', body2: '', conclusion: '' },
     analysis: { topic: null, body1: null, body2: null, conclusion: null },
+    pedagogy: { topic: null, body1: null, body2: null, conclusion: null },
     debounceTimer: 0,
     idleHandle: 0,
     analysisRunToken: 0,
     coachDismissedFor: '',
     demoTimers: []
   };
+  var tierLevel = resolveTierLevel();
 
   var PLACEHOLDERS = {
     topic: 'Enter a clear topic sentence.',
@@ -39,6 +41,22 @@
 
   function sanitize(text) {
     return String(text || '').replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function resolveTierLevel() {
+    try {
+      if (window.PB_TIER_LEVEL !== undefined && window.PB_TIER_LEVEL !== null) {
+        var fromWindow = Number(window.PB_TIER_LEVEL);
+        if (fromWindow === 1 || fromWindow === 2 || fromWindow === 3) return fromWindow;
+      }
+      var params = new URLSearchParams(window.location.search || '');
+      var raw = String(params.get('tier') || params.get('tierLevel') || '').toLowerCase();
+      if (raw === '1' || raw === 'tier1' || raw === 'tier-1' || raw === 'tier 1') return 1;
+      if (raw === '3' || raw === 'tier3' || raw === 'tier-3' || raw === 'tier 3') return 3;
+    } catch (_e) {
+      // ignore
+    }
+    return 2;
   }
 
   function getSlotEl(type) {
@@ -134,27 +152,43 @@
   }
 
   function updateCoach() {
-    var topic = state.values.topic;
-    var bodyReasoning = (state.analysis.body1 && state.analysis.body1.has_reasoning)
-      || (state.analysis.body2 && state.analysis.body2.has_reasoning);
-    var detailLow = computeDetail(state.analysis) <= 2;
+    var keys = ['topic', 'body1', 'body2', 'conclusion'];
+    var counts = {};
+    var selected = null;
 
-    if (!topic) {
-      showCoach('Make your topic clear and specific.');
+    keys.forEach(function (key) {
+      var row = state.pedagogy[key];
+      if (!row || !row.primary_focus || !row.coach_prompt) return;
+      counts[row.primary_focus] = Number(counts[row.primary_focus] || 0) + 1;
+    });
+
+    var prioritized = '';
+    Object.keys(counts).forEach(function (focus) {
+      if (!prioritized || counts[focus] > counts[prioritized]) prioritized = focus;
+    });
+
+    if (prioritized) {
+      for (var i = 0; i < keys.length; i += 1) {
+        var key = keys[i];
+        var row = state.pedagogy[key];
+        if (row && row.primary_focus === prioritized && row.coach_prompt) {
+          selected = row;
+          break;
+        }
+      }
+    }
+
+    if (selected) {
+      var text = selected.coach_prompt;
+      if (tierLevel === 3 && selected.suggested_stem) text += ' Stem: ' + sanitize(selected.suggested_stem);
+      if (tierLevel === 1 && selected.extension_option) text += ' Challenge: ' + sanitize(selected.extension_option);
+      showCoach(text);
       return;
     }
-    if (!bodyReasoning) {
-      showCoach('Add a reason using because or although.');
-      return;
-    }
-    if (detailLow) {
-      showCoach('Help the reader see more detail.');
-      return;
-    }
-    if (!state.values.conclusion) {
-      showCoach('Wrap up by linking back to your topic.');
-      return;
-    }
+
+    if (!state.values.topic) return showCoach('Make your topic clear and specific.');
+    if (!state.values.body1 || !state.values.body2) return showCoach('Add support in both body sentences.');
+    if (!state.values.conclusion) return showCoach('Wrap up by linking back to your topic.');
     hideCoach();
   }
 
@@ -181,10 +215,11 @@
   }
 
   async function runAnalysis(token) {
+    var runToken = typeof token === 'number' ? token : state.analysisRunToken;
     var keys = ['topic','body1','body2','conclusion'];
     for (var i = 0; i < keys.length; i += 1) {
       var key = keys[i];
-      if (token !== state.analysisRunToken) return;
+      if (runToken !== state.analysisRunToken) return;
       state.analysis[key] = await (window.CSAIService && window.CSAIService.analyzeSentence
         ? window.CSAIService.analyzeSentence(state.values[key], {
           endpoint: window.PB_AI_ENDPOINT || window.WS_AI_ENDPOINT || '',
@@ -192,7 +227,15 @@
           cohesion: computeCohesion(state.values)
         })
         : analyzeSentence(state.values[key]));
-      if (token !== state.analysisRunToken) return;
+      state.pedagogy[key] = await (window.CSAIService && window.CSAIService.generatePedagogyFeedback
+        ? window.CSAIService.generatePedagogyFeedback(state.values[key], (state.analysis[key] || {}).suggested_focus, {
+          analysis: state.analysis[key],
+          tierLevel: tierLevel,
+          coachEndpoint: window.PB_COACH_ENDPOINT || window.WS_COACH_ENDPOINT || '',
+          channel: 'paragraph-builder-pedagogy-' + key
+        })
+        : null);
+      if (runToken !== state.analysisRunToken) return;
     }
     renderMetrics();
   }
@@ -283,6 +326,7 @@
   function resetBuilder() {
     state.values = { topic: '', body1: '', body2: '', conclusion: '' };
     state.analysis = { topic: null, body1: null, body2: null, conclusion: null };
+    state.pedagogy = { topic: null, body1: null, body2: null, conclusion: null };
     setAllPlaceholders();
     hideCoach();
     if (actionsEl) actionsEl.classList.add('hidden');
@@ -335,6 +379,7 @@
     setSlotText('body2', 'Because they comfort patients, recovery improves.');
     setSlotText('conclusion', 'Dogs make a meaningful difference.');
     collectValues();
+    state.analysisRunToken += 1;
     void runAnalysis();
 
     demoSetTimeout(function () { showCoachForSlot('topic', 'Make your topic clear and specific.'); }, 400);

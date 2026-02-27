@@ -58,9 +58,36 @@
   var AI_ENDPOINT = "";
   var COACH_ENDPOINT = "";
   var demoLocked = false;
+  var tierLevel = resolveTierLevel();
 
   function sanitize(text) {
     return String(text || "").replace(/[\n\r]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function resolveTierLevel() {
+    try {
+      if (window.SS_TIER_LEVEL !== undefined && window.SS_TIER_LEVEL !== null) {
+        var fromWindow = Number(window.SS_TIER_LEVEL);
+        if (fromWindow === 1 || fromWindow === 2 || fromWindow === 3) return fromWindow;
+      }
+      var params = new URLSearchParams(window.location.search || "");
+      var raw = String(params.get("tier") || params.get("tierLevel") || "").toLowerCase();
+      if (raw === "1" || raw === "tier1" || raw === "tier-1" || raw === "tier 1") return 1;
+      if (raw === "3" || raw === "tier3" || raw === "tier-3" || raw === "tier 3") return 3;
+    } catch (_e) {
+      // ignore
+    }
+    return 2;
+  }
+
+  function skillLabel(skill) {
+    var key = String(skill || "").toLowerCase();
+    if (key === "verb_precision") return "Verb Precision";
+    if (key === "sentence_control") return "Sentence Control";
+    if (key === "reasoning") return "Reasoning";
+    if (key === "detail") return "Detail";
+    if (key === "cohesion") return "Cohesion";
+    return "Reasoning";
   }
 
   function setCoachText(text) {
@@ -166,9 +193,36 @@
     renderTraits(lens.metrics);
     levelEl.textContent = "Level " + level + " • Step " + engine.state.step + "/" + engine.state.maxActions;
 
+    var pedagogy = await (aiService && aiService.generatePedagogyFeedback
+      ? aiService.generatePedagogyFeedback(sentenceText, ai.suggested_focus, {
+        analysis: ai,
+        tierLevel: tierLevel,
+        coachEndpoint: COACH_ENDPOINT,
+        channel: "sentence-surgery-pedagogy"
+      })
+      : null);
+    if (token !== activeAnalysisToken) return;
+    if (pedagogy && skillTagEl) {
+      skillTagEl.textContent = "Skill: " + skillLabel(pedagogy.primary_focus);
+    }
+    if (pedagogy && pedagogy.coach_prompt) {
+      var coachText = pedagogy.coach_prompt;
+      if (tierLevel === 3 && pedagogy.suggested_stem) {
+        coachText += " Stem: " + sanitize(pedagogy.suggested_stem);
+      }
+      setCoachText(coachText);
+      return;
+    }
     var coach = await (aiService && aiService.generateMicroCoach
-      ? aiService.generateMicroCoach(sentenceText, ai.suggested_focus, { coachEndpoint: COACH_ENDPOINT, channel: "sentence-surgery-coach" })
-      : window.SSAIAnalysis.microCoach(sentenceText, ai.suggested_focus, { coachEndpoint: COACH_ENDPOINT }));
+      ? aiService.generateMicroCoach(sentenceText, ai.suggested_focus, {
+        coachEndpoint: COACH_ENDPOINT,
+        tierLevel: tierLevel,
+        channel: "sentence-surgery-coach"
+      })
+      : window.SSAIAnalysis.microCoach(sentenceText, ai.suggested_focus, {
+        coachEndpoint: COACH_ENDPOINT,
+        tierLevel: tierLevel
+      }));
     if (token !== activeAnalysisToken) return;
     setCoachText(coach);
   }

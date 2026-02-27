@@ -125,6 +125,91 @@
     return local[focus] || "Add one precise detail, then read it aloud for punctuation control.";
   }
 
+  function clampTierLevel(rawTier) {
+    var engine = window.CSPedagogyEngine;
+    if (engine && typeof engine.clampTier === "function") return engine.clampTier(rawTier);
+    var n = Number(rawTier);
+    if (n === 1 || n === 2 || n === 3) return n;
+    var text = String(rawTier || "").toLowerCase();
+    if (text.indexOf("tier 1") >= 0 || text.indexOf("tier1") >= 0 || text === "1") return 1;
+    if (text.indexOf("tier 3") >= 0 || text.indexOf("tier3") >= 0 || text === "3") return 3;
+    return 2;
+  }
+
+  function validPrimaryFocus(value) {
+    var focus = String(value || "");
+    var list = (window.CSPedagogyEngine && window.CSPedagogyEngine.VALID_PRIMARY) || [
+      "reasoning",
+      "detail",
+      "verb_precision",
+      "cohesion",
+      "sentence_control"
+    ];
+    return list.indexOf(focus) >= 0 ? focus : "";
+  }
+
+  function compactWords(text, limit) {
+    return String(text || "").trim().split(/\s+/).filter(Boolean).slice(0, limit).join(" ");
+  }
+
+  function fallbackPedagogy(sentence, focusArea, tierLevel, analysis) {
+    var engine = window.CSPedagogyEngine;
+    var tier = clampTierLevel(tierLevel);
+    var clean = normalizeSentence(sentence);
+    var focus = validPrimaryFocus(focusArea) || (analysis && validPrimaryFocus(analysis.suggested_focus)) || "reasoning";
+    if (engine && typeof engine.heuristicPedagogy === "function") {
+      return engine.heuristicPedagogy(clean, tier, analysis || heuristic(clean), focus);
+    }
+    var coach = fallbackCoach(focus);
+    return {
+      skills_detected: {
+        reasoning: !!(analysis && analysis.has_reasoning),
+        detail_score: Number((analysis && analysis.detail_score) || 1),
+        verb_strength: String((analysis && analysis.verb_strength) || "adequate"),
+        cohesion_score: analysis && analysis.has_reasoning ? 3 : 1,
+        sentence_control_score: /[.!?]$/.test(clean) ? 3 : 1
+      },
+      primary_focus: focus,
+      coach_prompt: compactWords(coach, 30),
+      suggested_stem: tier === 3 ? "Because ___, ___." : null,
+      extension_option: tier === 1 ? "Add one contrast or qualifying clause to deepen precision." : null
+    };
+  }
+
+  function parsePedagogyShape(payload, sentence, focusArea, tierLevel, analysis) {
+    if (!payload || typeof payload !== "object") throw new Error("invalid_json");
+    if (!payload.skills_detected || typeof payload.skills_detected !== "object") throw new Error("schema_mismatch");
+
+    var primary = validPrimaryFocus(payload.primary_focus);
+    if (!primary) throw new Error("schema_mismatch");
+
+    var tier = clampTierLevel(tierLevel);
+    var skills = payload.skills_detected || {};
+    var verbStrength = String(skills.verb_strength || "adequate").toLowerCase();
+    if (verbStrength !== "weak" && verbStrength !== "adequate" && verbStrength !== "strong") {
+      verbStrength = "adequate";
+    }
+
+    var shaped = {
+      skills_detected: {
+        reasoning: !!skills.reasoning,
+        detail_score: Math.max(0, Math.min(5, Number(skills.detail_score || 0))),
+        verb_strength: verbStrength,
+        cohesion_score: Math.max(0, Math.min(5, Number(skills.cohesion_score || 0))),
+        sentence_control_score: Math.max(0, Math.min(5, Number(skills.sentence_control_score || 0)))
+      },
+      primary_focus: primary,
+      coach_prompt: compactWords(String(payload.coach_prompt || ""), 30),
+      suggested_stem: payload.suggested_stem == null ? null : String(payload.suggested_stem),
+      extension_option: payload.extension_option == null ? null : String(payload.extension_option)
+    };
+
+    if (!shaped.coach_prompt) throw new Error("schema_mismatch");
+    if (tier !== 3) shaped.suggested_stem = null;
+    if (tier !== 1) shaped.extension_option = null;
+    return shaped;
+  }
+
   function sleep(ms) {
     return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
   }
@@ -310,56 +395,72 @@
   }
 
   async function generateMicroCoach(sentence, focusArea, options) {
+    var pedagogy = await generatePedagogyFeedback(sentence, focusArea, options);
+    return pedagogy && pedagogy.coach_prompt ? pedagogy.coach_prompt : fallbackCoach(focusArea);
+  }
+
+  async function generatePedagogyFeedback(sentence, focusArea, options) {
     var opts = options || {};
     var clean = normalizeSentence(sentence);
     var focus = String(focusArea || "reasoning").toLowerCase();
+    var tierLevel = clampTierLevel(opts.tierLevel);
+    if (!clean) return fallbackPedagogy(clean, focus, tierLevel, heuristic(clean));
 
-    if (!clean) return fallbackCoach(focus);
-
-    var hash = await hashSentence(clean + "::" + focus);
+    var hash = await hashSentence(clean + "::" + focus + "::t" + String(tierLevel));
     var cache = window.CSCacheEngine && window.CSCacheEngine.get ? window.CSCacheEngine.get(hash) : null;
-    if (cache && cache.coach) {
+    if (cache && cache.pedagogy) {
       usageBump("cache_hits");
-      return cache.coach;
+      return cache.pedagogy;
     }
 
-    var coachEndpoint = opts.coachEndpoint || window.WS_COACH_ENDPOINT || window.PB_COACH_ENDPOINT || "";
+    var baseAnalysis = opts.analysis && typeof opts.analysis === "object"
+      ? opts.analysis
+      : heuristic(clean);
+    var coachEndpoint = opts.pedagogyEndpoint || opts.coachEndpoint || window.WS_COACH_ENDPOINT || window.PB_COACH_ENDPOINT || "";
     if (shouldSkipAI(coachEndpoint)) {
       usageBump("fallback_count");
-      return fallbackCoach(focus);
+      return fallbackPedagogy(clean, focus, tierLevel, baseAnalysis);
     }
 
     await runDebounce(hash);
 
     if (!claimRateLimitSlot()) {
       usageBump("rate_limited");
-      return fallbackCoach(focus);
+      return fallbackPedagogy(clean, focus, tierLevel, baseAnalysis);
     }
 
-    var channel = String(opts.channel || "global-coach");
+    var channel = String(opts.channel || "global-pedagogy");
+    var engine = window.CSPedagogyEngine;
+    var systemPrompt = engine && typeof engine.buildPedagogyPrompt === "function"
+      ? engine.buildPedagogyPrompt(clean, tierLevel)
+      : "";
 
     try {
-      var text = await fetchTextWithTimeout(coachEndpoint, {
+      var json = await fetchJsonWithTimeout(coachEndpoint, {
         sentence: clean,
-        focus: focus
+        focus: focus,
+        tier_level: tierLevel,
+        response_format: "json",
+        system_prompt: systemPrompt
       }, channel);
-      var compact = text.split(" ").slice(0, 22).join(" ");
+      var shaped = parsePedagogyShape(json, clean, focus, tierLevel, baseAnalysis);
       if (window.CSCacheEngine && window.CSCacheEngine.set) {
-        window.CSCacheEngine.set(hash, { coach: compact });
+        window.CSCacheEngine.set(hash, { pedagogy: shaped, coach: shaped.coach_prompt });
       }
       usageBump("ai_calls");
-      logDebug("generateMicroCoach ai", { channel: channel, hash: hash.slice(0, 8) });
-      return compact;
+      logDebug("generatePedagogyFeedback ai", { channel: channel, hash: hash.slice(0, 8) });
+      return shaped;
     } catch (err) {
       usageBump("fallback_count");
-      logDebug("generateMicroCoach fallback", err && err.message ? err.message : err);
-      return fallbackCoach(focus);
+      logDebug("generatePedagogyFeedback fallback", err && err.message ? err.message : err);
+      return fallbackPedagogy(clean, focus, tierLevel, baseAnalysis);
     }
   }
 
   window.CSAIService = {
     hashSentence: hashSentence,
     analyzeSentence: analyzeSentence,
+    generatePedagogyFeedback: generatePedagogyFeedback,
     generateMicroCoach: generateMicroCoach,
     heuristicAnalyze: heuristic,
     isDemoMode: isDemoMode,
