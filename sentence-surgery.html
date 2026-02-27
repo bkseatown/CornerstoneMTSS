@@ -8,77 +8,87 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./sentence-surgery.css?v=20260227d">
+  <link rel="stylesheet" href="./sentence-surgery.css?v=20260227f">
 </head>
-<body class="cs-page-surgery">
+<body class="cs-page-surgery writing-studio">
   <main class="ss-container" aria-label="Sentence Surgery practice">
     <h1 class="ss-header">Sentence Surgery</h1>
 
-    <section class="ss-sentence-wrapper" aria-label="Editable sentence">
-      <div id="ssSentence" class="ss-sentence" role="textbox" aria-multiline="false" aria-label="Edit your sentence">
-        The dog ran.
+    <section class="ss-card" aria-label="Sentence builder">
+      <div class="ss-sentence-wrapper" aria-label="Structured sentence">
+        <div id="ssSentence" class="ss-sentence" role="group" aria-label="Build your sentence"></div>
+      </div>
+      <div id="ssCoachBubble" class="ss-coach hidden" aria-live="polite"></div>
+
+      <section class="ss-actions" aria-label="Sentence actions">
+        <button type="button" class="ss-action-btn" data-action="why">Add Why</button>
+        <button type="button" class="ss-action-btn" data-action="detail">Add Detail</button>
+        <button type="button" class="ss-action-btn" data-action="verb">Upgrade Verb</button>
+        <button type="button" class="ss-action-btn" data-action="clause">Add Clause</button>
+        <button type="button" class="ss-action-btn" id="ssTeacherToggle" aria-pressed="false">Teacher Lens</button>
+        <div class="ss-verb-menu hidden" id="ssVerbMenu" role="menu" aria-label="Choose a verb"></div>
+      </section>
+
+      <section class="ss-meter" aria-label="Complexity meter">
+        <div class="ss-meter-bar" id="ssMeterBar"></div>
+      </section>
+      <div class="ss-level" id="ssLevel">Level 1</div>
+
+      <section class="ss-stats" aria-label="Sentence summary">
+        <div><strong id="ssWordCount">Words: 0</strong></div>
+        <div id="ssType">Type: simple</div>
+        <div id="ssFocus">Focus: reasoning</div>
+      </section>
+
+      <section class="ss-traits" aria-label="Writing traits">
+        <div class="ss-trait"><span>Clarity</span><div class="ss-trait-track"><div id="ssTraitClarity" class="ss-trait-fill"></div></div><span id="ssTraitClarityValue">0</span></div>
+        <div class="ss-trait"><span>Detail</span><div class="ss-trait-track"><div id="ssTraitDetail" class="ss-trait-fill"></div></div><span id="ssTraitDetailValue">0</span></div>
+        <div class="ss-trait"><span>Reasoning</span><div class="ss-trait-track"><div id="ssTraitReasoning" class="ss-trait-fill"></div></div><span id="ssTraitReasoningValue">0</span></div>
+        <div class="ss-trait"><span>Control</span><div class="ss-trait-track"><div id="ssTraitControl" class="ss-trait-fill"></div></div><span id="ssTraitControlValue">0</span></div>
+      </section>
+
+      <aside class="ss-breakdown" id="ssBreakdown" aria-live="polite">
+        <div><strong>Skill Tag:</strong> <span id="ssSkillTag">Emerging sentence</span></div>
+        <div><strong>Suggested Grouping:</strong> <span id="ssGrouping">Tier 2</span></div>
+        <div id="ssBreakdownBody">Words: 0 • Clauses: 0 • Adjectives: 0 • Strong Verb: No</div>
+      </aside>
+
+      <div class="ss-footer" id="ssFooterCta">
+        <button type="button" id="ssDoneBtn" class="ss-action-btn">Done</button>
+        <button type="button" id="ssTryAnotherBtn" class="ss-action-btn">Try another</button>
+        <button type="button" id="ssChaosToggleBtn" class="ss-action-btn">Fix the Chaos</button>
       </div>
     </section>
 
-    <section class="ss-actions" aria-label="Sentence actions">
-      <button type="button" data-action="why">Add Why</button>
-      <button type="button" data-action="detail">Add Detail</button>
-      <button type="button" data-action="verb">Upgrade Verb</button>
-      <button type="button" id="ssTeacherToggle" class="ss-teacher-toggle" aria-pressed="false">Teacher Lens</button>
-      <div class="ss-verb-menu hidden" id="ssVerbMenu" role="menu" aria-label="Choose a verb"></div>
+    <section id="ssChaosPanel" class="ss-chaos hidden" aria-label="Fix the Chaos game">
+      <h2>Fix the Chaos</h2>
+      <p id="ssChaosPrompt">Tap the best fix for this sentence.</p>
+      <div id="ssChaosSentence" class="ss-chaos-sentence"></div>
+      <div class="ss-chaos-actions">
+        <button type="button" class="ss-action-btn" data-chaos-action="punctuate">Insert punctuation</button>
+        <button type="button" class="ss-action-btn" data-chaos-action="replace">Replace word</button>
+        <button type="button" class="ss-action-btn" data-chaos-action="combine">Combine clause</button>
+      </div>
+      <div id="ssChaosResult" class="ss-chaos-result" aria-live="polite"></div>
     </section>
 
-    <section class="ss-meter" aria-label="Complexity meter">
-      <div class="ss-meter-bar" id="ssMeterBar"></div>
+    <section id="ssDashboard" class="ss-dashboard hidden" aria-label="Class snapshot">
+      <h2>Class Snapshot</h2>
+      <div id="ssDashboardStats">Simple: 0% • Complex: 0% • Reasoning: 0% • Strong verbs: 0%</div>
+      <p id="ssDashboardLesson">Suggested mini-lesson: Model complex sentences using subordinating conjunctions.</p>
     </section>
 
-    <div class="ss-level" id="ssLevel">Level 1</div>
-    <div class="ss-dev-label hidden" id="ssDevLabel" aria-live="polite"></div>
-
-    <section class="ss-traits" aria-label="Writing traits">
-      <div class="ss-trait">
-        <span>Clarity</span>
-        <div class="ss-trait-track"><div id="ssTraitClarity" class="ss-trait-fill"></div></div>
-        <span id="ssTraitClarityValue">0</span>
-      </div>
-      <div class="ss-trait">
-        <span>Detail</span>
-        <div class="ss-trait-track"><div id="ssTraitDetail" class="ss-trait-fill"></div></div>
-        <span id="ssTraitDetailValue">0</span>
-      </div>
-      <div class="ss-trait">
-        <span>Reasoning</span>
-        <div class="ss-trait-track"><div id="ssTraitReasoning" class="ss-trait-fill"></div></div>
-        <span id="ssTraitReasoningValue">0</span>
-      </div>
-      <div class="ss-trait">
-        <span>Control</span>
-        <div class="ss-trait-track"><div id="ssTraitControl" class="ss-trait-fill"></div></div>
-        <span id="ssTraitControlValue">0</span>
-      </div>
-    </section>
-
-    <aside class="ss-breakdown" id="ssBreakdown" aria-live="polite">
-      <div><strong>Skill Tag:</strong> <span id="ssSkillTag">Emerging sentence</span></div>
-      <div><strong>Suggested Grouping:</strong> <span id="ssGrouping">Core</span></div>
-      <div id="ssBreakdownBody">Word count, clause use, and verb strength update live.</div>
-    </aside>
-
-    <div class="ss-badge" id="ssBadge" role="status" aria-live="polite"></div>
-    <div class="ss-footer hidden" id="ssFooterCta">
-      <button type="button" id="ssDoneBtn">Done</button>
-      <button type="button" id="ssTryAnotherBtn">Try another</button>
-    </div>
     <div class="ss-compare" id="ssCompare" aria-hidden="true">
       <div class="before" id="ssCompareBefore"></div>
       <div class="after" id="ssCompareAfter"></div>
     </div>
-    <div class="ss-complete-actions hidden" id="ssCompleteActions">
-      <button type="button" id="ssNextSentenceBtn">Next sentence</button>
-      <button type="button" id="ssExitStudioBtn">Exit to Studio</button>
-    </div>
   </main>
 
-  <script src="./sentence-surgery.js?v=20260227e" defer></script>
+  <script src="./sentenceEngine.js?v=20260227a" defer></script>
+  <script src="./aiAnalysis.js?v=20260227a" defer></script>
+  <script src="./teacherLens.js?v=20260227a" defer></script>
+  <script src="./fixChaosGame.js?v=20260227a" defer></script>
+  <script src="./demoMode.js?v=20260227a" defer></script>
+  <script src="./sentence-surgery.js?v=20260227f" defer></script>
 </body>
 </html>
