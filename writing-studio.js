@@ -535,6 +535,7 @@
   var threeSecEl = document.getElementById("ws-three-sec");
   var startTitleEl = document.getElementById("ws-start-title");
   var startCtaBtn = document.getElementById("ws-start-cta");
+  var runtimeStatusEl = document.getElementById("ws-runtime-status");
   var launchSearchInput = document.getElementById("ws-launch-search");
   var launchResultsEl = document.getElementById("ws-launch-results");
   var launchContextEl = document.getElementById("ws-launch-context");
@@ -612,6 +613,7 @@
   var saveBtn = document.getElementById("ws-save");
   var clearBtn = document.getElementById("ws-clear");
   var modeButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-mode]"));
+  var modeToggleBtn = document.getElementById("ws-mode-toggle");
   var audienceButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-audience]"));
   var presetSelect = document.getElementById("ws-preset-pack");
   var profileButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-profile]"));
@@ -788,6 +790,39 @@
 
   if (!editor || !metrics || !coach || !vocab || !saveBtn || !clearBtn) {
     return;
+  }
+
+  function safeGetItem(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function safeSetItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function safeRemoveItem(key) {
+    try {
+      localStorage.removeItem(key);
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function syncRuntimeStatus() {
+    if (!runtimeStatusEl) return;
+    var online = navigator.onLine !== false;
+    runtimeStatusEl.classList.toggle("is-offline", !online);
+    runtimeStatusEl.textContent = online ? "Online" : "Offline";
   }
 
   function splitSentences(text) {
@@ -1030,7 +1065,7 @@
   function toggleDictation() {
     initRecognition();
     if (!recognition) {
-      showToast("Dictation not supported");
+      showToast("Dictation is not available in this browser");
       return;
     }
     if (isDictating) {
@@ -1048,7 +1083,7 @@
       }
       showToast("Dictation on");
     } catch (_err) {
-      showToast("Dictation unavailable");
+      showToast("Dictation could not start");
     }
   }
 
@@ -1801,11 +1836,11 @@
         trackArtifactCopy(successMessage || "Copied");
         showToast(successMessage || "Copied");
       }).catch(function () {
-        showToast("Copy blocked by browser");
+        showToast("Copy blocked by browser permissions");
       });
       return;
     }
-    showToast("Clipboard not available");
+    showToast("Clipboard is not available in this browser");
   }
 
   function getArtifactMinutes(label) {
@@ -4311,7 +4346,10 @@
   }
 
   function saveDraft() {
-    localStorage.setItem(DRAFT_KEY, editor.value);
+    if (!safeSetItem(DRAFT_KEY, editor.value)) {
+      showToast("Could not save draft on this device");
+      return;
+    }
     updateQualityStreak(editor.value, getWordCount(editor.value), splitSentences(editor.value).length);
     var stage = document.getElementById("ws-stage");
     if (stage) {
@@ -4323,7 +4361,7 @@
 
   function clearDraft() {
     editor.value = "";
-    localStorage.removeItem(DRAFT_KEY);
+    safeRemoveItem(DRAFT_KEY);
     checklistInputs.forEach(function (input) { input.checked = false; });
     currentStep = "plan";
     if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -4333,7 +4371,7 @@
   }
 
   function loadDraft() {
-    var saved = localStorage.getItem(DRAFT_KEY);
+    var saved = safeGetItem(DRAFT_KEY);
     if (saved) {
       editor.value = saved;
     }
@@ -4348,6 +4386,22 @@
       stored = "ccss";
     }
     setFramework(stored, { silent: true });
+  }
+
+  function syncModeToggle() {
+    if (!modeToggleBtn) return;
+    modeToggleBtn.textContent = "Mode: " + (currentMode === "paragraph" ? "Paragraph" : "Sentence");
+    modeToggleBtn.setAttribute(
+      "aria-label",
+      currentMode === "paragraph"
+        ? "Switch to sentence mode"
+        : "Switch to paragraph mode"
+    );
+  }
+
+  function toggleModeQuick() {
+    setMode(currentMode === "paragraph" ? "sentence" : "paragraph");
+    showToast(currentMode === "paragraph" ? "Paragraph mode on" : "Sentence mode on");
   }
 
   function setMode(mode) {
@@ -4367,6 +4421,7 @@
     renderStepUpMode();
     renderChecklist();
     renderVocabPills();
+    syncModeToggle();
     setImagePrompts(imagePromptItems.length ? buildImagePrompts(imagePromptLabel || "this image") : []);
     updateMetricsAndCoach();
     renderLaunchpadCopy();
@@ -4520,6 +4575,9 @@
   }
 
   function resolveStudioBuildLabel() {
+    var metaBuild = document.querySelector('meta[name="ws-build"]');
+    var metaValue = String(metaBuild && metaBuild.getAttribute("content") || "").trim();
+    if (metaValue) return metaValue;
     var scripts = Array.prototype.slice.call(document.querySelectorAll("script[src]"));
     var studioScript = scripts.find(function (script) {
       return /(?:^|\/)writing-studio\.js(?:[?#]|$)/i.test(String(script.getAttribute("src") || ""));
@@ -4599,6 +4657,7 @@
       setMode(btn.getAttribute("data-mode"));
     });
   });
+  if (modeToggleBtn) modeToggleBtn.addEventListener("click", toggleModeQuick);
   audienceButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       setAudience(btn.getAttribute("data-audience"));
@@ -4781,7 +4840,9 @@
   if (controlsMoreBtn) controlsMoreBtn.addEventListener("click", function () {
     setControlsAdvancedOpen(!controlsAdvancedOpen);
   });
-  settingsBtn.addEventListener("click", cycleTheme);
+  if (settingsBtn) settingsBtn.addEventListener("click", cycleTheme);
+  window.addEventListener("online", syncRuntimeStatus);
+  window.addEventListener("offline", syncRuntimeStatus);
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && showcaseOpen) {
       closeShowcase();
@@ -4828,6 +4889,7 @@
   });
 
   applyTheme(resolveInitialTheme());
+  syncRuntimeStatus();
   syncStudioVersionChip();
   buildLauncherOptions();
   renderOrganizerPreview();
@@ -4861,6 +4923,7 @@
     renderFishTankTarget(getSelectedFishTankLesson());
   }
   loadPresetPack();
+  syncModeToggle();
   applyTaskHandoffFromHash();
   applyWordQuestContext();
   maybeStartGreeting();

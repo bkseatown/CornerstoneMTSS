@@ -13,6 +13,10 @@
   --ws-30-surface-2: #26384d;
   --ws-10-accent: #5ec8ff;
   --ws-10-warm: #ffbf69;
+  --ws-neutral-border: rgba(199, 210, 224, 0.34);
+  --ws-neutral-surface: rgba(23, 31, 41, 0.68);
+  --ws-neutral-surface-soft: rgba(17, 25, 35, 0.58);
+  --ws-neutral-ink: rgba(239, 245, 252, 0.95);
   --ws-ink-dark: #132236;
   --ws-ink-light: rgba(255, 255, 255, 0.94);
   --ws-muted: rgba(226, 237, 252, 0.78);
@@ -164,6 +168,27 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   color: rgba(241, 249, 255, 0.9);
 }
 
+.ws-runtime-status {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(146, 233, 190, 0.36);
+  background: rgba(27, 83, 58, 0.34);
+  color: rgba(223, 255, 237, 0.96);
+}
+
+.ws-runtime-status.is-offline {
+  border-color: rgba(255, 189, 140, 0.46);
+  background: rgba(95, 51, 29, 0.4);
+  color: rgba(255, 232, 212, 0.96);
+}
+
 .ws-start-here {
   margin-top: var(--ws-gap-2);
   display: grid;
@@ -202,9 +227,9 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   border-radius: 999px;
   padding: 4px 10px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(122, 167, 255, 0.36);
-  background: rgba(122, 167, 255, 0.16);
+  color: var(--ws-neutral-ink);
+  border: 1px solid var(--ws-neutral-border);
+  background: rgba(92, 110, 129, 0.26);
 }
 
 .ws-launch-context:empty {
@@ -220,10 +245,10 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-launch-search {
   width: 100%;
   border-radius: 12px;
-  background: rgba(13, 23, 34, 0.42);
-  border: 1px solid rgba(94, 200, 255, 0.28);
+  background: var(--ws-neutral-surface-soft);
+  border: 1px solid var(--ws-neutral-border);
   padding: 10px 12px;
-  color: rgba(244, 251, 255, 0.98);
+  color: var(--ws-neutral-ink);
   font-weight: 600;
 }
 
@@ -250,8 +275,8 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   max-height: 320px;
   overflow: auto;
   border-radius: 12px;
-  border: 1px solid rgba(94, 200, 255, 0.22);
-  background: rgba(14, 24, 36, 0.96);
+  border: 1px solid var(--ws-neutral-border);
+  background: rgba(16, 24, 34, 0.97);
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
   padding: 8px;
   display: grid;
@@ -261,10 +286,10 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-launch-option {
-  border: 1px solid rgba(94, 200, 255, 0.22);
+  border: 1px solid rgba(188, 202, 217, 0.28);
   border-radius: 8px;
-  background: transparent;
-  color: rgba(239, 247, 255, 0.95);
+  background: var(--ws-neutral-surface-soft);
+  color: var(--ws-neutral-ink);
   font-size: 13px;
   text-align: left;
   padding: 8px 9px;
@@ -272,8 +297,8 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-launch-option:hover {
-  border-color: rgba(94, 200, 255, 0.4);
-  background: rgba(94, 200, 255, 0.12);
+  border-color: rgba(213, 223, 234, 0.46);
+  background: rgba(113, 130, 151, 0.24);
 }
 
 .ws-controls {
@@ -303,8 +328,23 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-controls-primary .ws-chip[data-mode].is-active {
-  border-bottom-color: rgba(94, 200, 255, 0.85);
+  border-bottom-color: rgba(226, 236, 247, 0.9);
   background: transparent;
+}
+
+#ws-mode-toggle {
+  border-radius: 999px;
+  border: 1px solid var(--ws-neutral-border);
+  padding: 7px 12px;
+  background: var(--ws-neutral-surface);
+  color: var(--ws-neutral-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#ws-mode-toggle:hover {
+  border-color: rgba(218, 228, 239, 0.52);
+  background: rgba(126, 142, 162, 0.26);
 }
 
 .ws-controls-primary .ws-icon-btn {
@@ -1316,6 +1356,8 @@ button.ws-pill {
   #ws-topbar {
     align-items: flex-start;
     flex-direction: column;
+    padding: var(--ws-gap-4) var(--ws-gap-3);
+    gap: var(--ws-gap-3);
   }
 
   #ws-stage {
@@ -1346,6 +1388,18 @@ button.ws-pill {
   .ws-controls-primary,
   .ws-controls-row {
     justify-content: flex-start;
+  }
+
+  .ws-launch-search-wrap {
+    width: 100%;
+    max-width: none;
+  }
+
+  .ws-launch-results {
+    position: static;
+    width: 100%;
+    margin-top: 6px;
+    max-height: 280px;
   }
 
   .ws-rail-nav {
@@ -1692,6 +1746,15 @@ body.cs-writing-greeting-open .app-shell {
 }
 
 @media (max-width: 720px) {
+  #ws-mode-toggle {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .ws-launch-results {
+    grid-template-columns: 1fr;
+  }
+
   .ws-version-chip {
     right: 8px;
     bottom: 6px;
