@@ -999,6 +999,31 @@
     );
   }
 
+  function buildReviewLinkUrl() {
+    const url = new URL(window.location.href);
+    const stamp = new Date();
+    const parts = [
+      String(stamp.getFullYear()),
+      String(stamp.getMonth() + 1).padStart(2, '0'),
+      String(stamp.getDate()).padStart(2, '0'),
+      String(stamp.getHours()).padStart(2, '0'),
+      String(stamp.getMinutes()).padStart(2, '0'),
+      String(stamp.getSeconds()).padStart(2, '0')
+    ];
+    const runtime = resolveRuntimeChannel().toLowerCase();
+    const build = (resolveBuildLabel() || 'local').toLowerCase().replace(/[^a-z0-9._-]+/g, '-');
+    url.searchParams.set('cb', `review-${parts.join('')}-${runtime}-${build}`);
+    return url.toString();
+  }
+
+  async function copyReviewLink() {
+    await copyTextToClipboard(
+      buildReviewLinkUrl(),
+      'Review link copied with fresh cache-buster.',
+      'Could not copy review link on this device.'
+    );
+  }
+
   function setHoverNoteForElement(el, note) {
     if (!el) return;
     const text = String(note || '').replace(/\s+/g, ' ').trim();
@@ -5303,6 +5328,9 @@
   });
   _el('diag-copy-btn')?.addEventListener('click', () => {
     void copyDiagnosticsSummary();
+  });
+  _el('diag-copy-review-link-btn')?.addEventListener('click', () => {
+    void copyReviewLink();
   });
   _el('session-copy-btn')?.addEventListener('click', () => {
     void copySessionSummary();
