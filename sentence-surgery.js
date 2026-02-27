@@ -601,6 +601,26 @@
     window.__SS_DEBUG = { state: state };
   });
 
+  sentenceEl.addEventListener("keydown", function (event) {
+    var blankEl = event.target && event.target.closest && event.target.closest(".ss-blank");
+    if (!blankEl) return;
+    if (event.key !== "Enter") return;
+    // Keep slots single-line: Enter should commit, not create a new row.
+    event.preventDefault();
+    var blankId = blankEl.getAttribute("data-blank-id");
+    if (!blankId) return;
+    var value = sanitizeText(blankEl.textContent);
+    if (blankId === "why1" && blankEl.classList.contains("placeholder")) value = "";
+    if (blankId === "why1" && !value) {
+      normalizeWhySlotPlaceholder(blankEl);
+      value = "";
+    }
+    state.blankValues[blankId] = value;
+    blankEl.blur();
+    updateProgressAndTraits();
+    window.__SS_DEBUG = { state: state };
+  });
+
   sentenceEl.addEventListener("beforeinput", function (event) {
     var slotEl = event.target && event.target.closest && event.target.closest("#ss-why");
     if (!slotEl) return;
