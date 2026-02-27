@@ -6,6 +6,9 @@
 
     var opts = options && typeof options === "object" ? options : {};
     var shouldLoop = opts.loop !== false;
+    var onEvent = typeof opts.onEvent === "function" ? opts.onEvent : null;
+    var resetDelayMs = Number(opts.resetDelayMs || 900);
+    var resetFadeMs = Number(opts.resetFadeMs || 250);
     var timers = [];
     var running = false;
 
@@ -37,14 +40,23 @@
 
     container.appendChild(root);
 
+    function emit(type, detail) {
+      if (!onEvent) return;
+      onEvent({
+        type: String(type || ""),
+        detail: detail && typeof detail === "object" ? detail : {}
+      });
+    }
+
     function reset() {
       root.querySelectorAll('.hero-tile').forEach(function (tile) {
         tile.textContent = '';
-        tile.classList.remove('is-gray', 'is-yellow', 'is-green', 'flip');
+        tile.classList.remove('is-gray', 'is-yellow', 'is-green', 'flip', 'settle');
       });
       root.querySelectorAll('.hero-key').forEach(function (key) {
         key.classList.remove('is-gray', 'is-yellow', 'is-green');
       });
+      root.classList.remove('is-resetting');
     }
 
     function colorKey(letter, stateClass) {
@@ -82,7 +94,15 @@
           tiles[index].classList.remove('flip');
           var tileState = states[index];
           tiles[index].classList.add(tileState);
+          tiles[index].classList.add('settle');
           colorKey(word[index], tileState);
+          emit('tile:state', {
+            rowIndex: rowIndex,
+            tileIndex: index,
+            letter: word[index],
+            state: tileState
+          });
+          setTimer(function () { tiles[index].classList.remove('settle'); }, 220);
           setTimer(function () { flipNext(index + 1); }, 280);
         }, 280);
       }
@@ -92,16 +112,26 @@
 
     function playRound() {
       if (!running || document.hidden) return;
-      reset();
+      emit('round:start');
       animateGuess(0, 'SLATE', ['is-gray', 'is-green', 'is-green', 'is-yellow', 'is-gray'], function () {
+        emit('round:first-feedback');
         setTimer(function () {
+          emit('round:strategy');
           animateGuess(1, 'PLAIN', ['is-green', 'is-green', 'is-green', 'is-gray', 'is-gray'], function () {
             setTimer(function () {
               animateGuess(2, 'PLANT', ['is-green', 'is-green', 'is-green', 'is-green', 'is-green'], function () {
+                emit('round:complete');
                 setTimer(function () {
                   if (!running || document.hidden) return;
-                  if (shouldLoop) playRound();
-                }, 1500);
+                  if (!shouldLoop) return;
+                  root.classList.add('is-resetting');
+                  emit('round:loop-reset');
+                  setTimer(function () {
+                    if (!running || document.hidden) return;
+                    reset();
+                    playRound();
+                  }, resetFadeMs);
+                }, resetDelayMs);
               });
             }, 380);
           });
@@ -112,6 +142,7 @@
     function start() {
       if (running) return;
       running = true;
+      reset();
       playRound();
     }
 

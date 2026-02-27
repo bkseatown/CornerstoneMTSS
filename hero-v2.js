@@ -4,20 +4,30 @@
   if (window.__HERO_ROTATOR_ACTIVE) return;
   window.__HERO_ROTATOR_ACTIVE = true;
 
-  var container = document.getElementById('home-demo-preview');
   var htmlEl = document.documentElement;
+  var homeMode = String(htmlEl && htmlEl.getAttribute('data-home-mode') || '').trim();
+  var container = document.getElementById('home-demo-preview');
+  var coachEl = document.getElementById('home-demo-coach');
   var ctaWordQuest = document.getElementById('cta-wordquest');
   var ctaTools = document.getElementById('cta-tools');
-  if (!container) return;
-  if (String(htmlEl && htmlEl.getAttribute('data-home-mode') || '').trim() !== 'home') return;
+  if (!container || homeMode !== 'home') return;
 
-  var ROTATE_MS = 10000;
-  var FADE_MS = 250;
-  var timers = [];
-  var rotateIntervalId = 0;
-  var currentIndex = 0;
-  var running = true;
+  var preview = null;
+  var running = false;
   var prefersReducedMotion = false;
+  var coachTimer = 0;
+  var coachIndex = -1;
+  var ctaPulseShown = false;
+  var seenColors = { gray: false, yellow: false, green: false };
+
+  var COACH_LINES = [
+    'Watch one round.',
+    'Gray means: not in the word.',
+    'Yellow means: right letter, wrong spot.',
+    'Green means: right letter, right spot.',
+    'We change one sound at a time.',
+    'Now it\'s your turn.'
+  ];
 
   try {
     prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,29 +35,98 @@
     prefersReducedMotion = false;
   }
 
-  function setTimer(fn, ms) {
-    var id = window.setTimeout(fn, ms);
-    timers.push(id);
-    return id;
-  }
-
-  function clearTimers() {
-    while (timers.length) {
-      window.clearTimeout(timers.pop());
+  function isDevMode() {
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      if (String(params.get('env') || '').toLowerCase() === 'dev') return true;
+      return localStorage.getItem('cs_allow_dev') === '1';
+    } catch (_e) {
+      return false;
     }
   }
 
-  function createPane(className) {
-    var pane = document.createElement('div');
-    pane.className = 'hero-preview-pane ' + className;
-    container.appendChild(pane);
-    return pane;
+  function logHomeOverflow() {
+    if (!isDevMode()) return;
+    var doc = document.documentElement;
+    console.debug('[home-demo] overflow', {
+      scrollHeight: doc.scrollHeight,
+      clientHeight: doc.clientHeight
+    });
   }
 
-  var paneWordQuest = createPane('hero-pane-wq');
-  var paneSentence = createPane('hero-pane-sentence');
-  var paneParagraph = createPane('hero-pane-paragraph');
-  var panes = [paneWordQuest, paneSentence, paneParagraph];
+  function setCoachLine(index) {
+    if (!coachEl || index < 0 || index >= COACH_LINES.length) return;
+    if (coachIndex === index && coachEl.textContent === COACH_LINES[index]) return;
+    coachIndex = index;
+
+    if (!prefersReducedMotion) {
+      coachEl.classList.remove('is-updating');
+      if (coachTimer) window.clearTimeout(coachTimer);
+      // force reflow so repeated updates animate reliably
+      void coachEl.offsetWidth;
+      coachEl.classList.add('is-updating');
+      coachTimer = window.setTimeout(function () {
+        coachEl.classList.remove('is-updating');
+        coachTimer = 0;
+      }, 220);
+    }
+
+    coachEl.textContent = COACH_LINES[index];
+
+    if (index === 5 && ctaWordQuest && !ctaPulseShown) {
+      ctaPulseShown = true;
+      if (!prefersReducedMotion) {
+        ctaWordQuest.classList.add('is-ready-pulse');
+        window.setTimeout(function () {
+          ctaWordQuest.classList.remove('is-ready-pulse');
+        }, 260);
+      }
+    }
+  }
+
+  function onPreviewEvent(event) {
+    if (!event || typeof event !== 'object') return;
+    var type = String(event.type || '');
+    if (type === 'round:start') {
+      seenColors.gray = false;
+      seenColors.yellow = false;
+      seenColors.green = false;
+      setCoachLine(0);
+      return;
+    }
+    if (type === 'tile:state') {
+      var state = String(event.detail && event.detail.state || '');
+      if (state === 'is-gray' && !seenColors.gray) {
+        seenColors.gray = true;
+        setCoachLine(1);
+      } else if (state === 'is-yellow' && seenColors.gray && !seenColors.yellow) {
+        seenColors.yellow = true;
+        setCoachLine(2);
+      } else if (state === 'is-green' && seenColors.yellow && !seenColors.green) {
+        seenColors.green = true;
+        setCoachLine(3);
+      }
+      return;
+    }
+    if (type === 'round:first-feedback') {
+      if (!seenColors.green) {
+        seenColors.green = true;
+        setCoachLine(3);
+      }
+      return;
+    }
+    if (type === 'round:strategy') {
+      setCoachLine(4);
+      return;
+    }
+    if (type === 'round:complete') {
+      setCoachLine(5);
+      return;
+    }
+    if (type === 'round:loop-reset') {
+      setCoachLine(0);
+    }
+  }
 
   function mountWordQuestPreview(target, options) {
     if (!(target instanceof HTMLElement)) return null;
@@ -55,129 +134,27 @@
     return window.WordQuestPreview.create(target, options || {});
   }
 
-  var wqPreview = mountWordQuestPreview(paneWordQuest, { mode: 'hero', loop: true });
-
-  paneSentence.innerHTML = [
-    '<div class="hero-preview-title">Sentence Growth Engine</div>',
-    '<div class="hero-sentence" id="heroSentenceText">The dog ran.</div>',
-    '<div class="hero-level" id="heroSentenceLevel">Level 1</div>',
-    '<div class="hero-metric-list">',
-    '  <div class="hero-metric"><span>Reasoning</span><div class="hero-track"><div id="heroSentenceReasonFill" class="hero-fill"></div></div></div>',
-    '  <div class="hero-metric"><span>Detail</span><div class="hero-track"><div id="heroSentenceDetailFill" class="hero-fill"></div></div></div>',
-    '</div>'
-  ].join('');
-
-  paneParagraph.innerHTML = [
-    '<div class="hero-preview-title">Paragraph Builder</div>',
-    '<div class="hero-pb-slot" id="heroPbTopic"></div>',
-    '<div class="hero-pb-slot" id="heroPbBody1"></div>',
-    '<div class="hero-pb-slot" id="heroPbBody2"></div>',
-    '<div class="hero-pb-slot" id="heroPbConclusion"></div>',
-    '<div class="hero-metric-list">',
-    '  <div class="hero-metric"><span>Cohesion</span><div class="hero-track"><div id="heroPbCohesionFill" class="hero-fill"></div></div></div>',
-    '  <div class="hero-metric"><span>Reasoning</span><div class="hero-track"><div id="heroPbReasonFill" class="hero-fill"></div></div></div>',
-    '</div>'
-  ].join('');
-
-  function setActivePane(index) {
-    panes.forEach(function (pane, i) {
-      pane.classList.toggle('is-active', i === index);
-    });
-  }
-
-  function runSentencePreview() {
-    var textEl = document.getElementById('heroSentenceText');
-    var levelEl = document.getElementById('heroSentenceLevel');
-    var reasonFill = document.getElementById('heroSentenceReasonFill');
-    var detailFill = document.getElementById('heroSentenceDetailFill');
-    if (!textEl || !levelEl || !reasonFill || !detailFill) return;
-
-    textEl.textContent = 'The dog ran.';
-    levelEl.textContent = 'Level 1';
-    reasonFill.style.width = '10%';
-    detailFill.style.width = '18%';
-
-    setTimer(function () {
-      if (!running || document.hidden) return;
-      textEl.textContent = 'The dog ran because it heard a crash.';
-      levelEl.textContent = 'Level 3';
-      reasonFill.style.width = '72%';
-      detailFill.style.width = '46%';
-    }, prefersReducedMotion ? 0 : 1600);
-
-    setTimer(function () {
-      if (!running || document.hidden) return;
-      textEl.textContent = 'The dog sprinted because it heard a crash.';
-      levelEl.textContent = 'Level 4';
-      reasonFill.style.width = '84%';
-      detailFill.style.width = '64%';
-    }, prefersReducedMotion ? 0 : 3600);
-  }
-
-  function runParagraphPreview() {
-    var topic = document.getElementById('heroPbTopic');
-    var body1 = document.getElementById('heroPbBody1');
-    var body2 = document.getElementById('heroPbBody2');
-    var conclusion = document.getElementById('heroPbConclusion');
-    var cohesionFill = document.getElementById('heroPbCohesionFill');
-    var reasonFill = document.getElementById('heroPbReasonFill');
-    if (!topic || !body1 || !body2 || !conclusion || !cohesionFill || !reasonFill) return;
-
-    topic.textContent = '';
-    body1.textContent = '';
-    body2.textContent = '';
-    conclusion.textContent = '';
-    cohesionFill.style.width = '0%';
-    reasonFill.style.width = '0%';
-
-    setTimer(function () { if (!running || document.hidden) return; topic.textContent = 'Dogs help people.'; }, prefersReducedMotion ? 0 : 900);
-    setTimer(function () { if (!running || document.hidden) return; body1.textContent = 'They work as companions in hospitals.'; }, prefersReducedMotion ? 0 : 1900);
-    setTimer(function () { if (!running || document.hidden) return; body2.textContent = 'Because they comfort patients, recovery improves.'; }, prefersReducedMotion ? 0 : 3000);
-    setTimer(function () { if (!running || document.hidden) return; conclusion.textContent = 'Dogs make a meaningful difference.'; }, prefersReducedMotion ? 0 : 4100);
-    setTimer(function () {
-      if (!running || document.hidden) return;
-      cohesionFill.style.width = '80%';
-      reasonFill.style.width = '88%';
-    }, prefersReducedMotion ? 0 : 5200);
-  }
-
-  function runActivePreview() {
-    clearTimers();
-    if (!running || document.hidden) return;
-
-    if (wqPreview) {
-      if (currentIndex === 0) wqPreview.start();
-      else wqPreview.stop();
-    }
-
-    if (currentIndex === 1) runSentencePreview();
-    if (currentIndex === 2) runParagraphPreview();
-  }
-
   function pause() {
     running = false;
-    clearTimers();
-    if (rotateIntervalId) {
-      window.clearInterval(rotateIntervalId);
-      rotateIntervalId = 0;
-    }
-    if (wqPreview) wqPreview.stop();
+    if (preview && typeof preview.stop === 'function') preview.stop();
   }
 
   function resume() {
-    if (document.hidden) return;
+    if (running || document.hidden) return;
     running = true;
-    setActivePane(currentIndex);
-    runActivePreview();
-    if (!rotateIntervalId) {
-      rotateIntervalId = window.setInterval(function () {
-        if (!running || document.hidden) return;
-        currentIndex = (currentIndex + 1) % panes.length;
-        setActivePane(currentIndex);
-        runActivePreview();
-      }, ROTATE_MS);
-    }
+    if (preview && typeof preview.start === 'function') preview.start();
   }
+
+  preview = mountWordQuestPreview(container, {
+    mode: 'hero',
+    loop: true,
+    resetDelayMs: 900,
+    resetFadeMs: prefersReducedMotion ? 0 : 250,
+    onEvent: onPreviewEvent
+  });
+
+  setCoachLine(0);
+  resume();
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) pause();
@@ -199,11 +176,13 @@
     });
   }
 
+  window.addEventListener('resize', logHomeOverflow, { passive: true });
+  logHomeOverflow();
+  window.setTimeout(logHomeOverflow, 180);
+
   window.addEventListener('beforeunload', function () {
     pause();
+    if (preview && typeof preview.destroy === 'function') preview.destroy();
     window.__HERO_ROTATOR_ACTIVE = false;
   });
-
-  setActivePane(0);
-  resume();
 })();
