@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="style/components.deep-dive-plus.css">
   <link rel="stylesheet" href="style/world-themes.css?v=20260226a">
   <link rel="stylesheet" href="style/premium-theme.css?v=20260226a">
+  <link rel="stylesheet" href="home-v2.css?v=20260227a">
 </head>
 <body>
 
@@ -94,6 +95,30 @@
       </div>
     </div>
   </header>
+
+  <section id="hero-v2" class="hero-v2" aria-label="Writing Studio live showcase">
+    <div class="hero-left">
+      <h1 class="hero-title">
+        Precision Writing Growth.
+        <span class="hero-accent">Built for Intervention.</span>
+      </h1>
+      <p class="hero-sub">
+        Sentence-level scaffolding. Paragraph-level coherence.
+        Instant instructional insight.
+      </p>
+      <div class="hero-cta">
+        <a href="word-quest.html?demo=1" class="hero-btn primary">
+          Try Live Word Quest (60 sec)
+        </a>
+        <a href="paragraph-builder.html?demo=1" class="hero-btn secondary">
+          Build a Paragraph
+        </a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div id="hero-preview-rotator" aria-live="polite"></div>
+    </div>
+  </section>
 
   <!-- ── Focus bar ────────────────────────────────── -->
   <div class="top-control-hub" role="region" aria-label="Quest and curriculum controls">
@@ -891,6 +916,7 @@
       <div id="modal-meaning-highlight" class="modal-meaning-highlight hidden" aria-live="polite">
         <p id="modal-meaning-highlight-line"></p>
       </div>
+      <p id="modal-read-cue" class="modal-read-cue hidden" aria-live="polite"></p>
       <div id="modal-challenge-launch" class="modal-challenge-launch hidden" aria-live="polite">
         <div class="modal-challenge-launch-copy">
           <span class="modal-challenge-launch-title">Deep Dive Quest (Optional)</span>
@@ -1253,6 +1279,7 @@
   <script src="js/contracts/deep-dive-contract.js?v=20260225d"></script>
   <script src="js/features/teacher-assignments.js?v=20260225d"></script>
   <script src="js/features/deep-dive-core.js?v=20260225d"></script>
+  <script src="hero-v2.js?v=20260227a"></script>
   <script src="js/app.js?v=20260227f"></script>
   <script src="js/deep-dive-plus.js?v=20260226m"></script>
   <script src="js/theme-nav.js?v=20260225d"></script>
