@@ -167,7 +167,7 @@ body.cs-page-reading-lab {
   background: rgba(12,23,34,0.66);
   color: var(--rl-text);
   padding: 8px 12px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -246,7 +246,7 @@ body.cs-page-reading-lab {
   background: rgba(127,182,255,0.18);
   color: #ecf5ff;
   font-size: var(--cs-meta);
-  font-weight: 800;
+  font-weight: 600;
   padding: 4px 10px;
 }
 
