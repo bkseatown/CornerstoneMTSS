@@ -3067,9 +3067,8 @@
   }
 
   function showListeningModeExplainer() {
-    const overlay = _el('listening-mode-overlay');
-    if (!overlay || isMissionLabStandaloneMode()) return;
-    overlay.classList.remove('hidden');
+    // Disabled by request: avoid interruptive explainer popup.
+    hideListeningModeExplainer();
   }
 
   function syncGameplayAudioStrip(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
@@ -8858,22 +8857,22 @@
     }
     if (entry.kind === 'curriculum') return getCurriculumEntryMeta(entry);
     const focusHints = Object.freeze({
-      cvc: '🗣 short vowel sounds • cat, map',
-      digraph: '🗣 two letters, one sound • ship, chat',
-      ccvc: '🗣 blend at the start • stop, plan',
-      cvcc: '🗣 blend at the end • lamp, sand',
-      trigraph: '🗣 three-letter chunk • catch, light',
-      cvce: '🗣 silent e changes the vowel • cap→cape',
-      vowel_team: '🗣 two vowels team up • rain, boat',
-      r_controlled: '🗣 vowel sound changes before r • car, fern',
-      diphthong: '🗣 mouth glides between sounds • coin, cloud',
-      floss: '🗣 double f/l/s/z after short vowel • bell, miss',
-      welded: '🗣 glued chunks • ring, bank',
-      schwa: '🗣 lazy vowel /uh/ • about, sofa',
-      prefix: '🧩 add to the beginning • re+do',
-      suffix: '🧩 add to the end • jump+ed',
-      compound: '🧩 two words join • sun+set',
-      multisyllable: '🗣 clap the parts • nap-kin, con-test'
+      cvc: 'short vowel sounds • cat, map',
+      digraph: 'two letters, one sound • ship, chat',
+      ccvc: 'blend at the start • stop, plan',
+      cvcc: 'blend at the end • lamp, sand',
+      trigraph: 'three-letter chunk • catch, light',
+      cvce: 'silent e changes the vowel • cap→cape',
+      vowel_team: 'two vowels team up • rain, boat',
+      r_controlled: 'vowel sound changes before r • car, fern',
+      diphthong: 'mouth glides between sounds • coin, cloud',
+      floss: 'double f/l/s/z after short vowel • bell, miss',
+      welded: 'glued chunks • ring, bank',
+      schwa: 'lazy vowel /uh/ • about, sofa',
+      prefix: 'add to the beginning • re+do',
+      suffix: 'add to the end • jump+ed',
+      compound: 'two words join • sun+set',
+      multisyllable: 'clap the parts • nap-kin, con-test'
     });
     if (entry.kind === 'focus') {
       const preset = parseFocusPreset(entry.value);
@@ -8998,7 +8997,7 @@
 
   function buildFocusSearchSections(entries, options = {}) {
     const query = String(options.query || '').trim();
-    const sectionOrder = Object.freeze(['phonics', 'subjects', 'curriculum']);
+    const sectionOrder = Object.freeze(['phonics', 'curriculum', 'subjects']);
     const sections = {
       phonics: [],
       subjects: [],
@@ -9035,15 +9034,15 @@
         output.push({ heading: 'Phonics Skills', entries: rows });
         return;
       }
-      if (key === 'subjects') {
-        output.push({ heading: 'Grade Band Subjects', entries: rows });
-        return;
-      }
-      if (!query) {
+      if (key === 'curriculum' && !query) {
         output.push({ heading: 'Curriculum', entries: rows });
         return;
       }
-      output.push({ heading: 'Curriculum Matches', entries: rows });
+      if (key === 'curriculum') {
+        output.push({ heading: 'Curriculum Matches', entries: rows });
+        return;
+      }
+      output.push({ heading: 'Grade Band Subjects', entries: rows });
     });
     return output;
   }
@@ -9132,7 +9131,7 @@
     const guidance = !query
       ? focusCurriculumPackFilter
         ? ''
-        : '<div class="focus-search-empty focus-search-empty-hint">Choose a phonics skill to see the sound pattern and example words, or choose a grade-band subject/curriculum program.</div>'
+        : '<div class="focus-search-empty focus-search-empty-hint">Choose a phonics skill to see the sound pattern and example words, or choose a curriculum/grade-band subject program.</div>'
       : '';
     const sections = buildFocusSearchSections(visible, { query });
     const sectionMarkup = sections.map((section) => {
@@ -9437,6 +9436,21 @@
       return;
     }
     clearPinnedFocusSearchValue(event.target);
+    // Keep closed on passive focus; open on explicit click or typing.
+  });
+
+  _el('focus-inline-search')?.addEventListener('click', (event) => {
+    if (DEMO_MODE) {
+      event.preventDefault();
+      closeAllOverlaysForDemo();
+      return;
+    }
+    if (isAssessmentRoundLocked()) {
+      showAssessmentLockNotice('Assessment lock is on. Focus changes unlock after this round.');
+      closeFocusSearchList();
+      return;
+    }
+    clearPinnedFocusSearchValue(event.target);
     const query = String(event.target?.value || '').trim();
     renderFocusSearchList(query);
   });
@@ -9558,11 +9572,7 @@
   updateFocusGradeNote();
   syncChunkTabsVisibility();
   updateFocusSummaryLabel();
-  if (!DEMO_MODE) {
-    renderFocusSearchList('');
-  } else {
-    closeFocusSearchList();
-  }
+  closeFocusSearchList();
 
   // ─── 7. New game ────────────────────────────────────
   const MIDGAME_BOOST_KEY = 'wq_v2_midgame_boost_state_v1';

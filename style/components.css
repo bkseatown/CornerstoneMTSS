@@ -1085,8 +1085,8 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border-radius: 13px;
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--modal-bg) 58%, #e2e8ef 42%) 0%,
-    color-mix(in oklab, var(--modal-bg) 48%, #cdd6e0 52%) 100%
+    color-mix(in oklab, var(--modal-bg) 74%, #8f9aa8 26%) 0%,
+    color-mix(in oklab, var(--modal-bg) 68%, #7f8997 32%) 100%
   );
   box-shadow: var(--panel-shadow);
   z-index: 50;
@@ -1500,10 +1500,10 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border: 1px solid transparent;
   border-radius: 9px;
   background: transparent;
-  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
+  color: rgba(245, 249, 255, 0.96);
   font-family: var(--font);
-  font-size: 1.03rem;
-  font-weight: 760;
+  font-size: 0.9rem;
+  font-weight: 720;
   line-height: 1.28;
   text-align: left;
   padding: 10px 10px;
@@ -1519,7 +1519,7 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
+  color: rgba(245, 249, 255, 0.96);
 }
 
 .focus-search-item.is-curriculum {
@@ -1535,9 +1535,9 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border-radius: 0;
   padding: 0;
   margin: 0 0 0 10px;
-  color: color-mix(in oklab, var(--text) 84%, var(--text-muted) 16%);
-  font-size: 0.9rem;
-  font-weight: 720;
+  color: rgba(236, 243, 252, 0.94);
+  font-size: 0.8rem;
+  font-weight: 680;
   line-height: 1.34;
   text-align: left;
 }
@@ -1557,9 +1557,9 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
   padding: 5px 10px;
-  font-size: 0.86rem;
-  font-weight: 760;
-  color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(236, 243, 252, 0.94);
   text-align: left;
 }
 
@@ -1590,8 +1590,8 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   margin-top: 3px;
   padding: 7px 4px 4px;
   border-top: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
-  color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
-  font-size: 0.98rem;
+  color: rgba(245, 249, 255, 0.98);
+  font-size: 0.84rem;
   font-weight: 840;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1601,16 +1601,16 @@ html[data-mission-lab="off"] #session-copy-mission-csv-btn {
   grid-column: 1 / -1;
   margin-top: 1px;
   padding: 6px 6px 2px;
-  color: color-mix(in oklab, var(--text) 78%, var(--text-muted) 22%);
-  font-size: 0.84rem;
-  font-weight: 820;
+  color: rgba(236, 243, 252, 0.94);
+  font-size: 0.76rem;
+  font-weight: 760;
 }
 
 .focus-search-empty {
   grid-column: 1 / -1;
-  font-size: 0.92rem;
-  font-weight: 720;
-  color: color-mix(in oklab, var(--text) 74%, var(--text-muted) 26%);
+  font-size: 0.8rem;
+  font-weight: 680;
+  color: rgba(236, 243, 252, 0.94);
   padding: 6px 6px 8px;
 }
 
@@ -3637,12 +3637,6 @@ html[data-play-style="listening"] #focus-hint-toggle {
 }
 
 html[data-play-style="listening"] #g-hear-word {
-  border-color: color-mix(in oklab, var(--panel-border) 64%, #8b9fb9 36%);
-  background: linear-gradient(
-    145deg,
-    color-mix(in oklab, var(--panel-bg) 80%, #dbe2ea 20%),
-    color-mix(in oklab, var(--panel-bg) 70%, #bcc8d8 30%)
-  );
   min-width: 0;
   width: auto;
   justify-content: center;
