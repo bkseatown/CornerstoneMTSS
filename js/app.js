@@ -20,10 +20,41 @@
     return fromQuery || window.WQ_DEMO === true;
   }
   const DEMO_MODE = detectDemoMode();
+  const DEMO_DEBUG_MODE = (() => {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      return String(params.get('debug') || '').trim() === '1';
+    } catch {
+      return false;
+    }
+  })();
   if (DEMO_MODE) {
     window.WQ_DEMO = true;
     document.documentElement.setAttribute('data-wq-demo', 'on');
   }
+
+  function normalizeDemoRoute() {
+    if (!DEMO_MODE) return false;
+    try {
+      const url = new URL(window.location.href);
+      const pageParam = String(url.searchParams.get('page') || '').trim().toLowerCase();
+      const demoParam = String(url.searchParams.get('demo') || '').trim().toLowerCase();
+      const modeParam = String(url.searchParams.get('mode') || '').trim().toLowerCase();
+      const needsFix =
+        pageParam !== 'wordquest' ||
+        (demoParam !== '1' && demoParam !== 'true') ||
+        modeParam === 'demo';
+      if (!needsFix) return false;
+      url.searchParams.set('page', 'wordquest');
+      url.searchParams.set('demo', '1');
+      url.searchParams.delete('mode');
+      window.location.replace(url.toString());
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  if (normalizeDemoRoute()) return;
 
   function installDemoStorageGuard() {
     if (!DEMO_MODE || window.__WQ_DEMO_STORAGE_GUARD__) return;
@@ -715,6 +746,10 @@
   let demoEndOverlayEl = null;
   let demoBannerEl = null;
   let demoCoachEl = null;
+  let demoCoachReadyTimer = 0;
+  let demoDebugLabelEl = null;
+  const DEMO_COACH_READY_MAX_TRIES = 30;
+  const DEMO_COACH_READY_DELAY_MS = 100;
   const demoState = {
     step: 0,
     guessCount: 0,
@@ -722,8 +757,22 @@
     discoveredCore: new Set(),
     keyPulseTimer: 0,
     keyPulseIndex: 0,
-    hintUsed: false
+    hintUsed: false,
+    overlaysClosed: false,
+    coachMounted: false
   };
+  const DEMO_OVERLAY_SELECTORS = Object.freeze([
+    '#focus-inline-results:not(.hidden)',
+    '#settings-panel:not(.hidden)',
+    '#teacher-panel:not(.hidden)',
+    '#modal-overlay:not(.hidden)',
+    '#challenge-modal:not(.hidden)',
+    '#phonics-clue-modal:not(.hidden)',
+    '#listening-mode-overlay:not(.hidden)',
+    '#first-run-setup-modal:not(.hidden)',
+    '#end-modal:not(.hidden)',
+    '#modal-challenge-launch:not(.hidden)'
+  ]);
 
   function createDemoBanner() {
     if (!DEMO_MODE || document.getElementById('wq-demo-banner')) return;
@@ -750,6 +799,7 @@
 
   function setDemoControlsDisabled() {
     if (!DEMO_MODE) return;
+    document.body.classList.add('wq-demo');
     const focusInput = _el('focus-inline-search');
     const focusSelect = _el('setting-focus');
     const lengthSelect = _el('s-length');
@@ -761,6 +811,7 @@
       focusInput.value = 'Classic (Demo Locked)';
       focusInput.setAttribute('readonly', 'true');
       focusInput.setAttribute('aria-readonly', 'true');
+      focusInput.setAttribute('tabindex', '-1');
     }
     const targets = [
       focusSelect,
@@ -782,6 +833,7 @@
     });
     const teacherTools = _el('wq-teacher-tools');
     if (teacherTools) teacherTools.classList.add('hidden');
+    closeFocusSearchList();
   }
 
   function ensureDemoParam(url) {
@@ -804,6 +856,63 @@
     demoState.keyPulseTimer = 0;
   }
 
+  function stopDemoCoachReadyLoop() {
+    if (!demoCoachReadyTimer) return;
+    clearTimeout(demoCoachReadyTimer);
+    demoCoachReadyTimer = 0;
+  }
+
+  function listOpenOverlays() {
+    return DEMO_OVERLAY_SELECTORS
+      .map((selector) => {
+        const node = document.querySelector(selector);
+        return node ? selector : '';
+      })
+      .filter(Boolean);
+  }
+
+  function renderDemoDebugReadout() {
+    if (!DEMO_MODE || !DEMO_DEBUG_MODE) return;
+    if (!demoDebugLabelEl) {
+      const label = document.createElement('div');
+      label.id = 'wq-demo-debug';
+      label.className = 'wq-demo-debug';
+      document.body.appendChild(label);
+      demoDebugLabelEl = label;
+    }
+    const overlaysOpen = listOpenOverlays().length === 0 ? 'true' : 'false';
+    const coachMounted = demoState.coachMounted ? 'true' : 'false';
+    demoDebugLabelEl.textContent = `demo:1 overlaysClosed:${overlaysOpen} coachMounted:${coachMounted}`;
+  }
+
+  function closeAllOverlaysForDemo() {
+    if (!DEMO_MODE) return true;
+    closeFocusSearchList();
+    closeQuickPopover('all');
+    _el('settings-panel')?.classList.add('hidden');
+    _el('teacher-panel')?.classList.add('hidden');
+    _el('modal-overlay')?.classList.add('hidden');
+    _el('challenge-modal')?.classList.add('hidden');
+    _el('phonics-clue-modal')?.classList.add('hidden');
+    _el('listening-mode-overlay')?.classList.add('hidden');
+    _el('first-run-setup-modal')?.classList.add('hidden');
+    _el('end-modal')?.classList.add('hidden');
+    _el('modal-challenge-launch')?.classList.add('hidden');
+    _el('focus-inline-results')?.classList.add('hidden');
+    document.documentElement.setAttribute('data-focus-search-open', 'false');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    setPageMode('wordquest', { force: true, skipUrl: true });
+    syncHeaderControlsVisibility();
+    const openOverlays = listOpenOverlays();
+    demoState.overlaysClosed = openOverlays.length === 0;
+    if (DEMO_DEBUG_MODE) {
+      console.log('[demo] overlays:', openOverlays);
+    }
+    renderDemoDebugReadout();
+    return demoState.overlaysClosed;
+  }
+
   function pulseDemoKey(letter) {
     const key = document.querySelector(`.key[data-key=\"${String(letter || '').toLowerCase()}\"]`);
     if (!(key instanceof HTMLElement)) return;
@@ -823,14 +932,17 @@
     }, 360);
   }
 
-  function fillGuessWithWord(word) {
+  function applySuggestedDemoWord(word) {
     const normalizedWord = String(word || '').trim().toLowerCase();
     const current = WQGame.getState?.() || {};
     if (!normalizedWord || !current.wordLength || normalizedWord.length !== current.wordLength) return false;
-    while ((WQGame.getState?.()?.guess || '').length > 0) WQGame.deleteLetter();
-    for (const letter of normalizedWord) WQGame.addLetter(letter);
-    const next = WQGame.getState?.();
-    if (next) WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
+    let clears = 0;
+    while ((WQGame.getState?.()?.guess || '').length > 0 && clears < 8) {
+      handleInputUnit('Backspace');
+      clears += 1;
+    }
+    for (const letter of normalizedWord) handleInputUnit(letter);
+    handleInputUnit('Enter');
     return true;
   }
 
@@ -880,8 +992,8 @@
     if (suggestedWord) {
       suggestBtn.classList.remove('hidden');
       suggestBtn.onclick = () => {
-        fillGuessWithWord(suggestedWord);
         hideDemoCoach();
+        applySuggestedDemoWord(suggestedWord);
       };
       startDemoKeyPulse(suggestedWord);
     } else {
@@ -914,17 +1026,48 @@
     demoState.guessCount = 0;
     demoState.discoveredCore = new Set();
     demoState.hintUsed = false;
+    demoState.overlaysClosed = false;
+    demoState.coachMounted = false;
+    window.__WQ_DEMO_COACH_MOUNTED = false;
+    stopDemoCoachReadyLoop();
     stopDemoKeyPulse();
     hideDemoCoach();
+    renderDemoDebugReadout();
   }
 
   function runDemoCoachForStart() {
-    showDemoCoach({
-      anchor: _el('keyboard'),
-      text: 'Try SLATE first. Colors will teach the rule instantly.',
-      primaryLabel: 'Got it',
-      suggestedWord: demoState.suggestions[0]
-    });
+    if (!DEMO_MODE) return;
+    if (window.__WQ_DEMO_COACH_MOUNTED) return;
+    let tries = 0;
+    stopDemoCoachReadyLoop();
+    const waitForGameplayThenShowCoach = () => {
+      if (!DEMO_MODE || demoRoundComplete) return;
+      closeAllOverlaysForDemo();
+      const keyboard = _el('keyboard');
+      const board = _el('game-board');
+      const overlaysOpen = listOpenOverlays().length > 0;
+      const ready = Boolean(keyboard && board && !overlaysOpen);
+      if (ready) {
+        window.__WQ_DEMO_COACH_MOUNTED = true;
+        demoState.coachMounted = true;
+        renderDemoDebugReadout();
+        showDemoCoach({
+          anchor: keyboard,
+          text: 'Try SLATE first. Colors will teach the rule instantly.',
+          primaryLabel: 'Got it',
+          suggestedWord: demoState.suggestions[0]
+        });
+        return;
+      }
+      tries += 1;
+      if (tries > DEMO_COACH_READY_MAX_TRIES) {
+        console.warn('Demo coach aborted: gameplay not ready');
+        renderDemoDebugReadout();
+        return;
+      }
+      demoCoachReadyTimer = setTimeout(waitForGameplayThenShowCoach, DEMO_COACH_READY_DELAY_MS);
+    };
+    waitForGameplayThenShowCoach();
   }
 
   function updateDemoDiscovered(result) {
@@ -972,6 +1115,7 @@
 
   function showDemoEndOverlay() {
     if (!DEMO_MODE) return;
+    stopDemoCoachReadyLoop();
     stopDemoKeyPulse();
     hideDemoCoach();
     if (!demoEndOverlayEl) {
@@ -9110,6 +9254,12 @@
   });
 
   _el('focus-inline-search')?.addEventListener('focus', (event) => {
+    if (DEMO_MODE) {
+      event.preventDefault();
+      closeAllOverlaysForDemo();
+      event.target.blur();
+      return;
+    }
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice('Assessment lock is on. Focus changes unlock after this round.');
       closeFocusSearchList();
@@ -9122,6 +9272,11 @@
   });
 
   _el('focus-inline-search')?.addEventListener('input', (event) => {
+    if (DEMO_MODE) {
+      event.preventDefault();
+      closeAllOverlaysForDemo();
+      return;
+    }
     if (isAssessmentRoundLocked()) {
       closeFocusSearchList();
       return;
@@ -9132,6 +9287,12 @@
   });
 
   _el('focus-inline-search')?.addEventListener('keydown', (event) => {
+    if (DEMO_MODE) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeAllOverlaysForDemo();
+      return;
+    }
     if (isAssessmentRoundLocked()) {
       if (event.key === 'Enter' || event.key === ' ') {
         showAssessmentLockNotice('Assessment lock is on. Focus changes unlock after this round.');
@@ -9181,6 +9342,12 @@
   });
 
   _el('focus-inline-results')?.addEventListener('click', (event) => {
+    if (DEMO_MODE) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeAllOverlaysForDemo();
+      return;
+    }
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice('Assessment lock is on. Focus changes unlock after this round.');
       closeFocusSearchList();
@@ -9221,7 +9388,11 @@
   updateFocusGradeNote();
   syncChunkTabsVisibility();
   updateFocusSummaryLabel();
-  renderFocusSearchList('');
+  if (!DEMO_MODE) {
+    renderFocusSearchList('');
+  } else {
+    closeFocusSearchList();
+  }
 
   // ─── 7. New game ────────────────────────────────────
   const MIDGAME_BOOST_KEY = 'wq_v2_midgame_boost_state_v1';
@@ -15980,6 +16151,10 @@
   initQuestLoop();
   createDemoBanner();
   setDemoControlsDisabled();
+  if (DEMO_MODE) {
+    closeAllOverlaysForDemo();
+    renderDemoDebugReadout();
+  }
   enforceClassicFiveLetterDefault();
   newGame({ launchMissionLab: false });
   consumeWritingStudioReturnSummary();

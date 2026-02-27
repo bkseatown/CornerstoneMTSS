@@ -6667,6 +6667,16 @@ body.wq-demo-active {
   padding-top: 52px;
 }
 
+body.wq-demo #focus-inline-wrap {
+  pointer-events: none;
+}
+
+body.wq-demo #focus-inline-results,
+body.wq-demo .focus-panel,
+body.wq-demo .quest-overlay {
+  display: none !important;
+}
+
 .wq-demo-coach {
   position: fixed;
   z-index: 232;
@@ -6767,6 +6777,21 @@ body.wq-demo-active {
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.wq-demo-debug {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  z-index: 245;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(8, 14, 24, 0.78);
+  color: rgba(240, 246, 255, 0.88);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 4px 7px;
 }
 /* ── Motion (Fun/Calm) ───────────────────────────────── */
 @keyframes key-press-spring {
