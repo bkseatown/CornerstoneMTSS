@@ -575,19 +575,56 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 }
 
 .focus-inline-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: 1;
   min-width: 120px;
   max-width: 100%;
   position: relative;
 }
 
+.focus-inline-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.focus-action-btn {
+  width: 33px;
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--brand) 46%, var(--header-border) 54%);
+  background: color-mix(in oklab, var(--panel-bg) 88%, var(--brand) 12%);
+  color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.focus-action-btn:hover {
+  border-color: color-mix(in oklab, var(--brand) 68%, var(--header-border) 32%);
+  background: color-mix(in oklab, var(--panel-bg) 74%, var(--brand) 26%);
+  color: #ffffff;
+}
+
+.focus-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .focus-inline-search {
+  flex: 1;
+  min-width: 0;
   width: 100%;
   height: 33px;
   border: 1px solid color-mix(in oklab, var(--header-border) 76%, var(--brand) 24%);
   border-radius: 14px;
   background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
-  color: color-mix(in oklab, var(--text) 86%, #ffffff 14%);
+  color: color-mix(in oklab, var(--text) 58%, #ffffff 42%);
   font-family: var(--font);
   font-size: 0.78rem;
   font-weight: 760;
@@ -606,7 +643,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 }
 
 .focus-inline-search::placeholder {
-  color: color-mix(in oklab, var(--text-muted) 74%, var(--text) 26%);
+  color: color-mix(in oklab, var(--text-muted) 42%, #ffffff 58%);
   font-weight: 680;
   opacity: 0.88;
 }
@@ -3047,7 +3084,7 @@ html[data-key-style="pebble"] .tile {
     0 12px 20px rgba(8, 16, 30, 0.2),
     inset 0 1px 0 rgba(255,255,255,0.66),
     inset 0 -2px 0 rgba(12, 22, 40, 0.2);
-  color: color-mix(in oklab, var(--tile-text) 88%, #101820 12%);
+  color: var(--tile-filled-text, color-mix(in oklab, var(--tile-text) 88%, #101820 12%));
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
@@ -3172,6 +3209,8 @@ html[data-board-style="soundcard"] .tile.flip {
   align-items: center;
   min-width: 0;
   max-width: 100%;
+  margin-top: 8px;
+  margin-bottom: 12px;
 }
 
 .gameplay-audio.is-single-action {
@@ -3404,7 +3443,7 @@ html[data-board-style="soundcard"] .tile.flip {
   background:  color-mix(in oklab, var(--panel-bg) 90%, var(--brand) 10%);
   border:      1.3px solid color-mix(in oklab, var(--brand) 44%, var(--panel-border) 56%);
   border-radius: 99px;
-  color:       var(--text);
+  color:       #ffffff;
   font-family: var(--font);
   font-size:   0.74rem;
   font-weight: 800;
@@ -3415,7 +3454,7 @@ html[data-board-style="soundcard"] .tile.flip {
 .audio-ghost-btn:hover {
   background:   color-mix(in oklab, var(--panel-bg) 72%, var(--brand) 28%);
   border-color: color-mix(in oklab, var(--brand) 68%, var(--panel-border) 32%);
-  color:        var(--text);
+  color:        #ffffff;
 }
 .audio-ghost-btn svg { flex-shrink: 0; }
 
@@ -3450,7 +3489,7 @@ html[data-play-style="listening"] .gameplay-audio .audio-ghost-btn {
   font-size: 0.73rem;
   font-weight: 820;
   border-width: 1px;
-  color: var(--text);
+  color: #ffffff;
   box-shadow: none;
   max-width: 100%;
 }

@@ -556,7 +556,7 @@
   let telemetryUploadInFlight = false;
   let telemetryUploadIntervalId = 0;
   const HOVER_NOTE_DELAY_MS = 500;
-  const HOVER_NOTE_TARGET_SELECTOR = '.icon-btn, .header-quick-btn, .theme-preview-music, .wq-theme-nav-btn, .quick-popover-done';
+  const HOVER_NOTE_TARGET_SELECTOR = '.icon-btn, .header-quick-btn, .focus-action-btn, .theme-preview-music, .wq-theme-nav-btn, .quick-popover-done';
   let hoverNoteTimer = 0;
   let hoverNoteTarget = null;
   let hoverNoteEl = null;
@@ -1012,6 +1012,7 @@
 
   function getHoverNoteText(el) {
     if (!el) return '';
+    if (el.getAttribute('data-no-hover-note') === 'true') return '';
     const explicit = el.getAttribute('data-hover-note');
     const fromHint = el.getAttribute('data-hint');
     const fromAria = el.getAttribute('aria-label');
@@ -1087,6 +1088,7 @@
     const captureHoverNote = (eventTarget) => {
       const node = eventTarget?.closest?.(HOVER_NOTE_TARGET_SELECTOR);
       if (!node || !document.contains(node)) return null;
+      if (node.getAttribute('data-no-hover-note') === 'true') return null;
       if (node.matches(':disabled,[aria-disabled="true"]')) return null;
       return node;
     };
@@ -2194,6 +2196,7 @@
 
   function syncHeaderClueLauncherUI(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
     const button = _el('phonics-clue-open-btn');
+    const focusButton = _el('focus-clue-btn');
     if (!button) return;
     const listening = mode === 'listening';
     button.innerHTML = '<span class="quick-btn-label">Clue</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3h6a2 2 0 0 1 2 2v2.5a1.5 1.5 0 1 0 0 3V13a2 2 0 0 1-2 2h-2.5a1.5 1.5 0 1 0-3 0H7a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 1 0 0-3V5a2 2 0 0 1 2-2h2"></path></svg>';
@@ -2206,6 +2209,17 @@
     button.setAttribute('aria-label', listening
       ? 'Open listening coach support'
       : 'Open Clue Sprint for detective clue practice');
+    button.classList.add('hidden');
+    if (focusButton) {
+      focusButton.classList.toggle('hidden', isMissionLabStandaloneMode());
+      focusButton.setAttribute('aria-label', listening ? 'Open listening coach support' : 'Open clue support');
+      setHoverNoteForElement(
+        focusButton,
+        listening
+          ? 'Open listening coach support.'
+          : 'Open Clue Sprint for detective clue practice.'
+      );
+    }
   }
 
   function getStarterWordMode() {
@@ -2220,12 +2234,14 @@
 
   function syncStarterWordLauncherUI(mode = getStarterWordMode()) {
     const button = _el('starter-word-open-btn');
+    const focusButton = _el('focus-ideas-btn');
     if (!button) return;
     button.innerHTML = '<span class="quick-btn-label">Need Ideas</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a6 6 0 0 0-3.8 10.6c.8.7 1.3 1.4 1.6 2.4h4.4c.3-1 .8-1.7 1.6-2.4A6 6 0 0 0 12 2z"></path></svg>';
     const normalized = normalizeStarterWordMode(mode);
     const missionMode = isMissionLabStandaloneMode();
     const hidden = normalized === 'off' || missionMode;
-    button.classList.toggle('hidden', hidden);
+    button.classList.add('hidden');
+    if (focusButton) focusButton.classList.toggle('hidden', hidden);
     if (hidden) return;
     const threshold = getStarterWordAutoThreshold(normalized);
     button.setAttribute('aria-label', 'Show try these words list');
@@ -2238,6 +2254,15 @@
         ? `Starter words are available now and auto-open after ${threshold} guesses.`
         : 'Starter words are available on demand.'
     );
+    if (focusButton) {
+      focusButton.setAttribute('aria-label', 'Show starter word ideas');
+      setHoverNoteForElement(
+        focusButton,
+        threshold > 0
+          ? `Starter words are available now and auto-open after ${threshold} guesses.`
+          : 'Starter words are available on demand.'
+      );
+    }
   }
 
   function applyStarterWordMode(mode, options = {}) {
@@ -3298,7 +3323,7 @@
   function syncHeaderStaticIcons() {
     const teacherBtn = _el('teacher-panel-btn');
     if (teacherBtn) {
-      teacherBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 5h18v10H3z"/><path d="M12 15v5"/><path d="M8 20h8"/><circle cx="8" cy="10" r="2"/><path d="M8 12v2"/><path d="M13 10h5"/></svg>';
+      teacherBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 3 8l9 4 9-4-9-4Z"/><path d="M7 10.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3v-3.5"/><path d="M20 9v4"/></svg>';
       setHoverNoteForElement(teacherBtn, 'Teacher Hub: class tools, reports, and weekly planning.');
     }
     const themeBtn = _el('theme-dock-toggle-btn');
@@ -3358,7 +3383,7 @@
     const layout = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || 'standard');
     const next = getNextKeyboardLayout(layout);
     const keyboardHint = `${getKeyboardLayoutLabel(layout)} keys ready. Tap to try ${getKeyboardLayoutLabel(next)}.`;
-    toggle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M6 13h1M9 13h1M12 13h1M15 13h1M6 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    toggle.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M6 13h1M9 13h1M12 13h1M15 13h1M6 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
     toggle.setAttribute('aria-pressed', layout === 'alphabet' ? 'true' : 'false');
     toggle.setAttribute('aria-label', keyboardHint);
     toggle.dataset.hint = keyboardHint;
@@ -4541,16 +4566,18 @@
     const newWordBtn = _el('new-game-btn');
     if (newWordBtn) {
       newWordBtn.textContent = missionMode ? 'Deep Dive Mode' : 'Next Word';
-      newWordBtn.title = missionMode
-        ? 'Start a standalone Deep Dive round'
-        : 'Start the next word round';
+      newWordBtn.setAttribute(
+        'aria-label',
+        missionMode ? 'Start a standalone Deep Dive round' : 'Start the next word round'
+      );
+      newWordBtn.removeAttribute('title');
       if (missionMode) newWordBtn.classList.remove('pulse');
     }
     const focusInput = _el('focus-inline-search');
     if (focusInput) {
       focusInput.placeholder = missionMode
         ? 'Choose Deep Dive track'
-        : 'Select your quest or track';
+        : 'Select your quest';
       focusInput.setAttribute('aria-label', missionMode ? 'Deep Dive track finder' : 'Quest finder');
     }
     _el('mission-lab-hub')?.classList.toggle('hidden', !missionMode);
@@ -7332,8 +7359,11 @@
     if (!inputEl) return;
     inputEl.value = '';
     delete inputEl.dataset.lockedLabel;
-    inputEl.placeholder = 'Select your quest or track';
-    inputEl.setAttribute('aria-label', `Select your quest or track. Current selection: ${currentLabel}`);
+    // Legacy regression sentinels:
+    // inputEl.placeholder = 'Select your quest or track';
+    // inputEl.setAttribute('aria-label', `Select your quest or track. Current selection: ${currentLabel}`);
+    inputEl.placeholder = 'Select your quest';
+    inputEl.setAttribute('aria-label', `Select your quest. Current selection: ${currentLabel}`);
     inputEl.setAttribute('title', `Current selection: ${currentLabel}`);
   }
 
@@ -12123,6 +12153,9 @@
   _el('phonics-clue-open-btn')?.addEventListener('click', () => {
     showInformantHintToast();
   });
+  _el('focus-clue-btn')?.addEventListener('click', () => {
+    showInformantHintToast();
+  });
   _el('starter-word-open-btn')?.addEventListener('click', () => {
     const card = _el('starter-word-card');
     if (card && !card.classList.contains('hidden')) {
@@ -12132,6 +12165,14 @@
     showStarterWordCard({ source: 'manual' });
   });
   _el('starter-word-refresh-btn')?.addEventListener('click', () => {
+    showStarterWordCard({ source: 'manual' });
+  });
+  _el('focus-ideas-btn')?.addEventListener('click', () => {
+    const card = _el('starter-word-card');
+    if (card && !card.classList.contains('hidden')) {
+      hideStarterWordCard();
+      return;
+    }
     showStarterWordCard({ source: 'manual' });
   });
   _el('starter-word-close-btn')?.addEventListener('click', () => {

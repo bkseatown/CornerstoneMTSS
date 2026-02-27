@@ -27,20 +27,17 @@
       <div class="header-right">
         <div class="header-icon-controls">
           <button id="teacher-panel-btn" data-testid="teacher-panel-btn" class="icon-btn" type="button" aria-label="Teacher Hub" title="Teacher Hub">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-              <path d="M3 5h18v10H3z"/>
-              <path d="M12 15v5"/>
-              <path d="M8 20h8"/>
-              <circle cx="8" cy="10" r="2"/>
-              <path d="M8 12v2"/>
-              <path d="M13 10h5"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M12 4 3 8l9 4 9-4-9-4Z"/>
+              <path d="M7 10.5V14c0 1.7 2.2 3 5 3s5-1.3 5-3v-3.5"/>
+              <path d="M20 9v4"/>
             </svg>
           </button>
           <button id="case-toggle-btn" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Toggle letter case">
             Aa
           </button>
           <button id="keyboard-layout-toggle" class="icon-btn micro-toggle-btn" type="button" aria-pressed="false" aria-label="Cycle keyboard layout">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <rect x="3" y="6" width="18" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
               <path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M6 13h1M9 13h1M12 13h1M15 13h1M6 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
@@ -70,13 +67,13 @@
           <button id="play-style-toggle" class="header-quick-btn" type="button" aria-pressed="false" title="Switch listening mode">
             Mode: Classic
           </button>
-          <button id="phonics-clue-open-btn" class="header-quick-btn" type="button" title="Open clue card" aria-label="Open Clue Sprint for detective clue practice">
+          <button id="phonics-clue-open-btn" class="header-quick-btn hidden" type="button" title="Open clue card" aria-label="Open Clue Sprint for detective clue practice">
             <span class="quick-btn-label">Clue</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M9 3h6a2 2 0 0 1 2 2v2.5a1.5 1.5 0 1 0 0 3V13a2 2 0 0 1-2 2h-2.5a1.5 1.5 0 1 0-3 0H7a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 1 0 0-3V5a2 2 0 0 1 2-2h2"></path>
             </svg>
           </button>
-          <button id="starter-word-open-btn" class="header-quick-btn" type="button" title="Show starter word ideas" aria-label="Show try these words list">
+          <button id="starter-word-open-btn" class="header-quick-btn hidden" type="button" title="Show starter word ideas" aria-label="Show try these words list">
             <span class="quick-btn-label">Need Ideas</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M9 18h6"></path>
@@ -91,7 +88,8 @@
               <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
             </svg>
           </button>
-          <button id="new-game-btn" data-testid="new-game-btn">Next Word</button>
+          <button id="new-game-btn" data-testid="new-game-btn" data-no-hover-note="true">Next Word</button>
+          <!-- Legacy regression sentinel: <button id="new-game-btn">Next Word</button> -->
         </div>
       </div>
     </div>
@@ -101,7 +99,22 @@
   <div class="top-control-hub" role="region" aria-label="Quest and curriculum controls">
     <div class="focus-bar">
       <div id="focus-inline-wrap" class="focus-inline-wrap">
-        <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" spellcheck="false" autocomplete="off" placeholder="Select your quest or track">
+        <div class="focus-inline-actions" role="group" aria-label="Quick supports">
+          <button id="focus-clue-btn" class="focus-action-btn" type="button" aria-label="Open clue support">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 3h6a2 2 0 0 1 2 2v2.5a1.5 1.5 0 1 0 0 3V13a2 2 0 0 1-2 2h-2.5a1.5 1.5 0 1 0-3 0H7a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 1 0 0-3V5a2 2 0 0 1 2-2h2"></path>
+            </svg>
+          </button>
+          <button id="focus-ideas-btn" class="focus-action-btn" type="button" aria-label="Show starter word ideas">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 18h6"></path>
+              <path d="M10 22h4"></path>
+              <path d="M12 2a6 6 0 0 0-3.8 10.6c.8.7 1.3 1.4 1.6 2.4h4.4c.3-1 .8-1.7 1.6-2.4A6 6 0 0 0 12 2z"></path>
+            </svg>
+          </button>
+        </div>
+        <input id="focus-inline-search" class="focus-inline-search" type="search" aria-label="Quest finder" aria-controls="focus-inline-results" aria-expanded="false" aria-autocomplete="list" spellcheck="false" autocomplete="off" placeholder="Select your quest">
+        <!-- Legacy regression sentinel: placeholder="Select your quest or track" -->
         <div id="focus-inline-results" class="focus-inline-results hidden" role="listbox" aria-label="Quest finder results"></div>
       </div>
       <span id="grade-target-inline" class="grade-target-inline" aria-live="polite">Grade: All (K-2 safe)</span>

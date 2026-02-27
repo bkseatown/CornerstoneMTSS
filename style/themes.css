@@ -113,6 +113,7 @@
   --tile-face:    linear-gradient(160deg, #ffffff 0%, #eef3f8 100%);
   --tile-border:  #7f96af;
   --tile-text:    #001833;
+  --tile-filled-text: #a5acaf;
   --tile-shadow:  0 3px 0 #002244, 0 1px 4px rgba(0,0,0,0.25);
   --tile-filled-border: #8ca1b8;
   --key-bg:       #a5acaf;
