@@ -5772,12 +5772,24 @@
     window.location.href = url.toString();
   }
 
+  function openTeacherDashboardPage() {
+    const url = new URL('teacher-dashboard.html', window.location.href);
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      if (params.get('demo') === '1') url.searchParams.set('demo', '1');
+    } catch (_e) {
+      // no-op
+    }
+    window.location.href = url.toString();
+  }
+
   if (WRITING_STUDIO_ENABLED) {
     _el('writing-studio-btn')?.addEventListener('click', openWritingStudioPage);
   } else {
     syncWritingStudioAvailability();
   }
   _el('sentence-surgery-btn')?.addEventListener('click', openSentenceSurgeryPage);
+  _el('teacher-dashboard-btn')?.addEventListener('click', openTeacherDashboardPage);
   _el('home-logo-btn')?.addEventListener('click', () => {
     setPageMode('wordquest', { force: true });
     closeFocusSearchList();
@@ -14850,6 +14862,28 @@
     const meaning = getRevealMeaningPayload(nextEntry);
     lineEl.textContent = meaning.line;
     wrap.classList.toggle('hidden', !meaning.line);
+    syncRevealReadCue(nextEntry);
+  }
+
+  function buildRevealReadCue(text) {
+    const sentence = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!sentence) return '';
+    const cues = [];
+    if (/\?$/.test(sentence)) cues.push('Lift your voice slightly at the end for the question mark.');
+    else if (/!$/.test(sentence)) cues.push('Use a strong voice at the exclamation point.');
+    else cues.push('Let your voice drop at the period to finish clearly.');
+    if (/,/.test(sentence)) cues.push('Pause briefly at commas.');
+    else if (/\b(because|although|when|if|while)\b/i.test(sentence)) cues.push('Add a small pause before the clause word.');
+    return cues.slice(0, 2).join(' ');
+  }
+
+  function syncRevealReadCue(nextEntry) {
+    const cueEl = _el('modal-read-cue');
+    if (!cueEl) return;
+    const sourceText = String(nextEntry?.sentence || '').trim() || String(nextEntry?.text_to_read_definition || '').trim();
+    const cue = buildRevealReadCue(sourceText);
+    cueEl.textContent = cue || '';
+    cueEl.classList.toggle('hidden', !cue);
   }
 
   function getRevealFeedbackCopy(result) {

@@ -613,6 +613,7 @@
   var clearBtn = document.getElementById("ws-clear");
   var modeButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-mode]"));
   var paragraphBuilderBtn = document.getElementById("ws-paragraph-builder-btn");
+  var teacherDashboardBtn = document.getElementById("ws-teacher-dashboard-btn");
   var modeToggleBtn = document.getElementById("ws-mode-toggle");
   var audienceButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-audience]"));
   var presetSelect = document.getElementById("ws-preset-pack");
@@ -4671,12 +4672,20 @@
     window.location.href = url.toString();
   }
 
+  function openTeacherDashboard() {
+    var url = new URL("teacher-dashboard.html", window.location.href);
+    var params = new URLSearchParams(window.location.search || "");
+    if (params.get("demo") === "1") url.searchParams.set("demo", "1");
+    window.location.href = url.toString();
+  }
+
   modeButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       setMode(btn.getAttribute("data-mode"));
     });
   });
   if (paragraphBuilderBtn) paragraphBuilderBtn.addEventListener("click", openParagraphBuilder);
+  if (teacherDashboardBtn) teacherDashboardBtn.addEventListener("click", openTeacherDashboard);
   if (modeToggleBtn) modeToggleBtn.addEventListener("click", toggleModeQuick);
   audienceButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {

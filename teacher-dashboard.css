@@ -1,0 +1,127 @@
+* { box-sizing: border-box; }
+
+body.cs-page-teacher {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(135deg, #1f2a35 0%, #243848 45%, #1b2632 100%);
+  color: #e8edf2;
+}
+
+#td-root {
+  width: min(1100px, 95vw);
+  margin: 0 auto;
+  padding: 28px 14px 38px;
+  display: grid;
+  gap: 14px;
+}
+
+.td-header h1 {
+  margin: 0;
+  font-family: "Nunito", "Atkinson Hyperlegible", sans-serif;
+  font-size: clamp(28px, 3.2vw, 42px);
+  letter-spacing: 0.05em;
+}
+
+.td-sub {
+  margin: 8px 0 0;
+  color: rgba(232,237,242,0.8);
+  font-size: 16px;
+}
+
+.ss-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.38), inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.ss-card h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.td-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  gap: 24px;
+}
+
+.td-metric {
+  display: grid;
+  gap: 8px;
+}
+
+.metric-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#4fc3f7,#66bb6a);
+  transition: width 400ms cubic-bezier(.4,0,.2,1);
+}
+
+.td-grouping-list {
+  display: grid;
+  gap: 10px;
+}
+
+.td-group {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(12,23,34,0.45);
+  padding: 10px;
+}
+
+.td-group-title {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+#td-heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#td-heatmap-table td,
+#td-heatmap-table th {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  font-size: 13px;
+}
+
+.tier-1 { background: rgba(102,187,106,0.3); }
+.tier-2 { background: rgba(255,202,40,0.3); }
+.tier-3 { background: rgba(239,83,80,0.3); }
+
+.heat-high { background: rgba(102,187,106,0.25); }
+.heat-mid { background: rgba(255,202,40,0.2); }
+.heat-low { background: rgba(239,83,80,0.22); }
+
+#td-lesson-suggestion {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(12,23,34,0.45);
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  #td-root { width: 96vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation:none !important; transition:none !important; }
+}

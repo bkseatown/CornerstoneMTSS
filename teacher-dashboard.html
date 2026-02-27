@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Dashboard</title>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260227a">
+</head>
+<body class="writing-studio cs-page-teacher">
+  <main id="td-root" class="writing-studio cs-page-teacher">
+    <div class="td-header">
+      <h1>Teacher Dashboard</h1>
+      <p class="td-sub">Live structural insights across your learners.</p>
+    </div>
+
+    <div class="td-overview ss-card">
+      <h2>Class Snapshot</h2>
+      <div class="td-metrics-grid">
+        <div class="td-metric">
+          <label>Complex Sentences</label>
+          <div class="metric-bar"><div class="metric-fill" id="td-complex"></div></div>
+        </div>
+        <div class="td-metric">
+          <label>Reasoning Usage</label>
+          <div class="metric-bar"><div class="metric-fill" id="td-reasoning"></div></div>
+        </div>
+        <div class="td-metric">
+          <label>Strong Verbs</label>
+          <div class="metric-bar"><div class="metric-fill" id="td-verbs"></div></div>
+        </div>
+        <div class="td-metric">
+          <label>Average Cohesion</label>
+          <div class="metric-bar"><div class="metric-fill" id="td-cohesion"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="td-grouping ss-card">
+      <h2>Suggested Intervention Groups</h2>
+      <div id="td-groups"></div>
+    </div>
+
+    <div class="td-heatmap ss-card">
+      <h2>Skill Heatmap</h2>
+      <table id="td-heatmap-table"></table>
+    </div>
+
+    <div class="td-suggestion ss-card">
+      <h2>Recommended Mini-Lesson</h2>
+      <div id="td-lesson-suggestion"></div>
+    </div>
+  </main>
+
+  <script src="./teacher-dashboard.js?v=20260227a" defer></script>
+</body>
+</html>
