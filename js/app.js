@@ -45,6 +45,72 @@
       return false;
     }
   })();
+
+  function collectOverflowDiagnostics(limit = 10) {
+    const viewportH = document.documentElement.clientHeight || window.innerHeight || 0;
+    const viewportW = document.documentElement.clientWidth || window.innerWidth || 0;
+    const nodes = Array.from(document.body ? document.body.querySelectorAll('*') : []);
+    const offenders = [];
+    for (let i = 0; i < nodes.length; i += 1) {
+      const el = nodes[i];
+      if (!el || !el.getBoundingClientRect) continue;
+      const style = getComputedStyle(el);
+      if (!style || style.display === 'none' || style.visibility === 'hidden') continue;
+      if (style.position === 'fixed') continue;
+      const rect = el.getBoundingClientRect();
+      if (!Number.isFinite(rect.bottom) || rect.height <= 0) continue;
+      if (rect.right <= 0 || rect.left >= viewportW) continue;
+      offenders.push({
+        tag: el.tagName ? el.tagName.toLowerCase() : 'node',
+        id: el.id || '',
+        className: typeof el.className === 'string'
+          ? el.className.trim().split(/\s+/).filter(Boolean).slice(0, 3).join('.')
+          : '',
+        bottom: Math.round(rect.bottom * 100) / 100,
+        top: Math.round(rect.top * 100) / 100,
+        marginTop: style.marginTop,
+        marginBottom: style.marginBottom
+      });
+    }
+    offenders.sort((a, b) => b.bottom - a.bottom);
+    return offenders.slice(0, Math.max(1, limit));
+  }
+
+  function logOverflowDiagnostics(tag) {
+    if (!isDevModeEnabled()) return;
+    requestAnimationFrame(() => {
+      const docEl = document.documentElement;
+      const body = document.body;
+      const viewportH = docEl ? docEl.clientHeight : window.innerHeight;
+      const metrics = {
+        tag: String(tag || 'runtime'),
+        homeMode: document.documentElement.getAttribute('data-home-mode') || 'n/a',
+        pageMode: document.documentElement.getAttribute('data-page-mode') || 'n/a',
+        viewport: `${Math.round(window.innerWidth)}x${Math.round(window.innerHeight)}`,
+        docScrollHeight: docEl ? docEl.scrollHeight : 0,
+        docClientHeight: docEl ? docEl.clientHeight : 0,
+        bodyScrollHeight: body ? body.scrollHeight : 0,
+        bodyClientHeight: body ? body.clientHeight : 0
+      };
+      const overflow = Math.max(
+        metrics.docScrollHeight - metrics.docClientHeight,
+        metrics.bodyScrollHeight - metrics.bodyClientHeight
+      );
+      if (overflow <= 0) {
+        console.info('[WQ Overflow Diagnostics]', metrics, 'overflow=0');
+        return;
+      }
+      const offenders = collectOverflowDiagnostics(8).filter((entry) => entry.bottom > viewportH - 1);
+      console.groupCollapsed(`[WQ Overflow Diagnostics] ${metrics.tag} overflow=${overflow}px`);
+      console.table(metrics);
+      if (offenders.length) {
+        console.table(offenders);
+      } else {
+        console.info('No visible non-fixed offenders exceeded viewport bottom.');
+      }
+      console.groupEnd();
+    });
+  }
   if (DEMO_MODE) {
     // Mark demo initialization; do not early-return the app bootstrap.
     window.__CS_DEMO_INIT_DONE = true;
@@ -5634,6 +5700,7 @@
         url.searchParams.set('play', '1');
         window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
       } catch {}
+      logOverflowDiagnostics('setHomeMode:play');
       return;
     }
     try {
@@ -5641,6 +5708,7 @@
       url.searchParams.delete('play');
       window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
     } catch {}
+    logOverflowDiagnostics('setHomeMode:home');
   }
 
   function initializeHomeMode() {
@@ -5801,6 +5869,7 @@
   persistPageMode('wordquest');
   updatePageModeUrl('wordquest');
   initializeHomeMode();
+  logOverflowDiagnostics('init');
   syncPlayToolsRoleVisibility();
 
   setSettingsView('quick');
@@ -5827,6 +5896,7 @@
   });
   window.addEventListener('resize', () => {
     syncQuickPopoverPositions();
+    logOverflowDiagnostics('resize');
   }, { passive: true });
   window.addEventListener('scroll', () => {
     syncQuickPopoverPositions();
@@ -7677,6 +7747,7 @@
       const themeH = (themeNestedInHeader || themeStripOverlay) ? 0 : (themeStripEl?.offsetHeight || 0);
       const viewportH = window.visualViewport?.height || window.innerHeight;
       const viewportW = window.visualViewport?.width || window.innerWidth;
+      const homeMode = document.documentElement.getAttribute('data-home-mode') || 'play';
       const playStyle = document.documentElement.getAttribute('data-play-style') || 'detective';
       const keyboardLayout = document.documentElement.getAttribute('data-keyboard-layout') || 'standard';
       const chunkTabsOn = document.documentElement.getAttribute('data-chunk-tabs') !== 'off';
@@ -7718,7 +7789,9 @@
         : 4;
       const kbH = kbRows * keyH + (kbRows - 1) * keyGap + chunkRowH + keyboardSafetyPad;
 
-      const extraSafetyH = layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 22 : layoutMode === 'wide' ? 14 : 18;
+      const extraSafetyBase = layoutMode === 'compact' ? 30 : layoutMode === 'tight' ? 22 : layoutMode === 'wide' ? 14 : 18;
+      const playModeSafety = homeMode === 'play' ? 12 : 0;
+      const extraSafetyH = extraSafetyBase + playModeSafety;
       const listeningReserveH = playStyle === 'listening' ? 12 : 0;
       const reservedH = headerH + focusH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + (keyboardBottomGap + listeningBottomGapBoost) + boardZoneGap + supportReserveH + extraSafetyH + listeningReserveH;
       const availableBoardH = Math.max(140, viewportH - reservedH);
@@ -7764,6 +7837,7 @@
       document.documentElement.style.setProperty('--gap-key', `${Math.max(6, adaptiveKeyGap).toFixed(1)}px`);
       document.documentElement.style.setProperty('--keyboard-max-width', `${Math.ceil(maxKeyboardW)}px`);
       document.documentElement.style.setProperty('--keyboard-bottom-gap', `${keyboardBottomGap + listeningBottomGapBoost}px`);
+      document.documentElement.style.setProperty('--play-header-h', `${Math.ceil(headerH)}px`);
 
       if (boardPlateEl) {
         boardPlateEl.style.removeProperty('width');
@@ -13225,6 +13299,7 @@
   const reflowLayout = () => {
     const s = WQGame.getState();
     if (s?.word) WQUI.calcLayout(s.wordLength, s.maxGuesses);
+    logOverflowDiagnostics('reflowLayout');
   };
   window.addEventListener('resize', reflowLayout);
   window.visualViewport?.addEventListener('resize', reflowLayout);

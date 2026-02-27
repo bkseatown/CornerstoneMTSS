@@ -91,6 +91,10 @@ html[data-text-size="large"] { --wq-text-size: 18px; }
   --cs-space-3: 16px;
   --cs-space-4: 24px;
   --cs-space-5: 32px;
+  --home-hero-maxh: clamp(520px, 72vh, 760px);
+  --home-preview-maxh: min(48vh, 420px);
+  --play-header-h: 62px;
+  --play-safe-padding: 8px;
 }
 
 .cs-stage {
@@ -786,9 +790,12 @@ html[data-home-mode="home"] main {
 }
 
 html[data-home-mode="home"] .hero-v2 {
-  min-height: clamp(500px, calc(100dvh - 108px), 620px);
-  padding-top: clamp(28px, 5vh, 56px);
-  padding-bottom: clamp(20px, 4vh, 40px);
+  height: min(var(--home-hero-maxh), calc(100dvh - var(--play-header-h) - 10px));
+  max-height: var(--home-hero-maxh);
+  min-height: 0;
+  margin-bottom: 0;
+  padding-top: clamp(20px, 3.6vh, 36px);
+  padding-bottom: clamp(14px, 2.8vh, 28px);
 }
 
 html[data-home-mode="play"] #hero-v2,
@@ -798,6 +805,14 @@ html[data-home-mode="play"] #home-tools-section {
 
 html[data-home-mode="play"] .top-control-hub {
   display: none !important;
+}
+
+html[data-home-mode="play"] main {
+  height: calc(100dvh - var(--play-header-h) - var(--play-safe-padding));
+  min-height: calc(100dvh - var(--play-header-h) - var(--play-safe-padding));
+  padding-top: 2px;
+  padding-bottom: 0;
+  overflow: hidden;
 }
 
 html[data-home-mode="play"] .header-main-row {
@@ -3110,8 +3125,8 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
   gap: 10px;
   flex-wrap: nowrap;
   order: 3;
-  margin-top: 8px;
-  margin-bottom: 10px;
+  margin-top: 2px;
+  margin-bottom: 4px;
 }
 
 .play-style-banner {
@@ -3907,9 +3922,28 @@ html[data-play-style="detective"] .gameplay-audio {
   max-width:      min(calc(100vw - 16px), calc(100% - 6px));
   flex-shrink:    0;
   margin-top:     0;
-  margin-bottom:  max(var(--keyboard-bottom-gap, 10px), env(safe-area-inset-bottom));
+  margin-bottom:  max(var(--keyboard-bottom-gap, 4px), env(safe-area-inset-bottom));
   padding-inline: 0;
   min-height:     clamp(220px, 28vh, 320px);
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --home-hero-maxh: clamp(480px, 70vh, 640px);
+    --home-preview-maxh: min(44vh, 420px);
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --home-hero-maxh: clamp(420px, 62vh, 560px);
+    --home-preview-maxh: min(34vh, 300px);
+  }
+
+  html[data-home-mode="home"] .hero-v2 {
+    padding-top: 14px;
+    padding-bottom: 12px;
+  }
 }
 
 .key-row {
