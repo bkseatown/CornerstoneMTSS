@@ -3088,6 +3088,15 @@ html[data-key-style="pebble"] .tile {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
+html[data-theme="seahawks"] .tile.filled:not(.correct):not(.present):not(.absent) {
+  background: linear-gradient(
+    170deg,
+    color-mix(in oklab, var(--key-bg) 86%, #ffffff 14%) 0%,
+    color-mix(in oklab, var(--key-bg) 94%, #1b2d42 6%) 100%
+  );
+  color: #001433;
+}
+
 html[data-board-style="soundcard"] .tile {
   --tile-tilt: 10deg;
   border-radius: 13px;

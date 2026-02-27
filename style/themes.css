@@ -106,14 +106,14 @@
 /* ── SEAHAWKS ── Navy #002244 + Action Green #69BE28 + Wolf Gray #A5ACAF
    Wolf gray keys (actual brand color), green key shadows = instant ID   */
 [data-theme="seahawks"] {
-  --page-bg:      #224050;
-  --page-bg2:     #183047;
+  --page-bg:      #2d5268;
+  --page-bg2:     #23465c;
   --plate-bg:     rgba(0,0,0,0.20);
   --plate-border: rgba(128,152,178,0.40);
   --tile-face:    linear-gradient(160deg, #ffffff 0%, #eef3f8 100%);
   --tile-border:  #7f96af;
   --tile-text:    #001833;
-  --tile-filled-text: #a5acaf;
+  --tile-filled-text: #001433;
   --tile-shadow:  0 3px 0 #002244, 0 1px 4px rgba(0,0,0,0.25);
   --tile-filled-border: #8ca1b8;
   --key-bg:       #a5acaf;
