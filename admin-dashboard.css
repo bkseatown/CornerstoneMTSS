@@ -1,0 +1,114 @@
+* { box-sizing: border-box; }
+
+body.cs-page-admin {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(135deg, #1f2a35 0%, #243848 45%, #1b2632 100%);
+  color: #e8edf2;
+}
+
+#admin-root {
+  width: min(1160px, 95vw);
+  margin: 0 auto;
+  padding: 28px 14px 38px;
+  display: grid;
+  gap: 14px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-family: "Nunito", "Atkinson Hyperlegible", sans-serif;
+  font-size: clamp(28px, 3.2vw, 42px);
+  letter-spacing: 0.04em;
+}
+
+.admin-header p {
+  margin: 8px 0 0;
+  color: rgba(232,237,242,0.82);
+  font-size: 16px;
+}
+
+.ss-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.38), inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.ss-card h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.admin-metric {
+  margin-bottom: 12px;
+}
+
+.admin-metric-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-bar {
+  height: 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.admin-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#42a5f5,#66bb6a);
+  transition: width 400ms cubic-bezier(.4,0,.2,1);
+}
+
+.admin-class-card {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(12,23,34,0.45);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-class-title {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.admin-muted {
+  color: rgba(232,237,242,0.74);
+  font-size: 13px;
+}
+
+#admin-trend-insights {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-trend {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(12,23,34,0.45);
+  padding: 11px 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+@media (max-width: 860px) {
+  #admin-root { width: 96vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

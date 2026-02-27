@@ -20,6 +20,26 @@
     }
   }
 
+  function getClassId() {
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      var fromQuery = String(params.get('classId') || params.get('class') || '').trim();
+      if (fromQuery) return fromQuery;
+    } catch (_e) {
+      // ignore
+    }
+    try {
+      var fromStorage = String(localStorage.getItem('cs_active_class_id') || '').trim();
+      if (fromStorage) return fromStorage;
+    } catch (_e2) {
+      // ignore
+    }
+    if (window.CS_CONFIG && window.CS_CONFIG.classId) {
+      return String(window.CS_CONFIG.classId).trim() || 'Default Class';
+    }
+    return 'Default Class';
+  }
+
   function loadData() {
     var parsed = [];
     try {
@@ -248,6 +268,21 @@
     renderGroups(stats);
     renderHeatmap(stats);
     renderLesson(snapshot);
+
+    if (!isDemoMode() && window.CSAnalyticsEngine && typeof window.CSAnalyticsEngine.updateSchoolAnalytics === 'function') {
+      var totalSentences = data.reduce(function (sum, student) {
+        var rows = Array.isArray(student && student.sentences) ? student.sentences : [];
+        return sum + rows.length;
+      }, 0);
+      window.CSAnalyticsEngine.updateSchoolAnalytics(getClassId(), {
+        totalSentences: totalSentences,
+        reasoningRate: snapshot.reasoningPct / 100,
+        complexRate: snapshot.complexPct / 100,
+        avgDetail: Number((stats.reduce(function (sum, s) { return sum + s.detailAvg; }, 0) / Math.max(1, stats.length)).toFixed(2)),
+        avgCohesion: snapshot.cohesionAvg,
+        verbStrengthRate: snapshot.strongPct / 100
+      });
+    }
   }
 
   render();

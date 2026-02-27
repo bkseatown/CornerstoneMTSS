@@ -2,6 +2,7 @@
   "use strict";
 
   var KEY = "cs_analytics";
+  var SCHOOL_KEY = "cs_school_analytics";
 
   function isDemoMode() {
     try {
@@ -80,11 +81,65 @@
     return next;
   }
 
+  function readSchoolAnalytics() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(SCHOOL_KEY) || "null");
+      if (!parsed || typeof parsed !== "object") {
+        return { classes: {}, lastUpdated: 0 };
+      }
+      var classes = parsed.classes && typeof parsed.classes === "object" ? parsed.classes : {};
+      return {
+        classes: classes,
+        lastUpdated: Number(parsed.lastUpdated || 0)
+      };
+    } catch (_e) {
+      return { classes: {}, lastUpdated: 0 };
+    }
+  }
+
+  function writeSchoolAnalytics(payload) {
+    try {
+      localStorage.setItem(SCHOOL_KEY, JSON.stringify(payload || { classes: {}, lastUpdated: Date.now() }));
+    } catch (_e) {
+      // ignore storage write failures
+    }
+  }
+
+  function normalizeClassId(classId) {
+    var clean = String(classId || "").replace(/\s+/g, " ").trim();
+    return clean || "Unassigned Class";
+  }
+
+  function updateSchoolAnalytics(classId, metrics) {
+    if (isDemoMode()) return readSchoolAnalytics();
+    if (!metrics || typeof metrics !== "object") return readSchoolAnalytics();
+    if (window.CS_CONFIG && window.CS_CONFIG.enableAnalytics === false) return readSchoolAnalytics();
+
+    var school = readSchoolAnalytics();
+    if (!school.classes || typeof school.classes !== "object") school.classes = {};
+    var key = normalizeClassId(classId);
+    school.classes[key] = {
+      totalSentences: Math.max(0, Number(metrics.totalSentences || 0)),
+      reasoningRate: clamp(Number(metrics.reasoningRate || 0), 0, 1),
+      complexRate: clamp(Number(metrics.complexRate || 0), 0, 1),
+      avgDetail: clamp(Number(metrics.avgDetail || 0), 0, 5),
+      avgCohesion: clamp(Number(metrics.avgCohesion || 0), 0, 5),
+      verbStrengthRate: clamp(Number(metrics.verbStrengthRate || 0), 0, 1)
+    };
+    school.lastUpdated = Date.now();
+    writeSchoolAnalytics(school);
+    return school;
+  }
+
   window.CSAnalyticsEngine = {
     KEY: KEY,
+    SCHOOL_KEY: SCHOOL_KEY,
     isDemoMode: isDemoMode,
     read: read,
     write: write,
-    updateFromAnalysis: updateFromAnalysis
+    updateFromAnalysis: updateFromAnalysis,
+    readSchoolAnalytics: readSchoolAnalytics,
+    writeSchoolAnalytics: writeSchoolAnalytics,
+    updateSchoolAnalytics: updateSchoolAnalytics
   };
 })();
