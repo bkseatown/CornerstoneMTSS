@@ -38,7 +38,10 @@
     metricAccuracy: document.getElementById("rl-metric-accuracy"),
     metricPacing: document.getElementById("rl-metric-pacing"),
     metricPunct: document.getElementById("rl-metric-punct"),
-    metricProsody: document.getElementById("rl-metric-prosody")
+    metricProsody: document.getElementById("rl-metric-prosody"),
+    metricsPanel: document.getElementById("rl-metrics-panel"),
+    liveChip: document.getElementById("rl-live-chip"),
+    markTools: document.getElementById("rl-mark-tools")
   };
 
   if (!el.passage || !el.start || !el.stop) return;
@@ -84,6 +87,9 @@
   }
 
   function isDevMode() {
+    if (window.CSAppMode && typeof window.CSAppMode.isDevMode === "function") {
+      return !!window.CSAppMode.isDevMode();
+    }
     try {
       return localStorage.getItem("cs_allow_dev") === "1";
     } catch (_e) {
@@ -277,9 +283,12 @@
       el.hardPanel.classList.add("hidden");
       return;
     }
-    el.hardPanel.classList.remove("hidden");
     var diff = getWordDifficulty();
     var row = diff[token.norm] || { misses: 0, heart: false };
+    var latest = latestMarkByWord();
+    var shouldShow = Number(row.misses || 0) > 0 || isHardWord(token, diff, latest);
+    el.hardPanel.classList.toggle("hidden", !shouldShow);
+    if (!shouldShow) return;
     el.hardTarget.textContent = "Word: " + token.raw;
     el.hardBreakdown.textContent = "Breakdown: " + splitSyllables(token.norm);
     el.hardPattern.textContent = "Pattern: " + detectPattern(token.norm) + " • Misses: " + Number(row.misses || 0);
@@ -330,6 +339,7 @@
       mode: state.mode
     };
     setStatus("Attempt running.");
+    syncAttemptVisibility("running");
 
     if (state.mode === "read_aloud" && !opts.skipAudio) {
       beginAudioCapture();
@@ -353,6 +363,7 @@
     renderTeacherSummary(metrics);
     if (!state.isDemo && !opts.skipPersist) persistReadingAggregate(metrics);
     setStatus("Attempt complete.");
+    syncAttemptVisibility("complete");
   }
 
   function beginAudioCapture() {
@@ -478,11 +489,30 @@
     el.metricPacing.textContent = String(metrics.pacingVar);
     el.metricPunct.textContent = String(metrics.punctScore) + "%";
     el.metricProsody.textContent = metrics.prosody;
+    if (el.liveChip) {
+      var liveLabel = attempted > 0 ? ("Accuracy: " + String(metrics.accuracy) + "%") : "Accuracy: --";
+      el.liveChip.textContent = liveLabel;
+    }
 
     renderTokens(state.tokens);
     updateHardWordPanel();
     updateComprehensionPrompt();
     return metrics;
+  }
+
+  function syncAttemptVisibility(mode) {
+    var phase = String(mode || "ready");
+    if (el.markTools) el.markTools.classList.toggle("hidden", phase === "ready");
+    if (el.liveChip) el.liveChip.classList.toggle("hidden", phase === "ready");
+    if (el.metricsPanel) {
+      var attempted = Number(state.latestMetrics && state.latestMetrics.attempted || 0);
+      var reveal = phase === "complete" || attempted >= 20;
+      el.metricsPanel.classList.toggle("hidden", !reveal);
+    }
+    if (phase === "ready") {
+      el.teacherSummary.classList.add("hidden");
+      el.hardPanel.classList.add("hidden");
+    }
   }
 
   function topHardWords(limit) {
@@ -603,6 +633,7 @@
     updateHardWordPanel();
     updateComprehensionPrompt();
     computeAndRenderMetrics();
+    syncAttemptVisibility(state.attempt && state.attempt.startedAt ? "running" : "ready");
   }
 
   function sendSentenceToSurgery() {
@@ -734,7 +765,8 @@
     if (!state.isDemo) return;
     clearDemoTimers();
     state.passageIndex = 0;
-    refreshPassage();
+  refreshPassage();
+  syncAttemptVisibility("ready");
     el.replayDemo.classList.remove("hidden");
     startAttempt({ skipAudio: true });
 

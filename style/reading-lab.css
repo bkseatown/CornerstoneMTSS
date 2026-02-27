@@ -169,8 +169,7 @@ body.cs-page-reading-lab {
 
 .rl-mark-tools {
   margin-top: 10px;
-  border-top: 1px solid rgba(255,255,255,0.12);
-  padding-top: 10px;
+  padding-top: 4px;
 }
 
 .rl-mark-buttons {
@@ -190,10 +189,46 @@ body.cs-page-reading-lab {
   color: var(--rl-muted);
 }
 
+.rl-help-toggle {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--rl-muted);
+}
+
+.rl-help-toggle summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #d8e6f6;
+}
+
+.rl-live-chip {
+  margin-top: 10px;
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(127,182,255,0.48);
+  background: rgba(127,182,255,0.18);
+  color: #ecf5ff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+}
+
 .rl-metrics {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.rl-metrics-panel {
   margin-top: 10px;
   border-top: 1px solid rgba(255,255,255,0.12);
   padding-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.rl-metrics-summary {
   display: grid;
   gap: 6px;
   font-size: 14px;

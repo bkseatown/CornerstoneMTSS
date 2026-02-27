@@ -6,6 +6,9 @@
   var RELOAD_GUARD_KEY = "cs_app_version_reloaded_once";
 
   function inDevMode() {
+    if (window.CSAppMode && typeof window.CSAppMode.isDevMode === "function") {
+      return !!window.CSAppMode.isDevMode();
+    }
     return !!(window.CS_CONFIG && window.CS_CONFIG.environment === "dev");
   }
 
@@ -115,7 +118,10 @@
 
     applyReloadGuard(version);
 
-    var onReady = function () { ensureBadge(version); };
+    var onReady = function () {
+      if (!inDevMode()) return;
+      ensureBadge(version);
+    };
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", onReady, { once: true });
     } else {

@@ -42,15 +42,18 @@
       <section class="ss-stats" aria-label="Sentence summary">
         <div><strong id="ssWordCount">Words: 0</strong></div>
         <div id="ssType">Type: simple</div>
-        <div id="ssFocus">Focus: reasoning</div>
+        <div id="ssFocus">Target skill: Reasoning (because/although)</div>
       </section>
 
-      <section class="ss-traits" aria-label="Writing traits">
-        <div class="ss-trait"><span>Clarity</span><div class="ss-trait-track"><div id="ssTraitClarity" class="ss-trait-fill"></div></div><span id="ssTraitClarityValue">0</span></div>
-        <div class="ss-trait"><span>Detail</span><div class="ss-trait-track"><div id="ssTraitDetail" class="ss-trait-fill"></div></div><span id="ssTraitDetailValue">0</span></div>
-        <div class="ss-trait"><span>Reasoning</span><div class="ss-trait-track"><div id="ssTraitReasoning" class="ss-trait-fill"></div></div><span id="ssTraitReasoningValue">0</span></div>
-        <div class="ss-trait"><span>Control</span><div class="ss-trait-track"><div id="ssTraitControl" class="ss-trait-fill"></div></div><span id="ssTraitControlValue">0</span></div>
-      </section>
+      <details id="ssTraitsPanel" class="ss-post-edit hidden">
+        <summary>View trait scores</summary>
+        <section class="ss-traits" aria-label="Writing traits">
+          <div class="ss-trait"><span>Clarity</span><div class="ss-trait-track"><div id="ssTraitClarity" class="ss-trait-fill"></div></div><span id="ssTraitClarityValue">0</span></div>
+          <div class="ss-trait"><span>Detail</span><div class="ss-trait-track"><div id="ssTraitDetail" class="ss-trait-fill"></div></div><span id="ssTraitDetailValue">0</span></div>
+          <div class="ss-trait"><span>Reasoning</span><div class="ss-trait-track"><div id="ssTraitReasoning" class="ss-trait-fill"></div></div><span id="ssTraitReasoningValue">0</span></div>
+          <div class="ss-trait"><span>Control</span><div class="ss-trait-track"><div id="ssTraitControl" class="ss-trait-fill"></div></div><span id="ssTraitControlValue">0</span></div>
+        </section>
+      </details>
 
       <aside class="ss-breakdown" id="ssBreakdown" aria-live="polite">
         <div><strong>Skill Tag:</strong> <span id="ssSkillTag">Emerging sentence</span></div>
@@ -58,13 +61,13 @@
         <div id="ssBreakdownBody">Words: 0 • Clauses: 0 • Adjectives: 0 • Strong Verb: No</div>
       </aside>
 
-      <div class="ss-footer" id="ssFooterCta">
+      <div class="ss-footer ss-post-edit hidden" id="ssFooterCta">
         <button type="button" id="ssDoneBtn" class="ss-action-btn">Done</button>
         <button type="button" id="ssTryAnotherBtn" class="ss-action-btn">Try another</button>
         <button type="button" id="ssChaosToggleBtn" class="ss-action-btn">Fix the Chaos</button>
       </div>
 
-      <section class="ss-timed" aria-label="Timed mode">
+      <section class="ss-timed ss-post-edit hidden" aria-label="Timed mode">
         <div class="ss-timed-controls">
           <label for="ssTimedPreset">Timed Mode</label>
           <select id="ssTimedPreset" class="ss-timed-select">

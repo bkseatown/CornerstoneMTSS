@@ -31,7 +31,7 @@
       <article class="rl-surface rl-passage-surface" aria-label="Passage panel">
         <div class="rl-surface-head">
           <h2>Passage</h2>
-          <div id="rl-status" class="rl-status">Ready.</div>
+          <div id="rl-status" class="rl-status">Start reading. We’ll track accuracy + phrasing.</div>
         </div>
         <div id="rl-passage" class="rl-passage" tabindex="0" aria-label="Reading passage"></div>
         <div class="rl-passage-actions">
@@ -60,7 +60,14 @@
           <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> Show Prosody Coach</label>
         </div>
 
-        <div class="rl-mark-tools">
+        <details id="rl-what-track" class="rl-help-toggle">
+          <summary>What we track</summary>
+          <div>Accuracy, punctuation respect, ORF estimate, and reasoning response quality.</div>
+        </details>
+
+        <div id="rl-live-chip" class="rl-live-chip hidden">Accuracy: --</div>
+
+        <div id="rl-mark-tools" class="rl-mark-tools hidden">
           <strong>Mark Tokens</strong>
           <div class="rl-mark-buttons">
             <button type="button" class="rl-btn rl-mark-btn is-active" data-mark="correct">C</button>
@@ -68,15 +75,25 @@
             <button type="button" class="rl-btn rl-mark-btn" data-mark="skip">S</button>
             <button type="button" class="rl-btn rl-mark-btn" data-mark="self_correct">R</button>
           </div>
-          <div class="rl-help">Silent keys: <code>C</code>/<code>I</code>/<code>S</code> mark, <code>R</code> self-correct last, <code>Space</code>/<code>→</code> next.</div>
+          <details class="rl-help-toggle">
+            <summary>Keyboard help</summary>
+            <div class="rl-help">Silent keys: <code>C</code>/<code>I</code>/<code>S</code> mark, <code>R</code> self-correct last, <code>Space</code>/<code>→</code> next.</div>
+          </details>
         </div>
 
-        <div class="rl-metrics" id="rl-metrics">
-          <div><strong>ORF WPM:</strong> <span id="rl-metric-wpm">0</span></div>
-          <div><strong>Accuracy:</strong> <span id="rl-metric-accuracy">0%</span></div>
-          <div><strong>Pacing Var:</strong> <span id="rl-metric-pacing">0</span></div>
-          <div><strong>Punctuation Respect:</strong> <span id="rl-metric-punct">0</span></div>
-          <div><strong>Prosody Cue:</strong> <span id="rl-metric-prosody">--</span></div>
+        <div id="rl-metrics-panel" class="rl-metrics-panel hidden">
+          <div class="rl-metrics-summary" id="rl-metrics-summary">
+            <div><strong>Accuracy:</strong> <span id="rl-metric-accuracy">0%</span></div>
+            <div><strong>Punctuation Respect:</strong> <span id="rl-metric-punct">0</span></div>
+            <div><strong>ORF WPM:</strong> <span id="rl-metric-wpm">0</span></div>
+          </div>
+          <details class="rl-help-toggle">
+            <summary>Details</summary>
+            <div class="rl-metrics" id="rl-metrics">
+              <div><strong>Pacing Var:</strong> <span id="rl-metric-pacing">0</span></div>
+              <div><strong>Prosody Cue:</strong> <span id="rl-metric-prosody">--</span></div>
+            </div>
+          </details>
         </div>
 
         <div id="rl-hard-word-panel" class="rl-panel hidden" aria-label="Hard word support">

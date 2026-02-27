@@ -24,6 +24,8 @@
   var sessionPanelBody = document.getElementById("td-session-plan-content");
   var miniLessonCard = document.getElementById("td-mini-lesson-card");
   var miniLessonBody = document.getElementById("td-mini-lesson-content");
+  var classViewEls = Array.prototype.slice.call(document.querySelectorAll(".td-class-view"));
+  var studentViewEls = Array.prototype.slice.call(document.querySelectorAll(".td-student-view"));
 
   if (!complexFill || !reasoningFill || !verbsFill || !cohesionFill || !groupsEl || !heatmapTable || !lessonEl) return;
   if (window.CSPerformanceEngine && typeof window.CSPerformanceEngine.init === "function") {
@@ -364,16 +366,23 @@
   }
 
   function getSelectedRow() {
-    if (!state.rows.length) return null;
+    if (!state.rows.length || !state.selectedStudentId) return null;
     var id = state.selectedStudentId;
     var row = state.rows.filter(function (r) { return r.studentId === id; })[0];
-    return row || state.rows[0] || null;
+    return row || null;
+  }
+
+  function setStudentView(active) {
+    var show = !!active;
+    studentViewEls.forEach(function (el) { el.classList.toggle("hidden", !show); });
+    classViewEls.forEach(function (el) { el.classList.toggle("hidden", false); });
   }
 
   function refreshSelectedLabel() {
     if (!selectedEl) return;
     var row = getSelectedRow();
-    selectedEl.textContent = row ? (row.name + " (" + pickTier(row) + ")") : "No student selected";
+    selectedEl.textContent = row ? (row.name + " (" + pickTier(row) + ")") : "Select a student from heatmap details";
+    setStudentView(!!row);
   }
 
   function attachStudentSelectionHandlers() {
@@ -464,6 +473,7 @@
     var data = loadData();
     var analytics = loadAnalytics();
     if (!data.length) {
+      setStudentView(false);
       if (groupRecsEl) groupRecsEl.innerHTML = "";
       if (aiSummaryEl) aiSummaryEl.classList.add("hidden");
       if (analytics && Number(analytics.totalSentences || 0) > 0) {
@@ -493,7 +503,7 @@
 
     var stats = data.map(studentStats);
     state.rows = stats;
-    if (!state.selectedStudentId && stats.length) state.selectedStudentId = stats[0].studentId;
+    if (!state.selectedStudentId) state.selectedStudentId = "";
 
     if (!isDemoMode() && window.CSAnalyticsEngine && typeof window.CSAnalyticsEngine.appendStudentProgress === "function") {
       stats.forEach(function (row) {

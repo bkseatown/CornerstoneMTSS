@@ -29,6 +29,8 @@
   var timedStartBtn = document.getElementById("ssTimedStartBtn");
   var timedStopBtn = document.getElementById("ssTimedStopBtn");
   var timedStatusEl = document.getElementById("ssTimedStatus");
+  var traitsPanelEl = document.getElementById("ssTraitsPanel");
+  var postEditEls = Array.prototype.slice.call(document.querySelectorAll(".ss-post-edit"));
 
   if (!sentenceEl || !meterBarEl || !levelEl || !window.SentenceEngine || !(window.CSAIService || window.SSAIAnalysis) || !window.SSTeacherLens) return;
   if (window.CSPerformanceEngine && typeof window.CSPerformanceEngine.init === "function") {
@@ -77,6 +79,7 @@
     score: 0,
     timerId: 0
   };
+  var hasFirstEdit = false;
 
   function seedSentenceFromQuery() {
     try {
@@ -157,6 +160,16 @@
     }
     coachEl.textContent = line;
     coachEl.classList.remove("hidden");
+  }
+
+  function revealPostEditUi() {
+    if (hasFirstEdit) return;
+    hasFirstEdit = true;
+    postEditEls.forEach(function (node) { node.classList.remove("hidden"); });
+    if (traitsPanelEl) traitsPanelEl.open = false;
+    if (!sanitize(coachEl && coachEl.textContent)) {
+      setCoachText("Next move: add one reasoning revision, then review trait scores.");
+    }
   }
 
   function timedPresetConfig(code) {
@@ -346,7 +359,7 @@
 
     if (wordCountEl) wordCountEl.textContent = "Words: " + ai.word_count;
     if (typeEl) typeEl.textContent = "Type: " + ai.sentence_type;
-    if (focusEl) focusEl.textContent = "Focus: " + ai.suggested_focus;
+    if (focusEl) focusEl.textContent = "Target skill: " + skillLabel(ai.suggested_focus) + " (because/although)";
     if (skillTagEl) skillTagEl.textContent = lens.skillTag;
     if (groupingEl) groupingEl.textContent = lens.grouping;
     if (breakdownBodyEl) {
@@ -454,11 +467,13 @@
 
   function fillSlot(slotId, value) {
     engine.setSlotValue(slotId, value);
+    if (sanitize(value)) revealPostEditUi();
     render();
   }
 
   function chooseVerb(value) {
     engine.chooseVerb(value);
+    revealPostEditUi();
     hideVerbMenu();
     render();
   }
@@ -502,6 +517,7 @@
 
   function applyAction(action) {
     if (demoLocked) return;
+    if (action && action !== "teacher") revealPostEditUi();
     if (action === "verb") {
       engine.applyAction(action);
       var sourceBtn = document.querySelector('[data-action="verb"]');
@@ -543,6 +559,7 @@
       focusSlot(slotId, true);
       return;
     }
+    revealPostEditUi();
     render();
   }
 

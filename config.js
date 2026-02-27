@@ -96,4 +96,18 @@
 
   window.CS_CONFIG = buildConfig();
   window.CS_CONFIG.devUnlocked = hasDevUnlock();
+
+  function isDevMode() {
+    var hasStorageUnlock = hasDevUnlock();
+    var fromQuery = false;
+    try {
+      fromQuery = String(new URLSearchParams(window.location.search || "").get("env") || "").toLowerCase() === "dev";
+    } catch (_e) {
+      fromQuery = false;
+    }
+    return fromQuery || hasStorageUnlock || window.CS_CONFIG.environment === "dev";
+  }
+
+  window.CSAppMode = window.CSAppMode || {};
+  window.CSAppMode.isDevMode = isDevMode;
 })();

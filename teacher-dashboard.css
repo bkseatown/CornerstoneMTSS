@@ -44,6 +44,13 @@ body.cs-page-teacher {
   font-size: 20px;
 }
 
+.td-subhead {
+  margin: 14px 0 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: rgba(232,237,242,0.9);
+}
+
 .td-metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
@@ -76,7 +83,7 @@ body.cs-page-teacher {
 
 .td-group {
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.1);
   background: rgba(12,23,34,0.45);
   padding: 10px;
 }
@@ -175,6 +182,12 @@ body.cs-page-teacher {
   padding: 12px;
   display: grid;
   gap: 8px;
+}
+
+.td-heatmap > summary {
+  cursor: pointer;
+  font-weight: 800;
+  margin-bottom: 10px;
 }
 
 .hidden { display: none !important; }

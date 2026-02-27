@@ -22,7 +22,7 @@
       <p class="td-sub">Live structural insights across your learners.</p>
     </div>
 
-    <div class="td-overview ss-card">
+    <section class="td-overview ss-card td-class-view">
       <h2>Class Snapshot</h2>
       <div class="td-metrics-grid">
         <div class="td-metric">
@@ -42,10 +42,12 @@
           <div class="metric-bar"><div class="metric-fill" id="td-cohesion"></div></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="td-grouping ss-card">
-      <h2>Suggested Intervention Groups</h2>
+    <section class="td-grouping ss-card td-class-view">
+      <h2>Recommended Next Step</h2>
+      <div id="td-lesson-suggestion"></div>
+      <h3 class="td-subhead">Suggested Intervention Groups</h3>
       <div id="td-groups"></div>
       <div id="td-group-recommendations" class="td-grouping-list"></div>
       <div class="td-tools-row">
@@ -54,16 +56,15 @@
       <div id="td-session-plan-panel" class="td-panel hidden">
         <div id="td-session-plan-content"></div>
       </div>
-    </div>
+    </section>
 
-    <div class="td-heatmap ss-card">
-      <h2>Skill Heatmap</h2>
+    <details class="td-heatmap ss-card td-class-view">
+      <summary>Details: Skill Heatmap</summary>
       <table id="td-heatmap-table"></table>
-    </div>
+    </details>
 
-    <div class="td-suggestion ss-card">
+    <section class="td-suggestion ss-card td-student-view hidden">
       <h2>Recommended Mini-Lesson</h2>
-      <div id="td-lesson-suggestion"></div>
       <div id="td-ai-summary" class="td-panel hidden"></div>
       <div class="td-tools-row">
         <div id="td-selected-student">No student selected</div>
@@ -73,7 +74,7 @@
       <div id="td-mini-lesson-card" class="td-panel hidden">
         <div id="td-mini-lesson-content"></div>
       </div>
-    </div>
+    </section>
   </main>
 
   <script src="./analytics-engine.js?v=20260227a" defer></script>

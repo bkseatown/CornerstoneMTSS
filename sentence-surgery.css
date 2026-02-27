@@ -163,9 +163,25 @@ body.cs-page-surgery {
   font-size: 13px;
 }
 
-.ss-traits {
+#ssTraitsPanel {
   width: min(700px, 97%);
   margin: 12px auto 0;
+  border-radius: 12px;
+  border: 1px solid var(--ss-border);
+  background: rgba(12, 24, 37, 0.48);
+  padding: 8px 10px;
+}
+
+#ssTraitsPanel > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  color: #d9e8fa;
+}
+
+.ss-traits {
+  width: min(700px, 97%);
+  margin: 10px auto 0;
   display: grid;
   gap: 8px;
 }
