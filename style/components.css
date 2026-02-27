@@ -6641,6 +6641,28 @@ html[data-layout-mode="compact"] .key.key-chunk {
   letter-spacing: 0.01em;
 }
 
+.wq-demo-launch-btn {
+  position: fixed;
+  z-index: 228;
+  min-height: 34px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
+  background: color-mix(in oklab, var(--brand) 24%, #f8fbff 76%);
+  color: color-mix(in oklab, var(--text) 82%, #1f2c38 18%);
+  font-size: 0.76rem;
+  font-weight: 820;
+  letter-spacing: 0.01em;
+  padding: 6px 12px;
+  box-shadow: var(--panel-shadow);
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+.wq-demo-launch-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in oklab, var(--brand) 32%, #ffffff 68%);
+}
+
 .wq-demo-banner-left {
   white-space: nowrap;
   overflow: hidden;

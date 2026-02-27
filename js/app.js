@@ -745,6 +745,7 @@
   let demoRoundComplete = false;
   let demoEndOverlayEl = null;
   let demoBannerEl = null;
+  let demoLaunchBtnEl = null;
   let demoCoachEl = null;
   let demoCoachReadyTimer = 0;
   let demoDebugLabelEl = null;
@@ -797,6 +798,72 @@
     });
   }
 
+  function getDemoLaunchAnchorRect() {
+    const state = WQGame.getState?.() || null;
+    const wordLength = Math.max(1, Number(state?.wordLength || 0));
+    const activeRow = Math.max(0, Number(state?.guesses?.length || 0));
+    const firstTile = _el(`tile-${activeRow * wordLength}`);
+    const lastTile = _el(`tile-${activeRow * wordLength + (wordLength - 1)}`);
+    if (firstTile instanceof HTMLElement && lastTile instanceof HTMLElement) {
+      const a = firstTile.getBoundingClientRect();
+      const b = lastTile.getBoundingClientRect();
+      const hasSize = a.width > 0 && a.height > 0 && b.width > 0 && b.height > 0;
+      if (hasSize) {
+        return {
+          top: Math.min(a.top, b.top),
+          bottom: Math.max(a.bottom, b.bottom),
+          left: Math.min(a.left, b.left),
+          right: Math.max(a.right, b.right),
+          width: Math.max(0, Math.max(a.right, b.right) - Math.min(a.left, b.left)),
+          height: Math.max(a.height, b.height)
+        };
+      }
+    }
+    const keyboard = _el('keyboard');
+    if (keyboard instanceof HTMLElement) {
+      const rect = keyboard.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) return rect;
+    }
+    return null;
+  }
+
+  function positionDemoLaunchButton() {
+    if (DEMO_MODE || !(demoLaunchBtnEl instanceof HTMLElement)) return;
+    const rect = getDemoLaunchAnchorRect();
+    if (!rect) {
+      demoLaunchBtnEl.style.top = '';
+      demoLaunchBtnEl.style.left = '';
+      return;
+    }
+    const buttonWidth = Math.max(220, demoLaunchBtnEl.offsetWidth || 220);
+    const maxLeft = Math.max(8, window.innerWidth - buttonWidth - 8);
+    const targetCenterX = rect.left + (rect.width / 2);
+    const nextLeft = Math.min(maxLeft, Math.max(8, Math.round(targetCenterX - (buttonWidth / 2))));
+    const topFromTiles = Math.round(rect.top - 52);
+    const topFromKeyboard = Math.round(rect.top - 48);
+    const nextTop = Math.max(72, Math.min(window.innerHeight - 56, Math.max(topFromTiles, topFromKeyboard)));
+    demoLaunchBtnEl.style.left = `${nextLeft}px`;
+    demoLaunchBtnEl.style.top = `${nextTop}px`;
+  }
+
+  function createHomeDemoLaunchButton() {
+    if (DEMO_MODE || document.getElementById('wq-demo-launch-btn')) return;
+    const button = document.createElement('button');
+    button.id = 'wq-demo-launch-btn';
+    button.className = 'wq-demo-launch-btn';
+    button.type = 'button';
+    button.textContent = 'Try a live round (60 sec)';
+    button.addEventListener('click', () => {
+      window.location.href = ensureDemoParam(window.location.href);
+    });
+    document.body.appendChild(button);
+    demoLaunchBtnEl = button;
+    positionDemoLaunchButton();
+    window.addEventListener('resize', positionDemoLaunchButton, { passive: true });
+    window.addEventListener('scroll', positionDemoLaunchButton, { passive: true });
+    setTimeout(positionDemoLaunchButton, 0);
+  }
+
   function setDemoControlsDisabled() {
     if (!DEMO_MODE) return;
     document.body.classList.add('wq-demo');
@@ -839,6 +906,7 @@
   function ensureDemoParam(url) {
     const next = new URL(url || window.location.href, window.location.href);
     next.searchParams.set('demo', '1');
+    next.searchParams.set('page', 'wordquest');
     next.searchParams.delete('mode');
     return next.toString();
   }
@@ -12760,6 +12828,7 @@
     scheduleStarterCoachHint();
     syncAssessmentLockRuntime();
     if (DEMO_MODE) runDemoCoachForStart();
+    if (!DEMO_MODE) positionDemoLaunchButton();
   }
 
   const reflowLayout = () => {
@@ -12838,6 +12907,7 @@
         WQUI.showToast('Fill in all the letters first');
         WQUI.shakeRow(s.guesses, s.wordLength);
         updateNextActionLine();
+        if (!DEMO_MODE) positionDemoLaunchButton();
         return;
       }
 
@@ -12921,6 +12991,7 @@
           maybeAutoShowStarterWords(result);
           advanceTeamTurn();
           updateNextActionLine();
+          if (!DEMO_MODE) positionDemoLaunchButton();
         }
       });
 
@@ -12929,6 +13000,7 @@
       const s2 = WQGame.getState();
       WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
       updateNextActionLine();
+      if (!DEMO_MODE) positionDemoLaunchButton();
 
     } else if (/^[a-zA-Z]$/.test(key)) {
       const normalizedLetter = String(key || '').toLowerCase();
@@ -12942,6 +13014,7 @@
       const s2 = WQGame.getState();
       WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
       updateNextActionLine();
+      if (!DEMO_MODE) positionDemoLaunchButton();
     }
   }
 
@@ -16150,6 +16223,7 @@
   syncMusicForTheme();
   initQuestLoop();
   createDemoBanner();
+  createHomeDemoLaunchButton();
   setDemoControlsDisabled();
   if (DEMO_MODE) {
     closeAllOverlaysForDemo();
