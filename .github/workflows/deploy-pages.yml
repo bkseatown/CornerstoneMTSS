@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Stamp version.json (cache bust)
+        run: npm run stamp:version
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4

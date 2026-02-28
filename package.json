@@ -40,7 +40,8 @@
     "release:gate": "npm run release:check && npm run smoke:teacher-daily-flow && npm run test:regressions",
     "scope:view": "node scripts/check-change-scope.js",
     "scope:check": "node scripts/check-change-scope.js",
-    "scope:strict": "node scripts/check-change-scope.js --strict"
+    "scope:strict": "node scripts/check-change-scope.js --strict",
+    "stamp:version": "node scripts/stamp-build-version.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

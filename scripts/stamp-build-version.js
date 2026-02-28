@@ -1,73 +1,70 @@
-#!/usr/bin/env node
-'use strict';
+/**
+ * stamp-build-version.js
+ * Writes version.json with a cacheBuster that changes per build.
+ *
+ * Why: sw-runtime.js fetches ./version.json (no-store) and uses cacheBuster/sha/v
+ * to decide when to clear caches + prompt clients to update.
+ *
+ * Works locally and in GitHub Actions.
+ *
+ * Usage:
+ *   node scripts/stamp-build-version.js
+ *   node scripts/stamp-build-version.js --sha abc123 --out version.json
+ */
 
 const fs = require('fs');
 const path = require('path');
 
-function read(filePath) {
-  return fs.readFileSync(filePath, 'utf8');
+function argValue(name) {
+  const idx = process.argv.indexOf(name);
+  if (idx === -1) return null;
+  return process.argv[idx + 1] || null;
 }
 
-function write(filePath, content) {
-  fs.writeFileSync(filePath, content, 'utf8');
+function nowIso() {
+  return new Date().toISOString();
 }
 
-function stampIndex(indexPath, buildId) {
-  const original = read(indexPath);
-  let stamped = original.replace(/([?&]v=)[A-Za-z0-9._-]+/g, `$1${buildId}`);
-  stamped = stamped.replace(
-    /(<meta\s+name="wq-build"\s+content=")[^"]*(")/i,
-    `$1${buildId}$2`
-  );
-  if (stamped !== original) write(indexPath, stamped);
+function safeShortSha(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  return s.slice(0, 12);
 }
 
-function stampApp(appPath, buildId) {
-  const original = read(appPath);
-  const stamped = original.replace(
-    /const SW_RUNTIME_VERSION = '[^']+';/,
-    `const SW_RUNTIME_VERSION = '${buildId}';`
-  );
-  if (stamped !== original) write(appPath, stamped);
+function bestEffortSha() {
+  // Prefer explicit --sha, then GitHub Actions env, then fallback timestamp.
+  const cli = argValue('--sha');
+  if (cli) return safeShortSha(cli);
+
+  const envSha = process.env.GITHUB_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_SHA || '';
+  const short = safeShortSha(envSha);
+
+  return short;
 }
 
-function stampSwRuntime(swRuntimePath, buildId) {
-  const original = read(swRuntimePath);
-  const stamped = original.replace(
-    /const SW_VERSION = '[^']+';/,
-    `const SW_VERSION = '${buildId}';`
-  );
-  if (stamped !== original) write(swRuntimePath, stamped);
+function makeCacheBuster(shortSha) {
+  // Must change each deploy. If sha exists: "sha-<short>-<epoch>"
+  // else timestamp-only.
+  const epoch = Date.now();
+  if (shortSha) return `sha-${shortSha}-${epoch}`;
+  return `ts-${epoch}`;
 }
 
 function main() {
-  const distDir = path.resolve(process.argv[2] || 'dist');
-  const explicitBuildId = String(process.argv[3] || '').trim();
-  const fallbackBuildId = `${String(process.env.GITHUB_SHA || 'local').slice(0, 12)}-${String(process.env.GITHUB_RUN_NUMBER || Date.now())}`;
-  const buildId = (explicitBuildId || fallbackBuildId).replace(/[^A-Za-z0-9._-]/g, '').slice(0, 48) || 'local';
-  const rawSha = String(process.env.GITHUB_SHA || buildId).slice(0, 40);
-  const shortSha = rawSha.slice(0, 12);
-  const builtAt = new Date().toISOString();
+  const outRel = argValue('--out') || 'version.json';
+  const outPath = path.resolve(process.cwd(), outRel);
 
-  const indexPath = path.join(distDir, 'index.html');
-  const appPath = path.join(distDir, 'js', 'app.js');
-  const swRuntimePath = path.join(distDir, 'sw-runtime.js');
+  const sha = bestEffortSha();
+  const payload = {
+    name: 'Cornerstone MTSS',
+    // sw-runtime.js looks for cacheBuster OR sha OR v. Keep all for clarity.
+    sha: sha || '',
+    v: nowIso(),
+    cacheBuster: makeCacheBuster(sha),
+  };
 
-  [indexPath, appPath, swRuntimePath].forEach((filePath) => {
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`Missing file for build stamp: ${filePath}`);
-    }
-  });
-
-  stampIndex(indexPath, buildId);
-  stampApp(appPath, buildId);
-  stampSwRuntime(swRuntimePath, buildId);
-  write(
-    path.join(distDir, 'version.json'),
-    `${JSON.stringify({ sha: rawSha, builtAt, cacheBuster: shortSha, v: buildId }, null, 2)}\n`
-  );
-  write(path.join(distDir, 'build-version.txt'), `${buildId}\n`);
-  console.log(`Stamped build version: ${buildId}`);
+  fs.writeFileSync(outPath, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+  process.stdout.write(`[stamp-build-version] wrote ${outRel} (cacheBuster=${payload.cacheBuster})\n`);
 }
 
 main();
