@@ -894,10 +894,14 @@
   let demoToastChipEl = null;
   let demoToastProgressTimer = 0;
   let demoToastStartedAt = 0;
-  let demoToastDurationMs = 60000;
+  let demoToastDurationMs = 90000;
   let demoToastCollapsed = false;
   let demoToastAutoCollapsedByPlay = false;
-  let demoToastSize = 'sm';
+  let demoToastMessageTimer = 0;
+  let demoToastLastMessageAt = 0;
+  let demoToastPendingKey = '';
+  const DEMO_TOAST_DEFAULT_DURATION_MS = 90000;
+  const DEMO_TOAST_MIN_DWELL_MS = 3200;
   let homeCoachRibbon = null;
   let wordQuestCoachRibbon = null;
   let _wqDiagSession = null;
@@ -945,6 +949,14 @@
     demoToastProgressTimer = 0;
   }
 
+  function clearDemoToastMessageTimer() {
+    if (demoToastMessageTimer) {
+      clearTimeout(demoToastMessageTimer);
+      demoToastMessageTimer = 0;
+    }
+    demoToastPendingKey = '';
+  }
+
   function renderDemoToastProgress(forcePct) {
     if (!(demoToastBarFillEl instanceof HTMLElement)) return;
     let pct = Number(forcePct);
@@ -956,8 +968,8 @@
     demoToastBarFillEl.style.width = `${clamped}%`;
   }
 
-  function startDemoToastProgress(durationMs = 60000) {
-    demoToastDurationMs = Math.max(5000, Number(durationMs) || 60000);
+  function startDemoToastProgress(durationMs = DEMO_TOAST_DEFAULT_DURATION_MS) {
+    demoToastDurationMs = Math.max(5000, Number(durationMs) || DEMO_TOAST_DEFAULT_DURATION_MS);
     demoToastStartedAt = Date.now();
     renderDemoToastProgress(0);
     stopDemoToastProgress();
@@ -969,9 +981,34 @@
     }, 160);
   }
 
-  function setDemoToastText(stepKey) {
+  function setDemoToastText(stepKey, options = {}) {
     if (!(demoToastTextEl instanceof HTMLElement)) return;
-    demoToastTextEl.textContent = getDemoToastLine(stepKey);
+    const nextLine = getDemoToastLine(stepKey);
+    const force = !!(options && options.force);
+    if (!nextLine || demoToastTextEl.textContent === nextLine) {
+      demoToastPendingKey = '';
+      return;
+    }
+    const now = Date.now();
+    const elapsed = now - demoToastLastMessageAt;
+    const needsDelay = !force && demoToastLastMessageAt > 0 && elapsed < DEMO_TOAST_MIN_DWELL_MS;
+    if (needsDelay) {
+      demoToastPendingKey = stepKey;
+      if (demoToastMessageTimer) return;
+      demoToastMessageTimer = window.setTimeout(() => {
+        demoToastMessageTimer = 0;
+        const pending = demoToastPendingKey;
+        demoToastPendingKey = '';
+        if (!pending) return;
+        setDemoToastText(pending, { force: true });
+      }, Math.max(120, DEMO_TOAST_MIN_DWELL_MS - elapsed));
+      return;
+    }
+    if (demoToastMessageTimer) {
+      clearDemoToastMessageTimer();
+    }
+    demoToastTextEl.textContent = nextLine;
+    demoToastLastMessageAt = now;
   }
 
   function collapseDemoToast() {
@@ -989,48 +1026,6 @@
     }
   }
 
-  function normalizeDemoToastSize(value) {
-    const raw = String(value || '').trim().toLowerCase();
-    if (raw === 'lg' || raw === 'large') return 'lg';
-    if (raw === 'md' || raw === 'medium') return 'md';
-    return 'sm';
-  }
-
-  function getNextDemoToastSize(current) {
-    if (current === 'lg') return 'md';
-    if (current === 'md') return 'sm';
-    return 'lg';
-  }
-
-  function getDemoToastSizeLabel(size) {
-    if (size === 'lg') return '100%';
-    if (size === 'md') return '90%';
-    return '80%';
-  }
-
-  function applyDemoToastSize(size) {
-    demoToastSize = normalizeDemoToastSize(size);
-    if (!(demoToastEl instanceof HTMLElement)) return;
-    demoToastEl.classList.remove('cs-demo-toast--sm', 'cs-demo-toast--md', 'cs-demo-toast--lg');
-    demoToastEl.classList.add(`cs-demo-toast--${demoToastSize}`);
-    const sizeBtn = _el('cs-demo-size');
-    if (sizeBtn) sizeBtn.textContent = getDemoToastSizeLabel(demoToastSize);
-  }
-
-  function loadDemoToastSize() {
-    try {
-      return normalizeDemoToastSize(localStorage.getItem('wq_demo_toast_size'));
-    } catch {
-      return 'sm';
-    }
-  }
-
-  function saveDemoToastSize(size) {
-    try {
-      localStorage.setItem('wq_demo_toast_size', normalizeDemoToastSize(size));
-    } catch {}
-  }
-
   function createDemoBanner() {
     if (!DEMO_MODE || document.getElementById('cs-demo-toast')) return;
     const toast = document.createElement('div');
@@ -1043,7 +1038,6 @@
         '<div class=\"cs-demo-toast__badge\" aria-hidden=\"true\">DEMO</div>' +
         '<div class=\"cs-demo-toast__text\" aria-live=\"polite\" id=\"cs-demo-toast-text\">Live demo: try one round.</div>' +
         '<div class=\"cs-demo-toast__actions\">' +
-          '<button class=\"cs-btn cs-btn--ghost\" id=\"cs-demo-size\" type=\"button\" aria-label=\"Resize demo banner\">90%</button>' +
           '<button class=\"cs-btn cs-btn--ghost\" id=\"cs-demo-skip\" type=\"button\">Skip</button>' +
           '<button class=\"cs-btn cs-btn--primary\" id=\"cs-demo-restart\" type=\"button\">Restart</button>' +
           '<button class=\"cs-btn cs-btn--icon\" id=\"cs-demo-close\" type=\"button\" aria-label=\"Hide demo banner\">×</button>' +
@@ -1063,18 +1057,13 @@
     demoToastTextEl = _el('cs-demo-toast-text');
     demoToastBarFillEl = _el('cs-demo-toast-bar');
     demoToastChipEl = chip;
-    applyDemoToastSize(loadDemoToastSize());
     showDemoToast(true);
-    setDemoToastText('preRound');
-    startDemoToastProgress(60000);
-    _el('cs-demo-size')?.addEventListener('click', () => {
-      const nextSize = getNextDemoToastSize(demoToastSize);
-      applyDemoToastSize(nextSize);
-      saveDemoToastSize(nextSize);
-    });
+    setDemoToastText('preRound', { force: true });
+    startDemoToastProgress(DEMO_TOAST_DEFAULT_DURATION_MS);
     _el('cs-demo-skip')?.addEventListener('click', () => {
       const demoStateRuntime = getDemoState();
       demoStateRuntime.active = false;
+      clearDemoToastMessageTimer();
       stopDemoToastProgress();
       demoClearTimers();
       stopDemoCoachReadyLoop();
@@ -1092,8 +1081,8 @@
       resetDemoScriptState();
       closeDemoEndOverlay();
       showDemoToast(true);
-      setDemoToastText('preRound');
-      startDemoToastProgress(60000);
+      setDemoToastText('preRound', { force: true });
+      startDemoToastProgress(DEMO_TOAST_DEFAULT_DURATION_MS);
       newGame({ forceDemoReplay: true, launchMissionLab: false });
     });
     _el('cs-demo-close')?.addEventListener('click', () => collapseDemoToast());
@@ -1318,7 +1307,7 @@
       if (demoState.keyPulseIndex >= letters.length) {
         stopDemoKeyPulse();
       } else {
-        demoState.keyPulseTimer = demoSetTimeout(pulseOnce, 140);
+        demoState.keyPulseTimer = demoSetTimeout(pulseOnce, 320);
       }
     };
     demoState.keyPulseIndex = 0;
@@ -1398,11 +1387,12 @@
     stopDemoKeyPulse();
     hideDemoCoach();
     stopDemoToastProgress();
+    clearDemoToastMessageTimer();
     demoToastCollapsed = false;
     demoToastAutoCollapsedByPlay = false;
     showDemoToast(true);
-    setDemoToastText('preRound');
-    startDemoToastProgress(60000);
+    setDemoToastText('preRound', { force: true });
+    startDemoToastProgress(DEMO_TOAST_DEFAULT_DURATION_MS);
     renderDemoDebugReadout();
   }
 
@@ -1491,7 +1481,7 @@
 
   function closeDemoEndOverlay() {
     hideDemoCoach();
-    setDemoToastText('preRound');
+    setDemoToastText('preRound', { force: true });
     if (!demoToastAutoCollapsedByPlay) showDemoToast(true);
   }
 
@@ -1500,10 +1490,11 @@
     const demoStateRuntime = getDemoState();
     demoStateRuntime.active = false;
     demoClearTimers();
+    clearDemoToastMessageTimer();
     stopDemoCoachReadyLoop();
     stopDemoKeyPulse();
     hideDemoCoach();
-    setDemoToastText('completed');
+    setDemoToastText('completed', { force: true });
     showDemoToast(true);
     stopDemoToastProgress();
     renderDemoToastProgress(100);

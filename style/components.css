@@ -4486,12 +4486,33 @@ html[data-keyboard-layout="alphabet-arc"] .key-row-3 {
 }
 
 html[data-key-style="bubble"] .key {
-  border-radius: calc(var(--radius-key) + 6px);
+  border-radius: 999px;
+  border-color: color-mix(in oklab, #1f2c3d 74%, #9fb0c4 26%);
+  background:
+    radial-gradient(120% 120% at 28% 14%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 42%, rgba(0,0,0,0.12) 100%),
+    linear-gradient(180deg, #4a596a 0%, #3a4758 52%, #2f3b4c 100%);
+  color: #eef5ff;
   box-shadow:
-    0 5px 0 color-mix(in oklab, var(--key-bg) 50%, #000000 38%),
-    0 10px 18px rgba(9, 18, 34, 0.14),
-    inset 0 1px 0 rgba(255,255,255,0.72),
-    inset 0 -2px 0 rgba(0,0,0,0.1);
+    0 3px 0 rgba(18, 25, 36, 0.72),
+    0 9px 16px rgba(8, 14, 22, 0.32),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.34);
+}
+
+html[data-key-style="bubble"] .key:not(.wide):not(.key-chunk) {
+  flex: 0 0 var(--key-h);
+  min-width: var(--key-h);
+  max-width: var(--key-h);
+}
+
+html[data-key-style="bubble"] .key.wide {
+  flex: 1.55;
+  min-width: clamp(66px, 11vw, 94px);
+  max-width: 118px;
+  border-radius: 18px;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 html[data-key-style="classic"] .key {
@@ -7401,7 +7422,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   top: 12px;
   right: 12px;
   z-index: 234;
-  width: min(340px, calc(100vw - 20px));
+  width: min(320px, calc(100vw - 20px));
   min-height: 50px;
   display: grid;
   gap: 4px;
@@ -7413,19 +7434,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   box-shadow: 0 12px 22px rgba(7, 14, 24, 0.34);
   pointer-events: auto;
   transform-origin: top right;
-  transform: scale(0.9);
-}
-
-.cs-demo-toast--lg {
-  transform: scale(1);
-}
-
-.cs-demo-toast--md {
-  transform: scale(0.9);
-}
-
-.cs-demo-toast--sm {
-  transform: scale(0.8);
+  transform: scale(clamp(0.82, 0.72 + 0.24vw, 0.92));
 }
 
 .cs-demo-toast.hidden {
@@ -7593,21 +7602,9 @@ body.wq-demo .quest-overlay {
   .cs-demo-toast {
     top: 8px;
     right: 8px;
-    width: min(280px, calc(100vw - 16px));
+    width: min(268px, calc(100vw - 16px));
     padding: 7px 8px 6px;
-    transform: scale(0.82);
-  }
-
-  .cs-demo-toast.cs-demo-toast--lg {
-    transform: scale(0.92);
-  }
-
-  .cs-demo-toast.cs-demo-toast--md {
-    transform: scale(0.82);
-  }
-
-  .cs-demo-toast.cs-demo-toast--sm {
-    transform: scale(0.74);
+    transform: scale(clamp(0.74, 0.6 + 0.28vw, 0.86));
   }
 
   .cs-demo-toast__row {
