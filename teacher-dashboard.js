@@ -6,6 +6,8 @@
 
   var ROSTER_KEY = "cs_roster_v1";
   var PROGRESS_KEY = "cs_progress_history";
+  var EVIDENCE_KEY = "cs_evidence_v1";
+  var evidenceStore = window.CSEvidence || window.CSEvidenceStore || null;
   var SKILLS = ["decoding", "fluency", "sentence", "writing"];
 
   var state = {
@@ -62,20 +64,18 @@
     }
   }
 
-  function loadProgress() {
+  function loadLegacyProgress() {
     var obj = parseJSON(localStorage.getItem(PROGRESS_KEY), {});
     if (!obj || typeof obj !== "object") obj = {};
-    obj.skillEvidence = obj.skillEvidence && typeof obj.skillEvidence === "object" ? obj.skillEvidence : {};
     obj.wordQuestSignals = Array.isArray(obj.wordQuestSignals) ? obj.wordQuestSignals : [];
     return obj;
   }
 
-  function saveProgress(progress) {
-    try {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-    } catch (_e) {
-      // ignore storage full failures
-    }
+  function loadEvidenceState() {
+    var obj = parseJSON(localStorage.getItem(EVIDENCE_KEY), {});
+    if (!obj || typeof obj !== "object") obj = {};
+    if (!obj.students || typeof obj.students !== "object") obj.students = {};
+    return obj;
   }
 
   function loadRoster() {
@@ -163,17 +163,33 @@
   }
 
   function buildEvidenceMap() {
-    var progress = loadProgress();
-    var map = progress.skillEvidence && typeof progress.skillEvidence === "object" ? progress.skillEvidence : {};
+    var evidenceState = loadEvidenceState();
+    var map = evidenceState.students && typeof evidenceState.students === "object" ? evidenceState.students : {};
+    var legacyProgress = loadLegacyProgress();
 
     state.roster.forEach(function (student) {
       var sid = String(student.id);
       if (!map[sid] || typeof map[sid] !== "object") map[sid] = studentEvidenceBase();
-      SKILLS.forEach(function (skill) {
-        if (!map[sid][skill] || typeof map[sid][skill] !== "object") map[sid][skill] = ensureSkillEntry(skill);
-        if (!Array.isArray(map[sid][skill].signals)) map[sid][skill].signals = [];
-        if (!Array.isArray(map[sid][skill].series)) map[sid][skill].series = [];
-      });
+      if (map[sid].domains && typeof map[sid].domains === "object") {
+        SKILLS.forEach(function (skill) {
+          var key = skill === "decoding" ? "wordquest" : (skill === "fluency" ? "reading" : skill);
+          var row = map[sid].domains[key] || { signals: {}, spark: [] };
+          map[sid][skill] = {
+            score: Array.isArray(row.spark) && row.spark.length
+              ? Math.round(row.spark.reduce(function (sum, n) { return sum + Number(n || 0); }, 0) / row.spark.length)
+              : 0,
+            signals: Object.keys(row.signals || {}).slice(0, 4).map(function (k) { return String(k); }),
+            series: Array.isArray(row.spark) ? row.spark.slice(-12) : []
+          };
+        });
+      } else {
+        SKILLS.forEach(function (skill) {
+          if (!map[sid][skill] || typeof map[sid][skill] !== "object") map[sid][skill] = ensureSkillEntry(skill);
+          if (!Array.isArray(map[sid][skill].signals)) map[sid][skill].signals = [];
+          if (!Array.isArray(map[sid][skill].series)) map[sid][skill].series = [];
+        });
+        map[sid].domains = {};
+      }
     });
 
     var byStudent = {};
@@ -198,7 +214,7 @@
       map[sid] = ev;
     });
 
-    progress.wordQuestSignals.slice(-220).forEach(function (signal) {
+    legacyProgress.wordQuestSignals.slice(-220).forEach(function (signal) {
       var sid = String(signal.studentId || "");
       if (!sid || !map[sid]) return;
       var decoding = map[sid].decoding;
@@ -210,8 +226,7 @@
       if (adherence > 76) upsertSignal(decoding.signals, "Efficient refinement");
     });
 
-    progress.skillEvidence = map;
-    saveProgress(progress);
+    if (evidenceStore && typeof evidenceStore.init === "function") evidenceStore.init();
     return map;
   }
 
@@ -488,21 +503,27 @@
   }
 
   function exportBundle() {
-    var payload = {
-      exportedAt: new Date().toISOString(),
-      roster: state.roster,
-      sessions: state.sessions.slice(0, 120),
-      skillEvidence: state.evidence
-    };
-    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "cornerstone-dashboard-evidence.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 400);
-    setStatus("Export complete.");
+    var studentId = state.selectedStudentId || (state.roster[0] && state.roster[0].id) || "demo-student";
+    if (!evidenceStore || typeof evidenceStore.exportStudentSnapshot !== "function") {
+      setStatus("Export unavailable: evidence store missing.");
+      return;
+    }
+    var snapshot = evidenceStore.exportStudentSnapshot(studentId);
+    var jsonBlob = new Blob([JSON.stringify(snapshot.json, null, 2)], { type: "application/json" });
+    var csvBlob = new Blob([snapshot.csvRows.join("\n")], { type: "text/csv" });
+    downloadBlob(jsonBlob, "evidence-" + studentId + ".json");
+    downloadBlob(csvBlob, "evidence-" + studentId + ".csv");
+    setStatus("Exported JSON + CSV snapshot for " + studentId + ".");
+  }
+
+  function downloadBlob(blob, filename) {
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 300);
   }
 
   function bindEvents() {

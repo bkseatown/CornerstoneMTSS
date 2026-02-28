@@ -204,6 +204,60 @@
     return history;
   }
 
+  function appendWordQuestSignals(signals, meta) {
+    if (isDemoMode()) return readProgressHistory();
+    if (window.CS_CONFIG && window.CS_CONFIG.enableAnalytics === false) return readProgressHistory();
+    if (!signals || typeof signals !== "object") return readProgressHistory();
+
+    var history = readProgressHistory();
+    var rows = Array.isArray(history.wordQuestSignals) ? history.wordQuestSignals : [];
+    var summaryRows = Array.isArray(history.wq_signal_summary) ? history.wq_signal_summary : [];
+    var studentId = String(meta && meta.studentId || "").trim();
+    var next = {
+      t: Date.now(),
+      studentId: studentId,
+      guesses: Math.max(0, Number(signals.guesses || 0)),
+      durSec: Math.max(0, Number(signals.durSec || 0)),
+      solved: !!signals.solved,
+      guessesPerMin: Math.max(0, Number(signals.guessesPerMin || 0)),
+      uniqueVowels: Math.max(0, Number(signals.uniqueVowels || 0)),
+      vowelRatio: clamp(Number(signals.vowelRatio || 0), 0, 1),
+      updateRespect: clamp(Number(signals.updateRespect || 0), 0, 1),
+      repetitionPenalty: clamp(Number(signals.repetitionPenalty || 0), 0, 1),
+      affixAttempts: Math.max(0, Number(signals.affixAttempts || 0)),
+      focusTag: String(signals.focusTag || ""),
+      nextStep: String(signals.nextStep || ""),
+      soft: !!(meta && meta.soft)
+    };
+    rows.push(next);
+    summaryRows.push({
+      t: next.t,
+      studentId: studentId,
+      updateRespect: next.updateRespect,
+      uniqueVowels: next.uniqueVowels,
+      repetitionPenalty: next.repetitionPenalty,
+      nextStep: next.nextStep,
+      intensity: next.updateRespect < 0.55 || next.repetitionPenalty > 0.18 ? "tier3" : "tier2"
+    });
+    if (rows.length > 200) rows = rows.slice(rows.length - 200);
+    if (summaryRows.length > 200) summaryRows = summaryRows.slice(summaryRows.length - 200);
+    history.wordQuestSignals = rows;
+    history.wq_signal_summary = summaryRows;
+    writeProgressHistory(history);
+
+    try {
+      if (window.CSCornerstoneEngine && typeof window.CSCornerstoneEngine.appendSignal === "function") {
+        window.CSCornerstoneEngine.appendSignal(signals, {
+          module: "wordquest",
+          studentId: studentId
+        });
+      }
+    } catch (_e) {
+      // no-op
+    }
+    return history;
+  }
+
   function updateSchoolAnalytics(classId, metrics) {
     if (isDemoMode()) return readSchoolAnalytics();
     if (!metrics || typeof metrics !== "object") return readSchoolAnalytics();
@@ -239,6 +293,7 @@
     readProgressHistory: readProgressHistory,
     writeProgressHistory: writeProgressHistory,
     appendStudentProgress: appendStudentProgress,
-    appendReadingAttempt: appendReadingAttempt
+    appendReadingAttempt: appendReadingAttempt,
+    appendWordQuestSignals: appendWordQuestSignals
   };
 })();
