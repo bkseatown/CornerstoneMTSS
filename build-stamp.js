@@ -6,6 +6,11 @@
   var RELOAD_GUARD_KEY = "cs_app_version_reloaded_once";
   var AUTO_HEAL_PREFIX = "cs_build_auto_heal_";
 
+  function isLocalHost() {
+    var host = String(window.location.hostname || "").toLowerCase();
+    return !host || host === "localhost" || host === "127.0.0.1" || host === "::1";
+  }
+
   function inDevMode() {
     if (window.CSAppMode && typeof window.CSAppMode.isDevMode === "function") {
       return !!window.CSAppMode.isDevMode();
@@ -61,7 +66,7 @@
     var latest = String(version || "").trim();
     var runtime = String(runtimeBuild || "").trim();
     if (!latest || !runtime || latest === runtime) return false;
-    if (latest === "local" || runtime === "dev-local") return false;
+    if (latest === "local" || isLocalHost()) return false;
     var healKey = AUTO_HEAL_PREFIX + latest;
     var alreadyHealed = "";
     try { alreadyHealed = sessionStorage.getItem(healKey) || ""; } catch (_e) { alreadyHealed = ""; }

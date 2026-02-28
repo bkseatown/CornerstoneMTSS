@@ -55,12 +55,33 @@
     manifest: null,
     manifestPromise: null,
     matrixPromise: null,
+    assetWarnings: Object.create(null),
+    assetHealth: {
+      personaOk: true,
+      matrixOk: true,
+      manifestOk: true
+    },
     recentPhraseIds: [],
     lastEvent: "",
     lastSpokenAt: 0,
     liveAudio: null,
     liveAudioUrl: ""
   };
+
+  function warnAssetOnce(key, detail) {
+    var code = sanitizeText(key || "asset-warning");
+    if (!code || state.assetWarnings[code]) return;
+    state.assetWarnings[code] = true;
+    try {
+      console.warn("[AvaCoach]", code, detail || "");
+    } catch (_e) {
+      // no-op
+    }
+  }
+
+  function isAudioAllowedByAssets() {
+    return !!(state.assetHealth.personaOk && state.assetHealth.matrixOk && state.assetHealth.manifestOk);
+  }
 
   function sanitizeText(value) {
     return String(value || "").replace(/\s+/g, " ").trim();
@@ -218,10 +239,16 @@
       .then(function (res) { return res.ok ? res.json() : null; })
       .then(function (json) {
         state.persona = json && typeof json === "object" ? json : {};
+        state.assetHealth.personaOk = !!json;
+        if (!state.assetHealth.personaOk) {
+          warnAssetOnce("persona-unavailable", PERSONA_URL);
+        }
         return state.persona;
       })
       .catch(function () {
         state.persona = {};
+        state.assetHealth.personaOk = false;
+        warnAssetOnce("persona-fetch-failed", PERSONA_URL);
         return state.persona;
       })
       .finally(function () {
@@ -238,9 +265,17 @@
         if (json && window.AvaIntensity && typeof window.AvaIntensity.setEventMatrix === "function") {
           window.AvaIntensity.setEventMatrix(json);
         }
+        state.assetHealth.matrixOk = !!json;
+        if (!state.assetHealth.matrixOk) {
+          warnAssetOnce("event-matrix-unavailable", EVENT_MATRIX_URL);
+        }
         return json;
       })
-      .catch(function () { return null; })
+      .catch(function () {
+        state.assetHealth.matrixOk = false;
+        warnAssetOnce("event-matrix-fetch-failed", EVENT_MATRIX_URL);
+        return null;
+      })
       .finally(function () {
         state.matrixPromise = null;
       });
@@ -263,10 +298,16 @@
           });
         }
         state.manifest = { byText: byText };
+        state.assetHealth.manifestOk = !!json && Object.keys(byText).length > 0;
+        if (!state.assetHealth.manifestOk) {
+          warnAssetOnce("manifest-unavailable", LOCAL_MANIFEST_URL);
+        }
         return state.manifest;
       })
       .catch(function () {
         state.manifest = { byText: Object.create(null) };
+        state.assetHealth.manifestOk = false;
+        warnAssetOnce("manifest-fetch-failed", LOCAL_MANIFEST_URL);
         return state.manifest;
       })
       .finally(function () {
@@ -531,6 +572,9 @@
     var allowBrowserTtsFallback = false;
 
     var manifest = await loadManifest();
+    if (!isAudioAllowedByAssets()) {
+      return text;
+    }
     var fromManifest = manifest && manifest.byText ? manifest.byText[normalizeKey(text)] : "";
     var localClip = sanitizeText(selected.clip || fromManifest || "");
 
