@@ -3,97 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
   <title>Cornerstone MTSS - Teacher Dashboard</title>
   <script src="./config.js"></script>
-  <script src="./storage-schema.js"></script>
   <script src="./build-stamp.js?v=20260228d"></script>
-  <script src="./diagnostics.js"></script>
   <link rel="icon" href="./favicon.ico" sizes="any">
-  <link rel="preload" href="./teacher-dashboard.css?v=20260228c" as="style">
-  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260228c">
+  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260228d">
 </head>
 <body class="teacher-dashboard">
   <main class="td-shell" id="td-shell">
-    <header class="td-head">
-      <h1 class="td-title">Teacher Dashboard</h1>
-      <p class="td-subtitle">Cornerstone MTSS command center for Tier 2/3 literacy moves.</p>
-      <div class="td-actions">
-        <button id="td-primary-cta" class="btn-primary" type="button">Run 90-Second Probe</button>
-        <button id="td-import-sessions" class="btn-secondary" type="button">Import Sessions</button>
-        <input id="td-import-sessions-input" type="file" accept=".json,application/json" hidden>
-        <button id="td-export-progress" class="btn-secondary" type="button">Export Progress</button>
+    <header class="td-top td-surface">
+      <div class="td-brand">
+        <h1>Cornerstone MTSS</h1>
+        <p>Teacher command center · Tier 1/2/3 actions</p>
       </div>
-      <p class="td-demo-flag" id="td-demo-flag">Demo data</p>
-      <p class="td-import-status" id="td-import-status" aria-live="polite"></p>
+      <div class="td-search-wrap">
+        <input id="td-student-search" list="td-student-options" placeholder="Search student (ex: SAS7A-03 or Ava)">
+        <datalist id="td-student-options"></datalist>
+        <button id="td-open-students" class="td-btn td-btn-ghost" type="button">Students</button>
+        <button id="td-run-probe" class="td-btn td-btn-primary" type="button">Run 90-second Probe</button>
+        <button id="td-import" class="td-btn td-btn-ghost" type="button">Import Sessions</button>
+        <input id="td-import-input" type="file" accept=".json,application/json" hidden>
+        <button id="td-export" class="td-btn td-btn-ghost" type="button">Export Progress</button>
+      </div>
+      <div class="td-tier-tabs" role="tablist" aria-label="Tier filter">
+        <button data-tier-tab="tier1" class="td-tier-tab" type="button">Tier 1</button>
+        <button data-tier-tab="tier2" class="td-tier-tab is-active" type="button">Tier 2</button>
+        <button data-tier-tab="tier3" class="td-tier-tab" type="button">Tier 3</button>
+      </div>
+      <p id="td-status" class="td-status" aria-live="polite"></p>
     </header>
 
-    <section class="td-kpis">
-      <article class="td-kpi td-surface">
-        <div class="k-label">Risk Signal</div>
-        <div class="k-value" id="td-kpi-risk">Strategy</div>
-        <div class="k-hint" id="td-kpi-last-probe">WQ Strategy Probe - 90s (2 days ago)</div>
-      </article>
-      <article class="td-kpi td-surface">
-        <div class="k-label">Tier / Intensity</div>
-        <div class="k-value" id="td-kpi-tier">Tier 2</div>
-        <div class="k-hint">Small-group targeted support</div>
-      </article>
-      <article class="td-kpi td-surface">
-        <div class="k-label">Confidence</div>
-        <div class="k-value" id="td-kpi-confidence">72%</div>
-        <div class="k-hint">Based on recent probes</div>
-      </article>
-      <article class="td-kpi td-surface">
-        <div class="k-label">Last 7 Days Trend</div>
-        <div class="k-value" id="td-kpi-trend">+9%</div>
-        <div class="k-hint" id="td-kpi-trend-hint">Probe completion and signal lift</div>
-      </article>
-    </section>
-
-    <section class="td-grid">
-      <section class="td-plan td-surface">
-        <h2>Today's Plan</h2>
-        <p class="td-plan-lede" id="td-plan-lede">Start with Group B (5 students).</p>
-        <div class="td-steps" id="td-plan-steps"></div>
-        <div class="td-plan-ctas">
-          <button id="td-run-move" class="btn-primary" type="button">Run 10-Minute Move</button>
-          <button id="td-assign-probe" class="btn-secondary" type="button">Assign 90-Second Probe</button>
+    <section class="td-main">
+      <section class="td-stage td-surface">
+        <div class="td-stage-head">
+          <h2>Groups for Today</h2>
+          <button id="td-start-admin-demo" class="td-btn td-btn-ghost" type="button">Admin Demo</button>
         </div>
+        <div id="td-groups" class="td-groups"></div>
+
+        <article class="td-today td-panel">
+          <h3>Today's Move</h3>
+          <p id="td-next-move">Search a student first to load the recommended move.</p>
+          <button id="td-run-10" class="td-btn td-btn-primary" type="button" disabled>Run 10-min session</button>
+        </article>
+
+        <article class="td-recent td-panel">
+          <h3>Recent Sessions</h3>
+          <div id="td-recent-list" class="td-scroll"></div>
+        </article>
       </section>
 
-      <aside class="td-groups td-surface">
-        <h2>Groups</h2>
-        <div id="td-groups"></div>
-      </aside>
-    </section>
+      <aside class="td-rail td-surface">
+        <h2>Student Snapshot</h2>
+        <div id="td-student-empty" class="td-empty">Search and select a student to view signals, confidence, and next step.</div>
+        <div id="td-student-view" class="hidden">
+          <p class="td-student-name" id="td-student-name">-</p>
+          <div class="td-kpis">
+            <div><span>Primary Need</span><strong id="td-need">-</strong></div>
+            <div><span>Tier</span><strong id="td-tier">-</strong></div>
+            <div><span>Confidence</span><strong id="td-confidence">-</strong></div>
+            <div><span>Trend</span><strong id="td-trend">-</strong></div>
+          </div>
+          <p id="td-student-next" class="td-student-next">-</p>
+          <button id="td-student-run" class="td-btn td-btn-primary" type="button">Run session for student</button>
+        </div>
 
-    <section class="td-evidence">
-      <div class="td-evidence-inner td-surface">
-        <h2>Evidence</h2>
-        <div id="td-evidence-list" class="td-evidence-list"></div>
-      </div>
+        <div id="td-probe-hud" class="td-probe-hud hidden" aria-live="polite">
+          <div class="hud-head">Live probe capture</div>
+          <div class="hud-row"><span>Constraint Respect</span><strong id="hud-constraint">0.00</strong></div>
+          <div class="hud-row"><span>Vowel Variety</span><strong id="hud-vowel">0</strong></div>
+          <div class="hud-row"><span>Repeat Error Rate</span><strong id="hud-repeat">0.00</strong></div>
+          <div class="hud-row"><span>Decision Time (ms)</span><strong id="hud-time">0</strong></div>
+        </div>
+      </aside>
     </section>
 
     <details class="td-details">
       <summary>Details</summary>
-      <div class="td-details-panel td-surface">
-        <h3>Skill Heatmap</h3>
-        <table id="td-heatmap-table"></table>
+      <div class="td-details-body td-surface">
+        <h3>Advanced</h3>
+        <p>Import roster/sessions, review raw metrics, and export reports.</p>
       </div>
     </details>
   </main>
 
-  <script src="./analytics-engine.js?v=20260227a" defer></script>
-  <script src="./js/cornerstone-signals.js?v=20260228a" defer></script>
-  <script src="./js/cornerstone-store.js?v=20260228a" defer></script>
-  <script src="./js/cornerstone-engine.js?v=20260228a" defer></script>
-  <script src="./performance-engine.js?v=20260227a" defer></script>
-  <script src="./pedagogy-engine.js?v=20260227a" defer></script>
-  <script src="./ai-service.js?v=20260227b" defer></script>
-  <script src="./progression-engine.js?v=20260227a" defer></script>
-  <script src="./growth-report-engine.js?v=20260227a" defer></script>
-  <script src="./intervention-planner.js?v=20260227a" defer></script>
-  <script src="./lesson-generator.js?v=20260227a" defer></script>
-  <script src="./teacher-dashboard.js?v=20260228d" defer></script>
+  <aside id="td-students-drawer" class="td-drawer hidden" aria-label="Students drawer">
+    <div class="td-drawer-head">
+      <h3>Students</h3>
+      <button id="td-close-students" class="td-btn td-btn-ghost" type="button">Close</button>
+    </div>
+    <div id="td-drawer-list" class="td-drawer-list"></div>
+  </aside>
+
+  <div id="td-tour-overlay" class="td-tour hidden" role="dialog" aria-modal="true" aria-label="Admin demo tour">
+    <div id="td-tour-highlight" class="td-tour-highlight"></div>
+    <div id="td-tour-card" class="td-tour-card">
+      <h4 id="td-tour-title">Admin Demo</h4>
+      <p id="td-tour-text"></p>
+      <div class="td-tour-actions">
+        <button id="td-tour-back" class="td-btn td-btn-ghost" type="button">Back</button>
+        <button id="td-tour-next" class="td-btn td-btn-primary" type="button">Next</button>
+        <button id="td-tour-exit" class="td-btn td-btn-ghost" type="button">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/caseload-store.js?v=20260228a" defer></script>
+  <script src="./js/session-engine.js?v=20260228a" defer></script>
+  <script src="./teacher-dashboard.js?v=20260228e" defer></script>
 </body>
 </html>

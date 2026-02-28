@@ -96,3 +96,16 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
   - `/Users/robertwilliamknaus/Desktop/WordQuest/data/music-license-ledger.json`
 - Runtime behavior:
   - File tracks are used first (by mode), with synth fallback if catalog/load/playback fails.
+
+## Teacher Workflow
+1. Open [teacher-dashboard.html](/Users/robertwilliamknaus/Desktop/WordQuest/teacher-dashboard.html) and search/select a student first.
+2. Review the single “Today’s Move” recommendation and tier/confidence snapshot.
+3. Click `Run 90-second Probe` or `Run 10-min session` to launch [session-runner.html](/Users/robertwilliamknaus/Desktop/WordQuest/session-runner.html).
+4. Complete the session blocks, then end session to auto-generate teacher and parent notes.
+5. Save the session to the selected student and confirm trend updates in the dashboard.
+6. Export progress as CSV/JSON for admin, family, or MTSS documentation.
+
+Screenshot placeholders:
+- `[Screenshot: Search-first dashboard view]`
+- `[Screenshot: Session runner in progress]`
+- `[Screenshot: Auto-generated summary + export]`
