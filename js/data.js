@@ -40,6 +40,7 @@ const WQData = (() => {
 
   let _entries = {};      // word → unified entry
   let _playable = [];     // words with game_tag === 'playable'
+  let _quarantineItems = [];
   let _loaded = false;
 
   function _normalizeGradeBand(rawGradeBand) {
@@ -58,6 +59,32 @@ const WQData = (() => {
     return GRADE_BAND_ORDER.slice(0, idx + 1);
   }
 
+  function _isDevMode() {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      if (String(params.get('env') || '').toLowerCase() === 'dev') return true;
+      return localStorage.getItem('cs_allow_dev') === '1';
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function _classifyInvalidGradeBand(rawGradeBand) {
+    const raw = String(rawGradeBand || '').trim();
+    if (!raw) return 'missing';
+    // Valid-looking range syntax but outside known set -> unknown band.
+    if (/^(K|G?\d+)\s*-\s*(\d+)$/.test(raw.toUpperCase())) return 'unknown_band';
+    return 'invalid_format';
+  }
+
+  function _pushQuarantine(word, rawGradeBand, reason) {
+    _quarantineItems.push({
+      word: String(word || '').toLowerCase(),
+      raw_grade_band: String(rawGradeBand || '').trim(),
+      reason: String(reason || 'invalid_format')
+    });
+  }
+
   // ─── Normalise NEW JSON format ─────────────────────────────────────
   function _fromNew(raw) {
     const entries = {};
@@ -69,6 +96,7 @@ const WQData = (() => {
       let gameTag = v.game_tag || 'playable';
       if (gameTag === 'playable' && !gradeBand) {
         gameTag = 'invalid_grade_band';
+        _pushQuarantine(word, rawGradeBand, _classifyInvalidGradeBand(rawGradeBand));
       }
       entries[word] = {
         word,
@@ -106,6 +134,7 @@ const WQData = (() => {
           : 'playable';
       if (gameTag === 'playable' && !gradeBand) {
         gameTag = 'invalid_grade_band';
+        _pushQuarantine(w, rawGradeBand, _classifyInvalidGradeBand(rawGradeBand));
       }
       entries[w] = {
         word:        w,
@@ -133,6 +162,7 @@ const WQData = (() => {
   // ─── Load ──────────────────────────────────────────────────────────
   async function load() {
     if (_loaded) return _entries;
+    _quarantineItems = [];
 
     // 1. Inline JS variable (works with file:// — no server needed)
     if (window.WQ_WORD_DATA && Object.keys(window.WQ_WORD_DATA).length > 0) {
@@ -170,13 +200,17 @@ const WQData = (() => {
 
   function _finalize() {
     _playable = Object.keys(_entries).filter(w => _entries[w].game_tag === 'playable');
-    const quarantined = Object.values(_entries).filter(
-      (entry) => entry?.game_tag === 'invalid_grade_band'
-    ).length;
+    const quarantined = _quarantineItems.length;
     _loaded = true;
     console.log(`[WQData] ${_playable.length} words are game-playable`);
     if (quarantined > 0) {
       console.info(`[WQData] ${quarantined} entries quarantined due to invalid grade band metadata.`);
+    }
+    if (_isDevMode()) {
+      window.WQ_QUARANTINE = {
+        count: quarantined,
+        items: _quarantineItems.slice()
+      };
     }
   }
 
@@ -213,5 +247,12 @@ const WQData = (() => {
 
   function isLoaded() { return _loaded; }
 
-  return { load, getEntry, getPlayableWords, isLoaded };
+  function getQuarantineReport() {
+    return {
+      count: _quarantineItems.length,
+      items: _quarantineItems.slice()
+    };
+  }
+
+  return { load, getEntry, getPlayableWords, isLoaded, getQuarantineReport };
 })();

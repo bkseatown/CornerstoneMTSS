@@ -1,0 +1,65 @@
+/* ==================================================================
+   Design tokens — premium pragmatic ed-tech
+   Shared across teacher dashboard, hero, reading lab, sentence surgery
+   ================================================================== */
+
+:root {
+  /* color system */
+  --bg-900: #0c1725;
+  --bg-850: #0f1f31;
+  --surface-1: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text-strong: #edf3fb;
+  --text: #d7e2f1;
+  --muted: #90a8c2;
+  --accent: #5cd1ff;
+  --accent-2: #6ee7b7;
+  --warn: #f4c978;
+  --danger: #ff8b8b;
+
+  /* spacing scale */
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 44px;
+
+  /* radius scale */
+  --radius-1: 8px;
+  --radius-2: 12px;
+  --radius-3: 16px;
+  --radius-4: 20px;
+  --radius-round: 999px;
+
+  /* shadow scale */
+  --shadow-soft: 0 8px 18px rgba(5, 12, 24, 0.28);
+  --shadow-medium: 0 16px 34px rgba(5, 12, 24, 0.32);
+  --shadow-strong: 0 22px 48px rgba(5, 12, 24, 0.36);
+
+  /* typography */
+  --font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --h1: clamp(1.9rem, 2.4vw, 2.5rem);
+  --h2: clamp(1.35rem, 1.8vw, 1.8rem);
+  --h3: clamp(1.08rem, 1.3vw, 1.25rem);
+  --body: 0.98rem;
+  --meta: 0.82rem;
+  --line-tight: 1.15;
+  --line-body: 1.52;
+
+  /* motion */
+  --motion-fast: 140ms;
+  --motion-med: 220ms;
+  --motion-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+}

@@ -1925,6 +1925,20 @@
     chip.classList.remove('hidden');
   }
 
+  async function logRuntimeBuildDiagnostics() {
+    if (!isDevModeEnabled()) return;
+    const build = resolveBuildLabel() || 'local';
+    const controlledBySw = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+    let cacheCount = 0;
+    try {
+      if ('caches' in window) {
+        const names = await caches.keys();
+        cacheCount = names.length;
+      }
+    } catch {}
+    console.info('[WQ Build Debug]', { build, controlledBySw, cacheCount });
+  }
+
   function applyDevOnlyVisibility() {
     const isDev = isDevModeEnabled();
     _el('settings-group-diagnostics')?.classList.toggle('hidden', !isDev);
@@ -2239,6 +2253,7 @@
 
   async function runRemoteBuildConsistencyCheck() {
     if (DEMO_MODE) return;
+    if (new URLSearchParams(location.search || '').get('audit') === '1') return;
     const BUILD_REMOTE_CHECK_KEY = 'wq_v2_build_remote_check_v1';
     const currentBuild = resolveBuildLabel();
     if (!currentBuild) return;
@@ -2276,10 +2291,21 @@
         } catch {}
       }
 
+      const reloadKey = 'wq_v2_build_sync_once_v1';
+      let alreadyReloaded = false;
+      try {
+        alreadyReloaded = sessionStorage.getItem(reloadKey) === deployedBuild;
+      } catch {}
+      if (alreadyReloaded) return;
+      try {
+        sessionStorage.setItem(reloadKey, deployedBuild);
+      } catch {}
+
+      WQUI.showToast('Update available. Refreshing...');
       const params = new URLSearchParams(location.search || '');
       params.set('cb', `build-sync-${deployedBuild}-${Date.now()}`);
       const nextUrl = `${location.pathname}${params.toString() ? `?${params.toString()}` : ''}${location.hash || ''}`;
-      location.replace(nextUrl);
+      setTimeout(() => location.replace(nextUrl), 380);
     } catch {}
   }
 
@@ -3011,6 +3037,7 @@
   void runAutoCacheRepairForBuild();
   void runRemoteBuildConsistencyCheck();
   installBuildConsistencyHeartbeat();
+  void logRuntimeBuildDiagnostics();
 
   const themeSelect = _el('s-theme');
   const queryTheme = readThemeFromQuery();
@@ -13992,7 +14019,7 @@
   function publishWordQuestSignals(signals, meta) {
     const isDemo = DEMO_MODE || (new URLSearchParams(location.search)).get('demo') === '1';
     if (isDemo || !signals || typeof signals !== 'object') return;
-    const studentId = getActiveSignalStudentId();
+    const studentId = getActiveSignalStudentId() || 'demo-student';
     const payloadMeta = meta && typeof meta === 'object' ? meta : {};
 
     try {
@@ -14006,21 +14033,6 @@
         const raw = localStorage.getItem(key);
         const obj = raw ? JSON.parse(raw) : {};
         obj.wordQuestSignals = Array.isArray(obj.wordQuestSignals) ? obj.wordQuestSignals : [];
-        obj.skillEvidence = obj.skillEvidence && typeof obj.skillEvidence === 'object' ? obj.skillEvidence : {};
-        const studentEvidence = obj.skillEvidence[studentId] && typeof obj.skillEvidence[studentId] === 'object'
-          ? obj.skillEvidence[studentId]
-          : {
-              updatedAt: new Date().toISOString(),
-              decoding: { score: 0, signals: [], series: [] },
-              fluency: { score: 0, signals: [], series: [] },
-              sentence: { score: 0, signals: [], series: [] },
-              writing: { score: 0, signals: [], series: [] }
-            };
-        const decodingEvidence = studentEvidence.decoding && typeof studentEvidence.decoding === 'object'
-          ? studentEvidence.decoding
-          : { score: 0, signals: [], series: [] };
-        decodingEvidence.signals = Array.isArray(decodingEvidence.signals) ? decodingEvidence.signals : [];
-        decodingEvidence.series = Array.isArray(decodingEvidence.series) ? decodingEvidence.series : [];
         const guessCount = Math.max(0, Number(signals.guesses || 0));
         const timeToFirstGuess = Math.max(0, Number(signals.timeToFirstGuessSec || 0));
         const patternAdherence = Math.max(0, Math.min(1, Number(signals.updateRespect || 0)));
@@ -14028,15 +14040,6 @@
         const vowelSwapRate = guessCount > 0 ? Math.max(0, Math.min(1, Number(signals.uniqueVowels || 0) / guessCount)) : 0;
         const clueUtilization = payloadMeta.helpUsed ? 0.8 : 0.25;
         const decodingScore = Math.round(patternAdherence * 100);
-        const addSignalLabel = (label) => {
-          if (!label) return;
-          if (!decodingEvidence.signals.includes(label)) decodingEvidence.signals.push(label);
-          if (decodingEvidence.signals.length > 6) decodingEvidence.signals = decodingEvidence.signals.slice(-6);
-        };
-        if (vowelSwapRate < 0.22) addSignalLabel('Vowel mapping unstable');
-        if (repeatedInvalidLetterPlacementCount > 2) addSignalLabel('Overwrites known constraints');
-        if (timeToFirstGuess > 12) addSignalLabel('Slow start');
-        if (patternAdherence > 0.76) addSignalLabel('Efficient refinement');
         obj.wordQuestSignals.push({
           t: Date.now(),
           studentId,
@@ -14060,18 +14063,29 @@
           soft: !!payloadMeta.soft
         });
         if (obj.wordQuestSignals.length > 200) obj.wordQuestSignals = obj.wordQuestSignals.slice(-200);
-        decodingEvidence.series.push(decodingScore);
-        if (decodingEvidence.series.length > 12) decodingEvidence.series = decodingEvidence.series.slice(-12);
-        decodingEvidence.score = decodingEvidence.series.length
-          ? Math.round(decodingEvidence.series.reduce((sum, value) => sum + Number(value || 0), 0) / decodingEvidence.series.length)
-          : decodingScore;
-        studentEvidence.updatedAt = new Date().toISOString();
-        studentEvidence.decoding = decodingEvidence;
-        studentEvidence.fluency = studentEvidence.fluency || { score: 0, signals: [], series: [] };
-        studentEvidence.sentence = studentEvidence.sentence || { score: 0, signals: [], series: [] };
-        studentEvidence.writing = studentEvidence.writing || { score: 0, signals: [], series: [] };
-        obj.skillEvidence[studentId] = studentEvidence;
         localStorage.setItem(key, JSON.stringify(obj));
+      }
+    } catch {}
+
+    try {
+      const guessCount = Math.max(0, Number(signals.guesses || 0));
+      const timeToFirstGuess = Math.max(0, Number(signals.timeToFirstGuessSec || 0));
+      const patternAdherence = Math.max(0, Math.min(1, Number(signals.updateRespect || 0)));
+      const repeatedInvalidLetterPlacementCount = Math.max(0, Math.round((1 - patternAdherence) * guessCount));
+      const vowelSwapCount = Math.max(0, Number(signals.uniqueVowels || 0));
+      const clueUseScore = payloadMeta.helpUsed ? 0.8 : 0.25;
+      if (window.CSEvidence && typeof window.CSEvidence.appendSignal === 'function') {
+        window.CSEvidence.appendSignal(studentId, 'wordquest', {
+          guessesCount: guessCount,
+          timeToFirstGuess: timeToFirstGuess,
+          avgGuessLatency: Number(signals.guessesPerMin || 0) > 0 ? Number((60 / Number(signals.guessesPerMin || 1)).toFixed(2)) : 0,
+          constraintHonorRate: Number(patternAdherence.toFixed(3)),
+          vowelSwapCount: vowelSwapCount,
+          repeatedLetterErrors: repeatedInvalidLetterPlacementCount,
+          clueUseScore: Number(clueUseScore.toFixed(3)),
+          patternAdherence: Number(patternAdherence.toFixed(3)),
+          statusLabel: patternAdherence > 0.76 ? 'Efficient refinement' : (timeToFirstGuess > 12 ? 'Slow start' : 'Vowel mapping unstable')
+        }, { sparkKey: 'constraintHonorRate' });
       }
     } catch {}
 
