@@ -46,6 +46,31 @@
     }
   })();
 
+  function mountTeacherReturnButton() {
+    let params;
+    try { params = new URLSearchParams(window.location.search || ''); } catch (_e) { params = null; }
+    if (!params || params.get('from') !== 'teacher') return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Back to Dashboard';
+    btn.setAttribute('aria-label', 'Back to Dashboard');
+    btn.style.position = 'fixed';
+    btn.style.top = '10px';
+    btn.style.left = '10px';
+    btn.style.zIndex = '200';
+    btn.style.padding = '8px 12px';
+    btn.style.borderRadius = '10px';
+    btn.style.border = '1px solid rgba(255,255,255,0.3)';
+    btn.style.background = 'rgba(15, 27, 43, 0.86)';
+    btn.style.color = '#e9f2fb';
+    btn.style.fontWeight = '700';
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('click', () => {
+      window.location.href = 'teacher-dashboard.html';
+    });
+    document.body.appendChild(btn);
+  }
+
   function collectOverflowDiagnostics(limit = 10) {
     const viewportH = document.documentElement.clientHeight || window.innerHeight || 0;
     const viewportW = document.documentElement.clientWidth || window.innerWidth || 0;
@@ -129,6 +154,8 @@
       });
     });
   }
+
+  mountTeacherReturnButton();
   if (DEMO_MODE) {
     // Mark demo initialization; do not early-return the app bootstrap.
     window.__CS_DEMO_INIT_DONE = true;
@@ -13979,9 +14006,46 @@
         const raw = localStorage.getItem(key);
         const obj = raw ? JSON.parse(raw) : {};
         obj.wordQuestSignals = Array.isArray(obj.wordQuestSignals) ? obj.wordQuestSignals : [];
+        obj.skillEvidence = obj.skillEvidence && typeof obj.skillEvidence === 'object' ? obj.skillEvidence : {};
+        const studentEvidence = obj.skillEvidence[studentId] && typeof obj.skillEvidence[studentId] === 'object'
+          ? obj.skillEvidence[studentId]
+          : {
+              updatedAt: new Date().toISOString(),
+              decoding: { score: 0, signals: [], series: [] },
+              fluency: { score: 0, signals: [], series: [] },
+              sentence: { score: 0, signals: [], series: [] },
+              writing: { score: 0, signals: [], series: [] }
+            };
+        const decodingEvidence = studentEvidence.decoding && typeof studentEvidence.decoding === 'object'
+          ? studentEvidence.decoding
+          : { score: 0, signals: [], series: [] };
+        decodingEvidence.signals = Array.isArray(decodingEvidence.signals) ? decodingEvidence.signals : [];
+        decodingEvidence.series = Array.isArray(decodingEvidence.series) ? decodingEvidence.series : [];
+        const guessCount = Math.max(0, Number(signals.guesses || 0));
+        const timeToFirstGuess = Math.max(0, Number(signals.timeToFirstGuessSec || 0));
+        const patternAdherence = Math.max(0, Math.min(1, Number(signals.updateRespect || 0)));
+        const repeatedInvalidLetterPlacementCount = Math.max(0, Math.round((1 - patternAdherence) * guessCount));
+        const vowelSwapRate = guessCount > 0 ? Math.max(0, Math.min(1, Number(signals.uniqueVowels || 0) / guessCount)) : 0;
+        const clueUtilization = payloadMeta.helpUsed ? 0.8 : 0.25;
+        const decodingScore = Math.round(patternAdherence * 100);
+        const addSignalLabel = (label) => {
+          if (!label) return;
+          if (!decodingEvidence.signals.includes(label)) decodingEvidence.signals.push(label);
+          if (decodingEvidence.signals.length > 6) decodingEvidence.signals = decodingEvidence.signals.slice(-6);
+        };
+        if (vowelSwapRate < 0.22) addSignalLabel('Vowel mapping unstable');
+        if (repeatedInvalidLetterPlacementCount > 2) addSignalLabel('Overwrites known constraints');
+        if (timeToFirstGuess > 12) addSignalLabel('Slow start');
+        if (patternAdherence > 0.76) addSignalLabel('Efficient refinement');
         obj.wordQuestSignals.push({
           t: Date.now(),
           studentId,
+          guessCount,
+          timeToFirstGuess,
+          vowelSwapRate: Number(vowelSwapRate.toFixed(3)),
+          repeatedInvalidLetterPlacementCount,
+          patternAdherence: Number(patternAdherence.toFixed(3)),
+          clueUtilization: Number(clueUtilization.toFixed(3)),
           guesses: signals.guesses,
           durSec: signals.durSec,
           solved: !!signals.solved,
@@ -13996,6 +14060,17 @@
           soft: !!payloadMeta.soft
         });
         if (obj.wordQuestSignals.length > 200) obj.wordQuestSignals = obj.wordQuestSignals.slice(-200);
+        decodingEvidence.series.push(decodingScore);
+        if (decodingEvidence.series.length > 12) decodingEvidence.series = decodingEvidence.series.slice(-12);
+        decodingEvidence.score = decodingEvidence.series.length
+          ? Math.round(decodingEvidence.series.reduce((sum, value) => sum + Number(value || 0), 0) / decodingEvidence.series.length)
+          : decodingScore;
+        studentEvidence.updatedAt = new Date().toISOString();
+        studentEvidence.decoding = decodingEvidence;
+        studentEvidence.fluency = studentEvidence.fluency || { score: 0, signals: [], series: [] };
+        studentEvidence.sentence = studentEvidence.sentence || { score: 0, signals: [], series: [] };
+        studentEvidence.writing = studentEvidence.writing || { score: 0, signals: [], series: [] };
+        obj.skillEvidence[studentId] = studentEvidence;
         localStorage.setItem(key, JSON.stringify(obj));
       }
     } catch {}
