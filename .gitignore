@@ -4,3 +4,4 @@ node_modules/
 test-results/
 .artifacts/
 playwright-report/
+audio/ava/tmp/
