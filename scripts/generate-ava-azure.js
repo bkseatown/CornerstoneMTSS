@@ -7,7 +7,11 @@ const path = require('path');
 const { buildSsml } = require('./ssml');
 
 const root = path.resolve(__dirname, '..');
-const corpusPath = path.join(root, 'data/ava-phrases-v2.json');
+const defaultCorpus = path.join(root, 'data/ava-phrases-v2.json');
+const phrasesPathArg = process.argv.includes('--phrases') ? process.argv[process.argv.indexOf('--phrases') + 1] : '';
+const corpusPath = phrasesPathArg
+  ? (path.isAbsolute(phrasesPathArg) ? phrasesPathArg : path.join(process.cwd(), phrasesPathArg))
+  : defaultCorpus;
 let audioRoot = path.join(root, 'audio/ava/v2');
 let manifestPath = path.join(audioRoot, 'manifest.json');
 
@@ -88,7 +92,8 @@ function isIdLike(text) {
   return /wordquest\\./i.test(t) ||
     /(before_first_guess|first_miss|second_miss|idle_20s|rapid_wrong_streak)/i.test(t) ||
     /\\bwq\\b/.test(t) ||
-    /\\.\\d{2}\\b/.test(t);
+    /\\.\\d{2}\\b/.test(t) ||
+    /^\\s*[\\w ]{3,30}:\\s+/.test(t);
 }
 
 function ensureDir(filePath) {
