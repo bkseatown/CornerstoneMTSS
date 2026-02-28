@@ -10,6 +10,18 @@
   <script src="build-stamp.js?v=20260228c"></script>
   <script src="diagnostics.js"></script>
   <script>
+    (function bootstrapHomeModeBeforePaint() {
+      try {
+        var params = new URLSearchParams(window.location.search || '');
+        var play = String(params.get('play') || '').trim().toLowerCase();
+        var demo = String(params.get('demo') || '').trim().toLowerCase();
+        var shouldPlay = (play === '1' || play === 'true' || demo === '1' || demo === 'true');
+        document.documentElement.setAttribute('data-home-mode', shouldPlay ? 'play' : 'home');
+      } catch (_e) {
+        document.documentElement.setAttribute('data-home-mode', 'home');
+      }
+    })();
+
     (function ensureGameplayRoute() {
       try {
         var url = new URL(window.location.href);
@@ -29,16 +41,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style/modes.css?v=20260223d">
   <link rel="stylesheet" href="style/themes.css?v=20260224v">
-  <link rel="stylesheet" href="style/components.css?v=20260228f">
+  <link rel="stylesheet" href="style/components.css?v=20260228g">
   <link rel="stylesheet" href="style/components.deep-dive-plus.css">
   <link rel="stylesheet" href="style/world-themes.css?v=20260226a">
   <link rel="stylesheet" href="style/premium-theme.css?v=20260226a">
   <link rel="stylesheet" href="hero-v2.css?v=20260227b">
   <style>
     /* First-paint guard to prevent hero/gameplay bleed before app.js runs. */
-    #play-shell { display: none; }
-    html[data-home-mode="play"] #play-shell { display: block; }
-    html[data-home-mode="play"] #hero-v2 { display: none; }
+    #play-shell { display: none !important; }
+    html[data-home-mode="play"] #play-shell { display: block !important; }
+    html[data-home-mode="play"] #hero-v2 { display: none !important; }
     html[data-home-mode="play"] > body > header { display: block; }
     html[data-home-mode="home"] > body > header { display: none; }
     html[data-home-mode="home"],
@@ -1398,7 +1410,7 @@
   <script src="js/coach-ribbon.js?v=20260228b"></script>
   <script src="word-quest-preview.js?v=20260228c"></script>
   <script src="hero-v2.js?v=20260228c"></script>
-  <script src="js/app.js?v=20260228c"></script>
+  <script src="js/app.js?v=20260228e"></script>
   <script src="js/deep-dive-plus.js?v=20260226m"></script>
   <script src="js/theme-nav.js?v=20260225d"></script>
 </body>

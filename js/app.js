@@ -897,6 +897,7 @@
   let demoToastDurationMs = 60000;
   let demoToastCollapsed = false;
   let demoToastAutoCollapsedByPlay = false;
+  let demoToastSize = 'sm';
   let homeCoachRibbon = null;
   let wordQuestCoachRibbon = null;
   let _wqDiagSession = null;
@@ -988,6 +989,48 @@
     }
   }
 
+  function normalizeDemoToastSize(value) {
+    const raw = String(value || '').trim().toLowerCase();
+    if (raw === 'lg' || raw === 'large') return 'lg';
+    if (raw === 'md' || raw === 'medium') return 'md';
+    return 'sm';
+  }
+
+  function getNextDemoToastSize(current) {
+    if (current === 'lg') return 'md';
+    if (current === 'md') return 'sm';
+    return 'lg';
+  }
+
+  function getDemoToastSizeLabel(size) {
+    if (size === 'lg') return '100%';
+    if (size === 'md') return '90%';
+    return '80%';
+  }
+
+  function applyDemoToastSize(size) {
+    demoToastSize = normalizeDemoToastSize(size);
+    if (!(demoToastEl instanceof HTMLElement)) return;
+    demoToastEl.classList.remove('cs-demo-toast--sm', 'cs-demo-toast--md', 'cs-demo-toast--lg');
+    demoToastEl.classList.add(`cs-demo-toast--${demoToastSize}`);
+    const sizeBtn = _el('cs-demo-size');
+    if (sizeBtn) sizeBtn.textContent = getDemoToastSizeLabel(demoToastSize);
+  }
+
+  function loadDemoToastSize() {
+    try {
+      return normalizeDemoToastSize(localStorage.getItem('wq_demo_toast_size'));
+    } catch {
+      return 'sm';
+    }
+  }
+
+  function saveDemoToastSize(size) {
+    try {
+      localStorage.setItem('wq_demo_toast_size', normalizeDemoToastSize(size));
+    } catch {}
+  }
+
   function createDemoBanner() {
     if (!DEMO_MODE || document.getElementById('cs-demo-toast')) return;
     const toast = document.createElement('div');
@@ -1000,6 +1043,7 @@
         '<div class=\"cs-demo-toast__badge\" aria-hidden=\"true\">DEMO</div>' +
         '<div class=\"cs-demo-toast__text\" aria-live=\"polite\" id=\"cs-demo-toast-text\">Live demo: try one round.</div>' +
         '<div class=\"cs-demo-toast__actions\">' +
+          '<button class=\"cs-btn cs-btn--ghost\" id=\"cs-demo-size\" type=\"button\" aria-label=\"Resize demo banner\">90%</button>' +
           '<button class=\"cs-btn cs-btn--ghost\" id=\"cs-demo-skip\" type=\"button\">Skip</button>' +
           '<button class=\"cs-btn cs-btn--primary\" id=\"cs-demo-restart\" type=\"button\">Restart</button>' +
           '<button class=\"cs-btn cs-btn--icon\" id=\"cs-demo-close\" type=\"button\" aria-label=\"Hide demo banner\">×</button>' +
@@ -1019,9 +1063,15 @@
     demoToastTextEl = _el('cs-demo-toast-text');
     demoToastBarFillEl = _el('cs-demo-toast-bar');
     demoToastChipEl = chip;
+    applyDemoToastSize(loadDemoToastSize());
     showDemoToast(true);
     setDemoToastText('preRound');
     startDemoToastProgress(60000);
+    _el('cs-demo-size')?.addEventListener('click', () => {
+      const nextSize = getNextDemoToastSize(demoToastSize);
+      applyDemoToastSize(nextSize);
+      saveDemoToastSize(nextSize);
+    });
     _el('cs-demo-skip')?.addEventListener('click', () => {
       const demoStateRuntime = getDemoState();
       demoStateRuntime.active = false;
@@ -6005,6 +6055,7 @@
   }
 
   function initializeHomeMode() {
+    const forceGameplayRoute = /(?:^|\/)word-quest\.html$/i.test(String(location.pathname || ''));
     if (DEMO_MODE) {
       setHomeMode('play', { scroll: false });
       return;
@@ -6018,6 +6069,7 @@
     } catch {
       forcePlay = false;
     }
+    if (forceGameplayRoute) forcePlay = true;
     setHomeMode(forcePlay ? 'play' : 'home', { scroll: false });
   }
 
@@ -14216,8 +14268,15 @@
     }
   });
 
-  document.addEventListener('pointerdown', () => {
+  document.addEventListener('pointerdown', (event) => {
     avaWqLastActionAt = Date.now();
+    if (!DEMO_MODE || !(demoToastEl instanceof HTMLElement)) return;
+    if (demoToastEl.classList.contains('hidden')) return;
+    const target = event.target instanceof Node ? event.target : null;
+    if (!target) return;
+    if (demoToastEl.contains(target)) return;
+    if (demoToastChipEl instanceof HTMLElement && demoToastChipEl.contains(target)) return;
+    collapseDemoToast();
   }, { passive: true });
 
   document.addEventListener('visibilitychange', () => {
