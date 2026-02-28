@@ -1,0 +1,380 @@
+{
+  "wordquest": {
+    "before_first_guess": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    },
+    "first_miss": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "second_miss": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "rapid_wrong_streak": {
+      "priority": 6,
+      "defaultLane": "deescalation"
+    },
+    "near_solve": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "streak_three_correct": {
+      "priority": 1,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    },
+    "idle_20s": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "hint_opened": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "starter_word_used": {
+      "priority": 2,
+      "defaultLane": "gentle_support"
+    },
+    "backspace_burst": {
+      "priority": 5,
+      "defaultLane": "deescalation"
+    },
+    "pacing_drop": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "confidence_low": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "voice_support_used": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "end_round_reflect": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    }
+  },
+  "reading_lab": {
+    "start_read": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    },
+    "low_accuracy": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "punctuation_drop": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "prosody_flat": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "hard_word_repeat": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "self_correction": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "pacing_variance_high": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "pause_pattern_repeated": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "segment_complete": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    },
+    "idle_20s": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "teacher_summary_needed": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "fluency_growth": {
+      "priority": 2,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    },
+    "accuracy_recovery": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "transition_to_reasoning": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    }
+  },
+  "sentence_surgery": {
+    "first_reason_added": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "reasoning_missing": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "backspace_burst": {
+      "priority": 5,
+      "defaultLane": "deescalation"
+    },
+    "weak_verb_detected": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "fragment_detected": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "run_on_detected": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "clarity_gain": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "detail_missing": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "control_drop": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "idle_20s": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "peer_review": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "draft_complete": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    },
+    "revision_stall": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "complexity_step_up": {
+      "priority": 2,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    }
+  },
+  "writing_studio": {
+    "paragraph_start": {
+      "priority": 1,
+      "defaultLane": "neutral_coach"
+    },
+    "outline_missing": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "plan_set": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "evidence_thin": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "claim_unclear": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "conclusion_missing": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "revision_stall": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "backspace_burst": {
+      "priority": 5,
+      "defaultLane": "deescalation"
+    },
+    "idle_20s": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "focus_shift": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "voice_flat": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "teacher_review": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "idea_stuck": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "sentence_flow_issue": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    }
+  },
+  "teacher_dashboard": {
+    "low_group_accuracy": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "pacing_drop": {
+      "priority": 3,
+      "defaultLane": "neutral_coach"
+    },
+    "reteach_recommended": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "growth_spike": {
+      "priority": 2,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    },
+    "progress_review_ready": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "small_group_ready": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "data_conflict": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "attendance_gap": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "engagement_low": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    },
+    "assessment_window": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "behavior_spike": {
+      "priority": 4,
+      "defaultLane": "deescalation"
+    },
+    "curriculum_alignment": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "report_due": {
+      "priority": 2,
+      "defaultLane": "direct_instruction"
+    },
+    "idle_20s": {
+      "priority": 3,
+      "defaultLane": "gentle_support"
+    }
+  },
+  "numeracy": {
+    "first_miss": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "second_miss": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "rapid_wrong_streak": {
+      "priority": 6,
+      "defaultLane": "deescalation"
+    },
+    "near_solve": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "streak_three_correct": {
+      "priority": 1,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    },
+    "idle_20s": {
+      "priority": 4,
+      "defaultLane": "direct_instruction"
+    },
+    "hint_opened": {
+      "priority": 2,
+      "defaultLane": "neutral_coach"
+    },
+    "strategy_switch": {
+      "priority": 3,
+      "defaultLane": "neutral_coach"
+    },
+    "worked_example": {
+      "priority": 2,
+      "defaultLane": "direct_instruction"
+    },
+    "error_pattern_seen": {
+      "priority": 3,
+      "defaultLane": "direct_instruction"
+    },
+    "fluency_stall": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "confidence_low": {
+      "priority": 4,
+      "defaultLane": "gentle_support"
+    },
+    "timer_expired": {
+      "priority": 5,
+      "defaultLane": "deescalation"
+    },
+    "success_streak": {
+      "priority": 1,
+      "defaultLane": "challenge_stretch",
+      "tierRestrictions": {
+        "disallow": [
+          "3"
+        ]
+      }
+    }
+  }
+}

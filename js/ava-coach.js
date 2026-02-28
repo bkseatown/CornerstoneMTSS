@@ -526,8 +526,9 @@
     var selected = getAdaptive(arg1, arg2, arg3);
     var text = sanitizeText(selected && selected.text);
     if (!text) return "";
-    var isIdlePrompt = normalizeKey(selected && selected.event) === "idle_20s";
-    var allowBrowserTtsFallback = !isIdlePrompt;
+    // Disable robotic browser TTS fallback for coaching prompts.
+    // If no local/Azure audio is available, stay silent.
+    var allowBrowserTtsFallback = false;
 
     var manifest = await loadManifest();
     var fromManifest = manifest && manifest.byText ? manifest.byText[normalizeKey(text)] : "";

@@ -5872,6 +5872,14 @@
   }
 
   function speakAvaWordQuestAdaptive(eventKey, overrides = {}) {
+    // Hard guard: never speak outside true active Word Quest play.
+    if (DEMO_MODE) return;
+    if (!isPlayMode()) return;
+    if (!isWordQuestActiveRound()) return;
+    if (!isCoachEnabled()) return;
+    if (document.hidden) return;
+    if (isAnyOverlayOpen()) return;
+    if (isTextCompositionFocusActive()) return;
     if (typeof window.CSEmitAva !== 'function') return;
     const state = WQGame.getState ? WQGame.getState() : {};
     const tierRaw = String(localStorage.getItem('cs_tier_level') || '').trim();
