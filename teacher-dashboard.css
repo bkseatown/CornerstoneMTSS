@@ -78,6 +78,9 @@ body.teacher-dashboard {
   font-size: var(--meta);
   cursor: pointer;
 }
+.td-coach-chip { border-color: color-mix(in oklab, var(--accent) 58%, transparent); }
+.td-coach-chip.is-fresh { animation: tdCoachPulse 220ms ease-out 1; }
+@keyframes tdCoachPulse { 0% { transform: scale(1); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
 
 .td-local-dot {
   width: 18px;

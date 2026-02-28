@@ -37,7 +37,8 @@
     coachLine: document.getElementById("td-coach-line"),
     coachPlay: document.getElementById("td-coach-play"),
     coachMute: document.getElementById("td-coach-mute"),
-    coachCollapse: document.getElementById("td-coach-collapse")
+    coachCollapse: document.getElementById("td-coach-collapse"),
+    coachChip: document.getElementById("td-coach-chip")
   };
 
   function seedFromCaseloadStore() {
@@ -224,6 +225,12 @@
       if (isMuted()) return;
       playCoachLine(el.coachLine.textContent || "Next best move is ready.");
     });
+    if (el.coachChip) {
+      el.coachChip.addEventListener("click", function () {
+        el.coachRibbon.classList.remove("is-collapsed");
+        playCoachLine(el.coachLine.textContent || "Next best move is ready.");
+      });
+    }
   }
 
   function playCoachLine(text) {
@@ -246,6 +253,11 @@
     var line = String(text || "").slice(0, 140);
     if (el.coachLine.textContent === line) return;
     el.coachLine.textContent = line;
+    if (el.coachChip) {
+      el.coachChip.classList.remove("is-fresh");
+      setTimeout(function () { el.coachChip.classList.add("is-fresh"); }, 0);
+      setTimeout(function () { el.coachChip.classList.remove("is-fresh"); }, 260);
+    }
   }
 
   function bindEvents() {
