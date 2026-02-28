@@ -1720,6 +1720,8 @@
   }
 
   function resolveBuildLabel() {
+    const stampedBuild = String(window.CS_BUILD?.version || '').trim();
+    if (stampedBuild) return stampedBuild;
     const metaBuild = document.querySelector('meta[name="wq-build"]')?.getAttribute('content');
     const normalizedMetaBuild = String(metaBuild || '').trim();
     if (normalizedMetaBuild) return normalizedMetaBuild;
@@ -1763,6 +1765,7 @@
     }
     const channel = resolveRuntimeChannel();
     const buildLabel = resolveBuildLabel() || 'local';
+    const staleClient = !!window.CS_BUILD?.staleClient;
     const appVersion = `v${APP_SEMVER}`;
     let chip = _el('wq-version-chip');
     if (!chip) {
@@ -1772,8 +1775,12 @@
       chip.setAttribute('aria-hidden', 'true');
       document.body.appendChild(chip);
     }
-    chip.textContent = `${channel} · ${appVersion} · ${buildLabel}`;
-    chip.title = `WordQuest ${appVersion} (${buildLabel})`;
+    chip.textContent = staleClient
+      ? `${channel} · ${appVersion} · ${buildLabel} · syncing`
+      : `${channel} · ${appVersion} · ${buildLabel}`;
+    chip.title = staleClient
+      ? `WordQuest ${appVersion} (${buildLabel}) is syncing to latest deploy`
+      : `WordQuest ${appVersion} (${buildLabel})`;
     chip.classList.remove('hidden');
   }
 
@@ -2855,6 +2862,10 @@
   }
   syncBuildBadge();
   syncPersistentVersionChip();
+  window.addEventListener('cs-build-health', () => {
+    syncBuildBadge();
+    syncPersistentVersionChip();
+  });
   applyDevOnlyVisibility();
   void runAutoCacheRepairForBuild();
   void runRemoteBuildConsistencyCheck();

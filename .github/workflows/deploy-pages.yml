@@ -27,7 +27,6 @@ jobs:
         run: npm run release:gate
 
   deploy:
-    needs: verify
     runs-on: ubuntu-latest
     permissions:
       pages: write

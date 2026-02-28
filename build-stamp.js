@@ -4,6 +4,7 @@
   var VERSION_URL = "./version.json";
   var VERSION_KEY = "cs_app_version";
   var RELOAD_GUARD_KEY = "cs_app_version_reloaded_once";
+  var AUTO_HEAL_PREFIX = "cs_build_auto_heal_";
 
   function inDevMode() {
     if (window.CSAppMode && typeof window.CSAppMode.isDevMode === "function") {
@@ -24,10 +25,51 @@
     try {
       var url = new URL(window.location.href);
       url.searchParams.set("v", version);
+      url.searchParams.set("cb", Date.now().toString(36));
       window.location.replace(url.toString());
     } catch (_e) {
       window.location.reload();
     }
+  }
+
+  function getRuntimeBuildLabel() {
+    try {
+      var meta = document.querySelector('meta[name="wq-build"]');
+      var label = String(meta && meta.getAttribute("content") || "").trim();
+      return label || "";
+    } catch (_e) {
+      return "";
+    }
+  }
+
+  async function resetRuntimeCaches() {
+    try {
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+        var regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(function (reg) { return reg.unregister(); }));
+      }
+    } catch (_e1) {}
+    try {
+      if (window.caches && typeof window.caches.keys === "function") {
+        var keys = await window.caches.keys();
+        await Promise.all(keys.map(function (key) { return window.caches.delete(key); }));
+      }
+    } catch (_e2) {}
+  }
+
+  async function autoHealIfStale(version, runtimeBuild) {
+    var latest = String(version || "").trim();
+    var runtime = String(runtimeBuild || "").trim();
+    if (!latest || !runtime || latest === runtime) return false;
+    if (latest === "local" || runtime === "dev-local") return false;
+    var healKey = AUTO_HEAL_PREFIX + latest;
+    var alreadyHealed = "";
+    try { alreadyHealed = sessionStorage.getItem(healKey) || ""; } catch (_e) { alreadyHealed = ""; }
+    if (alreadyHealed === "1") return false;
+    try { sessionStorage.setItem(healKey, "1"); } catch (_e1) {}
+    await resetRuntimeCaches();
+    setPathVersion(latest);
+    return true;
   }
 
   function applyReloadGuard(version) {
@@ -59,7 +101,7 @@
     }
   }
 
-  function ensureBadge(version) {
+  function ensureBadge(version, stale) {
     var badge = document.getElementById("cs-build-badge");
     if (!badge) {
       badge = document.createElement("button");
@@ -88,7 +130,7 @@
       }
     }
 
-    badge.textContent = "Build " + version;
+    badge.textContent = "Build " + version + (stale ? " (syncing)" : "");
 
     badge.onclick = function () {
       var text = String(version || "");
@@ -117,10 +159,25 @@
       version = "local";
     }
 
+    var runtimeBuild = getRuntimeBuildLabel();
+    var staleClient = !!runtimeBuild && runtimeBuild !== version && version !== "local";
     window.CS_BUILD = {
       version: version,
+      runtimeBuild: runtimeBuild,
+      staleClient: staleClient,
       fetchedAt: Date.now()
     };
+
+    try {
+      if (window.dispatchEvent && typeof window.CustomEvent === "function") {
+        window.dispatchEvent(new CustomEvent("cs-build-health", { detail: window.CS_BUILD }));
+      }
+    } catch (_dispatchError) {}
+
+    try {
+      var healed = await autoHealIfStale(version, runtimeBuild);
+      if (healed) return;
+    } catch (_healError) {}
 
     try {
       applyReloadGuard(version);
@@ -130,7 +187,7 @@
 
     var onReady = function () {
       if (!inDevMode()) return;
-      ensureBadge(version);
+      ensureBadge(version, staleClient);
     };
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", onReady, { once: true });
