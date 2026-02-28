@@ -3562,9 +3562,13 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  width: min(620px, calc(100vw - 26px));
+  width: min(560px, calc(100vw - 20px));
   margin-bottom: 2px;
   pointer-events: auto;
+}
+
+html[data-wq-demo="on"] #wq-coach-ribbon {
+  display: none !important;
 }
 
 html[data-home-mode="play"] #wq-coach-ribbon.hidden {
@@ -4513,6 +4517,27 @@ html[data-key-style="bubble"] .key.wide {
   font-size: 0.76rem;
   letter-spacing: 0.02em;
   text-transform: none;
+}
+
+/* Keep vowels visibly distinct on dark bubble keys even when hint mode is off. */
+html[data-key-style="bubble"] .key.vowel:not(.correct):not(.present):not(.absent) {
+  color: #89e6d6;
+  border-color: color-mix(in oklab, #4f6d86 48%, #9fd7cf 52%);
+  text-shadow: 0 0 8px rgba(103, 224, 202, 0.34);
+}
+
+html[data-key-style="bubble"] .key.vowel:not(.correct):not(.present):not(.absent)::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 14px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(137,230,214,0) 0%, rgba(137,230,214,0.92) 50%, rgba(137,230,214,0) 100%);
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 html[data-key-style="classic"] .key {
@@ -7422,7 +7447,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   top: 12px;
   right: 12px;
   z-index: 234;
-  width: min(320px, calc(100vw - 20px));
+  width: min(296px, calc(100vw - 20px));
   min-height: 50px;
   display: grid;
   gap: 4px;
@@ -7602,7 +7627,7 @@ body.wq-demo .quest-overlay {
   .cs-demo-toast {
     top: 8px;
     right: 8px;
-    width: min(268px, calc(100vw - 16px));
+    width: min(244px, calc(100vw - 16px));
     padding: 7px 8px 6px;
     transform: scale(clamp(0.74, 0.6 + 0.28vw, 0.86));
   }

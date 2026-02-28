@@ -5937,11 +5937,7 @@
       return;
     }
     if (DEMO_MODE) {
-      mount.classList.remove('hidden');
-      wordQuestCoachRibbon.set({
-        key: 'wq.beforeFirstGuess',
-        text: 'Demo mode active; follow the guided coach prompts.'
-      });
+      mount.classList.add('hidden');
       return;
     }
     mount.classList.remove('hidden');
