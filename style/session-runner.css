@@ -1,0 +1,260 @@
+:root {
+  --sr-bg: linear-gradient(145deg, #1f3448 0%, #27485f 48%, #1d3347 100%);
+  --sr-surface: rgba(20, 33, 47, 0.72);
+  --sr-border: rgba(255, 255, 255, 0.14);
+  --sr-text: rgba(245, 249, 255, 0.96);
+  --sr-sub: rgba(225, 235, 247, 0.75);
+  --sr-accent: #5bc1ff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body.session-runner {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+  font-feature-settings: "zero" 0;
+  background: var(--sr-bg);
+  color: var(--sr-text);
+  overflow: hidden;
+}
+
+.sr-shell {
+  width: min(1120px, calc(100vw - 24px));
+  height: 100vh;
+  margin: 0 auto;
+  padding: 12px 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.sr-surface {
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sr-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+}
+
+.sr-head h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.sr-head p {
+  margin: 3px 0 0;
+  color: var(--sr-sub);
+  font-size: 0.88rem;
+}
+
+.sr-head-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sr-btn {
+  font: inherit;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.sr-btn-primary {
+  background: var(--sr-accent);
+  color: #0f2437;
+  border-color: rgba(167, 226, 255, 0.75);
+}
+
+.sr-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--sr-text);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sr-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.sr-coach {
+  padding: 10px 12px;
+}
+
+.sr-coach p {
+  margin: 6px 0 0;
+  color: var(--sr-sub);
+}
+
+.sr-stage {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 10px;
+}
+
+.sr-now,
+.sr-next {
+  min-height: 0;
+  padding: 12px;
+}
+
+.sr-now h2,
+.sr-next h2,
+.sr-summary h2,
+.sr-summary h3 {
+  margin: 0;
+}
+
+.sr-block-title {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.sr-muted {
+  margin: 6px 0 0;
+  color: var(--sr-sub);
+}
+
+.sr-timer-wrap {
+  margin-top: 10px;
+}
+
+#sr-timer-label {
+  font-weight: 700;
+}
+
+.sr-progress {
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+#sr-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #68d6ff, #87f0c2);
+}
+
+.sr-metrics {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.sr-metrics label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: var(--sr-sub);
+}
+
+.sr-metrics input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(16, 24, 34, 0.74);
+  color: var(--sr-text);
+  padding: 7px 8px;
+}
+
+.sr-now-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+#sr-student-select {
+  margin-top: 8px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(16, 24, 34, 0.74);
+  color: var(--sr-text);
+  padding: 8px;
+}
+
+.sr-summary {
+  padding: 12px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.sr-summary.hidden {
+  display: none;
+}
+
+.sr-note-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.sr-note-grid textarea {
+  margin-top: 5px;
+  width: 100%;
+  min-height: 84px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(16, 24, 34, 0.74);
+  color: var(--sr-text);
+  padding: 8px;
+  resize: vertical;
+}
+
+.sr-summary-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#sr-status {
+  margin: 10px 0 0;
+  color: var(--sr-sub);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 1024px) {
+  .sr-shell {
+    width: min(980px, calc(100vw - 22px));
+  }
+
+  .sr-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .sr-note-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sr-btn-primary {
+    animation: sr-ready 2.4s ease-in-out infinite;
+  }
+
+  @keyframes sr-ready {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(91, 193, 255, 0.0); }
+    50% { box-shadow: 0 0 0 6px rgba(91, 193, 255, 0.14); }
+  }
+}

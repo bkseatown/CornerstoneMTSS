@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" data-page="session-runner">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cornerstone Session Runner</title>
+  <script src="./config.js"></script>
+  <script src="./build-stamp.js?v=20260228d"></script>
+  <link rel="stylesheet" href="./style/session-runner.css?v=20260228a">
+</head>
+<body class="session-runner">
+  <main class="sr-shell">
+    <header class="sr-head sr-surface">
+      <div>
+        <h1>Session Runner</h1>
+        <p id="sr-meta-line">Mode: - · Target: -</p>
+      </div>
+      <div class="sr-head-actions">
+        <button id="sr-coach-toggle" class="sr-btn sr-btn-ghost" type="button">Hide Coach</button>
+        <button id="sr-end-session" class="sr-btn sr-btn-primary" type="button">End Session</button>
+      </div>
+    </header>
+
+    <section id="sr-coach" class="sr-coach sr-surface" aria-live="polite">
+      <strong>Coach</strong>
+      <p id="sr-coach-text">Focus one move at a time. Complete this block before moving on.</p>
+    </section>
+
+    <section class="sr-stage">
+      <article class="sr-now sr-surface">
+        <h2>Now</h2>
+        <div id="sr-current-block" class="sr-block-title">-</div>
+        <p id="sr-current-notes" class="sr-muted">-</p>
+        <div class="sr-timer-wrap">
+          <div id="sr-timer-label">0:00</div>
+          <div class="sr-progress"><span id="sr-progress-fill"></span></div>
+        </div>
+
+        <div id="sr-metrics" class="sr-metrics"></div>
+
+        <div class="sr-now-actions">
+          <button id="sr-complete-block" class="sr-btn sr-btn-primary" type="button">Complete Block</button>
+          <button id="sr-skip-block" class="sr-btn sr-btn-ghost" type="button">Skip</button>
+        </div>
+      </article>
+
+      <aside class="sr-next sr-surface">
+        <h2>Next</h2>
+        <p id="sr-next-line">No next block.</p>
+        <h3>Save Target</h3>
+        <select id="sr-student-select"></select>
+      </aside>
+    </section>
+
+    <section id="sr-summary" class="sr-summary sr-surface hidden">
+      <h2>Session Summary</h2>
+      <p id="sr-summary-line">-</p>
+      <div class="sr-note-grid">
+        <div>
+          <h3>Teacher Note</h3>
+          <textarea id="sr-teacher-note" readonly></textarea>
+          <button id="sr-copy-teacher" class="sr-btn sr-btn-ghost" type="button">Copy</button>
+        </div>
+        <div>
+          <h3>Parent Note</h3>
+          <textarea id="sr-parent-note" readonly></textarea>
+          <button id="sr-copy-parent" class="sr-btn sr-btn-ghost" type="button">Copy</button>
+        </div>
+      </div>
+      <div class="sr-summary-actions">
+        <button id="sr-save-session" class="sr-btn sr-btn-primary" type="button">Save to Student</button>
+        <button id="sr-export-json" class="sr-btn sr-btn-ghost" type="button">Export JSON</button>
+        <button id="sr-export-csv" class="sr-btn sr-btn-ghost" type="button">Export CSV</button>
+      </div>
+      <p id="sr-status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="./js/caseload-store.js?v=20260228a"></script>
+  <script src="./js/session-engine.js?v=20260228a"></script>
+  <script src="./js/session-runner.js?v=20260228a"></script>
+</body>
+</html>
