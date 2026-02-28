@@ -111,6 +111,24 @@
       console.groupEnd();
     });
   }
+
+  function assertHomeNoScrollDev() {
+    if (!isDevModeEnabled()) return;
+    if (document.documentElement.getAttribute('data-home-mode') !== 'home') return;
+    requestAnimationFrame(() => {
+      const root = document.documentElement;
+      const scrollH = Number(root?.scrollHeight || 0);
+      const clientH = Number(root?.clientHeight || 0);
+      if (scrollH <= clientH) return;
+      const overflow = collectOverflowDiagnostics(16).filter((entry) => entry.bottom > clientH - 1).slice(0, 5);
+      console.warn('[WQ Home Overflow]', {
+        scrollHeight: scrollH,
+        clientHeight: clientH,
+        overflowPx: scrollH - clientH,
+        offenders: overflow
+      });
+    });
+  }
   if (DEMO_MODE) {
     // Mark demo initialization; do not early-return the app bootstrap.
     window.__CS_DEMO_INIT_DONE = true;
@@ -871,6 +889,9 @@
   let demoDebugLabelEl = null;
   let homeCoachRibbon = null;
   let wordQuestCoachRibbon = null;
+  let _wqDiagSession = null;
+  let _wqDiagTimer = null;
+  let _latestSavedSessionId = '';
   let wordQuestCoachKey = 'before_guess';
   const DEMO_COACH_READY_MAX_TRIES = 25;
   const DEMO_COACH_READY_DELAY_MS = 120;
@@ -5726,6 +5747,137 @@
     homeCoachRibbon.update({});
   }
 
+  let avaWqWrongStreak = 0;
+  let avaWqCorrectStreak = 0;
+  let avaWqTotalWrong = 0;
+  let avaWqTotalCorrect = 0;
+  let avaWqRapidEvents = [];
+  let avaWqLastActionAt = Date.now();
+  let avaWqLastIdleEmitAt = 0;
+  let avaWqIdleTimer = 0;
+  let avaWqIdleFiredThisRound = false;
+
+  function logAvaIdleDev(message, detail) {
+    if (!isDevModeEnabled()) return;
+    try {
+      console.debug('[AvaIdle]', message, detail || '');
+    } catch {}
+  }
+
+  function isPlayMode() {
+    return document.documentElement.getAttribute('data-home-mode') === 'play';
+  }
+
+  function isWordQuestActiveRound() {
+    const state = WQGame.getState ? WQGame.getState() : null;
+    if (!state || !state.word || state.gameOver) return false;
+    return true;
+  }
+
+  function isCoachEnabled() {
+    try {
+      return localStorage.getItem('cs_coach_voice_enabled') === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  function isAnyOverlayOpen() {
+    const selectors = [
+      '#modal-overlay:not(.hidden)',
+      '#challenge-modal:not(.hidden)',
+      '#phonics-clue-modal:not(.hidden)',
+      '#listening-mode-overlay:not(.hidden)',
+      '#first-run-setup-modal:not(.hidden)',
+      '#end-modal:not(.hidden)',
+      '#modal-challenge-launch:not(.hidden)',
+      '#voice-help-modal:not(.hidden)'
+    ];
+    for (const selector of selectors) {
+      if (document.querySelector(selector)) return true;
+    }
+    return false;
+  }
+
+  function isTextCompositionFocusActive() {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement)) return false;
+    if (active.closest('#challenge-modal, #teacher-panel, #settings-panel, #modal-overlay, #voice-help-modal')) {
+      return true;
+    }
+    const tag = String(active.tagName || '').toLowerCase();
+    if (active.isContentEditable) return true;
+    return tag === 'input' || tag === 'textarea' || tag === 'select';
+  }
+
+  function canRunAvaIdleCoaching() {
+    if (!isPlayMode()) return false;
+    if (!isWordQuestActiveRound()) return false;
+    if (!isCoachEnabled()) return false;
+    if (isAnyOverlayOpen()) return false;
+    if (isTextCompositionFocusActive()) return false;
+    return true;
+  }
+
+  function recordAvaWordQuestEvent(type) {
+    const ts = Date.now();
+    avaWqRapidEvents.push({ type: String(type || 'event'), ts });
+    avaWqRapidEvents = avaWqRapidEvents.filter((evt) => (ts - Number(evt.ts || 0)) <= 10000);
+    avaWqLastActionAt = ts;
+  }
+
+  function speakAvaWordQuestAdaptive(eventKey, overrides = {}) {
+    if (typeof window.CSEmitAva !== 'function') return;
+    const state = WQGame.getState ? WQGame.getState() : {};
+    const tierRaw = String(localStorage.getItem('cs_tier_level') || '').trim();
+    const tier = Number(tierRaw || 2) === 3 ? 3 : 2;
+    const baseContext = {
+      module: 'wordquest',
+      event: String(eventKey || '').trim(),
+      tier,
+      demo: !!DEMO_MODE,
+      streakCorrect: avaWqCorrectStreak,
+      streakWrong: avaWqWrongStreak,
+      idleMs: Math.max(0, Date.now() - avaWqLastActionAt),
+      rapidActions: avaWqRapidEvents.length,
+      backspaceBurst: 0,
+      selfCorrects: 0,
+      accuracyPct: null,
+      punctuationScore: null,
+      remainingGuesses: Math.max(0, Number(state?.maxGuesses || 0) - Number(state?.guesses?.length || 0)),
+      lastEvents: avaWqRapidEvents.slice(-12)
+    };
+    void window.CSEmitAva(Object.assign(baseContext, overrides)).catch(() => {});
+  }
+
+  function startAvaWordQuestIdleWatcher() {
+    if (avaWqIdleTimer) return;
+    if (!isPlayMode()) {
+      logAvaIdleDev('watcher not started (not play mode)');
+      return;
+    }
+    logAvaIdleDev('watcher started');
+    avaWqIdleTimer = window.setInterval(() => {
+      if (!canRunAvaIdleCoaching()) return;
+      if (avaWqIdleFiredThisRound) return;
+      const idleMs = Math.max(0, Date.now() - avaWqLastActionAt);
+      if (idleMs < 20000) return;
+      if ((Date.now() - avaWqLastIdleEmitAt) < 20000) return;
+      avaWqLastIdleEmitAt = Date.now();
+      avaWqIdleFiredThisRound = true;
+      logAvaIdleDev('idle_20s fired', { idleMs });
+      speakAvaWordQuestAdaptive('idle_20s', { idleMs });
+    }, 1000);
+  }
+
+  function stopAvaWordQuestIdleWatcher(reason) {
+    if (avaWqIdleTimer) {
+      clearInterval(avaWqIdleTimer);
+      avaWqIdleTimer = 0;
+      logAvaIdleDev('watcher stopped', reason || '');
+    }
+  }
+
   function setWordQuestCoachState(key) {
     wordQuestCoachKey = String(key || '').trim() || 'before_guess';
     if (!wordQuestCoachRibbon || typeof wordQuestCoachRibbon.set !== 'function') return;
@@ -5794,11 +5946,12 @@
   function setHomeMode(mode, options = {}) {
     const next = String(mode || '').toLowerCase() === 'play' ? 'play' : 'home';
     homeMode = next;
-    document.documentElement.setAttribute('data-home-mode', next);
     setHomePlayShellIsolation(next !== 'play');
     updateHomeCoachRibbon();
     setWordQuestCoachState(wordQuestCoachKey);
     if (next === 'play') {
+      document.documentElement.setAttribute('data-home-mode', 'play');
+      startAvaWordQuestIdleWatcher();
       _el('home-tools-section')?.classList.add('hidden');
       _el('play-tools-drawer')?.classList.add('hidden');
       _el('play-tools-btn')?.setAttribute('aria-expanded', 'false');
@@ -5813,6 +5966,10 @@
       logOverflowDiagnostics('setHomeMode:play');
       return;
     }
+    document.documentElement.setAttribute('data-home-mode', 'home');
+    stopAvaWordQuestIdleWatcher('home mode');
+    _el('home-tools-section')?.classList.remove('hidden');
+    assertHomeNoScrollDev();
     try {
       const url = new URL(window.location.href);
       url.searchParams.delete('play');
@@ -5982,6 +6139,7 @@
   initializeHomeMode();
   updateHomeCoachRibbon();
   setWordQuestCoachState('before_guess');
+  startAvaWordQuestIdleWatcher();
   logOverflowDiagnostics('init');
   syncPlayToolsRoleVisibility();
 
@@ -6124,6 +6282,40 @@
     window.location.href = url.toString();
   }
 
+  function openNumeracyLabPage() {
+    const url = new URL('numeracy.html', window.location.href);
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      if (params.get('demo') === '1') url.searchParams.set('demo', '1');
+    } catch (_e) {
+      // no-op
+    }
+    window.location.href = url.toString();
+  }
+
+  function initStudentCodeControls() {
+    const row = _el('home-student-code-row');
+    const toggle = _el('home-set-code-toggle');
+    const input = _el('home-student-code-input');
+    const saveBtn = _el('home-student-code-save');
+    if (!row || !toggle || !input || !saveBtn || !window.CSCornerstoneStore) return;
+    const current = typeof window.CSCornerstoneStore.getStudentCode === 'function'
+      ? window.CSCornerstoneStore.getStudentCode()
+      : '';
+    if (current) input.value = String(current);
+    toggle.addEventListener('click', () => {
+      row.classList.toggle('hidden');
+      if (!row.classList.contains('hidden')) input.focus();
+    });
+    saveBtn.addEventListener('click', () => {
+      const next = String(input.value || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      const saved = window.CSCornerstoneStore.setStudentCode(next);
+      input.value = saved || '';
+      WQUI.showToast(saved ? `Student code saved: ${saved}` : 'Student code cleared.');
+      row.classList.add('hidden');
+    });
+  }
+
   if (WRITING_STUDIO_ENABLED) {
     _el('writing-studio-btn')?.addEventListener('click', openWritingStudioPage);
   } else {
@@ -6145,10 +6337,21 @@
   _el('play-drawer-reading-lab')?.addEventListener('click', openReadingLabPage);
   _el('play-drawer-teacher-dashboard')?.addEventListener('click', openTeacherDashboardPage);
   _el('home-open-writing-studio')?.addEventListener('click', openWritingStudioPage);
-  _el('home-open-sentence-surgery')?.addEventListener('click', openSentenceSurgeryPage);
+  _el('home-open-wordquest')?.addEventListener('click', () => {
+    setHomeMode('play');
+    if (!WQGame.getState?.()?.word) {
+      newGame({ launchMissionLab: false });
+    }
+  });
   _el('home-open-reading-lab')?.addEventListener('click', openReadingLabPage);
-  _el('home-open-teacher-dashboard')?.addEventListener('click', openTeacherDashboardPage);
-  _el('home-open-teacher-dashboard-report')?.addEventListener('click', openTeacherDashboardPage);
+  _el('home-open-numeracy')?.addEventListener('click', openNumeracyLabPage);
+  _el('wq-share-result-btn')?.addEventListener('click', async () => {
+    if (!_latestSavedSessionId) return;
+    await shareWordQuestSessionById(_latestSavedSessionId);
+  });
+  _el('wq-share-bundle-btn')?.addEventListener('click', async () => {
+    await shareWordQuestBundle();
+  });
   _el('cta-wordquest')?.addEventListener('click', () => {
     setHomeMode('play');
     if (!WQGame.getState?.()?.word) {
@@ -6156,11 +6359,7 @@
     }
   });
   _el('cta-tools')?.addEventListener('click', () => {
-    const section = _el('home-tools-section');
-    if (!section) return;
-    section.classList.remove('hidden');
-    updateHomeCoachRibbon();
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    openTeacherDashboardPage();
   });
   _el('home-logo-btn')?.addEventListener('click', () => {
     setHomeMode('home', { scroll: false });
@@ -6177,6 +6376,7 @@
     _el('play-tools-btn')?.setAttribute('aria-expanded', 'false');
     syncHeaderControlsVisibility();
   });
+  initStudentCodeControls();
 // Global outside-click handlers for flyouts/toasts
   document.addEventListener('pointerdown', e => {
     const focusWrap = _el('focus-inline-wrap');
@@ -6618,7 +6818,9 @@
     WQUI.showToast(`Auto next word: ${next} seconds.`);
   });
   _el('focus-hint-toggle')?.addEventListener('click', () => {
+    recordAvaWordQuestEvent('hint_open');
     showInformantHintToast();
+    speakAvaWordQuestAdaptive('hint_open');
   });
   const closeHintClueCard = (event) => {
     event.preventDefault();
@@ -13292,6 +13494,210 @@
     renderQuestLoop(state);
   }
 
+  function getActiveSignalStudentId() {
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      const fromQuery = String(params.get('studentId') || '').trim();
+      if (fromQuery) return fromQuery;
+    } catch {}
+    try {
+      const fromStorage = String(localStorage.getItem('cs_active_student_id') || '').trim();
+      if (fromStorage) return fromStorage;
+    } catch {}
+    return '';
+  }
+
+  function mapGuessFeedbackToSignalStates(states) {
+    return (Array.isArray(states) ? states : []).map((state) => {
+      if (state === 'correct') return 'green';
+      if (state === 'present') return 'yellow';
+      return 'gray';
+    });
+  }
+
+  function getOutcomeBand(signals) {
+    if (!signals || typeof signals !== 'object') return 'stuck';
+    if (signals.solved) return 'solved';
+    const respect = Number(signals.updateRespect || 0);
+    const guesses = Number(signals.guesses || 0);
+    if (respect >= 0.6 && guesses >= 3) return 'close';
+    return 'stuck';
+  }
+
+  function toThreeBand(value, strongMin, developingMin, inverse) {
+    const n = Number(value || 0);
+    if (inverse) {
+      if (n <= strongMin) return 'Strong';
+      if (n <= developingMin) return 'Developing';
+      return 'Emerging';
+    }
+    if (n >= strongMin) return 'Strong';
+    if (n >= developingMin) return 'Developing';
+    return 'Emerging';
+  }
+
+  function updateWordQuestShareButton(sessionId) {
+    const btn = _el('wq-share-result-btn');
+    const bundleBtn = _el('wq-share-bundle-btn');
+    if (!btn && !bundleBtn) return;
+    const show = !!sessionId && !DEMO_MODE;
+    if (btn) {
+      btn.classList.toggle('hidden', !show);
+      btn.dataset.sessionId = show ? String(sessionId) : '';
+    }
+    if (bundleBtn) bundleBtn.classList.toggle('hidden', !show);
+  }
+
+  async function shareWordQuestSessionById(sessionId) {
+    const id = String(sessionId || '').trim();
+    if (!id || !window.CSCornerstoneStore || typeof window.CSCornerstoneStore.listSessions !== 'function') return;
+    const sessions = window.CSCornerstoneStore.listSessions({});
+    const row = sessions.find((session) => String(session?.sessionId || '') === id);
+    if (!row) return;
+    const filename = `cornerstone-session-${id}.json`;
+    const json = JSON.stringify(row, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const file = typeof File !== 'undefined'
+      ? new File([blob], filename, { type: 'application/json' })
+      : null;
+    try {
+      if (navigator.share) {
+        const payload = file ? { files: [file], title: 'Cornerstone Session', text: 'Cornerstone MTSS session export' } : { title: 'Cornerstone Session', text: json };
+        await navigator.share(payload);
+        WQUI.showToast('Session shared.');
+        return;
+      }
+    } catch (_e) {}
+    if (window.CSCornerstoneStore && typeof window.CSCornerstoneStore.downloadBlob === 'function') {
+      window.CSCornerstoneStore.downloadBlob(blob, filename);
+      WQUI.showToast('Session file downloaded.');
+    }
+  }
+
+  async function shareWordQuestBundle() {
+    if (!window.CSCornerstoneStore) return;
+    const studentCode = typeof window.CSCornerstoneStore.getStudentCode === 'function'
+      ? window.CSCornerstoneStore.getStudentCode()
+      : null;
+    const blob = window.CSCornerstoneStore.exportSessions({ studentCode: studentCode || undefined });
+    const suffix = studentCode ? String(studentCode).toLowerCase() : 'device';
+    const filename = `cornerstone-sessions-${suffix}.json`;
+    const file = typeof File !== 'undefined'
+      ? new File([blob], filename, { type: 'application/json' })
+      : null;
+    try {
+      if (navigator.share && file) {
+        await navigator.share({
+          files: [file],
+          title: 'Cornerstone Sessions',
+          text: 'Cornerstone MTSS session bundle'
+        });
+        WQUI.showToast('Session bundle shared.');
+        return;
+      }
+    } catch (_e) {}
+    if (typeof window.CSCornerstoneStore.downloadBlob === 'function') {
+      window.CSCornerstoneStore.downloadBlob(blob, filename);
+      WQUI.showToast('Session bundle downloaded.');
+    }
+  }
+
+  function persistWordQuestCornerstoneSession(signals, meta) {
+    if (!window.CSCornerstoneSignals || !window.CSCornerstoneStore) return null;
+    const studentCode = typeof window.CSCornerstoneStore.getStudentCode === 'function'
+      ? window.CSCornerstoneStore.getStudentCode()
+      : null;
+    const tier = Number(signals.updateRespect || 0) < 0.55 || Number(signals.repetitionPenalty || 0) > 0.18 ? 'tier3' : 'tier2';
+    const repeatRate = Number(signals.repetitionPenalty || 0);
+    const session = window.CSCornerstoneSignals.normalizeSignal({
+      engine: 'wordquest',
+      studentCode,
+      durationMs: Math.max(0, Number(signals.durSec || 0) * 1000),
+      metrics: {
+        guessesCount: Math.max(0, Number(signals.guesses || 0)),
+        uniqueVowelsTried: Math.max(0, Number(signals.uniqueVowels || 0)),
+        repeatGuessRate: +repeatRate.toFixed(3),
+        constraintRespect: +Number(signals.updateRespect || 0).toFixed(3),
+        timeToFirstGuessMs: Math.max(0, Number(signals.timeToFirstGuessSec || 0) * 1000),
+        helpUsed: !!(meta && meta.helpUsed),
+        outcomeBand: getOutcomeBand(signals)
+      },
+      derived: {
+        vowelExploration: toThreeBand(Number(signals.uniqueVowels || 0), 4, 2, false),
+        strategyEfficiency: toThreeBand(Number(signals.updateRespect || 0), 0.75, 0.55, false),
+        repetitionRisk: toThreeBand(repeatRate, 0.08, 0.18, true)
+      },
+      tier,
+      nextMove: {
+        title: String(signals.nextStep || 'Run one coached strategy round and debrief the clue update pattern.'),
+        steps: [
+          'Model one think-aloud round (greens stay, yellows move, grays avoid).',
+          'Run one independent 90-second probe.'
+        ],
+        estMinutes: 10
+      },
+      privacy: { containsText: false, containsAudio: false }
+    });
+    const saved = window.CSCornerstoneStore.appendSession(session);
+    return saved || null;
+  }
+
+  function publishWordQuestSignals(signals, meta) {
+    const isDemo = DEMO_MODE || (new URLSearchParams(location.search)).get('demo') === '1';
+    if (isDemo || !signals || typeof signals !== 'object') return;
+    const studentId = getActiveSignalStudentId();
+    const payloadMeta = meta && typeof meta === 'object' ? meta : {};
+
+    try {
+      if (window.CSAnalyticsEngine && typeof window.CSAnalyticsEngine.appendWordQuestSignals === 'function') {
+        window.CSAnalyticsEngine.appendWordQuestSignals(signals, {
+          ...payloadMeta,
+          studentId
+        });
+      } else {
+        const key = 'cs_progress_history';
+        const raw = localStorage.getItem(key);
+        const obj = raw ? JSON.parse(raw) : {};
+        obj.wordQuestSignals = Array.isArray(obj.wordQuestSignals) ? obj.wordQuestSignals : [];
+        obj.wordQuestSignals.push({
+          t: Date.now(),
+          studentId,
+          guesses: signals.guesses,
+          durSec: signals.durSec,
+          solved: !!signals.solved,
+          guessesPerMin: Number(signals.guessesPerMin || 0),
+          uniqueVowels: Number(signals.uniqueVowels || 0),
+          vowelRatio: Number(signals.vowelRatio || 0),
+          updateRespect: Number(signals.updateRespect || 0),
+          repetitionPenalty: Number(signals.repetitionPenalty || 0),
+          affixAttempts: Number(signals.affixAttempts || 0),
+          focusTag: String(signals.focusTag || ''),
+          nextStep: String(signals.nextStep || ''),
+          soft: !!payloadMeta.soft
+        });
+        if (obj.wordQuestSignals.length > 200) obj.wordQuestSignals = obj.wordQuestSignals.slice(-200);
+        localStorage.setItem(key, JSON.stringify(obj));
+      }
+    } catch {}
+
+    try {
+      if (window.CSCornerstoneEngine && typeof window.CSCornerstoneEngine.appendSignal === 'function') {
+        window.CSCornerstoneEngine.appendSignal(signals, {
+          module: 'wordquest',
+          studentId
+        });
+      }
+    } catch {}
+
+    try {
+      const savedSession = persistWordQuestCornerstoneSession(signals, meta);
+      if (savedSession?.sessionId) {
+        _latestSavedSessionId = String(savedSession.sessionId);
+        updateWordQuestShareButton(_latestSavedSessionId);
+      }
+    } catch {}
+  }
+
   function newGame(options = {}) {
     if (DEMO_MODE && demoRoundComplete && !options.forceDemoReplay) {
       showDemoEndOverlay();
@@ -13345,6 +13751,16 @@
     drawWaveform();
     hideMidgameBoost();
     midgameBoostShown = false;
+    if (_wqDiagTimer) {
+      clearTimeout(_wqDiagTimer);
+      _wqDiagTimer = null;
+    }
+    _wqDiagSession = null;
+    _latestSavedSessionId = '';
+    updateWordQuestShareButton('');
+    avaWqIdleFiredThisRound = false;
+    avaWqLastActionAt = Date.now();
+    avaWqLastIdleEmitAt = 0;
 
     const s = WQUI.getSettings();
     if (DEMO_MODE) {
@@ -13408,6 +13824,19 @@
     syncStarterWordLauncherUI();
     scheduleStarterCoachHint();
     syncAssessmentLockRuntime();
+    startAvaWordQuestIdleWatcher();
+    try {
+      if (window.CSWQDiagnostics && typeof window.CSWQDiagnostics.createSession === 'function') {
+        _wqDiagSession = window.CSWQDiagnostics.createSession(result.wordLength || 5);
+        _wqDiagTimer = setTimeout(() => {
+          if (_wqDiagSession && !_wqDiagSession.endedAtMs) {
+            const softSignals = window.CSWQDiagnostics.endSession(_wqDiagSession, false);
+            _wqDiagSession = null;
+            if (softSignals) publishWordQuestSignals(softSignals, { soft: true });
+          }
+        }, 90000);
+      }
+    } catch {}
     if (DEMO_MODE) runDemoCoachForStart();
     if (!DEMO_MODE) positionDemoLaunchButton();
   }
@@ -13420,6 +13849,11 @@
   window.addEventListener('resize', reflowLayout);
   window.visualViewport?.addEventListener('resize', reflowLayout);
   window.addEventListener('beforeunload', () => {
+    stopAvaWordQuestIdleWatcher('beforeunload');
+    if (_wqDiagTimer) {
+      clearTimeout(_wqDiagTimer);
+      _wqDiagTimer = null;
+    }
     emitTelemetry('wq_session_end', {
       duration_ms: Math.max(0, Date.now() - telemetrySessionStartedAt),
       reason: 'beforeunload'
@@ -13465,6 +13899,7 @@
   }
 
   function handleKey(key) {
+    avaWqLastActionAt = Date.now();
     clearStarterCoachTimer();
     if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
       hideInformantHintCard();
@@ -13492,14 +13927,43 @@
         if (!DEMO_MODE) positionDemoLaunchButton();
         return;
       }
+      try {
+        if (_wqDiagSession && window.CSWQDiagnostics && typeof window.CSWQDiagnostics.addGuess === 'function') {
+          window.CSWQDiagnostics.addGuess(
+            _wqDiagSession,
+            result.guess,
+            mapGuessFeedbackToSignalStates(result.result)
+          );
+        }
+      } catch {}
 
       if (!result.won) {
+        avaWqWrongStreak += 1;
+        avaWqCorrectStreak = 0;
+        avaWqTotalWrong += 1;
+        recordAvaWordQuestEvent('wrong_guess');
         focusSupportUnlockedByMiss = true;
         clearFocusSupportUnlockTimer();
         syncHeaderClueLauncherUI();
         syncStarterWordLauncherUI();
         if (!result.lost && Number(result.guesses?.length || 0) === 1) {
           setWordQuestCoachState('after_first_miss');
+          speakAvaWordQuestAdaptive('after_first_miss');
+        } else if (!result.lost && Number(result.guesses?.length || 0) === 2) {
+          speakAvaWordQuestAdaptive('after_second_miss');
+        }
+        if (!result.lost && avaWqWrongStreak >= 3 && avaWqRapidEvents.length >= 6) {
+          speakAvaWordQuestAdaptive('rapid_wrong_streak');
+        }
+      } else {
+        avaWqCorrectStreak += 1;
+        avaWqWrongStreak = 0;
+        avaWqTotalCorrect += 1;
+        recordAvaWordQuestEvent('correct_guess');
+        if (avaWqCorrectStreak >= 2) {
+          speakAvaWordQuestAdaptive('streak_three_correct');
+        } else {
+          speakAvaWordQuestAdaptive('near_solve');
         }
       }
 
@@ -13521,6 +13985,21 @@
           showMidgameBoost();
         }
         if (result.won || result.lost) {
+          stopAvaWordQuestIdleWatcher('round complete');
+          try {
+            if (_wqDiagTimer) {
+              clearTimeout(_wqDiagTimer);
+              _wqDiagTimer = null;
+            }
+            if (_wqDiagSession && window.CSWQDiagnostics && typeof window.CSWQDiagnostics.endSession === 'function') {
+              const wqSignals = window.CSWQDiagnostics.endSession(_wqDiagSession, !!result.won);
+              _wqDiagSession = null;
+              if (wqSignals) publishWordQuestSignals(wqSignals, {
+                soft: false,
+                helpUsed: !!currentRoundHintRequested || !!currentRoundStarterWordsShown
+              });
+            }
+          } catch {}
           if (result.won) setWordQuestCoachState('after_correct');
           const roundMetrics = buildRoundMetrics(result, s.maxGuesses);
           const guessesUsed = Math.max(1, Number(roundMetrics.guessesUsed) || 1);
