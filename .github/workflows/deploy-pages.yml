@@ -51,6 +51,24 @@ jobs:
                     ./ dist/
           node scripts/stamp-build-version.js dist "${GITHUB_SHA::12}-${GITHUB_RUN_NUMBER}"
 
+      - name: Validate dist artifact completeness
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "Missing dist/index.html"; exit 1; }
+          test -f dist/js/app.js || { echo "Missing dist/js/app.js"; exit 1; }
+          test -f dist/js/evidence-store.js || { echo "Missing dist/js/evidence-store.js"; exit 1; }
+          test -f dist/sw-runtime.js || { echo "Missing dist/sw-runtime.js"; exit 1; }
+          test -f dist/version.json || { echo "Missing dist/version.json"; exit 1; }
+          test -f dist/build-version.txt || { echo "Missing dist/build-version.txt"; exit 1; }
+          while IFS= read -r asset; do
+            clean_asset="$(echo "${asset}" | sed 's#^\./##')"
+            test -f "dist/${clean_asset}" || { echo "Missing referenced asset dist/${clean_asset}"; exit 1; }
+          done < <(
+            grep -oE '(src|href)="(\./)?[^"]+\.(js|css)(\?v=[^"]*)?"' dist/index.html \
+            | sed -E 's/^(src|href)="(\.\/)?([^"?]+)(\?[^"]*)?"$/\3/' \
+            | sort -u
+          )
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

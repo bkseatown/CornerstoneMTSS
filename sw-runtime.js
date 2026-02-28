@@ -79,6 +79,8 @@ async function navigationHandler(request) {
   const cache = await caches.open(SHELL_CACHE);
   try {
     const response = await fetch(request);
+    // Never mask an upstream 404 with a cached shell; return network response as-is.
+    if (response && response.status === 404) return response;
     if (response && response.ok) {
       cache.put(request, response.clone()).catch(() => {});
     }
