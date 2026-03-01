@@ -23,7 +23,7 @@ body.teacher-dashboard {
   font-size: var(--body);
   line-height: var(--line-body);
   letter-spacing: var(--ls-base);
-  font-variant-numeric: lining-nums tabular-nums;
+  font-variant-numeric: normal;
   font-feature-settings: "zero" 0;
 }
 
@@ -87,6 +87,35 @@ body.cs-has-nav-shell .td-shell {
   font-size: var(--fs-h2);
   letter-spacing: var(--tracking-tight);
   line-height: var(--lh-tight);
+}
+.td-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-5);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  font-weight: var(--fw-bold);
+}
+.td-section-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-4);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+  font-weight: var(--fw-semibold);
+}
+.td-label {
+  margin: 0;
+  color: color-mix(in oklab, var(--muted) 84%, white 16%);
+  font-size: max(0.875rem, var(--fs-small));
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+.td-metric-number {
+  font-size: clamp(1.55rem, 2.3vw, 2.05rem);
+  line-height: 1;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 0;
 }
 .td-wordmark span { font-size: var(--fs-1); color: color-mix(in oklab, var(--muted) 82%, white 18%); font-weight: var(--fw-medium); }
 .td-brand-home {
@@ -247,7 +276,6 @@ body.cs-has-nav-shell .td-shell {
 }
 
 .td-selected-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
-.td-label { margin: 0; color: color-mix(in oklab, var(--muted) 84%, white 16%); font-size: max(0.875rem, var(--fs-small)); font-weight: var(--fw-medium); letter-spacing: var(--ls-wide); text-transform: uppercase; }
 .td-reco-line { margin: 8px 0 0; font-size: var(--fs-md); line-height: var(--lh-normal); }
 .td-mini-chart { width: 220px; max-width: 44%; }
 #td-sparkline { width: 100%; height: 48px; display: block; }
