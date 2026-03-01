@@ -269,8 +269,8 @@
     var nextStep = topSkill ? formatNextStep(student.id, topSkill.skillId).replace(/^Next Step:\\s*/i, "") : "Run baseline quick check";
     var accuracy = topSkill ? topSkill.mastery : null;
     var days = topSkill ? topSkill.stalenessDays : null;
-    var tierCfg = topSkill && EvidenceEngine && typeof EvidenceEngine.getTierConfig === "function"
-      ? EvidenceEngine.getTierConfig(topSkill.tier || "T2")
+    var tierCfg = topSkill && EvidenceEngine && typeof EvidenceEngine.getIntensityTier === "function"
+      ? EvidenceEngine.getIntensityTier(topSkill.tier || "T2")
       : { minutesPerSession: 20 };
     if (ExportNotes && typeof ExportNotes.buildSessionNote === "function") {
       return ExportNotes.buildSessionNote({
@@ -304,10 +304,11 @@
 
   function scoreStudent(student) {
     var sid = String(student && student.id || "");
-    if (EvidenceEngine && typeof EvidenceEngine.computePriority === "function") {
-      return Number(EvidenceEngine.computePriority(sid).overallPriority || 0);
-    }
     var snapshot = getStudentEvidence(sid) || {};
+    var computed = safeComputePriority(sid);
+    if (computed && computed.ok && computed.priority) {
+      return Number(computed.priority.overallPriority || 0);
+    }
     var last = getLastActivity(sid);
     var trend = snapshot.trends && snapshot.trends.wordquest;
     var lastPoint = trend && Array.isArray(trend.last7) && trend.last7.length ? trend.last7[trend.last7.length - 1] : null;
@@ -325,21 +326,53 @@
     return score;
   }
 
+  function heuristicScore(student, snapshot) {
+    var sid = String(student && student.id || "");
+    var snap = snapshot || {};
+    var last = getLastActivity(sid);
+    var trend = snap.trends && snap.trends.wordquest;
+    var lastPoint = trend && Array.isArray(trend.last7) && trend.last7.length ? trend.last7[trend.last7.length - 1] : null;
+    var score = 0;
+    if (!lastPoint) score += 35;
+    if (lastPoint && Number(lastPoint.score || 0) < 65) score += 25;
+    if (snap.needs && snap.needs.length) {
+      score += snap.needs.reduce(function (sum, need) {
+        return sum + (Number(need.severity || 1) * Number(need.confidence || 0.5) * 3);
+      }, 0);
+    }
+    if (snap.updatedAt) score += Math.min(20, ageDays(Date.parse(snap.updatedAt)) * 2);
+    score += Math.min(20, ageDays(last && last.ts) * 2);
+    return score;
+  }
+
+  function safeComputePriority(studentId) {
+    if (!EvidenceEngine || typeof EvidenceEngine.computePriority !== "function") {
+      return { ok: false, priority: null, reason: "missing-engine" };
+    }
+    try {
+      var priority = EvidenceEngine.computePriority(String(studentId || ""));
+      return { ok: true, priority: priority || null, reason: "" };
+    } catch (_err) {
+      return { ok: false, priority: null, reason: "compute-failed" };
+    }
+  }
+
   function buildTodayPlan() {
     var ranked = getCaseload()
       .map(function (student) {
         var sid = String(student.id || "");
         var snapshot = getStudentEvidence(sid) || null;
-        var priority = EvidenceEngine && typeof EvidenceEngine.computePriority === "function"
-          ? EvidenceEngine.computePriority(sid)
-          : null;
+        var computed = safeComputePriority(sid);
+        var priority = computed.ok ? computed.priority : null;
+        var fallbackScore = heuristicScore(student, snapshot || {});
         return {
           student: student,
           snapshot: snapshot,
           priority: priority,
+          priorityFallback: !computed.ok,
           focus: focusFromSnapshot(priority && priority.topSkills && priority.topSkills.length ? priority : snapshot),
           lastActivity: getLastActivity(sid),
-          score: scoreStudent(student)
+          score: computed.ok ? Number(priority && priority.overallPriority || 0) : fallbackScore
         };
       })
       .sort(function (a, b) { return b.score - a.score; })
@@ -381,13 +414,10 @@
         ? row.priority.topSkills[0]
         : null;
       var needLabel = topSkill && Number(topSkill.need) >= 0.65 ? "high" : (topSkill && Number(topSkill.need) >= 0.4 ? "moderate" : "low");
-      var staleLabel = topSkill && Number(topSkill.stalenessDays) > Number(topSkill.cadenceTargetDays || 14) ? "stale" : "on cadence";
+      var cadenceDays = topSkill && Number.isFinite(Number(topSkill.cadenceDays)) ? Number(topSkill.cadenceDays) : 14;
       var rationale = topSkill
-        ? ("Priority driver: " + formatSkillBreadcrumb(topSkill.skillId) + " • Need " + needLabel + " • Cadence " + staleLabel)
-        : "";
-      var cadenceLine = topSkill
-        ? ("Cadence target: " + topSkill.cadenceTargetDays + "d | Current: " + topSkill.stalenessDays + "d | Need: " + needLabel)
-        : "";
+        ? ("Priority: " + formatSkillBreadcrumb(topSkill.skillId) + " • Need: " + needLabel + " • Cadence: " + topSkill.stalenessDays + "d/" + cadenceDays + "d")
+        : "Priority: Missing evidence";
       var nextStepLine = topSkill ? formatNextStep(sid, topSkill.skillId) : "";
       return [
         '<article class="td-todayCard">',
@@ -413,7 +443,6 @@
         '</div>',
         (rationale ? ('<p class="td-todayCard__last">' + rationale + '</p>') : ''),
         (nextStepLine ? ('<p class="td-todayCard__last">' + nextStepLine + '</p>') : ''),
-        (cadenceLine ? ('<p class="td-todayCard__last">' + cadenceLine + '</p>') : ''),
         '<p class="td-todayCard__last">' + lastText + '</p>',
         '</article>'
       ].join("");
@@ -436,8 +465,8 @@
         var focusLine = row && row.focus && row.focus.length ? row.focus.join(", ") : "Collect baseline";
         var topSkill = row && row.priority && row.priority.topSkills && row.priority.topSkills[0] ? row.priority.topSkills[0] : null;
         var tier = topSkill && topSkill.tier ? topSkill.tier : "T2";
-        var tierCfg = EvidenceEngine && typeof EvidenceEngine.getTierConfig === "function"
-          ? EvidenceEngine.getTierConfig(tier)
+        var tierCfg = EvidenceEngine && typeof EvidenceEngine.getIntensityTier === "function"
+          ? EvidenceEngine.getIntensityTier(tier)
           : { minutesPerSession: tier === "T3" ? 25 : 20 };
         var mins = Number(tierCfg.minutesPerSession || (tier === "T3" ? 25 : 20));
         var warm = Math.max(2, Math.round(mins * 0.15));
@@ -479,8 +508,8 @@
     }
     var built = FlexGroupEngine.buildGroups(rows, {
       labelsApi: SkillLabels,
-      getTierConfig: EvidenceEngine && typeof EvidenceEngine.getTierConfig === "function"
-        ? EvidenceEngine.getTierConfig
+      getTierConfig: EvidenceEngine && typeof EvidenceEngine.getIntensityTier === "function"
+        ? EvidenceEngine.getIntensityTier
         : function () { return { minutesPerSession: 20, groupSizeMax: 4 }; }
     });
     var groups = built && Array.isArray(built.groups) ? built.groups : [];

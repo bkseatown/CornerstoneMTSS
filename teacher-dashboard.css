@@ -347,6 +347,9 @@ body.cs-has-nav-shell .td-shell {
 .td-todayCard__last {
   font-size: var(--fs-1, 13px);
   opacity: 0.72;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .td-chip--auto { opacity: 0.85; }
