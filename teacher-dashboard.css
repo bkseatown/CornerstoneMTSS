@@ -218,13 +218,20 @@ body.cs-has-nav-shell .td-shell {
 .td-body {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+}
+
+/* Keep document locked, but allow dashboard content to scroll internally. */
+.td-body {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .td-main {
   display: grid;
   grid-template-rows: auto auto auto 1fr;
   gap: 12px;
+  min-height: 100%;
+  overflow: visible;
 }
 
 .td-top-row {
