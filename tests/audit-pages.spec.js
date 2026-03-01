@@ -32,8 +32,44 @@ function expectedMarker(pageSlug) {
   return 'body';
 }
 
+async function getBuildId(page) {
+  try {
+    const resp = await page.request.get('/build.json', {
+      headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' }
+    });
+    if (resp.ok()) {
+      const data = await resp.json();
+      return String(data.buildId || data.build || data.id || 'unknown');
+    }
+  } catch (_e) {}
+
+  return page.evaluate(() => {
+    const el = document.querySelector('[data-build-badge], .build-badge, #build-badge, #cs-build-badge');
+    return el ? String(el.textContent || '').trim() : 'no-badge';
+  });
+}
+
+async function getDashboardMarkers(page) {
+  return page.evaluate(() => {
+    const anchorsAndButtons = Array.from(document.querySelectorAll('a,button'));
+    const controlNodes = Array.from(document.querySelectorAll('select,button,a'));
+    return {
+      hasHomeBtnText: anchorsAndButtons.some((n) => String(n.textContent || '').trim() === 'Home'),
+      hasHomeBtnId: !!document.getElementById('td-home-btn'),
+      hasActivities: !!document.getElementById('td-activity-select') || controlNodes.some((n) => {
+        const txt = String(n.textContent || '');
+        const aria = String(n.getAttribute('aria-label') || '');
+        return txt.includes('Activities') || aria.includes('Activities');
+      }),
+      hasBrandHome: !!document.querySelector('a[aria-label="Home"]'),
+      tdShell: !!document.querySelector('.td-shell'),
+      bodyClass: document.body.className
+    };
+  });
+}
+
 test.describe('UI screenshot audit', () => {
-  test('captures screenshots for all pages and viewports', async ({ browser, baseURL, request }) => {
+  test('captures screenshots for all pages and viewports', async ({ browser, baseURL, request }, testInfo) => {
     const context = await browser.newContext({ serviceWorkers: 'block' });
     const page = await context.newPage();
     fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -57,12 +93,53 @@ test.describe('UI screenshot audit', () => {
         expect(response, `No response for ${fullUrl}`).toBeTruthy();
         expect(response.status(), `Non-200 for ${fullUrl}`).toBe(200);
         await expect(page.locator(expectedMarker(pageDef.slug)).first()).toBeVisible();
+
+        const buildId = await getBuildId(page);
+        const targetMeta = {
+          baseURL: normalizedBase,
+          url: page.url(),
+          buildId,
+          page: pageDef.slug,
+          viewport
+        };
+        testInfo.attach(`audit-target-${pageDef.slug}-${viewport.width}x${viewport.height}`, {
+          body: Buffer.from(JSON.stringify(targetMeta, null, 2)),
+          contentType: 'application/json'
+        });
+        console.log(`[audit] baseURL=${normalizedBase} url=${page.url()} buildId=${buildId} page=${pageDef.slug} viewport=${viewport.width}x${viewport.height}`);
+
+        if (pageDef.slug === 'teacher-dashboard') {
+          const markers = await getDashboardMarkers(page);
+          testInfo.attach(`audit-dashboard-markers-${viewport.width}x${viewport.height}`, {
+            body: Buffer.from(JSON.stringify(markers, null, 2)),
+            contentType: 'application/json'
+          });
+          console.log('[audit] dashboard-markers', markers);
+        }
+
         if (NO_SCROLL_SLUGS.has(pageDef.slug)) {
           const overflow = await page.evaluate(() => {
             const el = document.scrollingElement;
-            return el ? (el.scrollHeight - el.clientHeight) : 0;
+            const body = getComputedStyle(document.body);
+            const root = getComputedStyle(document.documentElement);
+            return el ? {
+              delta: el.scrollHeight - el.clientHeight,
+              scrollHeight: el.scrollHeight,
+              clientHeight: el.clientHeight,
+              bodyPaddingTop: body.paddingTop,
+              bodyPaddingBottom: body.paddingBottom,
+              navH: root.getPropertyValue('--nav-h').trim()
+            } : {
+              delta: 0,
+              scrollHeight: 0,
+              clientHeight: 0,
+              bodyPaddingTop: body.paddingTop,
+              bodyPaddingBottom: body.paddingBottom,
+              navH: root.getPropertyValue('--nav-h').trim()
+            };
           });
-          expect(overflow, `${pageDef.slug} document overflow at ${viewport.width}x${viewport.height}`).toBe(0);
+          console.log('[audit] overflow-debug', pageDef.slug, viewport, overflow);
+          expect(overflow.delta, `${pageDef.slug} document overflow at ${viewport.width}x${viewport.height}`).toBe(0);
         }
 
         await page.waitForTimeout(250);

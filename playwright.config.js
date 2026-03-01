@@ -1,5 +1,6 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
+const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:4173';
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -7,7 +8,7 @@ module.exports = defineConfig({
   retries: 0,
   reporter: 'line',
   use: {
-    baseURL: 'https://bkseatown.github.io/WordQuest',
+    baseURL: BASE_URL,
     screenshot: 'on',
     trace: 'on',
     video: 'off'
