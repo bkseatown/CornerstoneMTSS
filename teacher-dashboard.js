@@ -264,7 +264,20 @@
     el.search.addEventListener("input", function () { filterCaseload(el.search.value || ""); });
     el.importExport.addEventListener("click", handleImportExport);
     el.addStudent.addEventListener("click", addStudentQuick);
-    el.settings.addEventListener("click", function () { setCoachLine("Settings are local-only on this device."); });
+    el.settings.addEventListener("click", function () {
+      var panel = document.getElementById("settings-panel");
+      if (panel) {
+        panel.classList.toggle("hidden");
+        setCoachLine(panel.classList.contains("hidden") ? "Settings closed." : "Settings opened.");
+        return;
+      }
+      if (window.CSBuildBadge && typeof window.CSBuildBadge.open === "function") {
+        window.CSBuildBadge.open();
+        setCoachLine("Build controls opened. Use Force update for stale clients.");
+        return;
+      }
+      setCoachLine("Build controls unavailable. Reload this page.");
+    });
 
     el.exportJson.addEventListener("click", function () {
       var id = state.selectedId || (state.caseload[0] && state.caseload[0].id) || "demo-student";

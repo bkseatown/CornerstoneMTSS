@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Stamp version.json (cache bust)
+      - name: Stamp build id
         run: npm run stamp:version
       - name: Run release gate (contracts + smokes + regressions)
         run: npm run release:gate
@@ -59,6 +59,9 @@ jobs:
           test -f dist/js/evidence-store.js || { echo "Missing dist/js/evidence-store.js"; exit 1; }
           test -f dist/js/ava-intensity.js || { echo "Missing dist/js/ava-intensity.js"; exit 1; }
           test -f dist/js/wq-diagnostics.js || { echo "Missing dist/js/wq-diagnostics.js"; exit 1; }
+          test -f dist/js/build-badge.js || { echo "Missing dist/js/build-badge.js"; exit 1; }
+          test -f dist/build-stamp.js || { echo "Missing dist/build-stamp.js"; exit 1; }
+          test -f dist/style/tokens.css || { echo "Missing dist/style/tokens.css"; exit 1; }
           test -f dist/sw-runtime.js || { echo "Missing dist/sw-runtime.js"; exit 1; }
           test -f dist/build.json || { echo "Missing dist/build.json"; exit 1; }
           test -f dist/data/ava-persona.json || { echo "Missing dist/data/ava-persona.json"; exit 1; }
@@ -72,6 +75,10 @@ jobs:
             | sed -E 's/^(src|href)="(\.\/)?([^"?]+)(\?[^"]*)?"$/\3/' \
             | sort -u
           )
+          grep -q "build-stamp.js" dist/index.html || { echo "index missing build-stamp include"; exit 1; }
+          grep -q "js/build-badge.js" dist/index.html || { echo "index missing build-badge include"; exit 1; }
+          grep -q "build-stamp.js" dist/teacher-dashboard.html || { echo "teacher-dashboard missing build-stamp include"; exit 1; }
+          grep -q "js/build-badge.js" dist/teacher-dashboard.html || { echo "teacher-dashboard missing build-badge include"; exit 1; }
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -170,13 +177,36 @@ jobs:
             fi
           done
 
+          for target_entry in "${targets[@]}"; do
+            target="${target_entry%%|*}"
+            requirement="${target_entry##*|}"
+            token_url="${target%/}/style/tokens.css?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            headers="$(curl -sSIL --max-time 20 "${token_url}" || true)"
+            status_line="$(printf "%s\n" "${headers}" | head -n 1)"
+            content_type="$(printf "%s\n" "${headers}" | tr '[:upper:]' '[:lower:]' | grep -i '^content-type:' | head -n 1 || true)"
+            ok=1
+            if [[ "${status_line}" != *"200"* ]]; then ok=0; fi
+            if [[ "${content_type}" != *"text/css"* ]]; then ok=0; fi
+            if [ "${ok}" -eq 1 ]; then
+              echo "| ${token_url} | ✅ PASS | tokens.css served as text/css. |" >> "${summary_file}"
+            else
+              if [ "${requirement}" = "required" ]; then
+                failures=$((failures + 1))
+                echo "| ${token_url} | ❌ FAIL | ${status_line} ${content_type} |" >> "${summary_file}"
+              else
+                warnings=$((warnings + 1))
+                echo "| ${token_url} | ⚠️ WARN | ${status_line} ${content_type} |" >> "${summary_file}"
+              fi
+            fi
+          done
+
           cat "${summary_file}" >> "${GITHUB_STEP_SUMMARY}"
           if [ "${warnings}" -gt 0 ]; then
             echo "Non-blocking smoke-check warning(s): ${warnings} optional URL target(s) failed." >&2
           fi
           if [ "${failures}" -gt 0 ]; then
-            echo "Non-blocking smoke-check warning(s): ${failures} required URL target(s) failed." >&2
-            echo "Proceeding to keep Pages deploy live while smoke retries are tuned." >&2
+            echo "Blocking smoke-check failures: ${failures} required URL target(s) failed." >&2
+            exit 1
           fi
 
   deploy-alert:
