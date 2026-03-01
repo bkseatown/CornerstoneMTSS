@@ -83,11 +83,12 @@ jobs:
           set -euo pipefail
           expected_build="$(node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('dist/build.json','utf8'));process.stdout.write(String(d.buildId||''));")"
           markers=(
-            'id="settings-build-badge"'
-            'src="js/app.js?v='
-            'id="s-reveal-focus"'
-            'id="s-assessment-lock"'
-            'id="voice-history-strip"'
+            'id="td-home-btn"'
+            'id="td-activity-select"'
+            'class="td-wordmark td-brand-home"'
+            "build-stamp.js?v=${expected_build}"
+            "js/build-badge.js?v=${expected_build}"
+            "style/tokens.css?v=${expected_build}"
           )
           summary_file="${RUNNER_TEMP}/pages-smoke-summary.md"
           {
@@ -107,12 +108,13 @@ jobs:
           for target_entry in "${targets[@]}"; do
             target="${target_entry%%|*}"
             requirement="${target_entry##*|}"
-            echo "Smoke checking ${target}"
+            dashboard_url="${target%/}/teacher-dashboard.html?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            echo "Smoke checking ${dashboard_url}"
             passed=0
             details="Missing markers after retries."
             for attempt in 1 2 3 4 5 6 7 8; do
               tmp_html="${RUNNER_TEMP}/pages-smoke-${attempt}.html"
-              http_code="$(curl -sSLo "${tmp_html}" -w "%{http_code}" --max-time 20 "${target}" || true)"
+              http_code="$(curl -sSLo "${tmp_html}" -w "%{http_code}" --max-time 20 "${dashboard_url}" || true)"
               html="$(cat "${tmp_html}" 2>/dev/null || true)"
               bytes="$(wc -c < "${tmp_html}" 2>/dev/null || echo 0)"
               missing=()
@@ -121,9 +123,6 @@ jobs:
                   missing+=("${marker}")
                 fi
               done
-              if [[ "${html}" != *"name=\"wq-build\" content=\"${expected_build}\""* ]]; then
-                missing+=("meta[name=wq-build]=${expected_build}")
-              fi
               if [ "${http_code}" = "200" ] && [ "${#missing[@]}" -eq 0 ]; then
                 passed=1
                 details="All markers found on attempt ${attempt} (HTTP ${http_code}, ${bytes} bytes)."
@@ -135,14 +134,14 @@ jobs:
             done
 
             if [ "${passed}" -eq 1 ]; then
-              echo "| ${target} | ✅ PASS | ${details} |" >> "${summary_file}"
+              echo "| ${dashboard_url} | ✅ PASS | ${details} |" >> "${summary_file}"
             else
               if [ "${requirement}" = "required" ]; then
                 failures=$((failures + 1))
-                echo "| ${target} | ❌ FAIL | ${details} |" >> "${summary_file}"
+                echo "| ${dashboard_url} | ❌ FAIL | ${details} |" >> "${summary_file}"
               else
                 warnings=$((warnings + 1))
-                echo "| ${target} | ⚠️ WARN | ${details} |" >> "${summary_file}"
+                echo "| ${dashboard_url} | ⚠️ WARN | ${details} |" >> "${summary_file}"
               fi
             fi
           done
