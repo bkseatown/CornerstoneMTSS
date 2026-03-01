@@ -61,6 +61,8 @@
   var mappingConfig = DEFAULT_MAPPING;
   var intensityConfig = DEFAULT_INTENSITY;
   var intensityLoadStarted = false;
+  var progressionConfig = { version: 'cs.microProgression.v1', ladders: {} };
+  var progressionLoadStarted = false;
 
   function clamp(v, lo, hi) {
     return Math.max(lo, Math.min(hi, v));
@@ -196,6 +198,23 @@
       .catch(function () {});
   }
 
+  function tryLoadProgressions() {
+    if (progressionLoadStarted) return;
+    progressionLoadStarted = true;
+    if (typeof fetch !== 'function') return;
+    fetch('./data/micro-progression.v1.json', { cache: 'no-store' })
+      .then(function (resp) { return resp && resp.ok ? resp.json() : null; })
+      .then(function (json) {
+        if (json && typeof json === 'object' && json.ladders && typeof json.ladders === 'object') {
+          progressionConfig = {
+            version: String(json.version || 'cs.microProgression.v1'),
+            ladders: json.ladders
+          };
+        }
+      })
+      .catch(function () {});
+  }
+
   function ewma(values, alpha) {
     if (!values.length) return 0.5;
     var acc = values[0];
@@ -241,6 +260,7 @@
 
   function getStudentSkillSnapshot(studentId) {
     tryLoadIntensityLadder();
+    tryLoadProgressions();
     var records = getStudentRecords(studentId);
     var bySkill = {};
 
@@ -335,6 +355,39 @@
     };
   }
 
+  function getNextSkillStep(studentId, skillId, _band) {
+    tryLoadProgressions();
+    var sid = String(studentId || '');
+    var skill = String(skillId || '');
+    if (!sid || !skill) return null;
+    var ladder = progressionConfig.ladders && progressionConfig.ladders[skill];
+    if (!ladder || !Array.isArray(ladder.ordered) || !ladder.ordered.length) return null;
+
+    var snapshot = getStudentSkillSnapshot(sid);
+    var skillRow = snapshot.skills.find(function (row) { return row.skillId === skill; }) || null;
+    if (!skillRow) return null;
+
+    var ordered = ladder.ordered.slice();
+    var mastery = Number(skillRow.mastery || 0);
+    var cadence = Math.max(1, Number(skillRow.cadenceTargetDays || 14));
+    var stale = Number(skillRow.stalenessDays || 0);
+    var settled = mastery >= 0.8 && stale <= cadence;
+    var idx = settled ? 1 : 0;
+    idx = clamp(idx, 0, ordered.length - 1);
+
+    return {
+      skillId: skill,
+      currentMicroId: ordered[idx] || ordered[0],
+      nextMicroId: ordered[Math.min(idx + 1, ordered.length - 1)] || ordered[idx] || ordered[0],
+      rationale: settled
+        ? ('Mastery ' + Math.round(mastery * 100) + '% with on-cadence evidence; advance to next micro-step.')
+        : ('Mastery ' + Math.round(mastery * 100) + '% and ' + stale + ' days stale; consolidate current micro-step.'),
+      cadenceTargetDays: cadence,
+      stalenessDays: stale,
+      mastery: mastery
+    };
+  }
+
   function setMapping(nextMapping) {
     if (nextMapping && typeof nextMapping === 'object' && nextMapping.modules) {
       mappingConfig = nextMapping;
@@ -354,6 +407,7 @@
     recordEvidence: recordEvidence,
     getStudentSkillSnapshot: getStudentSkillSnapshot,
     computePriority: computePriority,
+    getNextSkillStep: getNextSkillStep,
     setMapping: setMapping,
     setIntensityLadder: setIntensityLadder,
     getTierConfig: getTierConfig,

@@ -202,6 +202,18 @@
     return String(skillId || "Skill");
   }
 
+  function formatNextStep(studentId, topSkillId) {
+    if (!studentId || !topSkillId || !EvidenceEngine || typeof EvidenceEngine.getNextSkillStep !== "function") {
+      return "";
+    }
+    var next = EvidenceEngine.getNextSkillStep(studentId, topSkillId);
+    if (!next) return "";
+    var label = SkillLabels && typeof SkillLabels.getMicroLabel === "function"
+      ? SkillLabels.getMicroLabel(next.currentMicroId)
+      : String(next.currentMicroId || "").split(".").slice(-1)[0];
+    return "Next Step: " + label;
+  }
+
   function scoreStudent(student) {
     var sid = String(student && student.id || "");
     if (EvidenceEngine && typeof EvidenceEngine.computePriority === "function") {
@@ -287,6 +299,7 @@
       var cadenceLine = topSkill
         ? ("Cadence target: " + topSkill.cadenceTargetDays + "d | Current: " + topSkill.stalenessDays + "d | Need: " + needLabel)
         : "";
+      var nextStepLine = topSkill ? formatNextStep(sid, topSkill.skillId) : "";
       return [
         '<article class="td-todayCard">',
         '<div class="td-todayCard__top">',
@@ -305,6 +318,7 @@
         '</div>',
         '</div>',
         (rationale ? ('<p class="td-todayCard__last">' + rationale + '</p>') : ''),
+        (nextStepLine ? ('<p class="td-todayCard__last">' + nextStepLine + '</p>') : ''),
         (cadenceLine ? ('<p class="td-todayCard__last">' + cadenceLine + '</p>') : ''),
         '<p class="td-todayCard__last">' + lastText + '</p>',
         '</article>'
