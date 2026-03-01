@@ -204,6 +204,44 @@ body.cs-has-nav-shell .td-shell {
 .td-body {
   flex: 1 1 auto;
   min-height: 0;
+  overflow: hidden;
+}
+
+.td-main {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 10px;
+}
+
+.td-top-row {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.td-metric-card {
+  min-height: 0;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.td-snapshot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.td-activities-strip {
+  min-height: 0;
+  padding: 10px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.td-work-row {
+  min-height: 0;
   display: grid;
   grid-template-columns: 0.95fr 1.6fr 1fr;
   gap: 10px;
@@ -220,6 +258,9 @@ body.cs-has-nav-shell .td-shell {
 
 /* Optional: prevent accidental bottom push */
 .td-main > * {
+  min-height: 0;
+}
+.td-work-row > * {
   min-height: 0;
 }
 .td-left h2, .td-center h2, .td-right h2 { margin: 0 0 10px; font-size: var(--h3); font-weight: var(--fw-semibold); }
@@ -269,7 +310,39 @@ body.cs-has-nav-shell .td-shell {
   font-size: var(--meta);
 }
 
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 74%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 74%, transparent);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tier-1 {
+  border-color: rgba(98, 215, 173, 0.64);
+  background: rgba(98, 215, 173, 0.18);
+}
+
+.tier-2 {
+  border-color: rgba(244, 201, 120, 0.64);
+  background: rgba(244, 201, 120, 0.16);
+}
+
+.tier-3 {
+  border-color: rgba(255, 159, 135, 0.64);
+  background: rgba(255, 159, 135, 0.14);
+}
+
 .td-stage-selected { display: grid; gap: 12px; animation: tdStageIn 210ms var(--motion-ease); }
+.fade-in { animation: tdFadeIn 240ms var(--ease-out); }
+@keyframes tdFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes tdStageIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -367,7 +440,8 @@ body.cs-has-nav-shell .td-shell {
 
 @media (max-width: 1180px) {
   .td-shell { width: min(1160px, calc(100vw - 14px)); }
-  .td-body { grid-template-columns: 1fr 1.3fr; }
+  .td-top-row { grid-template-columns: 1fr; }
+  .td-work-row { grid-template-columns: 1fr 1.3fr; }
   .td-right { grid-column: 1 / -1; }
 }
 
@@ -378,7 +452,7 @@ body.cs-has-nav-shell .td-shell {
     max-height: 100dvh;
   }
   .td-top { grid-template-columns: 1fr; }
-  .td-body {
+  .td-work-row {
     grid-template-columns: repeat(3, 100%);
     grid-auto-flow: column;
     overflow-x: auto;

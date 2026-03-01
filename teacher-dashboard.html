@@ -48,54 +48,36 @@
     </header>
 
     <section class="td-body">
-      <aside class="td-left td-surface card td-support-rail">
-        <h2 class="h2">Search-first</h2>
-        <div id="td-recent-students" class="td-recent-row"></div>
-        <div id="td-recent-sessions" class="td-recent-list"></div>
-        <div id="td-no-caseload" class="td-empty hidden">
-          <p>No caseload yet.</p>
-          <div class="td-empty-actions">
-            <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="add">Add student</button>
-            <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="import">Import roster</button>
-            <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="demo">Use demo caseload</button>
-          </div>
-        </div>
-        <div id="td-caseload-list" class="td-caseload-list"></div>
-      </aside>
-
-      <section class="td-center td-surface card td-primary-stage" id="td-center-stage" aria-live="polite">
-        <div id="td-center-empty" class="td-stage-empty">
-          <h2 class="h2">Search or pick a student</h2>
-          <p class="muted">In under 3 seconds: who to support, what to do next, and where to launch.</p>
-          <div class="td-demo-chips">
-            <span>Tier 2 push-in</span>
-            <span>Tier 3 pull-out</span>
-            <span>Progress report</span>
-          </div>
-        </div>
-
-        <div id="td-center-selected" class="td-stage-selected hidden">
-          <article class="td-next-step-card">
-            <p class="td-label">Recommended Next Step</p>
-            <h3 id="td-next-step-title">Start intervention</h3>
-            <p id="td-next-step-sub" class="td-reco-line"></p>
+      <div class="td-main">
+        <section class="td-top-row">
+          <article class="td-metric-card td-surface card fade-in">
+            <p class="td-label">Today's Move</p>
+            <h2 id="td-focus-title" class="td-title">Tier 2 - Strategic Reinforcement Recommended</h2>
+            <p id="td-reco-line" class="td-reco-line">Pick a student to generate a targeted intervention move.</p>
+            <div class="td-cta-row">
+              <button id="td-quick-check" class="td-btn td-btn-primary btn btn-quiet" type="button">Run 90-sec Quick Check</button>
+              <button id="td-start-intervention" class="td-btn td-btn-accent btn btn-primary" type="button">Start Intervention</button>
+            </div>
           </article>
-          <div class="td-selected-head">
-            <div>
-              <p id="td-student-label" class="td-label"></p>
-              <h2 id="td-focus-title" class="h2">Next Best Move</h2>
-              <p id="td-reco-line" class="td-reco-line"></p>
-            </div>
-            <div class="td-mini-chart">
-              <svg id="td-sparkline" viewBox="0 0 180 48" preserveAspectRatio="none"></svg>
-              <p id="td-last7-summary" class="td-label"></p>
-            </div>
-          </div>
 
-          <div class="td-cta-row">
-            <button id="td-quick-check" class="td-btn td-btn-primary btn btn-quiet" type="button">Run 90-sec Quick Check</button>
-            <button id="td-start-intervention" class="td-btn td-btn-accent btn btn-primary" type="button">Start Intervention</button>
-          </div>
+          <article class="td-metric-card td-surface card fade-in td-snapshot-card">
+            <p class="td-label">Caseload Snapshot</p>
+            <div class="td-snapshot-grid">
+              <div>
+                <p class="td-label">Accuracy trend</p>
+                <p id="td-metric-accuracy" class="td-metric-number">+0.0%</p>
+              </div>
+              <div>
+                <p class="td-label">Tier signal</p>
+                <p id="td-metric-tier" class="td-metric-number">Tier 2</p>
+              </div>
+            </div>
+            <p id="td-next-step-sub" class="td-reco-line">Accuracy +4.2% over last 3 sessions</p>
+          </article>
+        </section>
+
+        <section class="td-activities-strip td-surface card fade-in">
+          <p class="td-label">Activities Quick Launch</p>
           <div class="td-quick-launch-row">
             <button class="td-top-btn" data-quick="word-quest">Word Quest</button>
             <button class="td-top-btn" data-quick="reading-lab">Reading Lab</button>
@@ -103,35 +85,81 @@
             <button class="td-top-btn" data-quick="writing-studio">Writing Studio</button>
             <button class="td-top-btn" data-quick="numeracy">Numeracy</button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <aside class="td-right td-surface card td-secondary-rail">
-        <h2 class="h2">Evidence + Tools</h2>
-        <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
-        <div id="td-right-content" class="hidden">
-          <div id="td-evidence-chips" class="td-chip-grid"></div>
-          <div class="td-artifacts">
-            <h3>Recent sessions</h3>
-            <div id="td-session-list"></div>
-          </div>
-          <details class="td-details" open>
-            <summary>Notes</summary>
-            <label class="td-notes">
-              <span>Intervention follow-up</span>
-              <textarea id="td-notes-input" rows="3" placeholder="Add notes for intervention follow-up..."></textarea>
-            </label>
-          </details>
-          <details class="td-details">
-            <summary>Export + Share</summary>
-            <div class="td-share">
-              <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>
-              <button id="td-copy-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy CSV</button>
-              <button id="td-copy-summary" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy summary</button>
+        <section class="td-work-row">
+          <aside class="td-left td-surface card td-support-rail">
+            <h2 class="td-section-title">Search-first</h2>
+            <div id="td-recent-students" class="td-recent-row"></div>
+            <div id="td-recent-sessions" class="td-recent-list"></div>
+            <div id="td-no-caseload" class="td-empty hidden">
+              <p>No caseload yet.</p>
+              <div class="td-empty-actions">
+                <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="add">Add student</button>
+                <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="import">Import roster</button>
+                <button class="td-btn td-btn-ghost btn btn-quiet" data-empty-action="demo">Use demo caseload</button>
+              </div>
             </div>
-          </details>
-        </div>
-      </aside>
+            <div id="td-caseload-list" class="td-caseload-list"></div>
+          </aside>
+
+          <section class="td-center td-surface card td-primary-stage" id="td-center-stage" aria-live="polite">
+            <div id="td-center-empty" class="td-stage-empty">
+              <h2 class="td-section-title">Search or pick a student</h2>
+              <p class="muted">In under 3 seconds: who to support, what to do next, and where to launch.</p>
+              <div class="td-demo-chips">
+                <span class="tier-badge tier-2">Tier 2 push-in</span>
+                <span class="tier-badge tier-3">Tier 3 pull-out</span>
+                <span class="tier-badge">Progress report</span>
+              </div>
+            </div>
+
+            <div id="td-center-selected" class="td-stage-selected hidden">
+              <article class="td-next-step-card">
+                <p class="td-label">Recommended Next Step</p>
+                <h3 id="td-next-step-title" class="td-section-title">Start intervention</h3>
+              </article>
+              <div class="td-selected-head">
+                <div>
+                  <p id="td-student-label" class="td-label"></p>
+                  <p id="td-next-tier-badge" class="tier-badge tier-2">Tier 2</p>
+                </div>
+                <div class="td-mini-chart">
+                  <svg id="td-sparkline" viewBox="0 0 180 48" preserveAspectRatio="none"></svg>
+                  <p id="td-last7-summary" class="td-label"></p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="td-right td-surface card td-secondary-rail">
+            <h2 class="td-section-title">Evidence + Tools</h2>
+            <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
+            <div id="td-right-content" class="hidden">
+              <div id="td-evidence-chips" class="td-chip-grid"></div>
+              <div class="td-artifacts">
+                <h3>Recent sessions</h3>
+                <div id="td-session-list"></div>
+              </div>
+              <details class="td-details" open>
+                <summary>Notes</summary>
+                <label class="td-notes">
+                  <span>Intervention follow-up</span>
+                  <textarea id="td-notes-input" rows="3" placeholder="Add notes for intervention follow-up..."></textarea>
+                </label>
+              </details>
+              <details class="td-details">
+                <summary>Export + Share</summary>
+                <div class="td-share">
+                  <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>
+                  <button id="td-copy-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy CSV</button>
+                  <button id="td-copy-summary" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy summary</button>
+                </div>
+              </details>
+            </div>
+          </aside>
+        </section>
+      </div>
     </section>
   </main>
 

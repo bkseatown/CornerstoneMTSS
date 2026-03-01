@@ -24,6 +24,10 @@
     studentLabel: document.getElementById("td-student-label"),
     focusTitle: document.getElementById("td-focus-title"),
     recoLine: document.getElementById("td-reco-line"),
+    nextTierBadge: document.getElementById("td-next-tier-badge"),
+    metricAccuracy: document.getElementById("td-metric-accuracy"),
+    metricTier: document.getElementById("td-metric-tier"),
+    metricSubline: document.getElementById("td-next-step-sub"),
     sparkline: document.getElementById("td-sparkline"),
     last7Summary: document.getElementById("td-last7-summary"),
     quickCheck: document.getElementById("td-quick-check"),
@@ -133,6 +137,9 @@
       el.centerSelected.classList.add("hidden");
       el.rightEmpty.classList.remove("hidden");
       el.rightContent.classList.add("hidden");
+      if (el.metricAccuracy) el.metricAccuracy.textContent = "+0.0%";
+      if (el.metricTier) el.metricTier.textContent = "Tier 2";
+      if (el.metricSubline) el.metricSubline.textContent = "Accuracy +4.2% over last 3 sessions";
       setCoachLine("Search or pick a student and I will suggest the next best move.");
       return;
     }
@@ -144,10 +151,22 @@
     el.rightContent.classList.remove("hidden");
 
     el.studentLabel.textContent = summary.student.name + " · " + summary.student.id;
-    el.focusTitle.textContent = summary.nextMove.focus + " Focus";
+    var spark = summary.last7Sparkline || [];
+    var tail = spark.slice(-3);
+    var delta = tail.length > 1 ? (tail[tail.length - 1] - tail[0]) : 0;
+    var tierLabel = summary.risk === "risk" ? "Tier 3" : "Tier 2";
+
+    el.focusTitle.textContent = tierLabel + " - Strategic Reinforcement Recommended";
     el.recoLine.textContent = summary.nextMove.line;
     el.last7Summary.textContent = "Last 7 sessions · " + summary.last7Sparkline.join(" / ");
     el.sparkline.innerHTML = '<path d="' + buildSparkPath(summary.last7Sparkline) + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>';
+    if (el.metricAccuracy) el.metricAccuracy.textContent = (delta >= 0 ? "+" : "") + delta.toFixed(1) + "%";
+    if (el.metricTier) el.metricTier.textContent = tierLabel;
+    if (el.metricSubline) el.metricSubline.textContent = "Accuracy " + (delta >= 0 ? "+" : "") + delta.toFixed(1) + "% over last 3 sessions";
+    if (el.nextTierBadge) {
+      el.nextTierBadge.textContent = tierLabel;
+      el.nextTierBadge.className = "tier-badge " + (tierLabel === "Tier 3" ? "tier-3" : "tier-2");
+    }
 
     el.quickCheck.onclick = function () { window.location.href = summary.nextMove.quickHref; };
     el.startIntervention.onclick = function () {
