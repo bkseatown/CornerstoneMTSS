@@ -50,6 +50,85 @@
 
     <section class="td-body">
       <div class="td-main">
+        <section id="td-today" class="td-surface card td-today fade-in" role="region" aria-label="Today’s Plan">
+          <div class="td-today__head">
+            <div class="td-today__titleWrap">
+              <div class="td-today__kicker">Cornerstone MTSS</div>
+              <h2 class="td-today__title">Today’s Plan</h2>
+              <div class="td-today__sub">Tap a student to start a 12–20 min support block.</div>
+            </div>
+            <div class="td-today__meta">
+              <span class="td-chip td-chip--auto" title="Auto-generated">Auto</span>
+              <button id="td-today-refresh" class="td-btn td-btn-primary btn btn-quiet" type="button" aria-label="Refresh Today plan">Refresh</button>
+            </div>
+          </div>
+
+          <div id="td-today-list" class="td-today__list" aria-label="Today plan students">
+            <article class="td-todayCard">
+              <div class="td-todayCard__top">
+                <h3 class="td-todayCard__name">Demo Student A</h3>
+                <span class="td-todayCard__grade">Grade G5</span>
+              </div>
+              <div class="td-todayCard__chips">
+                <span class="td-chip">Collect baseline</span>
+              </div>
+              <div class="td-todayCard__actions">
+                <button class="td-btn td-btn-accent btn btn-primary" type="button" data-build-block="demo-a">Build 20-min block</button>
+                <div class="td-todayCard__row">
+                  <button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="demo-a">Word Quest</button>
+                  <button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="demo-a">Reading Lab</button>
+                  <button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="demo-a">Sentence Surgery</button>
+                </div>
+              </div>
+            </article>
+            <article class="td-todayCard">
+              <div class="td-todayCard__top">
+                <h3 class="td-todayCard__name">Demo Student B</h3>
+                <span class="td-todayCard__grade">Grade G4</span>
+              </div>
+              <div class="td-todayCard__chips">
+                <span class="td-chip">Collect baseline</span>
+              </div>
+              <div class="td-todayCard__actions">
+                <button class="td-btn td-btn-accent btn btn-primary" type="button" data-build-block="demo-b">Build 20-min block</button>
+                <div class="td-todayCard__row">
+                  <button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="demo-b">Word Quest</button>
+                  <button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="demo-b">Reading Lab</button>
+                  <button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="demo-b">Sentence Surgery</button>
+                </div>
+              </div>
+            </article>
+            <article class="td-todayCard">
+              <div class="td-todayCard__top">
+                <h3 class="td-todayCard__name">Demo Student C</h3>
+                <span class="td-todayCard__grade">Grade G6</span>
+              </div>
+              <div class="td-todayCard__chips">
+                <span class="td-chip">Collect baseline</span>
+              </div>
+              <div class="td-todayCard__actions">
+                <button class="td-btn td-btn-accent btn btn-primary" type="button" data-build-block="demo-c">Build 20-min block</button>
+                <div class="td-todayCard__row">
+                  <button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="demo-c">Word Quest</button>
+                  <button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="demo-c">Reading Lab</button>
+                  <button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="demo-c">Sentence Surgery</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div id="td-today-group" class="td-today__group" aria-label="Group plan">
+            <div class="td-today__groupRow">
+              <div class="td-today__groupTitle">Start a small group</div>
+              <div class="td-today__groupHint">Pick 2–4 students and generate a shared plan.</div>
+            </div>
+            <div class="td-today__groupActions">
+              <button id="td-group-open" class="td-btn td-btn-ghost btn btn-quiet" type="button">Select students</button>
+              <button id="td-group-build" class="td-btn td-btn-accent btn btn-primary" type="button" disabled>Build group plan</button>
+            </div>
+          </div>
+        </section>
+
         <section class="td-top-row">
           <article class="td-metric-card td-surface card fade-in">
             <p class="td-label">Today's Move</p>

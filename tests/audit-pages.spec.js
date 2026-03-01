@@ -52,6 +52,7 @@ async function getBuildId(page) {
 async function getDashboardMarkers(page) {
   return page.evaluate(() => {
     const audit = window.__CS_AUDIT__ || {};
+    const tdAudit = window.__TD_MARKERS__ || {};
     const anchorsAndButtons = Array.from(document.querySelectorAll('a,button'));
     const controlNodes = Array.from(document.querySelectorAll('select,button,a'));
     return {
@@ -68,6 +69,9 @@ async function getDashboardMarkers(page) {
       hasNeedsChips: !!document.getElementById('td-needs-chip-list') || !!audit.hasNeedsChips,
       hasTodayPlan: !!document.getElementById('td-today-plan') || !!audit.hasTodayPlan,
       hasProgressNote: !!document.getElementById('td-progress-note') || !!audit.hasProgressNote,
+      hasToday: !!document.getElementById('td-today') || !!audit.hasToday || !!tdAudit.hasToday,
+      hasTodayList: !!document.getElementById('td-today-list') || !!audit.hasTodayList || !!tdAudit.hasTodayList,
+      hasBuildBlock: !!document.querySelector('[data-build-block]') || !!audit.hasBuildBlock || !!tdAudit.hasBuildBlock,
       tdShell: !!document.querySelector('.td-shell'),
       bodyClass: document.body.className
     };

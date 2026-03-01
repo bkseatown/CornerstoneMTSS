@@ -212,7 +212,7 @@ body.cs-has-nav-shell .td-shell {
 
 .td-main {
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   gap: 10px;
 }
 
@@ -241,6 +241,138 @@ body.cs-has-nav-shell .td-shell {
   padding: 10px 14px;
   display: grid;
   gap: 8px;
+}
+
+/* === TODAY ENGINE ================================================= */
+.td-today {
+  min-height: 0;
+  padding: 12px 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.td-today__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.td-today__kicker {
+  font-size: var(--fs-0, 12px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+  margin-bottom: 4px;
+}
+
+.td-today__title {
+  font-size: var(--fs-6, 22px);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.td-today__sub {
+  font-size: var(--fs-2, 14px);
+  opacity: 0.75;
+  margin-top: 6px;
+  max-width: 56ch;
+}
+
+.td-today__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.td-today__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.td-todayCard {
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--border-soft) 68%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 72%, transparent);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.td-todayCard__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.td-todayCard__name {
+  font-size: var(--fs-4, 18px);
+  font-weight: var(--fw-bold, 700);
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.td-todayCard__grade {
+  font-size: var(--fs-1, 13px);
+  opacity: 0.75;
+}
+
+.td-todayCard__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.td-todayCard__actions {
+  display: grid;
+  gap: 8px;
+}
+
+.td-todayCard__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.td-todayCard__last {
+  font-size: var(--fs-1, 13px);
+  opacity: 0.72;
+}
+
+.td-chip--auto { opacity: 0.85; }
+
+.td-today__group {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.td-today__groupRow {
+  display: grid;
+  gap: 2px;
+}
+
+.td-today__groupTitle {
+  font-size: var(--fs-3, 16px);
+  font-weight: var(--fw-bold, 700);
+}
+
+.td-today__groupHint {
+  font-size: var(--fs-1, 13px);
+  opacity: 0.75;
+}
+
+.td-today__groupActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .td-work-row {
@@ -483,6 +615,8 @@ body.cs-has-nav-shell .td-shell {
 
 @media (max-width: 1180px) {
   .td-shell { width: min(1160px, calc(100vw - 14px)); }
+  .td-today__list { grid-template-columns: 1fr; }
+  .td-todayCard__row { grid-template-columns: 1fr; }
   .td-top-row { grid-template-columns: 1fr; }
   .td-work-row { grid-template-columns: 1fr 1.3fr; }
   .td-right { grid-column: 1 / -1; }

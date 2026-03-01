@@ -18,8 +18,11 @@
     snapshot: null,
     plan: null,
     activePlanTab: "ten",
-    activeNoteTab: "teacher"
+    activeNoteTab: "teacher",
+    todayPlan: null
   };
+
+  var LAST_ACTIVITY_KEY = "cs.lastActivityByStudent.v1";
 
   var el = {
     search: document.getElementById("td-search-input"),
@@ -63,6 +66,12 @@
     copySummary: document.getElementById("td-copy-summary"),
     quickLaunchButtons: Array.prototype.slice.call(document.querySelectorAll("[data-quick]")),
     emptyActions: Array.prototype.slice.call(document.querySelectorAll("[data-empty-action]")),
+    todayRoot: document.getElementById("td-today"),
+    todayList: document.getElementById("td-today-list"),
+    todayRefresh: document.getElementById("td-today-refresh"),
+    todayGroup: document.getElementById("td-today-group"),
+    todayGroupOpen: document.getElementById("td-group-open"),
+    todayGroupBuild: document.getElementById("td-group-build"),
     coachRibbon: document.getElementById("td-coach-ribbon"),
     coachLine: document.getElementById("td-coach-line"),
     coachPlay: document.getElementById("td-coach-play"),
@@ -79,6 +88,208 @@
       state.demoMode = false;
     }
     if (el.demoBadge) el.demoBadge.classList.toggle("hidden", !state.demoMode);
+  }
+
+  function safeJsonParse(s, fallback) {
+    try { return JSON.parse(s); } catch (_e) { return fallback; }
+  }
+
+  function getLastActivityMap() {
+    return safeJsonParse(localStorage.getItem(LAST_ACTIVITY_KEY), {});
+  }
+
+  function setLastActivityMap(map) {
+    localStorage.setItem(LAST_ACTIVITY_KEY, JSON.stringify(map || {}));
+  }
+
+  function getLastActivity(studentId) {
+    if (!studentId) return null;
+    var map = getLastActivityMap();
+    return map[String(studentId)] || null;
+  }
+
+  function recordLastActivity(studentId, moduleKey) {
+    if (!studentId || !moduleKey) return;
+    var map = getLastActivityMap();
+    map[String(studentId)] = { module: String(moduleKey), ts: Date.now() };
+    setLastActivityMap(map);
+  }
+
+  function ageDays(ts) {
+    if (!ts || !Number.isFinite(Number(ts))) return 999;
+    return Math.max(0, Math.floor((Date.now() - Number(ts)) / 86400000));
+  }
+
+  function moduleLabel(key) {
+    var k = String(key || "").toLowerCase();
+    if (k === "word-quest") return "Word Quest";
+    if (k === "reading-lab") return "Reading Lab";
+    if (k === "sentence-surgery") return "Sentence Surgery";
+    if (k === "writing-studio") return "Writing Studio";
+    if (k === "numeracy") return "Numeracy";
+    return "Activity";
+  }
+
+  function getCaseload() {
+    if (CaseloadStore && typeof CaseloadStore.getAll === "function") {
+      var rows = CaseloadStore.getAll() || [];
+      if (rows.length) {
+        return rows.map(function (x) {
+          return {
+            id: String(x.id || x.studentId || x.key || x.name || ""),
+            name: String(x.name || x.studentName || x.id || "Student"),
+            grade: String(x.grade || x.gradeLevel || "")
+          };
+        });
+      }
+    }
+    if (Evidence && typeof Evidence.listCaseload === "function") {
+      var caseload = Evidence.listCaseload() || [];
+      if (caseload.length) {
+        return caseload.map(function (row) {
+          return { id: String(row.id), name: String(row.name), grade: String(row.gradeBand || "") };
+        });
+      }
+    }
+    var localRows = safeJsonParse(localStorage.getItem("cs.caseload.v1"), []);
+    if (Array.isArray(localRows) && localRows.length) {
+      return localRows.map(function (x) {
+        return {
+          id: String(x.id || x.studentId || x.name || ""),
+          name: String(x.name || "Student"),
+          grade: String(x.grade || x.gradeLevel || "")
+        };
+      });
+    }
+    return [
+      { id: "demo-a", name: "Demo Student A", grade: "G5" },
+      { id: "demo-b", name: "Demo Student B", grade: "G4" },
+      { id: "demo-c", name: "Demo Student C", grade: "G6" }
+    ];
+  }
+
+  function getStudentEvidence(studentId) {
+    if (!studentId) return null;
+    if (Evidence && typeof Evidence.computeStudentSnapshot === "function") {
+      return Evidence.computeStudentSnapshot(studentId);
+    }
+    var localEvidence = safeJsonParse(localStorage.getItem("cs.evidence.v1"), {});
+    return localEvidence[String(studentId)] || null;
+  }
+
+  function focusFromSnapshot(snapshot) {
+    var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
+    if (needs.length) return needs.slice(0, 2).map(function (need) { return String(need.label || "Need"); });
+    return ["Collect baseline"];
+  }
+
+  function scoreStudent(student) {
+    var sid = String(student && student.id || "");
+    var snapshot = getStudentEvidence(sid) || {};
+    var last = getLastActivity(sid);
+    var trend = snapshot.trends && snapshot.trends.wordquest;
+    var lastPoint = trend && Array.isArray(trend.last7) && trend.last7.length ? trend.last7[trend.last7.length - 1] : null;
+    var score = 0;
+
+    if (!lastPoint) score += 35;
+    if (lastPoint && Number(lastPoint.score || 0) < 65) score += 25;
+    if (snapshot.needs && snapshot.needs.length) {
+      score += snapshot.needs.reduce(function (sum, need) {
+        return sum + (Number(need.severity || 1) * Number(need.confidence || 0.5) * 3);
+      }, 0);
+    }
+    if (snapshot.updatedAt) score += Math.min(20, ageDays(Date.parse(snapshot.updatedAt)) * 2);
+    score += Math.min(20, ageDays(last && last.ts) * 2);
+    return score;
+  }
+
+  function buildTodayPlan() {
+    var ranked = getCaseload()
+      .map(function (student) {
+        var sid = String(student.id || "");
+        var snapshot = getStudentEvidence(sid) || null;
+        return {
+          student: student,
+          snapshot: snapshot,
+          focus: focusFromSnapshot(snapshot),
+          lastActivity: getLastActivity(sid),
+          score: scoreStudent(student)
+        };
+      })
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 3);
+
+    if (!ranked.length) {
+      ranked = [
+        { id: "demo-a", name: "Demo Student A", grade: "G5" },
+        { id: "demo-b", name: "Demo Student B", grade: "G4" },
+        { id: "demo-c", name: "Demo Student C", grade: "G6" }
+      ].map(function (student) {
+        return {
+          student: student,
+          snapshot: null,
+          focus: ["Collect baseline"],
+          lastActivity: getLastActivity(student.id),
+          score: 0
+        };
+      });
+    }
+
+    return { students: ranked };
+  }
+
+  function renderTodayEngine(plan) {
+    if (!el.todayList) return;
+    var rows = plan && Array.isArray(plan.students) ? plan.students : [];
+    if (!rows.length) {
+      rows = buildTodayPlan().students;
+    }
+    el.todayList.innerHTML = rows.map(function (row) {
+      var s = row.student || {};
+      var sid = String(s.id || "");
+      var grade = s.grade ? ("Grade " + s.grade) : "";
+      var last = row.lastActivity;
+      var lastText = last ? ("Last: " + moduleLabel(last.module) + " • " + ageDays(last.ts) + "d ago") : "Last: none yet";
+      return [
+        '<article class="td-todayCard">',
+        '<div class="td-todayCard__top">',
+        '<h3 class="td-todayCard__name">' + s.name + '</h3>',
+        '<span class="td-todayCard__grade">' + grade + '</span>',
+        '</div>',
+        '<div class="td-todayCard__chips">',
+        (row.focus || []).slice(0, 2).map(function (focus) { return '<span class="td-chip">' + focus + '</span>'; }).join(""),
+        '</div>',
+        '<div class="td-todayCard__actions">',
+        '<button class="td-btn td-btn-accent btn btn-primary" type="button" data-build-block="' + sid + '">Build 20-min block</button>',
+        '<div class="td-todayCard__row">',
+        '<button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="' + sid + '">Word Quest</button>',
+        '<button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="' + sid + '">Reading Lab</button>',
+        '<button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="' + sid + '">Sentence Surgery</button>',
+        '</div>',
+        '</div>',
+        '<p class="td-todayCard__last">' + lastText + '</p>',
+        '</article>'
+      ].join("");
+    }).join("");
+
+    Array.prototype.forEach.call(el.todayList.querySelectorAll("[data-today-launch]"), function (button) {
+      button.addEventListener("click", function () {
+        var target = String(button.getAttribute("data-today-launch") || "").trim();
+        var sid = String(button.getAttribute("data-student-id") || state.selectedId || "");
+        if (!target) return;
+        recordLastActivity(sid, target);
+        window.location.href = appendStudentParam("./" + target + ".html", sid);
+      });
+    });
+
+    Array.prototype.forEach.call(el.todayList.querySelectorAll("[data-build-block]"), function (button) {
+      button.addEventListener("click", function () {
+        var sid = String(button.getAttribute("data-build-block") || "");
+        var row = rows.find(function (x) { return String(x.student && x.student.id || "") === sid; });
+        var focusLine = row && row.focus && row.focus.length ? row.focus.join(", ") : "Collect baseline";
+        setCoachLine("20-min block: 2-min warm-up, 8-min guided practice, 8-min quick check, 2-min reflection. Focus: " + focusLine + ".");
+      });
+    });
   }
 
   function seedFromCaseloadStore() {
@@ -119,6 +330,9 @@
     state.caseload = Evidence.listCaseload();
     filterCaseload(el.search.value || "");
     el.noCaseload.classList.toggle("hidden", state.caseload.length > 0);
+    state.todayPlan = buildTodayPlan();
+    renderTodayEngine(state.todayPlan);
+    updateAuditMarkers();
   }
 
   function filterCaseload(query) {
@@ -456,14 +670,15 @@
     return state.selectedId || "";
   }
 
-  function appendStudentParam(url) {
-    var sid = currentStudentParam();
+  function appendStudentParam(url, overrideStudentId) {
+    var sid = overrideStudentId || currentStudentParam();
     var u = new URL(String(url || ""), window.location.href);
     if (sid) u.searchParams.set("student", sid);
     return u.pathname.replace(/^\//, "./") + (u.search || "");
   }
 
   function updateAuditMarkers() {
+    var hasBuildBlock = !!document.querySelector("[data-build-block]") || !!(el.todayList && el.todayList.children && el.todayList.children.length);
     window.__CS_AUDIT__ = {
       hasHomeBtnId: !!document.getElementById("td-home-btn"),
       hasActivities: !!document.getElementById("td-activity-select"),
@@ -472,7 +687,15 @@
       hasShareSummary: !!document.getElementById("td-share-summary"),
       hasNeedsChips: !!document.getElementById("td-needs-chip-list"),
       hasTodayPlan: !!document.getElementById("td-today-plan"),
-      hasProgressNote: !!document.getElementById("td-progress-note")
+      hasProgressNote: !!document.getElementById("td-progress-note"),
+      hasToday: !!document.getElementById("td-today"),
+      hasTodayList: !!document.getElementById("td-today-list"),
+      hasBuildBlock: hasBuildBlock
+    };
+    window.__TD_MARKERS__ = {
+      hasToday: !!document.getElementById("td-today"),
+      hasTodayList: !!document.getElementById("td-today-list"),
+      hasBuildBlock: hasBuildBlock
     };
   }
 
@@ -608,9 +831,32 @@
       button.addEventListener("click", function () {
         var target = String(button.getAttribute("data-quick") || "").trim();
         if (!target) return;
+        recordLastActivity(currentStudentParam(), target);
         window.location.href = appendStudentParam("./" + target + ".html");
       });
     });
+
+    if (el.todayRefresh) {
+      el.todayRefresh.addEventListener("click", function () {
+        state.todayPlan = buildTodayPlan();
+        renderTodayEngine(state.todayPlan);
+        updateAuditMarkers();
+        setCoachLine("Today plan refreshed.");
+      });
+    }
+
+    if (el.todayGroupOpen) {
+      el.todayGroupOpen.addEventListener("click", function () {
+        if (el.todayGroupBuild) el.todayGroupBuild.disabled = false;
+        setCoachLine("Group selection ready. Pick 2-4 students, then build the shared plan.");
+      });
+    }
+
+    if (el.todayGroupBuild) {
+      el.todayGroupBuild.addEventListener("click", function () {
+        setCoachLine("Group plan v1: 3-min warm-up, 10-min guided stations, 5-min exit check.");
+      });
+    }
 
     el.emptyActions.forEach(function (button) {
       button.addEventListener("click", function () {
