@@ -52,10 +52,26 @@
       <div id="dd-summary-stats"></div>
       <div class="dd-row">
         <button id="dd-save" class="dd-btn" type="button">Save Evidence</button>
+        <button id="dd-print" class="dd-btn" type="button">Print Probe</button>
         <button id="dd-copy-student" class="dd-btn" type="button">Copy Student Note</button>
         <button id="dd-copy-family" class="dd-btn" type="button">Copy Family Note</button>
         <button id="dd-copy-admin" class="dd-btn" type="button">Copy Admin Summary</button>
       </div>
+    </section>
+
+    <section id="dd-manual" class="dd-card hidden" aria-label="Manual entry">
+      <h2 style="margin:0">Manual Entry</h2>
+      <div class="dd-row">
+        <input id="dd-m-attempts" class="dd-input" type="number" min="0" placeholder="Attempts">
+        <input id="dd-m-correct" class="dd-input" type="number" min="0" placeholder="Correct">
+        <input id="dd-m-sc" class="dd-input" type="number" min="0" placeholder="Self-corrections">
+        <input id="dd-m-elapsed" class="dd-input" type="number" min="1" placeholder="Elapsed sec">
+      </div>
+      <div class="dd-row">
+        <input id="dd-m-tags" class="dd-input" placeholder="errorTag:count,errorTag:count">
+        <button id="dd-m-save" class="dd-btn" type="button">Save Manual Evidence</button>
+      </div>
+      <p class="dd-instructions">Use this fallback when probe dataset is unavailable.</p>
     </section>
 
     <footer class="dd-instructions">Space=Correct • X=Incorrect • S=Self-correct • T=Told • 1-6 tags • Enter=Next • Esc=Pause • Shift+P=Print • Shift+E=End</footer>
@@ -71,6 +87,7 @@
   <script src="../js/evidence-engine.js?v=20260301y" defer></script>
   <script src="../js/decodingdiag/probe-store.js?v=20260301y" defer></script>
   <script src="../js/decodingdiag/scoring.js?v=20260301y" defer></script>
+  <script src="../js/decodingdiag/print.js?v=20260301y" defer></script>
   <script src="../js/decodingdiag/ui.js?v=20260301y" defer></script>
 </body>
 </html>

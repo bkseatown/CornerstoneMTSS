@@ -4,6 +4,7 @@
   var ProbeStore = root.CSDecodingDiagProbeStore;
   var Scoring = root.CSDecodingDiagScoring;
   var EvidenceEngine = root.CSEvidenceEngine;
+  var PrintAPI = root.CSDecodingDiagPrint;
 
   if (!ProbeStore || !Scoring) return;
 
@@ -27,6 +28,14 @@
     copyStudent: document.getElementById('dd-copy-student'),
     copyFamily: document.getElementById('dd-copy-family'),
     copyAdmin: document.getElementById('dd-copy-admin')
+    ,print: document.getElementById('dd-print')
+    ,manual: document.getElementById('dd-manual')
+    ,mAttempts: document.getElementById('dd-m-attempts')
+    ,mCorrect: document.getElementById('dd-m-correct')
+    ,mSC: document.getElementById('dd-m-sc')
+    ,mElapsed: document.getElementById('dd-m-elapsed')
+    ,mTags: document.getElementById('dd-m-tags')
+    ,mSave: document.getElementById('dd-m-save')
   };
 
   var state = {
@@ -254,6 +263,54 @@
     el.word.textContent = 'Evidence saved';
   }
 
+  function saveManualEvidence() {
+    if (!EvidenceEngine || typeof EvidenceEngine.recordEvidence !== 'function') return;
+    var attempts = Math.max(0, Number(el.mAttempts.value || 0));
+    var correct = Math.max(0, Number(el.mCorrect.value || 0));
+    var sc = Math.max(0, Number(el.mSC.value || 0));
+    var elapsed = Math.max(1, Number(el.mElapsed.value || 60));
+    var tags = String(el.mTags.value || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+    var accuracy = correct / Math.max(1, attempts);
+    var wcpm = el.mode.value === 'timed' ? Math.round((correct / (elapsed / 60)) * 10) / 10 : undefined;
+    var eventObj = {
+      studentId: String(el.student.value || '').trim(),
+      timestamp: new Date().toISOString(),
+      module: 'decodingdiag',
+      activityId: el.mode.value === 'timed' ? 'dd.v1.timed' : 'dd.v1.untimed',
+      targets: [state.targetId || 'LIT.DEC.PHG.CVC'],
+      tier: el.tier.value === 'T3' ? 'T3' : 'T2',
+      doseMin: el.mode.value === 'timed' ? 3 : 5,
+      result: {
+        attempts: attempts,
+        accuracy: accuracy,
+        wcpm: wcpm,
+        selfCorrections: sc,
+        errorPattern: tags
+      },
+      confidence: 0.85,
+      notes: 'Manual entry'
+    };
+    var err = validateEvent(eventObj);
+    if (err) return alert(err);
+    EvidenceEngine.recordEvidence(eventObj);
+    el.word.textContent = 'Manual evidence saved';
+  }
+
+  function printProbe() {
+    var form = ProbeStore.getForm(state.targetId, state.formId);
+    var target = ProbeStore.getTarget(state.targetId);
+    if (PrintAPI && typeof PrintAPI.openPrintView === 'function') {
+      PrintAPI.openPrintView({
+        title: 'Decoding Diagnostic (v1)',
+        formId: state.formId,
+        targetId: state.targetId,
+        targetLabel: target && target.label ? target.label : state.targetId,
+        mode: el.mode.value,
+        items: form && form.items ? form.items : []
+      });
+    }
+  }
+
   function copyText(text) {
     var t = String(text || '').trim();
     if (!t) return;
@@ -272,6 +329,8 @@
       el.pause.textContent = state.paused ? 'Resume' : 'Pause';
     });
     el.save.addEventListener('click', saveEvidence);
+    if (el.print) el.print.addEventListener('click', printProbe);
+    if (el.mSave) el.mSave.addEventListener('click', saveManualEvidence);
 
     el.copyStudent.addEventListener('click', function () {
       if (!state.summary) return;
@@ -298,6 +357,7 @@
       if (key === 'ArrowRight') { e.preventDefault(); nextItem(); return; }
       if (key === 'ArrowLeft') { e.preventDefault(); if (state.idx > 0) { state.idx -= 1; renderProbe(); } return; }
       if (e.shiftKey && (key === 'E' || key === 'e')) { e.preventDefault(); endSession(); return; }
+      if (e.shiftKey && (key === 'P' || key === 'p')) { e.preventDefault(); printProbe(); return; }
       var n = Number(key);
       if (Number.isFinite(n) && n >= 1 && n <= 6) {
         var recommended = (state.store && state.store.tags && state.store.tags.recommendedByTarget && state.store.tags.recommendedByTarget[state.targetId]) || [];
@@ -310,7 +370,8 @@
     state.store = result;
     initStudent();
     if (!result.ok) {
-      el.word.textContent = 'Probe data unavailable. Manual mode arrives in next step.';
+      el.word.textContent = 'Probe data unavailable. Manual mode enabled.';
+      if (el.manual) el.manual.classList.remove('hidden');
       return;
     }
     renderTargets();
