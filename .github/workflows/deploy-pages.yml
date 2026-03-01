@@ -18,13 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Stamp version.json (cache bust)
-        run: npm run stamp:version
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Stamp version.json (cache bust)
+        run: npm run stamp:version
       - name: Run release gate (contracts + smokes + regressions)
         run: npm run release:gate
 
@@ -62,8 +60,7 @@ jobs:
           test -f dist/js/ava-intensity.js || { echo "Missing dist/js/ava-intensity.js"; exit 1; }
           test -f dist/js/wq-diagnostics.js || { echo "Missing dist/js/wq-diagnostics.js"; exit 1; }
           test -f dist/sw-runtime.js || { echo "Missing dist/sw-runtime.js"; exit 1; }
-          test -f dist/version.json || { echo "Missing dist/version.json"; exit 1; }
-          test -f dist/build-version.txt || { echo "Missing dist/build-version.txt"; exit 1; }
+          test -f dist/build.json || { echo "Missing dist/build.json"; exit 1; }
           test -f dist/data/ava-persona.json || { echo "Missing dist/data/ava-persona.json"; exit 1; }
           test -f dist/data/ava-event-matrix.json || { echo "Missing dist/data/ava-event-matrix.json"; exit 1; }
           test -f dist/audio/ava/current/manifest.json || { echo "Missing dist/audio/ava/current/manifest.json"; exit 1; }
@@ -89,7 +86,7 @@ jobs:
           CANONICAL_URL: https://bkseatown.github.io/WordQuest/
         run: |
           set -euo pipefail
-          expected_build="${GITHUB_SHA::12}-${GITHUB_RUN_NUMBER}"
+          expected_build="$(node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('dist/build.json','utf8'));process.stdout.write(String(d.buildId||''));")"
           markers=(
             'id="settings-build-badge"'
             'src="js/app.js?v='
@@ -158,10 +155,10 @@ jobs:
           for target_entry in "${targets[@]}"; do
             target="${target_entry%%|*}"
             requirement="${target_entry##*|}"
-            version_url="${target%/}/build-version.txt?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-            version_value="$(curl -sS --max-time 20 "${version_url}" | tr -d '[:space:]' || true)"
+            version_url="${target%/}/build.json?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            version_value="$(curl -sS --max-time 20 "${version_url}" | node -e "let data='';process.stdin.on('data',c=>data+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(data);process.stdout.write(String(j.buildId||''));}catch{process.stdout.write('');}});" || true)"
             if [ "${version_value}" = "${expected_build}" ]; then
-              echo "| ${version_url} | ✅ PASS | build-version.txt matches ${expected_build}. |" >> "${summary_file}"
+              echo "| ${version_url} | ✅ PASS | build.json buildId matches ${expected_build}. |" >> "${summary_file}"
             else
               if [ "${requirement}" = "required" ]; then
                 failures=$((failures + 1))
