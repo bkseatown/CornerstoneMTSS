@@ -14,6 +14,7 @@
   var VERSION = 1;
   var MAX_SPARK_POINTS = 14;
   var MAX_SESSIONS = 600;
+  var MAX_STUDENT_SESSIONS = 120;
 
   function now() { return Date.now(); }
 
@@ -165,6 +166,123 @@
     if (state.sessions.length > MAX_SESSIONS) state.sessions = state.sessions.slice(-MAX_SESSIONS);
     save(state);
     return session;
+  }
+
+  function toFiniteNumber(value, fallback) {
+    var n = Number(value);
+    return Number.isFinite(n) ? n : Number(fallback || 0);
+  }
+
+  function createSessionId() {
+    return "sess_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+
+  function normalizeEnvelope(studentId, envelope) {
+    var sid = normalizeStudentId(studentId || (envelope && envelope.studentId));
+    var src = envelope && typeof envelope === "object" ? envelope : {};
+    var durationSec = Math.max(0, Math.round(toFiniteNumber(src.durationSec, 0)));
+    var guessCount = Math.max(0, Math.round(toFiniteNumber(src.signals && src.signals.guessCount, 0)));
+    var solved = !!(src.outcomes && src.outcomes.solved);
+    return {
+      id: String(src.id || createSessionId()),
+      studentId: sid,
+      createdAt: String(src.createdAt || new Date().toISOString()),
+      activity: String(src.activity || "wordquest"),
+      durationSec: durationSec,
+      signals: {
+        guessCount: guessCount,
+        avgGuessLatencyMs: Math.max(0, Math.round(toFiniteNumber(src.signals && src.signals.avgGuessLatencyMs, 0))),
+        misplaceRate: +Math.max(0, Math.min(1, toFiniteNumber(src.signals && src.signals.misplaceRate, 0))).toFixed(3),
+        absentRate: +Math.max(0, Math.min(1, toFiniteNumber(src.signals && src.signals.absentRate, 0))).toFixed(3),
+        repeatSameBadSlotCount: Math.max(0, Math.round(toFiniteNumber(src.signals && src.signals.repeatSameBadSlotCount, 0))),
+        vowelSwapCount: Math.max(0, Math.round(toFiniteNumber(src.signals && src.signals.vowelSwapCount, 0))),
+        constraintViolations: Math.max(0, Math.round(toFiniteNumber(src.signals && src.signals.constraintViolations, 0)))
+      },
+      outcomes: {
+        solved: solved,
+        attemptsUsed: Math.max(0, Math.round(toFiniteNumber(src.outcomes && src.outcomes.attemptsUsed, guessCount)))
+      }
+    };
+  }
+
+  function addSession(studentId, sessionEnvelope) {
+    var state = load();
+    var normalized = normalizeEnvelope(studentId, sessionEnvelope);
+    var sid = normalizeStudentId(normalized.studentId);
+    var student = ensureStudentShape(state.students[sid], sid);
+    state.students[sid] = student;
+
+    var exists = false;
+    state.sessions = state.sessions.filter(function (row) {
+      if (row && row.id && row.id === normalized.id) exists = true;
+      return true;
+    });
+    if (!exists) state.sessions.push(normalized);
+    if (state.sessions.length > MAX_SESSIONS) state.sessions = state.sessions.slice(-MAX_SESSIONS);
+    save(state);
+    return normalized;
+  }
+
+  function getRecentSessions(studentId, opts) {
+    var state = load();
+    var sid = normalizeStudentId(studentId);
+    var limit = Math.max(1, Math.min(MAX_STUDENT_SESSIONS, Number(opts && opts.limit) || 10));
+    return state.sessions
+      .filter(function (row) { return normalizeStudentId(row && row.studentId) === sid && row && row.activity; })
+      .sort(function (a, b) { return String(b.createdAt || "").localeCompare(String(a.createdAt || "")); })
+      .slice(0, limit);
+  }
+
+  function exportStudentJSON(studentId) {
+    var sid = normalizeStudentId(studentId);
+    return JSON.stringify({
+      version: VERSION,
+      student: getStudent(sid),
+      summary: getStudentSummary(sid),
+      sessions: getRecentSessions(sid, { limit: MAX_STUDENT_SESSIONS })
+    }, null, 2);
+  }
+
+  function exportStudentCSV(studentId) {
+    var sid = normalizeStudentId(studentId);
+    var rows = [
+      "sessionId,studentId,createdAt,activity,durationSec,solved,attemptsUsed,guessCount,avgGuessLatencyMs,misplaceRate,absentRate,repeatSameBadSlotCount,vowelSwapCount,constraintViolations"
+    ];
+    getRecentSessions(sid, { limit: MAX_STUDENT_SESSIONS }).forEach(function (session) {
+      var sig = session.signals || {};
+      var out = session.outcomes || {};
+      rows.push([
+        csv(session.id),
+        csv(session.studentId),
+        csv(session.createdAt),
+        csv(session.activity),
+        csv(session.durationSec),
+        csv(out.solved ? 1 : 0),
+        csv(out.attemptsUsed),
+        csv(sig.guessCount),
+        csv(sig.avgGuessLatencyMs),
+        csv(sig.misplaceRate),
+        csv(sig.absentRate),
+        csv(sig.repeatSameBadSlotCount),
+        csv(sig.vowelSwapCount),
+        csv(sig.constraintViolations)
+      ].join(","));
+    });
+    return rows.join("\n");
+  }
+
+  function recommendNextSteps(signals) {
+    var s = signals || {};
+    var bullets = [];
+    if (Number(s.repeatSameBadSlotCount || 0) >= 2) bullets.push("Constraint tracking mini-lesson before next session.");
+    if (Number(s.vowelSwapCount || 0) >= 3) bullets.push("2-minute vowel mapping warm-up.");
+    if (Number(s.misplaceRate || 0) >= 0.28) bullets.push("Positioning strategy: move one letter per guess.");
+    if (Number(s.avgGuessLatencyMs || 0) >= 10000 && Number(s.guessCount || 0) <= 3) bullets.push("Reduce cognitive load with guided first guess.");
+    if (!bullets.length) bullets.push("Continue current strategy and monitor consistency.");
+    return {
+      title: bullets[0],
+      bullets: bullets.slice(0, 3)
+    };
   }
 
   function sanitizeMetrics(module, metrics) {
@@ -360,6 +478,11 @@
     save: save,
     upsertStudent: upsertStudent,
     appendSession: appendSession,
+    addSession: addSession,
+    getRecentSessions: getRecentSessions,
+    exportStudentCSV: exportStudentCSV,
+    exportStudentJSON: exportStudentJSON,
+    recommendNextSteps: recommendNextSteps,
     getStudentSummary: getStudentSummary,
     listCaseload: listCaseload,
     exportJSON: exportJSON,
