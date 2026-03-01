@@ -137,11 +137,16 @@
             <h2 class="td-section-title">Evidence + Tools</h2>
             <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
             <div id="td-right-content" class="hidden">
-              <div id="td-evidence-chips" class="td-chip-grid"></div>
-              <div class="td-artifacts">
-                <h3>Recent sessions</h3>
-                <div id="td-session-list"></div>
-              </div>
+            <div id="td-evidence-chips" class="td-chip-grid"></div>
+            <article id="td-last-session-card" class="td-stage-empty">
+              <p class="td-label">Last Session Summary</p>
+              <h3 id="td-last-session-title" class="td-section-title">No recent quick check yet</h3>
+              <p id="td-last-session-meta" class="td-reco-line">Run a 90-second Word Quest quick check to generate signals.</p>
+            </article>
+            <div class="td-artifacts">
+              <h3>Recent sessions</h3>
+              <div id="td-session-list"></div>
+            </div>
               <details class="td-details" open>
                 <summary>Notes</summary>
                 <label class="td-notes">
@@ -152,6 +157,8 @@
               <details class="td-details">
                 <summary>Export + Share</summary>
                 <div class="td-share">
+                  <button id="td-share-summary" class="td-btn td-btn-primary btn btn-quiet" type="button">Share Summary</button>
+                  <button id="td-export-student-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export CSV</button>
                   <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>
                   <button id="td-copy-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy CSV</button>
                   <button id="td-copy-summary" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy summary</button>

@@ -62,6 +62,8 @@ async function getDashboardMarkers(page) {
         return txt.includes('Activities') || aria.includes('Activities');
       }),
       hasBrandHome: !!document.querySelector('a[aria-label="Home"]'),
+      hasStudentDrawer: !!document.getElementById('td-last-session-card'),
+      hasShareSummary: !!document.getElementById('td-share-summary'),
       tdShell: !!document.querySelector('.td-shell'),
       bodyClass: document.body.className
     };

@@ -416,6 +416,14 @@ body.cs-has-nav-shell .td-shell {
 .td-artifacts h3 { margin: 0; font-size: 0.9rem; }
 .td-artifacts a { color: color-mix(in oklab, var(--accent) 75%, white 25%); text-decoration: none; font-size: var(--fs-sm); }
 .td-share { margin-top: 10px; display: grid; gap: 8px; }
+#td-last-session-card {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+#td-last-session-card .td-reco-line {
+  margin: 0;
+}
 
 .hidden { display: none !important; }
 

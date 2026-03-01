@@ -36,6 +36,10 @@
     rightEmpty: document.getElementById("td-right-empty"),
     rightContent: document.getElementById("td-right-content"),
     evidenceChips: document.getElementById("td-evidence-chips"),
+    lastSessionTitle: document.getElementById("td-last-session-title"),
+    lastSessionMeta: document.getElementById("td-last-session-meta"),
+    shareSummary: document.getElementById("td-share-summary"),
+    exportStudentCsv: document.getElementById("td-export-student-csv"),
     exportJson: document.getElementById("td-export-json"),
     copyCsv: document.getElementById("td-copy-csv"),
     importExport: document.getElementById("td-import-export"),
@@ -159,6 +163,8 @@
       if (el.metricAccuracy) el.metricAccuracy.textContent = "+0.0%";
       if (el.metricTier) el.metricTier.textContent = "Tier 2";
       if (el.metricSubline) el.metricSubline.textContent = "Accuracy +4.2% over last 3 sessions";
+      if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
+      if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
       setCoachLine("Search or pick a student and I will suggest the next best move.");
       return;
     }
@@ -195,6 +201,7 @@
     };
 
     renderEvidenceChips(summary.evidenceChips);
+    renderLastSessionSummary(state.selectedId);
     setCoachLine(summary.nextMove.line);
   }
 
@@ -206,6 +213,54 @@
     el.evidenceChips.innerHTML = chips.map(function (chip) {
       return '<span class="td-chip"><strong>' + chip.label + ':</strong> ' + chip.value + '</span>';
     }).join("");
+  }
+
+  function renderLastSessionSummary(studentId) {
+    if (!window.CSEvidence || typeof window.CSEvidence.getRecentSessions !== "function") return;
+    var sessions = window.CSEvidence.getRecentSessions(studentId, { limit: 1 });
+    var row = sessions[0];
+    if (!row) {
+      if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
+      if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
+      return;
+    }
+    var sig = row.signals || {};
+    var out = row.outcomes || {};
+    if (el.lastSessionTitle) {
+      el.lastSessionTitle.textContent = (out.solved ? "Solved" : "Not solved yet") + " · " + (out.attemptsUsed || sig.guessCount || 0) + " attempts";
+    }
+    if (el.lastSessionMeta) {
+      var hints = [];
+      if (Number(sig.vowelSwapCount || 0) >= 3) hints.push("Vowel swaps high");
+      if (Number(sig.repeatSameBadSlotCount || 0) >= 2) hints.push("Repeated same slot");
+      if (!hints.length) hints.push("Signals stable");
+      el.lastSessionMeta.textContent = hints.join(" · ") + " · Next: guided quick check";
+    }
+  }
+
+  function buildShareSummaryText(studentId) {
+    var summary = Evidence.getStudentSummary(studentId);
+    var sessions = (window.CSEvidence && typeof window.CSEvidence.getRecentSessions === "function")
+      ? window.CSEvidence.getRecentSessions(studentId, { limit: 1 })
+      : [];
+    var row = sessions[0] || {};
+    var sig = row.signals || {};
+    var rec = (window.CSEvidence && typeof window.CSEvidence.recommendNextSteps === "function")
+      ? window.CSEvidence.recommendNextSteps(sig)
+      : { bullets: [summary.nextMove.line] };
+    return [
+      "Student: " + summary.student.name + " (" + summary.student.id + ")",
+      "Date: " + new Date().toISOString().slice(0, 10),
+      "Activity: Word Quest (90s)",
+      "Observed:",
+      "- Attempts: " + (row.outcomes && row.outcomes.attemptsUsed != null ? row.outcomes.attemptsUsed : "--"),
+      "- Vowel swaps: " + (sig.vowelSwapCount != null ? sig.vowelSwapCount : "--"),
+      "- Repeat same slot: " + (sig.repeatSameBadSlotCount != null ? sig.repeatSameBadSlotCount : "--"),
+      "Next step (Tier 2):",
+      "- " + (rec.bullets && rec.bullets[0] ? rec.bullets[0] : summary.nextMove.line),
+      "Progress note:",
+      "- " + summary.nextMove.line
+    ].join("\n");
   }
 
   function download(name, contents, mime) {
@@ -358,10 +413,30 @@
       });
     }
 
+    if (el.shareSummary) {
+      el.shareSummary.addEventListener("click", function () {
+        if (!state.selectedId) return;
+        var text = buildShareSummaryText(state.selectedId);
+        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+        setCoachLine("Copied summary for teacher/family/admin notes.");
+      });
+    }
+
+    if (el.exportStudentCsv) {
+      el.exportStudentCsv.addEventListener("click", function () {
+        if (!state.selectedId || !window.CSEvidence || typeof window.CSEvidence.exportStudentCSV !== "function") return;
+        var csv = window.CSEvidence.exportStudentCSV(state.selectedId);
+        if (navigator.clipboard) navigator.clipboard.writeText(csv).catch(function () {});
+        setCoachLine("Copied student session CSV.");
+      });
+    }
+
     el.exportJson.addEventListener("click", function () {
       var id = state.selectedId || (state.caseload[0] && state.caseload[0].id) || "demo-student";
-      var payload = Evidence.exportStudentSnapshot(id);
-      download("student-summary-" + id + ".json", JSON.stringify(payload.json, null, 2), "application/json");
+      var jsonPayload = (window.CSEvidence && typeof window.CSEvidence.exportStudentJSON === "function")
+        ? window.CSEvidence.exportStudentJSON(id)
+        : JSON.stringify(Evidence.exportStudentSnapshot(id).json, null, 2);
+      download("student-summary-" + id + ".json", jsonPayload, "application/json");
       setCoachLine("Exported student summary JSON.");
     });
 
