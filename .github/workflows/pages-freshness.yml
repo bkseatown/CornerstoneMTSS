@@ -1,0 +1,93 @@
+name: Pages Freshness
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: pages-freshness
+  cancel-in-progress: true
+
+jobs:
+  check-live-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate live WordQuest freshness
+        env:
+          BASE: https://bkseatown.github.io/WordQuest
+        run: |
+          set -euo pipefail
+
+          echo "Checking ${BASE}/build.json"
+          build_json="$(curl -sS --fail "${BASE}/build.json?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}")"
+          echo "${build_json}" > /tmp/build.json
+          python3 - <<'PY'
+          import json, datetime, pathlib
+
+          raw = pathlib.Path("/tmp/build.json").read_text(encoding="utf-8")
+          data = json.loads(raw)
+          build_id = str(data.get("buildId") or "").strip()
+          if not build_id:
+            raise SystemExit("build.json missing buildId")
+          stamp = str(data.get("time") or "").strip()
+          if stamp:
+            try:
+              parsed = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+              age = datetime.datetime.now(datetime.timezone.utc) - parsed.astimezone(datetime.timezone.utc)
+              if age.total_seconds() > 60 * 60 * 24 * 14:
+                raise SystemExit(f"build.json appears stale ({age.days} days old)")
+            except ValueError:
+              raise SystemExit(f"Invalid build.json time field: {stamp}")
+          print(f"buildId={build_id}")
+          PY
+
+          echo "Checking teacher-dashboard script markers"
+          dashboard_html="$(curl -sS --fail "${BASE}/teacher-dashboard.html?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}")"
+          [[ "${dashboard_html}" == *"build-stamp.js"* ]] || { echo "Missing build-stamp include"; exit 1; }
+          [[ "${dashboard_html}" == *"js/build-badge.js"* ]] || { echo "Missing build-badge include"; exit 1; }
+          [[ "${dashboard_html}" == *"js/nav-shell.js"* ]] || { echo "Missing nav-shell include"; exit 1; }
+
+          echo "Checking tokens.css content-type"
+          token_headers="$(curl -sSIL --fail "${BASE}/style/tokens.css?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}")"
+          status_line="$(printf "%s\n" "${token_headers}" | head -n 1)"
+          content_type="$(printf "%s\n" "${token_headers}" | tr '[:upper:]' '[:lower:]' | awk -F': ' '/^content-type:/{print $2; exit}')"
+          [[ "${status_line}" == *"200"* ]] || { echo "tokens.css non-200: ${status_line}"; exit 1; }
+          [[ "${content_type}" == *"text/css"* ]] || { echo "tokens.css wrong content-type: ${content_type}"; exit 1; }
+
+          echo "Pages freshness checks passed."
+
+  alert-on-failure:
+    needs:
+      - check-live-pages
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open freshness alert issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = `Pages freshness alert (${new Date().toISOString().slice(0,10)})`;
+            const body = [
+              'Scheduled Pages freshness check failed.',
+              '',
+              `- Run: ${runUrl}`,
+              `- Workflow: ${context.workflow}`,
+              '',
+              'Checks include:',
+              '- /WordQuest/build.json availability + sanity',
+              '- teacher-dashboard script markers',
+              '- /WordQuest/style/tokens.css content-type'
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['bug']
+            });
