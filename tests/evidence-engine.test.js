@@ -52,8 +52,10 @@ function run() {
   const snapshot = engine.getStudentSkillSnapshot('stu-a');
   assert(snapshot.skills['LIT.DEC.SYL'], 'has skill snapshot');
   assert(typeof snapshot.skills['LIT.DEC.SYL'].mastery === 'number', 'has mastery');
+  assert(typeof snapshot.skills['LIT.DEC.SYL'].rawMastery === 'number', 'has rawMastery');
   assert(typeof snapshot.skills['LIT.DEC.SYL'].lastTs === 'number', 'has lastTs');
   assert(typeof snapshot.skills['LIT.DEC.SYL'].stalenessDays === 'number', 'has stalenessDays');
+  assert(snapshot.skills['LIT.DEC.SYL'].mastery <= snapshot.skills['LIT.DEC.SYL'].rawMastery, 'penalty does not increase mastery');
 
   // computePriority sorted + numeric overall
   const pr = engine.computePriority('stu-a');
@@ -85,6 +87,31 @@ function run() {
   const hi = engine.computePriority('conf-hi').overallPriority;
   const lo = engine.computePriority('conf-lo').overallPriority;
   assert(lo > hi, 'lower confidence increases urgency');
+
+  // EWMA + staleness penalty behavior
+  engine.recordEvidence({
+    studentId: 'ewma',
+    timestamp: isoDaysAgo(30),
+    module: 'wordquest',
+    targets: ['LIT.DEC.IRREG'],
+    tier: 'T2',
+    result: { accuracy: 0.2 },
+    confidence: 0.5
+  });
+  engine.recordEvidence({
+    studentId: 'ewma',
+    timestamp: isoDaysAgo(29),
+    module: 'wordquest',
+    targets: ['LIT.DEC.IRREG'],
+    tier: 'T2',
+    result: { accuracy: 0.9 },
+    confidence: 0.5
+  });
+  const ewmaSnap = engine.getStudentSkillSnapshot('ewma').skills['LIT.DEC.IRREG'];
+  assert(ewmaSnap.rawMastery > 0.2 && ewmaSnap.rawMastery < 0.9, 'ewma smooths between points');
+  assert(ewmaSnap.mastery < ewmaSnap.rawMastery, 'staleness penalty reduces mastery');
+  const ewmaPriority = engine.computePriority('ewma').topSkills[0];
+  assert(ewmaPriority.need > (1 - ewmaSnap.rawMastery), 'need increases after mastery penalty');
 
   // missing evidence fallback
   const missing = engine.computePriority('nobody');

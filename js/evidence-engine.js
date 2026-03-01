@@ -10,6 +10,7 @@
   var STORAGE_KEY = 'cs.evidence.v2';
   var WINDOW_N = 5;
   var DEFAULT_CONFIDENCE = 0.5;
+  var EWMA_ALPHA = 0.55;
 
   function clamp(v, lo, hi) {
     return Math.max(lo, Math.min(hi, v));
@@ -34,6 +35,17 @@
     if (!ts) return 0;
     var delta = Date.now() - ts;
     return Math.max(0, Math.floor(delta / 86400000));
+  }
+
+  function computeEwma(values, alpha) {
+    if (!Array.isArray(values) || !values.length) return 0.5;
+    var a = Number.isFinite(Number(alpha)) ? Number(alpha) : EWMA_ALPHA;
+    var ewma = clamp(Number(values[0]), 0, 1);
+    for (var i = 1; i < values.length; i += 1) {
+      var x = clamp(Number(values[i]), 0, 1);
+      ewma = (a * x) + ((1 - a) * ewma);
+    }
+    return clamp(ewma, 0, 1);
   }
 
   function readStore() {
@@ -156,13 +168,15 @@
         .map(function (v) { return clamp(Number(v), 0, 1); });
 
       var rawMastery = accuracyValues.length
-        ? accuracyValues.reduce(function (sum, v) { return sum + v; }, 0) / accuracyValues.length
+        ? computeEwma(accuracyValues, EWMA_ALPHA)
         : 0.5;
+      var recencyPenalty = clamp(stalenessDays / 30, 0, 0.25);
+      var masteryAdj = clamp(rawMastery - recencyPenalty, 0.05, 0.98);
 
       skills[targetId] = {
         n: rows.length,
         rawMastery: Number(rawMastery.toFixed(4)),
-        mastery: Number(rawMastery.toFixed(4)),
+        mastery: Number(masteryAdj.toFixed(4)),
         lastTs: lastTs,
         stalenessDays: stalenessDays
       };
