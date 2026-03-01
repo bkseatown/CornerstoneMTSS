@@ -15,6 +15,7 @@
   var CaseloadHealth = window.CSCaseloadHealth;
   var FlexGroupEngineV2 = window.CSFlexGroupEngineV2;
   var ProgressSummary = window.CSProgressSummary;
+  var PathwayEngine = window.CSPathwayEngine;
   var ExportNotes = window.CSExportNotes;
   var FlexGroupEngine = window.CSFlexGroupEngine;
   var PlanEngine = window.CSPlanEngine;
@@ -521,6 +522,9 @@
       }
       var nextStepLine = topSkill ? formatNextStep(sid, topSkill.skillId) : "";
       var trendLine = buildTrajectoryLine(sid, row.priority && row.priority.topSkills ? row.priority.topSkills : []);
+      var pathway = PathwayEngine && typeof PathwayEngine.detectPrimaryPathway === "function"
+        ? PathwayEngine.detectPrimaryPathway({ topSkills: row.priority && row.priority.topSkills ? row.priority.topSkills : [] })
+        : { pathway: "Foundational", confidenceScore: 0 };
       var whyItems = [];
       if (topSkill) {
         var masteryEst = Math.max(0, Math.min(1, 1 - Number(topSkill.need || 0.5)));
@@ -559,6 +563,7 @@
         '</div>',
         '</div>',
         (rationale ? ('<p class="td-todayCard__last" title="' + confidenceTip + '">' + rationale + '</p>') : ''),
+        '<p class="td-todayCard__last">Primary Focus: ' + pathway.pathway + '</p>',
         (trendLine ? ('<p class="td-todayCard__last">' + trendLine + '</p>') : ''),
         (nextStepLine ? ('<p class="td-todayCard__last">' + nextStepLine + '</p>') : ''),
         (whyItems.length ? ('<details class="td-todayWhy"><summary>Why</summary><ul>' + whyItems.map(function (item) { return "<li>" + item + "</li>"; }).join("") + '</ul></details>') : ''),
