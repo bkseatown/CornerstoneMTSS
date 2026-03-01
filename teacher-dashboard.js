@@ -1,6 +1,8 @@
 (function teacherDashboardVNext() {
   "use strict";
 
+  try { document.body && document.body.classList.add("td-page"); } catch (_e) {}
+
   var Evidence = window.CSEvidence;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;

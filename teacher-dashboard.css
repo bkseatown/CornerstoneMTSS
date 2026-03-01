@@ -19,18 +19,25 @@ body.teacher-dashboard {
   font-feature-settings: "zero" 0;
 }
 
+body.td-page {
+  overflow: hidden;
+}
+
 .td-shell {
   width: min(1320px, calc(100vw - 24px));
   height: 100dvh;
+  max-height: 100dvh;
   margin: 0 auto;
   padding: 10px 0;
   display: grid;
   grid-template-rows: 72px minmax(0, 1fr);
   gap: 10px;
+  overflow: hidden;
 }
 
 body.cs-has-nav-shell .td-shell {
   height: calc(100dvh - var(--nav-h));
+  max-height: calc(100dvh - var(--nav-h));
 }
 
 .td-surface {
@@ -115,7 +122,7 @@ body.cs-has-nav-shell .td-shell {
   overflow: hidden;
 }
 
-.td-left, .td-center, .td-right { min-height: 0; padding: 12px; overflow: hidden; }
+.td-left, .td-center, .td-right { min-height: 0; padding: 12px; overflow: auto; }
 .td-left h2, .td-center h2, .td-right h2 { margin: 0 0 10px; font-size: var(--h3); font-weight: var(--fw-semibold); }
 
 .td-caseload-list { display: grid; gap: 8px; overflow: auto; max-height: 100%; padding-right: 3px; }
