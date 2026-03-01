@@ -59,16 +59,10 @@ test.describe('UI screenshot audit', () => {
         await expect(page.locator(expectedMarker(pageDef.slug)).first()).toBeVisible();
         if (NO_SCROLL_SLUGS.has(pageDef.slug)) {
           const overflow = await page.evaluate(() => {
-            const body = document.body;
-            const doc = document.documentElement;
-            const clientHeight = Math.min(doc.clientHeight || 0, window.innerHeight || 0);
-            const scrollHeight = Math.max(body ? body.scrollHeight : 0, doc.scrollHeight || 0);
-            return { scrollHeight, clientHeight };
+            const el = document.scrollingElement;
+            return el ? (el.scrollHeight - el.clientHeight) : 0;
           });
-          expect(
-            overflow.scrollHeight,
-            `${pageDef.slug} overflows at ${viewport.width}x${viewport.height} (${overflow.scrollHeight} > ${overflow.clientHeight})`
-          ).toBeLessThanOrEqual(overflow.clientHeight);
+          expect(overflow, `${pageDef.slug} document overflow at ${viewport.width}x${viewport.height}`).toBe(0);
         }
 
         await page.waitForTimeout(250);
