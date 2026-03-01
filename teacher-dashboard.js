@@ -244,6 +244,40 @@
     return parts.length ? ("Trend: " + parts.join(" • ")) : "";
   }
 
+  function moduleForSkill(skillId) {
+    var id = String(skillId || "");
+    if (id.indexOf("LIT.DEC") === 0) return "Word Quest";
+    if (id.indexOf("LIT.FLU") === 0) return "Reading Lab";
+    if (id.indexOf("LIT.LANG.SYN") === 0 || id.indexOf("LIT.WRITE") === 0) return "Sentence Surgery";
+    if (id.indexOf("LIT.LANG.VOC") === 0) return "Sentence Surgery";
+    return "Word Quest";
+  }
+
+  function allocateMinutes(topSkills, totalMinutes) {
+    var mins = Math.max(10, Number(totalMinutes || 20));
+    var rows = Array.isArray(topSkills) ? topSkills.slice(0, 3) : [];
+    if (!rows.length) return { line: mins + "m Word Quest", buckets: [] };
+    var totalWeight = rows.reduce(function (sum, r) {
+      return sum + Math.max(0.1, Number(r.priorityScore || 0.1));
+    }, 0);
+    var bucketMap = {};
+    rows.forEach(function (r) {
+      var moduleName = moduleForSkill(r.skillId);
+      var weight = Math.max(0.1, Number(r.priorityScore || 0.1)) / totalWeight;
+      var m = Math.max(2, Math.round(weight * mins));
+      bucketMap[moduleName] = (bucketMap[moduleName] || 0) + m;
+    });
+    var buckets = Object.keys(bucketMap).map(function (name) {
+      return { module: name, minutes: bucketMap[name] };
+    }).sort(function (a, b) { return b.minutes - a.minutes; });
+    var assigned = buckets.reduce(function (sum, b) { return sum + b.minutes; }, 0);
+    if (assigned !== mins && buckets.length) {
+      buckets[0].minutes += (mins - assigned);
+    }
+    var line = "Suggested split: " + buckets.map(function (b) { return b.minutes + "m " + b.module; }).join(" • ");
+    return { line: line, buckets: buckets };
+  }
+
   function bootstrapSkillStore() {
     if (!SkillStoreAPI || typeof SkillStoreAPI.initSkillStore !== "function") return;
     SkillStoreAPI.initSkillStore().then(function (store) {
@@ -469,6 +503,20 @@
       }
       var nextStepLine = topSkill ? formatNextStep(sid, topSkill.skillId) : "";
       var trendLine = buildTrajectoryLine(sid, row.priority && row.priority.topSkills ? row.priority.topSkills : []);
+      var whyItems = [];
+      if (topSkill) {
+        var masteryEst = Math.max(0, Math.min(1, 1 - Number(topSkill.need || 0.5)));
+        var masteryBand = MasteryLabels && typeof MasteryLabels.masteryToBand === "function"
+          ? MasteryLabels.masteryToBand(masteryEst).label
+          : "Developing";
+        whyItems = [
+          "Top Skill: " + formatSkillBreadcrumb(topSkill.skillId),
+          "Need: " + needLabel,
+          "Cadence: " + topSkill.stalenessDays + "d/" + cadenceDays + "d",
+          "Tier: " + topSkill.tier,
+          "Confidence: " + masteryBand
+        ];
+      }
       return [
         '<article class="td-todayCard">',
         '<div class="td-todayCard__top">',
@@ -495,6 +543,7 @@
         (rationale ? ('<p class="td-todayCard__last" title="' + confidenceTip + '">' + rationale + '</p>') : ''),
         (trendLine ? ('<p class="td-todayCard__last">' + trendLine + '</p>') : ''),
         (nextStepLine ? ('<p class="td-todayCard__last">' + nextStepLine + '</p>') : ''),
+        (whyItems.length ? ('<details class="td-todayWhy"><summary>Why</summary><ul>' + whyItems.map(function (item) { return "<li>" + item + "</li>"; }).join("") + '</ul></details>') : ''),
         '<p class="td-todayCard__last">' + lastText + '</p>',
         '</article>'
       ].join("");
@@ -521,11 +570,12 @@
           ? EvidenceEngine.getIntensityTier(tier)
           : { minutesPerSession: tier === "T3" ? 25 : 20 };
         var mins = Number(tierCfg.minutesPerSession || (tier === "T3" ? 25 : 20));
+        var split = allocateMinutes(row && row.priority && row.priority.topSkills ? row.priority.topSkills : [], mins);
         var warm = Math.max(2, Math.round(mins * 0.15));
         var guided = Math.max(6, Math.round(mins * 0.4));
         var check = Math.max(6, Math.round(mins * 0.35));
         var reflect = Math.max(2, mins - warm - guided - check);
-        setCoachLine(mins + "-min block: " + warm + "-min warm-up, " + guided + "-min guided practice, " + check + "-min quick check, " + reflect + "-min reflection. Focus: " + focusLine + ".");
+        setCoachLine(mins + "-min block: " + warm + "-" + guided + "-" + check + "-" + reflect + " plan. " + split.line + ". Focus: " + focusLine + ".");
       });
     });
 

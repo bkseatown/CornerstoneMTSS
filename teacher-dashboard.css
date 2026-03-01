@@ -393,6 +393,26 @@ body.cs-has-nav-shell .td-shell {
   text-overflow: ellipsis;
 }
 
+.td-todayWhy {
+  border-top: 1px dashed color-mix(in oklab, var(--border-subtle) 68%, transparent);
+  padding-top: 6px;
+}
+
+.td-todayWhy > summary {
+  cursor: pointer;
+  font-size: var(--fs-1, 13px);
+  color: color-mix(in oklab, var(--muted) 86%, white 14%);
+}
+
+.td-todayWhy > ul {
+  margin: 6px 0 0;
+  padding-left: 16px;
+  display: grid;
+  gap: 3px;
+  font-size: var(--fs-0, 12px);
+  color: color-mix(in oklab, var(--muted) 82%, white 18%);
+}
+
 .td-chip--auto { opacity: 0.85; }
 
 .td-today__group {
