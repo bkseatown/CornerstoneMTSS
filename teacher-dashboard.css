@@ -31,8 +31,10 @@ body.teacher-dashboard {
 
 .td-surface {
   border-radius: var(--radius-4);
-  border: 1px solid color-mix(in oklab, var(--border-subtle) 72%, transparent);
-  background: color-mix(in oklab, var(--surface-1) 82%, rgba(14, 26, 38, 0.82));
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 58%, transparent);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(11, 20, 29, 0.24)),
+    color-mix(in oklab, var(--surface-1) 72%, rgba(12, 22, 32, 0.86));
   box-shadow: var(--shadow-medium);
   backdrop-filter: blur(10px);
 }
@@ -79,7 +81,10 @@ body.teacher-dashboard {
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   cursor: pointer;
+  transition: transform var(--motion-fast) var(--motion-ease), filter var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
 }
+.td-top-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.td-top-btn:active { transform: translateY(0); filter: brightness(0.98); }
 .td-coach-chip { border-color: color-mix(in oklab, var(--accent) 58%, transparent); }
 .td-coach-chip.is-fresh { animation: tdCoachPulse 220ms ease-out 1; }
 @keyframes tdCoachPulse { 0% { transform: scale(1); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
@@ -125,8 +130,8 @@ body.teacher-dashboard {
 
 .td-stage-empty, .td-empty {
   border-radius: var(--radius-3);
-  border: 1px dashed color-mix(in oklab, var(--border-subtle) 72%, transparent);
-  background: color-mix(in oklab, var(--surface-2) 58%, transparent);
+  border: 1px dashed color-mix(in oklab, var(--border-subtle) 54%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 52%, transparent);
   padding: 14px;
   color: var(--muted);
 }
@@ -163,6 +168,7 @@ body.teacher-dashboard {
   transition: transform var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
 }
 .td-btn:hover { transform: translateY(-1px); }
+.td-btn:active { transform: translateY(0); filter: brightness(0.98); }
 .td-btn-primary {
   background: color-mix(in oklab, var(--surface-2) 75%, transparent);
   border-color: color-mix(in oklab, var(--border-subtle) 74%, transparent);
@@ -187,6 +193,16 @@ body.teacher-dashboard {
   animation: tdTick 190ms var(--motion-ease);
 }
 @keyframes tdTick { from { transform: scale(1.02); opacity: 0.85; } to { transform: scale(1); opacity: 1; } }
+
+.td-quick-launch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.td-quick-launch-row .td-top-btn {
+  background: color-mix(in oklab, var(--surface-2) 76%, rgba(13, 25, 36, 0.85));
+}
 
 .td-artifacts { display: grid; gap: 6px; margin-top: 10px; }
 .td-artifacts h3 { margin: 0; font-size: 0.9rem; }
