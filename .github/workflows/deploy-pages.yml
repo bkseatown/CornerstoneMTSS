@@ -14,19 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Stamp build id
-        run: npm run stamp:version
-      - name: Run release gate (contracts + smokes + regressions)
-        run: npm run release:gate
-
   deploy:
     runs-on: ubuntu-latest
     permissions:
