@@ -15,10 +15,10 @@
 <body class="teacher-dashboard td-page">
   <main class="td-shell" id="td-shell">
     <header class="td-top td-surface card">
-      <div class="td-wordmark">
+      <a class="td-wordmark td-brand-home" href="./index.html" aria-label="Home">
         <strong>Cornerstone MTSS</strong>
         <span>Teacher Dashboard</span>
-      </div>
+      </a>
 
       <label class="td-search-wrap" for="td-search-input">
         <input id="td-search-input" type="search" placeholder="Search student or resource..." autocomplete="off">
@@ -26,8 +26,18 @@
 
       <div class="td-top-actions">
         <button id="td-add-student" class="td-top-btn" type="button">Add Student</button>
-        <a class="td-top-btn td-nav-btn" href="./index.html">Home</a>
-        <a class="td-top-btn td-nav-btn" href="./word-quest.html">Word Quest</a>
+        <button id="td-home-btn" class="td-top-btn td-nav-btn" type="button">Home</button>
+        <label class="td-activity-pick" for="td-activity-select">
+          <span>Activities</span>
+          <select id="td-activity-select" class="td-top-btn">
+            <option value="">Go to...</option>
+            <option value="word-quest.html">Word Quest</option>
+            <option value="reading-lab.html">Reading Lab</option>
+            <option value="sentence-surgery.html">Sentence Surgery</option>
+            <option value="writing-studio.html">Writing Studio</option>
+            <option value="numeracy.html">Numeracy</option>
+          </select>
+        </label>
         <button id="td-coach-chip" class="td-top-btn td-coach-chip" type="button">Coach</button>
         <button id="td-admin-demo" class="td-top-btn" type="button">Admin Demo</button>
         <button id="td-new-session" class="td-top-btn" type="button">New Session</button>

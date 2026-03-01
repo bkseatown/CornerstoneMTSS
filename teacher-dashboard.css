@@ -32,6 +32,11 @@ body.td-page {
   overflow: hidden !important;
 }
 
+/* Nav shell offset must live on dashboard shell, not document padding. */
+body.td-page.cs-has-nav-shell {
+  padding-top: 0 !important;
+}
+
 /* Root dashboard shell */
 .td-shell {
   width: min(1320px, calc(100vw - 24px));
@@ -47,8 +52,10 @@ body.td-page {
 
 /* If global nav shell exists */
 body.cs-has-nav-shell .td-shell {
-  height: calc(100dvh - var(--nav-h));
-  max-height: calc(100dvh - var(--nav-h));
+  height: 100dvh;
+  max-height: 100dvh;
+  margin-top: 0;
+  padding-top: calc(10px + var(--nav-h));
 }
 
 .td-surface {
@@ -74,6 +81,10 @@ body.cs-has-nav-shell .td-shell {
 
 .td-wordmark strong { display: block; font-size: 1rem; }
 .td-wordmark span { font-size: var(--fs-1); color: color-mix(in oklab, var(--muted) 82%, white 18%); font-weight: var(--fw-medium); }
+.td-brand-home {
+  text-decoration: none;
+  color: inherit;
+}
 
 #td-search-input {
   width: 100%;
@@ -109,6 +120,20 @@ body.cs-has-nav-shell .td-shell {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+}
+.td-activity-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-1);
+  color: color-mix(in oklab, var(--muted) 84%, white 16%);
+}
+.td-activity-pick > span {
+  white-space: nowrap;
+}
+#td-activity-select {
+  min-height: 34px;
+  padding-right: 28px;
 }
 .td-top-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
 .td-top-btn:active { transform: translateY(0); filter: brightness(0.98); }
@@ -291,7 +316,11 @@ body.cs-has-nav-shell .td-shell {
 }
 
 @media (max-width: 900px) {
-  .td-shell { width: calc(100vw - 10px); height: 100dvh; }
+  .td-shell { width: calc(100vw - 10px); }
+  body.cs-has-nav-shell .td-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
   .td-top { grid-template-columns: 1fr; }
   .td-body {
     grid-template-columns: repeat(3, 100%);

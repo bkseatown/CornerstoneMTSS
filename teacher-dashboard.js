@@ -35,7 +35,10 @@
     copyCsv: document.getElementById("td-copy-csv"),
     importExport: document.getElementById("td-import-export"),
     addStudent: document.getElementById("td-add-student"),
+    brandHome: document.querySelector(".td-brand-home"),
     settings: document.getElementById("td-settings"),
+    homeBtn: document.getElementById("td-home-btn"),
+    activitySelect: document.getElementById("td-activity-select"),
     copySummary: document.getElementById("td-copy-summary"),
     quickLaunchButtons: Array.prototype.slice.call(document.querySelectorAll("[data-quick]")),
     emptyActions: Array.prototype.slice.call(document.querySelectorAll("[data-empty-action]")),
@@ -266,6 +269,21 @@
     }
   }
 
+  function currentStudentParam() {
+    try {
+      var sid = new URLSearchParams(window.location.search).get("student");
+      if (sid) return sid;
+    } catch (_e) {}
+    return state.selectedId || "";
+  }
+
+  function appendStudentParam(url) {
+    var sid = currentStudentParam();
+    var u = new URL(String(url || ""), window.location.href);
+    if (sid) u.searchParams.set("student", sid);
+    return u.pathname.replace(/^\//, "./") + (u.search || "");
+  }
+
   function bindEvents() {
     el.search.addEventListener("input", function () { filterCaseload(el.search.value || ""); });
     el.importExport.addEventListener("click", handleImportExport);
@@ -284,6 +302,23 @@
       }
       setCoachLine("Build controls unavailable. Reload this page.");
     });
+
+    if (el.homeBtn) {
+      el.homeBtn.addEventListener("click", function () {
+        window.location.href = appendStudentParam("./index.html");
+      });
+    }
+    if (el.brandHome) {
+      el.brandHome.setAttribute("href", appendStudentParam("./index.html"));
+    }
+
+    if (el.activitySelect) {
+      el.activitySelect.addEventListener("change", function () {
+        var target = String(el.activitySelect.value || "").trim();
+        if (!target) return;
+        window.location.href = appendStudentParam("./" + target);
+      });
+    }
 
     el.exportJson.addEventListener("click", function () {
       var id = state.selectedId || (state.caseload[0] && state.caseload[0].id) || "demo-student";
@@ -316,8 +351,7 @@
       button.addEventListener("click", function () {
         var target = String(button.getAttribute("data-quick") || "").trim();
         if (!target) return;
-        var sid = encodeURIComponent(state.selectedId || "demo-student");
-        window.location.href = target + ".html?student=" + sid;
+        window.location.href = appendStudentParam("./" + target + ".html");
       });
     });
 
@@ -340,6 +374,14 @@
   ensureDemoCaseload();
   refreshCaseload();
   bindEvents();
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "H" && event.shiftKey) {
+      var tag = event.target && event.target.tagName ? String(event.target.tagName).toLowerCase() : "";
+      if (tag === "input" || tag === "textarea" || (event.target && event.target.isContentEditable)) return;
+      event.preventDefault();
+      window.location.href = appendStudentParam("./index.html");
+    }
+  });
   setupCoachRibbon();
   var initial = (function () {
     try {
