@@ -7,6 +7,7 @@
 
   var Evidence = window.CSEvidence;
   var EvidenceEngine = window.CSEvidenceEngine;
+  var SkillLabels = window.CSSkillLabels;
   var PlanEngine = window.CSPlanEngine;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
@@ -183,11 +184,22 @@
 
   function focusFromSnapshot(snapshot) {
     if (snapshot && Array.isArray(snapshot.topSkills) && snapshot.topSkills.length) {
-      return snapshot.topSkills.slice(0, 2).map(function (skill) { return String(skill.skillId || "Need"); });
+      var skillIds = snapshot.topSkills.slice(0, 3).map(function (skill) { return String(skill.skillId || ""); });
+      if (SkillLabels && typeof SkillLabels.getPrettyTargets === "function") {
+        return SkillLabels.getPrettyTargets(skillIds);
+      }
+      return skillIds.filter(Boolean);
     }
     var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
     if (needs.length) return needs.slice(0, 2).map(function (need) { return String(need.label || "Need"); });
     return ["Collect baseline"];
+  }
+
+  function formatSkillBreadcrumb(skillId) {
+    if (SkillLabels && typeof SkillLabels.getSkillBreadcrumb === "function") {
+      return SkillLabels.getSkillBreadcrumb(skillId);
+    }
+    return String(skillId || "Skill");
   }
 
   function scoreStudent(student) {
@@ -268,7 +280,9 @@
       var topSkill = row.priority && row.priority.topSkills && row.priority.topSkills[0]
         ? row.priority.topSkills[0]
         : null;
-      var rationale = topSkill ? String(topSkill.rationale || "") : "";
+      var rationale = topSkill
+        ? ("Priority: " + formatSkillBreadcrumb(topSkill.skillId))
+        : "";
       var needLabel = topSkill && Number(topSkill.need) >= 0.65 ? "high" : (topSkill && Number(topSkill.need) >= 0.4 ? "moderate" : "low");
       var cadenceLine = topSkill
         ? ("Cadence target: " + topSkill.cadenceTargetDays + "d | Current: " + topSkill.stalenessDays + "d | Need: " + needLabel)
