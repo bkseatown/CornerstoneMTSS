@@ -6,11 +6,13 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260301-v1';
-const SHELL_CACHE = `wq-shell-${SW_VERSION}`;
-const DATA_CACHE = `wq-data-${SW_VERSION}`;
-const AUDIO_CACHE = `wq-audio-${SW_VERSION}`;
-const DYNAMIC_CACHE = `wq-dynamic-${SW_VERSION}`;
+const SW_VERSION = '20260301-v2';
+const RUNTIME_BUILD_ID = new URL(self.location.href).searchParams.get('v') || SW_VERSION;
+const CACHE_PREFIX = `cs-cache-${RUNTIME_BUILD_ID}`;
+const SHELL_CACHE = `${CACHE_PREFIX}-shell`;
+const DATA_CACHE = `${CACHE_PREFIX}-data`;
+const AUDIO_CACHE = `${CACHE_PREFIX}-audio`;
+const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`;
 const AUDIO_MAX_ENTRIES = 1800;
 
 const CORE_FILES = [
@@ -19,9 +21,9 @@ const CORE_FILES = [
   './sw.js',
   './sw-runtime.js'
 ];
-const VERSION_URL = new URL('./version.json', self.registration.scope).toString();
+const VERSION_URL = new URL('./build.json', self.registration.scope).toString();
 const VERSION_META_CACHE = 'wq-version-meta';
-let runtimeCacheSuffix = SW_VERSION;
+let runtimeCacheSuffix = RUNTIME_BUILD_ID;
 
 async function readVersionPayload() {
   try {
@@ -34,8 +36,8 @@ async function readVersionPayload() {
 }
 
 function computeVersionSuffix(payload) {
-  const raw = String((payload && (payload.cacheBuster || payload.sha || payload.v)) || '').trim();
-  return raw ? raw.slice(0, 16) : SW_VERSION;
+  const raw = String((payload && (payload.buildId || payload.cacheBuster || payload.sha || payload.v)) || '').trim();
+  return raw || RUNTIME_BUILD_ID;
 }
 
 async function persistVersionSuffix(nextSuffix) {
@@ -75,11 +77,15 @@ self.addEventListener('activate', (event) => {
     const nextSuffix = computeVersionSuffix(versionPayload);
     const prevSuffix = await getStoredSuffix();
     runtimeCacheSuffix = nextSuffix;
-    const expected = new Set([SHELL_CACHE, DATA_CACHE, AUDIO_CACHE, DYNAMIC_CACHE]);
+    const expected = new Set([SHELL_CACHE, DATA_CACHE, AUDIO_CACHE, DYNAMIC_CACHE, VERSION_META_CACHE]);
     const names = await caches.keys();
     await Promise.all(
       names
-        .filter((name) => name.startsWith('wq-') && !expected.has(name))
+        .filter((name) => {
+          if (expected.has(name)) return false;
+          const v = String(name || '').toLowerCase();
+          return v.startsWith('wq-') || v.startsWith('cs-cache-') || v.startsWith('wordquest-') || v.startsWith('cornerstone-');
+        })
         .map((name) => caches.delete(name))
     );
 
@@ -102,7 +108,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  if (event?.data?.type === 'WQ_SKIP_WAITING') {
+  if (event?.data === 'SKIP_WAITING' || event?.data?.type === 'WQ_SKIP_WAITING') {
     self.skipWaiting();
   }
 });
@@ -137,7 +143,15 @@ async function trimCache(cacheName, maxEntries) {
 async function navigationHandler(request) {
   const cache = await caches.open(SHELL_CACHE);
   try {
-    const response = await fetch(request);
+    const networkRequest = new Request(request.url, {
+      method: request.method,
+      headers: request.headers,
+      mode: request.mode,
+      credentials: request.credentials,
+      redirect: request.redirect,
+      cache: 'reload'
+    });
+    const response = await fetch(networkRequest);
     // Never mask an upstream 404 with a cached shell; return network response as-is.
     if (response && response.status === 404) return response;
     if (response && response.ok) {
@@ -241,6 +255,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (isDataRequest(url)) {
+    if (url.pathname.endsWith('/build.json')) {
+      event.respondWith(fetch(request, { cache: 'no-store' }).catch(() => networkFirst(request, DATA_CACHE)));
+      return;
+    }
     event.respondWith(networkFirst(request, DATA_CACHE));
     return;
   }
