@@ -17,6 +17,7 @@
       { href: "./word-quest.html", label: "Word Quest", pages: ["word-quest.html"] },
       { href: "./reading-lab.html", label: "Reading Lab", pages: ["reading-lab.html"] },
       { href: "./sentence-surgery.html", label: "Sentence Surgery", pages: ["sentence-surgery.html"] },
+      { href: "./activities/decoding-diagnostic.html", label: "Decoding Diagnostic", pages: ["decoding-diagnostic.html"] },
       { href: "./writing-studio.html", label: "Writing Studio", pages: ["writing-studio.html"] },
       { href: "./numeracy.html", label: "Numeracy", pages: ["numeracy.html"] },
       { href: "./admin-dashboard.html", label: "Admin Dashboard", pages: ["admin-dashboard.html"] }

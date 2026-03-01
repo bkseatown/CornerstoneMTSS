@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-page="decoding-diagnostic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decoding Diagnostic</title>
+  <link rel="stylesheet" href="../style/nav-shell.css?v=20260301y">
+  <link rel="stylesheet" href="../style/tokens.css?v=20260301y">
+  <link rel="stylesheet" href="../style/typography.css?v=20260301y">
+  <style>
+    :root { --dd-h: calc(100dvh - var(--nav-h, 58px)); }
+    body { margin: 0; overflow: hidden; }
+    .dd-shell { height: var(--dd-h); max-height: var(--dd-h); display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 12px; }
+    .dd-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .dd-row > * { min-height: 36px; }
+    .dd-select, .dd-btn, .dd-input { border-radius: 10px; border: 1px solid color-mix(in oklab, var(--border-soft) 70%, transparent); background: color-mix(in oklab, var(--surface-2) 75%, transparent); color: var(--text-strong); padding: 8px 10px; }
+    .dd-btn { cursor: pointer; }
+    .dd-btn:focus-visible, .dd-select:focus-visible, .dd-input:focus-visible { outline: 2px solid color-mix(in oklab, var(--accent) 72%, white); outline-offset: 1px; }
+    .dd-card { min-height: 0; border-radius: 16px; border: 1px solid color-mix(in oklab, var(--border-soft) 70%, transparent); background: color-mix(in oklab, var(--surface-1) 82%, transparent); display: grid; grid-template-rows: auto 1fr auto; padding: 14px; gap: 10px; }
+    .dd-word { display: grid; place-items: center; font-size: clamp(2.1rem, 6vw, 4rem); font-weight: 700; letter-spacing: .01em; min-height: 0; text-align: center; }
+    .dd-tags { display: flex; flex-wrap: wrap; gap: 8px; overflow: hidden; }
+    .dd-tag { border-radius: 999px; border: 1px solid color-mix(in oklab, var(--border-soft) 66%, transparent); padding: 4px 10px; font-size: 12px; background: color-mix(in oklab, var(--surface-2) 84%, transparent); cursor: pointer; }
+    .dd-tag.is-on { border-color: color-mix(in oklab, var(--accent) 70%, transparent); background: color-mix(in oklab, var(--accent) 16%, transparent); }
+    .dd-summary { display: none; min-height: 0; overflow: auto; }
+    .dd-summary.is-open { display: block; }
+    .dd-stat { font-size: 14px; margin: 4px 0; }
+    .dd-instructions { font-size: 12px; opacity: .82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="dd-shell" id="dd-shell">
+    <section class="dd-row" aria-label="Probe controls">
+      <input id="dd-student" class="dd-input" placeholder="Student ID" aria-label="Student ID">
+      <select id="dd-tier" class="dd-select" aria-label="Tier"><option value="T2">Tier 2</option><option value="T3">Tier 3</option></select>
+      <select id="dd-mode" class="dd-select" aria-label="Mode"><option value="timed">Timed (60s)</option><option value="untimed">Untimed</option></select>
+      <select id="dd-target" class="dd-select" aria-label="Target"></select>
+      <select id="dd-form" class="dd-select" aria-label="Form"></select>
+      <button id="dd-start" class="dd-btn" type="button">Start</button>
+      <button id="dd-end" class="dd-btn" type="button">End</button>
+      <button id="dd-pause" class="dd-btn" type="button">Pause</button>
+    </section>
+
+    <section class="dd-card" aria-live="polite">
+      <div class="dd-row"><strong id="dd-title">Decoding Diagnostic</strong><span id="dd-progress"></span><span id="dd-timer"></span></div>
+      <div id="dd-word" class="dd-word">Ready</div>
+      <div id="dd-tags" class="dd-tags"></div>
+    </section>
+
+    <section id="dd-summary" class="dd-card dd-summary" aria-label="Session summary">
+      <h2 style="margin:0">Session Summary</h2>
+      <div id="dd-summary-stats"></div>
+      <div class="dd-row">
+        <button id="dd-save" class="dd-btn" type="button">Save Evidence</button>
+        <button id="dd-copy-student" class="dd-btn" type="button">Copy Student Note</button>
+        <button id="dd-copy-family" class="dd-btn" type="button">Copy Family Note</button>
+        <button id="dd-copy-admin" class="dd-btn" type="button">Copy Admin Summary</button>
+      </div>
+    </section>
+
+    <footer class="dd-instructions">Space=Correct • X=Incorrect • S=Self-correct • T=Told • 1-6 tags • Enter=Next • Esc=Pause • Shift+P=Print • Shift+E=End</footer>
+  </main>
+
+  <script src="../js/nav-shell.js?v=20260301y"></script>
+  <script src="../build-stamp.js?v=20260301y"></script>
+  <script src="../js/build-badge.js?v=20260301y"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
+  <script src="../js/data-registry.js?v=20260301y" defer></script>
+  <script src="../js/skill-store.js?v=20260301y" defer></script>
+  <script src="../js/skill-labels.js?v=20260301y" defer></script>
+  <script src="../js/evidence-engine.js?v=20260301y" defer></script>
+  <script src="../js/decodingdiag/probe-store.js?v=20260301y" defer></script>
+  <script src="../js/decodingdiag/scoring.js?v=20260301y" defer></script>
+  <script src="../js/decodingdiag/ui.js?v=20260301y" defer></script>
+</body>
+</html>
