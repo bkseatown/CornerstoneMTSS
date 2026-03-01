@@ -34,6 +34,7 @@
   };
   var intensityLadder = INTENSITY_DEFAULTS;
   var intensityLoadStarted = false;
+  var auditLoggedOnce = false;
 
   function clamp(v, lo, hi) {
     return Math.max(lo, Math.min(hi, v));
@@ -130,6 +131,9 @@
     if (typeof localStorage === 'undefined') return { version: STORAGE_KEY, students: {} };
     var parsed = safeParse(localStorage.getItem(STORAGE_KEY), { version: STORAGE_KEY, students: {} });
     if (!parsed || typeof parsed !== 'object') parsed = { version: STORAGE_KEY, students: {} };
+    if (parsed.version && parsed.version !== STORAGE_KEY) {
+      parsed = { version: STORAGE_KEY, students: {} };
+    }
     if (!parsed.students || typeof parsed.students !== 'object') parsed.students = {};
     if (!parsed.version) parsed.version = STORAGE_KEY;
     return parsed;
@@ -195,7 +199,15 @@
     };
   }
 
+  function isValidEventShape(event) {
+    if (!event || typeof event !== 'object') return false;
+    if (!event.studentId || !String(event.studentId).trim()) return false;
+    if (!Array.isArray(event.targets) || !event.targets.length) return false;
+    return true;
+  }
+
   function recordEvidence(event) {
+    if (!isValidEventShape(event)) return null;
     var normalized = normalizeEvent(event);
     if (!normalized.studentId || !normalized.targets.length) return null;
 
@@ -216,6 +228,10 @@
     });
 
     writeStore(store);
+    if (!auditLoggedOnce) {
+      auditLoggedOnce = true;
+      auditEvidenceStore();
+    }
     return normalized;
   }
 
@@ -351,6 +367,48 @@
     return { direction: 'FLAT', delta: slope, label: 'Stable' };
   }
 
+  function knownSkillIds() {
+    var fromStore = root && root.__CS_SKILLSTORE__ && root.__CS_SKILLSTORE__.dictionaries && root.__CS_SKILLSTORE__.dictionaries.skillLabelById;
+    if (fromStore && typeof fromStore === 'object') return Object.keys(fromStore);
+    return [];
+  }
+
+  function auditEvidenceStore() {
+    var store = readStore();
+    var students = Object.keys(store.students || {});
+    var totalStudents = students.length;
+    var totalSkills = 0;
+    var oldRecords = 0;
+    var orphaned = {};
+    var known = knownSkillIds();
+    var hasKnown = known.length > 0;
+    var now = Date.now();
+
+    students.forEach(function (sid) {
+      var skills = store.students[sid] && store.students[sid].skills ? store.students[sid].skills : {};
+      Object.keys(skills).forEach(function (skillId) {
+        totalSkills += 1;
+        if (hasKnown && known.indexOf(skillId) === -1) orphaned[skillId] = true;
+        var records = Array.isArray(skills[skillId].records) ? skills[skillId].records : [];
+        records.forEach(function (row) {
+          var ts = toMs(row && row.timestamp);
+          if (ts && (now - ts) > (180 * 86400000)) oldRecords += 1;
+        });
+      });
+    });
+
+    var report = {
+      totalStudents: totalStudents,
+      totalSkillsTracked: totalSkills,
+      orphanedSkillIds: Object.keys(orphaned),
+      recordsOlderThan180d: oldRecords
+    };
+    if (root && root.console && typeof root.console.info === 'function') {
+      root.console.info('[CSEvidenceEngine] data-audit', report);
+    }
+    return report;
+  }
+
   function _clearAll() {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY);
@@ -364,6 +422,7 @@
     getStudentSkillSnapshot: getStudentSkillSnapshot,
     computePriority: computePriority,
     getSkillTrajectory: getSkillTrajectory,
+    auditEvidenceStore: auditEvidenceStore,
     getIntensityTier: getIntensityTier,
     _setIntensityLadderForTest: function (ladder) {
       intensityLadder = normalizeIntensityLadder(ladder);

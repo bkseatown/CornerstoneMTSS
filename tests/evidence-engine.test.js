@@ -179,6 +179,13 @@ function run() {
   assert(missing.topSkills.length > 0, 'missing evidence still returns topSkills');
   assert(missing.topSkills[0].skillId === 'MISSING_EVIDENCE', 'missing evidence sentinel');
 
+  // malformed event ignored
+  const bad = engine.recordEvidence({ studentId: '', targets: [] });
+  assert.strictEqual(bad, null, 'malformed events are ignored');
+
+  const audit = engine.auditEvidenceStore();
+  assert(typeof audit.totalStudents === 'number', 'audit summary exposed');
+
   console.log('evidence-engine.test: ok');
 }
 
