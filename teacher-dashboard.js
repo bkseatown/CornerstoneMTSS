@@ -14,6 +14,7 @@
   var MasteryLabels = window.CSMasteryLabels;
   var CaseloadHealth = window.CSCaseloadHealth;
   var FlexGroupEngineV2 = window.CSFlexGroupEngineV2;
+  var ProgressSummary = window.CSProgressSummary;
   var ExportNotes = window.CSExportNotes;
   var FlexGroupEngine = window.CSFlexGroupEngine;
   var PlanEngine = window.CSPlanEngine;
@@ -86,6 +87,8 @@
     todayGroupBuild: document.getElementById("td-group-build"),
     groupPanel: document.getElementById("td-group-panel"),
     groupOutput: document.getElementById("td-group-output"),
+    execPanel: document.getElementById("td-exec-panel"),
+    execOutput: document.getElementById("td-exec-output"),
     coachRibbon: document.getElementById("td-coach-ribbon"),
     coachLine: document.getElementById("td-coach-line"),
     coachPlay: document.getElementById("td-coach-play"),
@@ -486,6 +489,7 @@
         '<span class="td-chip td-risk-stable">Stable ' + bucket.pctStable + '%</span>'
       ].join('');
     }
+    renderExecutiveSnapshot(allRows);
     el.todayList.innerHTML = rows.map(function (row) {
       var s = row.student || {};
       var sid = String(s.id || "");
@@ -614,6 +618,31 @@
         });
       });
     });
+  }
+
+  function renderExecutiveSnapshot(rows) {
+    if (!el.execOutput) return;
+    var list = Array.isArray(rows) ? rows : [];
+    var metrics = list.map(function (row) {
+      var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0] ? row.priority.topSkills[0] : null;
+      var traj = top && EvidenceEngine && typeof EvidenceEngine.getSkillTrajectory === "function"
+        ? EvidenceEngine.getSkillTrajectory(String(row.student && row.student.id || ""), top.skillId, 3)
+        : { direction: "FLAT" };
+      return {
+        overallPriority: Number(row && row.score || 0),
+        stalenessDays: Number(top && top.stalenessDays || 0),
+        topSkillId: String(top && top.skillId || "BASELINE"),
+        trajectory: String(traj && traj.direction || "FLAT")
+      };
+    });
+    var summary = ProgressSummary && typeof ProgressSummary.buildExecutiveSummary === "function"
+      ? ProgressSummary.buildExecutiveSummary(metrics)
+      : { headline: "Executive snapshot unavailable", bulletPoints: [], riskShiftTrend: "" };
+    el.execOutput.innerHTML = [
+      '<p class="td-todayCard__last"><strong>' + summary.headline + '</strong></p>',
+      '<p class="td-todayCard__last">' + (summary.bulletPoints || []).join(' • ') + '</p>',
+      '<p class="td-todayCard__last">' + String(summary.riskShiftTrend || "") + '</p>'
+    ].join('');
   }
 
   function renderFlexGroups(rows) {
