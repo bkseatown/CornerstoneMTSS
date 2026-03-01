@@ -45,7 +45,34 @@
     };
   }
 
+  function expectedGrowthRate(tier) {
+    return String(tier || 'T2').toUpperCase() === 'T3' ? 0.015 : 0.01;
+  }
+
+  function compareToExpected(studentId, skillId) {
+    var velocity = computeGrowthVelocity(studentId, skillId);
+    var tier = 'T2';
+    var engine = root && root.CSEvidenceEngine;
+    if (engine && typeof engine._getSkillRows === 'function') {
+      var rows = engine._getSkillRows(studentId, skillId);
+      if (rows && rows.length) {
+        var latest = rows[rows.length - 1];
+        tier = latest && latest.tier === 'T3' ? 'T3' : 'T2';
+      }
+    }
+    var expected = expectedGrowthRate(tier);
+    var deltaFromExpected = Number((velocity.slope - expected).toFixed(4));
+    return {
+      meetsExpectation: velocity.direction !== 'INSUFFICIENT' && velocity.slope >= expected,
+      deltaFromExpected: deltaFromExpected,
+      tier: tier,
+      slope: velocity.slope
+    };
+  }
+
   return {
-    computeGrowthVelocity: computeGrowthVelocity
+    computeGrowthVelocity: computeGrowthVelocity,
+    expectedGrowthRate: expectedGrowthRate,
+    compareToExpected: compareToExpected
   };
 }));
