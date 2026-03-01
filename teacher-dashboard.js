@@ -8,6 +8,7 @@
   var Evidence = window.CSEvidence;
   var EvidenceEngine = window.CSEvidenceEngine;
   var SkillLabels = window.CSSkillLabels;
+  var ExportNotes = window.CSExportNotes;
   var PlanEngine = window.CSPlanEngine;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
@@ -214,6 +215,40 @@
     return "Next Step: " + label;
   }
 
+  function copyText(text, onDone) {
+    var done = typeof onDone === "function" ? onDone : function () {};
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      navigator.clipboard.writeText(String(text || "")).then(done).catch(done);
+      return;
+    }
+    done();
+  }
+
+  function buildTodayCardNote(row) {
+    var student = row && row.student ? row.student : { id: "", name: "Student" };
+    var topSkill = row && row.priority && row.priority.topSkills && row.priority.topSkills[0] ? row.priority.topSkills[0] : null;
+    var skillLabel = topSkill ? formatSkillBreadcrumb(topSkill.skillId) : "Collect baseline";
+    var nextStep = topSkill ? formatNextStep(student.id, topSkill.skillId).replace(/^Next Step:\\s*/i, "") : "Run baseline quick check";
+    var accuracy = topSkill ? topSkill.mastery : null;
+    var days = topSkill ? topSkill.stalenessDays : null;
+    var tierCfg = topSkill && EvidenceEngine && typeof EvidenceEngine.getTierConfig === "function"
+      ? EvidenceEngine.getTierConfig(topSkill.tier || "T2")
+      : { minutesPerSession: 20 };
+    if (ExportNotes && typeof ExportNotes.buildSessionNote === "function") {
+      return ExportNotes.buildSessionNote({
+        student: student,
+        topSkills: [skillLabel],
+        nextStep: nextStep,
+        minutes: Number(tierCfg.minutesPerSession || 20),
+        evidenceSummary: {
+          accuracy: accuracy,
+          lastChecked: Number.isFinite(Number(days)) ? (String(days) + " days ago") : "today"
+        }
+      });
+    }
+    return "Student: " + student.name + "\\nFocus: " + skillLabel + "\\nNext: " + nextStep;
+  }
+
   function scoreStudent(student) {
     var sid = String(student && student.id || "");
     if (EvidenceEngine && typeof EvidenceEngine.computePriority === "function") {
@@ -311,6 +346,7 @@
         '</div>',
         '<div class="td-todayCard__actions">',
         '<button class="td-btn td-btn-accent btn btn-primary" type="button" data-build-block="' + sid + '">Build 20-min block</button>',
+        '<button class="td-top-btn td-today-note-btn" type="button" data-copy-note="' + sid + '">Copy Note</button>',
         '<div class="td-todayCard__row">',
         '<button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="' + sid + '">Word Quest</button>',
         '<button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="' + sid + '">Reading Lab</button>',
@@ -351,6 +387,17 @@
         var check = Math.max(6, Math.round(mins * 0.35));
         var reflect = Math.max(2, mins - warm - guided - check);
         setCoachLine(mins + "-min block: " + warm + "-min warm-up, " + guided + "-min guided practice, " + check + "-min quick check, " + reflect + "-min reflection. Focus: " + focusLine + ".");
+      });
+    });
+
+    Array.prototype.forEach.call(el.todayList.querySelectorAll("[data-copy-note]"), function (button) {
+      button.addEventListener("click", function () {
+        var sid = String(button.getAttribute("data-copy-note") || "");
+        var row = rows.find(function (x) { return String(x.student && x.student.id || "") === sid; });
+        if (!row) return;
+        copyText(buildTodayCardNote(row), function () {
+          setCoachLine("Copied session note for " + String(row.student && row.student.name || "student") + ".");
+        });
       });
     });
   }

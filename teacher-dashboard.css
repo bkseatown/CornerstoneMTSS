@@ -334,6 +334,10 @@ body.cs-has-nav-shell .td-shell {
   gap: 8px;
 }
 
+.td-today-note-btn {
+  justify-self: start;
+}
+
 .td-todayCard__row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
