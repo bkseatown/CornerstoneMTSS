@@ -22,7 +22,7 @@
   margin: 0;
   font-size: var(--fs-hero);
   font-family: var(--font-display);
-  font-weight: 740;
+  font-weight: var(--fw-bold);
   color: var(--text-strong);
   line-height: var(--lh-tight);
   max-width: 640px;
@@ -31,8 +31,8 @@
 
 .hero-sub {
   margin-top: var(--sp-2);
-  font-size: var(--body);
-  line-height: 1.5;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: color-mix(in oklab, var(--muted) 86%, white 14%);
   max-width: 520px;
 }

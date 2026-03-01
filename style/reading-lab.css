@@ -18,6 +18,8 @@ body.cs-page-reading-lab {
   margin: 0;
   min-height: 100dvh;
   font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--rl-text);
   background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.04), transparent 58%), var(--rl-bg);
 }
@@ -43,7 +45,7 @@ body.cs-page-reading-lab {
 .rl-head h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--cs-h1);
+  font-size: var(--fs-h1);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-tight);
 }
@@ -51,7 +53,7 @@ body.cs-page-reading-lab {
 .rl-head p {
   margin: 8px 0 0;
   color: color-mix(in oklab, var(--rl-muted) 88%, #ffffff 12%);
-  font-size: max(0.875rem, var(--cs-body));
+  font-size: max(0.875rem, var(--fs-body));
   line-height: var(--lh-body);
 }
 

@@ -22,6 +22,8 @@ body.cs-page-surgery {
     var(--ss-bg);
   color: var(--ss-text);
   font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
 }
 
 .ss-container {
@@ -67,8 +69,8 @@ body.cs-page-surgery {
 .ss-stage-head h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--cs-h2);
-  font-weight: 700;
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-tight);
 }

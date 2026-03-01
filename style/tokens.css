@@ -32,6 +32,12 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 44px;
+  --sp-1: var(--space-1);
+  --sp-2: var(--space-2);
+  --sp-3: var(--space-3);
+  --sp-4: var(--space-4);
+  --sp-5: var(--space-5);
+  --sp-6: var(--space-6);
 
   /* radius scale */
   --radius-1: 8px;
@@ -92,6 +98,9 @@
   --ls-tight: -0.015em;
   --ls-base: -0.005em;
   --ls-wide: 0.01em;
+  --tracking-tight: var(--ls-tight);
+  --tracking-ui: var(--ls-base);
+  --tracking-normal: 0em;
   --track-tight: var(--ls-tight);
   --track-normal: 0em;
   --track-wide: 0.02em;
