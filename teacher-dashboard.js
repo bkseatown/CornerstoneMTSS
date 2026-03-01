@@ -6,6 +6,7 @@
   });
 
   var Evidence = window.CSEvidence;
+  var EvidenceEngine = window.CSEvidenceEngine;
   var PlanEngine = window.CSPlanEngine;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
@@ -170,6 +171,9 @@
 
   function getStudentEvidence(studentId) {
     if (!studentId) return null;
+    if (EvidenceEngine && typeof EvidenceEngine.getStudentSkillSnapshot === "function") {
+      return EvidenceEngine.getStudentSkillSnapshot(studentId);
+    }
     if (Evidence && typeof Evidence.computeStudentSnapshot === "function") {
       return Evidence.computeStudentSnapshot(studentId);
     }
@@ -178,6 +182,9 @@
   }
 
   function focusFromSnapshot(snapshot) {
+    if (snapshot && Array.isArray(snapshot.topSkills) && snapshot.topSkills.length) {
+      return snapshot.topSkills.slice(0, 2).map(function (skill) { return String(skill.skillId || "Need"); });
+    }
     var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
     if (needs.length) return needs.slice(0, 2).map(function (need) { return String(need.label || "Need"); });
     return ["Collect baseline"];
@@ -185,6 +192,9 @@
 
   function scoreStudent(student) {
     var sid = String(student && student.id || "");
+    if (EvidenceEngine && typeof EvidenceEngine.computePriority === "function") {
+      return Number(EvidenceEngine.computePriority(sid).overallPriority || 0);
+    }
     var snapshot = getStudentEvidence(sid) || {};
     var last = getLastActivity(sid);
     var trend = snapshot.trends && snapshot.trends.wordquest;
@@ -208,10 +218,14 @@
       .map(function (student) {
         var sid = String(student.id || "");
         var snapshot = getStudentEvidence(sid) || null;
+        var priority = EvidenceEngine && typeof EvidenceEngine.computePriority === "function"
+          ? EvidenceEngine.computePriority(sid)
+          : null;
         return {
           student: student,
           snapshot: snapshot,
-          focus: focusFromSnapshot(snapshot),
+          priority: priority,
+          focus: focusFromSnapshot(priority && priority.topSkills && priority.topSkills.length ? priority : snapshot),
           lastActivity: getLastActivity(sid),
           score: scoreStudent(student)
         };
@@ -228,6 +242,7 @@
         return {
           student: student,
           snapshot: null,
+          priority: null,
           focus: ["Collect baseline"],
           lastActivity: getLastActivity(student.id),
           score: 0
@@ -250,6 +265,9 @@
       var grade = s.grade ? ("Grade " + s.grade) : "";
       var last = row.lastActivity;
       var lastText = last ? ("Last: " + moduleLabel(last.module) + " • " + ageDays(last.ts) + "d ago") : "Last: none yet";
+      var rationale = row.priority && row.priority.topSkills && row.priority.topSkills[0]
+        ? String(row.priority.topSkills[0].rationale || "")
+        : "";
       return [
         '<article class="td-todayCard">',
         '<div class="td-todayCard__top">',
@@ -267,6 +285,7 @@
         '<button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="' + sid + '">Sentence Surgery</button>',
         '</div>',
         '</div>',
+        (rationale ? ('<p class="td-todayCard__last">' + rationale + '</p>') : ''),
         '<p class="td-todayCard__last">' + lastText + '</p>',
         '</article>'
       ].join("");
