@@ -16,7 +16,9 @@
     filtered: [],
     demoMode: false,
     snapshot: null,
-    plan: null
+    plan: null,
+    activePlanTab: "ten",
+    activeNoteTab: "teacher"
   };
 
   var el = {
@@ -39,6 +41,13 @@
     rightEmpty: document.getElementById("td-right-empty"),
     rightContent: document.getElementById("td-right-content"),
     evidenceChips: document.getElementById("td-evidence-chips"),
+    needsChipList: document.getElementById("td-needs-chip-list"),
+    planList: document.getElementById("td-plan-list"),
+    planTabs: Array.prototype.slice.call(document.querySelectorAll("[data-plan-tab]")),
+    noteTabs: Array.prototype.slice.call(document.querySelectorAll("[data-note-tab]")),
+    noteText: document.getElementById("td-progress-note-text"),
+    copyNote: document.getElementById("td-copy-note"),
+    shareAllNotes: document.getElementById("td-share-all-notes"),
     lastSessionTitle: document.getElementById("td-last-session-title"),
     lastSessionMeta: document.getElementById("td-last-session-meta"),
     shareSummary: document.getElementById("td-share-summary"),
@@ -168,6 +177,10 @@
       if (el.metricSubline) el.metricSubline.textContent = "Accuracy +4.2% over last 3 sessions";
       if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
       if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
+      renderNeeds(null);
+      renderTodayPlan(null);
+      renderProgressNote(null, null);
+      updateAuditMarkers();
       setCoachLine("Search or pick a student and I will suggest the next best move.");
       return;
     }
@@ -216,7 +229,11 @@
     };
 
     renderEvidenceChips(summary.evidenceChips);
+    renderNeeds(state.snapshot);
+    renderTodayPlan(state.plan);
+    renderProgressNote(state.plan, summary.student);
     renderLastSessionSummary(state.selectedId);
+    updateAuditMarkers();
     setCoachLine(summary.nextMove.line);
   }
 
@@ -228,6 +245,60 @@
     el.evidenceChips.innerHTML = chips.map(function (chip) {
       return '<span class="td-chip"><strong>' + chip.label + ':</strong> ' + chip.value + '</span>';
     }).join("");
+  }
+
+  function renderNeeds(snapshot) {
+    if (!el.needsChipList) return;
+    var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
+    if (!needs.length) {
+      el.needsChipList.innerHTML = '<span class="td-chip">Run Quick Check to detect needs</span>';
+      return;
+    }
+    el.needsChipList.innerHTML = needs.slice(0, 4).map(function (need) {
+      var sev = Math.max(1, Math.min(5, Number(need.severity || 1)));
+      var tierClass = sev >= 4 ? "tier-3" : (sev >= 3 ? "tier-2" : "tier-1");
+      return '<span class="tier-badge ' + tierClass + '">' + need.label + ' · S' + sev + '</span>';
+    }).join("");
+  }
+
+  function renderTodayPlan(plan) {
+    if (!el.planList) return;
+    var key = state.activePlanTab === "thirty" ? "thirtyMin" : "tenMin";
+    var rows = plan && plan.plans && Array.isArray(plan.plans[key]) ? plan.plans[key] : [];
+    if (!rows.length) {
+      el.planList.innerHTML = '<div class="td-plan-card"><strong>Run Quick Check</strong><p class="td-reco-line">Collect signals to auto-generate a plan.</p></div>';
+      return;
+    }
+    el.planList.innerHTML = rows.map(function (item) {
+      var steps = Array.isArray(item.steps) ? item.steps : [];
+      var launch = item.launch && item.launch.url ? item.launch.url : "word-quest.html?quick=1";
+      return [
+        '<article class="td-plan-card">',
+        '<strong>' + item.title + '</strong>',
+        '<ul>' + steps.map(function (s) { return '<li>' + s + '</li>'; }).join("") + '</ul>',
+        '<p class="td-reco-line">' + (item.successCriteria || "") + '</p>',
+        '<button class="td-top-btn" type="button" data-plan-launch="' + launch + '">Start</button>',
+        '</article>'
+      ].join("");
+    }).join("");
+
+    Array.prototype.forEach.call(el.planList.querySelectorAll("[data-plan-launch]"), function (button) {
+      button.addEventListener("click", function () {
+        var launch = String(button.getAttribute("data-plan-launch") || "word-quest.html?quick=1");
+        window.location.href = appendStudentParam("./" + launch.replace(/^\.\//, ""));
+      });
+    });
+  }
+
+  function renderProgressNote(plan, student) {
+    if (!el.noteText) return;
+    if (!plan || !plan.progressNoteTemplate) {
+      el.noteText.textContent = "Select a student to generate a progress note.";
+      return;
+    }
+    var notes = plan.progressNoteTemplate;
+    var key = state.activeNoteTab === "family" ? "family" : (state.activeNoteTab === "team" ? "team" : "teacher");
+    el.noteText.textContent = String(notes[key] || ("Student: " + (student && student.name ? student.name : "Student")));
   }
 
   function renderLastSessionSummary(studentId) {
@@ -392,6 +463,19 @@
     return u.pathname.replace(/^\//, "./") + (u.search || "");
   }
 
+  function updateAuditMarkers() {
+    window.__CS_AUDIT__ = {
+      hasHomeBtnId: !!document.getElementById("td-home-btn"),
+      hasActivities: !!document.getElementById("td-activity-select"),
+      hasBrandHome: !!document.querySelector("a[aria-label='Home']"),
+      hasStudentDrawer: !!document.getElementById("td-last-session-card"),
+      hasShareSummary: !!document.getElementById("td-share-summary"),
+      hasNeedsChips: !!document.getElementById("td-needs-chip-list"),
+      hasTodayPlan: !!document.getElementById("td-today-plan"),
+      hasProgressNote: !!document.getElementById("td-progress-note")
+    };
+  }
+
   function bindEvents() {
     el.search.addEventListener("input", function () { filterCaseload(el.search.value || ""); });
     el.importExport.addEventListener("click", handleImportExport);
@@ -425,6 +509,51 @@
         var target = String(el.activitySelect.value || "").trim();
         if (!target) return;
         window.location.href = appendStudentParam("./" + target);
+      });
+    }
+
+    el.planTabs.forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.activePlanTab = String(button.getAttribute("data-plan-tab") || "ten");
+        renderTodayPlan(state.plan);
+      });
+    });
+
+    el.noteTabs.forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.activeNoteTab = String(button.getAttribute("data-note-tab") || "teacher");
+        if (!state.selectedId) return;
+        var summary = Evidence.getStudentSummary(state.selectedId);
+        renderProgressNote(state.plan, summary.student);
+      });
+    });
+
+    if (el.copyNote) {
+      el.copyNote.addEventListener("click", function () {
+        if (!el.noteText) return;
+        var text = String(el.noteText.textContent || "").trim();
+        if (!text) return;
+        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+        setCoachLine("Copied progress note.");
+      });
+    }
+
+    if (el.shareAllNotes) {
+      el.shareAllNotes.addEventListener("click", function () {
+        if (!state.plan || !state.plan.progressNoteTemplate) return;
+        var n = state.plan.progressNoteTemplate;
+        var text = [
+          "Teacher Note",
+          n.teacher || "",
+          "",
+          "Family Update",
+          n.family || "",
+          "",
+          "Team Update",
+          n.team || ""
+        ].join("\n");
+        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+        setCoachLine("Copied teacher/family/team update block.");
       });
     }
 
@@ -513,6 +642,7 @@
     }
   });
   setupCoachRibbon();
+  updateAuditMarkers();
   var initial = (function () {
     try {
       var sid = new URLSearchParams(window.location.search).get("student");

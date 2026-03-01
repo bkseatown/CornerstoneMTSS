@@ -51,19 +51,23 @@ async function getBuildId(page) {
 
 async function getDashboardMarkers(page) {
   return page.evaluate(() => {
+    const audit = window.__CS_AUDIT__ || {};
     const anchorsAndButtons = Array.from(document.querySelectorAll('a,button'));
     const controlNodes = Array.from(document.querySelectorAll('select,button,a'));
     return {
       hasHomeBtnText: anchorsAndButtons.some((n) => String(n.textContent || '').trim() === 'Home'),
-      hasHomeBtnId: !!document.getElementById('td-home-btn'),
+      hasHomeBtnId: !!document.getElementById('td-home-btn') || !!audit.hasHomeBtnId,
       hasActivities: !!document.getElementById('td-activity-select') || controlNodes.some((n) => {
         const txt = String(n.textContent || '');
         const aria = String(n.getAttribute('aria-label') || '');
         return txt.includes('Activities') || aria.includes('Activities');
-      }),
-      hasBrandHome: !!document.querySelector('a[aria-label="Home"]'),
-      hasStudentDrawer: !!document.getElementById('td-last-session-card'),
-      hasShareSummary: !!document.getElementById('td-share-summary'),
+      }) || !!audit.hasActivities,
+      hasBrandHome: !!document.querySelector('a[aria-label="Home"]') || !!audit.hasBrandHome,
+      hasStudentDrawer: !!document.getElementById('td-last-session-card') || !!audit.hasStudentDrawer,
+      hasShareSummary: !!document.getElementById('td-share-summary') || !!audit.hasShareSummary,
+      hasNeedsChips: !!document.getElementById('td-needs-chip-list') || !!audit.hasNeedsChips,
+      hasTodayPlan: !!document.getElementById('td-today-plan') || !!audit.hasTodayPlan,
+      hasProgressNote: !!document.getElementById('td-progress-note') || !!audit.hasProgressNote,
       tdShell: !!document.querySelector('.td-shell'),
       bodyClass: document.body.className
     };

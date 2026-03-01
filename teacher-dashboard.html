@@ -138,6 +138,18 @@
             <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
             <div id="td-right-content" class="hidden">
             <div id="td-evidence-chips" class="td-chip-grid"></div>
+            <section id="td-needs-panel" class="td-stage-empty">
+              <p class="td-label">Top Needs</p>
+              <div id="td-needs-chip-list" class="td-chip-grid"></div>
+            </section>
+            <section id="td-today-plan" class="td-stage-empty">
+              <p class="td-label">Today Plan</p>
+              <div class="td-plan-tabs">
+                <button id="td-plan-tab-10" class="td-top-btn" type="button" data-plan-tab="ten">10 min</button>
+                <button id="td-plan-tab-30" class="td-top-btn" type="button" data-plan-tab="thirty">30 min</button>
+              </div>
+              <div id="td-plan-list" class="td-plan-list"></div>
+            </section>
             <article id="td-last-session-card" class="td-stage-empty">
               <p class="td-label">Last Session Summary</p>
               <h3 id="td-last-session-title" class="td-section-title">No recent quick check yet</h3>
@@ -157,6 +169,19 @@
               <details class="td-details">
                 <summary>Export + Share</summary>
                 <div class="td-share">
+                  <section id="td-progress-note" class="td-stage-empty">
+                    <p class="td-label">Progress Note</p>
+                    <div class="td-plan-tabs">
+                      <button class="td-top-btn" type="button" data-note-tab="teacher">Teacher</button>
+                      <button class="td-top-btn" type="button" data-note-tab="family">Family</button>
+                      <button class="td-top-btn" type="button" data-note-tab="team">Team</button>
+                    </div>
+                    <p id="td-progress-note-text" class="td-reco-line">Select a student to generate a progress note.</p>
+                    <div class="td-plan-tabs">
+                      <button id="td-copy-note" class="td-btn td-btn-primary btn btn-quiet" type="button">Copy Note</button>
+                      <button id="td-share-all-notes" class="td-btn td-btn-ghost btn btn-quiet" type="button">Share All</button>
+                    </div>
+                  </section>
                   <button id="td-share-summary" class="td-btn td-btn-primary btn btn-quiet" type="button">Share Summary</button>
                   <button id="td-export-student-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export CSV</button>
                   <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>

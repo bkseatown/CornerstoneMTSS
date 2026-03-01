@@ -416,6 +416,38 @@ body.cs-has-nav-shell .td-shell {
 .td-artifacts h3 { margin: 0; font-size: 0.9rem; }
 .td-artifacts a { color: color-mix(in oklab, var(--accent) 75%, white 25%); text-decoration: none; font-size: var(--fs-sm); }
 .td-share { margin-top: 10px; display: grid; gap: 8px; }
+#td-needs-panel,
+#td-today-plan,
+#td-progress-note {
+  margin-top: 10px;
+}
+.td-plan-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.td-plan-list {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+.td-plan-card {
+  border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 72%, transparent);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+  transition: transform var(--dur-1) var(--ease-out), filter var(--dur-1) var(--ease-out);
+}
+.td-plan-card:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+.td-plan-card ul {
+  margin: 0;
+  padding-left: 16px;
+}
 #td-last-session-card {
   margin-top: 10px;
   display: grid;
