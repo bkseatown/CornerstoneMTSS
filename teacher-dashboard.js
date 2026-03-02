@@ -955,18 +955,22 @@
       el.nextTierBadge.className = "tier-badge " + (tierLabel === "Tier 3" ? "tier-3" : "tier-2");
     }
 
-    el.quickCheck.onclick = function () {
-      var launch = state.plan && state.plan.plans && state.plan.plans.tenMin && state.plan.plans.tenMin[0] && state.plan.plans.tenMin[0].launch;
-      var href = launch && launch.url ? launch.url : "word-quest.html?quick=1";
-      window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
-    };
-    el.startIntervention.onclick = function () {
-      el.startIntervention.classList.add("td-btn-once");
-      setTimeout(function () { el.startIntervention.classList.remove("td-btn-once"); }, 260);
-      var launch = state.plan && state.plan.plans && state.plan.plans.thirtyMin && state.plan.plans.thirtyMin[0] && state.plan.plans.thirtyMin[0].launch;
-      var href = launch && launch.url ? launch.url : "word-quest.html?quick=1";
-      window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
-    };
+    if (el.quickCheck) {
+      el.quickCheck.onclick = function () {
+        var launch = state.plan && state.plan.plans && state.plan.plans.tenMin && state.plan.plans.tenMin[0] && state.plan.plans.tenMin[0].launch;
+        var href = launch && launch.url ? launch.url : "word-quest.html?quick=1";
+        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+      };
+    }
+    if (el.startIntervention) {
+      el.startIntervention.onclick = function () {
+        el.startIntervention.classList.add("td-btn-once");
+        setTimeout(function () { el.startIntervention.classList.remove("td-btn-once"); }, 260);
+        var launch = state.plan && state.plan.plans && state.plan.plans.thirtyMin && state.plan.plans.thirtyMin[0] && state.plan.plans.thirtyMin[0].launch;
+        var href = launch && launch.url ? launch.url : "word-quest.html?quick=1";
+        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+      };
+    }
 
     renderEvidenceChips(summary.evidenceChips);
     renderSkillTiles(state.selectedId);
@@ -2677,17 +2681,22 @@
   })();
   selectStudent(initial);
 })();
-    if (el.topOverflowToggle && el.topOverflowMenu) {
-      el.topOverflowToggle.addEventListener("click", function (event) {
-        event.stopPropagation();
-        var isHidden = el.topOverflowMenu.classList.contains("hidden");
-        el.topOverflowMenu.classList.toggle("hidden", !isHidden);
-        el.topOverflowToggle.setAttribute("aria-expanded", isHidden ? "true" : "false");
-      });
-      document.addEventListener("click", function (event) {
-        if (el.topOverflowMenu.classList.contains("hidden")) return;
-        if (el.topOverflowMenu.contains(event.target) || el.topOverflowToggle.contains(event.target)) return;
-        el.topOverflowMenu.classList.add("hidden");
-        el.topOverflowToggle.setAttribute("aria-expanded", "false");
-      });
-    }
+(() => {
+  const topOverflowToggle = document.getElementById("td-top-overflow-toggle");
+  const topOverflowMenu = document.getElementById("td-top-overflow-menu");
+  if (!topOverflowToggle || !topOverflowMenu) return;
+
+  topOverflowToggle.addEventListener("click", function (event) {
+    event.stopPropagation();
+    const isHidden = topOverflowMenu.classList.contains("hidden");
+    topOverflowMenu.classList.toggle("hidden", !isHidden);
+    topOverflowToggle.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  });
+
+  document.addEventListener("click", function (event) {
+    if (topOverflowMenu.classList.contains("hidden")) return;
+    if (topOverflowMenu.contains(event.target) || topOverflowToggle.contains(event.target)) return;
+    topOverflowMenu.classList.add("hidden");
+    topOverflowToggle.setAttribute("aria-expanded", "false");
+  });
+})();
