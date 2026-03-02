@@ -1,6 +1,15 @@
 (function sentenceSurgeryInit() {
   "use strict";
 
+  function withAppBase(path) {
+    var p = String((window.location && window.location.pathname) || "");
+    var marker = "/WordQuest/";
+    var idx = p.indexOf(marker);
+    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var clean = String(path || "").replace(/^\.?\//, "");
+    return base + "/" + clean;
+  }
+
   var sentenceEl = document.getElementById("ssSentence");
   var meterBarEl = document.getElementById("ssMeterBar");
   var levelEl = document.getElementById("ssLevel");
@@ -104,7 +113,7 @@
     btn.style.left = "10px";
     btn.style.zIndex = "40";
     btn.addEventListener("click", function () {
-      window.location.href = "teacher-dashboard.html";
+      window.location.href = withAppBase("teacher-dashboard.html");
     });
     document.body.appendChild(btn);
   })();

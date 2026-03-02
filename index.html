@@ -141,7 +141,7 @@
   <div id="cs-home-root">
     <header class="home-header">
       <div>Cornerstone MTSS</div>
-      <a href="teacher-dashboard.html">Teacher Dashboard</a>
+      <a href="./teacher-dashboard.html">Teacher Dashboard</a>
     </header>
 
     <section id="hero-v2" class="hero-v2" aria-label="Cornerstone MTSS home stage">
@@ -176,6 +176,18 @@
   <script src="js/nav-shell.js?v=20260301y"></script>
   <script>
     (function homeHashRouter() {
+      function appBasePath() {
+        var path = String((window.location && window.location.pathname) || '');
+        var marker = '/WordQuest/';
+        var idx = path.indexOf(marker);
+        return idx >= 0 ? path.slice(0, idx + marker.length - 1) : '';
+      }
+
+      function withAppBase(path) {
+        var clean = String(path || '').replace(/^\.?\//, '');
+        return appBasePath() + '/' + clean;
+      }
+
       function routeTo(route) {
         var next = String(route || 'home').toLowerCase();
         if (location.hash !== '#' + next) location.hash = '#' + next;
@@ -186,19 +198,21 @@
         var route = String(location.hash || '#home').replace(/^#/, '').toLowerCase();
         if (route === 'home' || !route) return;
         if (route === 'wordquest') {
-          window.location.href = 'word-quest.html?play=1#wordquest';
+          window.location.href = withAppBase('word-quest.html?play=1#wordquest');
           return;
         }
         if (route === 'reading') {
-          window.location.href = 'reading-lab.html';
+          window.location.href = withAppBase('reading-lab.html');
           return;
         }
         if (route === 'writing') {
-          window.location.href = 'writing-studio.html';
+          window.location.href = withAppBase('writing-studio.html');
           return;
         }
         if (route === 'dashboard' || route === 'admin-demo') {
-          window.location.href = route === 'admin-demo' ? 'teacher-dashboard.html#admin-demo' : 'teacher-dashboard.html';
+          window.location.href = route === 'admin-demo'
+            ? withAppBase('teacher-dashboard.html#admin-demo')
+            : withAppBase('teacher-dashboard.html');
           return;
         }
       }

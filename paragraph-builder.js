@@ -1,6 +1,15 @@
 (function paragraphBuilderV1() {
   "use strict";
 
+  function withAppBase(path) {
+    var p = String((window.location && window.location.pathname) || "");
+    var marker = "/WordQuest/";
+    var idx = p.indexOf(marker);
+    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var clean = String(path || "").replace(/^\.?\//, "");
+    return base + "/" + clean;
+  }
+
   var slots = Array.prototype.slice.call(document.querySelectorAll('.pb-slot'));
   var metricsEl = document.getElementById('pb-metrics');
   var actionsEl = document.getElementById('pb-actions');
@@ -358,7 +367,7 @@
   }
 
   function goBackHome() {
-    window.location.href = 'writing-studio.html';
+    window.location.href = withAppBase('writing-studio.html');
   }
 
   function demoSetTimeout(fn, ms) {

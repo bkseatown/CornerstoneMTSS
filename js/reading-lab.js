@@ -1,6 +1,15 @@
 (function readingLabModule() {
   "use strict";
 
+  function withAppBase(path) {
+    var p = String((window.location && window.location.pathname) || "");
+    var marker = "/WordQuest/";
+    var idx = p.indexOf(marker);
+    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var clean = String(path || "").replace(/^\.?\//, "");
+    return base + "/" + clean;
+  }
+
   var schema = window.CSStorageSchema || null;
   if (schema && typeof schema.migrateStorageIfNeeded === "function") schema.migrateStorageIfNeeded();
 
@@ -895,7 +904,7 @@
       setStatus("Select a sentence first.");
       return;
     }
-    var url = new URL("sentence-surgery.html", window.location.href);
+    var url = new URL(withAppBase("sentence-surgery.html"), window.location.origin);
     url.searchParams.set("seed", sentence);
     url.searchParams.set("from", "reading");
     if (state.isDemo) url.searchParams.set("demo", "1");
@@ -975,10 +984,10 @@
     el.backHome.addEventListener("click", function () {
       var params = new URLSearchParams(window.location.search || "");
       if (params.get("from") === "teacher") {
-        window.location.href = "teacher-dashboard.html";
+        window.location.href = withAppBase("teacher-dashboard.html");
         return;
       }
-      window.location.href = "index.html";
+      window.location.href = withAppBase("index.html");
     });
     try {
       var fromTeacher = new URLSearchParams(window.location.search || "").get("from") === "teacher";

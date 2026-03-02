@@ -1,6 +1,15 @@
 (function initWritingStudio() {
   "use strict";
 
+  function withAppBase(path) {
+    var p = String((window.location && window.location.pathname) || "");
+    var marker = "/WordQuest/";
+    var idx = p.indexOf(marker);
+    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var clean = String(path || "").replace(/^\.?\//, "");
+    return base + "/" + clean;
+  }
+
   var DRAFT_KEY = "ws_draft_v1";
   var PREF_KEY = "wq_v2_prefs";
   var STUDIO_THEME_KEY = "ws_theme_v1";
@@ -25,7 +34,7 @@
   var sessionStartTime = Date.now();
 
   if (!WRITING_STUDIO_ENABLED) {
-    var redirectUrl = new URL("index.html", window.location.href);
+    var redirectUrl = new URL(withAppBase("index.html"), window.location.origin);
     redirectUrl.searchParams.set("ws_hidden", "1");
     window.location.replace(redirectUrl.toString());
     return;
@@ -4689,7 +4698,7 @@
   function goBackToWordQuest() {
     var params = new URLSearchParams(window.location.search || "");
     if (params.get("from") === "teacher") {
-      window.location.href = "teacher-dashboard.html";
+      window.location.href = withAppBase("teacher-dashboard.html");
       return;
     }
     var current = normalizeTheme(document.documentElement.getAttribute("data-theme") || "default");
@@ -4700,21 +4709,21 @@
       prefs.theme = current;
       savePrefs(prefs);
     }
-    var url = new URL("index.html", window.location.href);
+    var url = new URL(withAppBase("index.html"), window.location.origin);
     url.searchParams.set("theme", current);
     url.searchParams.set("wq_studio_return", "1");
     window.location.href = url.toString();
   }
 
   function openParagraphBuilder() {
-    var url = new URL("paragraph-builder.html", window.location.href);
+    var url = new URL(withAppBase("paragraph-builder.html"), window.location.origin);
     var params = new URLSearchParams(window.location.search || "");
     if (params.get("demo") === "1") url.searchParams.set("demo", "1");
     window.location.href = url.toString();
   }
 
   function openTeacherDashboard() {
-    var url = new URL("teacher-dashboard.html", window.location.href);
+    var url = new URL(withAppBase("teacher-dashboard.html"), window.location.origin);
     var params = new URLSearchParams(window.location.search || "");
     if (params.get("demo") === "1") url.searchParams.set("demo", "1");
     window.location.href = url.toString();

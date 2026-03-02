@@ -66,9 +66,21 @@
     btn.style.fontWeight = '700';
     btn.style.cursor = 'pointer';
     btn.addEventListener('click', () => {
-      window.location.href = 'teacher-dashboard.html';
+      window.location.href = withAppBase('teacher-dashboard.html');
     });
     document.body.appendChild(btn);
+  }
+
+  function appBasePath() {
+    var path = String((window.location && window.location.pathname) || '');
+    var marker = '/WordQuest/';
+    var idx = path.indexOf(marker);
+    return idx >= 0 ? path.slice(0, idx + marker.length - 1) : '';
+  }
+
+  function withAppBase(path) {
+    var clean = String(path || '').replace(/^\.?\//, '');
+    return appBasePath() + '/' + clean;
   }
 
   function collectOverflowDiagnostics(limit = 10) {
@@ -1165,7 +1177,7 @@
         try { window.speechSynthesis.cancel(); } catch {}
       }
       window.WQ_DEMO = false;
-      window.location.href = 'index.html';
+      window.location.href = withAppBase('index.html');
     });
     _el('cs-demo-restart')?.addEventListener('click', () => {
       demoRoundComplete = false;
@@ -6352,7 +6364,7 @@
     }
     if (route === 'dashboard' || route === 'admin-demo') {
       setActivityLabel('Teacher Dashboard');
-      const url = new URL('teacher-dashboard.html', window.location.href);
+      const url = new URL(withAppBase('teacher-dashboard.html'), window.location.origin);
       if (route === 'admin-demo') url.hash = '#admin-demo';
       window.location.href = url.toString();
       return;
@@ -6591,7 +6603,7 @@
     const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
     const targetWord = String(state?.word || '').trim().toUpperCase();
     const clueSentence = String(state?.entry?.sentence || '').trim();
-    const url = new URL('writing-studio.html', window.location.href);
+    const url = new URL(withAppBase('writing-studio.html'), window.location.origin);
     url.searchParams.set('theme', activeTheme);
     url.searchParams.set('wq_focus', focusValue);
     url.searchParams.set('wq_focus_label', focusLabel);
@@ -6610,7 +6622,7 @@
     const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
     const targetWord = String(state?.word || '').trim().toUpperCase();
     const clueSentence = String(state?.entry?.sentence || '').trim();
-    const url = new URL('sentence-surgery.html', window.location.href);
+    const url = new URL(withAppBase('sentence-surgery.html'), window.location.origin);
     url.searchParams.set('theme', activeTheme);
     url.searchParams.set('wq_focus', focusValue);
     url.searchParams.set('wq_focus_label', focusLabel);
@@ -6629,7 +6641,7 @@
     const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
     const targetWord = String(state?.word || '').trim().toUpperCase();
     const clueSentence = String(state?.entry?.sentence || '').trim();
-    const url = new URL('reading-lab.html', window.location.href);
+    const url = new URL(withAppBase('reading-lab.html'), window.location.origin);
     url.searchParams.set('theme', activeTheme);
     url.searchParams.set('wq_focus', focusValue);
     url.searchParams.set('wq_focus_label', focusLabel);
@@ -6640,7 +6652,7 @@
   }
 
   function openTeacherDashboardPage() {
-    const url = new URL('teacher-dashboard.html', window.location.href);
+    const url = new URL(withAppBase('teacher-dashboard.html'), window.location.origin);
     try {
       const params = new URLSearchParams(window.location.search || '');
       if (params.get('demo') === '1') url.searchParams.set('demo', '1');
@@ -6651,7 +6663,7 @@
   }
 
   function openNumeracyLabPage() {
-    const url = new URL('numeracy.html', window.location.href);
+    const url = new URL(withAppBase('numeracy.html'), window.location.origin);
     try {
       const params = new URLSearchParams(window.location.search || '');
       if (params.get('demo') === '1') url.searchParams.set('demo', '1');

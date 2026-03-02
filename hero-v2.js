@@ -4,6 +4,15 @@
   if (window.__HERO_ROTATOR_ACTIVE) return;
   window.__HERO_ROTATOR_ACTIVE = true;
 
+  function withAppBase(path) {
+    var p = String((window.location && window.location.pathname) || "");
+    var marker = "/WordQuest/";
+    var idx = p.indexOf(marker);
+    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var clean = String(path || "").replace(/^\.?\//, "");
+    return base + "/" + clean;
+  }
+
   var htmlEl = document.documentElement;
   var homeMode = String(htmlEl && htmlEl.getAttribute('data-home-mode') || '').trim();
   var container = document.getElementById('home-demo-preview');
@@ -167,7 +176,7 @@
       window.dispatchEvent(event);
       if (event.defaultPrevented || window.__CS_HOME_ROUTED__ === true) routeHandled = true;
       if (!routeHandled) {
-        window.location.href = 'word-quest.html?play=1';
+        window.location.href = withAppBase('word-quest.html?play=1');
       }
     });
   }
@@ -179,7 +188,7 @@
       window.dispatchEvent(event);
       if (event.defaultPrevented || window.__CS_HOME_ROUTED__ === true) routeHandled = true;
       if (!routeHandled) {
-        window.location.href = 'teacher-dashboard.html';
+        window.location.href = withAppBase('teacher-dashboard.html');
       }
     });
   }
