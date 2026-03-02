@@ -1,10 +1,978 @@
 {
   "version": "sas_alignment_pack.v1",
-  "generatedAt": "pending-build",
-  "sourceDocs": [],
-  "interventions": [],
-  "assessments": [],
-  "goal_bank": [],
-  "beliefs_principles": [],
-  "forms_templates": []
+  "generatedAt": "seed-c9f3a5ad7781",
+  "sourceDocs": [
+    {
+      "doc": "Copy of Support Services Onboarding 2025-26 - Google Slides.pdf",
+      "docId": "copy-of-support-services-onboarding-2025-26-google-slides",
+      "sha1": "f570a68bb08859c59aa8c54c322b08d95e287214",
+      "pages": 1
+    },
+    {
+      "doc": "ElementarySchoolProgramGuide2025-26.pdf",
+      "docId": "elementaryschoolprogramguide2025-26",
+      "sha1": "ad0c3e354f4ad961fadfa9bc9c771d3fc14d4b03",
+      "pages": 1
+    },
+    {
+      "doc": "ES - Aligning SLP and LS Literacy Goals - Google Docs.pdf",
+      "docId": "es-aligning-slp-and-ls-literacy-goals-google-docs",
+      "sha1": "01e7745b24f4a07c33746112b460c60929518a7a",
+      "pages": 1
+    },
+    {
+      "doc": "ESQ Adult w definitions.pdf",
+      "docId": "esq-adult-w-definitions",
+      "sha1": "bbfdaa085d82ec57af0104e1a488fdca0fe1c3a2",
+      "pages": 1
+    },
+    {
+      "doc": "Goal Bank for Intervention Plans for Rising G2 - Google Docs.pdf",
+      "docId": "goal-bank-for-intervention-plans-for-rising-g2-google-docs",
+      "sha1": "67fe8d0378683bdd29d7a6b355cfe105c888e642",
+      "pages": 1
+    },
+    {
+      "doc": "High_School_PPG.pdf",
+      "docId": "high-school-ppg",
+      "sha1": "dbc2990bcfa92e96ba61dfd42ef0d70ec36fe7bd",
+      "pages": 1
+    },
+    {
+      "doc": "Instructional Intervention Recommendation Report - Google Docs.pdf",
+      "docId": "instructional-intervention-recommendation-report-google-docs",
+      "sha1": "37d4707910f7e27747d4dee7a335ec3af6d319eb",
+      "pages": 1
+    },
+    {
+      "doc": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs.pdf",
+      "docId": "intervention-plan-goal-bank-gr-3-to-gr-4-google-docs",
+      "sha1": "8c7a1544dbd6565b61808ee92ef55a6a3c4e6e08",
+      "pages": 1
+    },
+    {
+      "doc": "Intervention planning form w case example.pdf",
+      "docId": "intervention-planning-form-w-case-example",
+      "sha1": "21e4fb10c91fc293d4a2a2274227b3105e635553",
+      "pages": 1
+    },
+    {
+      "doc": "MS Literacy Goals - Google Docs.pdf",
+      "docId": "ms-literacy-goals-google-docs",
+      "sha1": "1f9669cc398a84d197633cbb9530892560ee1949",
+      "pages": 1
+    },
+    {
+      "doc": "MS Math Goals - Google Docs.pdf",
+      "docId": "ms-math-goals-google-docs",
+      "sha1": "7017f1c8eac5713368208e540c9f2e341e560c7c",
+      "pages": 1
+    },
+    {
+      "doc": "MS_PPG.pdf",
+      "docId": "ms-ppg",
+      "sha1": "b937eeb49b42b3c36f449c7823eba313518f6f31",
+      "pages": 1
+    },
+    {
+      "doc": "Support Services Area of Focus & Beliefs - Google Slides.pdf",
+      "docId": "support-services-area-of-focus-beliefs-google-slides",
+      "sha1": "1bd56790d01a24e77e44e467edf901f306153fca",
+      "pages": 1
+    },
+    {
+      "doc": "Support Services PD 2025-26 - Google Slides.pdf",
+      "docId": "support-services-pd-2025-26-google-slides",
+      "sha1": "a4451d12c3e0ed13dc11536ff2674125ee0d8370",
+      "pages": 1
+    }
+  ],
+  "interventions": [
+    {
+      "id": "intv_136d7a37b2af",
+      "name": "ElementarySchoolProgramGuide2025-26 Intervention",
+      "area": "math",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "math",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "ElementarySchoolProgramGuide2025-26.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Elementary School Program Guide 2025-26) /Producer (Skia/PDF m141 Google Docs Renderer)>> endobj 3 0 obj <</ca 1 /BM /Normal>> endobj 5 0 obj <</N 3 /F"
+        }
+      ]
+    },
+    {
+      "id": "intv_596059a5c9e6",
+      "name": "MS Math Goals - Google Docs Intervention",
+      "area": "math",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "math",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "MS Math Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Math Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0 Safa"
+        }
+      ]
+    },
+    {
+      "id": "intv_6100d1ad36d6",
+      "name": "Instructional Intervention Recommendation Report - Google Docs Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "Instructional Intervention Recommendation Report - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Instructional Intervention Recommendation Report - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML,"
+        }
+      ]
+    },
+    {
+      "id": "intv_6e69b8d69fd6",
+      "name": "MS_PPG Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "MS_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 461 0 obj <</Linearized 1/L 7342047/O 464/E 1058163/N 40/T 7332711/H [ 1036 1305]>> endobj xref 461 37 0000000016 00000 n 0000002341 00000 n 0000002505 00000 n 000000254"
+        }
+      ]
+    },
+    {
+      "id": "intv_7993881bb9b6",
+      "name": "Intervention planning form w case example Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "Intervention planning form w case example.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.3 % 3 0 obj << /Filter /FlateDecode /Length 1947 >> stream x I 7 [RKr2Yl 29 C }d7 \"M b _ g | 6 o~ vo 6 q N_ > x f3 ' 6 t: i _ < /W G u x x{ ? g} - T v v L a ; k 7 { ; ]qg y"
+        }
+      ]
+    },
+    {
+      "id": "intv_89151e4cc934",
+      "name": "High_School_PPG Intervention",
+      "area": "math",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "math",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "High_School_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1110 0 obj <</Linearized 1/L 8582904/O 1113/E 5227115/N 98/T 8560587/H [ 896 2501]>> endobj xref 1110 30 0000000016 00000 n 0000003397 00000 n 0000003566 00000 n 0000003"
+        }
+      ]
+    },
+    {
+      "id": "intv_9eea8bf1c323",
+      "name": "MS Literacy Goals - Google Docs Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "MS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0"
+        }
+      ]
+    },
+    {
+      "id": "intv_ac6809005540",
+      "name": "ES - Aligning SLP and LS Literacy Goals - Google Docs Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "ES - Aligning SLP and LS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (ES - Aligning SLP and LS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gec"
+        }
+      ]
+    },
+    {
+      "id": "intv_c34abb6a35f8",
+      "name": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Intervention Plan Goal Bank \\(Gr 3 to Gr 4\\) - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, lik"
+        }
+      ]
+    },
+    {
+      "id": "intv_d2d02348afdd",
+      "name": "Goal Bank for Intervention Plans for Rising G2 - Google Docs Intervention",
+      "area": "literacy",
+      "tier": "T1",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "prerequisites": [
+        "Baseline evidence captured",
+        "Student context selected"
+      ],
+      "dosage": "15-20 min, 2-3x/week",
+      "materials": [
+        "Core curriculum text",
+        "Intervention routine checklist"
+      ],
+      "fidelity_notes": "Use consistent protocol and quick fidelity checks per session.",
+      "progress_monitoring": "Weekly quick-check with 2-week review window.",
+      "linked_assessments": [
+        "aimsweb",
+        "map",
+        "core-phonics"
+      ],
+      "tags": [
+        "literacy",
+        "t1",
+        "sas-alignment"
+      ],
+      "source_refs": [
+        {
+          "doc": "Goal Bank for Intervention Plans for Rising G2 - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Goal Bank for Intervention Plans for Rising G2 - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, l"
+        }
+      ]
+    }
+  ],
+  "assessments": [
+    {
+      "id": "asm_30e29bfca128",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Support Services Area of Focus & Beliefs - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 5/Kids[ 4 0 R 28 0 R 45 0 R 49 0 R 59 0 R ]/Type/Pages>> endobj 3 0 obj <</CreationDate(D:20260302091043)/"
+        }
+      ]
+    },
+    {
+      "id": "asm_401f213e19b4",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Instructional Intervention Recommendation Report - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Instructional Intervention Recommendation Report - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML,"
+        }
+      ]
+    },
+    {
+      "id": "asm_5884f77d172f",
+      "name": "MAP Growth",
+      "domain": "math",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "High_School_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1110 0 obj <</Linearized 1/L 8582904/O 1113/E 5227115/N 98/T 8560587/H [ 896 2501]>> endobj xref 1110 30 0000000016 00000 n 0000003397 00000 n 0000003566 00000 n 0000003"
+        }
+      ]
+    },
+    {
+      "id": "asm_5a77f4fd8d6b",
+      "name": "MAP Growth",
+      "domain": "math",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Copy of Support Services Onboarding 2025-26 - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 72/Kids[ 4 0 R 17 0 R 28 0 R 38 0 R 45 0 R 49 0 R 57 0 R 73 0 R 81 0 R 91 0 R 98 0 R 103 0 R 112 0 R 116 0"
+        }
+      ]
+    },
+    {
+      "id": "asm_5d330b6d4256",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "MS_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 461 0 obj <</Linearized 1/L 7342047/O 464/E 1058163/N 40/T 7332711/H [ 1036 1305]>> endobj xref 461 37 0000000016 00000 n 0000002341 00000 n 0000002505 00000 n 000000254"
+        }
+      ]
+    },
+    {
+      "id": "asm_5e6a88bfd133",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "ES - Aligning SLP and LS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (ES - Aligning SLP and LS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gec"
+        }
+      ]
+    },
+    {
+      "id": "asm_c2cc06873bd8",
+      "name": "MAP Growth",
+      "domain": "math",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "ElementarySchoolProgramGuide2025-26.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Elementary School Program Guide 2025-26) /Producer (Skia/PDF m141 Google Docs Renderer)>> endobj 3 0 obj <</ca 1 /BM /Normal>> endobj 5 0 obj <</N 3 /F"
+        }
+      ]
+    },
+    {
+      "id": "asm_c46a8991853a",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Intervention Plan Goal Bank \\(Gr 3 to Gr 4\\) - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, lik"
+        }
+      ]
+    },
+    {
+      "id": "asm_d7105fb99b3c",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "MS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0"
+        }
+      ]
+    },
+    {
+      "id": "asm_ec5e53d2ef5b",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Support Services PD 2025-26 - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 8/Kids[ 4 0 R 17 0 R 28 0 R 38 0 R 47 0 R 52 0 R 71 0 R 79 0 R ]/Type/Pages>> endobj 3 0 obj <</CreationDa"
+        }
+      ]
+    },
+    {
+      "id": "asm_edb55fc4069a",
+      "name": "MAP Growth",
+      "domain": "literacy",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "Goal Bank for Intervention Plans for Rising G2 - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Goal Bank for Intervention Plans for Rising G2 - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, l"
+        }
+      ]
+    },
+    {
+      "id": "asm_f5c4410e47d3",
+      "name": "MAP Growth",
+      "domain": "math",
+      "grades": [
+        "K-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "cadence": "Every 14 days",
+      "what_it_measures": "Target skill performance and response-to-intervention trend.",
+      "interpretation_notes": "Combine benchmark score, error patterns, and classroom transfer notes.",
+      "source_refs": [
+        {
+          "doc": "MS Math Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Math Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0 Safa"
+        }
+      ]
+    }
+  ],
+  "goal_bank": [
+    {
+      "id": "goal_01900a24cae9",
+      "domain": "literacy",
+      "grade_band": "K-2",
+      "skill": "Decoding and fluency transfer",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "ES - Aligning SLP and LS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (ES - Aligning SLP and LS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gec"
+        }
+      ]
+    },
+    {
+      "id": "goal_18a677a5722c",
+      "domain": "literacy",
+      "grade_band": "K-2",
+      "skill": "Decoding and fluency transfer",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "MS Literacy Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Literacy Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0"
+        }
+      ]
+    },
+    {
+      "id": "goal_398d0fcae522",
+      "domain": "literacy",
+      "grade_band": "K-2",
+      "skill": "Decoding and fluency transfer",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "Intervention planning form w case example.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.3 % 3 0 obj << /Filter /FlateDecode /Length 1947 >> stream x I 7 [RKr2Yl 29 C }d7 \"M b _ g | 6 o~ vo 6 q N_ > x f3 ' 6 t: i _ < /W G u x x{ ? g} - T v v L a ; k 7 { ; ]qg y"
+        }
+      ]
+    },
+    {
+      "id": "goal_8842955c144c",
+      "domain": "literacy",
+      "grade_band": "K-2",
+      "skill": "Decoding and fluency transfer",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Intervention Plan Goal Bank \\(Gr 3 to Gr 4\\) - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, lik"
+        }
+      ]
+    },
+    {
+      "id": "goal_d25763bda929",
+      "domain": "math",
+      "grade_band": "K-2",
+      "skill": "Problem solving accuracy",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "MS Math Goals - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (MS Math Goals - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/145.0.0.0 Safa"
+        }
+      ]
+    },
+    {
+      "id": "goal_d351ef4165a6",
+      "domain": "literacy",
+      "grade_band": "K-2",
+      "skill": "Decoding and fluency transfer",
+      "baseline_prompt": "Current baseline (include date + source):",
+      "goal_template_smart": "By [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting].",
+      "progress_monitoring_method": "Weekly quick-check + biweekly trend review.",
+      "accommodations_link": "Link to classroom-ready accommodations and implementation notes.",
+      "source_refs": [
+        {
+          "doc": "Goal Bank for Intervention Plans for Rising G2 - Google Docs.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Goal Bank for Intervention Plans for Rising G2 - Google Docs) /Creator (Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, l"
+        }
+      ]
+    }
+  ],
+  "beliefs_principles": [
+    {
+      "id": "principle_34ee62c434df",
+      "principle": "Intervention should be explicit, structured, and evidence-linked.",
+      "implication_for_design": "Keep workflows quick, student-centered, and export-ready for team meetings.",
+      "source_refs": [
+        {
+          "doc": "Support Services Area of Focus & Beliefs - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 5/Kids[ 4 0 R 28 0 R 45 0 R 49 0 R 59 0 R ]/Type/Pages>> endobj 3 0 obj <</CreationDate(D:20260302091043)/"
+        }
+      ]
+    },
+    {
+      "id": "principle_4e4ff15fba99",
+      "principle": "Intervention should be explicit, structured, and evidence-linked.",
+      "implication_for_design": "Keep workflows quick, student-centered, and export-ready for team meetings.",
+      "source_refs": [
+        {
+          "doc": "Support Services PD 2025-26 - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 8/Kids[ 4 0 R 17 0 R 28 0 R 38 0 R 47 0 R 52 0 R 71 0 R 79 0 R ]/Type/Pages>> endobj 3 0 obj <</CreationDa"
+        }
+      ]
+    },
+    {
+      "id": "principle_abc35f2c4761",
+      "principle": "Intervention should be explicit, structured, and evidence-linked.",
+      "implication_for_design": "Keep workflows quick, student-centered, and export-ready for team meetings.",
+      "source_refs": [
+        {
+          "doc": "Copy of Support Services Onboarding 2025-26 - Google Slides.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1 0 obj <</Pages 2 0 R /Type/Catalog>> endobj 2 0 obj <</Count 72/Kids[ 4 0 R 17 0 R 28 0 R 38 0 R 45 0 R 49 0 R 57 0 R 73 0 R 81 0 R 91 0 R 98 0 R 103 0 R 112 0 R 116 0"
+        }
+      ]
+    },
+    {
+      "id": "principle_fec6652af58c",
+      "principle": "Intervention should be explicit, structured, and evidence-linked.",
+      "implication_for_design": "Keep workflows quick, student-centered, and export-ready for team meetings.",
+      "source_refs": [
+        {
+          "doc": "MS_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 461 0 obj <</Linearized 1/L 7342047/O 464/E 1058163/N 40/T 7332711/H [ 1036 1305]>> endobj xref 461 37 0000000016 00000 n 0000002341 00000 n 0000002505 00000 n 000000254"
+        }
+      ]
+    }
+  ],
+  "forms_templates": [
+    {
+      "id": "tmpl_01b9270460a1",
+      "name": "Intervention planning form w case example Template",
+      "fields": [
+        "Student",
+        "Concern area",
+        "Goal",
+        "Intervention plan",
+        "Review date"
+      ],
+      "usage_notes": "Use as a meeting-ready planning scaffold with clear action owners.",
+      "source_refs": [
+        {
+          "doc": "Intervention planning form w case example.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.3 % 3 0 obj << /Filter /FlateDecode /Length 1947 >> stream x I 7 [RKr2Yl 29 C }d7 \"M b _ g | 6 o~ vo 6 q N_ > x f3 ' 6 t: i _ < /W G u x x{ ? g} - T v v L a ; k 7 { ; ]qg y"
+        }
+      ]
+    },
+    {
+      "id": "tmpl_334878daa2af",
+      "name": "High_School_PPG Template",
+      "fields": [
+        "Student",
+        "Concern area",
+        "Goal",
+        "Intervention plan",
+        "Review date"
+      ],
+      "usage_notes": "Use as a meeting-ready planning scaffold with clear action owners.",
+      "source_refs": [
+        {
+          "doc": "High_School_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 1110 0 obj <</Linearized 1/L 8582904/O 1113/E 5227115/N 98/T 8560587/H [ 896 2501]>> endobj xref 1110 30 0000000016 00000 n 0000003397 00000 n 0000003566 00000 n 0000003"
+        }
+      ]
+    },
+    {
+      "id": "tmpl_600282294764",
+      "name": "ElementarySchoolProgramGuide2025-26 Template",
+      "fields": [
+        "Student",
+        "Concern area",
+        "Goal",
+        "Intervention plan",
+        "Review date"
+      ],
+      "usage_notes": "Use as a meeting-ready planning scaffold with clear action owners.",
+      "source_refs": [
+        {
+          "doc": "ElementarySchoolProgramGuide2025-26.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.4 % 1 0 obj <</Title (Elementary School Program Guide 2025-26) /Producer (Skia/PDF m141 Google Docs Renderer)>> endobj 3 0 obj <</ca 1 /BM /Normal>> endobj 5 0 obj <</N 3 /F"
+        }
+      ]
+    },
+    {
+      "id": "tmpl_c221faeea5ce",
+      "name": "MS_PPG Template",
+      "fields": [
+        "Student",
+        "Concern area",
+        "Goal",
+        "Intervention plan",
+        "Review date"
+      ],
+      "usage_notes": "Use as a meeting-ready planning scaffold with clear action owners.",
+      "source_refs": [
+        {
+          "doc": "MS_PPG.pdf",
+          "page": 1,
+          "quote_or_snippet": "%PDF-1.7 % 461 0 obj <</Linearized 1/L 7342047/O 464/E 1058163/N 40/T 7332711/H [ 1036 1305]>> endobj xref 461 37 0000000016 00000 n 0000002341 00000 n 0000002505 00000 n 000000254"
+        }
+      ]
+    }
+  ]
 }

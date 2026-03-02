@@ -1,13 +1,333 @@
 {
   "version": "sas_alignment_index.v1",
-  "generatedAt": "pending-build",
+  "generatedAt": "seed-c9f3a5ad7781",
   "counts": {
-    "interventions": 0,
-    "assessments": 0,
-    "goal_bank": 0,
-    "beliefs_principles": 0,
-    "forms_templates": 0
+    "interventions": 10,
+    "assessments": 12,
+    "goal_bank": 6,
+    "beliefs_principles": 4,
+    "forms_templates": 4
   },
-  "tokens": [],
-  "items": []
+  "tokens": [
+    "01900a24cae9",
+    "01b9270460a1",
+    "136d7a37b2af",
+    "18a677a5722c",
+    "30e29bfca128",
+    "334878daa2af",
+    "34ee62c434df",
+    "398d0fcae522",
+    "401f213e19b4",
+    "4e4ff15fba99",
+    "5884f77d172f",
+    "596059a5c9e6",
+    "5a77f4fd8d6b",
+    "5d330b6d4256",
+    "5e6a88bfd133",
+    "600282294764",
+    "6100d1ad36d6",
+    "6e69b8d69fd6",
+    "7993881bb9b6",
+    "8842955c144c",
+    "89151e4cc934",
+    "9eea8bf1c323",
+    "abc35f2c4761",
+    "ac6809005540",
+    "accuracy",
+    "action",
+    "aligning",
+    "alignment",
+    "and",
+    "asm",
+    "assessment",
+    "bank",
+    "baseline",
+    "c221faeea5ce",
+    "c2cc06873bd8",
+    "c34abb6a35f8",
+    "c46a8991853a",
+    "case",
+    "clear",
+    "d25763bda929",
+    "d2d02348afdd",
+    "d351ef4165a6",
+    "d7105fb99b3c",
+    "date",
+    "decoding",
+    "docs",
+    "ec5e53d2ef5b",
+    "edb55fc4069a",
+    "elementaryschoolprogramguide2025",
+    "evidence",
+    "example",
+    "explicit",
+    "f5c4410e47d3",
+    "fec6652af58c",
+    "fluency",
+    "for",
+    "form",
+    "from",
+    "goal",
+    "goals",
+    "google",
+    "growth",
+    "high",
+    "improve",
+    "instructional",
+    "intervention",
+    "intv",
+    "linked",
+    "literacy",
+    "map",
+    "math",
+    "measured",
+    "meeting",
+    "method",
+    "owners",
+    "plan",
+    "planning",
+    "plans",
+    "ppg",
+    "principle",
+    "problem",
+    "ready",
+    "recommendation",
+    "report",
+    "rising",
+    "sas",
+    "scaffold",
+    "school",
+    "setting",
+    "should",
+    "skill",
+    "slp",
+    "solving",
+    "structured",
+    "student",
+    "target",
+    "template",
+    "tmpl",
+    "transfer",
+    "use",
+    "will",
+    "with"
+  ],
+  "items": [
+    {
+      "id": "intv_136d7a37b2af",
+      "type": "interventions",
+      "title": "ElementarySchoolProgramGuide2025-26 Intervention",
+      "tokens": "intv_136d7a37b2af elementaryschoolprogramguide2025-26 intervention math t1 k-2 3-5 6-8 9-12 math t1 sas-alignment"
+    },
+    {
+      "id": "intv_596059a5c9e6",
+      "type": "interventions",
+      "title": "MS Math Goals - Google Docs Intervention",
+      "tokens": "intv_596059a5c9e6 ms math goals - google docs intervention math t1 k-2 3-5 6-8 9-12 math t1 sas-alignment"
+    },
+    {
+      "id": "intv_6100d1ad36d6",
+      "type": "interventions",
+      "title": "Instructional Intervention Recommendation Report - Google Docs Intervention",
+      "tokens": "intv_6100d1ad36d6 instructional intervention recommendation report - google docs intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_6e69b8d69fd6",
+      "type": "interventions",
+      "title": "MS_PPG Intervention",
+      "tokens": "intv_6e69b8d69fd6 ms_ppg intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_7993881bb9b6",
+      "type": "interventions",
+      "title": "Intervention planning form w case example Intervention",
+      "tokens": "intv_7993881bb9b6 intervention planning form w case example intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_89151e4cc934",
+      "type": "interventions",
+      "title": "High_School_PPG Intervention",
+      "tokens": "intv_89151e4cc934 high_school_ppg intervention math t1 k-2 3-5 6-8 9-12 math t1 sas-alignment"
+    },
+    {
+      "id": "intv_9eea8bf1c323",
+      "type": "interventions",
+      "title": "MS Literacy Goals - Google Docs Intervention",
+      "tokens": "intv_9eea8bf1c323 ms literacy goals - google docs intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_ac6809005540",
+      "type": "interventions",
+      "title": "ES - Aligning SLP and LS Literacy Goals - Google Docs Intervention",
+      "tokens": "intv_ac6809005540 es - aligning slp and ls literacy goals - google docs intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_c34abb6a35f8",
+      "type": "interventions",
+      "title": "Intervention Plan Goal Bank (Gr 3 to Gr 4) - Google Docs Intervention",
+      "tokens": "intv_c34abb6a35f8 intervention plan goal bank (gr 3 to gr 4) - google docs intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "intv_d2d02348afdd",
+      "type": "interventions",
+      "title": "Goal Bank for Intervention Plans for Rising G2 - Google Docs Intervention",
+      "tokens": "intv_d2d02348afdd goal bank for intervention plans for rising g2 - google docs intervention literacy t1 k-2 3-5 6-8 9-12 literacy t1 sas-alignment"
+    },
+    {
+      "id": "asm_30e29bfca128",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_30e29bfca128 map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_401f213e19b4",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_401f213e19b4 map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_5884f77d172f",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_5884f77d172f map growth math k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_5a77f4fd8d6b",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_5a77f4fd8d6b map growth math k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_5d330b6d4256",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_5d330b6d4256 map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_5e6a88bfd133",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_5e6a88bfd133 map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_c2cc06873bd8",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_c2cc06873bd8 map growth math k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_c46a8991853a",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_c46a8991853a map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_d7105fb99b3c",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_d7105fb99b3c map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_ec5e53d2ef5b",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_ec5e53d2ef5b map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_edb55fc4069a",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_edb55fc4069a map growth literacy k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "asm_f5c4410e47d3",
+      "type": "assessments",
+      "title": "MAP Growth",
+      "tokens": "asm_f5c4410e47d3 map growth math k-2 3-5 6-8 9-12"
+    },
+    {
+      "id": "goal_01900a24cae9",
+      "type": "goal_bank",
+      "title": "Decoding and fluency transfer",
+      "tokens": "goal_01900a24cae9 literacy decoding and fluency transfer k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "goal_18a677a5722c",
+      "type": "goal_bank",
+      "title": "Decoding and fluency transfer",
+      "tokens": "goal_18a677a5722c literacy decoding and fluency transfer k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "goal_398d0fcae522",
+      "type": "goal_bank",
+      "title": "Decoding and fluency transfer",
+      "tokens": "goal_398d0fcae522 literacy decoding and fluency transfer k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "goal_8842955c144c",
+      "type": "goal_bank",
+      "title": "Decoding and fluency transfer",
+      "tokens": "goal_8842955c144c literacy decoding and fluency transfer k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "goal_d25763bda929",
+      "type": "goal_bank",
+      "title": "Problem solving accuracy",
+      "tokens": "goal_d25763bda929 math problem solving accuracy k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "goal_d351ef4165a6",
+      "type": "goal_bank",
+      "title": "Decoding and fluency transfer",
+      "tokens": "goal_d351ef4165a6 literacy decoding and fluency transfer k-2 by [date], student will improve [skill] from [baseline] to [target] as measured by [assessment/method] in [setting]."
+    },
+    {
+      "id": "principle_34ee62c434df",
+      "type": "beliefs_principles",
+      "title": "Intervention should be explicit, structured, and evidence-linked.",
+      "tokens": "principle_34ee62c434df intervention should be explicit, structured, and evidence-linked."
+    },
+    {
+      "id": "principle_4e4ff15fba99",
+      "type": "beliefs_principles",
+      "title": "Intervention should be explicit, structured, and evidence-linked.",
+      "tokens": "principle_4e4ff15fba99 intervention should be explicit, structured, and evidence-linked."
+    },
+    {
+      "id": "principle_abc35f2c4761",
+      "type": "beliefs_principles",
+      "title": "Intervention should be explicit, structured, and evidence-linked.",
+      "tokens": "principle_abc35f2c4761 intervention should be explicit, structured, and evidence-linked."
+    },
+    {
+      "id": "principle_fec6652af58c",
+      "type": "beliefs_principles",
+      "title": "Intervention should be explicit, structured, and evidence-linked.",
+      "tokens": "principle_fec6652af58c intervention should be explicit, structured, and evidence-linked."
+    },
+    {
+      "id": "tmpl_01b9270460a1",
+      "type": "forms_templates",
+      "title": "Intervention planning form w case example Template",
+      "tokens": "tmpl_01b9270460a1 intervention planning form w case example template use as a meeting-ready planning scaffold with clear action owners."
+    },
+    {
+      "id": "tmpl_334878daa2af",
+      "type": "forms_templates",
+      "title": "High_School_PPG Template",
+      "tokens": "tmpl_334878daa2af high_school_ppg template use as a meeting-ready planning scaffold with clear action owners."
+    },
+    {
+      "id": "tmpl_600282294764",
+      "type": "forms_templates",
+      "title": "ElementarySchoolProgramGuide2025-26 Template",
+      "tokens": "tmpl_600282294764 elementaryschoolprogramguide2025-26 template use as a meeting-ready planning scaffold with clear action owners."
+    },
+    {
+      "id": "tmpl_c221faeea5ce",
+      "type": "forms_templates",
+      "title": "MS_PPG Template",
+      "tokens": "tmpl_c221faeea5ce ms_ppg template use as a meeting-ready planning scaffold with clear action owners."
+    }
+  ]
 }
