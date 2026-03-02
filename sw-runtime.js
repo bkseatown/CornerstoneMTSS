@@ -6,7 +6,7 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260302-v3';
+const SW_VERSION = '20260302-v4';
 const RUNTIME_BUILD_ID = new URL(self.location.href).searchParams.get('v') || SW_VERSION;
 const CACHE_PREFIX = `cs-cache-${RUNTIME_BUILD_ID}`;
 const SHELL_CACHE = `${CACHE_PREFIX}-shell`;
@@ -157,12 +157,9 @@ async function navigationHandler(request) {
     try {
       const shell = await caches.open(SHELL_CACHE);
       const dynamic = await caches.open(DYNAMIC_CACHE);
-      const fallbackIndexUrl = new URL('./index.html', self.registration.scope).toString();
       const cached =
         (await shell.match(request, { ignoreSearch: true })) ||
-        (await dynamic.match(request, { ignoreSearch: true })) ||
-        (await shell.match(fallbackIndexUrl)) ||
-        (await dynamic.match(fallbackIndexUrl));
+        (await dynamic.match(request, { ignoreSearch: true }));
       if (cached) return cached;
     } catch {
       // Fall through to hard offline response if cache lookup fails.
