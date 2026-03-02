@@ -23,10 +23,13 @@
   var FlexGroupEngine = window.CSFlexGroupEngine;
   var PlanEngine = window.CSPlanEngine;
   var SessionPlanner = window.CSSessionPlanner;
+  var InstructionalSequencer = window.CSInstructionalSequencer;
+  var AlignmentLoader = window.CSAlignmentLoader;
   var InterventionPlanner = window.CSInterventionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
   var SupportStore = window.CSSupportStore;
   var MeetingNotes = window.CSMeetingNotes;
+  var MeetingTranslation = window.CSMeetingTranslation;
   var SASLibrary = window.CSSASLibrary;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
@@ -48,7 +51,12 @@
     sasPack: null,
     sasTab: "interventions",
     sasSelection: null,
-    generatedPlanner: null
+    generatedPlanner: null,
+    efTimer: null,
+    efSecondsLeft: 0,
+    meetingFormat: "sas",
+    meetingLanguage: "en",
+    liveTranslate: false
   };
   var skillStoreLogged = false;
 
@@ -61,6 +69,10 @@
     centerEmpty: document.getElementById("td-center-empty"),
     centerSelected: document.getElementById("td-center-selected"),
     recommendedPlanList: document.getElementById("td-recommended-plan-list"),
+    nextMovesList: document.getElementById("td-next-moves-list"),
+    showAlignment: document.getElementById("td-show-alignment"),
+    implementationTodayBody: document.getElementById("td-implementation-today-body"),
+    executiveSupportBody: document.getElementById("td-executive-support-body"),
     studentLabel: document.getElementById("td-student-label"),
     focusTitle: document.getElementById("td-focus-title"),
     recoLine: document.getElementById("td-reco-line"),
@@ -93,6 +105,9 @@
     meetingModal: document.getElementById("td-meeting-modal"),
     meetingClose: document.getElementById("td-meeting-close"),
     meetingType: document.getElementById("td-meeting-type"),
+    meetingFormatButtons: Array.prototype.slice.call(document.querySelectorAll("[data-meeting-format]")),
+    meetingLanguage: document.getElementById("td-meeting-language"),
+    meetingLiveTranslate: document.getElementById("td-meeting-live-translate"),
     meetingSttStart: document.getElementById("td-meeting-stt-start"),
     meetingSttStop: document.getElementById("td-meeting-stt-stop"),
     meetingStamp: document.getElementById("td-meeting-stamp"),
@@ -103,6 +118,10 @@
     meetingSttStatus: document.getElementById("td-meeting-stt-status"),
     meetingNotes: document.getElementById("td-meeting-notes"),
     meetingActions: document.getElementById("td-meeting-actions"),
+    meetingPreview: document.getElementById("td-meeting-preview"),
+    meetingTranslationPreview: document.getElementById("td-meeting-translation-preview"),
+    meetingTranslationBadge: document.getElementById("td-meeting-translation-badge"),
+    meetingExportFormat: document.getElementById("td-meeting-export-format"),
     meetingSave: document.getElementById("td-meeting-save"),
     meetingGoals: document.getElementById("td-meeting-goals"),
     sasLibraryBtn: document.getElementById("td-sas-library-btn"),
@@ -183,6 +202,23 @@
 
   function safeJsonParse(s, fallback) {
     try { return JSON.parse(s); } catch (_e) { return fallback; }
+  }
+
+  function isAdminContext() {
+    try {
+      var params = new URLSearchParams(window.location.search || "");
+      return params.get("admin") === "1";
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function escAttr(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   function getLastActivityMap() {
@@ -917,6 +953,9 @@
       renderSupportHub("");
       renderDrawer("");
       renderRecommendedPlan("");
+      renderInstructionalSequencer("");
+      renderImplementationToday("");
+      renderExecutiveSupport("");
       renderTodayPlan(null);
       renderSkillTiles("");
       renderMasteryUI("");
@@ -980,6 +1019,9 @@
     renderSupportHub(state.selectedId);
     renderDrawer(state.selectedId);
     renderRecommendedPlan(state.selectedId);
+    renderInstructionalSequencer(state.selectedId);
+    renderImplementationToday(state.selectedId);
+    renderExecutiveSupport(state.selectedId);
     renderTodayPlan(state.plan);
     renderProgressNote(state.plan, summary.student);
     renderLastSessionSummary(state.selectedId);
@@ -1261,10 +1303,13 @@
       ? SupportStore.getStudent(studentId)
       : { needs: [], goals: [], accommodations: [], interventions: [], meetings: [] };
     if (state.activeSupportTab === "snapshot") {
+      var anchorPanel = renderInstitutionalAnchorPanel(studentId, false);
       el.supportBody.innerHTML = [
         '<div class="td-support-item"><h4>Top Needs</h4><p>' + (studentSupport.needs.length ? studentSupport.needs.slice(0, 5).map(function (n) { return n.label; }).join(" • ") : "No needs captured yet.") + '</p></div>',
-        '<div class="td-support-item"><h4>Last 14 days trend</h4><p>Use Skill Tiles + Recent Sessions for trend checks before meetings.</p></div>'
+        '<div class="td-support-item"><h4>Last 14 days trend</h4><p>Use Skill Tiles + Recent Sessions for trend checks before meetings.</p></div>',
+        anchorPanel
       ].join("");
+      bindInstitutionalAnchorActions(studentId, el.supportBody, false);
       return;
     }
     if (state.activeSupportTab === "plan") {
@@ -1448,11 +1493,26 @@
       : { goals: [], interventions: [] };
     el.drawerTitle.textContent = String(summary.student.name || "Student") + " • " + String(summary.student.id || studentId);
     if (state.activeDrawerTab === "snapshot") {
+      var drawerAnchorPanel = renderInstitutionalAnchorPanel(studentId, true);
+      var efRow = SupportStore && typeof SupportStore.getExecutiveFunction === "function"
+        ? SupportStore.getExecutiveFunction(studentId)
+        : { upcomingTasks: [] };
+      var upcomingTasks = Array.isArray(efRow.upcomingTasks) ? efRow.upcomingTasks.slice(0, 3) : [];
+      var assignmentSnapshot = '<div class="td-support-item"><h4>Upcoming Tasks</h4>' + (
+        upcomingTasks.length
+          ? upcomingTasks.map(function (task) {
+              return '<p>' + escAttr(task.name || "Task") + ' • ' + escAttr(task.dueDate || "No due date") + ' • ' + escAttr(task.status || "Not Started") + '</p>';
+            }).join("")
+          : '<p>No upcoming tasks yet.</p>'
+      ) + '</div>';
       el.drawerBody.innerHTML = [
         '<div class="td-support-item"><h4>Last 7 Days Minutes</h4><p>Derived from recent sessions and quick checks.</p></div>',
         '<div class="td-support-item"><h4>Top Signals</h4><p>' + (summary.evidenceChips || []).slice(0, 5).map(function (c) { return c.label + " " + c.value; }).join(" • ") + '</p></div>',
-        '<div class="td-support-item"><h4>Next Best Activity</h4><p>' + summary.nextMove.line + '</p><button class="td-top-btn" type="button" data-drawer-launch="' + summary.nextMove.quickHref + '">Launch</button></div>'
+        '<div class="td-support-item"><h4>Next Best Activity</h4><p>' + summary.nextMove.line + '</p><button class="td-top-btn" type="button" data-drawer-launch="' + summary.nextMove.quickHref + '">Launch</button></div>',
+        assignmentSnapshot,
+        drawerAnchorPanel
       ].join("");
+      bindInstitutionalAnchorActions(studentId, el.drawerBody, true);
     } else if (state.activeDrawerTab === "goals") {
       var goalsList = (support.goals || []).length
         ? support.goals.slice(0, 6).map(function (g) {
@@ -1608,6 +1668,609 @@
       button.addEventListener("click", function () {
         var href = String(button.getAttribute("data-reco-launch") || "word-quest.html?quick=1");
         window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+      });
+    });
+  }
+
+  function toSequencerRoute(moduleName, fallbackHref) {
+    var href = String(fallbackHref || "").trim();
+    if (href) return href;
+    var module = String(moduleName || "");
+    if (module === "ReadingLab") return "reading-lab.html";
+    if (module === "WritingStudio") return "writing-studio.html";
+    if (module === "SentenceStudio") return "sentence-surgery.html";
+    if (module === "PrecisionPlay") return "precision-play.html";
+    if (module.indexOf("Numeracy") === 0) return "numeracy.html";
+    return "word-quest.html?play=1";
+  }
+
+  function parseGradeLevel(raw) {
+    var text = String(raw || "").toUpperCase();
+    var match = text.match(/(\d{1,2})/);
+    if (match && Number.isFinite(Number(match[1]))) return Number(match[1]);
+    return null;
+  }
+
+  function readingMapThreshold(gradeLevel) {
+    if (!Number.isFinite(gradeLevel)) return 190;
+    if (gradeLevel <= 1) return 175;
+    if (gradeLevel <= 2) return 185;
+    if (gradeLevel <= 3) return 195;
+    if (gradeLevel <= 5) return 205;
+    if (gradeLevel <= 8) return 215;
+    return 225;
+  }
+
+  function isLowBenchmarkText(value) {
+    var text = String(value || "").toLowerCase();
+    if (!text) return false;
+    return (
+      text.indexOf("below") >= 0 ||
+      text.indexOf("risk") >= 0 ||
+      text.indexOf("intensive") >= 0 ||
+      text.indexOf("low") >= 0 ||
+      text.indexOf("strategic") >= 0
+    );
+  }
+
+  function isEarlyWordsTheirWayStage(value) {
+    var text = String(value || "").toLowerCase();
+    if (!text) return false;
+    return (
+      text.indexOf("psi") >= 0 ||
+      text.indexOf("early") >= 0 ||
+      text.indexOf("letter") >= 0 ||
+      text.indexOf("within word pattern") >= 0
+    );
+  }
+
+  function isWeakGlossStage(value) {
+    var text = String(value || "").toLowerCase();
+    if (!text) return false;
+    return (
+      text.indexOf("early") >= 0 ||
+      text.indexOf("emerging") >= 0 ||
+      text.indexOf("limited") >= 0 ||
+      text.indexOf("additive") >= 0
+    );
+  }
+
+  function rankWeightFromAnchor(studentId, row, anchors) {
+    var score = (4 - Math.max(1, Math.min(3, Number(row.rank || 3)))) * 10;
+    var contexts = [];
+    var student = (state.caseload || []).find(function (s) { return String(s && s.id || "") === String(studentId || ""); }) || null;
+    var gradeLevel = parseGradeLevel(student && student.gradeBand ? student.gradeBand : "");
+    var moduleName = String(row.module || "");
+    var skillId = String(row.skillId || "").toUpperCase();
+
+    var readingMap = anchors && anchors.reading ? Number(anchors.reading.mapRIT) : NaN;
+    if (Number.isFinite(readingMap) && readingMap < readingMapThreshold(gradeLevel)) {
+      if (moduleName === "WordQuest" || moduleName === "PrecisionPlay" || moduleName === "ReadingLab" || skillId.indexOf("LIT.") === 0) {
+        score += 22;
+        contexts.push("MAP RIT below benchmark; reinforcing literacy foundations.");
+      }
+    }
+    if (anchors && anchors.reading && isLowBenchmarkText(anchors.reading.corePhonicsBenchmark)) {
+      if (moduleName === "WordQuest") {
+        score += 28;
+        contexts.push("Core Phonics benchmark indicates support need; prioritizing decoding.");
+      }
+    }
+    if (anchors && anchors.reading && isEarlyWordsTheirWayStage(anchors.reading.wordsTheirWayStage)) {
+      if (moduleName === "WordQuest" || moduleName === "PrecisionPlay") {
+        score += 16;
+        contexts.push("Words Their Way stage is early; reinforcing morphology/decoding patterns.");
+      }
+    }
+    if (anchors && anchors.math && isWeakGlossStage(anchors.math.glossStage)) {
+      if (moduleName.indexOf("Numeracy") === 0 || skillId.indexOf("MATH") >= 0 || skillId.indexOf("NUM") >= 0) {
+        score += 20;
+        contexts.push("GLOSS stage suggests weak strategy use; reinforcing conceptual numeracy.");
+      }
+    }
+    var writingRubric = anchors && anchors.writing ? Number(anchors.writing.onDemandRubricScore) : NaN;
+    if (Number.isFinite(writingRubric) && writingRubric < 2.5) {
+      if (moduleName === "WritingStudio" || skillId.indexOf("WRITE") >= 0) {
+        score += 24;
+        contexts.push("Writing rubric score is low; increasing paragraph structure reinforcement.");
+      }
+    }
+
+    return {
+      score: score,
+      context: contexts[0] || ""
+    };
+  }
+
+  function applyInstitutionalAnchorOverlay(studentId, rows) {
+    if (!Array.isArray(rows) || !rows.length) return [];
+    if (!SupportStore || typeof SupportStore.getInstitutionalAnchors !== "function") return rows.slice(0, 3);
+    var anchors = SupportStore.getInstitutionalAnchors(studentId);
+    var ranked = rows.slice(0, 3).map(function (row) {
+      var weight = rankWeightFromAnchor(studentId, row, anchors);
+      return Object.assign({}, row, {
+        _anchorScore: weight.score,
+        anchorContext: weight.context
+      });
+    });
+    ranked.sort(function (a, b) {
+      if (Number(b._anchorScore || 0) !== Number(a._anchorScore || 0)) return Number(b._anchorScore || 0) - Number(a._anchorScore || 0);
+      return Number(a.rank || 3) - Number(b.rank || 3);
+    });
+    return ranked.slice(0, 3).map(function (row, idx) {
+      return Object.assign({}, row, { rank: idx + 1 });
+    });
+  }
+
+  function formatAlignmentLine(alignment) {
+    if (!alignment) return "";
+    var standard = "";
+    if (Array.isArray(alignment.fishTank) && alignment.fishTank.length) standard = String(alignment.fishTank[0]);
+    if (!standard && Array.isArray(alignment.illustrativeMath) && alignment.illustrativeMath.length) standard = String(alignment.illustrativeMath[0]);
+    var strand = String(alignment.sasStrand || "");
+    var category = String(alignment.mtssCategory || "");
+    var lines = [];
+    if (standard || strand) lines.push("Aligned to: " + [standard, strand].filter(Boolean).join(" - "));
+    if (category) lines.push("MTSS Category: " + category);
+    return lines.map(function (line) {
+      return '<p class="td-sequencer-alignment">' + line + '</p>';
+    }).join("");
+  }
+
+  function formatAnchorContextLine(contextLine) {
+    var line = String(contextLine || "").trim();
+    if (!line) return "";
+    return '<p class="td-sequencer-alignment">Context: ' + line + '</p>';
+  }
+
+  function renderInstitutionalAnchorPanel(studentId, compact) {
+    var isCompact = !!compact;
+    if (!studentId || !SupportStore || typeof SupportStore.getInstitutionalAnchors !== "function") {
+      return '<div class="td-support-item"><h4>Institutional Data Anchors</h4><p>Select a student to enter MAP/Aimsweb/Core Phonics/Writing/Math anchors.</p></div>';
+    }
+    var a = SupportStore.getInstitutionalAnchors(studentId);
+    var cls = isCompact ? "td-anchor-grid is-compact" : "td-anchor-grid";
+    return [
+      '<div class="td-support-item td-anchor-panel">',
+      '<h4>Institutional Data Anchors</h4>',
+      '<div class="' + cls + '">',
+      '<section class="td-anchor-group"><h5>Reading</h5>',
+      '<label>MAP RIT<input class="td-anchor-input" data-anchor-path="reading.mapRIT" type="number" value="' + escAttr(a.reading.mapRIT == null ? "" : a.reading.mapRIT) + '" /></label>',
+      '<label>Aimsweb Percentile<input class="td-anchor-input" data-anchor-path="reading.aimswebPercentile" type="number" min="0" max="99" value="' + escAttr(a.reading.aimswebPercentile == null ? "" : a.reading.aimswebPercentile) + '" /></label>',
+      '<label>Core Phonics<input class="td-anchor-input" data-anchor-path="reading.corePhonicsBenchmark" type="text" value="' + escAttr(a.reading.corePhonicsBenchmark || "") + '" /></label>',
+      '<label>Words Their Way Stage<input class="td-anchor-input" data-anchor-path="reading.wordsTheirWayStage" type="text" value="' + escAttr(a.reading.wordsTheirWayStage || "") + '" /></label>',
+      '<label>Fundations Unit<input class="td-anchor-input" data-anchor-path="reading.fundationsUnit" type="text" value="' + escAttr(a.reading.fundationsUnit || "") + '" /></label>',
+      '</section>',
+      '<section class="td-anchor-group"><h5>Writing</h5>',
+      '<label>On-Demand Rubric<input class="td-anchor-input" data-anchor-path="writing.onDemandRubricScore" type="number" step="0.1" value="' + escAttr(a.writing.onDemandRubricScore == null ? "" : a.writing.onDemandRubricScore) + '" /></label>',
+      '<label>Current Goal<input class="td-anchor-input" data-anchor-path="writing.currentWritingGoal" type="text" value="' + escAttr(a.writing.currentWritingGoal || "") + '" /></label>',
+      '</section>',
+      '<section class="td-anchor-group"><h5>Math</h5>',
+      '<label>MAP RIT<input class="td-anchor-input" data-anchor-path="math.mapRIT" type="number" value="' + escAttr(a.math.mapRIT == null ? "" : a.math.mapRIT) + '" /></label>',
+      '<label>Bridges Unit Score<input class="td-anchor-input" data-anchor-path="math.bridgesUnitScore" type="number" step="0.1" value="' + escAttr(a.math.bridgesUnitScore == null ? "" : a.math.bridgesUnitScore) + '" /></label>',
+      '<label>GLOSS Stage<input class="td-anchor-input" data-anchor-path="math.glossStage" type="text" value="' + escAttr(a.math.glossStage || "") + '" /></label>',
+      '<label>Illustrative Checkpoint<input class="td-anchor-input" data-anchor-path="math.illustrativeCheckpoint" type="text" value="' + escAttr(a.math.illustrativeCheckpoint || "") + '" /></label>',
+      '</section>',
+      '</div>',
+      '<div class="td-plan-tabs"><button class="td-top-btn" type="button" data-anchor-save="1">Save Anchors</button></div>',
+      '</div>'
+    ].join("");
+  }
+
+  function bindInstitutionalAnchorActions(studentId, rootEl, refreshDrawer) {
+    var container = rootEl || document;
+    var saveBtn = container.querySelector("[data-anchor-save='1']");
+    if (!saveBtn || !SupportStore || typeof SupportStore.setInstitutionalAnchors !== "function") return;
+    saveBtn.addEventListener("click", function () {
+      var inputs = container.querySelectorAll(".td-anchor-input[data-anchor-path]");
+      var patch = { reading: {}, writing: {}, math: {} };
+      Array.prototype.forEach.call(inputs, function (input) {
+        var path = String(input.getAttribute("data-anchor-path") || "");
+        var value = String(input.value || "").trim();
+        var parts = path.split(".");
+        if (parts.length !== 2) return;
+        var group = parts[0];
+        var key = parts[1];
+        if (!patch[group]) patch[group] = {};
+        patch[group][key] = value;
+      });
+      SupportStore.setInstitutionalAnchors(studentId, patch);
+      setCoachLine("Institutional anchors saved.");
+      renderInstructionalSequencer(studentId);
+      if (refreshDrawer) {
+        renderDrawer(studentId);
+      } else {
+        renderSupportHub(studentId);
+      }
+    });
+  }
+
+  function renderInstructionalSequencer(studentId) {
+    if (!el.nextMovesList) return;
+    if (!studentId) {
+      el.nextMovesList.innerHTML = '<p class="td-reco-line">Select a student to generate 3 ranked instructional moves.</p>';
+      return;
+    }
+    var rows = InstructionalSequencer && typeof InstructionalSequencer.generateInstructionalOptions === "function"
+      ? InstructionalSequencer.generateInstructionalOptions(studentId)
+      : [];
+    rows = applyInstitutionalAnchorOverlay(studentId, rows);
+    if (SupportStore && typeof SupportStore.calculateImplementationConsistency === "function") {
+      var fidelity = SupportStore.calculateImplementationConsistency(studentId, 21);
+      if (fidelity && Number(fidelity.percent || 0) < 40) {
+        rows = rows.map(function (row) {
+          return Object.assign({}, row, {
+            reason: String(row.reason || "") + " Low implementation consistency detected; prioritize structured routine support."
+          });
+        });
+      }
+    }
+    if (SupportStore && typeof SupportStore.getExecutiveFunction === "function") {
+      var ef = SupportStore.getExecutiveFunction(studentId);
+      var recentFocus = Array.isArray(ef.focusHistory) ? ef.focusHistory.slice(0, 3) : [];
+      if (recentFocus.length >= 3) {
+        var lowFocusCount = recentFocus.filter(function (f) {
+          var r = String(f && f.selfRating || "");
+          return r === "Struggled" || r === "Mostly";
+        }).length;
+        if (lowFocusCount >= 3) {
+          rows = rows.map(function (row) {
+            return Object.assign({}, row, {
+              reason: String(row.reason || "") + " Low sustained focus detected; begin with 10-min structured sprint."
+            });
+          });
+        }
+      }
+    }
+    if (!Array.isArray(rows) || !rows.length) {
+      el.nextMovesList.innerHTML = '<p class="td-reco-line">No recommendation data yet. Run a quick check and refresh.</p>';
+      return;
+    }
+    var showAlignment = !!(el.showAlignment && el.showAlignment.checked);
+    el.nextMovesList.innerHTML = rows.slice(0, 3).map(function (row, idx) {
+      var rank = Math.max(1, Math.min(3, Number(row.rank || (idx + 1))));
+      var moduleName = String(row.module || "WordQuest");
+      var title = String(row.title || "Focused skill reinforcement");
+      var skillId = String(row.skillId || "");
+      var skillLabel = skillId ? formatSkillBreadcrumb(skillId) : "Foundational skill";
+      var duration = Math.max(5, Math.min(10, Number(row.durationMin || 6)));
+      var reason = String(row.reason || "Targeted reinforcement based on recent evidence.");
+      var alignment = showAlignment && AlignmentLoader && typeof AlignmentLoader.getAlignmentForSkill === "function"
+        ? AlignmentLoader.getAlignmentForSkill(skillId)
+        : null;
+      var anchorContext = showAlignment ? formatAnchorContextLine(row.anchorContext) : "";
+      var launchHref = toSequencerRoute(moduleName, row.href);
+      return [
+        '<article class="td-sequencer-item">',
+        '<span class="td-sequencer-rank">' + rank + '</span>',
+        '<div class="td-sequencer-main">',
+        '<div class="td-sequencer-head"><strong>' + title + '</strong><span class="td-chip">' + moduleName + '</span></div>',
+        '<p class="td-sequencer-meta">' + skillLabel + " • " + duration + ' min</p>',
+        '<p class="td-sequencer-reason">' + reason + '</p>',
+        (showAlignment ? formatAlignmentLine(alignment) : ""),
+        anchorContext,
+        '</div>',
+        '<button class="td-top-btn" type="button" data-sequencer-launch="' + launchHref + '">Start This</button>',
+        '</article>'
+      ].join("");
+    }).join("");
+    Array.prototype.forEach.call(el.nextMovesList.querySelectorAll("[data-sequencer-launch]"), function (button) {
+      button.addEventListener("click", function () {
+        var launch = String(button.getAttribute("data-sequencer-launch") || "word-quest.html?play=1");
+        window.location.href = appendStudentParam("./" + launch.replace(/^\.\//, ""), studentId);
+      });
+    });
+  }
+
+  function renderImplementationToday(studentId) {
+    if (!el.implementationTodayBody) return;
+    if (!studentId || !SupportStore || typeof SupportStore.getStudent !== "function") {
+      el.implementationTodayBody.innerHTML = '<p class="td-reco-line">Select a student to track implementation fidelity.</p>';
+      return;
+    }
+    var student = SupportStore.getStudent(studentId);
+    var tracking = typeof SupportStore.getImplementationTracking === "function"
+      ? SupportStore.getImplementationTracking(studentId)
+      : { accommodations: [], tier1Interventions: [] };
+    var accommodations = (student.accommodations || []).slice(0, 4);
+    var today = new Date().toISOString().slice(0, 10);
+    var toggles = accommodations.length ? accommodations.map(function (acc) {
+      var trackRow = (tracking.accommodations || []).find(function (row) { return String(row.id) === String(acc.id); });
+      var implementedToday = !!(trackRow && Array.isArray(trackRow.history) && trackRow.history.some(function (h) {
+        return String(h.date || "").slice(0, 10) === today && h.implemented === true;
+      }));
+      return '<label class="td-impl-chip"><input type="checkbox" data-impl-acc="' + escAttr(String(acc.id || "")) + '"' + (implementedToday ? " checked" : "") + '> ' + escAttr(acc.title || "Accommodation") + '</label>';
+    }).join("") : '<span class="td-reco-line">No active accommodations yet.</span>';
+
+    var tier1Interventions = (student.interventions || []).filter(function (row) { return Number(row.tier || 1) === 1; }).slice(0, 8);
+    var options = tier1Interventions.length
+      ? tier1Interventions.map(function (row) {
+          return '<option value="' + escAttr(String(row.id || "")) + '">' + escAttr(row.strategy || row.focus || "Tier 1 intervention") + '</option>';
+        }).join("")
+      : '<option value="">Tier 1 intervention</option>';
+
+    var consistency = typeof SupportStore.calculateImplementationConsistency === "function"
+      ? SupportStore.calculateImplementationConsistency(studentId, 21)
+      : { percent: 0 };
+
+    var body = [
+      '<div class="td-impl-row">' + toggles + '</div>',
+      '<div class="td-impl-form">',
+      '<select id="td-impl-intervention">' + options + '</select>',
+      '<select id="td-impl-duration"><option value="5">5m</option><option value="10" selected>10m</option><option value="15">15m</option><option value="20">20m</option></select>',
+      '<select id="td-impl-context"><option value="ELA" selected>ELA</option><option value="Math">Math</option><option value="Other">Other</option></select>',
+      '<button id="td-impl-log" class="td-top-btn" type="button">Log Intervention</button>',
+      '</div>',
+      '<p class="td-sequencer-alignment">Implementation Consistency (Past 3 Weeks): ' + Number(consistency.percent || 0).toFixed(1) + '%</p>'
+    ];
+
+    if (isAdminContext()) {
+      var accTotal = (tracking.accommodations || []).reduce(function (sum, row) {
+        var hits = Array.isArray(row.history) ? row.history.filter(function (h) { return h && h.implemented === true; }).length : 0;
+        return sum + hits;
+      }, 0);
+      var recentTier1 = (tracking.tier1Interventions || []).filter(function (row) {
+        var ts = Date.parse(String(row.date || ""));
+        return Number.isFinite(ts) && ts >= (Date.now() - (28 * 86400000));
+      });
+      var byCtx = {};
+      recentTier1.forEach(function (row) {
+        var key = String(row.context || "Other");
+        byCtx[key] = (byCtx[key] || 0) + 1;
+      });
+      body.push('<p class="td-impl-admin">Admin: accommodation logs=' + accTotal + ' • Tier 1/week=' + (Math.round((recentTier1.length / 4) * 10) / 10) + ' • Context: ' + Object.keys(byCtx).map(function (k) { return k + " " + byCtx[k]; }).join(" • ") + '</p>');
+    }
+
+    el.implementationTodayBody.innerHTML = body.join("");
+
+    Array.prototype.forEach.call(el.implementationTodayBody.querySelectorAll("[data-impl-acc]"), function (cb) {
+      cb.addEventListener("change", function () {
+        var id = String(cb.getAttribute("data-impl-acc") || "");
+        if (!id) return;
+        var acc = accommodations.find(function (row) { return String(row.id) === id; }) || {};
+        if (typeof SupportStore.logAccommodationImplementation === "function") {
+          SupportStore.logAccommodationImplementation(studentId, { id: id, name: acc.title || "Accommodation", implemented: !!cb.checked });
+        }
+        if (cb.checked && typeof SupportStore.toggleAccommodationImplemented === "function") {
+          SupportStore.toggleAccommodationImplemented(studentId, id, "class");
+        }
+        renderImplementationToday(studentId);
+        renderInstructionalSequencer(studentId);
+      });
+    });
+
+    var logBtn = document.getElementById("td-impl-log");
+    if (logBtn) {
+      logBtn.addEventListener("click", function () {
+        var select = document.getElementById("td-impl-intervention");
+        var durationEl = document.getElementById("td-impl-duration");
+        var contextEl = document.getElementById("td-impl-context");
+        var interventionId = String(select && select.value || "");
+        var intervention = tier1Interventions.find(function (row) { return String(row.id || "") === interventionId; }) || {};
+        if (typeof SupportStore.logTier1InterventionUsage === "function") {
+          SupportStore.logTier1InterventionUsage(studentId, {
+            id: interventionId || ("tier1_" + Date.now()),
+            name: intervention.strategy || intervention.focus || "Tier 1 intervention",
+            durationMin: Number(durationEl && durationEl.value || 10),
+            context: String(contextEl && contextEl.value || "ELA")
+          });
+        }
+        renderImplementationToday(studentId);
+        renderInstructionalSequencer(studentId);
+        setCoachLine("Tier 1 intervention logged.");
+      });
+    }
+  }
+
+  function decomposeTask(name) {
+    var text = String(name || "").toLowerCase();
+    if (text.indexOf("write") >= 0 || text.indexOf("paragraph") >= 0 || text.indexOf("essay") >= 0) {
+      return [
+        "Identify claim",
+        "Brainstorm 2-3 reasons",
+        "Draft paragraph",
+        "Add explanation",
+        "Quick revision check"
+      ];
+    }
+    if (text.indexOf("read") >= 0 || text.indexOf("text") >= 0 || text.indexOf("article") >= 0) {
+      return [
+        "Preview text",
+        "Identify purpose",
+        "Annotate 3 key points",
+        "Summarize",
+        "Reflect"
+      ];
+    }
+    if (text.indexOf("math") >= 0 || text.indexOf("solve") >= 0 || text.indexOf("equation") >= 0 || text.indexOf("problem") >= 0) {
+      return [
+        "Identify problem type",
+        "List knowns/unknowns",
+        "Solve step-by-step",
+        "Check answer",
+        "Explain reasoning"
+      ];
+    }
+    return [
+      "Define task objective",
+      "Break into 3-5 steps",
+      "Complete first step",
+      "Review progress",
+      "Finalize"
+    ];
+  }
+
+  function emitExecutiveEvidence(studentId, skillId, accuracy) {
+    if (!studentId || !skillId || !EvidenceEngine || typeof EvidenceEngine.recordEvidence !== "function") return;
+    EvidenceEngine.recordEvidence({
+      studentId: String(studentId),
+      timestamp: new Date().toISOString(),
+      module: "executive_function",
+      activityId: "ef.v1",
+      targets: [String(skillId)],
+      tier: "T2",
+      doseMin: 5,
+      result: {
+        attempts: 1,
+        accuracy: Math.max(0, Math.min(1, Number(accuracy || 0))),
+        selfCorrections: 0,
+        errorPattern: []
+      },
+      confidence: 0.8,
+      notes: "Phase 19 executive function signal"
+    });
+  }
+
+  function clearEfTimer() {
+    if (state.efTimer) {
+      window.clearInterval(state.efTimer);
+      state.efTimer = null;
+    }
+  }
+
+  function ratingAccuracy(value) {
+    var v = String(value || "");
+    if (v === "On Task") return 1;
+    if (v === "Mostly") return 0.75;
+    return 0.45;
+  }
+
+  function renderExecutiveSupport(studentId) {
+    if (!el.executiveSupportBody) return;
+    clearEfTimer();
+    if (!studentId || !SupportStore || typeof SupportStore.getExecutiveFunction !== "function") {
+      el.executiveSupportBody.innerHTML = '<p class="td-reco-line">Select a student to open executive-function scaffolds.</p>';
+      return;
+    }
+    var ef = SupportStore.getExecutiveFunction(studentId);
+    var activeTask = ef.activeTask || null;
+    var upcoming = Array.isArray(ef.upcomingTasks) ? ef.upcomingTasks.slice(0, 3) : [];
+    var stepsHtml = "";
+    if (activeTask && Array.isArray(activeTask.steps) && activeTask.steps.length) {
+      stepsHtml = '<div class="td-ef-steps">' + activeTask.steps.map(function (step, idx) {
+        var checked = Array.isArray(activeTask.completedSteps) && activeTask.completedSteps.indexOf(idx) >= 0;
+        return '<label class="td-ef-step"><input type="checkbox" data-ef-step="' + idx + '"' + (checked ? " checked" : "") + '> ' + escAttr(step) + "</label>";
+      }).join("") + "</div>";
+    }
+    var upcomingHtml = upcoming.length
+      ? upcoming.map(function (task) {
+          return '<div class="td-impl-chip">' + escAttr(task.name) + " • " + escAttr(task.dueDate || "No due date") + " • " + escAttr(task.status || "Not Started") + ' <button class="td-top-btn" type="button" data-ef-break="' + escAttr(String(task.id || "")) + '">Break into Steps</button></div>';
+        }).join("")
+      : '<span class="td-reco-line">No upcoming tasks yet.</span>';
+
+    el.executiveSupportBody.innerHTML = [
+      '<div class="td-impl-form">',
+      '<input id="td-ef-task-input" class="td-anchor-input" type="text" placeholder="Enter assignment or task">',
+      '<button id="td-ef-build" class="td-top-btn" type="button">Build Steps</button>',
+      '<button id="td-ef-add-upcoming" class="td-top-btn" type="button">Add Upcoming</button>',
+      '<span></span>',
+      '</div>',
+      (activeTask ? '<p class="td-sequencer-alignment">Active Task: ' + escAttr(activeTask.name || "Task") + "</p>" : '<p class="td-sequencer-alignment">No active executive task.</p>'),
+      stepsHtml,
+      '<div class="td-impl-form">',
+      '<span class="td-ef-timer" id="td-ef-timer">10:00</span>',
+      '<button id="td-ef-start-sprint" class="td-top-btn" type="button">Start Focus Sprint</button>',
+      '<select id="td-ef-rating"><option>On Task</option><option selected>Mostly</option><option>Struggled</option></select>',
+      '<button id="td-ef-log-rating" class="td-top-btn" type="button">Log Focus</button>',
+      '</div>',
+      '<div class="td-support-item"><h4>Upcoming Tasks</h4><div class="td-impl-row">' + upcomingHtml + "</div></div>",
+      (activeTask ? '<div class="td-plan-tabs"><button id="td-ef-complete-task" class="td-top-btn" type="button">Mark Task Complete</button><button id="td-ef-open-task" class="td-top-btn" type="button">Open Task Plan</button></div>' : "")
+    ].join("");
+
+    var buildBtn = document.getElementById("td-ef-build");
+    if (buildBtn) {
+      buildBtn.addEventListener("click", function () {
+        var input = document.getElementById("td-ef-task-input");
+        var name = String(input && input.value || "").trim();
+        if (!name) return;
+        var steps = decomposeTask(name);
+        SupportStore.setActiveExecutiveTask(studentId, { name: name, steps: steps, completedSteps: [] });
+        renderExecutiveSupport(studentId);
+      });
+    }
+    var addUpcomingBtn = document.getElementById("td-ef-add-upcoming");
+    if (addUpcomingBtn) {
+      addUpcomingBtn.addEventListener("click", function () {
+        var input = document.getElementById("td-ef-task-input");
+        var name = String(input && input.value || "").trim();
+        if (!name) return;
+        var due = window.prompt("Due date (YYYY-MM-DD)", "") || "";
+        SupportStore.addUpcomingTask(studentId, { name: name, dueDate: due, status: "Not Started" });
+        renderExecutiveSupport(studentId);
+      });
+    }
+    Array.prototype.forEach.call(el.executiveSupportBody.querySelectorAll("[data-ef-step]"), function (box) {
+      box.addEventListener("change", function () {
+        var active = SupportStore.getExecutiveFunction(studentId).activeTask;
+        if (!active) return;
+        var done = Array.isArray(active.completedSteps) ? active.completedSteps.slice() : [];
+        var idx = Number(box.getAttribute("data-ef-step") || -1);
+        if (idx < 0) return;
+        if (box.checked && done.indexOf(idx) === -1) done.push(idx);
+        if (!box.checked) done = done.filter(function (v) { return Number(v) !== idx; });
+        SupportStore.updateExecutiveTaskProgress(studentId, done);
+      });
+    });
+    var startSprintBtn = document.getElementById("td-ef-start-sprint");
+    if (startSprintBtn) {
+      startSprintBtn.addEventListener("click", function () {
+        var timerEl = document.getElementById("td-ef-timer");
+        clearEfTimer();
+        state.efSecondsLeft = 600;
+        if (timerEl) timerEl.textContent = "10:00";
+        state.efTimer = window.setInterval(function () {
+          state.efSecondsLeft -= 1;
+          if (timerEl) {
+            var mm = Math.floor(Math.max(0, state.efSecondsLeft) / 60);
+            var ss = Math.max(0, state.efSecondsLeft) % 60;
+            timerEl.textContent = String(mm).padStart(2, "0") + ":" + String(ss).padStart(2, "0");
+          }
+          if (state.efSecondsLeft <= 0) {
+            clearEfTimer();
+            window.alert("Focus sprint complete. Log focus rating.");
+          }
+        }, 1000);
+      });
+    }
+    var logFocusBtn = document.getElementById("td-ef-log-rating");
+    if (logFocusBtn) {
+      logFocusBtn.addEventListener("click", function () {
+        var ratingEl = document.getElementById("td-ef-rating");
+        var rating = String(ratingEl && ratingEl.value || "Mostly");
+        var taskId = activeTask && activeTask.id ? String(activeTask.id) : "";
+        SupportStore.logFocusSprint(studentId, { taskId: taskId, duration: 10, selfRating: rating });
+        emitExecutiveEvidence(studentId, "EXEC.FUNCTION.SUSTAINED_ATTENTION", ratingAccuracy(rating));
+        renderExecutiveSupport(studentId);
+        renderInstructionalSequencer(studentId);
+      });
+    }
+    var completeBtn = document.getElementById("td-ef-complete-task");
+    if (completeBtn) {
+      completeBtn.addEventListener("click", function () {
+        var done = SupportStore.completeExecutiveTask(studentId);
+        if (done) emitExecutiveEvidence(studentId, "EXEC.FUNCTION.TASK_COMPLETION", 1);
+        renderExecutiveSupport(studentId);
+        renderInstructionalSequencer(studentId);
+      });
+    }
+    var openTaskBtn = document.getElementById("td-ef-open-task");
+    if (openTaskBtn) {
+      openTaskBtn.addEventListener("click", function () {
+        if (el.drawer) el.drawer.classList.remove("hidden");
+        state.activeDrawerTab = "snapshot";
+        renderDrawer(studentId);
+      });
+    }
+    Array.prototype.forEach.call(el.executiveSupportBody.querySelectorAll("[data-ef-break]"), function (btn) {
+      btn.addEventListener("click", function () {
+        var id = String(btn.getAttribute("data-ef-break") || "");
+        if (!id) return;
+        var task = (SupportStore.getExecutiveFunction(studentId).upcomingTasks || []).find(function (t) { return String(t.id) === id; });
+        if (!task) return;
+        var steps = decomposeTask(task.name || "");
+        SupportStore.setActiveExecutiveTask(studentId, { name: task.name || "Task", steps: steps, completedSteps: [] });
+        SupportStore.updateUpcomingTask(studentId, id, { status: "In Progress" });
+        renderExecutiveSupport(studentId);
       });
     });
   }
@@ -1769,11 +2432,23 @@
       if (el.meetingNotes) el.meetingNotes.value = notesText;
       if (el.meetingActions) el.meetingActions.value = "";
     }
+    if (el.meetingFormatButtons && el.meetingFormatButtons.length) {
+      el.meetingFormatButtons.forEach(function (btn) {
+        btn.classList.toggle("is-active", btn.getAttribute("data-meeting-format") === state.meetingFormat);
+      });
+    }
+    if (el.meetingLanguage) {
+      el.meetingLanguage.value = state.meetingLanguage || "en";
+    }
+    if (el.meetingLiveTranslate) {
+      el.meetingLiveTranslate.checked = !!state.liveTranslate;
+    }
     updateMeetingSttStatus(MeetingNotes && typeof MeetingNotes.supportsSpeechRecognition === "function" && MeetingNotes.supportsSpeechRecognition()
       ? "Transcription ready. Click Start STT to capture local text."
       : "Speech recognition unavailable in this browser. Manual notes mode is active.", !(MeetingNotes && typeof MeetingNotes.supportsSpeechRecognition === "function" && MeetingNotes.supportsSpeechRecognition()) ? "warn" : "");
     if (el.meetingSttStart) el.meetingSttStart.disabled = !(MeetingNotes && typeof MeetingNotes.supportsSpeechRecognition === "function" && MeetingNotes.supportsSpeechRecognition());
     if (el.meetingSttStop) el.meetingSttStop.disabled = true;
+    renderMeetingOutput();
     el.meetingModal.classList.remove("hidden");
   }
 
@@ -1814,21 +2489,201 @@
     }
   }
 
-  function buildMeetingClipboardSummary() {
+  function toneDownFamilyLanguage(text) {
+    return String(text || "")
+      .replace(/\bMTSS\b/gi, "school support plan")
+      .replace(/\bTier\s*([123])\b/gi, "support level $1")
+      .replace(/\bintervention\b/gi, "support")
+      .replace(/\bbenchmark\b/gi, "target")
+      .replace(/\bdeficit\b/gi, "need")
+      .replace(/\bnoncompliant\b/gi, "not yet consistent")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+
+  function meetingStudentContext() {
     var sid = state.selectedId || "student";
-    var meetingType = el.meetingType ? String(el.meetingType.value || "SSM") : "SSM";
-    var notes = String(el.meetingNotes && el.meetingNotes.value || "").trim();
-    var actions = String(el.meetingActions && el.meetingActions.value || "").trim();
+    var summary = Evidence.getStudentSummary(sid);
+    var model = Evidence.getSkillModel ? Evidence.getSkillModel(sid) : { topNeeds: [] };
+    var topNeeds = (model && Array.isArray(model.topNeeds) ? model.topNeeds : []).slice(0, 3).map(function (n) {
+      return n.label || n.skillId || n.id || "priority skill";
+    });
+    var riskText = summary && summary.risk === "risk" ? "higher support intensity" : "steady support";
+    return {
+      sid: sid,
+      studentName: summary && summary.student ? summary.student.name : sid,
+      topNeeds: topNeeds.length ? topNeeds : ["decoding accuracy"],
+      riskText: riskText,
+      nextMove: summary && summary.nextMove ? summary.nextMove.line : "continue focused practice"
+    };
+  }
+
+  function buildParentActions(context) {
+    var hints = [];
+    var key = String((context.topNeeds && context.topNeeds[0]) || "").toLowerCase();
+    if (/decod|phon|vowel/.test(key)) {
+      hints.push("Read together for 10 minutes each day and practice short vowel words.");
+      hints.push("Ask your child to tap and blend sounds before reading each word.");
+    } else if (/math|number|base|fact/.test(key)) {
+      hints.push("Have your child explain one math problem out loud each night.");
+      hints.push("Practice quick number facts for 5 minutes using everyday examples.");
+    } else if (/writing|sentence|paragraph|syntax/.test(key)) {
+      hints.push("Ask your child to write 3 clear sentences about their day.");
+      hints.push("Have your child reread and add one detail sentence each night.");
+    } else {
+      hints.push("Review class vocabulary for 10 minutes each day.");
+      hints.push("Ask your child to explain one thing they learned in class.");
+    }
+    hints.push("Celebrate effort and keep practice short and consistent.");
+    return hints.slice(0, 3);
+  }
+
+  function buildFamilySummary(context, notesText, actionsText) {
+    var actions = MeetingTranslation && typeof MeetingTranslation.splitLines === "function"
+      ? MeetingTranslation.splitLines(actionsText)
+      : String(actionsText || "").split(/\r?\n/).filter(Boolean);
+    var parentActions = buildParentActions(context);
+    var checkInDate = new Date(Date.now() + (14 * 86400000)).toISOString().slice(0, 10);
+    var sections = [
+      "How Your Child Is Doing",
+      "Strengths first: " + toneDownFamilyLanguage(context.nextMove) + ".",
+      "Growth areas: " + toneDownFamilyLanguage(context.topNeeds.join(", ")) + ".",
+      "",
+      "What We Are Working On",
+      toneDownFamilyLanguage(notesText || "We are building accuracy, confidence, and consistency in class tasks."),
+      "",
+      "How the School Is Supporting",
+      "- Daily focused support in class",
+      "- Weekly progress checks",
+      "- Structured practice linked to current goals",
+      "",
+      "How You Can Help at Home",
+      parentActions.map(function (item) { return "- " + item; }).join("\n"),
+      "",
+      "Next Check-In Date",
+      checkInDate,
+      "",
+      "Action Items",
+      (actions.length ? actions.slice(0, 5).map(function (item) { return "- " + toneDownFamilyLanguage(item); }).join("\n") : "- Continue current home-school support routine")
+    ];
+    return sections.join("\n");
+  }
+
+  function buildMeetingNarrative(format, notesText, actionsText) {
+    var context = meetingStudentContext();
+    if (format === "family") {
+      return buildFamilySummary(context, notesText, actionsText);
+    }
+    if (format === "optimized") {
+      return [
+        "Student: " + context.studentName + " (" + context.sid + ")",
+        "Highlights: " + toneDownFamilyLanguage(context.nextMove),
+        "Priority Skills: " + toneDownFamilyLanguage(context.topNeeds.join(", ")),
+        "Current Support Signal: " + context.riskText,
+        "",
+        "Meeting Notes",
+        toneDownFamilyLanguage(notesText || "No notes captured."),
+        "",
+        "Action Items",
+        actionsText || "No action items captured.",
+        "",
+        "Next Move",
+        toneDownFamilyLanguage(context.nextMove)
+      ].join("\n");
+    }
     return [
-      "Meeting Notes (" + meetingType + ")",
-      "Student: " + sid,
+      "Meeting Notes (" + (el.meetingType ? String(el.meetingType.value || "SSM") : "SSM") + ")",
+      "Student: " + context.studentName + " (" + context.sid + ")",
       "Date: " + new Date().toISOString().slice(0, 10),
       "",
-      "Notes:",
-      notes || "No notes captured.",
+      "Agenda / Notes",
+      notesText || "No notes captured.",
       "",
-      "Action Items:",
-      actions || "No action items captured."
+      "Action Items",
+      actionsText || "No action items captured.",
+      "",
+      "Top Needs",
+      context.topNeeds.join(" • "),
+      "",
+      "Recommended Next Step",
+      context.nextMove
+    ].join("\n");
+  }
+
+  function getMeetingLanguage() {
+    if (!el.meetingLanguage) return "en";
+    return String(el.meetingLanguage.value || "en");
+  }
+
+  function renderMeetingOutput() {
+    var notesText = String(el.meetingNotes && el.meetingNotes.value || "").trim();
+    var actionsText = String(el.meetingActions && el.meetingActions.value || "").trim();
+    var english = buildMeetingNarrative(state.meetingFormat || "sas", notesText, actionsText);
+    if (el.meetingPreview) el.meetingPreview.value = english;
+    var language = state.meetingLanguage || getMeetingLanguage();
+    var translated = english;
+    if (MeetingTranslation && typeof MeetingTranslation.translateText === "function") {
+      translated = MeetingTranslation.translateText(english, language);
+    }
+    var showTranslated = language !== "en" || !!state.liveTranslate;
+    if (el.meetingTranslationPreview) {
+      el.meetingTranslationPreview.classList.toggle("hidden", !showTranslated);
+      if (showTranslated) {
+        if (!state.liveTranslate || !String(el.meetingTranslationPreview.value || "").trim()) {
+          el.meetingTranslationPreview.value = translated;
+        }
+      }
+    }
+    if (el.meetingTranslationBadge) {
+      el.meetingTranslationBadge.classList.toggle("hidden", language === "en");
+      if (language !== "en" && MeetingTranslation && typeof MeetingTranslation.languageLabel === "function") {
+        el.meetingTranslationBadge.textContent = "Translated from English • " + MeetingTranslation.languageLabel(language);
+      }
+    }
+  }
+
+  function buildMeetingExportHtml(mode, englishText, translatedText, language) {
+    var safeEnglish = String(englishText || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var safeTranslated = String(translatedText || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var langLabel = (MeetingTranslation && typeof MeetingTranslation.languageLabel === "function")
+      ? MeetingTranslation.languageLabel(language)
+      : String(language || "Target");
+    if (mode === "bilingual") {
+      return [
+        "<!doctype html><html><head><meta charset='utf-8'><title>Bilingual Meeting Summary</title>",
+        "<style>body{font:14px/1.45 -apple-system,Segoe UI,Arial;padding:20px;color:#112}h1{margin:0 0 10px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px} pre{white-space:pre-wrap;border:1px solid #ccd;border-radius:8px;padding:10px;background:#f8fbff}</style>",
+        "</head><body><h1>Bilingual Meeting Summary</h1><div class='grid'><section><h2>English</h2><pre>",
+        safeEnglish,
+        "</pre></section><section><h2>",
+        langLabel,
+        "</h2><pre>",
+        safeTranslated || safeEnglish,
+        "</pre></section></div></body></html>"
+      ].join("");
+    }
+    return [
+      "<!doctype html><html><head><meta charset='utf-8'><title>Meeting Summary</title>",
+      "<style>body{font:14px/1.45 -apple-system,Segoe UI,Arial;padding:20px;color:#112}pre{white-space:pre-wrap;border:1px solid #ccd;border-radius:8px;padding:10px;background:#f8fbff}</style>",
+      "</head><body><h1>Meeting Summary</h1><pre>",
+      mode === "parent" ? safeEnglish : (safeTranslated || safeEnglish),
+      "</pre></body></html>"
+    ].join("");
+  }
+
+  function buildMeetingClipboardSummary() {
+    var english = String(el.meetingPreview && el.meetingPreview.value || "").trim();
+    if (!english) {
+      renderMeetingOutput();
+      english = String(el.meetingPreview && el.meetingPreview.value || "").trim();
+    }
+    var language = getMeetingLanguage();
+    if (language === "en") return english;
+    var translated = String(el.meetingTranslationPreview && el.meetingTranslationPreview.value || "").trim();
+    return [
+      english,
+      "",
+      "Translated from English",
+      translated || english
     ].join("\n");
   }
 
@@ -2151,7 +3006,11 @@
       hasReferralPacketExport: !!document.getElementById("td-support-export-packet"),
       hasShareControls: !!document.getElementById("td-share-cluster"),
       hasCopySummary: !!document.getElementById("td-share-quick-copy"),
-      hasEvidenceChips: !!document.getElementById("td-evidence-chips")
+      hasEvidenceChips: !!document.getElementById("td-evidence-chips"),
+      hasAlignmentToggle: !!document.getElementById("td-show-alignment"),
+      hasImplementationToday: !!document.getElementById("td-implementation-today"),
+      hasImplementationLogButton: !!document.getElementById("td-impl-log"),
+      hasExecutiveSupport: !!document.getElementById("td-executive-support")
     };
     window.__TD_MARKERS__ = {
       hasToday: !!document.getElementById("td-today"),
@@ -2341,16 +3200,59 @@
         openMeetingModal();
       });
     }
+    if (el.meetingFormatButtons && el.meetingFormatButtons.length) {
+      el.meetingFormatButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          state.meetingFormat = String(btn.getAttribute("data-meeting-format") || "sas");
+          el.meetingFormatButtons.forEach(function (item) {
+            item.classList.toggle("is-active", item === btn);
+          });
+          renderMeetingOutput();
+        });
+      });
+    }
+    if (el.meetingLanguage) {
+      el.meetingLanguage.addEventListener("change", function () {
+        state.meetingLanguage = String(el.meetingLanguage.value || "en");
+        renderMeetingOutput();
+      });
+    }
+    if (el.meetingLiveTranslate) {
+      el.meetingLiveTranslate.addEventListener("change", function () {
+        state.liveTranslate = !!el.meetingLiveTranslate.checked;
+        renderMeetingOutput();
+      });
+    }
+    if (el.meetingNotes) {
+      el.meetingNotes.addEventListener("input", function () {
+        if (state.liveTranslate) renderMeetingOutput();
+      });
+    }
+    if (el.meetingActions) {
+      el.meetingActions.addEventListener("input", function () {
+        if (state.liveTranslate) renderMeetingOutput();
+      });
+    }
     if (el.meetingSave) {
       el.meetingSave.addEventListener("click", function () {
         if (!state.selectedId || !SupportStore || typeof SupportStore.addMeeting !== "function") return;
+        renderMeetingOutput();
+        var canonicalEnglish = String(el.meetingPreview && el.meetingPreview.value || "").trim();
+        var translatedOutput = String(el.meetingTranslationPreview && el.meetingTranslationPreview.value || "").trim();
+        var meetingLanguage = getMeetingLanguage();
         var sttBanner = "Local-only notes. No audio recordings are stored by Cornerstone MTSS.";
         SupportStore.addMeeting(state.selectedId, {
           type: el.meetingType ? String(el.meetingType.value || "SSM") : "SSM",
           date: new Date().toISOString().slice(0, 10),
           attendees: "",
           agenda: (el.meetingNotes && el.meetingNotes.value || "").slice(0, 3000),
-          notes: (el.meetingNotes && el.meetingNotes.value || "").slice(0, 3000),
+          notes: canonicalEnglish.slice(0, 3000),
+          notesRaw: (el.meetingNotes && el.meetingNotes.value || "").slice(0, 3000),
+          format: state.meetingFormat || "sas",
+          language: meetingLanguage,
+          translatedFromEnglish: meetingLanguage !== "en",
+          translatedNotes: meetingLanguage !== "en" ? translatedOutput.slice(0, 3000) : "",
+          liveTranslateMode: !!state.liveTranslate,
           decisions: "",
           actionItems: MeetingNotes && typeof MeetingNotes.toActionItems === "function"
             ? MeetingNotes.toActionItems(el.meetingActions && el.meetingActions.value || "")
@@ -2422,6 +3324,7 @@
     }
     if (el.meetingCopySummary) {
       el.meetingCopySummary.addEventListener("click", function () {
+        renderMeetingOutput();
         var text = buildMeetingClipboardSummary();
         if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
         setCoachLine("Meeting summary copied.");
@@ -2430,11 +3333,19 @@
     if (el.meetingExportMdt) {
       el.meetingExportMdt.addEventListener("click", function () {
         if (!state.selectedId || !SupportStore || typeof SupportStore.buildMdtExport !== "function") return;
+        renderMeetingOutput();
+        var english = String(el.meetingPreview && el.meetingPreview.value || "").trim();
+        var translated = String(el.meetingTranslationPreview && el.meetingTranslationPreview.value || "").trim();
+        var lang = getMeetingLanguage();
+        var exportMode = el.meetingExportFormat ? String(el.meetingExportFormat.value || "english") : "english";
+        var exportText = exportMode === "english" ? english : buildMeetingClipboardSummary();
+        var exportHtml = buildMeetingExportHtml(exportMode, english, translated, lang);
         var bundle = SupportStore.buildMdtExport(state.selectedId, {
-          summary: buildMeetingClipboardSummary()
+          summary: exportText
         });
         download("mdt-export-" + state.selectedId + ".json", JSON.stringify(bundle.json, null, 2), "application/json");
         download("mdt-export-" + state.selectedId + ".csv", bundle.csv, "text/csv");
+        download("meeting-summary-" + state.selectedId + ".html", exportHtml, "text/html");
         if (navigator.clipboard) navigator.clipboard.writeText(bundle.csv).catch(function () {});
         setCoachLine("MDT export generated and CSV copied.");
       });
@@ -2540,6 +3451,12 @@
         var packet = SupportStore.exportReferralPacket(state.selectedId);
         download("referral-packet-" + state.selectedId + ".html", packet.html, "text/html");
         setCoachLine("Exported referral-ready evidence packet.");
+      });
+    }
+
+    if (el.showAlignment) {
+      el.showAlignment.addEventListener("change", function () {
+        renderInstructionalSequencer(state.selectedId);
       });
     }
 
