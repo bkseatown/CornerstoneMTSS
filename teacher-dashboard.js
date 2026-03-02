@@ -23,6 +23,7 @@
   var SessionPlanner = window.CSSessionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
   var SupportStore = window.CSSupportStore;
+  var MeetingNotes = window.CSMeetingNotes;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
 
@@ -36,6 +37,7 @@
     activePlanTab: "ten",
     activeNoteTab: "teacher",
     activeSupportTab: "snapshot",
+    activeDrawerTab: "snapshot",
     todayPlan: null,
     sharePayload: null
   };
@@ -61,6 +63,14 @@
     last7Summary: document.getElementById("td-last7-summary"),
     quickCheck: document.getElementById("td-quick-check"),
     startIntervention: document.getElementById("td-start-intervention"),
+    meetingModeBtn: document.getElementById("td-meeting-mode"),
+    tier1PackBtn: document.getElementById("td-tier1-pack"),
+    openStudentDrawer: document.getElementById("td-open-student-drawer"),
+    drawer: document.getElementById("td-student-drawer"),
+    drawerClose: document.getElementById("td-drawer-close"),
+    drawerTitle: document.getElementById("td-drawer-title"),
+    drawerBody: document.getElementById("td-drawer-body"),
+    drawerTabs: Array.prototype.slice.call(document.querySelectorAll("[data-drawer-tab]")),
     rightEmpty: document.getElementById("td-right-empty"),
     rightContent: document.getElementById("td-right-content"),
     evidenceChips: document.getElementById("td-evidence-chips"),
@@ -68,6 +78,15 @@
     needsChipList: document.getElementById("td-needs-chip-list"),
     supportBody: document.getElementById("td-support-body"),
     supportTabs: Array.prototype.slice.call(document.querySelectorAll("[data-support-tab]")),
+    openMeetingNotes: document.getElementById("td-open-meeting-notes"),
+    meetingModal: document.getElementById("td-meeting-modal"),
+    meetingClose: document.getElementById("td-meeting-close"),
+    meetingType: document.getElementById("td-meeting-type"),
+    meetingStt: document.getElementById("td-meeting-stt"),
+    meetingNotes: document.getElementById("td-meeting-notes"),
+    meetingActions: document.getElementById("td-meeting-actions"),
+    meetingSave: document.getElementById("td-meeting-save"),
+    meetingGoals: document.getElementById("td-meeting-goals"),
     supportExportPacket: document.getElementById("td-support-export-packet"),
     planList: document.getElementById("td-plan-list"),
     planTabs: Array.prototype.slice.call(document.querySelectorAll("[data-plan-tab]")),
@@ -830,6 +849,7 @@
       if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
       renderNeeds(null);
       renderSupportHub("");
+      renderDrawer("");
       renderRecommendedPlan("");
       renderTodayPlan(null);
       renderSkillTiles("");
@@ -886,6 +906,7 @@
     renderSkillTiles(state.selectedId);
     renderNeeds(state.snapshot);
     renderSupportHub(state.selectedId);
+    renderDrawer(state.selectedId);
     renderRecommendedPlan(state.selectedId);
     renderTodayPlan(state.plan);
     renderProgressNote(state.plan, summary.student);
@@ -1033,6 +1054,53 @@
       '<div class="td-support-item"><h4>Exports</h4><p>Share Summary for quick updates. Referral Packet for MDT-ready evidence.</p></div>',
       '<div class="td-support-item"><p>All data remains local-first unless exported intentionally.</p></div>'
     ].join("");
+  }
+
+  function renderDrawer(studentId) {
+    if (!el.drawerBody || !el.drawerTitle) return;
+    if (!studentId) {
+      el.drawerTitle.textContent = "Student Drawer";
+      el.drawerBody.innerHTML = '<div class="td-support-item"><p>Select a student to open the drawer.</p></div>';
+      return;
+    }
+    var summary = Evidence.getStudentSummary(studentId);
+    var support = SupportStore && typeof SupportStore.getStudent === "function"
+      ? SupportStore.getStudent(studentId)
+      : { goals: [], interventions: [] };
+    el.drawerTitle.textContent = String(summary.student.name || "Student") + " • " + String(summary.student.id || studentId);
+    if (state.activeDrawerTab === "snapshot") {
+      el.drawerBody.innerHTML = [
+        '<div class="td-support-item"><h4>Last 7 Days Minutes</h4><p>Derived from recent sessions and quick checks.</p></div>',
+        '<div class="td-support-item"><h4>Top Signals</h4><p>' + (summary.evidenceChips || []).slice(0, 5).map(function (c) { return c.label + " " + c.value; }).join(" • ") + '</p></div>',
+        '<div class="td-support-item"><h4>Next Best Activity</h4><p>' + summary.nextMove.line + '</p><button class="td-top-btn" type="button" data-drawer-launch="' + summary.nextMove.quickHref + '">Launch</button></div>'
+      ].join("");
+    } else if (state.activeDrawerTab === "goals") {
+      el.drawerBody.innerHTML = (support.goals || []).length
+        ? support.goals.slice(0, 6).map(function (g) {
+            return '<div class="td-support-item"><h4>' + (g.skill || g.domain || "Goal") + '</h4><p>' + (g.baseline || "--") + ' → ' + (g.target || "--") + ' • updated ' + (g.updatedAt || g.createdAt || "") + '</p></div>';
+          }).join("")
+        : '<div class="td-support-item"><p>No goals yet. Use Meeting Notes → Convert to Goals.</p></div>';
+    } else if (state.activeDrawerTab === "interventions") {
+      el.drawerBody.innerHTML = (support.interventions || []).length
+        ? support.interventions.slice(0, 8).map(function (i) {
+            return '<div class="td-support-item"><h4>Tier ' + (i.tier || 1) + ' • ' + (i.domain || "") + '</h4><p>' + (i.strategy || i.focus || "") + ' • ' + (i.frequency || "") + ' • ' + (i.durationMin || "--") + ' min</p></div>';
+          }).join("")
+        : '<div class="td-support-item"><p>No intervention entries yet.</p></div>';
+    } else if (state.activeDrawerTab === "evidence") {
+      el.drawerBody.innerHTML = '<div class="td-support-item"><h4>Evidence (filterable)</h4><p>' + (summary.evidenceChips || []).map(function (c) { return c.label + ": " + c.value; }).join(" • ") + '</p></div>';
+    } else {
+      el.drawerBody.innerHTML = '<div class="td-support-item"><h4>Share</h4><p>Use Share Summary or Tier 1 Evidence Pack export.</p><button id="td-drawer-share-now" class="td-top-btn" type="button">Open Share Summary</button></div>';
+    }
+    Array.prototype.forEach.call(el.drawerBody.querySelectorAll("[data-drawer-launch]"), function (button) {
+      button.addEventListener("click", function () {
+        var href = String(button.getAttribute("data-drawer-launch") || "word-quest.html?quick=1");
+        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+      });
+    });
+    var shareBtn = document.getElementById("td-drawer-share-now");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () { openShareModal(studentId); });
+    }
   }
 
   function renderRecommendedPlan(studentId) {
@@ -1215,6 +1283,27 @@
     state.sharePayload = payload;
     el.sharePreview.value = payload.text;
     el.shareModal.classList.remove("hidden");
+  }
+
+  function openMeetingModal() {
+    if (!el.meetingModal) return;
+    if (el.meetingType && MeetingNotes && MeetingNotes.templates) {
+      var type = String(el.meetingType.value || "SSM");
+      var preset = MeetingNotes.templates[type] || MeetingNotes.templates.SSM || {};
+      var notesText = [
+        "Agenda: " + String(preset.agenda || ""),
+        "Concerns: " + String(preset.concerns || ""),
+        "Strengths: " + String(preset.strengths || ""),
+        "Data Reviewed: " + String(preset.dataReviewed || "")
+      ].join("\n");
+      if (el.meetingNotes) el.meetingNotes.value = notesText;
+      if (el.meetingActions) el.meetingActions.value = "";
+    }
+    el.meetingModal.classList.remove("hidden");
+  }
+
+  function closeMeetingModal() {
+    if (el.meetingModal) el.meetingModal.classList.add("hidden");
   }
 
   function download(name, contents, mime) {
@@ -1476,6 +1565,64 @@
       });
     }
 
+    if (el.openMeetingNotes) {
+      el.openMeetingNotes.addEventListener("click", function () {
+        if (!state.selectedId) return;
+        openMeetingModal();
+      });
+    }
+    if (el.meetingClose) {
+      el.meetingClose.addEventListener("click", closeMeetingModal);
+    }
+    if (el.meetingModal) {
+      el.meetingModal.addEventListener("click", function (event) {
+        if (event.target === el.meetingModal) closeMeetingModal();
+      });
+    }
+    if (el.meetingType) {
+      el.meetingType.addEventListener("change", function () {
+        openMeetingModal();
+      });
+    }
+    if (el.meetingSave) {
+      el.meetingSave.addEventListener("click", function () {
+        if (!state.selectedId || !SupportStore || typeof SupportStore.addMeeting !== "function") return;
+        var sttBanner = el.meetingStt && el.meetingStt.checked
+          ? "Transcription may use device/vendor speech services. No audio is stored by Cornerstone MTSS. Confirm consent."
+          : "";
+        SupportStore.addMeeting(state.selectedId, {
+          type: el.meetingType ? String(el.meetingType.value || "SSM") : "SSM",
+          date: new Date().toISOString().slice(0, 10),
+          attendees: "",
+          agenda: (el.meetingNotes && el.meetingNotes.value || "").slice(0, 3000),
+          notes: (el.meetingNotes && el.meetingNotes.value || "").slice(0, 3000),
+          decisions: "",
+          actionItems: MeetingNotes && typeof MeetingNotes.toActionItems === "function"
+            ? MeetingNotes.toActionItems(el.meetingActions && el.meetingActions.value || "")
+            : [],
+          sttNotice: sttBanner
+        });
+        renderSupportHub(state.selectedId);
+        closeMeetingModal();
+        setCoachLine("Meeting notes saved (local-first).");
+      });
+    }
+    if (el.meetingGoals) {
+      el.meetingGoals.addEventListener("click", function () {
+        if (!state.selectedId || !SupportStore || typeof SupportStore.addGoal !== "function") return;
+        var actions = MeetingNotes && typeof MeetingNotes.toActionItems === "function"
+          ? MeetingNotes.toActionItems(el.meetingActions && el.meetingActions.value || "")
+          : [];
+        var goals = MeetingNotes && typeof MeetingNotes.toDraftGoals === "function"
+          ? MeetingNotes.toDraftGoals(actions)
+          : [];
+        goals.forEach(function (goal) { SupportStore.addGoal(state.selectedId, goal); });
+        state.activeSupportTab = "plan";
+        renderSupportHub(state.selectedId);
+        setCoachLine("Converted action items to SMART-goal drafts.");
+      });
+    }
+
     if (el.exportStudentCsv) {
       el.exportStudentCsv.addEventListener("click", function () {
         if (!state.selectedId || !window.CSEvidence || typeof window.CSEvidence.exportStudentCSV !== "function") return;
@@ -1529,6 +1676,44 @@
         var packet = SupportStore.exportReferralPacket(state.selectedId);
         download("referral-packet-" + state.selectedId + ".html", packet.html, "text/html");
         setCoachLine("Exported referral-ready evidence packet.");
+      });
+    }
+
+    if (el.openStudentDrawer) {
+      el.openStudentDrawer.addEventListener("click", function () {
+        if (!state.selectedId || !el.drawer) return;
+        el.drawer.classList.remove("hidden");
+        renderDrawer(state.selectedId);
+      });
+    }
+    if (el.drawerClose) {
+      el.drawerClose.addEventListener("click", function () {
+        if (el.drawer) el.drawer.classList.add("hidden");
+      });
+    }
+    if (Array.isArray(el.drawerTabs)) {
+      el.drawerTabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          state.activeDrawerTab = String(tab.getAttribute("data-drawer-tab") || "snapshot");
+          renderDrawer(state.selectedId);
+        });
+      });
+    }
+    if (el.meetingModeBtn) {
+      el.meetingModeBtn.addEventListener("click", function () {
+        if (!state.selectedId) return;
+        openMeetingModal();
+      });
+    }
+    if (el.tier1PackBtn) {
+      el.tier1PackBtn.addEventListener("click", function () {
+        if (!state.selectedId || !SupportStore) return;
+        var packet = SupportStore.exportReferralPacket(state.selectedId);
+        download("tier1-evidence-pack-" + state.selectedId + ".html", packet.html, "text/html");
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText("Tier 1 Evidence Pack ready for " + state.selectedId + ".").catch(function () {});
+        }
+        setCoachLine("Tier 1 Evidence Pack exported.");
       });
     }
 

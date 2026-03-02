@@ -43,6 +43,8 @@
         <span id="td-demo-badge" class="tier-badge tier-2 hidden" aria-live="polite">Demo data</span>
         <button id="td-admin-demo" class="td-top-btn" type="button">Admin Demo</button>
         <button id="td-new-session" class="td-top-btn" type="button">New Session</button>
+        <button id="td-meeting-mode" class="td-top-btn" type="button">Meeting Notes</button>
+        <button id="td-tier1-pack" class="td-top-btn" type="button">Tier 1 Pack</button>
         <button id="td-import-export" class="td-top-btn" type="button">Import/Export</button>
         <button id="td-settings" class="td-top-btn" type="button">Settings</button>
         <button id="td-local-status" class="td-local-dot" type="button" title="Local data on this device" aria-label="Local mode"></button>
@@ -210,6 +212,7 @@
               <article class="td-next-step-card">
                 <p class="td-label">Recommended Next Step</p>
                 <h3 id="td-next-step-title" class="td-section-title">Start intervention</h3>
+                <button id="td-open-student-drawer" class="td-top-btn" type="button">Open Student Drawer</button>
               </article>
               <article id="td-recommended-plan" class="td-next-step-card">
                 <p class="td-label">Recommended Plan (Today)</p>
@@ -236,7 +239,10 @@
             <section id="td-support-hub" class="td-stage-empty">
               <div class="td-support-head">
                 <p class="td-label">Student Support Hub</p>
-                <button id="td-support-export-packet" class="td-btn td-btn-ghost btn btn-quiet" type="button">Referral Packet</button>
+                <div class="td-modal-actions">
+                  <button id="td-open-meeting-notes" class="td-btn td-btn-ghost btn btn-quiet" type="button">Meeting Notes</button>
+                  <button id="td-support-export-packet" class="td-btn td-btn-ghost btn btn-quiet" type="button">Referral Packet</button>
+                </div>
               </div>
               <div class="td-plan-tabs">
                 <button class="td-top-btn" type="button" data-support-tab="snapshot">Snapshot</button>
@@ -309,6 +315,21 @@
     </section>
   </main>
 
+  <aside id="td-student-drawer" class="td-student-drawer hidden" aria-label="Student Drawer">
+    <div class="td-student-drawer__head">
+      <h2 id="td-drawer-title" class="td-section-title">Student Drawer</h2>
+      <button id="td-drawer-close" class="td-top-btn" type="button">Close</button>
+    </div>
+    <div class="td-plan-tabs">
+      <button class="td-top-btn" type="button" data-drawer-tab="snapshot">Snapshot</button>
+      <button class="td-top-btn" type="button" data-drawer-tab="goals">Goals</button>
+      <button class="td-top-btn" type="button" data-drawer-tab="interventions">Interventions</button>
+      <button class="td-top-btn" type="button" data-drawer-tab="evidence">Evidence</button>
+      <button class="td-top-btn" type="button" data-drawer-tab="share">Share</button>
+    </div>
+    <div id="td-drawer-body" class="td-student-drawer__body"></div>
+  </aside>
+
   <div id="td-share-modal" class="td-modal hidden" role="dialog" aria-modal="true" aria-labelledby="td-share-modal-title">
     <div class="td-modal-card">
       <div class="td-modal-head">
@@ -320,6 +341,30 @@
         <button id="td-share-copy" class="td-btn td-btn-primary btn btn-quiet" type="button">Copy</button>
         <button id="td-share-download-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Download JSON</button>
         <button id="td-share-download-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Download CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="td-meeting-modal" class="td-modal hidden" role="dialog" aria-modal="true" aria-labelledby="td-meeting-title">
+    <div class="td-modal-card">
+      <div class="td-modal-head">
+        <h2 id="td-meeting-title" class="td-section-title">Meeting Notes Mode</h2>
+        <button id="td-meeting-close" class="td-top-btn" type="button">Close</button>
+      </div>
+      <p class="td-reco-line">Transcription is optional and OFF by default. No audio is stored by Cornerstone MTSS.</p>
+      <div class="td-plan-tabs">
+        <select id="td-meeting-type" class="td-top-btn">
+          <option value="SSM">SSM</option>
+          <option value="MDT">MDT</option>
+          <option value="Parent">Parent</option>
+        </select>
+        <label class="td-label"><input id="td-meeting-stt" type="checkbox"> Enable device transcription banner</label>
+      </div>
+      <textarea id="td-meeting-notes" class="td-share-preview" placeholder="Agenda, concerns, strengths, data reviewed..."></textarea>
+      <textarea id="td-meeting-actions" class="td-share-preview" placeholder="Action items (one per line)"></textarea>
+      <div class="td-modal-actions">
+        <button id="td-meeting-save" class="td-btn td-btn-primary btn btn-quiet" type="button">Save Meeting</button>
+        <button id="td-meeting-goals" class="td-btn td-btn-ghost btn btn-quiet" type="button">Convert to Goals</button>
       </div>
     </div>
   </div>
@@ -359,6 +404,7 @@
   <script src="./js/plan-engine.js?v=20260301y" defer></script>
   <script src="./js/session-planner.js?v=20260301y" defer></script>
   <script src="./js/share-summary.js?v=20260301y" defer></script>
+  <script src="./js/meeting-notes.js?v=20260301y" defer></script>
   <script src="./teacher-dashboard.js?v=20260301y" defer></script>
 </body>
 </html>

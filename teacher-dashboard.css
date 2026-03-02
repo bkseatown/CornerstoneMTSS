@@ -895,6 +895,11 @@ body.cs-has-nav-shell .td-shell {
   font: 500 var(--fs-sm) / var(--lh-normal) var(--font-sans);
   overflow: auto;
 }
+#td-meeting-notes,
+#td-meeting-actions {
+  min-height: 120px;
+  max-height: 180px;
+}
 .td-modal-actions {
   display: flex;
   flex-wrap: wrap;
@@ -915,6 +920,38 @@ body.cs-has-nav-shell .td-shell {
   border: 1px solid color-mix(in oklab, var(--border-subtle) 76%, transparent);
   background: color-mix(in oklab, var(--surface-1) 92%, rgba(12, 24, 36, 0.9));
   box-shadow: var(--shadow-medium);
+}
+
+.td-student-drawer {
+  position: fixed;
+  top: 58px;
+  right: 0;
+  width: min(460px, calc(100vw - 24px));
+  height: calc(100dvh - 58px);
+  z-index: 55;
+  border-left: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
+  background: color-mix(in oklab, var(--surface-1) 96%, rgba(10, 22, 34, 0.98));
+  box-shadow: -18px 0 28px rgba(7, 14, 24, 0.35);
+  padding: 10px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 8px;
+}
+.td-student-drawer__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.td-student-drawer__body {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--surface-2) 70%, transparent);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
 }
 .td-coach-ribbon button { border: 0; background: transparent; color: var(--text-strong); cursor: pointer; }
 .td-coach-title { font-weight: 700; }
