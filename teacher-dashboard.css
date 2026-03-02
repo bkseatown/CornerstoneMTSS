@@ -246,213 +246,217 @@ body.cs-has-nav-shell .td-shell {
 }
 
 /* Main content region */
-.td-main,
 .td-body {
   flex: 1 1 auto;
   min-height: 0;
+  overflow: hidden;
 }
 
-/* Keep document locked, but allow dashboard content to scroll internally. */
-.td-body {
-  overflow-y: auto;
-  overflow-x: hidden;
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--sp-5);
+  padding: var(--sp-5);
+  overflow: hidden;
 }
 
-.td-main {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 12px;
-  min-height: 100%;
-  overflow: visible;
-}
-
-.td-legacy-hidden {
-  display: none !important;
-}
-
-.td-surgical-dashboard {
+.dashboard-focus {
+  flex: 0 0 40%;
   min-height: 0;
-  display: grid;
-  grid-template-rows: 1.4fr 1fr auto;
-  gap: 12px;
 }
 
-.td-surgical-zone {
-  padding: 20px;
-  border-radius: var(--radius-3);
-  border: 1px solid color-mix(in oklab, var(--border-soft) 40%, transparent);
-  box-shadow: var(--shadow-soft);
+.focus-card {
+  height: 100%;
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  border: 1px solid color-mix(in oklab, var(--border-soft) 60%, transparent);
+  box-shadow: var(--shadow-card, var(--shadow-medium));
 }
 
-.td-surgical-focus {
-  display: grid;
-  align-content: start;
-  gap: 10px;
-}
-
-.td-surgical-student {
+.dashboard-kicker {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.85rem, 2.7vw, 2.45rem);
-  line-height: 1.08;
+  font-size: var(--fs-1);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.focus-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.focus-student-name {
+  margin: 0;
+  font-size: var(--fs-7);
+  line-height: var(--lh-tight);
   letter-spacing: var(--ls-tight);
   color: var(--text-strong);
 }
 
-.td-surgical-tier {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: var(--fs-2);
-  font-weight: var(--fw-semibold);
-}
-
-.td-surgical-reason {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: var(--fs-3);
-  line-height: var(--lh-body);
-}
-
-#td-focus-start-btn {
-  margin-top: 4px;
-  min-height: 46px;
-  padding-inline: 18px;
-  justify-self: start;
-  font-size: var(--fs-3);
-  font-weight: var(--fw-semibold);
-}
-
-.td-surgical-attention {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  min-height: 0;
-}
-
-.td-surgical-attention-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.td-attn-card {
-  border-radius: var(--radius-2);
-  border: 1px solid color-mix(in oklab, var(--border-subtle) 46%, transparent);
+.focus-tier {
+  border-radius: var(--radius-round);
+  border: 1px solid var(--border-subtle);
   background: var(--surface-elev-2);
-  padding: 12px;
-  display: grid;
-  gap: 8px;
+  color: var(--text-secondary);
+  font-size: var(--fs-1);
+  font-weight: var(--fw-semibold);
+  padding: var(--space-1) var(--space-2);
+  white-space: nowrap;
 }
 
-.td-attn-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.td-attn-name {
+.focus-reason {
   margin: 0;
   font-size: var(--fs-3);
-  line-height: var(--lh-tight);
+  line-height: var(--lh-relaxed);
+  color: var(--text-primary);
+  max-width: 80ch;
+}
+
+.focus-start {
+  align-self: start;
+  min-height: calc(var(--sp-6) + var(--space-1));
+  padding-inline: var(--sp-4);
+  font-size: var(--fs-3);
   font-weight: var(--fw-semibold);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.focus-start:hover {
+  background: color-mix(in oklab, var(--accent) 88%, black 12%);
+}
+
+.dashboard-queue,
+.dashboard-launch {
+  min-height: 0;
+  padding: var(--sp-4);
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.dashboard-queue {
+  flex: 1 1 auto;
+}
+
+.dashboard-launch {
+  flex: 0 0 auto;
+}
+
+.dashboard-section-title {
+  margin: 0;
+  font-size: var(--fs-4);
+  line-height: var(--lh-tight);
   color: var(--text-strong);
 }
 
-.td-attn-tier {
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--border-subtle) 78%, transparent);
+.queue-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+
+.queue-card {
+  padding: var(--sp-3);
+  border-radius: var(--radius-2);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 65%, transparent);
+  background: var(--surface-elev-2);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.queue-name {
+  margin: 0;
+  font-size: var(--fs-3);
+  line-height: var(--lh-tight);
+  color: var(--text-strong);
+}
+
+.queue-tier {
+  justify-self: start;
+  border-radius: var(--radius-round);
+  border: 1px solid var(--border-subtle);
   background: var(--surface-elev-1);
   color: var(--text-secondary);
   font-size: var(--fs-0);
   font-weight: var(--fw-semibold);
-  padding: 2px 8px;
+  padding: var(--space-1) var(--space-2);
 }
 
-.td-attn-signal {
+.queue-signal {
   margin: 0;
-  color: var(--text-secondary);
   font-size: var(--fs-2);
   line-height: var(--lh-normal);
+  color: var(--text-secondary);
 }
 
-.td-attn-open {
+.queue-open {
   justify-self: start;
+  background: var(--surface-elev-1);
+  color: var(--text-primary);
 }
 
-.td-surgical-launch {
-  display: grid;
-  gap: 10px;
-}
-
-.td-surgical-launch-row {
+.launch-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--sp-3);
 }
 
-.td-surgical-launch-btn {
-  min-height: 40px;
+.launch-card {
+  min-height: calc(var(--sp-6) + var(--space-1));
   display: inline-flex;
-  justify-content: center;
   align-items: center;
-  text-decoration: none;
+  justify-content: center;
+  font-size: var(--fs-3);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-2);
+  background: var(--surface-elev-2);
+  color: var(--text-primary);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 64%, transparent);
 }
 
-.section {
-  margin-bottom: 32px;
+.launch-card:hover {
+  background: var(--surface-elev-1);
 }
 
-.section-divider {
-  margin: 48px 0;
-  border-top: 1px solid var(--border-subtle);
+.td-compat-sink {
+  display: none !important;
 }
 
-.dashboard-viewport {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  min-height: 100dvh;
-  padding-bottom: 24px;
+@media (max-width: 1200px) {
+  .queue-list,
+  .launch-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.triage-left {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+@media (max-width: 860px) {
+  .dashboard {
+    gap: var(--sp-3);
+    padding: var(--sp-3);
+  }
 
-.triage-right {
-  position: sticky;
-  top: 140px;
-  align-self: start;
-}
+  .dashboard-focus {
+    flex-basis: auto;
+  }
 
-.td-top-row {
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
+  .focus-student-name {
+    font-size: var(--fs-6);
+  }
 
-.td-metric-card {
-  min-height: 0;
-  padding: 16px;
-  display: grid;
-  gap: 10px;
-}
-
-.td-snapshot-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.td-activities-strip {
-  min-height: 0;
-  padding: 10px 14px;
-  display: grid;
-  gap: 8px;
+  .queue-list,
+  .launch-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* === TODAY ENGINE ================================================= */
