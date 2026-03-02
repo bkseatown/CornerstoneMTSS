@@ -72,6 +72,13 @@ async function getDashboardMarkers(page) {
       hasToday: !!document.getElementById('td-today') || !!audit.hasToday || !!tdAudit.hasToday,
       hasTodayList: !!document.getElementById('td-today-list') || !!audit.hasTodayList || !!tdAudit.hasTodayList,
       hasBuildBlock: !!document.querySelector('[data-build-block]') || !!audit.hasBuildBlock || !!tdAudit.hasBuildBlock,
+      hasTier1EvidenceTool: !!document.getElementById('td-tier1-pack') || !!audit.hasTier1EvidenceTool,
+      hasAccommodationsPanel: !!document.querySelector('[data-support-tab="accommodations"]') || !!audit.hasAccommodationsPanel,
+      hasMeetingNotesTool: !!document.getElementById('td-meeting-mode') || !!audit.hasMeetingNotesTool,
+      hasReferralPacketExport: !!document.getElementById('td-support-export-packet') || !!audit.hasReferralPacketExport,
+      hasShareControls: !!document.getElementById('td-share-cluster') || !!audit.hasShareControls,
+      hasCopySummary: !!document.getElementById('td-share-quick-copy') || !!audit.hasCopySummary,
+      hasEvidenceChips: !!document.getElementById('td-evidence-chips') || !!audit.hasEvidenceChips,
       tdShell: !!document.querySelector('.td-shell'),
       bodyClass: document.body.className
     };
@@ -120,6 +127,13 @@ test.describe('UI screenshot audit', () => {
 
         if (pageDef.slug === 'teacher-dashboard') {
           const markers = await getDashboardMarkers(page);
+          expect(markers.hasTier1EvidenceTool, 'teacher-dashboard missing Tier 1 Evidence tool').toBe(true);
+          expect(markers.hasAccommodationsPanel, 'teacher-dashboard missing accommodations panel').toBe(true);
+          expect(markers.hasMeetingNotesTool, 'teacher-dashboard missing meeting notes tool').toBe(true);
+          expect(markers.hasReferralPacketExport, 'teacher-dashboard missing referral packet export').toBe(true);
+          expect(markers.hasShareControls, 'teacher-dashboard missing share controls').toBe(true);
+          expect(markers.hasCopySummary, 'teacher-dashboard missing copy summary button').toBe(true);
+          expect(markers.hasEvidenceChips, 'teacher-dashboard missing evidence chips').toBe(true);
           testInfo.attach(`audit-dashboard-markers-${viewport.width}x${viewport.height}`, {
             body: Buffer.from(JSON.stringify(markers, null, 2)),
             contentType: 'application/json'
