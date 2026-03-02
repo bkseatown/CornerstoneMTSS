@@ -35,6 +35,9 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/hud-spec-v1.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/hud-acceptance-checklist.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/HANDOVER.md`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/CONTINUITY_PLAYBOOK.md`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/AGENT_CONTINUITY.md`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/SESSION_LOG.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/NONCODER_SAFETY_GUIDE.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/AUDIO_OFFLINE_DEPLOY_CHECKLIST.md`
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/CAPACITY_PROOF_PLAYBOOK.md`

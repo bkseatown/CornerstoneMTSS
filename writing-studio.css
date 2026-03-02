@@ -969,6 +969,12 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   margin-top: var(--ws-gap-2);
 }
 
+.ws-paragraph-intel {
+  margin-top: var(--ws-gap-1);
+  padding-top: var(--ws-gap-1);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .ws-sprint {
   margin-top: var(--ws-gap-2);
   display: flex;

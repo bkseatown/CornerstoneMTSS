@@ -94,6 +94,46 @@
     }).join("");
   }
 
+  function renderImplementationSummary() {
+    if (!trendInsightsEl) return;
+    var parsed = null;
+    try {
+      parsed = JSON.parse(localStorage.getItem("CS_SUPPORT_STORE_V1") || "null");
+    } catch (_e) {
+      parsed = null;
+    }
+    var students = parsed && parsed.students && typeof parsed.students === "object" ? parsed.students : {};
+    var ids = Object.keys(students);
+    if (!ids.length) return;
+    var accTotal = 0;
+    var tier1Recent = 0;
+    var byContext = {};
+    var cutoff = Date.now() - (28 * 86400000);
+    ids.forEach(function (sid) {
+      var row = students[sid] || {};
+      var tracking = row.implementationTracking && typeof row.implementationTracking === "object" ? row.implementationTracking : {};
+      var acc = Array.isArray(tracking.accommodations) ? tracking.accommodations : [];
+      var ints = Array.isArray(tracking.tier1Interventions) ? tracking.tier1Interventions : [];
+      acc.forEach(function (item) {
+        var history = Array.isArray(item.history) ? item.history : [];
+        history.forEach(function (h) {
+          if (h && h.implemented === true) accTotal += 1;
+        });
+      });
+      ints.forEach(function (entry) {
+        var ts = Date.parse(String(entry.date || ""));
+        if (!Number.isFinite(ts) || ts < cutoff) return;
+        tier1Recent += 1;
+        var key = String(entry.context || "Other");
+        byContext[key] = (byContext[key] || 0) + 1;
+      });
+    });
+    var contextLine = Object.keys(byContext).length
+      ? Object.keys(byContext).sort().map(function (k) { return k + " " + byContext[k]; }).join(" • ")
+      : "No recent context logs";
+    trendInsightsEl.insertAdjacentHTML("beforeend", '<div class="admin-trend"><strong>Implementation Fidelity:</strong> Accommodation logs ' + accTotal + ' • Tier 1 interventions (4w) ' + tier1Recent + ' • Context ' + contextLine + '</div>');
+  }
+
   function countBy(rows, keyFn) {
     var out = {};
     (rows || []).forEach(function (row) {
@@ -160,6 +200,7 @@
       var extra = progressionSummary(snapshot);
       if (extra) trends.push(extra);
       renderTrends(trends);
+      renderImplementationSummary();
     };
 
     if (typeof window.requestIdleCallback === "function") {

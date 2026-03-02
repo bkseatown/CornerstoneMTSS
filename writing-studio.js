@@ -86,6 +86,11 @@
   var CLAIM_RE = /\b(i think|i believe|this shows|the author|the text)\b/i;
   var ABSOLUTE_RE = /\b(always|never|everyone|no one|all|none)\b/i;
   var COUNTER_RE = /\b(however|although|on the other hand|some may say|counter)\b/i;
+  var TRANSITION_START_RE = /^(first|next|then|however|therefore|for example|for instance|in addition|moreover|in contrast|because|finally|meanwhile)\b/i;
+  var CLAIM_MARKER_RE = /\b(i believe|i think|should|must|is important|the main idea|my claim|argue|thesis)\b/i;
+  var EVIDENCE_MARKER_RE = /\b(for example|for instance|according to|the text says|data|evidence|for one|quote|%|\d+)\b/i;
+  var EXPLANATION_MARKER_RE = /\b(because|this shows|therefore|which means|this means|as a result|so that)\b/i;
+  var CONCLUSION_MARKER_RE = /\b(in conclusion|overall|in summary|to conclude|finally)\b/i;
   var FRAMEWORK_BANDS = {
     ccss: [
       { min: 0, level: "Below", note: "Build clear structure and details to reach grade-level writing expectations." },
@@ -562,6 +567,14 @@
   var evidenceEl = document.getElementById("ws-evidence");
   var revisionPatchEl = document.getElementById("ws-revision-patch");
   var feedbackConfidenceEl = document.getElementById("ws-feedback-confidence");
+  var paraClaimEl = document.getElementById("ws-para-claim");
+  var paraEvidenceEl = document.getElementById("ws-para-evidence");
+  var paraExplanationEl = document.getElementById("ws-para-explanation");
+  var paraTransitionsEl = document.getElementById("ws-para-transitions");
+  var paraTotalEl = document.getElementById("ws-para-total");
+  var paraStrengthEl = document.getElementById("ws-para-strength");
+  var paraGrowthEl = document.getElementById("ws-para-growth");
+  var paraNextEl = document.getElementById("ws-para-next");
   var conferenceStrengthEl = document.getElementById("ws-conference-strength");
   var conferenceTargetEl = document.getElementById("ws-conference-target");
   var conferencePromptEl = document.getElementById("ws-conference-prompt");
@@ -4368,6 +4381,115 @@
     }, 1200);
   }
 
+  function getPrimaryParagraph(text) {
+    var blocks = String(text || "").split(/\n{2,}/).map(function (block) { return block.trim(); }).filter(Boolean);
+    return blocks.length ? blocks[0] : String(text || "").trim();
+  }
+
+  function scoreComponent(found, clear) {
+    if (!found) return 0;
+    return clear ? 2 : 1;
+  }
+
+  function analyzeParagraphStructure(text) {
+    var paragraph = getPrimaryParagraph(text);
+    var sentences = getTextSentences(paragraph);
+    var claimIndex = -1;
+    var evidenceIndex = -1;
+    var explanationIndex = -1;
+    var transitionCount = 0;
+
+    sentences.forEach(function (sentence, idx) {
+      var clean = String(sentence || "").trim();
+      if (!clean) return;
+      var lower = clean.toLowerCase();
+      if (claimIndex < 0 && (CLAIM_MARKER_RE.test(lower) || (idx < 2 && clean.length >= 28))) claimIndex = idx;
+      if (evidenceIndex < 0 && (EVIDENCE_MARKER_RE.test(lower) || /["']/.test(clean) || /\d/.test(clean))) evidenceIndex = idx;
+      if (explanationIndex < 0 && EXPLANATION_MARKER_RE.test(lower)) explanationIndex = idx;
+      if (TRANSITION_START_RE.test(lower)) transitionCount += 1;
+    });
+
+    var claimScore = scoreComponent(claimIndex >= 0, claimIndex >= 0 && claimIndex <= 1 && sentences.length >= 2);
+    var evidenceScore = scoreComponent(evidenceIndex >= 0, evidenceIndex >= 0 && /\d|for example|according to|evidence|text says|["']/.test((sentences[evidenceIndex] || "").toLowerCase()));
+    var explanationScore = scoreComponent(explanationIndex >= 0, explanationIndex >= 0 && evidenceIndex >= 0 && explanationIndex >= evidenceIndex);
+    var transitionScore = transitionCount >= 2 ? 2 : (transitionCount >= 1 ? 1 : 0);
+    var hasConclusionSignal = CONCLUSION_MARKER_RE.test(paragraph.toLowerCase());
+    var total = claimScore + evidenceScore + explanationScore + transitionScore;
+    var max = 8;
+
+    return {
+      paragraph: paragraph,
+      claim: claimScore,
+      evidence: evidenceScore,
+      explanation: explanationScore,
+      transitions: transitionScore,
+      total: total,
+      max: max,
+      hasConclusionSignal: hasConclusionSignal
+    };
+  }
+
+  function paragraphFeedback(analysis) {
+    var strength = "Your paragraph is developing; keep your claim and support connected.";
+    if (analysis.claim >= 2) strength = "You clearly state your main claim at the start of the paragraph.";
+    else if (analysis.evidence >= 2) strength = "You include concrete evidence that supports your point.";
+    else if (analysis.transitions >= 2) strength = "Your transitions help readers follow your reasoning.";
+
+    var growth = "Add one stronger evidence sentence and one explanation sentence to tighten structure.";
+    if (analysis.explanation < 1) growth = "Your evidence needs stronger explanation to connect back to your claim.";
+    else if (analysis.evidence < 1) growth = "Add a concrete example, quote, or data point to support your claim.";
+    else if (analysis.claim < 1) growth = "Start with one clear claim sentence so your paragraph has direction.";
+    else if (analysis.transitions < 1) growth = "Use a transition starter to improve flow between ideas.";
+
+    var next = "Add 1-2 sentences explaining why your example proves your point.";
+    if (analysis.claim < 1) next = "Write one claim sentence first, then add one supporting detail.";
+    else if (analysis.evidence < 1) next = "Add one evidence sentence using 'for example' or 'according to'.";
+    else if (analysis.explanation < 1) next = "Add one sentence starting with 'This shows...' to explain your evidence.";
+    else if (analysis.transitions < 1) next = "Revise one sentence to begin with a transition word.";
+
+    return { strength: strength, growth: growth, next: next };
+  }
+
+  function renderParagraphIntelligence(analysis, feedback) {
+    if (!paraClaimEl || !paraEvidenceEl || !paraExplanationEl || !paraTransitionsEl || !paraTotalEl) return;
+    paraClaimEl.textContent = String(analysis.claim);
+    paraEvidenceEl.textContent = String(analysis.evidence);
+    paraExplanationEl.textContent = String(analysis.explanation);
+    paraTransitionsEl.textContent = String(analysis.transitions);
+    paraTotalEl.textContent = String(analysis.total) + " / " + String(analysis.max);
+    if (paraStrengthEl) paraStrengthEl.textContent = feedback.strength;
+    if (paraGrowthEl) paraGrowthEl.textContent = feedback.growth;
+    if (paraNextEl) paraNextEl.textContent = feedback.next;
+  }
+
+  function emitParagraphEvidence(studentId, analysis) {
+    if (!window.CSEvidenceEngine || typeof window.CSEvidenceEngine.recordEvidence !== "function") return;
+    var componentStrings = [
+      "claim:" + analysis.claim,
+      "evidence:" + analysis.evidence,
+      "explanation:" + analysis.explanation,
+      "transitions:" + analysis.transitions
+    ];
+    var event = {
+      studentId: String(studentId || "demo-student"),
+      timestamp: new Date().toISOString(),
+      module: "writing_studio",
+      activityId: "ws.paragraph.intel.v1",
+      targets: ["LIT.WRITE.SENT", "WRITING.PARAGRAPH.STRUCTURE"],
+      tier: "T2",
+      doseMin: 5,
+      result: {
+        accuracy: Number((analysis.total / analysis.max).toFixed(3)),
+        attempts: Math.max(1, splitSentences(analysis.paragraph).length),
+        errorPattern: componentStrings
+      },
+      confidence: 0.8,
+      notes: "paragraph-intel-v1"
+    };
+    window.CSEvidenceEngine.recordEvidence(event);
+    console.info("[WritingStudio] Paragraph evidence recorded", event);
+  }
+
   function saveDraft() {
     if (!safeSetItem(DRAFT_KEY, editor.value)) {
       showToast("Could not save draft on this device");
@@ -4411,6 +4533,12 @@
               "Checkpoints " + checkpoints
             ]
           });
+        }
+        if (currentMode === "paragraph") {
+          var structure = analyzeParagraphStructure(text);
+          var intelFeedback = paragraphFeedback(structure);
+          renderParagraphIntelligence(structure, intelFeedback);
+          emitParagraphEvidence(studentId, structure);
         }
       }
     } catch (_e) {}

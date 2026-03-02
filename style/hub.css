@@ -1,0 +1,126 @@
+@import url("./tokens.css");
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body.cs-hub-page {
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-ui, var(--font-sans, system-ui, -apple-system, Segoe UI, Roboto, sans-serif));
+}
+
+.cs-hub-root {
+  width: min(1120px, calc(100vw - 28px));
+  margin: 16px auto 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.cs-hub-head {
+  background: var(--surface-elev-1);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 90%, transparent);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cs-hub-head h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+}
+
+.cs-hub-head p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+}
+
+.cs-hub-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cs-btn-primary {
+  background: var(--action-primary);
+  color: #fff;
+  border-color: var(--action-primary);
+}
+
+.cs-btn-primary:hover {
+  background: var(--action-primary-hover);
+  border-color: var(--action-primary-hover);
+}
+
+.cs-btn-quiet {
+  background: var(--surface-elev-2);
+  color: var(--text-primary);
+  border-color: color-mix(in oklab, var(--border-subtle) 86%, transparent);
+}
+
+.cs-hub-list {
+  display: grid;
+  gap: 10px;
+}
+
+.cs-hub-section {
+  background: var(--surface-elev-1);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 90%, transparent);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.cs-hub-section h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.cs-hub-section p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.cs-hub-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.cs-hub-engine {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 780px) {
+  .cs-hub-head {
+    flex-direction: column;
+  }
+  .cs-hub-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

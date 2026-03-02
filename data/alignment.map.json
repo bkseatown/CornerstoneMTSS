@@ -1,0 +1,62 @@
+{
+  "LIT.PHON.CVC": {
+    "fishTank": ["ELA.RF.1.2"],
+    "sasStrand": "Foundational Reading",
+    "mtssCategory": "Decoding",
+    "domain": "Literacy"
+  },
+  "LIT.DEC.PHG.CVC": {
+    "fishTank": ["ELA.RF.1.2"],
+    "sasStrand": "Foundational Reading",
+    "mtssCategory": "Decoding",
+    "domain": "Literacy"
+  },
+  "LIT.DEC.PHG.DIGRAPHS": {
+    "fishTank": ["ELA.RF.1.3"],
+    "sasStrand": "Foundational Reading",
+    "mtssCategory": "Phonics Patterns",
+    "domain": "Literacy"
+  },
+  "LIT.MORPH.PREFIX": {
+    "fishTank": ["ELA.L.4.4"],
+    "sasStrand": "Vocabulary Development",
+    "mtssCategory": "Morphology",
+    "domain": "Literacy"
+  },
+  "LIT.FLU.ACC": {
+    "fishTank": ["ELA.RF.4.4"],
+    "sasStrand": "Reading Fluency",
+    "mtssCategory": "Fluency",
+    "domain": "Literacy"
+  },
+  "LIT.WRITE.SENT": {
+    "fishTank": ["ELA.W.3.1"],
+    "sasStrand": "Written Expression",
+    "mtssCategory": "Sentence Construction",
+    "domain": "Literacy"
+  },
+  "LIT.LANG.VOC": {
+    "fishTank": ["ELA.L.5.6"],
+    "sasStrand": "Language Development",
+    "mtssCategory": "Academic Vocabulary",
+    "domain": "Literacy"
+  },
+  "NUM.BASE10.PLACEVALUE": {
+    "illustrativeMath": ["5.NBT.A.1"],
+    "sasStrand": "Number Sense",
+    "mtssCategory": "Numeracy Fluency",
+    "domain": "Numeracy"
+  },
+  "NUM.FACT.FLUENCY": {
+    "illustrativeMath": ["3.OA.C.7"],
+    "sasStrand": "Computation Fluency",
+    "mtssCategory": "Fact Recall",
+    "domain": "Numeracy"
+  },
+  "NUM.RATIO.REASONING": {
+    "illustrativeMath": ["6.RP.A.1"],
+    "sasStrand": "Proportional Reasoning",
+    "mtssCategory": "Conceptual Reasoning",
+    "domain": "Numeracy"
+  }
+}

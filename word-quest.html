@@ -68,6 +68,23 @@
 <body class="wordquest-root theme-default">
 
   <div id="loading-screen" data-testid="loading-screen"><div class="spinner"></div><span>Loading…</span></div>
+  <script>
+    (function loadingScreenFailsafe() {
+      function releaseLoadingScreen() {
+        var loading = document.getElementById("loading-screen");
+        if (!loading) return;
+        loading.style.opacity = "0";
+        loading.style.pointerEvents = "none";
+        setTimeout(function () {
+          if (loading && loading.parentNode) loading.parentNode.removeChild(loading);
+        }, 320);
+      }
+      setTimeout(releaseLoadingScreen, 4500);
+      window.addEventListener("load", function () {
+        setTimeout(releaseLoadingScreen, 1200);
+      }, { once: true });
+    })();
+  </script>
 
   <!-- ── Header ───────────────────────────────────── -->
   <header>
