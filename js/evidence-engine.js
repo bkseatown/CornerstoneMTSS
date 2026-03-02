@@ -72,6 +72,24 @@
     return clamp(ewma, 0, 1);
   }
 
+  function computeMasteryBand(dataPoints) {
+    var rows = Array.isArray(dataPoints) ? dataPoints.slice() : [];
+    if (!rows.length) return { mean: null, band: 'NOT_STARTED' };
+    rows.sort(function (a, b) { return toMs(a && a.timestamp) - toMs(b && b.timestamp); });
+    var recent = rows.slice(-3);
+    var valid = recent
+      .map(function (p) { return p && p.result ? Number(p.result.accuracy) : NaN; })
+      .filter(function (n) { return Number.isFinite(n); })
+      .map(function (n) { return clamp(n, 0, 1); });
+    if (!valid.length) return { mean: null, band: 'NOT_STARTED' };
+    var mean = valid.reduce(function (sum, n) { return sum + n; }, 0) / valid.length;
+    var band = 'AUTOMATED';
+    if (mean < 0.6) band = 'EMERGING';
+    else if (mean < 0.75) band = 'DEVELOPING';
+    else if (mean < 0.9) band = 'SECURE';
+    return { mean: Number(mean.toFixed(4)), band: band };
+  }
+
   function normalizeIntensityLadder(input) {
     var src = input && typeof input === 'object' ? input : {};
     var tiers = src.tiers && typeof src.tiers === 'object' ? src.tiers : {};
@@ -174,9 +192,18 @@
   }
 
   function normalizeTargets(event) {
+    var resolver = root && root.CSSkillResolver;
+    var resolve = resolver && typeof resolver.resolveSkillId === 'function'
+      ? resolver.resolveSkillId
+      : function (id) {
+        var raw = String(id || '').trim();
+        return { canonical: raw, known: !!raw };
+      };
     var inTargets = Array.isArray(event.targets) ? event.targets : [];
     return inTargets
-      .map(function (id) { return String(id || '').trim(); })
+      .map(function (id) { return resolve(id); })
+      .filter(function (row) { return row && row.known && row.canonical; })
+      .map(function (row) { return row.canonical; })
       .filter(Boolean)
       .slice(0, 8);
   }
@@ -254,6 +281,7 @@
 
     Object.keys(skillMap).forEach(function (targetId) {
       var rows = getSkillRows(sid, targetId).slice(-WINDOW_N);
+      var bandState = computeMasteryBand(rows);
       var lastTs = rows.length ? toMs(rows[rows.length - 1].timestamp) : 0;
       var stalenessDays = daysSince(lastTs);
       var accuracyValues = rows
@@ -269,6 +297,7 @@
 
       skills[targetId] = {
         n: rows.length,
+        band: bandState.band,
         rawMastery: Number(rawMastery.toFixed(4)),
         mastery: Number(masteryAdj.toFixed(4)),
         lastTs: lastTs,
@@ -367,6 +396,57 @@
     return { direction: 'FLAT', delta: slope, label: 'Stable' };
   }
 
+  function getSkillTrendWindow(studentId, targetId, minPoints, maxPoints) {
+    var minN = Math.max(2, Number(minPoints || 6));
+    var maxN = Math.max(minN, Number(maxPoints || 8));
+    var rows = getSkillRows(studentId, targetId)
+      .filter(function (row) { return row && row.result && Number.isFinite(Number(row.result.accuracy)); })
+      .slice(-maxN);
+    return {
+      points: rows,
+      minRequired: minN,
+      complete: rows.length >= minN
+    };
+  }
+
+  function computeMtssTrendDecision(studentId, targetId) {
+    var sid = String(studentId || '');
+    var tid = String(targetId || '');
+    if (!sid || !tid) {
+      return { status: 'INSUFFICIENT', reason: 'Missing student or skill id', points: 0 };
+    }
+    var trendWindow = getSkillTrendWindow(sid, tid, 6, 8);
+    if (!trendWindow.complete) {
+      return {
+        status: 'INSUFFICIENT',
+        reason: 'Need at least ' + trendWindow.minRequired + ' points for MTSS decision rules',
+        points: trendWindow.points.length
+      };
+    }
+    var first = clamp(Number(trendWindow.points[0].result.accuracy || 0), 0, 1);
+    var last = clamp(Number(trendWindow.points[trendWindow.points.length - 1].result.accuracy || 0), 0, 1);
+    var delta = last - first;
+    var slopePerPoint = delta / Math.max(1, trendWindow.points.length - 1);
+    var status = 'HOLD';
+    var reason = 'Trend stable; continue support cycle';
+    if (last < 0.6 || slopePerPoint < -0.01) {
+      status = 'INTENSIFY';
+      reason = 'Response is weak/declining across MTSS window';
+    } else if (last >= 0.85 && slopePerPoint >= 0.01) {
+      status = 'FADE';
+      reason = 'Response is strong and improving across MTSS window';
+    }
+    return {
+      status: status,
+      reason: reason,
+      points: trendWindow.points.length,
+      firstAccuracy: Number(first.toFixed(3)),
+      latestAccuracy: Number(last.toFixed(3)),
+      delta: Number(delta.toFixed(3)),
+      slopePerPoint: Number(slopePerPoint.toFixed(4))
+    };
+  }
+
   function knownSkillIds() {
     var fromStore = root && root.__CS_SKILLSTORE__ && root.__CS_SKILLSTORE__.dictionaries && root.__CS_SKILLSTORE__.dictionaries.skillLabelById;
     if (fromStore && typeof fromStore === 'object') return Object.keys(fromStore);
@@ -421,7 +501,10 @@
     recordEvidence: recordEvidence,
     getStudentSkillSnapshot: getStudentSkillSnapshot,
     computePriority: computePriority,
+    computeMasteryBand: computeMasteryBand,
     getSkillTrajectory: getSkillTrajectory,
+    getSkillTrendWindow: getSkillTrendWindow,
+    computeMtssTrendDecision: computeMtssTrendDecision,
     auditEvidenceStore: auditEvidenceStore,
     getIntensityTier: getIntensityTier,
     _setIntensityLadderForTest: function (ladder) {

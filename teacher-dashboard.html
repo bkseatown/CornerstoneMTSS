@@ -18,6 +18,7 @@
       <a class="td-wordmark td-brand-home" href="./index.html" aria-label="Home">
         <strong>Cornerstone MTSS</strong>
         <span>Teacher Dashboard</span>
+        <small id="td-buildline" class="td-buildline">Build: checking...</small>
       </a>
 
       <label class="td-search-wrap" for="td-search-input">
@@ -44,7 +45,8 @@
         <button id="td-admin-demo" class="td-top-btn" type="button">Admin Demo</button>
         <button id="td-new-session" class="td-top-btn" type="button">New Session</button>
         <button id="td-meeting-mode" class="td-top-btn" type="button">Meeting Notes</button>
-        <button id="td-tier1-pack" class="td-top-btn" type="button">Tier 1 Pack</button>
+        <button id="td-tier1-pack" class="td-top-btn" type="button">Tier 1 Evidence</button>
+        <button id="td-sas-library-btn" class="td-top-btn" type="button">SAS Library</button>
         <button id="td-import-export" class="td-top-btn" type="button">Import/Export</button>
         <button id="td-settings" class="td-top-btn" type="button">Settings</button>
         <button id="td-local-status" class="td-local-dot" type="button" title="Local data on this device" aria-label="Local mode"></button>
@@ -183,7 +185,7 @@
 
         <section class="td-work-row">
           <aside class="td-left td-surface card td-support-rail">
-            <h2 class="td-section-title">Search-first</h2>
+            <h2 class="td-section-title">Students</h2>
             <div id="td-recent-students" class="td-recent-row"></div>
             <div id="td-recent-sessions" class="td-recent-list"></div>
             <div id="td-no-caseload" class="td-empty hidden">
@@ -198,6 +200,7 @@
           </aside>
 
           <section class="td-center td-surface card td-primary-stage" id="td-center-stage" aria-live="polite">
+            <h2 class="td-section-title">Today’s Next Actions</h2>
             <div id="td-center-empty" class="td-stage-empty">
               <h2 class="td-section-title">Search or pick a student</h2>
               <p class="muted">In under 3 seconds: who to support, what to do next, and where to launch.</p>
@@ -223,6 +226,14 @@
                   <p id="td-student-label" class="td-label"></p>
                   <p id="td-next-tier-badge" class="tier-badge tier-2">Tier 2</p>
                 </div>
+                <div id="td-share-cluster" class="td-share-cluster">
+                  <div class="td-plan-tabs">
+                    <button id="td-share-quick-copy" class="td-top-btn" type="button">Copy Summary</button>
+                    <button id="td-share-quick-packet" class="td-top-btn" type="button">Export MDT Packet</button>
+                    <button id="td-share-link" class="td-top-btn" type="button">Share Link</button>
+                  </div>
+                  <p id="td-share-buildline" class="td-label">Build: checking...</p>
+                </div>
                 <div class="td-mini-chart">
                   <svg id="td-sparkline" viewBox="0 0 180 48" preserveAspectRatio="none"></svg>
                   <p id="td-last7-summary" class="td-label"></p>
@@ -232,7 +243,7 @@
           </section>
 
           <aside class="td-right td-surface card td-secondary-rail">
-            <h2 class="td-section-title">Evidence + Tools</h2>
+            <h2 class="td-section-title">Evidence &amp; Plans</h2>
             <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
             <div id="td-right-content" class="hidden">
             <div id="td-evidence-chips" class="td-chip-grid"></div>
@@ -260,6 +271,18 @@
             <section id="td-needs-panel" class="td-stage-empty">
               <p class="td-label">Top Needs</p>
               <div id="td-needs-chip-list" class="td-chip-grid"></div>
+            </section>
+            <section id="td-mastery-panel" class="td-stage-empty td-panel">
+              <header class="td-panel-header">
+                <h3 class="td-label">Skill Mastery</h3>
+              </header>
+              <div id="td-mastery-list" class="td-mastery-list"></div>
+            </section>
+            <section id="td-next-skill-panel" class="td-stage-empty td-panel">
+              <header class="td-panel-header">
+                <h3 class="td-label">Recommended Next Skill</h3>
+              </header>
+              <div id="td-next-skill"></div>
             </section>
             <section id="td-today-plan" class="td-stage-empty">
               <p class="td-label">Today Plan</p>
@@ -364,6 +387,7 @@
         <button id="td-meeting-tag-student" class="td-top-btn" type="button">Tag student</button>
         <button id="td-meeting-tag-tier" class="td-top-btn" type="button">Tag tier</button>
         <button id="td-meeting-copy-summary" class="td-top-btn" type="button">Copy summary</button>
+        <button id="td-meeting-export-mdt" class="td-top-btn" type="button">Export for MDT</button>
       </div>
       <p id="td-meeting-stt-status" class="td-reco-line">Transcription ready (manual mode fallback if unsupported).</p>
       <textarea id="td-meeting-notes" class="td-share-preview" placeholder="Agenda, concerns, strengths, data reviewed..."></textarea>
@@ -371,6 +395,30 @@
       <div class="td-modal-actions">
         <button id="td-meeting-save" class="td-btn td-btn-primary btn btn-quiet" type="button">Save Meeting</button>
         <button id="td-meeting-goals" class="td-btn td-btn-ghost btn btn-quiet" type="button">Convert to Goals</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="td-sas-library-modal" class="td-modal hidden" role="dialog" aria-modal="true" aria-labelledby="td-sas-library-title">
+    <div class="td-modal-card td-sas-library-card">
+      <div class="td-modal-head">
+        <h2 id="td-sas-library-title" class="td-section-title">SAS Library</h2>
+        <button id="td-sas-library-close" class="td-top-btn" type="button">Close</button>
+      </div>
+      <input id="td-sas-search" class="td-top-btn" type="search" placeholder="Search interventions, goals, assessments...">
+      <div class="td-plan-tabs" id="td-sas-tabs">
+        <button class="td-top-btn" type="button" data-sas-tab="interventions">Interventions</button>
+        <button class="td-top-btn" type="button" data-sas-tab="goals">Goals</button>
+        <button class="td-top-btn" type="button" data-sas-tab="assessments">Assessments</button>
+        <button class="td-top-btn" type="button" data-sas-tab="principles">Principles</button>
+        <button class="td-top-btn" type="button" data-sas-tab="templates">Templates</button>
+      </div>
+      <div class="td-sas-library-grid">
+        <div id="td-sas-list" class="td-sas-list"></div>
+        <div id="td-sas-detail" class="td-sas-detail">Select an item to view details.</div>
+      </div>
+      <div class="td-modal-actions">
+        <button id="td-sas-apply-plan" class="td-btn td-btn-primary btn btn-quiet" type="button" disabled>Apply to Plan</button>
       </div>
     </div>
   </div>
@@ -393,13 +441,16 @@
   <script src="./js/skill-mapper.js?v=20260301y" defer></script>
   <script src="./js/support-store.js?v=20260301y" defer></script>
   <script src="./js/evidence-store.js?v=20260301y" defer></script>
+  <script src="./js/intervention-planner.js?v=20260301y" defer></script>
   <script src="./js/data-registry.js?v=20260301y" defer></script>
   <script src="./js/skill-store.js?v=20260301y" defer></script>
+  <script src="./js/skill-resolver.js?v=20260302b" defer></script>
   <script src="./js/evidence-engine.js?v=20260301y" defer></script>
   <script src="./js/risk-bands.js?v=20260301y" defer></script>
   <script src="./js/skill-labels.js?v=20260301y" defer></script>
   <script src="./js/celebrations.js?v=20260301y" defer></script>
   <script src="./js/mastery-labels.js?v=20260301y" defer></script>
+  <script src="./js/mastery-engine.js?v=20260302d" defer></script>
   <script src="./js/caseload-health.js?v=20260301y" defer></script>
   <script src="./js/export-notes.js?v=20260301y" defer></script>
   <script src="./js/flex-group-engine.v2.js?v=20260301y" defer></script>
@@ -411,6 +462,7 @@
   <script src="./js/session-planner.js?v=20260301y" defer></script>
   <script src="./js/share-summary.js?v=20260301y" defer></script>
   <script src="./js/meeting-notes.js?v=20260301y" defer></script>
+  <script src="./js/sas-alignment-library.js?v=20260302a" defer></script>
   <script src="./teacher-dashboard.js?v=20260301y" defer></script>
 </body>
 </html>
