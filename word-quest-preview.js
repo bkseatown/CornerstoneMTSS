@@ -7,6 +7,7 @@
     var opts = options && typeof options === "object" ? options : {};
     var shouldLoop = opts.loop !== false;
     var onEvent = typeof opts.onEvent === "function" ? opts.onEvent : null;
+    var includeWriting = opts.includeWriting !== false;
     var resetDelayMs = Number(opts.resetDelayMs || 1800);
     var resetFadeMs = Number(opts.resetFadeMs || 250);
     var typeDelayMs = Number(opts.typeDelayMs || 130);
@@ -76,7 +77,7 @@
       wordquest: root.querySelector('[data-scene="wordquest"]'),
       writing: root.querySelector('[data-scene="writing"]')
     };
-    var sceneOrder = ["wordquest", "writing"];
+    var sceneOrder = includeWriting ? ["wordquest", "writing"] : ["wordquest"];
     var sceneIndex = 0;
 
     function setScene(name) {

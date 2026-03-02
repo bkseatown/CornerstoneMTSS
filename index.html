@@ -14,18 +14,26 @@
   <main id="cs-home-root" class="cs-home-root" aria-label="Cornerstone MTSS home">
     <section class="home-shell" aria-label="Homepage layout">
       <article class="home-card home-sequencer" aria-labelledby="home-next-move-title">
-        <header class="home-head">
-          <p class="home-kicker">Cornerstone MTSS</p>
-          <h1 id="home-next-move-title">Recommended Next Move</h1>
-          <p class="home-sub">Teacher-centered instructional sequencing for Tier 2/3 literacy and numeracy support.</p>
-        </header>
-        <div id="home-sequencer-preview" class="home-sequencer-preview" aria-live="polite"></div>
-        <div class="home-sequencer-actions">
-          <button id="home-start-this" class="home-btn home-btn-primary" type="button">Start This</button>
-          <button id="home-see-all" class="home-btn home-btn-quiet" type="button" aria-expanded="false" aria-controls="home-all-options">See All 3 Options</button>
-          <a id="home-dashboard-link" class="home-btn home-btn-quiet" href="./teacher-dashboard.html">Open Teacher Dashboard</a>
+        <div class="home-sequencer-layout">
+          <div class="home-sequencer-left">
+            <header class="home-head">
+              <p class="home-kicker">Cornerstone MTSS</p>
+              <h1 id="home-next-move-title">Recommended Next Move</h1>
+              <p class="home-sub">Teacher-centered instructional sequencing for Tier 2/3 literacy and numeracy support.</p>
+            </header>
+            <div id="home-sequencer-preview" class="home-sequencer-preview" aria-live="polite"></div>
+            <div class="home-sequencer-actions">
+              <button id="home-start-this" class="home-btn home-btn-primary" type="button">Start This</button>
+              <button id="home-see-all" class="home-btn home-btn-quiet" type="button" aria-expanded="false" aria-controls="home-all-options">See All 3 Options</button>
+              <a id="home-open-wordquest" class="home-btn home-btn-quiet" href="./word-quest/index.html#wordquest">Open Word Quest</a>
+              <a id="home-dashboard-link" class="home-btn home-btn-quiet" href="./teacher-dashboard.html">Open Teacher Dashboard</a>
+            </div>
+            <div id="home-all-options" class="home-all-options hidden"></div>
+          </div>
+          <aside class="home-sequencer-right" aria-label="Word Quest demo">
+            <div id="home-wordquest-demo" class="home-wordquest-demo"></div>
+          </aside>
         </div>
-        <div id="home-all-options" class="home-all-options hidden"></div>
       </article>
 
       <section class="home-domain-row" aria-label="Domain branching">
@@ -44,6 +52,7 @@
   </main>
 
   <script src="./js/instructional-sequencer.js?v=20260302a"></script>
+  <script src="./word-quest-preview.js?v=20260302a"></script>
   <script src="./home-v3.js?v=20260302a"></script>
   <script src="./build-stamp.js?v=20260302a"></script>
   <script src="./js/build-badge.js?v=20260302a"></script>
