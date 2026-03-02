@@ -72,6 +72,24 @@
     return clamp(ewma, 0, 1);
   }
 
+  function computeMasteryBand(dataPoints) {
+    var rows = Array.isArray(dataPoints) ? dataPoints.slice() : [];
+    if (!rows.length) return { mean: null, band: 'NOT_STARTED' };
+    rows.sort(function (a, b) { return toMs(a && a.timestamp) - toMs(b && b.timestamp); });
+    var recent = rows.slice(-3);
+    var valid = recent
+      .map(function (p) { return p && p.result ? Number(p.result.accuracy) : NaN; })
+      .filter(function (n) { return Number.isFinite(n); })
+      .map(function (n) { return clamp(n, 0, 1); });
+    if (!valid.length) return { mean: null, band: 'NOT_STARTED' };
+    var mean = valid.reduce(function (sum, n) { return sum + n; }, 0) / valid.length;
+    var band = 'AUTOMATED';
+    if (mean < 0.6) band = 'EMERGING';
+    else if (mean < 0.75) band = 'DEVELOPING';
+    else if (mean < 0.9) band = 'SECURE';
+    return { mean: Number(mean.toFixed(4)), band: band };
+  }
+
   function normalizeIntensityLadder(input) {
     var src = input && typeof input === 'object' ? input : {};
     var tiers = src.tiers && typeof src.tiers === 'object' ? src.tiers : {};
@@ -263,6 +281,7 @@
 
     Object.keys(skillMap).forEach(function (targetId) {
       var rows = getSkillRows(sid, targetId).slice(-WINDOW_N);
+      var bandState = computeMasteryBand(rows);
       var lastTs = rows.length ? toMs(rows[rows.length - 1].timestamp) : 0;
       var stalenessDays = daysSince(lastTs);
       var accuracyValues = rows
@@ -278,6 +297,7 @@
 
       skills[targetId] = {
         n: rows.length,
+        band: bandState.band,
         rawMastery: Number(rawMastery.toFixed(4)),
         mastery: Number(masteryAdj.toFixed(4)),
         lastTs: lastTs,
@@ -481,6 +501,7 @@
     recordEvidence: recordEvidence,
     getStudentSkillSnapshot: getStudentSkillSnapshot,
     computePriority: computePriority,
+    computeMasteryBand: computeMasteryBand,
     getSkillTrajectory: getSkillTrajectory,
     getSkillTrendWindow: getSkillTrendWindow,
     computeMtssTrendDecision: computeMtssTrendDecision,
