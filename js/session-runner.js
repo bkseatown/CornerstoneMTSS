@@ -67,7 +67,7 @@
     var map = {
       WQ_PROBE: "Word Quest Probe",
       RL_ORF: "Reading Lab ORF",
-      SS_TARGET: "Sentence Surgery",
+      SS_TARGET: "Sentence Studio",
       PB_TRANSFER: "Paragraph Builder Transfer",
       MINI_PRACTICE: "Mini Practice"
     };

@@ -360,7 +360,7 @@
     if (reasoningPct < 40) {
       return {
         summary: "Class shows weak causal reasoning across sentences.",
-        action: "Run a 15-minute Tier 2 small group: Sentence Surgery Timed Level 2 + Because/But/So expansion."
+        action: "Run a 15-minute Tier 2 small group: Sentence Studio Timed Level 2 + Because/But/So expansion."
       };
     }
     if (strongPct < 40) {

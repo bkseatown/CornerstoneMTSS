@@ -79,7 +79,7 @@
     if (weakFlags.sentence || weakFlags.writing || rows.length < 2) {
       pushPlan(rows, {
         activityId: weakFlags.writing ? "writing-studio" : "sentence-surgery",
-        title: weakFlags.writing ? "Writing Studio Precision" : "Sentence Surgery Repair",
+        title: weakFlags.writing ? "Writing Studio Precision" : "Sentence Studio Repair",
         focusSkillId: weakFlags.writing ? "LIT.WRITE.SENT" : "LIT.LANG.SYN",
         minutes: 6,
         href: weakFlags.writing ? "writing-studio.html" : "sentence-surgery.html"

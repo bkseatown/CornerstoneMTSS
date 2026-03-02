@@ -217,7 +217,7 @@
     var k = String(key || "").toLowerCase();
     if (k === "word-quest") return "Word Quest";
     if (k === "reading-lab") return "Reading Lab";
-    if (k === "sentence-surgery") return "Sentence Surgery";
+    if (k === "sentence-surgery") return "Sentence Studio";
     if (k === "writing-studio") return "Writing Studio";
     if (k === "numeracy") return "Numeracy";
     return "Activity";
@@ -336,12 +336,12 @@
       : String(skillId || "");
     if (id.indexOf("LIT.DEC") === 0) return "Word Quest";
     if (id.indexOf("LIT.FLU") === 0) return "Reading Lab";
-    if (id.indexOf("LIT.LANG.SYN") === 0 || id.indexOf("LIT.WRITE") === 0) return "Sentence Surgery";
-    if (id.indexOf("LIT.LANG.VOC") === 0) return "Sentence Surgery";
+    if (id.indexOf("LIT.LANG.SYN") === 0 || id.indexOf("LIT.WRITE") === 0) return "Sentence Studio";
+    if (id.indexOf("LIT.LANG.VOC") === 0) return "Sentence Studio";
     if (id.indexOf("NUM.") === 0 || id.indexOf("numeracy.") === 0) return "Numeracy";
     if (id.indexOf("decoding.") === 0 || id.indexOf("orthography.") === 0 || id.indexOf("morphology.") === 0) return "Word Quest";
     if (id.indexOf("fluency.") === 0) return "Reading Lab";
-    if (id.indexOf("sentence.") === 0 || id.indexOf("writing.") === 0) return "Sentence Surgery";
+    if (id.indexOf("sentence.") === 0 || id.indexOf("writing.") === 0) return "Sentence Studio";
     return "Word Quest";
   }
 
@@ -681,7 +681,7 @@
         '<div class="td-more-tools" data-more-tools="' + sid + '">',
         '<button class="td-top-btn" type="button" data-today-launch="word-quest" data-student-id="' + sid + '">Word Quest</button>',
         '<button class="td-top-btn" type="button" data-today-launch="reading-lab" data-student-id="' + sid + '">Reading Lab</button>',
-        '<button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="' + sid + '">Sentence Surgery</button>',
+        '<button class="td-top-btn" type="button" data-today-launch="sentence-surgery" data-student-id="' + sid + '">Sentence Studio</button>',
         (rationale ? ('<p class="td-todayCard__last" title="' + confidenceTip + '">' + rationale + '</p>') : ''),
         '<p class="td-todayCard__last">Primary Focus: ' + pathway.pathway + '</p>',
         (trendLine ? ('<p class="td-todayCard__last">' + trendLine + '</p>') : ''),

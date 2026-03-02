@@ -4769,7 +4769,7 @@
     const writingBtn = _el('writing-studio-btn');
     if (WRITING_STUDIO_ENABLED) setHoverNoteForElement(writingBtn, 'Open Writing Studio.');
     const surgeryBtn = _el('sentence-surgery-btn');
-    if (surgeryBtn) setHoverNoteForElement(surgeryBtn, 'Open Sentence Surgery.');
+    if (surgeryBtn) setHoverNoteForElement(surgeryBtn, 'Open Sentence Studio.');
     const readingBtn = _el('reading-lab-btn');
     if (readingBtn) setHoverNoteForElement(readingBtn, 'Open Reading Lab.');
     syncWritingStudioAvailability();
@@ -15045,9 +15045,9 @@
     quick: Object.freeze({ introDelay: 140, betweenDelay: 70, postMeaningDelay: 120 }),
     slow: Object.freeze({ introDelay: 420, betweenDelay: 220, postMeaningDelay: 320 })
   });
-  let revealAutoAdvanceTimer = 0;
-  let revealAutoCountdownTimer = 0;
-  let revealAutoAdvanceEndsAt = 0;
+  var revealAutoAdvanceTimer = 0;
+  var revealAutoCountdownTimer = 0;
+  var revealAutoAdvanceEndsAt = 0;
   let revealChallengeState = null;
   let challengeOnboardingState = loadChallengeOnboardingState();
 
