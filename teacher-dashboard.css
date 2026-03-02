@@ -764,6 +764,37 @@ body.cs-has-nav-shell .td-shell {
 #td-progress-note {
   margin-top: 10px;
 }
+.td-support-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.td-support-body {
+  margin-top: 8px;
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--surface-2) 70%, transparent);
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+}
+.td-support-item {
+  border: 1px solid color-mix(in oklab, var(--border-soft) 68%, transparent);
+  border-radius: 10px;
+  padding: 8px;
+  background: color-mix(in oklab, var(--surface-1) 88%, transparent);
+}
+.td-support-item h4 {
+  margin: 0 0 4px;
+  font-size: var(--fs-sm);
+}
+.td-support-item p {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
 .td-plan-tabs {
   display: flex;
   gap: 8px;

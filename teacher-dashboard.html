@@ -233,6 +233,20 @@
             <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
             <div id="td-right-content" class="hidden">
             <div id="td-evidence-chips" class="td-chip-grid"></div>
+            <section id="td-support-hub" class="td-stage-empty">
+              <div class="td-support-head">
+                <p class="td-label">Student Support Hub</p>
+                <button id="td-support-export-packet" class="td-btn td-btn-ghost btn btn-quiet" type="button">Referral Packet</button>
+              </div>
+              <div class="td-plan-tabs">
+                <button class="td-top-btn" type="button" data-support-tab="snapshot">Snapshot</button>
+                <button class="td-top-btn" type="button" data-support-tab="plan">Plan</button>
+                <button class="td-top-btn" type="button" data-support-tab="accommodations">Accommodations</button>
+                <button class="td-top-btn" type="button" data-support-tab="interventions">Interventions</button>
+                <button class="td-top-btn" type="button" data-support-tab="exports">Exports</button>
+              </div>
+              <div id="td-support-body" class="td-support-body"></div>
+            </section>
             <section id="td-skill-tiles-panel" class="td-stage-empty">
               <p class="td-label">Skill Tiles</p>
               <div id="td-skill-tiles" class="td-skill-tiles"></div>
@@ -326,6 +340,7 @@
   <script src="./js/caseload-store.js?v=20260301y" defer></script>
   <script src="./js/skill-taxonomy.js?v=20260301y" defer></script>
   <script src="./js/skill-mapper.js?v=20260301y" defer></script>
+  <script src="./js/support-store.js?v=20260301y" defer></script>
   <script src="./js/evidence-store.js?v=20260301y" defer></script>
   <script src="./js/data-registry.js?v=20260301y" defer></script>
   <script src="./js/skill-store.js?v=20260301y" defer></script>

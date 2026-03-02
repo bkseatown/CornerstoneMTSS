@@ -22,6 +22,7 @@
   var PlanEngine = window.CSPlanEngine;
   var SessionPlanner = window.CSSessionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
+  var SupportStore = window.CSSupportStore;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
 
@@ -34,6 +35,7 @@
     plan: null,
     activePlanTab: "ten",
     activeNoteTab: "teacher",
+    activeSupportTab: "snapshot",
     todayPlan: null,
     sharePayload: null
   };
@@ -64,6 +66,9 @@
     evidenceChips: document.getElementById("td-evidence-chips"),
     skillTiles: document.getElementById("td-skill-tiles"),
     needsChipList: document.getElementById("td-needs-chip-list"),
+    supportBody: document.getElementById("td-support-body"),
+    supportTabs: Array.prototype.slice.call(document.querySelectorAll("[data-support-tab]")),
+    supportExportPacket: document.getElementById("td-support-export-packet"),
     planList: document.getElementById("td-plan-list"),
     planTabs: Array.prototype.slice.call(document.querySelectorAll("[data-plan-tab]")),
     noteTabs: Array.prototype.slice.call(document.querySelectorAll("[data-note-tab]")),
@@ -824,6 +829,7 @@
       if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
       if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
       renderNeeds(null);
+      renderSupportHub("");
       renderRecommendedPlan("");
       renderTodayPlan(null);
       renderSkillTiles("");
@@ -879,6 +885,7 @@
     renderEvidenceChips(summary.evidenceChips);
     renderSkillTiles(state.selectedId);
     renderNeeds(state.snapshot);
+    renderSupportHub(state.selectedId);
     renderRecommendedPlan(state.selectedId);
     renderTodayPlan(state.plan);
     renderProgressNote(state.plan, summary.student);
@@ -965,6 +972,67 @@
       var tierClass = sev >= 4 ? "tier-3" : (sev >= 3 ? "tier-2" : "tier-1");
       return '<span class="tier-badge ' + tierClass + '">' + need.label + ' · S' + sev + '</span>';
     }).join("");
+    if (SupportStore && state.selectedId) {
+      try {
+        SupportStore.setNeeds(state.selectedId, needs.map(function (need) {
+          return {
+            key: String(need.key || need.skillId || need.label || ""),
+            label: String(need.label || need.skillId || "Need"),
+            domain: String(need.domain || ""),
+            severity: Number(need.severity || 0)
+          };
+        }));
+      } catch (_e) {}
+    }
+  }
+
+  function renderSupportHub(studentId) {
+    if (!el.supportBody) return;
+    if (!studentId) {
+      el.supportBody.innerHTML = '<div class="td-support-item"><p>Select a student to load support workflows.</p></div>';
+      return;
+    }
+    var studentSupport = SupportStore && typeof SupportStore.getStudent === "function"
+      ? SupportStore.getStudent(studentId)
+      : { needs: [], goals: [], accommodations: [], interventions: [], meetings: [] };
+    if (state.activeSupportTab === "snapshot") {
+      el.supportBody.innerHTML = [
+        '<div class="td-support-item"><h4>Top Needs</h4><p>' + (studentSupport.needs.length ? studentSupport.needs.slice(0, 5).map(function (n) { return n.label; }).join(" • ") : "No needs captured yet.") + '</p></div>',
+        '<div class="td-support-item"><h4>Last 14 days trend</h4><p>Use Skill Tiles + Recent Sessions for trend checks before meetings.</p></div>'
+      ].join("");
+      return;
+    }
+    if (state.activeSupportTab === "plan") {
+      var goals = studentSupport.goals || [];
+      el.supportBody.innerHTML = goals.length
+        ? goals.slice(0, 5).map(function (g) {
+            return '<div class="td-support-item"><h4>' + (g.skill || g.domain || "Goal") + '</h4><p>Baseline ' + (g.baseline || "--") + ' → Target ' + (g.target || "--") + ' • Review every ' + (g.reviewEveryDays || 14) + 'd</p></div>';
+          }).join("")
+        : '<div class="td-support-item"><p>No SMART goals yet. Add from Meeting Notes conversion.</p></div>';
+      return;
+    }
+    if (state.activeSupportTab === "accommodations") {
+      var acc = studentSupport.accommodations || [];
+      el.supportBody.innerHTML = acc.length
+        ? acc.slice(0, 6).map(function (a) {
+            return '<div class="td-support-item"><h4>' + (a.title || "Accommodation") + '</h4><p>' + (a.teacherText || a.whenToUse || "Teacher-facing support guidance") + '</p></div>';
+          }).join("")
+        : '<div class="td-support-item"><p>No accommodation cards yet.</p></div>';
+      return;
+    }
+    if (state.activeSupportTab === "interventions") {
+      var interventions = studentSupport.interventions || [];
+      el.supportBody.innerHTML = interventions.length
+        ? interventions.slice(0, 8).map(function (i) {
+            return '<div class="td-support-item"><h4>Tier ' + (i.tier || 1) + ' • ' + (i.domain || "Domain") + '</h4><p>' + (i.strategy || i.focus || "") + ' • ' + (i.frequency || "") + ' • ' + (i.durationMin || "--") + ' min</p></div>';
+          }).join("")
+        : '<div class="td-support-item"><p>No intervention logs yet.</p></div>';
+      return;
+    }
+    el.supportBody.innerHTML = [
+      '<div class="td-support-item"><h4>Exports</h4><p>Share Summary for quick updates. Referral Packet for MDT-ready evidence.</p></div>',
+      '<div class="td-support-item"><p>All data remains local-first unless exported intentionally.</p></div>'
+    ].join("");
   }
 
   function renderRecommendedPlan(studentId) {
@@ -1272,6 +1340,7 @@
       hasStudentDrawer: !!document.getElementById("td-last-session-card"),
       hasShareSummary: !!document.getElementById("td-share-summary"),
       hasNeedsChips: !!document.getElementById("td-needs-chip-list"),
+      hasSupportHub: !!document.getElementById("td-support-hub"),
       hasTodayPlan: !!document.getElementById("td-today-plan"),
       hasProgressNote: !!document.getElementById("td-progress-note"),
       hasToday: !!document.getElementById("td-today"),
@@ -1442,6 +1511,24 @@
         ].join("\n");
         if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
         setCoachLine("Copied family/admin summary.");
+      });
+    }
+
+    if (Array.isArray(el.supportTabs)) {
+      el.supportTabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          state.activeSupportTab = String(tab.getAttribute("data-support-tab") || "snapshot");
+          renderSupportHub(state.selectedId);
+        });
+      });
+    }
+
+    if (el.supportExportPacket) {
+      el.supportExportPacket.addEventListener("click", function () {
+        if (!state.selectedId || !SupportStore || typeof SupportStore.exportReferralPacket !== "function") return;
+        var packet = SupportStore.exportReferralPacket(state.selectedId);
+        download("referral-packet-" + state.selectedId + ".html", packet.html, "text/html");
+        setCoachLine("Exported referral-ready evidence packet.");
       });
     }
 
