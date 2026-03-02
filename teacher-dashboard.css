@@ -774,6 +774,28 @@ body.cs-has-nav-shell .td-shell {
   display: grid;
   gap: 8px;
 }
+.td-plan-quick-list {
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+.td-plan-quick-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--border-soft) 70%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 72%, transparent);
+}
+.td-plan-quick-item .td-chip {
+  justify-self: end;
+}
+.td-plan-quick-item .td-top-btn {
+  min-height: 32px;
+  padding: 4px 10px;
+}
 .td-plan-card {
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 72%, transparent);

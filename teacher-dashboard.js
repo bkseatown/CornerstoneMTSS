@@ -20,6 +20,7 @@
   var ExportNotes = window.CSExportNotes;
   var FlexGroupEngine = window.CSFlexGroupEngine;
   var PlanEngine = window.CSPlanEngine;
+  var SessionPlanner = window.CSSessionPlanner;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
 
@@ -44,6 +45,7 @@
     list: document.getElementById("td-caseload-list"),
     centerEmpty: document.getElementById("td-center-empty"),
     centerSelected: document.getElementById("td-center-selected"),
+    recommendedPlanList: document.getElementById("td-recommended-plan-list"),
     studentLabel: document.getElementById("td-student-label"),
     focusTitle: document.getElementById("td-focus-title"),
     recoLine: document.getElementById("td-reco-line"),
@@ -813,6 +815,7 @@
       if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
       if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
       renderNeeds(null);
+      renderRecommendedPlan("");
       renderTodayPlan(null);
       renderSkillTiles("");
       renderProgressNote(null, null);
@@ -867,6 +870,7 @@
     renderEvidenceChips(summary.evidenceChips);
     renderSkillTiles(state.selectedId);
     renderNeeds(state.snapshot);
+    renderRecommendedPlan(state.selectedId);
     renderTodayPlan(state.plan);
     renderProgressNote(state.plan, summary.student);
     renderLastSessionSummary(state.selectedId);
@@ -952,6 +956,45 @@
       var tierClass = sev >= 4 ? "tier-3" : (sev >= 3 ? "tier-2" : "tier-1");
       return '<span class="tier-badge ' + tierClass + '">' + need.label + ' · S' + sev + '</span>';
     }).join("");
+  }
+
+  function renderRecommendedPlan(studentId) {
+    if (!el.recommendedPlanList) return;
+    if (!studentId) {
+      el.recommendedPlanList.innerHTML = '<p class="td-reco-line">Select a student to generate today\'s micro-plan.</p>';
+      return;
+    }
+    var model = Evidence && typeof Evidence.getSkillModel === "function"
+      ? Evidence.getSkillModel(studentId)
+      : null;
+    var rows = SessionPlanner && typeof SessionPlanner.buildDailyPlan === "function"
+      ? SessionPlanner.buildDailyPlan({
+          studentId: studentId,
+          skillModel: model,
+          topNeeds: model && Array.isArray(model.topNeeds) ? model.topNeeds : [],
+          timeBudgetMin: 20
+        })
+      : [];
+    if (!rows.length) {
+      el.recommendedPlanList.innerHTML = '<p class="td-reco-line">Run a quick check to auto-build a recommended plan.</p>';
+      return;
+    }
+    el.recommendedPlanList.innerHTML = rows.map(function (row) {
+      var focusLabel = getSkillLabelSafe(row.focusSkillId || "decoding.short_vowels");
+      return [
+        '<article class="td-plan-quick-item">',
+        '<div><strong>' + row.title + '</strong><p class="td-reco-line">' + focusLabel + '</p></div>',
+        '<span class="td-chip">' + row.minutes + ' min</span>',
+        '<button class="td-top-btn" type="button" data-reco-launch="' + String(row.href || "word-quest.html?quick=1") + '">Launch</button>',
+        '</article>'
+      ].join("");
+    }).join("");
+    Array.prototype.forEach.call(el.recommendedPlanList.querySelectorAll("[data-reco-launch]"), function (button) {
+      button.addEventListener("click", function () {
+        var href = String(button.getAttribute("data-reco-launch") || "word-quest.html?quick=1");
+        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+      });
+    });
   }
 
   function renderTodayPlan(plan) {
