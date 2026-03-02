@@ -21,6 +21,7 @@
   var FlexGroupEngine = window.CSFlexGroupEngine;
   var PlanEngine = window.CSPlanEngine;
   var SessionPlanner = window.CSSessionPlanner;
+  var ShareSummaryAPI = window.CSShareSummary;
   var CaseloadStore = window.CSCaseloadStore;
   if (!Evidence) return;
 
@@ -33,7 +34,8 @@
     plan: null,
     activePlanTab: "ten",
     activeNoteTab: "teacher",
-    todayPlan: null
+    todayPlan: null,
+    sharePayload: null
   };
   var skillStoreLogged = false;
 
@@ -66,11 +68,18 @@
     planTabs: Array.prototype.slice.call(document.querySelectorAll("[data-plan-tab]")),
     noteTabs: Array.prototype.slice.call(document.querySelectorAll("[data-note-tab]")),
     noteText: document.getElementById("td-progress-note-text"),
+    notesInput: document.getElementById("td-notes-input"),
     copyNote: document.getElementById("td-copy-note"),
     shareAllNotes: document.getElementById("td-share-all-notes"),
     lastSessionTitle: document.getElementById("td-last-session-title"),
     lastSessionMeta: document.getElementById("td-last-session-meta"),
     shareSummary: document.getElementById("td-share-summary"),
+    shareModal: document.getElementById("td-share-modal"),
+    shareModalClose: document.getElementById("td-share-modal-close"),
+    sharePreview: document.getElementById("td-share-preview"),
+    shareCopy: document.getElementById("td-share-copy"),
+    shareDownloadJson: document.getElementById("td-share-download-json"),
+    shareDownloadCsv: document.getElementById("td-share-download-csv"),
     exportStudentCsv: document.getElementById("td-export-student-csv"),
     exportJson: document.getElementById("td-export-json"),
     copyCsv: document.getElementById("td-copy-csv"),
@@ -1085,6 +1094,61 @@
     ].join("\n");
   }
 
+  function buildSharePayload(studentId) {
+    var sid = String(studentId || "");
+    var summary = Evidence.getStudentSummary(sid);
+    var model = Evidence && typeof Evidence.getSkillModel === "function"
+      ? Evidence.getSkillModel(sid)
+      : { studentId: sid, mastery: {}, topNeeds: [] };
+    var recentSessions = window.CSEvidence && typeof window.CSEvidence.getRecentSessions === "function"
+      ? window.CSEvidence.getRecentSessions(sid, { limit: 7 })
+      : [];
+    var plan = SessionPlanner && typeof SessionPlanner.buildDailyPlan === "function"
+      ? SessionPlanner.buildDailyPlan({
+          studentId: sid,
+          skillModel: model,
+          topNeeds: model.topNeeds || [],
+          timeBudgetMin: 20
+        })
+      : [];
+    var teacherNotes = el.notesInput && typeof el.notesInput.value === "string" ? el.notesInput.value.trim() : "";
+    if (ShareSummaryAPI && typeof ShareSummaryAPI.buildShareSummary === "function") {
+      return ShareSummaryAPI.buildShareSummary({
+        studentId: sid,
+        studentProfile: summary.student,
+        skillModel: model,
+        recentSessions: recentSessions,
+        plan: plan,
+        teacherNotes: teacherNotes
+      });
+    }
+    return {
+      text: buildShareSummaryText(sid),
+      json: {
+        studentId: sid,
+        student: summary.student,
+        topNeeds: model.topNeeds || [],
+        skillModel: model,
+        recentSessions: recentSessions,
+        plan: plan,
+        teacherNotes: teacherNotes
+      },
+      csv: "studentId,summary\n\"" + sid + "\",\"" + buildShareSummaryText(sid).replace(/"/g, '""') + "\""
+    };
+  }
+
+  function closeShareModal() {
+    if (el.shareModal) el.shareModal.classList.add("hidden");
+  }
+
+  function openShareModal(studentId) {
+    if (!el.shareModal || !el.sharePreview || !studentId) return;
+    var payload = buildSharePayload(studentId);
+    state.sharePayload = payload;
+    el.sharePreview.value = payload.text;
+    el.shareModal.classList.remove("hidden");
+  }
+
   function download(name, contents, mime) {
     var a = document.createElement("a");
     var blob = new Blob([contents], { type: mime });
@@ -1305,9 +1369,41 @@
     if (el.shareSummary) {
       el.shareSummary.addEventListener("click", function () {
         if (!state.selectedId) return;
-        var text = buildShareSummaryText(state.selectedId);
+        openShareModal(state.selectedId);
+        setCoachLine("Share summary ready.");
+      });
+    }
+
+    if (el.shareModalClose) {
+      el.shareModalClose.addEventListener("click", closeShareModal);
+    }
+    if (el.shareModal) {
+      el.shareModal.addEventListener("click", function (event) {
+        if (event.target === el.shareModal) closeShareModal();
+      });
+    }
+    if (el.shareCopy) {
+      el.shareCopy.addEventListener("click", function () {
+        var text = state.sharePayload && state.sharePayload.text ? state.sharePayload.text : "";
+        if (!text) return;
         if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
-        setCoachLine("Copied summary for teacher/family/admin notes.");
+        setCoachLine("Copied share summary.");
+      });
+    }
+    if (el.shareDownloadJson) {
+      el.shareDownloadJson.addEventListener("click", function () {
+        if (!state.sharePayload || !state.sharePayload.json) return;
+        var sid = state.selectedId || "student";
+        download("student-summary-" + sid + ".json", JSON.stringify(state.sharePayload.json, null, 2), "application/json");
+        setCoachLine("Downloaded share summary JSON.");
+      });
+    }
+    if (el.shareDownloadCsv) {
+      el.shareDownloadCsv.addEventListener("click", function () {
+        if (!state.sharePayload || !state.sharePayload.csv) return;
+        var sid = state.selectedId || "student";
+        download("student-summary-" + sid + ".csv", state.sharePayload.csv, "text/csv");
+        setCoachLine("Downloaded share summary CSV.");
       });
     }
 
