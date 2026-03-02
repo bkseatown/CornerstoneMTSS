@@ -638,7 +638,15 @@
 
   function renderSurgicalDashboard(rows) {
     var list = Array.isArray(rows) ? rows.slice(0, 3) : [];
-    if (!list.length) return;
+    if (!list.length) {
+      if (el.focusStudentName) el.focusStudentName.textContent = "Select a student";
+      if (el.focusTierLine) el.focusTierLine.textContent = "Tier 2 focus";
+      if (el.focusReasonLine) el.focusReasonLine.textContent = "Search a student to get a clear next move.";
+      if (el.surgicalAttentionList) {
+        el.surgicalAttentionList.innerHTML = '<article class="queue-card"><h3 class="queue-name">No queued students</h3><p class="queue-signal">Add students to generate a focused queue.</p></article>';
+      }
+      return;
+    }
 
     var focus = list[0];
     var focusStudent = focus && focus.student ? focus.student : { id: "", name: "Select a student" };
@@ -668,13 +676,11 @@
         : null;
       var tier = top && top.tier ? top.tier : "T2";
       return [
-        '<article class="td-attn-card">',
-        '<div class="td-attn-head">',
-        '<h3 class="td-attn-name">' + escAttr(student.name || "Student") + '</h3>',
-        '<span class="td-attn-tier">' + escAttr(tier) + '</span>',
-        '</div>',
-        '<p class="td-attn-signal">' + escAttr(signalLineForRow(row)) + '</p>',
-        '<button class="td-top-btn td-attn-open" type="button" data-attn-open="' + escAttr(student.id || "") + '">Open Plan</button>',
+        '<article class="queue-card">',
+        '<h3 class="queue-name">' + escAttr(student.name || "Student") + '</h3>',
+        '<span class="queue-tier">' + escAttr(tier) + '</span>',
+        '<p class="queue-signal">' + escAttr(signalLineForRow(row)) + '</p>',
+        '<button class="td-top-btn queue-open" type="button" data-attn-open="' + escAttr(student.id || "") + '">Open Plan</button>',
         '</article>'
       ].join("");
     }).join("");
@@ -683,8 +689,7 @@
       button.addEventListener("click", function () {
         var sid = String(button.getAttribute("data-attn-open") || "");
         if (!sid) return;
-        selectStudent(sid);
-        if (el.openStudentDrawer) el.openStudentDrawer.click();
+        window.location.href = appendStudentParam("./teacher-dashboard.html#student", sid);
       });
     });
   }
