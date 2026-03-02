@@ -61,7 +61,31 @@
 
     <section class="td-body">
       <div class="td-main">
-        <div class="dashboard-viewport section">
+        <section id="td-surgical-dashboard" class="td-surgical-dashboard" aria-label="Dashboard command center">
+          <article class="td-surgical-zone td-surgical-focus card td-surface">
+            <p class="td-label">Today's Focus</p>
+            <h2 id="td-focus-student-name" class="td-surgical-student">Select a student</h2>
+            <p id="td-focus-tier-line" class="td-surgical-tier">Tier 2</p>
+            <p id="td-focus-reason-line" class="td-surgical-reason">Search a student to get a clear next move.</p>
+            <button id="td-focus-start-btn" class="td-btn td-btn-accent btn btn-primary" type="button">Start Intervention</button>
+          </article>
+
+          <article class="td-surgical-zone td-surgical-attention card td-surface">
+            <p class="td-label">Who Else Needs Attention</p>
+            <div id="td-surgical-attention-list" class="td-surgical-attention-list"></div>
+          </article>
+
+          <article class="td-surgical-zone td-surgical-launch card td-surface">
+            <p class="td-label">Quick Launch</p>
+            <div class="td-surgical-launch-row">
+              <a class="td-top-btn td-surgical-launch-btn" href="./literacy/index.html">Literacy</a>
+              <a class="td-top-btn td-surgical-launch-btn" href="./writing-studio.html">Writing</a>
+              <a class="td-top-btn td-surgical-launch-btn" href="./numeracy/index.html">Numeracy</a>
+            </div>
+          </article>
+        </section>
+
+        <div class="dashboard-viewport section td-legacy-hidden">
           <div class="triage-left">
             <section class="td-surface card priority-strip">
               <div>
@@ -167,9 +191,9 @@
           </div>
         </div>
 
-        <div class="section-divider" aria-hidden="true"></div>
+        <div class="section-divider td-legacy-hidden" aria-hidden="true"></div>
 
-        <section class="td-top-row section">
+        <section class="td-top-row section td-legacy-hidden">
           <article class="td-metric-card td-surface card fade-in td-snapshot-card section-analytics module-literacy">
             <p class="td-label">Recommendation Panel</p>
             <div class="td-snapshot-grid">
@@ -186,7 +210,7 @@
           </article>
         </section>
 
-        <section class="td-activities-strip td-surface card fade-in section section-tools module-literacy">
+        <section class="td-activities-strip td-surface card fade-in section section-tools module-literacy td-legacy-hidden">
           <p class="td-label">Instructional Tools</p>
           <div class="td-quick-launch-row">
             <button class="td-top-btn" data-quick="word-quest">Word Quest</button>
@@ -199,7 +223,7 @@
           </div>
         </section>
 
-        <section class="td-work-row section">
+        <section class="td-work-row section td-legacy-hidden">
           <section class="td-center td-surface card td-primary-stage section-plan" id="td-center-stage" aria-live="polite">
             <h2 class="td-section-title">Student Search</h2>
             <div id="td-center-empty" class="td-stage-empty">

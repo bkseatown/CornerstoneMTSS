@@ -186,7 +186,12 @@
     coachMute: document.getElementById("td-coach-mute"),
     coachCollapse: document.getElementById("td-coach-collapse"),
     coachChip: document.getElementById("td-coach-chip"),
-    demoBadge: document.getElementById("td-demo-badge")
+    demoBadge: document.getElementById("td-demo-badge"),
+    focusStudentName: document.getElementById("td-focus-student-name"),
+    focusTierLine: document.getElementById("td-focus-tier-line"),
+    focusReasonLine: document.getElementById("td-focus-reason-line"),
+    focusStartBtn: document.getElementById("td-focus-start-btn"),
+    surgicalAttentionList: document.getElementById("td-surgical-attention-list")
     ,
     buildline: document.getElementById("td-buildline")
   };
@@ -610,12 +615,87 @@
     return { students: ranked, allStudents: allRows };
   }
 
+  function pickLaunchHrefForRow(row) {
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var skillId = String(top && top.skillId || "").toUpperCase();
+    if (skillId.indexOf("NUM") === 0 || skillId.indexOf("MATH") === 0) return "numeracy.html";
+    if (skillId.indexOf("WRITE") >= 0 || skillId.indexOf("WRI.") >= 0) return "writing-studio.html";
+    return "word-quest.html?play=1#wordquest";
+  }
+
+  function signalLineForRow(row) {
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    if (!top) return "Missing evidence; collect baseline signal.";
+    var need = Number(top.need || 0);
+    if (need >= 0.65) return "High need signal on " + formatSkillBreadcrumb(top.skillId) + ".";
+    if (need >= 0.4) return "Developing signal on " + formatSkillBreadcrumb(top.skillId) + ".";
+    return "Monitor consistency for " + formatSkillBreadcrumb(top.skillId) + ".";
+  }
+
+  function renderSurgicalDashboard(rows) {
+    var list = Array.isArray(rows) ? rows.slice(0, 3) : [];
+    if (!list.length) return;
+
+    var focus = list[0];
+    var focusStudent = focus && focus.student ? focus.student : { id: "", name: "Select a student" };
+    var focusTop = focus && focus.priority && focus.priority.topSkills && focus.priority.topSkills[0]
+      ? focus.priority.topSkills[0]
+      : null;
+    var focusTier = focusTop && focusTop.tier ? focusTop.tier : "T2";
+
+    if (el.focusStudentName) el.focusStudentName.textContent = String(focusStudent.name || "Select a student");
+    if (el.focusTierLine) el.focusTierLine.textContent = focusTier + " focus";
+    if (el.focusReasonLine) el.focusReasonLine.textContent = signalLineForRow(focus);
+    if (el.focusStartBtn) {
+      el.focusStartBtn.onclick = function () {
+        var sid = String(focusStudent.id || "");
+        if (!sid) return;
+        selectStudent(sid);
+        var href = pickLaunchHrefForRow(focus);
+        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""), sid);
+      };
+    }
+
+    if (!el.surgicalAttentionList) return;
+    el.surgicalAttentionList.innerHTML = list.map(function (row) {
+      var student = row && row.student ? row.student : { id: "", name: "Student" };
+      var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+        ? row.priority.topSkills[0]
+        : null;
+      var tier = top && top.tier ? top.tier : "T2";
+      return [
+        '<article class="td-attn-card">',
+        '<div class="td-attn-head">',
+        '<h3 class="td-attn-name">' + escAttr(student.name || "Student") + '</h3>',
+        '<span class="td-attn-tier">' + escAttr(tier) + '</span>',
+        '</div>',
+        '<p class="td-attn-signal">' + escAttr(signalLineForRow(row)) + '</p>',
+        '<button class="td-top-btn td-attn-open" type="button" data-attn-open="' + escAttr(student.id || "") + '">Open Plan</button>',
+        '</article>'
+      ].join("");
+    }).join("");
+
+    Array.prototype.forEach.call(el.surgicalAttentionList.querySelectorAll("[data-attn-open]"), function (button) {
+      button.addEventListener("click", function () {
+        var sid = String(button.getAttribute("data-attn-open") || "");
+        if (!sid) return;
+        selectStudent(sid);
+        if (el.openStudentDrawer) el.openStudentDrawer.click();
+      });
+    });
+  }
+
   function renderTodayEngine(plan) {
     if (!el.todayList) return;
     var rows = plan && Array.isArray(plan.students) ? plan.students : [];
     if (!rows.length) {
       rows = buildTodayPlan().students;
     }
+    renderSurgicalDashboard(rows);
     var allRows = plan && Array.isArray(plan.allStudents) ? plan.allStudents : rows;
     if (el.caseloadSnapshot) {
       var scoreList = allRows.map(function (row) { return Number(row && row.score || 0); });

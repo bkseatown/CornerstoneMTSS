@@ -260,10 +260,143 @@ body.cs-has-nav-shell .td-shell {
 
 .td-main {
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
-  gap: 16px;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
   min-height: 100%;
   overflow: visible;
+}
+
+.td-legacy-hidden {
+  display: none !important;
+}
+
+.td-surgical-dashboard {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1.4fr 1fr auto;
+  gap: 12px;
+}
+
+.td-surgical-zone {
+  padding: 20px;
+  border-radius: var(--radius-3);
+  border: 1px solid color-mix(in oklab, var(--border-soft) 40%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.td-surgical-focus {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.td-surgical-student {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 2.7vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: var(--ls-tight);
+  color: var(--text-strong);
+}
+
+.td-surgical-tier {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-2);
+  font-weight: var(--fw-semibold);
+}
+
+.td-surgical-reason {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--fs-3);
+  line-height: var(--lh-body);
+}
+
+#td-focus-start-btn {
+  margin-top: 4px;
+  min-height: 46px;
+  padding-inline: 18px;
+  justify-self: start;
+  font-size: var(--fs-3);
+  font-weight: var(--fw-semibold);
+}
+
+.td-surgical-attention {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+  min-height: 0;
+}
+
+.td-surgical-attention-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.td-attn-card {
+  border-radius: var(--radius-2);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 46%, transparent);
+  background: var(--surface-elev-2);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.td-attn-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.td-attn-name {
+  margin: 0;
+  font-size: var(--fs-3);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-semibold);
+  color: var(--text-strong);
+}
+
+.td-attn-tier {
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 78%, transparent);
+  background: var(--surface-elev-1);
+  color: var(--text-secondary);
+  font-size: var(--fs-0);
+  font-weight: var(--fw-semibold);
+  padding: 2px 8px;
+}
+
+.td-attn-signal {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-2);
+  line-height: var(--lh-normal);
+}
+
+.td-attn-open {
+  justify-self: start;
+}
+
+.td-surgical-launch {
+  display: grid;
+  gap: 10px;
+}
+
+.td-surgical-launch-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.td-surgical-launch-btn {
+  min-height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 }
 
 .section {
@@ -1449,6 +1582,12 @@ body.cs-has-nav-shell .td-shell {
 
 @media (max-width: 1180px) {
   .td-shell { width: min(1160px, calc(100vw - 14px)); }
+  .td-surgical-attention-list {
+    grid-template-columns: 1fr;
+  }
+  .td-surgical-launch-row {
+    grid-template-columns: 1fr;
+  }
   .dashboard-viewport {
     grid-template-columns: 1fr;
     min-height: auto;
