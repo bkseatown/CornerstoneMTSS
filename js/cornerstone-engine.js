@@ -94,7 +94,7 @@
       engine: "writingstudio",
       skill_domain: "reasoning",
       confidence: +confidence.toFixed(3),
-      next_step: String(src.next_step || src.nextStep || "Use Sentence Surgery to model one because/although sentence, then independent rewrite."),
+      next_step: String(src.next_step || src.nextStep || "Use Sentence Studio to model one because/although sentence, then independent rewrite."),
       intensity: String(src.intensity || intensityFromConfidence(confidence)) === "tier3" ? "tier3" : "tier2",
       studentId: String(options && options.studentId || ""),
       source: src.source && typeof src.source === "object" ? src.source : {}

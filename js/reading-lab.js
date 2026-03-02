@@ -799,7 +799,7 @@
     if (metrics.accuracy < 92) return "Decoding focus next: send hard words to Word Quest and run micro-practice.";
     if (metrics.punctScore < 60) return "Prosody focus next: re-read one sentence with punctuation pauses.";
     if (metrics.wpm < 85 && metrics.accuracy >= 92) return "Fluency pacing focus: timed re-read with phrase chunking.";
-    return "Reasoning focus next: send sentence to Sentence Surgery (because/although).";
+    return "Reasoning focus next: send sentence to Sentence Studio (because/although).";
   }
 
   function renderTeacherSummary(metrics) {
@@ -817,7 +817,7 @@
       "<section class=\"rl-next-move\" aria-label=\"Next instructional move\">",
       "<p class=\"rl-next-move-title\">Next instructional move</p>",
       "<p class=\"rl-next-move-line\">" + esc(nextStep) + "</p>",
-      "<button id=\"rl-next-move-btn\" class=\"rl-btn rl-next-move-btn\" type=\"button\">Send to Sentence Surgery</button>",
+      "<button id=\"rl-next-move-btn\" class=\"rl-btn rl-next-move-btn\" type=\"button\">Send to Sentence Studio</button>",
       "</section>"
     ].join("");
     var nextMoveBtn = document.getElementById("rl-next-move-btn");

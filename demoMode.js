@@ -38,7 +38,7 @@
       setTimer(function () { controller.toggleTeacherLens(true); controller.setCoachText("Teacher Lens: growth data updates in real time."); }, 43000);
       setTimer(function () {
         controller.finishSentence();
-        controller.setCoachText("That is Sentence Surgery. Structured growth in under a minute.");
+        controller.setCoachText("That is Sentence Studio. Structured growth in under a minute.");
       }, 54000);
       setTimer(function () { clear(); runLoop(); }, 60000);
     }

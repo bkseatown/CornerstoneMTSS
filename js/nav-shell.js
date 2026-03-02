@@ -28,7 +28,7 @@
       { href: withBase("teacher-dashboard.html"), label: "Teacher Dashboard", pages: ["teacher-dashboard.html"] },
       { href: withBase("word-quest.html"), label: "Word Quest", pages: ["word-quest.html"] },
       { href: withBase("reading-lab.html"), label: "Reading Lab", pages: ["reading-lab.html"] },
-      { href: withBase("sentence-surgery.html"), label: "Sentence Surgery", pages: ["sentence-surgery.html"] },
+      { href: withBase("sentence-surgery.html"), label: "Sentence Studio", pages: ["sentence-surgery.html"] },
       { href: withBase("activities/decoding-diagnostic.html"), label: "Decoding Diagnostic", pages: ["decoding-diagnostic.html"] },
       { href: withBase("writing-studio.html"), label: "Writing Studio", pages: ["writing-studio.html"] },
       { href: withBase("numeracy.html"), label: "Numeracy", pages: ["numeracy.html"] },

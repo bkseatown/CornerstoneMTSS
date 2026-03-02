@@ -27,14 +27,30 @@
     var root = document.createElement("div");
     root.className = "hero-wq-preview";
     root.innerHTML = [
-      '<div class="hero-preview-title">Word Quest Preview</div>',
-      '<div class="hero-board" data-board>',
-      '  <div class="hero-row" data-row="0">' + Array(5).fill('<div class="hero-tile"></div>').join('') + '</div>',
-      '  <div class="hero-row" data-row="1">' + Array(5).fill('<div class="hero-tile"></div>').join('') + '</div>',
-      '  <div class="hero-row" data-row="2">' + Array(5).fill('<div class="hero-tile"></div>').join('') + '</div>',
+      '<div class="hero-scene-title" data-scene-label>Word Quest</div>',
+      '<div class="hero-scene is-active" data-scene="wordquest">',
+      '  <div class="hero-board" data-board>',
+      '    <div class="hero-row" data-row="0">' + Array(5).fill('<div class="tile hero-game-tile"></div>').join('') + '</div>',
+      '    <div class="hero-row" data-row="1">' + Array(5).fill('<div class="tile hero-game-tile"></div>').join('') + '</div>',
+      '    <div class="hero-row" data-row="2">' + Array(5).fill('<div class="tile hero-game-tile"></div>').join('') + '</div>',
+      '  </div>',
+      '  <div class="hero-kbd" id="hero-kbd">',
+      '    <div class="key-row">' + 'qwertyuiop'.split('').map(function (k) { return '<span class="key hero-game-key" data-k="' + k + '">' + k + '</span>'; }).join('') + '</div>',
+      '    <div class="key-row">' + 'asdfghjkl'.split('').map(function (k) { return '<span class="key hero-game-key" data-k="' + k + '">' + k + '</span>'; }).join('') + '</div>',
+      '    <div class="key-row">' + 'zxcvbnm'.split('').map(function (k) { return '<span class="key hero-game-key" data-k="' + k + '">' + k + '</span>'; }).join('') + '</div>',
+      '  </div>',
       '</div>',
-      '<div class="hero-kbd">',
-      '  ' + 'qwertyuiopasdfghjklzxcvbnm'.split('').map(function (k) { return '<span class="hero-key" data-k="' + k + '">' + k + '</span>'; }).join(''),
+      '<div class="hero-scene" data-scene="writing">',
+      '  <div class="hero-writing-shell">',
+      '    <div class="hero-writing-line" data-write-line="0"></div>',
+      '    <div class="hero-writing-line" data-write-line="1"></div>',
+      '    <div class="hero-writing-line" data-write-line="2"></div>',
+      '    <div class="hero-writing-bars">',
+      '      <div class="hero-writing-bar"><span data-write-bar="0"></span></div>',
+      '      <div class="hero-writing-bar"><span data-write-bar="1"></span></div>',
+      '      <div class="hero-writing-bar"><span data-write-bar="2"></span></div>',
+      '    </div>',
+      '  </div>',
       '</div>'
     ].join('');
 
@@ -48,30 +64,62 @@
       });
     }
 
-    function reset() {
-      root.querySelectorAll('.hero-tile').forEach(function (tile) {
-        tile.textContent = '';
-        tile.classList.remove('is-gray', 'is-yellow', 'is-green', 'flip', 'settle');
+    var sceneLabel = root.querySelector('[data-scene-label]');
+    var scenes = {
+      wordquest: root.querySelector('[data-scene="wordquest"]'),
+      writing: root.querySelector('[data-scene="writing"]')
+    };
+    var sceneOrder = ["wordquest", "writing"];
+    var sceneIndex = 0;
+
+    function setScene(name) {
+      Object.keys(scenes).forEach(function (key) {
+        if (!scenes[key]) return;
+        scenes[key].classList.toggle('is-active', key === name);
       });
-      root.querySelectorAll('.hero-key').forEach(function (key) {
-        key.classList.remove('is-gray', 'is-yellow', 'is-green');
+      if (sceneLabel) {
+        sceneLabel.textContent = name === "writing" ? "Writing Studio" : "Word Quest";
+      }
+    }
+
+    function resetWordQuest() {
+      root.querySelectorAll('.hero-game-tile').forEach(function (tile) {
+        tile.textContent = '';
+        tile.classList.remove('correct', 'present', 'absent', 'flip', 'settle', 'filled');
+      });
+      root.querySelectorAll('.hero-game-key').forEach(function (key) {
+        key.classList.remove('correct', 'present', 'absent', 'wq-demo-key-pulse');
       });
       root.classList.remove('is-resetting');
     }
 
+    function resetWriting() {
+      root.querySelectorAll('[data-write-line]').forEach(function (line) {
+        line.textContent = '';
+      });
+      root.querySelectorAll('[data-write-bar]').forEach(function (bar) {
+        bar.style.width = '0%';
+      });
+    }
+
+    function reset() {
+      resetWordQuest();
+      resetWriting();
+    }
+
     function colorKey(letter, stateClass) {
-      var keyEl = root.querySelector('.hero-key[data-k="' + letter.toLowerCase() + '"]');
+      var keyEl = root.querySelector('.hero-game-key[data-k="' + letter.toLowerCase() + '"]');
       if (!keyEl) return;
-      keyEl.classList.remove('is-gray', 'is-yellow', 'is-green');
+      keyEl.classList.remove('correct', 'present', 'absent');
       keyEl.classList.add(stateClass);
-      keyEl.classList.add('is-pop');
-      setTimer(function () { keyEl.classList.remove('is-pop'); }, 120);
+      keyEl.classList.add('wq-demo-key-pulse');
+      setTimer(function () { keyEl.classList.remove('wq-demo-key-pulse'); }, 140);
     }
 
     function animateGuess(rowIndex, word, states, done) {
       var row = root.querySelector('.hero-row[data-row="' + rowIndex + '"]');
       if (!row) return;
-      var tiles = Array.prototype.slice.call(row.querySelectorAll('.hero-tile'));
+      var tiles = Array.prototype.slice.call(row.querySelectorAll('.hero-game-tile'));
       var t = 0;
 
       function typeNext() {
@@ -81,6 +129,7 @@
           return;
         }
         tiles[t].textContent = word[t];
+        tiles[t].classList.add('filled');
         t += 1;
         setTimer(typeNext, 80);
       }
@@ -112,28 +161,20 @@
       typeNext();
     }
 
-    function playRound() {
+    function playWordQuestRound(next) {
       if (!running || document.hidden) return;
       emit('round:start');
-      animateGuess(0, 'SLATE', ['is-gray', 'is-green', 'is-green', 'is-yellow', 'is-gray'], function () {
+      animateGuess(0, 'SLATE', ['absent', 'correct', 'correct', 'present', 'absent'], function () {
         emit('round:first-feedback');
           setTimer(function () {
             emit('round:strategy');
-            animateGuess(1, 'PLAIN', ['is-green', 'is-green', 'is-green', 'is-gray', 'is-gray'], function () {
+            animateGuess(1, 'PLAIN', ['correct', 'correct', 'correct', 'absent', 'absent'], function () {
               setTimer(function () {
-                animateGuess(2, 'PLANT', ['is-green', 'is-green', 'is-green', 'is-green', 'is-green'], function () {
+                animateGuess(2, 'PLANT', ['correct', 'correct', 'correct', 'correct', 'correct'], function () {
                   emit('round:complete');
                   setTimer(function () {
-                  if (!running || document.hidden) return;
-                  if (!shouldLoop) return;
-                  root.classList.add('is-resetting');
-                  emit('round:loop-reset');
-                  setTimer(function () {
-                    if (!running || document.hidden) return;
-                    reset();
-                    playRound();
-                  }, resetFadeMs);
-                }, resetDelayMs);
+                    if (typeof next === 'function') next();
+                  }, resetDelayMs);
               });
             }, 300);
           });
@@ -141,11 +182,77 @@
       });
     }
 
+    function playWritingRound(next) {
+      if (!running || document.hidden) return;
+      var lines = [
+        "Claim: The strongest evidence comes from...",
+        "Because the text shows clear causal links...",
+        "Revision: add transition and precise verb."
+      ];
+      var bars = [86, 74, 82];
+      var lineEls = Array.prototype.slice.call(root.querySelectorAll('[data-write-line]'));
+      var barEls = Array.prototype.slice.call(root.querySelectorAll('[data-write-bar]'));
+      var idx = 0;
+
+      function typeLine() {
+        if (!running || document.hidden) return;
+        if (idx >= lines.length) {
+          setTimer(function () {
+            barEls.forEach(function (bar, barIndex) {
+              setTimer(function () {
+                bar.style.width = String(bars[barIndex]) + '%';
+              }, barIndex * 120);
+            });
+            setTimer(function () {
+              if (typeof next === 'function') next();
+            }, resetDelayMs);
+          }, 240);
+          return;
+        }
+        lineEls[idx].textContent = lines[idx];
+        idx += 1;
+        setTimer(typeLine, 240);
+      }
+
+      typeLine();
+    }
+
+    function loopScenes() {
+      if (!running || document.hidden) return;
+      var scene = sceneOrder[sceneIndex % sceneOrder.length];
+      setScene(scene);
+      if (scene === "writing") {
+        playWritingRound(function () {
+          if (!running || document.hidden || !shouldLoop) return;
+          sceneIndex += 1;
+          root.classList.add('is-resetting');
+          setTimer(function () {
+            root.classList.remove('is-resetting');
+            reset();
+            loopScenes();
+          }, resetFadeMs);
+        });
+        return;
+      }
+      playWordQuestRound(function () {
+        if (!running || document.hidden || !shouldLoop) return;
+        sceneIndex += 1;
+        root.classList.add('is-resetting');
+        emit('round:loop-reset');
+        setTimer(function () {
+          root.classList.remove('is-resetting');
+          reset();
+          loopScenes();
+        }, resetFadeMs);
+      });
+    }
+
     function start() {
       if (running) return;
       running = true;
       reset();
-      playRound();
+      sceneIndex = 0;
+      loopScenes();
     }
 
     function stop() {

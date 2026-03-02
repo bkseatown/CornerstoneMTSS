@@ -99,7 +99,7 @@
         focusSkill: focus,
         blocks: [
           makeBlock(BLOCK.RL_ORF, 3, "Reading Lab ORF", "Short warm-up passage."),
-          makeBlock(BLOCK.SS_TARGET, 10, "Sentence Surgery", "Targeted reasoning + control."),
+          makeBlock(BLOCK.SS_TARGET, 10, "Sentence Studio", "Targeted reasoning + control."),
           makeBlock(BLOCK.PB_TRANSFER, 12, "Paragraph Transfer", "Apply target in writing."),
           makeBlock(BLOCK.WQ_PROBE, 5, "Word Quest Probe", "Optional consolidation probe."),
           makeBlock(BLOCK.MINI_PRACTICE, 5, "Wrap + Plan Next", "Plan next move and assign practice.")
@@ -115,7 +115,7 @@
         blocks: [
           makeBlock(BLOCK.WQ_PROBE, 2, "Word Quest Probe", "90-second strategy probe."),
           makeBlock(BLOCK.MINI_PRACTICE, 4, "Mini Practice", "Target: " + mini + "."),
-          makeBlock(BLOCK.SS_TARGET, 4, "Sentence Surgery Target", "Reinforce strategy through sentence work.")
+          makeBlock(BLOCK.SS_TARGET, 4, "Sentence Studio Target", "Reinforce strategy through sentence work.")
         ]
       };
     }
@@ -127,7 +127,7 @@
       blocks: [
         makeBlock(BLOCK.WQ_PROBE, 2, "Word Quest Probe", "Fast signal check."),
         makeBlock(BLOCK.MINI_PRACTICE, 3, "Mini Practice", "Target: " + mini + "."),
-        makeBlock(BLOCK.SS_TARGET, 4, "Sentence Surgery Target", "Transfer to sentence-level control.")
+        makeBlock(BLOCK.SS_TARGET, 4, "Sentence Studio Target", "Transfer to sentence-level control.")
       ]
     };
   }

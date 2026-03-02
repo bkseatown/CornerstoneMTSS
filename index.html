@@ -9,7 +9,6 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="style/tokens.css?v=20260301y">
   <link rel="stylesheet" href="style/typography.css?v=20260301y">
-  <link rel="stylesheet" href="style/nav-shell.css?v=20260301y">
   <link rel="stylesheet" href="style/components.css?v=20260301y">
   <link rel="stylesheet" href="hero-v2.css?v=20260301y">
   <link rel="stylesheet" href="style/home-lock.css?v=20260301y">
@@ -24,35 +23,15 @@
       height: 100vh;
       max-height: 100vh;
       overflow: clip;
-      display: grid;
-      grid-template-rows: auto 1fr;
+      display: block;
       padding: 8px;
       box-sizing: border-box;
       background: var(--surface-base);
     }
-    .home-header {
-      width: min(1120px, calc(100vw - 20px));
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 42px;
-      color: var(--text-primary);
-      font-family: var(--font-ui);
-      font-size: clamp(0.95rem, 1.4vw, 1.12rem);
-      letter-spacing: 0.02em;
-    }
-    .home-header a {
-      color: var(--action-primary);
-      text-decoration: none;
-      font-family: var(--font-ui);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
     #hero-v2 {
       height: 100%;
       max-height: 100%;
-      margin-top: 6px;
+      margin-top: 0;
       margin-bottom: 0;
     }
     .hero-v2 {
@@ -139,41 +118,24 @@
 </head>
 <body class="home-locked">
   <div id="cs-home-root">
-    <header class="home-header">
-      <div>Cornerstone MTSS</div>
-      <a href="./teacher-dashboard.html">Teacher Dashboard</a>
-    </header>
-
     <section id="hero-v2" class="hero-v2" aria-label="Cornerstone MTSS home stage">
       <div class="hero-left">
         <h1 class="hero-title h1">Cornerstone MTSS</h1>
-        <p class="hero-sub muted">A Tier 2/3 Intervention Engine for Literacy Growth</p>
-        <div id="home-coach-ribbon" class="cs-coach-ribbon" role="status" aria-live="polite">
-          <span class="cs-coach-chip hidden"></span>
-          <p class="cs-coach-text"></p>
-          <button class="cs-coach-action hidden" type="button"></button>
-        </div>
+        <p class="hero-sub muted">A Tier 2/3 Intervention Engine for Literacy and Numeracy Growth</p>
         <div class="hero-cta">
-          <button id="cta-wordquest" class="primary-btn btn-label" type="button">Try Live Word Quest (60 sec)</button>
-          <button id="cta-tools" class="secondary-btn btn-label" type="button">Open Teacher Dashboard</button>
-        </div>
-        <div class="hero-proof">
-          <span>Word Quest - Strategy Probe</span>
-          <span>Reading Lab - Fluency & Accuracy</span>
-          <span>Writing Studio - Sentence & Reasoning</span>
+          <button id="cta-dashboard" class="primary-btn btn-label" type="button">Open Teacher Dashboard</button>
+          <a id="cta-wordquest-link" class="secondary-btn btn-label" href="./word-quest.html?play=1#wordquest">Open Word Quest</a>
         </div>
       </div>
       <div class="hero-right">
         <div id="hero-preview-container" aria-live="polite">
           <div id="home-demo-preview" class="home-demo-preview" aria-label="Word Quest preview" role="img"></div>
         </div>
-        <div id="home-demo-coach" class="home-demo-coach" aria-live="polite"></div>
       </div>
     </section>
   </div>
 
   <script src="word-quest-preview.js?v=20260301y"></script>
-  <script src="js/nav-shell.js?v=20260301y"></script>
   <script>
     (function homeHashRouter() {
       function appBasePath() {
@@ -197,35 +159,25 @@
       function applyRoute() {
         var route = String(location.hash || '#home').replace(/^#/, '').toLowerCase();
         if (route === 'home' || !route) return;
+        if (route === 'dashboard') {
+          window.location.href = withAppBase('teacher-dashboard.html');
+          return;
+        }
         if (route === 'wordquest') {
           window.location.href = withAppBase('word-quest.html?play=1#wordquest');
           return;
         }
-        if (route === 'reading') {
-          window.location.href = withAppBase('reading-lab.html');
-          return;
-        }
-        if (route === 'writing') {
-          window.location.href = withAppBase('writing-studio.html');
-          return;
-        }
-        if (route === 'dashboard' || route === 'admin-demo') {
-          window.location.href = route === 'admin-demo'
-            ? withAppBase('teacher-dashboard.html#admin-demo')
-            : withAppBase('teacher-dashboard.html');
-          return;
-        }
       }
 
-      document.getElementById('cta-wordquest')?.addEventListener('click', function (event) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        routeTo('wordquest');
-      }, { capture: true });
-      document.getElementById('cta-tools')?.addEventListener('click', function (event) {
+      document.getElementById('cta-dashboard')?.addEventListener('click', function (event) {
         event.preventDefault();
         event.stopImmediatePropagation();
         routeTo('dashboard');
+      }, { capture: true });
+      document.getElementById('cta-wordquest-link')?.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        routeTo('wordquest');
       }, { capture: true });
 
       window.addEventListener('hashchange', applyRoute);

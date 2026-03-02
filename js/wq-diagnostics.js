@@ -168,7 +168,7 @@
       }
     }
 
-    var nextStep = "Next step: Run Sentence Surgery focusing on because/although to strengthen reasoning + sentence control.";
+    var nextStep = "Next step: Run Sentence Studio focusing on because/although to strengthen reasoning + sentence control.";
     var focusTag = "writing_reasoning";
 
     if (updateRespect < 0.55) {
