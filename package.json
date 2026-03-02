@@ -50,6 +50,7 @@
     "scope:view": "node scripts/check-change-scope.js",
     "scope:check": "node scripts/check-change-scope.js",
     "scope:strict": "node scripts/check-change-scope.js --strict",
+    "publish:check": "node scripts/check-publish-ready.js",
     "taxonomy:audit": "node scripts/check-taxonomy-alignment.js",
     "stamp:version": "node scripts/stamp-build-version.js",
     "sas:build": "node scripts/sas/build-sas-alignment-pack.js",
