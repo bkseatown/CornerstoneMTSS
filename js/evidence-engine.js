@@ -175,12 +175,17 @@
 
   function normalizeTargets(event) {
     var resolver = root && root.CSSkillResolver;
-    var canonicalize = resolver && typeof resolver.canonicalizeSkillId === 'function'
-      ? resolver.canonicalizeSkillId
-      : function (id) { return String(id || '').trim(); };
+    var resolve = resolver && typeof resolver.resolveSkillId === 'function'
+      ? resolver.resolveSkillId
+      : function (id) {
+        var raw = String(id || '').trim();
+        return { canonical: raw, known: !!raw };
+      };
     var inTargets = Array.isArray(event.targets) ? event.targets : [];
     return inTargets
-      .map(function (id) { return canonicalize(id); })
+      .map(function (id) { return resolve(id); })
+      .filter(function (row) { return row && row.known && row.canonical; })
+      .map(function (row) { return row.canonical; })
       .filter(Boolean)
       .slice(0, 8);
   }
