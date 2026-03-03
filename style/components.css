@@ -3743,7 +3743,7 @@ html[data-home-mode="play"] #theme-dock-toggle-btn,
 html[data-home-mode="play"] #music-dock-toggle-btn,
 html[data-home-mode="play"] #case-toggle-btn,
 html[data-home-mode="play"] #keyboard-layout-toggle {
-  color: color-mix(in oklab, var(--text) 70%, #ffffff 30%);
+  color: color-mix(in oklab, var(--text) 52%, #ffffff 48%);
   text-shadow: 0 1px 1px rgba(6, 15, 28, 0.52);
   font-weight: 900;
 }
@@ -3777,6 +3777,17 @@ html[data-home-mode="play"] .curriculum-main-step-field select {
 
 html[data-home-mode="play"] .focus-inline-search::placeholder {
   color: color-mix(in oklab, var(--text-muted) 52%, #ffffff 48%);
+}
+
+html[data-home-mode="play"] .hover-note-toast {
+  border-color: color-mix(in oklab, var(--brand) 54%, #d6e7fa 46%);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, #1f3f5c 82%, #2f5678 18%),
+    color-mix(in oklab, #2a4e6d 78%, #203f5b 22%)
+  );
+  color: #f3f8ff;
+  text-shadow: 0 1px 2px rgba(5, 14, 28, 0.52);
 }
 
 html[data-home-mode="play"] .grade-target-inline {
@@ -5360,6 +5371,9 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
 }
 
 .starter-word-title {

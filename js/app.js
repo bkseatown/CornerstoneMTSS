@@ -4528,6 +4528,8 @@
     const normalizedWord = normalizeReviewWord(word);
     if (!normalizedWord) return 0;
     let score = 0;
+    const letterCounts = {};
+    for (const ch of normalizedWord) letterCounts[ch] = (letterCounts[ch] || 0) + 1;
     const counted = new Set();
     for (let index = 0; index < normalizedWord.length; index += 1) {
       const letter = normalizedWord[index];
@@ -4537,6 +4539,13 @@
         counted.add(letter);
       }
       if ((constraint.minCounts[letter] || 0) > 0) score += 1;
+    }
+    for (const [letter, minimum] of Object.entries(constraint.minCounts || {})) {
+      if ((letterCounts[letter] || 0) < minimum) score -= 14;
+      else score += 6;
+    }
+    for (const letter of constraint.absentLetters || []) {
+      if ((letterCounts[letter] || 0) > 0) score -= 18;
     }
     return score;
   }
@@ -4597,10 +4606,17 @@
     let filtered = candidates;
     if (constraint.guessCount >= 1) {
       const strict = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: true }));
-      if (strict.length >= 3) filtered = strict;
-      else {
-        const soft = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: false }));
-        if (soft.length >= 3) filtered = soft;
+      const soft = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: false }));
+      if (strict.length >= 3) {
+        filtered = strict;
+      } else if (strict.length > 0) {
+        const merged = strict.slice();
+        for (const word of soft) {
+          if (!merged.includes(word)) merged.push(word);
+        }
+        filtered = merged;
+      } else if (soft.length >= 1) {
+        filtered = soft;
       }
     }
 
@@ -4708,7 +4724,69 @@
       guess_count: guessCount,
       source
     });
+    initializeStarterWordCardDrag();
     return true;
+  }
+
+  let starterWordDragBound = false;
+  function initializeStarterWordCardDrag() {
+    if (starterWordDragBound) return;
+    const card = _el('starter-word-card');
+    const head = card?.querySelector('.starter-word-head');
+    if (!(card instanceof HTMLElement) || !(head instanceof HTMLElement)) return;
+    starterWordDragBound = true;
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let originLeft = 0;
+    let originTop = 0;
+
+    const getPoint = (event) => {
+      if (event.touches && event.touches[0]) return { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      return { x: event.clientX, y: event.clientY };
+    };
+
+    const onMove = (event) => {
+      if (!dragging) return;
+      const point = getPoint(event);
+      const nextLeft = originLeft + (point.x - startX);
+      const nextTop = originTop + (point.y - startY);
+      card.style.left = `${Math.max(8, nextLeft)}px`;
+      card.style.top = `${Math.max(8, nextTop)}px`;
+      card.style.transform = 'none';
+      event.preventDefault();
+    };
+
+    const onUp = () => {
+      dragging = false;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onUp);
+    };
+
+    const onDown = (event) => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (target?.closest('button')) return;
+      const point = getPoint(event);
+      const rect = card.getBoundingClientRect();
+      dragging = true;
+      startX = point.x;
+      startY = point.y;
+      originLeft = rect.left;
+      originTop = rect.top;
+      card.style.left = `${rect.left}px`;
+      card.style.top = `${rect.top}px`;
+      card.style.transform = 'none';
+      window.addEventListener('mousemove', onMove, { passive: false });
+      window.addEventListener('mouseup', onUp, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onUp, { passive: true });
+      event.preventDefault();
+    };
+
+    head.addEventListener('mousedown', onDown);
+    head.addEventListener('touchstart', onDown, { passive: false });
   }
 
   function maybeAutoShowStarterWords(state) {
