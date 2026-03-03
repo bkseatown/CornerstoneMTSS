@@ -5510,16 +5510,7 @@
     banner.classList.remove('hidden');
     banner.setAttribute('aria-hidden', 'false');
 
-    let lastActionMs = 0;
-    try {
-      lastActionMs = Number(localStorage.getItem(REFRESH_BANNER_LAST_ACTION_KEY) || 0);
-    } catch {}
-    const ageMin = lastActionMs > 0 ? Math.max(0, Math.round((Date.now() - lastActionMs) / 60000)) : null;
-    if (label && ageMin !== null && Number.isFinite(ageMin)) {
-      label.textContent = ageMin <= 1
-        ? 'Updated just now. Refresh again if needed.'
-        : `Updated ${ageMin}m ago. Refresh again if needed.`;
-    }
+    if (label) label.textContent = 'Please refresh for the latest update.';
 
     btn.addEventListener('click', () => {
       btn.disabled = true;
