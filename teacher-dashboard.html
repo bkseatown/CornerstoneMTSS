@@ -92,6 +92,28 @@
                 <strong id="td-num-practice-mode">Quick Check</strong>
               </div>
             </div>
+            <div class="numeracy-curriculum-controls" aria-label="Illustrative Math alignment">
+              <label class="numeracy-curriculum-field">
+                <span class="numeracy-meta-label">Grade</span>
+                <select id="td-num-grade-select" class="td-top-btn">
+                  <option value="">Grade</option>
+                </select>
+              </label>
+              <label class="numeracy-curriculum-field">
+                <span class="numeracy-meta-label">Unit</span>
+                <select id="td-num-unit-select" class="td-top-btn" disabled>
+                  <option value="">Unit</option>
+                </select>
+              </label>
+              <label class="numeracy-curriculum-field">
+                <span class="numeracy-meta-label">Lesson</span>
+                <select id="td-num-lesson-select" class="td-top-btn" disabled>
+                  <option value="">Lesson</option>
+                </select>
+              </label>
+              <span id="td-num-curriculum-badge" class="numeracy-curriculum-badge hidden">Curriculum Aligned</span>
+            </div>
+            <p id="td-num-curriculum-line" class="numeracy-curriculum-line hidden"></p>
             <p id="td-num-action-line" class="focus-reason">Run Quick Check to verify strategy use before moving to Strategy Builder.</p>
           </article>
         </section>
@@ -309,6 +331,7 @@
 
   <script src="./js/nav-shell.js?v=20260301y"></script>
   <script src="./js/numeracy/sequencer.js?v=20260303a" defer></script>
+  <script src="./js/numeracy/curriculum-map.js?v=20260303b" defer></script>
   <script src="./build-stamp.js?v=20260301y"></script>
   <script src="./js/build-badge.js?v=20260301y"></script>
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>

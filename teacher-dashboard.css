@@ -329,6 +329,45 @@ body.cs-has-nav-shell .td-shell {
   color: var(--text-primary);
 }
 
+.numeracy-curriculum-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: var(--sp-2);
+  align-items: end;
+}
+
+.numeracy-curriculum-field {
+  display: grid;
+  gap: 6px;
+}
+
+.numeracy-curriculum-field .td-top-btn {
+  min-height: 34px;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: var(--fs-1);
+}
+
+.numeracy-curriculum-badge {
+  justify-self: end;
+  align-self: center;
+  white-space: nowrap;
+  border-radius: var(--radius-round);
+  border: 1px solid color-mix(in oklab, var(--accent-2) 36%, var(--border-subtle));
+  background: color-mix(in oklab, var(--accent-2) 14%, var(--surface-elev-2));
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  font-size: var(--fs-0);
+  line-height: 1.25;
+  font-weight: var(--fw-medium);
+}
+
+.numeracy-curriculum-line {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--text-secondary);
+}
+
 .dashboard-kicker {
   margin: 0;
   font-size: var(--fs-1);
@@ -508,6 +547,15 @@ body.cs-has-nav-shell .td-shell {
 
   .numeracy-meta-grid {
     grid-template-columns: 1fr;
+  }
+
+  .numeracy-curriculum-controls {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .numeracy-curriculum-badge {
+    justify-self: start;
   }
 
   .queue-list,

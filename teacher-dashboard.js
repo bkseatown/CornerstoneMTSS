@@ -25,6 +25,7 @@
   var SessionPlanner = window.CSSessionPlanner;
   var InstructionalSequencer = window.CSInstructionalSequencer;
   var NumeracySequencer = window.CSNumeracySequencer;
+  var CurriculumMap = window.CSCurriculumMap;
   var AlignmentLoader = window.CSAlignmentLoader;
   var InterventionPlanner = window.CSInterventionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
@@ -197,10 +198,99 @@
     numeracyContentFocus: document.getElementById("td-num-content-focus"),
     numeracyStrategyStage: document.getElementById("td-num-strategy-stage"),
     numeracyPracticeMode: document.getElementById("td-num-practice-mode"),
-    numeracyActionLine: document.getElementById("td-num-action-line")
-    ,
+    numeracyActionLine: document.getElementById("td-num-action-line"),
+    numGradeSelect: document.getElementById("td-num-grade-select"),
+    numUnitSelect: document.getElementById("td-num-unit-select"),
+    numLessonSelect: document.getElementById("td-num-lesson-select"),
+    numCurriculumBadge: document.getElementById("td-num-curriculum-badge"),
+    numCurriculumLine: document.getElementById("td-num-curriculum-line"),
     buildline: document.getElementById("td-buildline")
   };
+
+  function getIllustrativeMapSafe() {
+    if (!CurriculumMap || typeof CurriculumMap.getIllustrativeMap !== "function") return {};
+    var map = CurriculumMap.getIllustrativeMap();
+    if (!map || typeof map !== "object" || Array.isArray(map)) return {};
+    return map;
+  }
+
+  function keyLabel(prefix, key) {
+    var s = String(key == null ? "" : key).toLowerCase();
+    if (s.indexOf(prefix) === 0) {
+      var n = s.slice(prefix.length);
+      return n ? prefix.charAt(0).toUpperCase() + prefix.slice(1) + " " + n : prefix;
+    }
+    return s || prefix;
+  }
+
+  function setSelectOptions(select, items, placeholder) {
+    if (!select) return;
+    var list = Array.isArray(items) ? items : [];
+    var prev = String(select.value || "");
+    var html = ['<option value="">' + placeholder + '</option>'];
+    list.forEach(function (item) {
+      html.push('<option value="' + escAttr(item.value) + '">' + escAttr(item.label) + "</option>");
+    });
+    select.innerHTML = html.join("");
+    if (prev && list.some(function (item) { return String(item.value) === prev; })) {
+      select.value = prev;
+    }
+    select.disabled = list.length === 0;
+  }
+
+  function renderNumeracyAlignmentLine() {
+    if (!el.numCurriculumLine || !el.numCurriculumBadge) return;
+    var grade = el.numGradeSelect ? String(el.numGradeSelect.value || "") : "";
+    var unit = el.numUnitSelect ? String(el.numUnitSelect.value || "") : "";
+    var lesson = el.numLessonSelect ? String(el.numLessonSelect.value || "") : "";
+    if (!grade || !unit || !lesson || !CurriculumMap || typeof CurriculumMap.getIllustrativeAlignment !== "function") {
+      el.numCurriculumLine.classList.add("hidden");
+      el.numCurriculumBadge.classList.add("hidden");
+      return;
+    }
+    var alignment = CurriculumMap.getIllustrativeAlignment(grade, unit, lesson);
+    if (!alignment) {
+      el.numCurriculumLine.classList.add("hidden");
+      el.numCurriculumBadge.classList.add("hidden");
+      return;
+    }
+    el.numCurriculumBadge.classList.remove("hidden");
+    el.numCurriculumLine.classList.remove("hidden");
+    el.numCurriculumLine.textContent = "Aligned to Illustrative Math — " + keyLabel("grade", grade) + ", " + keyLabel("unit", unit);
+  }
+
+  function syncNumeracyCurriculumSelectors() {
+    var map = getIllustrativeMapSafe();
+    var gradeKeys = Object.keys(map).sort();
+    setSelectOptions(el.numGradeSelect, gradeKeys.map(function (gradeKey) {
+      return { value: gradeKey, label: keyLabel("grade", gradeKey) };
+    }), "Grade");
+
+    var gradeValue = el.numGradeSelect ? String(el.numGradeSelect.value || "") : "";
+    var gradeNode = gradeValue && map[gradeValue] ? map[gradeValue] : null;
+    var unitKeys = gradeNode ? Object.keys(gradeNode).sort() : [];
+    setSelectOptions(el.numUnitSelect, unitKeys.map(function (unitKey) {
+      var unit = gradeNode[unitKey] || {};
+      var title = String(unit.title || "");
+      return { value: unitKey, label: title ? keyLabel("unit", unitKey) + " - " + title : keyLabel("unit", unitKey) };
+    }), "Unit");
+
+    var unitValue = el.numUnitSelect ? String(el.numUnitSelect.value || "") : "";
+    var unitNode = gradeNode && unitValue && gradeNode[unitValue] ? gradeNode[unitValue] : null;
+    var lessonKeys = unitNode && unitNode.lessons ? Object.keys(unitNode.lessons).sort() : [];
+    setSelectOptions(el.numLessonSelect, lessonKeys.map(function (lessonKey) {
+      var lesson = unitNode.lessons[lessonKey] || {};
+      var focus = String(lesson.contentFocus || "");
+      return { value: lessonKey, label: focus ? keyLabel("lesson", lessonKey) + " - " + focus : keyLabel("lesson", lessonKey) };
+    }), "Lesson");
+
+    renderNumeracyAlignmentLine();
+  }
+
+  function initNumeracyCurriculumSelectors() {
+    if (!el.numGradeSelect || !el.numUnitSelect || !el.numLessonSelect) return;
+    syncNumeracyCurriculumSelectors();
+  }
 
   function buildNumeracyStubProfile(row) {
     var student = row && row.student ? row.student : {};
@@ -246,6 +336,7 @@
     el.numeracyPracticeMode.textContent = String(recommendation.practiceMode || fallback.practiceMode);
     if (el.numeracyTier) el.numeracyTier.textContent = String(recommendation.tierSignal || fallback.tierSignal);
     el.numeracyActionLine.textContent = String(recommendation.recommendedAction || fallback.recommendedAction);
+    renderNumeracyAlignmentLine();
   }
 
   function detectDemoMode() {
@@ -3696,6 +3787,25 @@
       });
     }
 
+    if (el.numGradeSelect) {
+      el.numGradeSelect.addEventListener("change", function () {
+        if (el.numUnitSelect) el.numUnitSelect.value = "";
+        if (el.numLessonSelect) el.numLessonSelect.value = "";
+        syncNumeracyCurriculumSelectors();
+      });
+    }
+    if (el.numUnitSelect) {
+      el.numUnitSelect.addEventListener("change", function () {
+        if (el.numLessonSelect) el.numLessonSelect.value = "";
+        syncNumeracyCurriculumSelectors();
+      });
+    }
+    if (el.numLessonSelect) {
+      el.numLessonSelect.addEventListener("change", function () {
+        renderNumeracyAlignmentLine();
+      });
+    }
+
     el.emptyActions.forEach(function (button) {
       button.addEventListener("click", function () {
         var action = button.getAttribute("data-empty-action");
@@ -3719,6 +3829,7 @@
   primeDemoMetrics();
   refreshCaseload();
   bindEvents();
+  initNumeracyCurriculumSelectors();
   document.addEventListener("keydown", function (event) {
     if (event.key === "H" && event.shiftKey) {
       var tag = event.target && event.target.tagName ? String(event.target.tagName).toLowerCase() : "";
