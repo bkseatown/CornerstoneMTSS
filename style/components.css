@@ -1402,10 +1402,10 @@ html[data-home-mode="play"] #play-tools-btn.hidden {
   border: 1px solid color-mix(in oklab, var(--header-border) 82%, #95a3b4 18%);
   border-radius: 14px;
   background: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
-  color: color-mix(in oklab, var(--text) 58%, #ffffff 42%);
+  color: color-mix(in oklab, var(--text) 80%, #ffffff 20%);
   font-family: var(--font);
-  font-size: 0.78rem;
-  font-weight: 760;
+  font-size: 0.84rem;
+  font-weight: 800;
   padding: 0 12px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
@@ -1421,9 +1421,9 @@ html[data-home-mode="play"] #play-tools-btn.hidden {
 }
 
 .focus-inline-search::placeholder {
-  color: color-mix(in oklab, var(--text-muted) 42%, #ffffff 58%);
-  font-weight: 680;
-  opacity: 0.88;
+  color: color-mix(in oklab, var(--text-muted) 72%, #ffffff 28%);
+  font-weight: 760;
+  opacity: 1;
 }
 
 .focus-source {
@@ -1433,10 +1433,10 @@ html[data-home-mode="play"] #play-tools-btn.hidden {
 .grade-target-inline {
   max-width: none;
   min-width: 0;
-  font-size: 0.63rem;
-  font-weight: 780;
+  font-size: 0.74rem;
+  font-weight: 820;
   letter-spacing: 0.02em;
-  color: color-mix(in oklab, var(--text) 78%, var(--text-muted) 22%);
+  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
   text-transform: none;
   white-space: nowrap;
   overflow: hidden;
@@ -1445,8 +1445,8 @@ html[data-home-mode="play"] #play-tools-btn.hidden {
   min-height: 24px;
   padding: 3px 10px;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
+  background: color-mix(in oklab, var(--panel-bg) 66%, #ffffff 34%);
 }
 
 .curriculum-main-bar { display: none !important; }
@@ -3585,8 +3585,65 @@ html[data-wq-demo="on"] #wq-coach-ribbon {
   display: none !important;
 }
 
+html[data-wq-demo="on"] .cs-demo-toast,
+html[data-wq-demo="on"] .cs-demo-chip,
+html[data-wq-demo="on"] .wq-demo-coach,
+html[data-wq-demo="on"] .wq-demo-banner,
+html[data-wq-demo="on"] .wq-demo-end-overlay {
+  display: none !important;
+}
+
 html[data-home-mode="play"] #wq-coach-ribbon.hidden {
   display: none !important;
+}
+
+html[data-home-mode="play"] #wq-coach-ribbon,
+html[data-home-mode="play"] .next-action-line {
+  display: none !important;
+}
+
+html[data-home-mode="play"] .focus-search-label span,
+html[data-home-mode="play"] .focus-inline-search,
+html[data-home-mode="play"] .grade-target-inline,
+html[data-home-mode="play"] .curriculum-main-step-field select,
+html[data-home-mode="play"] .quest-stat,
+html[data-home-mode="play"] .quest-next {
+  color: color-mix(in oklab, var(--text) 95%, #ffffff 5%);
+}
+
+html[data-home-mode="play"] .logo {
+  color: color-mix(in oklab, var(--logo-word, var(--text)) 40%, #ffffff 60%);
+  text-shadow: 0 1px 2px rgba(3, 12, 24, 0.48);
+}
+
+html[data-home-mode="play"] .logo span {
+  color: color-mix(in oklab, var(--logo-quest, var(--accent)) 46%, #ffffff 54%);
+}
+
+html[data-home-mode="play"] .icon-btn {
+  color: color-mix(in oklab, var(--text) 78%, #ffffff 22%);
+  border-color: color-mix(in oklab, var(--brand) 52%, #ffffff 48%);
+  background: color-mix(in oklab, var(--panel-bg) 74%, #ffffff 26%);
+}
+
+html[data-home-mode="play"] .focus-search-label span {
+  border-color: color-mix(in oklab, var(--panel-border) 78%, #ffffff 22%);
+  background: color-mix(in oklab, var(--panel-bg) 62%, #ffffff 38%);
+}
+
+html[data-home-mode="play"] .focus-inline-search,
+html[data-home-mode="play"] .curriculum-main-step-field select {
+  border-color: color-mix(in oklab, var(--header-border) 74%, #ffffff 26%);
+  background: color-mix(in oklab, var(--panel-bg) 76%, #ffffff 24%);
+}
+
+html[data-home-mode="play"] .focus-inline-search::placeholder {
+  color: color-mix(in oklab, var(--text-muted) 52%, #ffffff 48%);
+}
+
+html[data-home-mode="play"] .grade-target-inline {
+  border-color: color-mix(in oklab, var(--panel-border) 74%, #ffffff 26%);
+  background: color-mix(in oklab, var(--panel-bg) 58%, #ffffff 42%);
 }
 
 .play-support-row {
