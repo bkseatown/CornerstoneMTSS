@@ -10284,7 +10284,25 @@
     return String(leftEntry.label || '').localeCompare(String(rightEntry.label || ''), undefined, { numeric: true, sensitivity: 'base' });
   }
 
-  function renderFocusSectionItems(entries, activeQuestValue, activePack, activePackLabel) {
+  function reorderForColumnFirstGrid(entries, columns = 2) {
+    const list = Array.isArray(entries) ? entries.slice() : [];
+    if (list.length <= columns) return list;
+    const perCol = Math.ceil(list.length / columns);
+    const cols = [];
+    for (let i = 0; i < columns; i += 1) {
+      cols.push(list.slice(i * perCol, (i + 1) * perCol));
+    }
+    const ordered = [];
+    for (let row = 0; row < perCol; row += 1) {
+      for (let col = 0; col < columns; col += 1) {
+        const item = cols[col][row];
+        if (item) ordered.push(item);
+      }
+    }
+    return ordered;
+  }
+
+  function renderFocusSectionItems(entries, activeQuestValue, activePack, activePackLabel, options = {}) {
     return entries.map((entry) => {
       const questValue = entry.questValue || `focus::${entry.value}`;
       const isProgram = entry.kind === 'curriculum-pack';
@@ -10296,10 +10314,11 @@
       const label = isProgram ? `${entry.label} · Choose Lesson` : formatCurriculumLessonLabel(entry);
       const meta = getFocusEntryMeta(entry);
       const scopeClass = isProgram ? ' is-program' : ' is-curriculum';
+      const extraClass = options && options.columnFlow ? ' focus-curriculum-item' : '';
       const ariaLabel = isProgram
         ? `Open ${entry.label} lesson groups`
         : `${entry.group || activePackLabel} ${label}${meta ? ` ${meta}` : ''}`;
-      return `<button type="button" class="focus-search-item${scopeClass}${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}" aria-label="${escapeHtml(ariaLabel)}"><span>${escapeHtml(label)}</span>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</button>`;
+      return `<button type="button" class="focus-search-item${scopeClass}${extraClass}${activeClass}" data-quest-value="${escapeHtml(questValue)}" role="option" aria-selected="${selected}" aria-label="${escapeHtml(ariaLabel)}"><span>${escapeHtml(label)}</span>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</button>`;
     }).join('');
   }
 
@@ -10463,17 +10482,19 @@
           .filter((packLabel) => Array.isArray(groupedLessons[packLabel]) && groupedLessons[packLabel].length)
           .map((packLabel) => {
             groupedLessons[packLabel].sort(compareCurriculumEntries);
+            const orderedLessons = reorderForColumnFirstGrid(groupedLessons[packLabel], 2);
             return `<div class="focus-search-subheading" role="presentation">${escapeHtml(packLabel)}</div>` +
-              renderFocusSectionItems(groupedLessons[packLabel], activeQuestValue, activePack, activePackLabel);
+              renderFocusSectionItems(orderedLessons, activeQuestValue, activePack, activePackLabel, { columnFlow: true });
           });
         Object.keys(groupedLessons)
           .filter((packLabel) => !orderedPacks.includes(packLabel))
           .sort((a, b) => a.localeCompare(b))
           .forEach((packLabel) => {
             groupedLessons[packLabel].sort(compareCurriculumEntries);
+            const orderedLessons = reorderForColumnFirstGrid(groupedLessons[packLabel], 2);
             lessonBlocks.push(
               `<div class="focus-search-subheading" role="presentation">${escapeHtml(packLabel)}</div>` +
-              renderFocusSectionItems(groupedLessons[packLabel], activeQuestValue, activePack, activePackLabel)
+              renderFocusSectionItems(orderedLessons, activeQuestValue, activePack, activePackLabel, { columnFlow: true })
             );
           });
         const includeCurriculumHeading = !(isCurriculumLessonListMode && !query);

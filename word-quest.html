@@ -335,12 +335,13 @@
             <div class="setting-row"><label>Max Guesses<select id="s-guesses"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option></select></label></div>
             <div class="setting-row"><label>Try These Words<select id="s-starter-words"><option value="off">Off</option><option value="on_demand">On demand</option><option value="after_2">Auto after 2 guesses</option><option value="after_3" selected>Auto after 3 guesses</option></select></label></div>
             <div class="setting-row setting-row-full">
-              <button id="s-force-update-now-top" class="quick-action-btn quick-action-btn-warning" type="button">Refresh for Latest</button>
+              <button id="s-force-update-now-top" class="quick-action-btn quick-action-btn-warning hidden" aria-hidden="true" type="button" tabindex="-1">Refresh for Latest</button>
             </div>
             <div class="setting-row hidden" aria-hidden="true"><label>Hint Cues<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
-            <div class="setting-row"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Guess &amp; Check Mode (color + clue strategy)</option><option value="listening">Listen &amp; Spell Mode (hear + spell)</option></select></label></div>
+            <div class="setting-row"><label>Game Mode<select id="s-play-style"><option value="detective" selected>Guess &amp; Check Mode (teacher-led strategy)</option><option value="listening">Listen &amp; Spell Mode (audio-first decoding)</option></select></label></div>
+            <div class="setting-row setting-row-full setting-row-help">Teacher tip: <b>Guess &amp; Check</b> for visual strategy rounds, <b>Listen &amp; Spell</b> for auditory mapping and dictation practice.</div>
             <div class="setting-row"><label>Keyboard Layout<select id="s-keyboard-layout"><option value="standard" selected>QWERTY</option><option value="alphabet">Alphabet</option></select></label></div>
-            <div class="setting-row"><label>Text Size<select id="s-text-size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option></select></label></div>
+            <div class="setting-row hidden" aria-hidden="true"><label>Text Size<select id="s-text-size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option></select></label></div>
             <div class="setting-row hidden" aria-hidden="true"><label>Keyboard Style<select id="s-key-style"><option value="bubble" selected>Puffy Rounded</option></select></label></div>
             <div class="setting-row setting-row-full setting-row-help hidden" aria-hidden="true">Hear &amp; Spell Mode gives direct Word + Meaning support. Guess &amp; Check Mode keeps sentence-only clue hints.</div>
             <div class="setting-row setting-row-full quick-preset-row hidden">
@@ -760,7 +761,7 @@
         </details>
         <div class="settings-inline-actions settings-maintenance-row">
           <button id="s-reset-look-cache" class="quick-action-btn" type="button">Reset Appearance</button>
-          <button id="s-force-update-now" class="quick-action-btn quick-action-btn-warning" type="button">Refresh for Latest</button>
+          <button id="s-force-update-now" class="quick-action-btn quick-action-btn-warning hidden" aria-hidden="true" type="button" tabindex="-1">Refresh for Latest</button>
         </div>
       </section>
     </div>
