@@ -24,6 +24,7 @@
   var PlanEngine = window.CSPlanEngine;
   var SessionPlanner = window.CSSessionPlanner;
   var InstructionalSequencer = window.CSInstructionalSequencer;
+  var NumeracySequencer = window.CSNumeracySequencer;
   var AlignmentLoader = window.CSAlignmentLoader;
   var InterventionPlanner = window.CSInterventionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
@@ -191,10 +192,61 @@
     focusTierLine: document.getElementById("td-focus-tier-line"),
     focusReasonLine: document.getElementById("td-focus-reason-line"),
     focusStartBtn: document.getElementById("td-focus-start-btn"),
-    surgicalAttentionList: document.getElementById("td-surgical-attention-list")
+    surgicalAttentionList: document.getElementById("td-surgical-attention-list"),
+    numeracyTier: document.getElementById("td-num-tier"),
+    numeracyContentFocus: document.getElementById("td-num-content-focus"),
+    numeracyStrategyStage: document.getElementById("td-num-strategy-stage"),
+    numeracyPracticeMode: document.getElementById("td-num-practice-mode"),
+    numeracyActionLine: document.getElementById("td-num-action-line")
     ,
     buildline: document.getElementById("td-buildline")
   };
+
+  function buildNumeracyStubProfile(row) {
+    var student = row && row.student ? row.student : {};
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var skillLabel = String(top && top.skillId || "");
+    var domainHint = "number fluency";
+    if (/fraction/i.test(skillLabel)) domainHint = "fraction";
+    else if (/ratio|proportion/i.test(skillLabel)) domainHint = "ratio";
+    else if (/algebra|equation/i.test(skillLabel)) domainHint = "algebra";
+    else if (/place|value/i.test(skillLabel)) domainHint = "place value";
+    else if (/problem|model/i.test(skillLabel)) domainHint = "model";
+    var need = Number(top && top.need || 0.45);
+    return {
+      studentId: String(student.id || ""),
+      gradeBand: String(student.grade || "G5"),
+      accuracy: Math.max(0, Math.min(1, 1 - need)),
+      errorRate: Math.max(0, Math.min(1, need)),
+      confidence: Math.max(0.2, Math.min(0.95, 1 - (need * 0.8))),
+      languageSupport: false,
+      workingMemoryRisk: need > 0.6 ? 0.65 : 0.3,
+      domainHint: domainHint
+    };
+  }
+
+  function renderNumeracyRecommendationCard(row) {
+    if (!el.numeracyContentFocus || !el.numeracyStrategyStage || !el.numeracyPracticeMode || !el.numeracyActionLine) return;
+    var profile = buildNumeracyStubProfile(row || null);
+    var fallback = {
+      contentFocus: "Number Fluency",
+      strategyStage: "Additive",
+      errorPattern: "Procedural inconsistency",
+      tierSignal: "Tier 2",
+      recommendedAction: "Run Quick Check targeting Number Fluency at the Additive stage.",
+      practiceMode: "Quick Check"
+    };
+    var recommendation = NumeracySequencer && typeof NumeracySequencer.generateNumeracyRecommendation === "function"
+      ? NumeracySequencer.generateNumeracyRecommendation(profile)
+      : fallback;
+    el.numeracyContentFocus.textContent = String(recommendation.contentFocus || fallback.contentFocus);
+    el.numeracyStrategyStage.textContent = String(recommendation.strategyStage || fallback.strategyStage);
+    el.numeracyPracticeMode.textContent = String(recommendation.practiceMode || fallback.practiceMode);
+    if (el.numeracyTier) el.numeracyTier.textContent = String(recommendation.tierSignal || fallback.tierSignal);
+    el.numeracyActionLine.textContent = String(recommendation.recommendedAction || fallback.recommendedAction);
+  }
 
   function detectDemoMode() {
     try {
@@ -642,6 +694,7 @@
       if (el.focusStudentName) el.focusStudentName.textContent = "Select a student";
       if (el.focusTierLine) el.focusTierLine.textContent = "Tier 2 focus";
       if (el.focusReasonLine) el.focusReasonLine.textContent = "Search a student to get a clear next move.";
+      renderNumeracyRecommendationCard(null);
       if (el.surgicalAttentionList) {
         el.surgicalAttentionList.innerHTML = '<article class="queue-card"><h3 class="queue-name">No queued students</h3><p class="queue-signal">Add students to generate a focused queue.</p></article>';
       }
@@ -658,6 +711,7 @@
     if (el.focusStudentName) el.focusStudentName.textContent = String(focusStudent.name || "Select a student");
     if (el.focusTierLine) el.focusTierLine.textContent = focusTier + " focus";
     if (el.focusReasonLine) el.focusReasonLine.textContent = signalLineForRow(focus);
+    renderNumeracyRecommendationCard(focus);
     if (el.focusStartBtn) {
       el.focusStartBtn.onclick = function () {
         var sid = String(focusStudent.id || "");

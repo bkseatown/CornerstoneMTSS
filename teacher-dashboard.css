@@ -271,6 +271,9 @@ body.cs-has-nav-shell .td-shell {
 .dashboard-focus {
   flex: 0 0 40%;
   min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
 }
 
 .focus-card {
@@ -282,6 +285,48 @@ body.cs-has-nav-shell .td-shell {
   gap: var(--sp-3);
   border: 1px solid color-mix(in oklab, var(--border-soft) 60%, transparent);
   box-shadow: var(--shadow-card, var(--shadow-medium));
+}
+
+.numeracy-focus-card {
+  border: 1px solid color-mix(in oklab, var(--border-soft) 58%, transparent);
+  box-shadow: var(--shadow-card, var(--shadow-medium));
+}
+
+.numeracy-title {
+  margin: 0;
+  font-size: clamp(1.18rem, 1.6vw, 1.35rem);
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.numeracy-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.numeracy-meta-item {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: var(--radius-2);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 66%, transparent);
+  background: var(--surface-elev-2);
+}
+
+.numeracy-meta-label {
+  font-size: var(--fs-0);
+  line-height: 1.25;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--fw-medium);
+}
+
+.numeracy-meta-item strong {
+  font-size: var(--fs-2);
+  line-height: 1.25;
+  color: var(--text-primary);
 }
 
 .dashboard-kicker {
@@ -454,10 +499,15 @@ body.cs-has-nav-shell .td-shell {
 
   .dashboard-focus {
     flex-basis: auto;
+    grid-template-columns: 1fr;
   }
 
   .focus-student-name {
     font-size: var(--fs-6);
+  }
+
+  .numeracy-meta-grid {
+    grid-template-columns: 1fr;
   }
 
   .queue-list,
