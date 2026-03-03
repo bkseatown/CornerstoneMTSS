@@ -1011,6 +1011,7 @@
   var demoLaunchBtnEl = null;
   var demoCoachEl = null;
   var demoCoachReadyTimer = 0;
+  var demoAutoplayTimer = 0;
   var demoDebugLabelEl = null;
   var demoToastEl = null;
   var demoToastTextEl = null;
@@ -1384,6 +1385,15 @@
     demoCoachReadyTimer = 0;
   }
 
+  function clearDemoAutoplayTimer() {
+    if (!demoAutoplayTimer) return;
+    clearTimeout(demoAutoplayTimer);
+    if (window.__CS_DEMO_TIMERS && typeof window.__CS_DEMO_TIMERS.delete === 'function') {
+      window.__CS_DEMO_TIMERS.delete(demoAutoplayTimer);
+    }
+    demoAutoplayTimer = 0;
+  }
+
   function listOpenOverlays() {
     return DEMO_OVERLAY_SELECTORS
       .map((selector) => {
@@ -1531,6 +1541,7 @@
     demoState.handledGuessCounts = new Set();
     window.__CS_DEMO_RENDER_COUNT = 0;
     stopDemoCoachReadyLoop();
+    clearDemoAutoplayTimer();
     demoClearTimers();
     stopDemoKeyPulse();
     hideDemoCoach();
@@ -1538,10 +1549,52 @@
     clearDemoToastMessageTimer();
     demoToastCollapsed = false;
     demoToastAutoCollapsedByPlay = false;
-    showDemoToast(true);
-    setDemoToastText('preRound', { force: true });
-    startDemoToastProgress(DEMO_TOAST_DEFAULT_DURATION_MS);
+    collapseDemoToast();
     renderDemoDebugReadout();
+  }
+
+  function runBoardOnlyDemoPlayback() {
+    if (!DEMO_MODE) return;
+    const demoStateRuntime = getDemoState();
+    if (!demoStateRuntime.active) return;
+    const script = ['slate', 'plain', DEMO_TARGET_WORD];
+    const typeDelayMs = 130;
+    const betweenGuessesMs = 1100;
+
+    clearDemoAutoplayTimer();
+
+    const clearCurrentGuess = () => {
+      const state = WQGame.getState?.();
+      const guess = String(state?.guess || '');
+      for (let i = 0; i < guess.length; i += 1) handleKey('Backspace');
+    };
+
+    const typeGuessAt = (index) => {
+      const state = WQGame.getState?.();
+      if (!state || state.gameOver || !demoStateRuntime.active) return;
+      if (index >= script.length) return;
+      const guessWord = String(script[index] || '').toLowerCase().replace(/[^a-z]/g, '').slice(0, Number(state.wordLength) || 5);
+      if (!guessWord) return;
+      clearCurrentGuess();
+      let letterIdx = 0;
+
+      const typeNextLetter = () => {
+        const live = WQGame.getState?.();
+        if (!live || live.gameOver || !demoStateRuntime.active) return;
+        if (letterIdx < guessWord.length) {
+          handleKey(guessWord[letterIdx]);
+          letterIdx += 1;
+          demoAutoplayTimer = demoSetTimeout(typeNextLetter, typeDelayMs);
+          return;
+        }
+        handleKey('Enter');
+        demoAutoplayTimer = demoSetTimeout(() => typeGuessAt(index + 1), betweenGuessesMs);
+      };
+
+      demoAutoplayTimer = demoSetTimeout(typeNextLetter, 250);
+    };
+
+    typeGuessAt(0);
   }
 
   function runDemoCoachForStart() {
@@ -1550,36 +1603,9 @@
     if (!demoStateRuntime.active || demoStateRuntime.started) return;
     demoStateRuntime.started = true;
     demoStateRuntime.step = 1;
-    let tries = 0;
-    stopDemoCoachReadyLoop();
-    const waitForGameplayThenShowCoach = () => {
-      if (!DEMO_MODE || demoRoundComplete || !demoStateRuntime.active) return;
-      closeAllOverlaysForDemo();
-      const keyboard = _el('keyboard');
-      const board = _el('game-board');
-      const overlaysOpen = listOpenOverlays().length > 0;
-      const ready = Boolean(keyboard && board && !overlaysOpen);
-      if (ready) {
-        demoState.coachMounted = true;
-        renderDemoDebugReadout();
-        showDemoCoach({
-          id: 'start',
-          anchor: keyboard,
-          text: 'Try SLATE first. Colors will teach the rule instantly.',
-          primaryLabel: 'Got it',
-          suggestedWord: getConstraintSafeCoachSuggestion(WQGame.getState?.() || {}) || demoState.suggestions[0]
-        });
-        return;
-      }
-      tries += 1;
-      if (tries > DEMO_COACH_READY_MAX_TRIES) {
-        console.warn('Demo coach aborted: gameplay not ready');
-        renderDemoDebugReadout();
-        return;
-      }
-      demoCoachReadyTimer = demoSetTimeout(waitForGameplayThenShowCoach, DEMO_COACH_READY_DELAY_MS);
-    };
-    waitForGameplayThenShowCoach();
+    closeAllOverlaysForDemo();
+    hideDemoCoach();
+    runBoardOnlyDemoPlayback();
   }
 
   function updateDemoDiscovered(result) {
@@ -1601,38 +1627,7 @@
     const demoStateRuntime = getDemoState();
     if (!demoStateRuntime.active) return;
     demoState.guessCount = Math.max(0, Number(result.guesses?.length || 0));
-    if (demoState.handledGuessCounts.has(demoState.guessCount)) return;
-    demoState.handledGuessCounts.add(demoState.guessCount);
-    updateDemoDiscovered(result);
-    if (demoState.guessCount === 1) {
-      demoStateRuntime.step = 2;
-      const safeSuggestion = getConstraintSafeCoachSuggestion(WQGame.getState?.() || {}) || demoState.suggestions[1];
-      showDemoCoach({
-        id: 'after_guess_1',
-        anchor: _el('game-board'),
-        text: 'Grey = not in word, yellow = wrong spot, green = right spot.',
-        suggestedWord: safeSuggestion,
-        overrideLine: safeSuggestion
-          ? `Use clues and try ${safeSuggestion.toUpperCase()} next.`
-          : 'No perfect suggestion yet. Try a new vowel and keep confirmed letters.'
-      });
-      return;
-    }
-    if (demoState.guessCount === 2) {
-      demoStateRuntime.step = 3;
-      const coreFound = demoState.discoveredCore.has('P') && demoState.discoveredCore.has('L') && demoState.discoveredCore.has('A');
-      const safeSuggestion = getConstraintSafeCoachSuggestion(WQGame.getState?.() || {}) || demoState.suggestions[2];
-      showDemoCoach({
-        id: 'after_guess_2',
-        anchor: _el('game-board'),
-        text: 'Refine one variable from the clue pattern.',
-        suggestedWord: safeSuggestion,
-        overrideLine: safeSuggestion
-          ? `Refine with ${safeSuggestion.toUpperCase()} next.`
-          : 'No perfect suggestion yet. Try a new vowel and keep confirmed letters.',
-        showHint: !coreFound
-      });
-    }
+    demoStateRuntime.step = demoState.guessCount + 1;
   }
 
   function closeDemoEndOverlay() {
@@ -6134,7 +6129,7 @@
           mountEl: mount,
           getMessageFn: () => ({
             key: 'wq.beforeFirstGuess',
-            text: 'Try SLATE first; watch the colors teach the rule.'
+            text: ''
           })
         });
       }
@@ -6309,9 +6304,13 @@
       mount.classList.add('hidden');
       return;
     }
+    if (wordQuestCoachKey === 'before_guess') {
+      mount.classList.add('hidden');
+      return;
+    }
     mount.classList.remove('hidden');
     const map = {
-      before_guess: { key: 'wq.beforeFirstGuess', text: 'Try SLATE first; watch the colors teach the rule.' },
+      before_guess: { key: 'wq.beforeFirstGuess', text: '' },
       after_first_miss: { key: 'wq.afterFirstMiss', text: 'Use the clue or change one letter.' },
       after_correct: { key: 'wq.correct', text: 'Nice. Tap Next Word for another round.' }
     };
@@ -14701,8 +14700,11 @@
               demoRoundComplete = true;
               WQUI.hideModal();
               closeRevealChallengeModal({ silent: true });
-              showDemoEndOverlay();
+              hideDemoCoach();
               _el('new-game-btn')?.classList.remove('pulse');
+              demoAutoplayTimer = demoSetTimeout(() => {
+                newGame({ forceDemoReplay: true });
+              }, 1400);
             } else {
               WQUI.showModal(result);
               _el('new-game-btn')?.classList.add('pulse');
