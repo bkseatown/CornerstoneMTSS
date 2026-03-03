@@ -1282,6 +1282,11 @@ html[data-home-mode="play"] .header-icon-controls > * {
   display: none !important;
 }
 
+html[data-home-mode="play"] #teacher-panel-btn,
+html[data-home-mode="play"] #case-toggle-btn,
+html[data-home-mode="play"] #keyboard-layout-toggle,
+html[data-home-mode="play"] #theme-dock-toggle-btn,
+html[data-home-mode="play"] #music-dock-toggle-btn,
 html[data-home-mode="play"] #settings-btn {
   display: inline-flex !important;
 }
