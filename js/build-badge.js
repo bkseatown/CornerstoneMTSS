@@ -63,6 +63,17 @@
     }
   }
 
+  async function unregisterAllServiceWorkers() {
+    if (!("serviceWorker" in navigator) || !navigator.serviceWorker || typeof navigator.serviceWorker.getRegistrations !== "function") return;
+    try {
+      var regs = await navigator.serviceWorker.getRegistrations();
+      if (!regs || !regs.length) return;
+      await Promise.all(regs.map(function (reg) { return reg.unregister().catch(function () {}); }));
+    } catch (_e) {
+      // no-op: keep runtime stable if browser blocks registrations API
+    }
+  }
+
   async function forceUpdate() {
     var deployed = (window.CSBuildBadgeState && window.CSBuildBadgeState.deployedBuildId) || currentBuildId();
     try {
@@ -194,6 +205,7 @@
     if (initialized) return;
     initialized = true;
     ensureStyles();
+    await unregisterAllServiceWorkers();
     bindUi();
     var current = currentBuildId();
     var deployedPayload = await fetchDeployedBuild();

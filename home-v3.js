@@ -14,7 +14,16 @@
     var path = String((window.location && window.location.pathname) || "");
     var marker = "/WordQuest/";
     var idx = path.indexOf(marker);
-    return idx >= 0 ? path.slice(0, idx + marker.length - 1) : "";
+    if (idx >= 0) return path.slice(0, idx + marker.length - 1);
+    try {
+      var baseEl = document.querySelector("base[href]");
+      if (baseEl) {
+        var baseUrl = new URL(baseEl.getAttribute("href"), window.location.href);
+        var basePath = String(baseUrl.pathname || "").replace(/\/+$/, "");
+        if (basePath && basePath !== "/") return basePath;
+      }
+    } catch (_e) {}
+    return "";
   }
 
   function withAppBase(path) {

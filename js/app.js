@@ -75,7 +75,16 @@
     var path = String((window.location && window.location.pathname) || '');
     var marker = '/WordQuest/';
     var idx = path.indexOf(marker);
-    return idx >= 0 ? path.slice(0, idx + marker.length - 1) : '';
+    if (idx >= 0) return path.slice(0, idx + marker.length - 1);
+    try {
+      var baseEl = document.querySelector('base[href]');
+      if (baseEl) {
+        var baseUrl = new URL(baseEl.getAttribute('href'), window.location.href);
+        var basePath = String(baseUrl.pathname || '').replace(/\/+$/, '');
+        if (basePath && basePath !== '/') return basePath;
+      }
+    } catch (_e) {}
+    return '';
   }
 
   function withAppBase(path) {
@@ -423,11 +432,9 @@
   }
 
   function isOfflineRuntimeEnabled() {
-    try {
-      return localStorage.getItem('wq_enable_offline_runtime') === '1';
-    } catch (_e) {
-      return false;
-    }
+    // Runtime service worker is intentionally disabled to avoid stale-cache
+    // route hijacks on GitHub Pages deployments.
+    return false;
   }
 
   async function unregisterOfflineRuntime() {
@@ -2397,6 +2404,7 @@
     ironman: 'scifi',
     harleyquinn: 'lofi',
     kuromi: 'lofi',
+    poppink: 'lofi',
     harrypotter: 'fantasy',
     minecraft: 'arcade',
     demonhunter: 'fantasy',

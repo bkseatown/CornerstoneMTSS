@@ -11,18 +11,19 @@
     Object.freeze({ id: 'coffee', label: '☕ Coffeehouse', family: 'core' }),
     Object.freeze({ id: 'seahawks', label: '🦅 Seahawks', family: 'sports' }),
     Object.freeze({ id: 'huskies', label: '🐾 Huskies', family: 'sports' }),
-    Object.freeze({ id: 'superman', label: '🦸 Hero Flight', family: 'inspired' }),
+    Object.freeze({ id: 'superman', label: '🦸 Superman', family: 'inspired' }),
     Object.freeze({ id: 'mario', label: '🍄 Mushroom Sprint', family: 'inspired' }),
     Object.freeze({ id: 'zelda', label: '🗡️ Forest Relic', family: 'inspired' }),
     Object.freeze({ id: 'amongus', label: '🚀 Cosmic Crew', family: 'inspired' }),
     Object.freeze({ id: 'rainbowfriends', label: '🌈 Neon Squad', family: 'inspired' }),
-    Object.freeze({ id: 'minecraft', label: '⛏️ Block Builder', family: 'inspired' }),
-    Object.freeze({ id: 'marvel', label: '💥 Hero League', family: 'inspired' }),
-    Object.freeze({ id: 'ironman', label: '🔴 Arc Reactor', family: 'inspired' }),
-    Object.freeze({ id: 'harleyquinn', label: '🎭 Jester Pop', family: 'inspired' }),
-    Object.freeze({ id: 'kuromi', label: '🖤 Midnight Mischief', family: 'inspired' }),
+    Object.freeze({ id: 'minecraft', label: '⛏️ Minecraft', family: 'inspired' }),
+    Object.freeze({ id: 'marvel', label: '💥 Marvel', family: 'inspired' }),
+    Object.freeze({ id: 'ironman', label: '🔴 Iron Man', family: 'inspired' }),
+    Object.freeze({ id: 'harleyquinn', label: '🎭 Harley Quinn', family: 'inspired' }),
+    Object.freeze({ id: 'kuromi', label: '🖤 Kuromi', family: 'inspired' }),
+    Object.freeze({ id: 'poppink', label: '💖 Pop Pink', family: 'inspired' }),
     Object.freeze({ id: 'harrypotter', label: '🪄 Wizard House', family: 'inspired' }),
-    Object.freeze({ id: 'demonhunter', label: '🌸 Moon Blossom', family: 'inspired' }),
+    Object.freeze({ id: 'demonhunter', label: '🌸 Demon Hunter', family: 'inspired' }),
     Object.freeze({ id: 'dark', label: '🌙 Dark', family: 'dark' }),
     Object.freeze({ id: 'matrix', label: '💻 Matrix', family: 'dark' })
   ]);
@@ -48,6 +49,10 @@
     themeById.set(theme.id, theme);
   });
 
+  var THEME_ALIASES = Object.freeze({
+    barbie: 'poppink'
+  });
+
   var ORDER = Object.freeze(THEME_REGISTRY.map(function toId(theme) {
     return theme.id;
   }));
@@ -57,6 +62,7 @@
       ? fallback
       : DEFAULT_BY_MODE.calm;
     var value = String(theme || '').trim().toLowerCase();
+    if (THEME_ALIASES[value]) value = THEME_ALIASES[value];
     return themeById.has(value) ? value : nextFallback;
   }
 

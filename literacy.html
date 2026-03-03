@@ -1,15 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="literacy-hub">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=./literacy/index.html">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Cornerstone MTSS · Literacy Hub</title>
-  <script>
-    window.location.replace('./literacy/index.html');
-  </script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260303b">
+  <link rel="stylesheet" href="./style/typography.css?v=20260303b">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260303b">
+  <link rel="stylesheet" href="./style/hub.css?v=20260303b">
 </head>
-<body>
-  <p>Redirecting to Literacy Hub...</p>
+<body class="cs-hub-page">
+  <main class="cs-hub-root" aria-label="Literacy domain hub">
+    <header class="cs-hub-head">
+      <div>
+        <h1>Literacy Domain</h1>
+        <p>Four processing layers to guide intervention flow from foundational decoding to comprehension transfer.</p>
+      </div>
+      <nav class="cs-hub-nav" aria-label="Hub navigation">
+        <a class="cs-btn cs-btn-quiet" href="./index.html">Home</a>
+        <a class="cs-btn cs-btn-primary" href="./teacher-dashboard.html">Teacher Dashboard</a>
+      </nav>
+    </header>
+
+    <section class="cs-hub-list">
+      <article class="cs-hub-section">
+        <h2>1. Word-Level Processing</h2>
+        <p>Target letter-sound patterns, syllable control, and rapid decoding accuracy.</p>
+        <div class="cs-hub-row">
+          <span class="cs-hub-engine">Word Quest</span>
+          <a class="cs-btn cs-btn-primary" href="./word-quest.html?play=1#wordquest">Launch Word Quest</a>
+        </div>
+      </article>
+
+      <article class="cs-hub-section">
+        <h2>2. Oral Language &amp; Vocabulary</h2>
+        <p>Build semantic precision and expressive language for content-area transfer.</p>
+        <div class="cs-hub-row">
+          <span class="cs-hub-engine">Word Connections</span>
+          <a class="cs-btn cs-btn-quiet" href="./precision-play.html">Launch Word Connections</a>
+        </div>
+      </article>
+
+      <article class="cs-hub-section">
+        <h2>3. Composition &amp; Structure</h2>
+        <p>Strengthen sentence architecture, paragraph cohesion, and revision confidence.</p>
+        <div class="cs-hub-row">
+          <span class="cs-hub-engine">Writing Studio</span>
+          <a class="cs-btn cs-btn-primary" href="./writing-studio.html">Launch Writing Studio</a>
+        </div>
+      </article>
+
+      <article class="cs-hub-section">
+        <h2>4. Fluency &amp; Comprehension</h2>
+        <p>Reinforce pacing, accuracy, and understanding through short structured passages.</p>
+        <div class="cs-hub-row">
+          <span class="cs-hub-engine">Reading Lab</span>
+          <a class="cs-btn cs-btn-primary" href="./reading-lab.html">Launch Reading Lab</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="./js/nav-shell.js?v=20260303b" defer></script>
+  <script src="./build-stamp.js?v=20260303b"></script>
+  <script src="./js/build-badge.js?v=20260303b"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
 </body>
 </html>

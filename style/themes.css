@@ -737,3 +737,40 @@
   --fun-text:     #92531d;
   --fun-border:   #eabf97;
 }
+
+/* ── POP PINK ── bright pop header with soft blush gameplay field */
+[data-theme="poppink"] {
+  --page-bg:      #f6e8f2;
+  --page-bg2:     #eed7ea;
+  --plate-bg:     rgba(255, 78, 170, 0.10);
+  --plate-border: rgba(255, 78, 170, 0.30);
+  --tile-face:    linear-gradient(160deg, #ffffff 0%, #f7f1f8 100%);
+  --tile-border:  #ef78bd;
+  --tile-text:    #3a112e;
+  --tile-shadow:  0 4px 0 #d644a9, 0 10px 20px rgba(129, 28, 94, 0.24);
+  --tile-filled-border: #f34ca6;
+  --key-bg:       #ffffff;
+  --key-text:     #34122b;
+  --key-shadow:   0 4px 0 #d73ca1, 0 8px 16px rgba(121, 31, 93, 0.22);
+  --key-hover:    #fff5fb;
+  --vowel-accent: #9f7df2;
+  --brand:        #f34ca6;
+  --brand-dk:     #d7338f;
+  --brand-text:   #2b0921;
+  --accent:       #f34ca6;
+  --header-bg:    #f34ca6;
+  --header-border: rgba(255, 255, 255, 0.28);
+  --focusbar-bg:  rgba(255, 245, 252, 0.92);
+  --panel-bg:     #fff7fc;
+  --panel-border: rgba(233, 121, 188, 0.24);
+  --panel-shadow: 0 8px 32px rgba(145, 52, 116, 0.20);
+  --text:         #3a112e;
+  --text-muted:   #8d4e77;
+  --modal-bg:     #fff6fc;
+  --fun-bg:       #ffe8f7;
+  --fun-text:     #a0256f;
+  --fun-border:   #f2acd6;
+  --logo-word:    #30112a;
+  --logo-quest:   #ff4ab0;
+  --logo-dot:     #b07bff;
+}

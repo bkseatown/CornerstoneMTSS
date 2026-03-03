@@ -6,8 +6,21 @@
   <title>Redirecting...</title>
   <script>
     (function redirect() {
-      var target = "../word-quest.html?play=1" + (window.location.hash || "");
-      window.location.replace(target);
+      try {
+        var current = new URL(window.location.href);
+        var target = new URL("../word-quest.html", current.href);
+        current.searchParams.forEach(function (value, key) {
+          target.searchParams.set(key, value);
+        });
+        if (!target.searchParams.has("play")) target.searchParams.set("play", "1");
+        target.hash = current.hash || "";
+        if (target.href !== current.href) {
+          window.location.replace(target.toString());
+        }
+      } catch (_e) {
+        var fallback = "../word-quest.html?play=1" + (window.location.hash || "");
+        window.location.replace(fallback);
+      }
     })();
   </script>
 </head>
