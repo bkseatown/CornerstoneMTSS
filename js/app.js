@@ -15025,14 +15025,7 @@
   });
 
   // Buttons
-  _el('new-game-btn')?.addEventListener('click',  (event) => {
-    if (DEMO_MODE) {
-      event.preventDefault();
-      exitDemoModeToPlay();
-      return;
-    }
-    newGame();
-  });
+  _el('new-game-btn')?.addEventListener('click', newGame);
   _el('play-again-btn')?.addEventListener('click', newGame);
   _el('phonics-clue-open-btn')?.addEventListener('click', () => {
     showInformantHintToast();

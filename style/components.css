@@ -2281,6 +2281,7 @@ html[data-home-mode="play"] .focus-search-item span {
 html[data-home-mode="play"] .focus-search-item.is-curriculum small,
 html[data-home-mode="play"] .focus-search-item small {
   color: #2f4b66;
+  font-size: 0.78rem;
 }
 
 .focus-inline-results.is-curriculum-list .focus-curriculum-item {
