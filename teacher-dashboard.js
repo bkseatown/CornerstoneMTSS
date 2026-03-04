@@ -25,6 +25,7 @@
   var SessionPlanner = window.CSSessionPlanner;
   var InstructionalSequencer = window.CSInstructionalSequencer;
   var NumeracySequencer = window.CSNumeracySequencer;
+  var NumeracyPracticeEngine = window.CSNumeracyPracticeEngine;
   var CurriculumMap = window.CSCurriculumMap;
   var ReportingGenerator = window.CSReportingGenerator;
   var FrameworkRegistry = window.CSFrameworkRegistry;
@@ -61,10 +62,12 @@
     efTimer: null,
     efSecondsLeft: 0,
     fidelitySeeded: {},
+    numeracyPracticeSeeded: {},
     meetingFormat: "sas",
     meetingLanguage: "en",
     liveTranslate: false,
-    reportDraft: null
+    reportDraft: null,
+    numeracyMapLoaded: false
   };
   var skillStoreLogged = false;
 
@@ -222,6 +225,11 @@
     numeracyStrategyStage: document.getElementById("td-num-strategy-stage"),
     numeracyPracticeMode: document.getElementById("td-num-practice-mode"),
     numeracyActionLine: document.getElementById("td-num-action-line"),
+    numeracyRepresentationMode: document.getElementById("td-num-representation-mode"),
+    numeracyFeedbackType: document.getElementById("td-num-feedback-type"),
+    numeracyProblemList: document.getElementById("td-num-problem-list"),
+    numeracyScaffoldList: document.getElementById("td-num-scaffold-list"),
+    numeracyProgressionLine: document.getElementById("td-num-progression-line"),
     numGradeSelect: document.getElementById("td-num-grade-select"),
     numUnitSelect: document.getElementById("td-num-unit-select"),
     numLessonSelect: document.getElementById("td-num-lesson-select"),
@@ -353,6 +361,24 @@
     syncNumeracyCurriculumSelectors();
   }
 
+  function loadIllustrativeMathMapData() {
+    if (state.numeracyMapLoaded) return Promise.resolve();
+    state.numeracyMapLoaded = true;
+    return fetch("./data/illustrative-math-map.json", { cache: "no-cache" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("map-load-failed");
+        return response.json();
+      })
+      .then(function (payload) {
+        if (!payload || typeof payload !== "object" || Array.isArray(payload)) return;
+        window.CSIllustrativeMathMapData = payload;
+        syncNumeracyCurriculumSelectors();
+      })
+      .catch(function () {
+        // Keep existing fallback map behavior.
+      });
+  }
+
   function buildNumeracyStubProfile(row) {
     var student = row && row.student ? row.student : {};
     var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
@@ -399,11 +425,100 @@
     return fallback;
   }
 
+  function getCurrentNumeracyAlignment() {
+    if (!el.numGradeSelect || !el.numUnitSelect || !el.numLessonSelect) return null;
+    var grade = String(el.numGradeSelect.value || "");
+    var unit = String(el.numUnitSelect.value || "");
+    var lesson = String(el.numLessonSelect.value || "");
+    if (!grade || !unit || !lesson || !CurriculumMap || typeof CurriculumMap.getIllustrativeAlignment !== "function") return null;
+    return CurriculumMap.getIllustrativeAlignment(grade, unit, lesson);
+  }
+
+  function selectNumeracyMode(recommended) {
+    var recommendationMode = String(recommended || "Quick Check");
+    if (!el.numeracyPracticeMode) return recommendationMode;
+    if (!el.numeracyPracticeMode.value) {
+      el.numeracyPracticeMode.value = recommendationMode;
+    }
+    if (!el.numeracyPracticeMode.value) {
+      el.numeracyPracticeMode.value = "Quick Check";
+    }
+    return String(el.numeracyPracticeMode.value || recommendationMode || "Quick Check");
+  }
+
+  function escListHtml(value) {
+    return escAttr(value);
+  }
+
+  function renderNumeracyPracticePanel(practice) {
+    if (!practice) return;
+    var problems = Array.isArray(practice.problemSet) ? practice.problemSet : [];
+    var scaffolds = Array.isArray(practice.scaffolds) ? practice.scaffolds : [];
+    var progression = practice.progressionSignal || {};
+
+    if (el.numeracyRepresentationMode) {
+      el.numeracyRepresentationMode.textContent = String(practice.representationMode || "Open number line decomposition");
+    }
+    if (el.numeracyFeedbackType) {
+      el.numeracyFeedbackType.textContent = String(practice.feedbackType || "Immediate correctness + one strategy note");
+    }
+    if (el.numeracyProblemList) {
+      el.numeracyProblemList.innerHTML = (problems.length ? problems : [{ prompt: "No generated practice set." }])
+        .slice(0, 5)
+        .map(function (item) { return "<li>" + escListHtml(item.prompt || "") + "</li>"; })
+        .join("");
+    }
+    if (el.numeracyScaffoldList) {
+      el.numeracyScaffoldList.innerHTML = (scaffolds.length ? scaffolds : ["Use model-first reasoning and explain each step."])
+        .slice(0, 6)
+        .map(function (item) { return "<li>" + escListHtml(item) + "</li>"; })
+        .join("");
+    }
+    if (el.numeracyProgressionLine) {
+      el.numeracyProgressionLine.textContent =
+        "Trend: " + String(progression.trendDecision || "HOLD") +
+        " • Tier: " + String(progression.tierLevel || "Tier 2") +
+        " • Suggested next step: " + String(progression.suggestedNextStep || "Hold current mode and monitor accuracy trend.");
+    }
+  }
+
+  function maybeRecordNumeracyPractice(row, recommendation, practice, accuracy) {
+    if (!NumeracyPracticeEngine || typeof NumeracyPracticeEngine.recordPracticeSession !== "function") return;
+    var studentId = row && row.student ? String(row.student.id || "") : "demo";
+    var mode = selectNumeracyMode(recommendation && recommendation.practiceMode);
+    var key = [
+      studentId,
+      String(recommendation && recommendation.contentFocus || ""),
+      String(recommendation && recommendation.strategyStage || ""),
+      mode
+    ].join("|");
+    if (state.numeracyPracticeSeeded[key]) return;
+    var attempts = Array.isArray(practice && practice.problemSet) ? practice.problemSet.length : 4;
+    var timePerProblem = mode === "Skill Sprint" ? 18 : (mode === "Quick Check" ? 25 : 38);
+    NumeracyPracticeEngine.recordPracticeSession({
+      studentId: studentId,
+      attempts: attempts,
+      accuracy: clamp(Number(accuracy), 0, 1),
+      strategyStage: recommendation && recommendation.strategyStage,
+      modeUsed: mode,
+      timeSpentSeconds: attempts * timePerProblem
+    });
+    state.numeracyPracticeSeeded[key] = true;
+  }
+
   function toPct(value) {
     var n = Number(value);
     if (!Number.isFinite(n)) return 0;
     if (n > 1) return Math.max(0, Math.min(100, n));
     return Math.max(0, Math.min(100, n * 100));
+  }
+
+  function clamp(value, min, max) {
+    var n = Number(value);
+    if (!Number.isFinite(n)) return min;
+    if (n < min) return min;
+    if (n > max) return max;
+    return n;
   }
 
   function computeTierInputsForRow(row) {
@@ -530,12 +645,40 @@
     if (!el.numeracyContentFocus || !el.numeracyStrategyStage || !el.numeracyPracticeMode || !el.numeracyActionLine) return;
     var fallback = latestNumeracyRecommendation(null);
     var recommendation = latestNumeracyRecommendation(row || null);
+    var tierInput = computeTierInputsForRow(row || null);
+    var selectedMode = selectNumeracyMode(recommendation.practiceMode || fallback.practiceMode);
+    recommendation.practiceMode = selectedMode;
     el.numeracyContentFocus.textContent = String(recommendation.contentFocus || fallback.contentFocus);
     el.numeracyStrategyStage.textContent = String(recommendation.strategyStage || fallback.strategyStage);
-    el.numeracyPracticeMode.textContent = String(recommendation.practiceMode || fallback.practiceMode);
     if (el.numeracyTier) el.numeracyTier.textContent = String(recommendation.tierSignal || fallback.tierSignal);
-    el.numeracyActionLine.textContent = String(recommendation.recommendedAction || fallback.recommendedAction);
+    var alignment = getCurrentNumeracyAlignment();
+    var mappedNode = String(alignment && alignment.mappedNumeracyNode || recommendation.contentFocus || "Core Numeracy Node");
+    var practice = NumeracyPracticeEngine && typeof NumeracyPracticeEngine.generateNumeracyPractice === "function"
+      ? NumeracyPracticeEngine.generateNumeracyPractice({
+          contentFocus: recommendation.contentFocus,
+          strategyStage: recommendation.strategyStage,
+          errorPattern: recommendation.errorPattern,
+          tierLevel: recommendation.tierSignal,
+          gradeBand: row && row.student ? String(row.student.grade || "G5") : "G5",
+          mode: selectedMode,
+          mappedNumeracyNode: mappedNode,
+          recentAccuracy: Number(tierInput.recentAccuracy || 0.72),
+          goalAccuracy: Number(tierInput.goalAccuracy || 0.8),
+          stableCount: Number(tierInput.stableCount || 1),
+          weeksInIntervention: Number(tierInput.weeksInIntervention || 6),
+          fidelityPercent: Number(tierInput.fidelityPercent || 82)
+        })
+      : null;
+    var progression = practice && practice.progressionSignal ? practice.progressionSignal : null;
+    var trend = progression ? String(progression.trendDecision || "HOLD") : String(recommendation.trendDecision || "HOLD");
+    var tierLevel = progression ? String(progression.tierLevel || recommendation.tierSignal || "Tier 2") : String(recommendation.tierSignal || "Tier 2");
+    var nextStep = progression
+      ? String(progression.suggestedNextStep || "Hold current strategy and monitor trend.")
+      : "Run " + selectedMode + " with model-based supports, then reassess trend.";
+    el.numeracyActionLine.textContent = "Run " + selectedMode + " aligned to " + mappedNode + ". Trend: " + trend + " • Tier: " + tierLevel + ". " + nextStep;
     renderFrameworkBadges(el.numFrameworkBadges, String(recommendation.contentFocus || "numeracy"));
+    renderNumeracyPracticePanel(practice);
+    maybeRecordNumeracyPractice(row, recommendation, practice, Number(tierInput.recentAccuracy || 0.72));
     renderNumeracyAlignmentLine();
   }
 
@@ -1122,6 +1265,22 @@
     if (need >= 0.65) return "High need signal on " + formatSkillBreadcrumb(top.skillId) + ".";
     if (need >= 0.4) return "Developing signal on " + formatSkillBreadcrumb(top.skillId) + ".";
     return "Monitor consistency for " + formatSkillBreadcrumb(top.skillId) + ".";
+  }
+
+  function getSelectedPlanRow() {
+    var rows = state.todayPlan && Array.isArray(state.todayPlan.students) ? state.todayPlan.students : [];
+    var sid = String(state.selectedId || "");
+    if (sid) {
+      var match = rows.find(function (item) {
+        return item && item.student && String(item.student.id || "") === sid;
+      });
+      if (match) return match;
+    }
+    return rows[0] || null;
+  }
+
+  function refreshNumeracyPanelFromSelection() {
+    renderNumeracyRecommendationCard(getSelectedPlanRow());
   }
 
   function renderSurgicalDashboard(rows) {
@@ -4188,17 +4347,25 @@
         if (el.numUnitSelect) el.numUnitSelect.value = "";
         if (el.numLessonSelect) el.numLessonSelect.value = "";
         syncNumeracyCurriculumSelectors();
+        refreshNumeracyPanelFromSelection();
       });
     }
     if (el.numUnitSelect) {
       el.numUnitSelect.addEventListener("change", function () {
         if (el.numLessonSelect) el.numLessonSelect.value = "";
         syncNumeracyCurriculumSelectors();
+        refreshNumeracyPanelFromSelection();
       });
     }
     if (el.numLessonSelect) {
       el.numLessonSelect.addEventListener("change", function () {
         renderNumeracyAlignmentLine();
+        refreshNumeracyPanelFromSelection();
+      });
+    }
+    if (el.numeracyPracticeMode) {
+      el.numeracyPracticeMode.addEventListener("change", function () {
+        refreshNumeracyPanelFromSelection();
       });
     }
 
@@ -4225,6 +4392,7 @@
   primeDemoMetrics();
   refreshCaseload();
   bindEvents();
+  void loadIllustrativeMathMapData();
   initNumeracyCurriculumSelectors();
   document.addEventListener("keydown", function (event) {
     if (event.key === "H" && event.shiftKey) {

@@ -328,6 +328,11 @@ body.cs-has-nav-shell .td-shell {
   color: var(--text-primary);
 }
 
+.numeracy-mode-select {
+  width: 100%;
+  min-height: 34px;
+}
+
 .numeracy-curriculum-controls {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
@@ -362,6 +367,56 @@ body.cs-has-nav-shell .td-shell {
 }
 
 .numeracy-curriculum-line {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--text-secondary);
+}
+
+.numeracy-practice-panel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 66%, transparent);
+  border-radius: var(--radius-2);
+  background: color-mix(in oklab, var(--surface-elev-2) 84%, transparent);
+  padding: 10px;
+}
+
+.numeracy-practice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.numeracy-practice-block {
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 70%, transparent);
+  border-radius: var(--radius-2);
+  background: var(--surface-1);
+  padding: 8px 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.numeracy-practice-block-wide {
+  grid-column: span 2;
+}
+
+.numeracy-practice-value {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--text-primary);
+}
+
+.numeracy-practice-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  color: var(--text-primary);
+  font-size: var(--fs-1);
+  line-height: var(--lh-normal);
+}
+
+.numeracy-progression-line {
   margin: 0;
   font-size: var(--fs-1);
   color: var(--text-secondary);
@@ -627,6 +682,14 @@ body.cs-has-nav-shell .td-shell {
 
   .numeracy-curriculum-badge {
     justify-self: start;
+  }
+
+  .numeracy-practice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .numeracy-practice-block-wide {
+    grid-column: span 1;
   }
 
   .queue-list,

@@ -105,7 +105,12 @@
               </div>
               <div class="numeracy-meta-item">
                 <span class="numeracy-meta-label">Practice Mode</span>
-                <strong id="td-num-practice-mode">Quick Check</strong>
+                <select id="td-num-practice-mode" class="td-top-btn numeracy-mode-select">
+                  <option value="Quick Check">Quick Check</option>
+                  <option value="Strategy Builder">Strategy Builder</option>
+                  <option value="Error Analysis">Error Analysis</option>
+                  <option value="Skill Sprint">Skill Sprint</option>
+                </select>
               </div>
             </div>
             <div id="td-num-framework-badges" class="framework-badge-row" aria-label="Numeracy framework alignment"></div>
@@ -132,6 +137,31 @@
             </div>
             <p id="td-num-curriculum-line" class="numeracy-curriculum-line hidden"></p>
             <p id="td-num-action-line" class="focus-reason">Run Quick Check to verify strategy use before moving to Strategy Builder.</p>
+            <section class="numeracy-practice-panel" aria-label="Numeracy practice detail">
+              <div class="numeracy-practice-grid">
+                <article class="numeracy-practice-block">
+                  <p class="numeracy-meta-label">Representation</p>
+                  <p id="td-num-representation-mode" class="numeracy-practice-value">Open number line decomposition</p>
+                </article>
+                <article class="numeracy-practice-block">
+                  <p class="numeracy-meta-label">Feedback Type</p>
+                  <p id="td-num-feedback-type" class="numeracy-practice-value">Immediate correctness + one strategy note</p>
+                </article>
+                <article class="numeracy-practice-block numeracy-practice-block-wide">
+                  <p class="numeracy-meta-label">Problem Set</p>
+                  <ul id="td-num-problem-list" class="numeracy-practice-list">
+                    <li>Problem set will appear after recommendation sync.</li>
+                  </ul>
+                </article>
+                <article class="numeracy-practice-block numeracy-practice-block-wide">
+                  <p class="numeracy-meta-label">Scaffolds</p>
+                  <ul id="td-num-scaffold-list" class="numeracy-practice-list">
+                    <li>Scaffolds will appear after recommendation sync.</li>
+                  </ul>
+                </article>
+              </div>
+              <p id="td-num-progression-line" class="numeracy-progression-line">Trend: HOLD • Tier: Tier 2 • Suggested next step: Continue current strategy with one representation switch.</p>
+            </section>
           </article>
         </section>
 
@@ -375,6 +405,7 @@
   <script src="./js/core/framework-registry.js?v=20260303a" defer></script>
   <script src="./js/numeracy/sequencer.js?v=20260303a" defer></script>
   <script src="./js/numeracy/curriculum-map.js?v=20260303b" defer></script>
+  <script src="./js/numeracy/practice-engine.js?v=20260304a" defer></script>
   <script src="./build-stamp.js?v=20260301y"></script>
   <script src="./js/build-badge.js?v=20260301y"></script>
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
