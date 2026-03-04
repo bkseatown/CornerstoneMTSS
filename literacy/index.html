@@ -8,14 +8,21 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260302a">
   <link rel="stylesheet" href="./style/typography.css?v=20260302a">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260302a">
   <link rel="stylesheet" href="./style/hub.css?v=20260302a">
 </head>
-<body class="cs-hub-page">
+<body class="cs-hub-page cs-hub-page--literacy">
   <main class="cs-hub-root" aria-label="Literacy domain hub">
     <header class="cs-hub-head">
       <div>
+        <p class="cs-hub-kicker">Teacher Command Surface</p>
         <h1>Literacy Domain</h1>
         <p>Four processing layers to guide intervention flow from foundational decoding to comprehension transfer.</p>
+        <ul class="cs-hub-signals" aria-label="Literacy operating signals">
+          <li>Tier-aware launches</li>
+          <li>Skill-focused pathways</li>
+          <li>Ready in under 60 seconds</li>
+        </ul>
       </div>
       <nav class="cs-hub-nav" aria-label="Hub navigation">
         <a class="cs-btn cs-btn-quiet" href="./">Home</a>
@@ -24,7 +31,7 @@
     </header>
 
     <section class="cs-hub-list">
-      <article class="cs-hub-section">
+      <article class="cs-hub-section cs-hub-section--priority">
         <h2>1. Word-Level Processing</h2>
         <p>Target letter-sound patterns, syllable control, and rapid decoding accuracy.</p>
         <div class="cs-hub-row">
@@ -47,7 +54,7 @@
         <p>Strengthen sentence architecture, paragraph cohesion, and revision confidence.</p>
         <div class="cs-hub-row">
           <span class="cs-hub-engine">Writing Studio</span>
-          <a class="cs-btn cs-btn-primary" href="./writing-studio.html">Launch Writing Studio</a>
+          <a class="cs-btn cs-btn-quiet" href="./writing-studio.html">Launch Writing Studio</a>
         </div>
       </article>
 
@@ -56,12 +63,13 @@
         <p>Reinforce pacing, accuracy, and understanding through short structured passages.</p>
         <div class="cs-hub-row">
           <span class="cs-hub-engine">Reading Lab</span>
-          <a class="cs-btn cs-btn-primary" href="./reading-lab.html">Launch Reading Lab</a>
+          <a class="cs-btn cs-btn-quiet" href="./reading-lab.html">Launch Reading Lab</a>
         </div>
       </article>
     </section>
   </main>
 
+  <script src="./js/nav-shell.js?v=20260302a" defer></script>
   <script src="./build-stamp.js?v=20260302a"></script>
   <script src="./js/build-badge.js?v=20260302a"></script>
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>

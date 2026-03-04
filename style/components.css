@@ -3843,7 +3843,7 @@ html[data-home-mode="play"] #theme-dock-toggle-btn,
 html[data-home-mode="play"] #music-dock-toggle-btn,
 html[data-home-mode="play"] #case-toggle-btn,
 html[data-home-mode="play"] #keyboard-layout-toggle {
-  color: color-mix(in oklab, var(--text) 52%, #ffffff 48%);
+  color: color-mix(in oklab, var(--text) 84%, #ffffff 16%);
   text-shadow: 0 1px 1px rgba(6, 15, 28, 0.52);
   font-weight: 900;
 }
@@ -3862,6 +3862,7 @@ html[data-home-mode="play"] .case-toggle-glyph {
   font-size: 1rem;
   letter-spacing: 0.01em;
   font-weight: 900;
+  color: color-mix(in oklab, #1d2f40 84%, #ffffff 16%);
 }
 
 html[data-home-mode="play"] .focus-search-label span {
@@ -6014,6 +6015,8 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   font-size: 0.98rem;
   font-weight: 880;
   border: 1px solid color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
+  background: color-mix(in oklab, var(--brand) 74%, #132b3f 26%);
+  color: #f6fbff;
   box-shadow: 0 8px 18px rgba(12, 30, 48, 0.22);
 }
 

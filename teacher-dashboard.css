@@ -131,19 +131,19 @@ body.cs-has-nav-shell .td-shell {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1, "zero" 0;
 }
-.td-wordmark span { font-size: var(--fs-1); color: color-mix(in oklab, var(--muted) 82%, white 18%); font-weight: var(--fw-medium); }
+.td-wordmark span { font-size: var(--fs-1); color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%); font-weight: var(--fw-medium); }
 .td-top-description {
   margin: 4px 0 0;
   font-size: 0.96rem;
   line-height: 1.48;
-  color: color-mix(in oklab, var(--muted) 86%, white 14%);
+  color: color-mix(in oklab, var(--text-primary) 72%, var(--muted) 28%);
   max-width: 560px;
 }
 .td-buildline {
   display: block;
   margin-top: 3px;
   font-size: var(--fs-0);
-  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+  color: color-mix(in oklab, var(--text-primary) 64%, var(--muted) 36%);
   letter-spacing: var(--ls-base);
 }
 .td-brand-home {
