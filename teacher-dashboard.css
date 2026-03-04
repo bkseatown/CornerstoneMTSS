@@ -289,6 +289,37 @@ body.cs-has-nav-shell .td-shell {
   gap: var(--sp-3);
 }
 
+.executive-snapshot-card {
+  grid-column: 1 / -1;
+  gap: 12px;
+  border-color: color-mix(in oklab, var(--surface-border) 78%, #8fa4bf 22%);
+}
+
+.td-executive-active-tag {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, #8ea4bf 48%, var(--surface-border));
+  background: color-mix(in oklab, #e8eef5 78%, var(--surface-elev-2));
+  color: color-mix(in oklab, #4f647a 84%, var(--text-secondary));
+  padding: 2px 10px;
+  font-size: var(--fs-sm);
+}
+
+.executive-accommodation-quicklog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.executive-accommodation-quicklog .td-top-btn.is-logged {
+  border-color: color-mix(in oklab, #6d879f 52%, var(--surface-border));
+  background: color-mix(in oklab, #dfe8f2 78%, var(--surface-elev-2));
+}
+
 .focus-card {
   height: 100%;
   padding: 20px;

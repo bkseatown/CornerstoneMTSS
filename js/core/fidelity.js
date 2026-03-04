@@ -8,6 +8,7 @@
   "use strict";
 
   var sessions = [];
+  var accommodationLogs = {};
 
   function asNumber(value, fallback) {
     var n = Number(value);
@@ -72,8 +73,44 @@
     return summarize(studentId, interventionType);
   }
 
+  function ensureAccommodationRow(studentId) {
+    var sid = String(studentId || "").trim() || "demo";
+    if (!accommodationLogs[sid]) {
+      accommodationLogs[sid] = {
+        extendedTimeUsed: 0,
+        visualSupportsProvided: 0,
+        checkInsCompleted: 0,
+        taskChunkingApplied: 0,
+        totalEntries: 0
+      };
+    }
+    return accommodationLogs[sid];
+  }
+
+  function logAccommodationSupport(payload) {
+    var src = payload && typeof payload === "object" ? payload : {};
+    var sid = String(src.studentId || "").trim() || "demo";
+    var row = ensureAccommodationRow(sid);
+    var supportType = String(src.supportType || "").toLowerCase();
+    if (supportType === "extended_time") row.extendedTimeUsed += 1;
+    if (supportType === "visual_supports") row.visualSupportsProvided += 1;
+    if (supportType === "check_ins") row.checkInsCompleted += 1;
+    if (supportType === "task_chunking") row.taskChunkingApplied += 1;
+    row.totalEntries += 1;
+    row.lastUpdatedAt = Date.now();
+    return Object.assign({}, row);
+  }
+
+  function getAccommodationSupportSummary(studentId) {
+    var sid = String(studentId || "").trim() || "demo";
+    var row = ensureAccommodationRow(sid);
+    return Object.assign({}, row);
+  }
+
   return {
     logInterventionSession: logInterventionSession,
-    getFidelitySummary: getFidelitySummary
+    getFidelitySummary: getFidelitySummary,
+    logAccommodationSupport: logAccommodationSupport,
+    getAccommodationSupportSummary: getAccommodationSupportSummary
   };
 });

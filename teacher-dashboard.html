@@ -71,6 +71,7 @@
               <h1 id="td-focus-student-name" class="focus-student-name">Select a student</h1>
               <span id="td-focus-tier-line" class="focus-tier">Tier 2</span>
             </div>
+            <p id="td-executive-active-tag" class="td-executive-active-tag hidden">Executive Support Active</p>
             <p id="td-focus-reason-line" class="focus-reason">Instructional sequencing and intervention planning for Tier 2/3 literacy and numeracy support.</p>
             <p id="td-focus-fidelity-line" class="focus-fidelity-line fidelity-good">Fidelity: 0% over 0 sessions</p>
             <div id="td-lit-framework-badges" class="framework-badge-row" aria-label="Literacy framework alignment"></div>
@@ -163,6 +164,34 @@
               </div>
               <p id="td-num-progression-line" class="numeracy-progression-line">Trend: HOLD • Tier: Tier 2 • Suggested next step: Continue current strategy with one representation switch.</p>
             </section>
+          </article>
+          <article class="focus-card card td-surface executive-snapshot-card" aria-labelledby="td-exec-snapshot-title">
+            <p class="dashboard-kicker">Executive Snapshot</p>
+            <div class="focus-header">
+              <h2 id="td-exec-snapshot-title" class="numeracy-title">Executive Function & Organization</h2>
+              <span id="td-exec-risk-chip" class="focus-tier">MODERATE</span>
+            </div>
+            <div class="numeracy-meta-grid">
+              <div class="numeracy-meta-item">
+                <span class="numeracy-meta-label">Primary Barrier</span>
+                <strong id="td-exec-primary-barrier">Initiation</strong>
+              </div>
+              <div class="numeracy-meta-item">
+                <span class="numeracy-meta-label">Weekly Goal</span>
+                <strong id="td-exec-weekly-goal">Complete 4 tasks with prompt support.</strong>
+              </div>
+              <div class="numeracy-meta-item">
+                <span class="numeracy-meta-label">Progress Status</span>
+                <strong id="td-exec-progress-status">Monitoring</strong>
+              </div>
+            </div>
+            <p id="td-exec-scaffold-line" class="focus-reason">Use launch routine and step-by-step planning scaffold.</p>
+            <div class="executive-accommodation-quicklog" aria-label="Accommodation quick logging">
+              <button class="td-top-btn" id="td-acc-extended-time" type="button">Extended time used</button>
+              <button class="td-top-btn" id="td-acc-visual-supports" type="button">Visual supports provided</button>
+              <button class="td-top-btn" id="td-acc-checkins" type="button">Check-ins completed</button>
+              <button class="td-top-btn" id="td-acc-task-chunking" type="button">Task chunking applied</button>
+            </div>
           </article>
         </section>
 
@@ -431,6 +460,9 @@
   <script src="./js/core/tier-engine.js?v=20260303a" defer></script>
   <script src="./js/core/fidelity.js?v=20260303a" defer></script>
   <script src="./js/core/framework-registry.js?v=20260303a" defer></script>
+  <script src="./js/executive/executive-profile.js?v=20260304a" defer></script>
+  <script src="./js/executive/support-engine.js?v=20260304a" defer></script>
+  <script src="./js/executive/task-breakdown.js?v=20260304a" defer></script>
   <script src="./js/numeracy/sequencer.js?v=20260303a" defer></script>
   <script src="./js/numeracy/curriculum-map.js?v=20260303b" defer></script>
   <script src="./js/numeracy/practice-engine.js?v=20260304a" defer></script>

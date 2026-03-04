@@ -32,6 +32,9 @@
   var FrameworkRegistry = window.CSFrameworkRegistry;
   var TierEngine = window.CSTierEngine;
   var FidelityEngine = window.CSFidelity;
+  var ExecutiveProfileEngine = window.CSExecutiveProfile;
+  var ExecutiveSupportEngine = window.CSExecutiveSupportEngine;
+  var TaskBreakdownTool = window.CSTaskBreakdown;
   var AlignmentLoader = window.CSAlignmentLoader;
   var InterventionPlanner = window.CSInterventionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
@@ -71,7 +74,9 @@
     numeracyMapLoaded: false,
     meetingDeck: [],
     meetingDeckIndex: 0,
-    meetingDeckConcernMode: false
+    meetingDeckConcernMode: false,
+    executiveProfile: null,
+    executivePlan: null
   };
   var skillStoreLogged = false;
 
@@ -226,6 +231,7 @@
     focusTierLine: document.getElementById("td-focus-tier-line"),
     focusReasonLine: document.getElementById("td-focus-reason-line"),
     focusFidelityLine: document.getElementById("td-focus-fidelity-line"),
+    executiveActiveTag: document.getElementById("td-executive-active-tag"),
     expRecentAccuracy: document.getElementById("td-exp-recent-accuracy"),
     expGoalAccuracy: document.getElementById("td-exp-goal-accuracy"),
     expStableCount: document.getElementById("td-exp-stable-count"),
@@ -247,6 +253,15 @@
     numeracyProblemList: document.getElementById("td-num-problem-list"),
     numeracyScaffoldList: document.getElementById("td-num-scaffold-list"),
     numeracyProgressionLine: document.getElementById("td-num-progression-line"),
+    executiveRiskChip: document.getElementById("td-exec-risk-chip"),
+    executivePrimaryBarrier: document.getElementById("td-exec-primary-barrier"),
+    executiveWeeklyGoal: document.getElementById("td-exec-weekly-goal"),
+    executiveProgressStatus: document.getElementById("td-exec-progress-status"),
+    executiveScaffoldLine: document.getElementById("td-exec-scaffold-line"),
+    accExtendedTimeBtn: document.getElementById("td-acc-extended-time"),
+    accVisualSupportsBtn: document.getElementById("td-acc-visual-supports"),
+    accCheckInsBtn: document.getElementById("td-acc-checkins"),
+    accTaskChunkingBtn: document.getElementById("td-acc-task-chunking"),
     numGradeSelect: document.getElementById("td-num-grade-select"),
     numUnitSelect: document.getElementById("td-num-unit-select"),
     numLessonSelect: document.getElementById("td-num-lesson-select"),
@@ -629,6 +644,87 @@
     return signal;
   }
 
+  function buildExecutiveInput(row) {
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var need = Number(top && top.need || 0.45);
+    var studentId = row && row.student ? String(row.student.id || "") : "";
+    var ef = SupportStore && typeof SupportStore.getExecutiveFunction === "function" && studentId
+      ? SupportStore.getExecutiveFunction(studentId)
+      : { focusHistory: [], upcomingTasks: [] };
+    var focusHistory = Array.isArray(ef.focusHistory) ? ef.focusHistory : [];
+    var lowFocus = focusHistory.filter(function (item) { return String(item.selfRating || "").toLowerCase() === "struggled"; }).length;
+    return {
+      taskCompletionRate: Math.max(0, Math.min(1, 1 - need - (lowFocus * 0.03))),
+      assignmentMissingCount: Math.max(0, Math.round(need * 8)),
+      initiationDelay: Math.max(1, Math.round((need * 12) + 2)),
+      teacherObservations: need >= 0.65 ? "Task initiation and planning delays observed." : "Moderate organizational support needed."
+    };
+  }
+
+  function buildExecutiveProfileAndPlan(row) {
+    var input = buildExecutiveInput(row);
+    var profile = ExecutiveProfileEngine && typeof ExecutiveProfileEngine.generateExecutiveProfile === "function"
+      ? ExecutiveProfileEngine.generateExecutiveProfile(input)
+      : {
+          executiveRiskLevel: "MODERATE",
+          primaryBarrier: "Planning",
+          suggestedSupports: ["Use a simple start routine and step checklist."]
+        };
+    var gradeBand = row && row.student ? String(row.student.grade || "G5") : "G5";
+    var plan = ExecutiveSupportEngine && typeof ExecutiveSupportEngine.generateExecutiveSupportPlan === "function"
+      ? ExecutiveSupportEngine.generateExecutiveSupportPlan({
+          executiveRiskLevel: profile.executiveRiskLevel,
+          primaryBarrier: profile.primaryBarrier,
+          gradeBand: gradeBand
+        })
+      : {
+          dailySupportActions: ["Use launch cue and chunking scaffold."],
+          weeklyGoal: "Complete 4 tasks with supports.",
+          teacherScaffold: "Prompt-fade-monitor sequence.",
+          studentFacingPrompt: "Start with step one and check off progress.",
+          progressMetric: "Weekly completion and check-in consistency."
+        };
+    state.executiveProfile = profile;
+    state.executivePlan = plan;
+    return { profile: profile, plan: plan };
+  }
+
+  function renderExecutiveSnapshot(row) {
+    var data = buildExecutiveProfileAndPlan(row);
+    var profile = data.profile || {};
+    var plan = data.plan || {};
+    if (el.executiveRiskChip) el.executiveRiskChip.textContent = String(profile.executiveRiskLevel || "MODERATE");
+    if (el.executivePrimaryBarrier) el.executivePrimaryBarrier.textContent = String(profile.primaryBarrier || "Planning");
+    if (el.executiveWeeklyGoal) el.executiveWeeklyGoal.textContent = String(plan.weeklyGoal || "Complete 4 tasks with support.");
+    if (el.executiveProgressStatus) {
+      var risk = String(profile.executiveRiskLevel || "MODERATE");
+      el.executiveProgressStatus.textContent = risk === "HIGH" ? "Intensive support cycle" : (risk === "LOW" ? "Stable with monitoring" : "Active support in progress");
+    }
+    if (el.executiveScaffoldLine) {
+      el.executiveScaffoldLine.textContent = String(plan.teacherScaffold || "Use explicit scaffold sequence with consistent check-ins.");
+    }
+    if (el.executiveActiveTag) {
+      el.executiveActiveTag.classList.remove("hidden");
+      el.executiveActiveTag.textContent = "Executive Support Active";
+    }
+  }
+
+  function updateAccommodationButtons(studentId) {
+    if (!FidelityEngine || typeof FidelityEngine.getAccommodationSupportSummary !== "function") return;
+    var summary = FidelityEngine.getAccommodationSupportSummary(studentId || "demo");
+    function mark(button, count) {
+      if (!button) return;
+      button.classList.toggle("is-logged", Number(count || 0) > 0);
+      button.setAttribute("title", "Logged " + Math.max(0, Math.round(Number(count || 0))) + " time(s)");
+    }
+    mark(el.accExtendedTimeBtn, summary.extendedTimeUsed);
+    mark(el.accVisualSupportsBtn, summary.visualSupportsProvided);
+    mark(el.accCheckInsBtn, summary.checkInsCompleted);
+    mark(el.accTaskChunkingBtn, summary.taskChunkingApplied);
+  }
+
   function renderExplainability(signal, skillNode) {
     var s = signal || { input: {} };
     var input = s.input || {};
@@ -745,6 +841,9 @@
       "Tier Decision Explanation",
       String(report && report.tierDecisionExplanation || ""),
       "",
+      "Executive Function & Organizational Support",
+      String(report && report.executiveFunctionSupport || ""),
+      "",
       "Recommended Next Steps",
       nextSteps.map(function (step, idx) { return (idx + 1) + ". " + step; }).join("\n"),
       "",
@@ -770,6 +869,7 @@
       "<section><h3>Instructional Framework Alignment</h3><p>" + escHtml(translated.instructionalFrameworkAlignment || "") + "</p></section>",
       "<section><h3>Intervention Fidelity Summary</h3><p>" + escHtml(translated.interventionFidelitySummary || "") + "</p></section>",
       "<section><h3>Tier Decision Explanation</h3><p>" + escHtml(translated.tierDecisionExplanation || "") + "</p></section>",
+      "<section><h3>Executive Function &amp; Organizational Support</h3><p>" + escHtml(translated.executiveFunctionSupport || "") + "</p></section>",
       "<section><h3>Recommended Next Steps</h3><ul>" + nextSteps.map(function (step) { return "<li>" + escHtml(step) + "</li>"; }).join("") + "</ul></section>",
       "<section><h3>Parent Summary</h3><p>" + escHtml(translated.parentSummary || "") + "</p></section>"
     ].join("");
@@ -779,6 +879,7 @@
     var summary = Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(state.selectedId) : null;
     var student = summary && summary.student ? summary.student : {};
     var numeracy = latestNumeracyRecommendation(row);
+    var executive = buildExecutiveProfileAndPlan(row || null);
     var tierSignal = computeTierSignalForRow(row);
     var tierInput = tierSignal.input || {};
     var literacyFrameworks = frameworkListFromAlignment(getFrameworkAlignmentSafe(summary ? summary.focus : "literacy"));
@@ -803,6 +904,13 @@
       practiceMode: numeracy.practiceMode,
       tierSignal: numeracy.tierSignal,
       recommendedAction: numeracy.recommendedAction,
+      executiveSupport: {
+        primaryBarrier: executive.profile.primaryBarrier,
+        weeklyGoal: executive.plan.weeklyGoal,
+        dailySupportActions: executive.plan.dailySupportActions,
+        progressMetric: executive.plan.progressMetric,
+        parentExplanation: "School is supporting organization and task completion with clear steps, check-ins, and accommodations."
+      },
       fidelitySummary: tierInput.fidelitySummary || { fidelityPercent: 82, totalSessions: 6 },
       curriculumAlignment: curriculumLine || "Numeracy sequencing aligned to active instructional pathways.",
       frameworkAlignment: numeracyFrameworks
@@ -908,48 +1016,12 @@
 
   function openReportModal() {
     if (!el.reportModal || !el.reportPreview || !state.selectedId) return;
-    var summary = Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(state.selectedId) : null;
-    var student = summary && summary.student ? summary.student : {};
     var focusRows = state.todayPlan && Array.isArray(state.todayPlan.students) ? state.todayPlan.students : [];
     var row = focusRows.find(function (item) { return item && item.student && String(item.student.id || "") === String(state.selectedId); }) || null;
-    var numeracy = latestNumeracyRecommendation(row);
-    var tierSignal = computeTierSignalForRow(row);
-    var tierInput = tierSignal.input || {};
-    var literacyFrameworks = frameworkListFromAlignment(getFrameworkAlignmentSafe(summary ? summary.focus : "literacy"));
-    var numeracyFrameworks = frameworkListFromAlignment(getFrameworkAlignmentSafe(numeracy.contentFocus || "numeracy"));
-    var curriculumLine = el.numCurriculumLine ? String(el.numCurriculumLine.textContent || "").trim() : "";
-    var literacyData = {
-      focus: summary ? String(summary.focus || "Foundational literacy") : "Foundational literacy",
-      growth: summary && summary.metrics ? Number(summary.metrics.weekDelta || 0.12) : 0.12,
-      nextStep: summary && summary.nextMove ? String(summary.nextMove.line || "Continue targeted literacy support.") : "Continue targeted literacy support.",
-      tier: String(tierSignal.tierLevel || (summary && summary.metrics ? summary.metrics.tierLabel : "Tier 2")),
-      recentAccuracy: Number(tierInput.recentAccuracy || 0.72),
-      goalAccuracy: Number(tierInput.goalAccuracy || 0.8),
-      stableCount: Number(tierInput.stableCount || 2),
-      weeksInIntervention: Number(tierInput.weeksInIntervention || 6),
-      fidelitySummary: tierInput.fidelitySummary || { fidelityPercent: 82, totalSessions: 6 },
-      curriculumAlignment: "Literacy sequencing aligned to active instructional pathways.",
-      frameworkAlignment: literacyFrameworks
-    };
-    var numeracyData = {
-      contentFocus: numeracy.contentFocus,
-      strategyStage: numeracy.strategyStage,
-      practiceMode: numeracy.practiceMode,
-      tierSignal: numeracy.tierSignal,
-      recommendedAction: numeracy.recommendedAction,
-      fidelitySummary: tierInput.fidelitySummary || { fidelityPercent: 82, totalSessions: 6 },
-      curriculumAlignment: curriculumLine || "Numeracy sequencing aligned to active instructional pathways.",
-      frameworkAlignment: numeracyFrameworks
-    };
-    var studentProfile = {
-      id: String(student.id || state.selectedId),
-      name: String(student.name || "Student"),
-      tier: literacyData.tier,
-      recentAccuracy: Number(tierInput.recentAccuracy || 0.72),
-      goalAccuracy: Number(tierInput.goalAccuracy || 0.8),
-      stableCount: Number(tierInput.stableCount || 2),
-      weeksInIntervention: Number(tierInput.weeksInIntervention || 6)
-    };
+    var ctx = buildReportingContext(row);
+    var studentProfile = ctx.studentProfile;
+    var literacyData = ctx.literacyData;
+    var numeracyData = ctx.numeracyData;
 
     if (ReportingGenerator && typeof ReportingGenerator.generateStudentReport === "function") {
       state.reportDraft = ReportingGenerator.generateStudentReport(studentProfile, literacyData, numeracyData);
@@ -1437,6 +1509,7 @@
       if (el.focusStudentName) el.focusStudentName.textContent = "Select a student";
       if (el.focusTierLine) el.focusTierLine.textContent = "Tier 2 focus";
       if (el.focusReasonLine) el.focusReasonLine.textContent = "Search a student to get a clear next move.";
+      renderExecutiveSnapshot(null);
       renderExplainability(null, "");
       renderFrameworkBadges(el.litFrameworkBadges, "");
       renderNumeracyRecommendationCard(null);
@@ -1459,8 +1532,10 @@
     if (el.focusReasonLine) el.focusReasonLine.textContent = signalLineForRow(focus);
     var focusSkillId = String(focusTop && focusTop.skillId || "literacy");
     renderExplainability(tierSignal, focusSkillId);
+    renderExecutiveSnapshot(focus);
     renderFrameworkBadges(el.litFrameworkBadges, focusSkillId);
     renderNumeracyRecommendationCard(focus);
+    updateAccommodationButtons(String(focusStudent.id || ""));
     if (el.focusStartBtn) {
       el.focusStartBtn.onclick = function () {
         var sid = String(focusStudent.id || "");
@@ -3032,13 +3107,17 @@
       return;
     }
     var ef = SupportStore.getExecutiveFunction(studentId);
+    var breakdown = TaskBreakdownTool && typeof TaskBreakdownTool.load === "function"
+      ? TaskBreakdownTool.load(studentId)
+      : { assignmentName: "", steps: [], timerMinutes: 10 };
     var activeTask = ef.activeTask || null;
     var upcoming = Array.isArray(ef.upcomingTasks) ? ef.upcomingTasks.slice(0, 3) : [];
     var stepsHtml = "";
     if (activeTask && Array.isArray(activeTask.steps) && activeTask.steps.length) {
       stepsHtml = '<div class="td-ef-steps">' + activeTask.steps.map(function (step, idx) {
         var checked = Array.isArray(activeTask.completedSteps) && activeTask.completedSteps.indexOf(idx) >= 0;
-        return '<label class="td-ef-step"><input type="checkbox" data-ef-step="' + idx + '"' + (checked ? " checked" : "") + '> ' + escAttr(step) + "</label>";
+        var minutes = Array.isArray(breakdown.steps) && breakdown.steps[idx] ? Number(breakdown.steps[idx].minutes || 10) : 10;
+        return '<label class="td-ef-step"><input type="checkbox" data-ef-step="' + idx + '"' + (checked ? " checked" : "") + '> ' + escAttr(step) + ' <span class="td-chip">' + minutes + ' min</span></label>';
       }).join("") + "</div>";
     }
     var upcomingHtml = upcoming.length
@@ -3049,16 +3128,18 @@
 
     el.executiveSupportBody.innerHTML = [
       '<div class="td-impl-form">',
-      '<input id="td-ef-task-input" class="td-anchor-input" type="text" placeholder="Enter assignment or task">',
+      '<input id="td-ef-task-input" class="td-anchor-input" type="text" placeholder="Enter assignment or task" value="' + escAttr(String(breakdown.assignmentName || "")) + '">',
+      '<input id="td-ef-step-minutes" class="td-anchor-input" type="number" min="3" max="40" step="1" value="' + Math.max(3, Math.min(40, Number(breakdown.timerMinutes || 10))) + '" title="Estimated minutes per step">',
       '<button id="td-ef-build" class="td-top-btn" type="button">Build Steps</button>',
       '<button id="td-ef-add-upcoming" class="td-top-btn" type="button">Add Upcoming</button>',
-      '<span></span>',
+      '<button id="td-ef-save-breakdown" class="td-top-btn" type="button">Save Breakdown</button>',
       '</div>',
       (activeTask ? '<p class="td-sequencer-alignment">Active Task: ' + escAttr(activeTask.name || "Task") + "</p>" : '<p class="td-sequencer-alignment">No active executive task.</p>'),
       stepsHtml,
       '<div class="td-impl-form">',
       '<span class="td-ef-timer" id="td-ef-timer">10:00</span>',
       '<button id="td-ef-start-sprint" class="td-top-btn" type="button">Start Focus Sprint</button>',
+      '<input id="td-ef-timer-minutes" class="td-anchor-input" type="number" min="3" max="45" step="1" value="' + Math.max(3, Math.min(45, Number(breakdown.timerMinutes || 10))) + '">',
       '<select id="td-ef-rating"><option>On Task</option><option selected>Mostly</option><option>Struggled</option></select>',
       '<button id="td-ef-log-rating" class="td-top-btn" type="button">Log Focus</button>',
       '</div>',
@@ -3070,9 +3151,18 @@
     if (buildBtn) {
       buildBtn.addEventListener("click", function () {
         var input = document.getElementById("td-ef-task-input");
+        var minutesEl = document.getElementById("td-ef-step-minutes");
         var name = String(input && input.value || "").trim();
         if (!name) return;
         var steps = decomposeTask(name);
+        var mins = Math.max(3, Math.min(40, Number(minutesEl && minutesEl.value || 10) || 10));
+        if (TaskBreakdownTool && typeof TaskBreakdownTool.save === "function") {
+          TaskBreakdownTool.save(studentId, {
+            assignmentName: name,
+            steps: steps.map(function (step) { return { name: step, minutes: mins }; }),
+            timerMinutes: mins
+          });
+        }
         SupportStore.setActiveExecutiveTask(studentId, { name: name, steps: steps, completedSteps: [] });
         renderExecutiveSupport(studentId);
       });
@@ -3085,6 +3175,25 @@
         if (!name) return;
         var due = window.prompt("Due date (YYYY-MM-DD)", "") || "";
         SupportStore.addUpcomingTask(studentId, { name: name, dueDate: due, status: "Not Started" });
+        renderExecutiveSupport(studentId);
+      });
+    }
+    var saveBreakdownBtn = document.getElementById("td-ef-save-breakdown");
+    if (saveBreakdownBtn) {
+      saveBreakdownBtn.addEventListener("click", function () {
+        if (!TaskBreakdownTool || typeof TaskBreakdownTool.save !== "function") return;
+        var input = document.getElementById("td-ef-task-input");
+        var stepMins = document.getElementById("td-ef-step-minutes");
+        var timerMins = document.getElementById("td-ef-timer-minutes");
+        var name = String(input && input.value || "").trim();
+        var mins = Math.max(3, Math.min(40, Number(stepMins && stepMins.value || 10) || 10));
+        var steps = decomposeTask(name || "Task");
+        TaskBreakdownTool.save(studentId, {
+          assignmentName: name,
+          steps: steps.map(function (step) { return { name: step, minutes: mins }; }),
+          timerMinutes: Math.max(3, Math.min(45, Number(timerMins && timerMins.value || mins) || mins))
+        });
+        setCoachLine("Task breakdown saved locally.");
         renderExecutiveSupport(studentId);
       });
     }
@@ -3104,9 +3213,11 @@
     if (startSprintBtn) {
       startSprintBtn.addEventListener("click", function () {
         var timerEl = document.getElementById("td-ef-timer");
+        var timerMinsEl = document.getElementById("td-ef-timer-minutes");
+        var timerMins = Math.max(3, Math.min(45, Number(timerMinsEl && timerMinsEl.value || 10) || 10));
         clearEfTimer();
-        state.efSecondsLeft = 600;
-        if (timerEl) timerEl.textContent = "10:00";
+        state.efSecondsLeft = timerMins * 60;
+        if (timerEl) timerEl.textContent = String(timerMins).padStart(2, "0") + ":00";
         state.efTimer = window.setInterval(function () {
           state.efSecondsLeft -= 1;
           if (timerEl) {
@@ -4510,6 +4621,23 @@
         window.print();
       });
     }
+    function bindAccommodationQuickLog(button, supportType, successLine) {
+      if (!button) return;
+      button.addEventListener("click", function () {
+        if (!FidelityEngine || typeof FidelityEngine.logAccommodationSupport !== "function") return;
+        var sid = state.selectedId || "demo";
+        FidelityEngine.logAccommodationSupport({
+          studentId: sid,
+          supportType: supportType
+        });
+        updateAccommodationButtons(sid);
+        setCoachLine(successLine);
+      });
+    }
+    bindAccommodationQuickLog(el.accExtendedTimeBtn, "extended_time", "Extended time log captured.");
+    bindAccommodationQuickLog(el.accVisualSupportsBtn, "visual_supports", "Visual supports log captured.");
+    bindAccommodationQuickLog(el.accCheckInsBtn, "check_ins", "Check-ins log captured.");
+    bindAccommodationQuickLog(el.accTaskChunkingBtn, "task_chunking", "Task chunking log captured.");
     if (el.tier1PackBtn) {
       el.tier1PackBtn.addEventListener("click", function () {
         if (!state.selectedId || !SupportStore) return;
