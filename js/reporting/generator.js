@@ -119,6 +119,21 @@
     return name + " is making steady growth in " + litFocus + " and " + numFocus + ". Next, we will " + nextStep + " The intervention has been delivered consistently over " + sessions + " sessions, averaging " + avg + "% of planned instructional time.";
   }
 
+  function buildExecutiveFunctionSupport(executiveData) {
+    var data = executiveData && typeof executiveData === "object" ? executiveData : {};
+    var barrier = asText(data.primaryBarrier, "Task initiation and organization");
+    var actions = Array.isArray(data.dailySupportActions) ? data.dailySupportActions.slice(0, 3) : [];
+    var weeklyGoal = asText(data.weeklyGoal, "Complete assigned tasks with scaffold support.");
+    var progress = asText(data.progressMetric, "Progress tracked through weekly completion and support logs.");
+    var parentLine = asText(data.parentExplanation, "School is supporting planning and task completion with clear steps and check-ins.");
+    return [
+      "Barrier: " + barrier,
+      "Intervention actions: " + (actions.length ? actions.join("; ") : "Use structured launch, check-ins, and chunking."),
+      "Progress notes: " + progress + " Weekly goal: " + weeklyGoal,
+      "Parent-friendly explanation: " + parentLine
+    ].join(" ");
+  }
+
   function generateStudentReport(studentProfile, literacyData, numeracyData) {
     var profile = studentProfile && typeof studentProfile === "object" ? studentProfile : {};
     var lit = literacyData && typeof literacyData === "object" ? literacyData : {};
@@ -138,6 +153,7 @@
       recommendedNextSteps: buildNextSteps(lit, num),
       interventionFidelitySummary: buildFidelitySummary(profile, fidelitySummary),
       tierDecisionExplanation: Array.isArray(tierSignal.reasoning) ? tierSignal.reasoning.slice(0, 4).join(" ") : "",
+      executiveFunctionSupport: buildExecutiveFunctionSupport(num && num.executiveSupport),
       parentSummary: buildParentSummary(profile, lit, num, fidelitySummary)
     };
   }
@@ -160,6 +176,7 @@
       instructionalFrameworkAlignment: "[" + label + " placeholder] " + asText(report && report.instructionalFrameworkAlignment, ""),
       interventionFidelitySummary: "[" + label + " placeholder] " + asText(report && report.interventionFidelitySummary, ""),
       tierDecisionExplanation: "[" + label + " placeholder] " + asText(report && report.tierDecisionExplanation, ""),
+      executiveFunctionSupport: "[" + label + " placeholder] " + asText(report && report.executiveFunctionSupport, ""),
       recommendedNextSteps: Array.isArray(report && report.recommendedNextSteps)
         ? report.recommendedNextSteps.map(function (step) { return "[" + label + " placeholder] " + asText(step, ""); })
         : [],
