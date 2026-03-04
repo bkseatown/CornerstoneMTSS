@@ -215,6 +215,52 @@
             <button class="launch-card td-top-btn" data-quick="numeracy" type="button">Numeracy</button>
           </div>
         </section>
+        <section id="td-pilot-evaluation" class="dashboard-eval card td-surface" aria-label="Pilot evaluation">
+          <div class="dashboard-eval-head">
+            <h2 class="dashboard-section-title">Pilot Evaluation</h2>
+            <span id="td-eval-readiness-chip" class="td-chip">Readiness: Candidate</span>
+          </div>
+          <p class="td-reco-line">Capture usability signals without changing instructional workflows.</p>
+          <form id="td-eval-usability-form" class="dashboard-eval-grid">
+            <label class="dashboard-eval-field">Clarity of next action (1–10)
+              <input id="td-eval-clarity" type="number" min="1" max="10" step="1" required>
+            </label>
+            <label class="dashboard-eval-field">Mental effort required (1–10)
+              <input id="td-eval-mental-effort" type="number" min="1" max="10" step="1" required>
+            </label>
+            <label class="dashboard-eval-field">Visual overwhelm (1–10)
+              <input id="td-eval-overwhelm" type="number" min="1" max="10" step="1" required>
+            </label>
+            <label class="dashboard-eval-field">Confidence in recommendation (1–10)
+              <input id="td-eval-confidence" type="number" min="1" max="10" step="1" required>
+            </label>
+            <label class="dashboard-eval-field">Would use next week?
+              <select id="td-eval-adoption" required>
+                <option value="">Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+            <label class="dashboard-eval-field">Product feel
+              <select id="td-eval-institutional" required>
+                <option value="">Select</option>
+                <option value="institutional">Institutional</option>
+                <option value="founder-built">Founder-built</option>
+              </select>
+            </label>
+            <label class="dashboard-eval-field dashboard-eval-field-wide">Notes (optional)
+              <textarea id="td-eval-notes" rows="3" placeholder="Observed friction, confidence, and adoption signals..."></textarea>
+            </label>
+          </form>
+          <div class="dashboard-eval-actions">
+            <button id="td-eval-save" class="td-top-btn btn-primary" type="button">Save Evaluation</button>
+            <button id="td-eval-export-json" class="td-top-btn" type="button">Export JSON</button>
+            <button id="td-eval-export-csv" class="td-top-btn" type="button">Export CSV</button>
+            <button id="td-eval-generate-report" class="td-top-btn" type="button">Generate Pilot Evaluation Report</button>
+          </div>
+          <div id="td-eval-metrics" class="dashboard-eval-metrics" aria-live="polite"></div>
+          <div id="td-eval-report" class="dashboard-eval-report hidden" aria-live="polite"></div>
+        </section>
         <footer class="dashboard-confidence card td-surface" aria-label="System confidence">
           <h2 class="dashboard-section-title">Today's System Confidence</h2>
           <p id="td-confidence-line">Tier guidance stable • Fidelity tracking active • Curriculum mapping active • System checks passed</p>
@@ -479,6 +525,8 @@
   <script src="./js/dashboard/dashboard-support.js?v=20260304b" defer></script>
   <script src="./js/dashboard/dashboard-meeting.js?v=20260304b" defer></script>
   <script src="./js/dashboard/dashboard-modals.js?v=20260304c" defer></script>
+  <script src="./js/evaluation/wow-evaluator.js?v=20260304d" defer></script>
+  <script src="./js/evaluation/evaluation-summary.js?v=20260304d" defer></script>
   <script src="./teacher-dashboard.js?v=20260304b" defer></script>
 </body>
 </html>
