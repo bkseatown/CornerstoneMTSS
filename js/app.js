@@ -3404,20 +3404,20 @@
     toggle.innerHTML = `
       <span class="play-style-toggle-label">Game Mode</span>
       <span class="play-style-toggle-pills" aria-hidden="true">
-        <span class="play-style-pill ${listening ? '' : 'is-active'}">Guess & Check</span>
-        <span class="play-style-pill ${listening ? 'is-active' : ''}">Listen & Spell</span>
+        <span class="play-style-pill ${listening ? '' : 'is-active'}"><span class="pill-emoji" aria-hidden="true">🕵️</span>Detective</span>
+        <span class="play-style-pill ${listening ? 'is-active' : ''}"><span class="pill-emoji" aria-hidden="true">📝</span>Spelling</span>
       </span>
     `;
     toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('aria-label', listening
-      ? 'Hear and Spell mode on. Hear meaning and encode what you hear.'
-      : 'Guess and Check mode on. Use tile colors and clues to encode.');
+      ? 'Spelling mode on. Hear meaning and encode what you hear.'
+      : 'Detective mode on. Use tile colors and clues to encode.');
     setHoverNoteForElement(
       toggle,
       listening
-        ? 'Hear and Spell mode: hear word plus meaning, then spell by sound.'
-        : 'Guess and Check mode: use color feedback and clues.'
+        ? 'Spelling mode: hear word plus meaning, then spell by sound.'
+        : 'Detective mode: use color feedback and clues.'
     );
   }
 
@@ -5289,10 +5289,20 @@
   function syncFirstRunGradeSelectFromPrefs() {
     const modalGradeSelect = _el('first-run-grade-band');
     if (!modalGradeSelect) return;
+    if (firstRunSetupPending) {
+      modalGradeSelect.value = '';
+      return;
+    }
     modalGradeSelect.value = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
   }
 
   function syncFirstRunSetupControlsFromPrefs() {
+    const skipBtn = _el('first-run-skip-btn');
+    if (skipBtn) {
+      skipBtn.disabled = !!firstRunSetupPending;
+      skipBtn.classList.toggle('hidden', !!firstRunSetupPending);
+      skipBtn.setAttribute('aria-hidden', firstRunSetupPending ? 'true' : 'false');
+    }
     syncFirstRunGradeSelectFromPrefs();
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
     setFirstRunModeChoice(playStyle);
@@ -5332,7 +5342,17 @@
 
   function bindFirstRunSetupModal() {
     if (document.body.dataset.wqFirstRunSetupBound === '1') return;
-    const closeTutorial = () => {
+    const closeTutorial = (source = 'dismiss') => {
+      const selectedGradeBand = String(_el('first-run-grade-band')?.value || '').trim();
+      if (firstRunSetupPending && source !== 'start') {
+        WQUI.showToast('Choose a grade band, then tap Start Quest.');
+        return;
+      }
+      if (!selectedGradeBand) {
+        WQUI.showToast('Choose a grade band to continue.');
+        _el('first-run-grade-band')?.focus();
+        return;
+      }
       applyFirstRunGradeSelection();
       applyFirstRunPlayStyleSelection();
       if (_el('first-run-hide-again')?.checked) markFirstRunSetupDone();
@@ -5345,8 +5365,8 @@
       }
       updateNextActionLine();
     };
-    _el('first-run-skip-btn')?.addEventListener('click', closeTutorial);
-    _el('first-run-start-btn')?.addEventListener('click', closeTutorial);
+    _el('first-run-skip-btn')?.addEventListener('click', () => closeTutorial('skip'));
+    _el('first-run-start-btn')?.addEventListener('click', () => closeTutorial('start'));
     document.querySelectorAll('[data-play-style-choice]').forEach((button) => {
       button.addEventListener('click', () => {
         setFirstRunModeChoice(button.getAttribute('data-play-style-choice') || 'detective');
@@ -5354,7 +5374,7 @@
     });
     _el('first-run-setup-modal')?.addEventListener('click', (event) => {
       if (event.target?.id === 'first-run-setup-modal') {
-        closeTutorial();
+        closeTutorial('backdrop');
       }
     });
     document.body.dataset.wqFirstRunSetupBound = '1';
@@ -7480,8 +7500,8 @@
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
     WQUI.showToast(next === 'listening'
-      ? 'Listening challenge on: hear word + meaning, then spell.'
-      : 'Classic mode on: use tile colors and clue strategy.');
+      ? 'Spelling Mode on: hear word + meaning, then spell.'
+      : 'Detective Mode on: use tile colors and clues.');
   });
   _el('s-reveal-focus')?.addEventListener('change', e => {
     const next = applyRevealFocusMode(e.target.value);
@@ -7552,8 +7572,8 @@
     const next = current === 'listening' ? 'detective' : 'listening';
     applyPlayStyle(next);
     WQUI.showToast(next === 'listening'
-      ? 'Listening challenge on: spell what you hear.'
-      : 'Classic mode on.');
+      ? 'Spelling Mode on: spell what you hear.'
+      : 'Detective Mode on.');
   });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => {
@@ -9712,7 +9732,6 @@
 
   function updateGradeTargetInline() {
     const gradeEl = _el('grade-target-inline');
-    if (!gradeEl) return;
     const focusValue = _el('setting-focus')?.value || prefs.focus || 'all';
     const preset = parseFocusPreset(focusValue);
     const activeGrade = preset.kind === 'subject'
@@ -9720,12 +9739,23 @@
       : (_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade);
     const inlineLabel = formatGradeBandInlineLabel(activeGrade);
     const titleLabel = formatGradeBandLabel(activeGrade);
-    gradeEl.textContent = `Grade: ${inlineLabel}`;
-    if (preset.kind === 'subject') {
-      gradeEl.setAttribute('title', `Grade band currently follows the selected subject focus: ${titleLabel}.`);
-    } else {
-      gradeEl.setAttribute('title', `Grade band in use: ${titleLabel}. This filters age-appropriate words; word length is controlled separately.`);
+    if (gradeEl) {
+      gradeEl.textContent = `Grade: ${inlineLabel}`;
+      if (preset.kind === 'subject') {
+        gradeEl.setAttribute('title', `Grade band currently follows the selected subject focus: ${titleLabel}.`);
+      } else {
+        gradeEl.setAttribute('title', `Grade band in use: ${titleLabel}. This filters age-appropriate words; word length is controlled separately.`);
+      }
     }
+    updateActiveGradeLockChip(titleLabel, preset.kind === 'subject');
+  }
+
+  function updateActiveGradeLockChip(gradeLabel, fromSubjectPreset) {
+    const chipEl = _el('active-grade-lock-chip');
+    if (!chipEl) return;
+    const sourceLabel = fromSubjectPreset ? 'subject preset' : 'teacher/session grade';
+    chipEl.textContent = `Active Grade Band locked: ${gradeLabel}`;
+    chipEl.setAttribute('title', `New rounds use ${gradeLabel} from ${sourceLabel}.`);
   }
 
   function escapeHtml(value) {
