@@ -2,18 +2,16 @@ const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 test.use({ serviceWorkers: 'block' });
+test.describe.configure({ timeout: 90000 });
 
 const ROUTES = [
   { slug: 'index', url: './?audit=1', marker: 'body' },
+  { slug: 'literacy-hub', url: 'literacy.html?audit=1', marker: '.cs-hub-root' },
+  { slug: 'numeracy-hub', url: 'numeracy.html?audit=1', marker: '.cs-hub-root' },
   { slug: 'teacher-dashboard', url: 'teacher-dashboard.html?audit=1', marker: '#td-shell' },
   { slug: 'word-quest', url: 'word-quest.html?audit=1', marker: '#game-board, #gameBoard, .game-board, body' },
   { slug: 'reading-lab', url: 'reading-lab.html?audit=1', marker: '#rl-root' },
   { slug: 'sentence-surgery', url: 'sentence-surgery.html?audit=1', marker: '.ss-container' }
-];
-
-const DISABLED_RULES = [
-  // Contrast requires theme-by-theme manual verification in this repo.
-  'color-contrast'
 ];
 
 function normalizeMarker(marker) {
@@ -41,7 +39,6 @@ test.describe('Accessibility audit (WCAG A/AA)', () => {
       expect(markerVisible, `No marker visible for ${route.slug}`).toBe(true);
 
       const results = await new AxeBuilder({ page })
-        .disableRules(DISABLED_RULES)
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
         .analyze();
 

@@ -13,6 +13,18 @@ const ROUTES = [
     interactionSelectors: ['#roleTeacher', 'button']
   },
   {
+    slug: 'literacy-hub',
+    url: 'literacy.html?audit=1',
+    marker: '.cs-hub-root',
+    interactionSelectors: ['.cs-hub-head h1', '.cs-hub-section h2']
+  },
+  {
+    slug: 'numeracy-hub',
+    url: 'numeracy.html?audit=1',
+    marker: '.cs-hub-root',
+    interactionSelectors: ['.cs-hub-head h1', '.cs-hub-section h2']
+  },
+  {
     slug: 'teacher-dashboard',
     url: 'teacher-dashboard.html?audit=1',
     marker: '#td-shell',
