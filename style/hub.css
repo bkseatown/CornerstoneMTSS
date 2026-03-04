@@ -9,126 +9,391 @@ body {
 }
 
 body.cs-hub-page {
+  --hub-accent: var(--accent);
+  --hub-accent-2: var(--accent-2);
+  --hub-surface-tint: #e8f0fb;
+  --hub-shadow-soft: 0 8px 18px rgba(25, 44, 71, 0.09);
+  --hub-shadow-strong: 0 12px 28px rgba(24, 42, 70, 0.13);
+  --hub-shadow-command: 0 16px 34px rgba(22, 39, 63, 0.15);
   background: var(--surface-base-gradient);
   color: var(--text-primary);
   font-family: var(--font-ui, var(--font-sans, system-ui, -apple-system, Segoe UI, Roboto, sans-serif));
+  background:
+    radial-gradient(circle at 10% 8%, color-mix(in oklab, var(--hub-accent) 15%, transparent), transparent 42%),
+    radial-gradient(circle at 89% 16%, color-mix(in oklab, var(--hub-accent-2) 11%, transparent), transparent 45%),
+    radial-gradient(circle at 52% 96%, color-mix(in oklab, var(--hub-accent) 10%, #f7f2e7 90%), transparent 56%),
+    var(--surface-base-gradient);
+  padding-top: var(--nav-h, 58px);
+}
+
+body.cs-hub-page--literacy {
+  --hub-accent: #2b5da8;
+  --hub-accent-2: #4c84d6;
+  --hub-surface-tint: #e8f0fb;
+}
+
+body.cs-hub-page--numeracy {
+  --hub-accent: #1f6fb8;
+  --hub-accent-2: #5c96df;
+  --hub-surface-tint: #e6f1fc;
+}
+
+body.cs-hub-page .cs-nav-shell {
+  background: color-mix(in oklab, var(--surface-elev-1) 91%, var(--hub-surface-tint) 9%);
+  border-bottom: 1px solid color-mix(in oklab, var(--surface-border) 74%, transparent);
+  box-shadow: 0 6px 16px rgba(24, 40, 66, 0.08);
+}
+
+body.cs-hub-page .cs-nav-shell .cs-nav-link {
+  border-radius: 8px;
+  border-bottom-width: 0;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--text-secondary) 88%, #576a7f 12%);
+}
+
+body.cs-hub-page .cs-nav-shell .cs-nav-link:hover {
+  background: color-mix(in oklab, var(--surface-elev-2) 86%, white 14%);
+  border-color: transparent;
+}
+
+body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
+  background: color-mix(in oklab, var(--hub-accent) 12%, var(--surface-elev-2));
+  color: color-mix(in oklab, var(--hub-accent) 78%, #1a2a3f 22%);
 }
 
 .cs-hub-root {
-  width: min(1120px, calc(100vw - 28px));
-  margin: 16px auto 18px;
+  width: min(1180px, calc(100vw - 26px));
+  margin: 12px auto 30px;
   display: grid;
-  gap: 12px;
+  gap: 15px;
+  align-content: start;
 }
 
 .cs-hub-head {
-  background: color-mix(in oklab, var(--surface-elev-1) 90%, #eef4fc 10%);
-  border: 1px solid color-mix(in oklab, var(--border-subtle) 90%, transparent);
-  border-radius: 14px;
-  padding: 16px 18px;
-  display: flex;
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--surface-elev-1) 74%, var(--hub-surface-tint) 26%);
+  border: 0;
+  border-radius: 18px;
+  padding: 20px 22px 21px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  box-shadow: var(--shadow-medium);
+  gap: 16px;
+  box-shadow: var(--hub-shadow-command);
+}
+
+.cs-hub-head::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--hub-accent) 84%, white 16%),
+    color-mix(in oklab, var(--hub-accent-2) 72%, white 28%)
+  );
+}
+
+.cs-hub-head::after {
+  content: "";
+  position: absolute;
+  right: -74px;
+  top: -84px;
+  width: 246px;
+  height: 246px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklab, var(--hub-accent) 22%, transparent), transparent 68%);
+  pointer-events: none;
+}
+
+.cs-hub-head > div {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.cs-hub-kicker {
+  margin: 0;
+  width: fit-content;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--hub-accent) 14%, var(--surface-elev-2));
+  color: color-mix(in oklab, var(--hub-accent) 76%, #1f334a 24%);
+  font-size: 0.77rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .cs-hub-head h1 {
   margin: 0;
-  font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+  font-family: var(--font-display);
+  font-size: clamp(2.05rem, 3.4vw, 2.78rem);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  font-weight: 760;
 }
 
 .cs-hub-head p {
-  margin: 4px 0 0;
-  color: var(--text-secondary);
+  margin: 8px 0 0;
+  color: color-mix(in oklab, var(--text-secondary) 93%, #5b7087 7%);
+  line-height: 1.5;
+  max-width: 68ch;
+  font-size: 1.02rem;
+}
+
+.cs-hub-signals {
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cs-hub-signals li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--text-secondary) 90%, #324a64 10%);
+  background: color-mix(in oklab, var(--surface-elev-2) 82%, #f8fbff 18%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 58%, transparent);
 }
 
 .cs-hub-nav {
-  display: flex;
-  gap: 8px;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  gap: 9px;
   flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  align-self: start;
 }
 
 .cs-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid transparent;
+  min-height: 40px;
+  padding: 8px 15px;
+  border-radius: 11px;
+  border: 0;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   font-weight: 600;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  transition: background-color 190ms ease-in-out, box-shadow 190ms ease-in-out, transform 190ms ease-in-out;
+}
+
+.cs-btn:hover {
+  transform: translateY(-1px);
 }
 
 .cs-btn-primary {
   background: var(--action-primary);
   color: #fff;
-  border-color: var(--action-primary);
+  box-shadow: 0 10px 20px color-mix(in oklab, var(--hub-accent) 25%, transparent);
 }
 
 .cs-btn-primary:hover {
   background: var(--action-primary-hover);
-  border-color: var(--action-primary-hover);
+  box-shadow: 0 12px 22px color-mix(in oklab, var(--hub-accent) 30%, transparent);
 }
 
 .cs-btn-quiet {
-  background: var(--surface-elev-2);
+  background: color-mix(in oklab, var(--surface-elev-2) 86%, #f8fbff 14%);
   color: var(--text-primary);
-  border-color: color-mix(in oklab, var(--border-subtle) 86%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 62%, transparent);
 }
 
 .cs-hub-list {
   display: grid;
-  gap: 10px;
+  gap: 13px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .cs-hub-section {
-  background: color-mix(in oklab, var(--surface-elev-1) 93%, #f5f8fd 7%);
-  border: 1px solid color-mix(in oklab, var(--border-subtle) 90%, transparent);
-  border-radius: 12px;
-  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--surface-elev-1) 83%, var(--hub-surface-tint) 17%);
+  border: 0;
+  border-radius: 15px;
+  padding: 16px 16px 15px 18px;
   display: grid;
-  gap: 8px;
-  box-shadow: var(--shadow-soft);
-  transition: transform var(--dur-2) ease-in-out, box-shadow var(--dur-2) ease-in-out;
+  gap: 9px;
+  box-shadow: var(--hub-shadow-soft);
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out, background-color 200ms ease-in-out;
+}
+
+.cs-hub-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--hub-accent) 82%, white 18%),
+    color-mix(in oklab, var(--hub-accent-2) 72%, white 28%)
+  );
+}
+
+.cs-hub-section::after {
+  content: "";
+  position: absolute;
+  right: -42px;
+  bottom: -54px;
+  width: 138px;
+  height: 138px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in oklab, var(--hub-accent) 13%, transparent), transparent 74%);
+  pointer-events: none;
 }
 
 .cs-hub-section:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+  box-shadow: 0 13px 25px rgba(24, 42, 68, 0.14);
+  background: color-mix(in oklab, var(--surface-elev-1) 80%, var(--hub-surface-tint) 20%);
+}
+
+.cs-hub-section--priority {
+  background: color-mix(in oklab, var(--surface-elev-1) 77%, var(--hub-surface-tint) 23%);
+  box-shadow: 0 14px 30px rgba(26, 44, 68, 0.16);
 }
 
 .cs-hub-section h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: clamp(1.16rem, 1.38vw, 1.32rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  font-weight: 720;
+}
+
+.cs-hub-section--priority h2 {
+  color: color-mix(in oklab, var(--text-primary) 88%, var(--hub-accent) 12%);
 }
 
 .cs-hub-section p {
   margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-secondary) 93%, #5a6f85 7%);
+  line-height: 1.42;
+  font-size: 0.99rem;
 }
 
 .cs-hub-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
 }
 
 .cs-hub-engine {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 26px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--surface-elev-2) 80%, #f8fbff 20%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 58%, transparent);
   color: var(--text-primary);
   font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+}
+
+.cs-hub-engine::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  margin-right: 8px;
+  background: color-mix(in oklab, var(--hub-accent) 86%, white 14%);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--hub-accent) 15%, transparent);
+}
+
+.cs-hub-section .cs-btn {
+  min-width: 182px;
+}
+
+.cs-hub-section .cs-btn-quiet {
+  color: color-mix(in oklab, var(--text-primary) 88%, #41546a 12%);
+}
+
+.cs-hub-section .cs-btn-quiet:hover {
+  background: color-mix(in oklab, var(--surface-elev-2) 75%, #f7fbff 25%);
+}
+
+@media (max-width: 980px) {
+  .cs-hub-root {
+    width: min(100%, calc(100vw - 16px));
+    margin-top: 10px;
+  }
+  .cs-hub-head {
+    padding: 18px 16px 18px;
+  }
+  .cs-hub-head h1 {
+    font-size: clamp(1.95rem, 5.6vw, 2.3rem);
+  }
+  .cs-hub-head p {
+    font-size: 0.98rem;
+  }
+  .cs-hub-signals {
+    gap: 5px;
+  }
+  .cs-hub-signals li {
+    font-size: 0.74rem;
+  }
 }
 
 @media (max-width: 780px) {
   .cs-hub-head {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    padding: 17px 14px 15px;
+    gap: 14px;
+  }
+  .cs-hub-list {
+    grid-template-columns: 1fr;
+    gap: 11px;
   }
   .cs-hub-row {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 8px;
+  }
+  .cs-hub-section {
+    padding: 14px 13px 13px 16px;
+  }
+  .cs-hub-section h2 {
+    font-size: 1.13rem;
+  }
+  .cs-hub-section p {
+    font-size: 0.97rem;
+  }
+  .cs-hub-nav {
+    justify-content: flex-start;
+  }
+  .cs-btn {
+    min-height: 37px;
+    font-size: 0.87rem;
+  }
+  .cs-hub-section .cs-btn {
+    width: 100%;
+    min-width: 0;
+  }
+  .cs-hub-signals {
+    margin-top: 0;
   }
 }
