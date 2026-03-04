@@ -214,16 +214,37 @@ const WQUI = (() => {
     result.forEach((status, i) => {
       const k = _keyboard.querySelector(`.key[data-key="${guess[i]}"]`);
       if (!k) return;
+      const hadCorrect = k.classList.contains('correct');
+      const hadPresent = k.classList.contains('present');
+      const hadAbsent = k.classList.contains('absent');
       if (status === 'correct') {
         k.classList.remove('present','absent','in-play');
         k.classList.add('correct');
+        if (!hadCorrect) {
+          k.classList.remove('state-pop-correct');
+          void k.offsetWidth;
+          k.classList.add('state-pop-correct');
+          setTimeout(() => k.classList.remove('state-pop-correct'), 440);
+        }
       } else if (status === 'present' && !k.classList.contains('correct')) {
         k.classList.remove('absent');
         k.classList.add('present');
+        if (!hadPresent) {
+          k.classList.remove('state-pop-present');
+          void k.offsetWidth;
+          k.classList.add('state-pop-present');
+          setTimeout(() => k.classList.remove('state-pop-present'), 380);
+        }
       } else if (status === 'absent' &&
                  !k.classList.contains('correct') &&
                  !k.classList.contains('present')) {
         k.classList.add('absent');
+        if (!hadAbsent) {
+          k.classList.remove('state-pop-absent');
+          void k.offsetWidth;
+          k.classList.add('state-pop-absent');
+          setTimeout(() => k.classList.remove('state-pop-absent'), 360);
+        }
       }
     });
 

@@ -26,6 +26,7 @@
     "test:regressions": "npm run test:regression:curriculum-microcopy && npm run test:regression:prefs-reset && npm run test:regression:force-update && npm run test:regression:sw-upgrade && npm run test:regression:focus-search-placeholder && npm run test:regression:student-microcopy && npm run test:regression:session-outcomes-export",
     "telemetry:funnel:check": "node scripts/check-funnel-telemetry-contract.js",
     "telemetry:dashboards:check": "node scripts/check-telemetry-dashboard-contract.js",
+    "theme:balance:check": "node scripts/check-theme-balance.js",
     "dom:hooks:check": "node scripts/check-dead-dom-hooks.js",
     "visual:check": "node scripts/check-visual-baseline.js",
     "audit:ui": "BASE_URL=http://127.0.0.1:4173 playwright test tests/audit-pages.spec.js --project=chromium --reporter=line",
