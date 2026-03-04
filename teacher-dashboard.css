@@ -348,6 +348,12 @@ body.cs-has-nav-shell .td-shell {
   position: relative;
 }
 
+.dashboard-focus > .focus-card:first-child {
+  background: color-mix(in oklab, var(--surface-elev-1) 88%, #eaf2fe 12%);
+  border-color: color-mix(in oklab, var(--surface-border) 64%, #9fb5d8 36%);
+  gap: 16px;
+}
+
 .focus-card::before {
   content: "";
   position: absolute;
@@ -532,9 +538,9 @@ body.cs-has-nav-shell .td-shell {
   border: 1px solid var(--border-subtle);
   background: var(--surface-elev-2);
   color: var(--text-secondary);
-  font-size: var(--fs-1);
+  font-size: var(--fs-0);
   font-weight: var(--fw-semibold);
-  padding: var(--space-1) var(--space-2);
+  padding: 4px 8px;
   white-space: nowrap;
 }
 

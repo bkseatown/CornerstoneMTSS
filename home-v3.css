@@ -337,6 +337,8 @@ body.cs-home-page {
   background: var(--action-primary);
   color: #fff;
   border-color: var(--action-primary);
+  min-height: 42px;
+  box-shadow: 0 6px 14px rgba(43, 93, 168, 0.20);
 }
 
 .home-btn-primary:hover {
@@ -387,10 +389,24 @@ body.cs-home-page {
 }
 
 .home-domain {
-  padding: 18px;
+  padding: 16px 18px;
   display: grid;
   gap: 10px;
   align-content: start;
+  position: relative;
+  background: color-mix(in oklab, var(--surface-elev-1) 92%, #edf4ff 8%);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-domain::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 72%, #9bb8e4 28%), color-mix(in oklab, var(--accent-2) 64%, #dbe7f7 36%));
 }
 
 .home-domain h2 {

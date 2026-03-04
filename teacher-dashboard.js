@@ -761,9 +761,9 @@
     if (el.confidenceLine) {
       var trend = String(s.trendDecision || "HOLD").toUpperCase();
       var fidelityState = Math.round(Number(input.fidelityPercent || 0)) >= 70 ? "active" : "watch";
-      el.confidenceLine.textContent = "Tier engine " + (trend === "HOLD" || trend === "FADE" ? "stable" : "active") +
+      el.confidenceLine.textContent = "Tier guidance " + (trend === "HOLD" || trend === "FADE" ? "stable" : "active") +
         " • Fidelity tracking " + fidelityState +
-        " • Curriculum alignment mapped • Guardrails passed";
+        " • Curriculum mapping active • System checks passed";
     }
   }
 
