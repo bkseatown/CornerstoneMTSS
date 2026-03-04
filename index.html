@@ -20,36 +20,63 @@
             <header class="home-head">
               <p class="home-kicker">Cornerstone MTSS</p>
               <h1 id="home-next-move-title">Choose Role</h1>
-              <p class="home-sub">Teacher flow is now centralized in one landing page.</p>
-              <p class="home-sub home-sub-detail">Teacher: select student, review snapshot, launch one action, log session. Student: open practice tools only.</p>
-              <div class="home-value-ribbon" role="note">This recommendation is aligned to curriculum pacing and Tier support logic.</div>
-              <ul class="home-feature-bullets" aria-label="Core platform value">
-                <li>Auto-sequenced literacy &amp; numeracy pathways</li>
-                <li>Curriculum-aligned to Fish Tank, Wilson, Illustrative Math</li>
-                <li>Meeting-ready reports with parent-friendly summaries</li>
-              </ul>
+              <p class="home-sub">Teacher workflow: Select -> Snapshot -> Start -> Log -> Done.</p>
+              <div class="home-signal-chips" role="list" aria-label="Core intelligence signals">
+                <span role="listitem">Tier-aware recommendations</span>
+                <span role="listitem">Curriculum mapped moves</span>
+                <span role="listitem">Meeting-ready evidence</span>
+              </div>
             </header>
             <div class="home-sequencer-actions">
               <a id="home-dashboard-link" class="home-btn home-btn-primary" href="./teacher-dashboard.html">Teacher</a>
               <a id="home-open-wordquest" class="home-btn home-btn-quiet" href="./cornerstone-mtss.html?play=1#wordquest">Student</a>
             </div>
           </div>
-          <aside class="home-sequencer-right" aria-label="Word Quest demo">
+          <aside class="home-sequencer-right" aria-label="Live system preview">
+            <section class="home-live-preview" aria-label="Live Preview">
+              <header class="home-live-preview-head">
+                <p class="home-kicker">Live Preview</p>
+                <h2>Teacher Snapshot</h2>
+              </header>
+              <article class="home-live-preview-card" aria-label="Simulated student recommendation card">
+                <div class="home-live-student-top">
+                  <strong class="home-live-student-name">Maya R.</strong>
+                  <span class="home-live-tier">Tier 2</span>
+                </div>
+                <div class="home-live-signal-row">
+                  <svg class="home-live-sparkline" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <path d="M0 22 L16 20 L32 17 L48 14 L64 12 L80 10 L100 8"></path>
+                  </svg>
+                  <span class="home-live-delta home-live-delta-up">↑ improving</span>
+                </div>
+                <p class="home-live-label">Recommended Session</p>
+                <p class="home-live-action">Word Connections • Targeted • 12 min</p>
+                <p class="home-live-rationale"><strong>Insight:</strong> Confidence 84% from stable decoding + vocabulary growth.</p>
+              </article>
+            </section>
             <div id="home-wordquest-demo" class="home-wordquest-demo"></div>
           </aside>
         </div>
       </article>
 
       <section class="home-domain-row" aria-label="Domain branching">
-        <article class="home-card home-domain" id="home-literacy-card">
-          <h2>Literacy</h2>
-          <p>Word-level to composition support across decoding, language, writing, and fluency.</p>
-          <a class="home-btn home-btn-primary" href="./literacy.html">Explore Literacy Tools</a>
+        <article class="home-card home-domain home-domain-literacy" id="home-literacy-card">
+          <div class="home-domain-head">
+            <span class="home-domain-icon" aria-hidden="true">🧠</span>
+            <h2>Literacy Engine</h2>
+          </div>
+          <p class="home-domain-descriptor">Decode, reason, and compose.</p>
+          <p class="home-domain-map">Mapped: Fish Tank • UFLI • Fundations</p>
+          <a class="home-btn home-btn-primary" href="./literacy.html">Open Literacy Engine</a>
         </article>
-        <article class="home-card home-domain" id="home-numeracy-card">
-          <h2>Numeracy</h2>
-          <p>Structured progression from number fluency to mathematical reasoning and language.</p>
-          <a class="home-btn home-btn-primary" href="./numeracy.html">Explore Numeracy Tools</a>
+        <article class="home-card home-domain home-domain-numeracy" id="home-numeracy-card">
+          <div class="home-domain-head">
+            <span class="home-domain-icon" aria-hidden="true">∑</span>
+            <h2>Numeracy Engine</h2>
+          </div>
+          <p class="home-domain-descriptor">Concept-first strategy progression.</p>
+          <p class="home-domain-map">Mapped: Illustrative Math • Bridges</p>
+          <a class="home-btn home-btn-primary" href="./numeracy.html">Open Numeracy Engine</a>
         </article>
       </section>
     </section>

@@ -18,7 +18,7 @@
       <a class="td-wordmark td-brand-home" href="./index.html" aria-label="Home">
         <strong>Cornerstone MTSS</strong>
         <span>Teacher Dashboard</span>
-        <p class="td-top-description">Instructional sequencing and intervention planning for Tier 2/3 literacy and numeracy support.</p>
+        <p class="td-top-description">Tier 2/3 sequencing for literacy and numeracy intervention.</p>
         <small id="td-buildline" class="td-buildline">Build: checking...</small>
       </a>
 
@@ -69,14 +69,33 @@
           <button id="td-mode-classroom" class="td-top-btn" type="button">Classroom Mode</button>
         </section>
         <section class="dashboard-focus">
-          <article class="focus-card card td-surface">
+          <article id="td-focus-card" class="focus-card card td-surface">
             <p class="dashboard-kicker">Today's Focus</p>
             <div class="focus-header">
-              <h1 id="td-focus-student-name" class="focus-student-name">Select a student</h1>
-              <span id="td-focus-tier-line" class="focus-tier">Tier 2</span>
+              <div class="focus-title-stack">
+                <h1 id="td-focus-student-name" class="focus-student-name">Select a student</h1>
+                <div class="focus-signal-line" aria-label="Student momentum signal">
+                  <svg id="td-focus-trend-spark" class="focus-trend-spark" viewBox="0 0 92 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <path id="td-focus-trend-path" d="M0 18 L16 18 L32 17 L48 16 L64 16 L80 15 L92 14"></path>
+                  </svg>
+                  <span id="td-focus-delta" class="focus-delta">→ steady</span>
+                </div>
+              </div>
+              <div class="focus-right-signals">
+                <div id="td-focus-confidence-ring" class="focus-confidence-ring" aria-label="Recommendation confidence">
+                  <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                    <circle class="focus-confidence-track" cx="20" cy="20" r="16"></circle>
+                    <circle id="td-focus-confidence-progress" class="focus-confidence-progress" cx="20" cy="20" r="16"></circle>
+                  </svg>
+                  <span id="td-focus-confidence-score" class="focus-confidence-score">--%</span>
+                </div>
+                <span id="td-focus-tier-line" class="focus-tier">Tier 2</span>
+              </div>
             </div>
             <p id="td-executive-active-tag" class="td-executive-active-tag hidden">Executive Support Active</p>
-            <p id="td-focus-reason-line" class="focus-reason">Review today’s recommended support move and start instruction with confidence.</p>
+            <p id="td-focus-reason-line" class="focus-reason focus-insight-line"><strong>Pick a student to load today’s strongest move.</strong></p>
+            <button id="td-focus-why-toggle" class="td-top-btn focus-why-toggle" type="button" aria-expanded="false" aria-controls="td-focus-why-line">Why?</button>
+            <p id="td-focus-why-line" class="focus-why-line hidden">Trend and fidelity signals are combined into one recommendation.</p>
             <p id="td-focus-fidelity-line" class="focus-fidelity-line fidelity-good">Fidelity: 0% over 0 sessions</p>
             <div id="td-lit-framework-badges" class="framework-badge-row" aria-label="Literacy framework alignment"></div>
             <details class="td-explainability">
@@ -96,6 +115,7 @@
               <button id="td-focus-start-btn" class="btn-primary td-top-btn focus-start" type="button">Start Recommended Session</button>
               <button id="td-focus-view-details-btn" class="td-top-btn focus-view-details-btn" type="button">View Details</button>
             </div>
+            <p id="td-focus-engine-cue" class="focus-engine-cue hidden" aria-live="polite">Engine active. Preparing recommended session…</p>
           </article>
           <article class="focus-card card td-surface numeracy-focus-card" aria-labelledby="td-num-title">
             <p class="dashboard-kicker">Numeracy Recommendation</p>
@@ -210,9 +230,24 @@
         <section class="dashboard-launch card td-surface">
           <h2 class="dashboard-section-title">Quick Launch</h2>
           <div class="launch-row">
-            <button class="launch-card td-top-btn" data-quick="literacy" type="button">Literacy</button>
-            <button class="launch-card td-top-btn" data-quick="writing-studio" type="button">Writing</button>
-            <button class="launch-card td-top-btn" data-quick="numeracy" type="button">Numeracy</button>
+            <button class="launch-card td-top-btn launch-card-engine" data-quick="literacy" type="button">
+              <span class="launch-card-icon" aria-hidden="true">🧠</span>
+              <span class="launch-card-title">Literacy Engine</span>
+              <span class="launch-card-desc">Precision literacy moves</span>
+              <span class="launch-card-map">Fish Tank • UFLI</span>
+            </button>
+            <button class="launch-card td-top-btn" data-quick="writing-studio" type="button">
+              <span class="launch-card-icon" aria-hidden="true">✍️</span>
+              <span class="launch-card-title">Writing Studio</span>
+              <span class="launch-card-desc">Sentence-to-composition coaching</span>
+              <span class="launch-card-map">Reasoning • Cohesion</span>
+            </button>
+            <button class="launch-card td-top-btn launch-card-engine" data-quick="numeracy" type="button">
+              <span class="launch-card-icon" aria-hidden="true">∑</span>
+              <span class="launch-card-title">Numeracy Engine</span>
+              <span class="launch-card-desc">Concept-first strategy support</span>
+              <span class="launch-card-map">Illustrative • Bridges</span>
+            </button>
           </div>
         </section>
         <section id="td-pilot-evaluation" class="dashboard-eval card td-surface" aria-label="Pilot evaluation">

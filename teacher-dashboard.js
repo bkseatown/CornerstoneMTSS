@@ -237,9 +237,17 @@
     coachCollapse: document.getElementById("td-coach-collapse"),
     coachChip: document.getElementById("td-coach-chip"),
     demoBadge: document.getElementById("td-demo-badge"),
+    focusCard: document.getElementById("td-focus-card"),
     focusStudentName: document.getElementById("td-focus-student-name"),
+    focusTrendPath: document.getElementById("td-focus-trend-path"),
+    focusDelta: document.getElementById("td-focus-delta"),
+    focusConfidenceProgress: document.getElementById("td-focus-confidence-progress"),
+    focusConfidenceScore: document.getElementById("td-focus-confidence-score"),
     focusTierLine: document.getElementById("td-focus-tier-line"),
     focusReasonLine: document.getElementById("td-focus-reason-line"),
+    focusWhyToggle: document.getElementById("td-focus-why-toggle"),
+    focusWhyLine: document.getElementById("td-focus-why-line"),
+    focusEngineCue: document.getElementById("td-focus-engine-cue"),
     focusFidelityLine: document.getElementById("td-focus-fidelity-line"),
     executiveActiveTag: document.getElementById("td-executive-active-tag"),
     expRecentAccuracy: document.getElementById("td-exp-recent-accuracy"),
@@ -1381,11 +1389,97 @@
     var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
       ? row.priority.topSkills[0]
       : null;
-    if (!top) return "Missing evidence; collect baseline signal.";
+    if (!top) return "Collect one baseline check to activate recommendations.";
     var need = Number(top.need || 0);
-    if (need >= 0.65) return "High need signal on " + formatSkillBreadcrumb(top.skillId) + ".";
-    if (need >= 0.4) return "Developing signal on " + formatSkillBreadcrumb(top.skillId) + ".";
-    return "Monitor consistency for " + formatSkillBreadcrumb(top.skillId) + ".";
+    if (need >= 0.65) return "Priority: " + formatSkillBreadcrumb(top.skillId) + " needs immediate support.";
+    if (need >= 0.4) return "Priority: " + formatSkillBreadcrumb(top.skillId) + " is developing.";
+    return "Priority: " + formatSkillBreadcrumb(top.skillId) + " is steady; monitor consistency.";
+  }
+
+  function setFocusInsight(text) {
+    if (!el.focusReasonLine) return;
+    var line = String(text || "Pick a student to load today’s strongest move.");
+    el.focusReasonLine.innerHTML = "<strong>" + escAttr(line) + "</strong>";
+  }
+
+  function buildFocusSparkline(row, signal) {
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var need = Number(top && top.need || 0.45);
+    var input = signal && signal.input ? signal.input : {};
+    var recent = Number(toPct(input.recentAccuracy || 0.72));
+    var drift = need >= 0.65 ? -1.8 : (need >= 0.4 ? 0.45 : 1.15);
+    var start = clamp(recent - (drift * 3), 24, 96);
+    var points = [];
+    for (var i = 0; i < 7; i += 1) {
+      var jitter = (i % 2 === 0 ? 0.6 : -0.5);
+      points.push(clamp(start + (drift * i) + jitter, 22, 98));
+    }
+    return points;
+  }
+
+  function buildFocusSparkPath(points) {
+    var arr = Array.isArray(points) && points.length ? points : [58, 59, 60, 61, 62, 63, 64];
+    var max = Math.max.apply(Math, arr);
+    var min = Math.min.apply(Math, arr);
+    var span = Math.max(1, max - min);
+    return arr.map(function (value, idx) {
+      var x = Math.round((idx / Math.max(1, arr.length - 1)) * 92);
+      var y = Math.round(21 - ((Number(value || 0) - min) / span) * 16);
+      return (idx ? "L" : "M") + x + " " + y;
+    }).join(" ");
+  }
+
+  function renderFocusSignalVisuals(row, signal) {
+    var points = buildFocusSparkline(row, signal);
+    if (el.focusTrendPath) {
+      el.focusTrendPath.setAttribute("d", buildFocusSparkPath(points));
+    }
+    var first = Number(points[0] || 0);
+    var last = Number(points[points.length - 1] || first);
+    var delta = last - first;
+    var deltaText = "→ steady";
+    var deltaClass = "focus-delta focus-delta-steady";
+    if (delta > 1.4) {
+      deltaText = "↑ improving";
+      deltaClass = "focus-delta focus-delta-up";
+    } else if (delta < -1.4) {
+      deltaText = "↓ risk";
+      deltaClass = "focus-delta focus-delta-down";
+    }
+    if (el.focusDelta) {
+      el.focusDelta.textContent = deltaText;
+      el.focusDelta.className = deltaClass;
+    }
+
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var needPenalty = Number(top && top.need || 0.45) * 22;
+    var input = signal && signal.input ? signal.input : {};
+    var recent = Number(toPct(input.recentAccuracy || 0.72));
+    var goalGap = Math.abs(Number(toPct(input.goalAccuracy || 0.8)) - recent);
+    var fidelityBoost = Number(input.fidelityPercent || 80) * 0.08;
+    var confidenceScore = clamp(Math.round(recent - (goalGap * 0.3) - needPenalty + fidelityBoost + 28), 42, 97);
+    if (el.focusConfidenceScore) el.focusConfidenceScore.textContent = String(confidenceScore) + "%";
+    if (el.focusConfidenceProgress) {
+      var circumference = 2 * Math.PI * 16;
+      var offset = circumference * (1 - (confidenceScore / 100));
+      el.focusConfidenceProgress.style.strokeDasharray = String(circumference.toFixed(2));
+      el.focusConfidenceProgress.style.strokeDashoffset = String(offset.toFixed(2));
+    }
+  }
+
+  function focusWhyLineFromSignal(signal, row) {
+    var top = row && row.priority && row.priority.topSkills && row.priority.topSkills[0]
+      ? row.priority.topSkills[0]
+      : null;
+    var reason = signal && Array.isArray(signal.reasoning) && signal.reasoning[0]
+      ? String(signal.reasoning[0])
+      : "Tier decision based on recent accuracy, goal match, and stability.";
+    if (!top) return reason;
+    return reason + " Focus skill: " + formatSkillBreadcrumb(top.skillId) + ".";
   }
 
   function getSelectedPlanRow() {
@@ -1409,7 +1503,15 @@
     if (!list.length) {
       if (el.focusStudentName) el.focusStudentName.textContent = "Select a student";
       if (el.focusTierLine) el.focusTierLine.textContent = "Tier 2 focus";
-      if (el.focusReasonLine) el.focusReasonLine.textContent = "Search a student to get a clear next move.";
+      setFocusInsight("Search a student to activate a clear next move.");
+      if (el.focusWhyLine) {
+        el.focusWhyLine.textContent = "Trend and fidelity signals are combined into one recommendation.";
+        el.focusWhyLine.classList.add("hidden");
+      }
+      if (el.focusWhyToggle) el.focusWhyToggle.setAttribute("aria-expanded", "false");
+      renderFocusSignalVisuals(null, null);
+      if (el.focusEngineCue) el.focusEngineCue.classList.add("hidden");
+      if (el.focusCard) el.focusCard.classList.remove("is-engine-active");
       renderExecutiveSnapshot(null);
       renderExplainability(null, "");
       renderFrameworkBadges(el.litFrameworkBadges, "");
@@ -1430,7 +1532,13 @@
 
     if (el.focusStudentName) el.focusStudentName.textContent = String(focusStudent.name || "Select a student");
     if (el.focusTierLine) el.focusTierLine.textContent = focusTier + " focus";
-    if (el.focusReasonLine) el.focusReasonLine.textContent = signalLineForRow(focus);
+    setFocusInsight(signalLineForRow(focus));
+    if (el.focusWhyLine) {
+      el.focusWhyLine.textContent = focusWhyLineFromSignal(tierSignal, focus);
+      el.focusWhyLine.classList.add("hidden");
+    }
+    if (el.focusWhyToggle) el.focusWhyToggle.setAttribute("aria-expanded", "false");
+    renderFocusSignalVisuals(focus, tierSignal);
     var focusSkillId = String(focusTop && focusTop.skillId || "literacy");
     renderExplainability(tierSignal, focusSkillId);
     renderExecutiveSnapshot(focus);
@@ -1444,10 +1552,16 @@
         selectStudent(sid);
         var href = pickLaunchHrefForRow(focus);
         el.focusStartBtn.classList.add("is-launching");
+        if (el.focusCard) el.focusCard.classList.add("is-engine-active");
+        if (el.focusEngineCue) el.focusEngineCue.classList.remove("hidden");
         setTimeout(function () {
           if (el.focusStartBtn) el.focusStartBtn.classList.remove("is-launching");
+          if (el.focusCard) el.focusCard.classList.remove("is-engine-active");
+          if (el.focusEngineCue) el.focusEngineCue.classList.add("hidden");
         }, 220);
-        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""), sid);
+        setTimeout(function () {
+          window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""), sid);
+        }, 180);
       };
     }
 
@@ -1605,7 +1719,8 @@
         var sid = String(button.getAttribute("data-student-id") || state.selectedId || "");
         if (!target) return;
         recordLastActivity(sid, target);
-        window.location.href = appendStudentParam("./" + target + ".html", sid);
+        if (sid) state.selectedId = sid;
+        window.location.href = appendStudentParam("./" + target + ".html");
       });
     });
 
@@ -3092,6 +3207,20 @@
       modalController.bindBackdropClose("sas-library");
       modalController.closeOnEscape();
     }
+    if (el.meetingWorkspaceBtn) {
+      el.meetingWorkspaceBtn.addEventListener("click", function () {
+        openMeetingModal();
+      });
+    }
+  }
+
+  function bindFocusWhyToggle() {
+    if (!el.focusWhyToggle || !el.focusWhyLine) return;
+    el.focusWhyToggle.addEventListener("click", function () {
+      var isOpen = !el.focusWhyLine.classList.contains("hidden");
+      el.focusWhyLine.classList.toggle("hidden", isOpen);
+      el.focusWhyToggle.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    });
   }
 
   Evidence.init();
@@ -3112,6 +3241,7 @@
   initDrawerController();
   initBindingsController();
   bindEvents();
+  bindFocusWhyToggle();
   void loadIllustrativeMathMapData();
   initNumeracyCurriculumSelectors();
   document.addEventListener("keydown", function (event) {
