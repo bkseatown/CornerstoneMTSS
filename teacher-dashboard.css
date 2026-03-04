@@ -527,6 +527,12 @@ body.cs-has-nav-shell .td-shell {
   gap: 10px;
 }
 
+.focus-title-stack {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
 .focus-student-name {
   margin: 0;
   font-size: clamp(2.35rem, 3.9vw, 2.95rem);
@@ -534,6 +540,102 @@ body.cs-has-nav-shell .td-shell {
   letter-spacing: var(--ls-tight);
   color: var(--text-strong);
   font-weight: 700;
+}
+
+.focus-signal-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.focus-trend-spark {
+  width: 140px;
+  height: 24px;
+  display: block;
+}
+
+.focus-trend-spark path {
+  fill: none;
+  stroke: color-mix(in oklab, var(--accent) 74%, #9fc1eb 26%);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.focus-delta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--fs-0);
+  line-height: 1.2;
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  background: color-mix(in oklab, var(--surface-elev-2) 84%, #deebfa 16%);
+  border: 1px solid color-mix(in oklab, var(--surface-border) 68%, transparent);
+}
+
+.focus-delta-up {
+  color: color-mix(in oklab, #2f9e44 70%, var(--text-secondary) 30%);
+  background: color-mix(in oklab, #e0f4e7 76%, var(--surface-elev-2) 24%);
+}
+
+.focus-delta-steady {
+  color: color-mix(in oklab, #436b98 72%, var(--text-secondary) 28%);
+}
+
+.focus-delta-down {
+  color: color-mix(in oklab, #b4534a 70%, var(--text-secondary) 30%);
+  background: color-mix(in oklab, #f7e4e1 78%, var(--surface-elev-2) 22%);
+}
+
+.focus-right-signals {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.focus-confidence-ring {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+
+.focus-confidence-ring svg {
+  width: 44px;
+  height: 44px;
+  transform: rotate(-90deg);
+}
+
+.focus-confidence-track {
+  fill: none;
+  stroke: color-mix(in oklab, var(--surface-border) 62%, transparent);
+  stroke-width: 4;
+}
+
+.focus-confidence-progress {
+  fill: none;
+  stroke: color-mix(in oklab, var(--accent) 72%, #99bbe8 28%);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 28;
+  transition: stroke-dashoffset 180ms ease-in-out;
+}
+
+.focus-confidence-score {
+  position: absolute;
+  inset: 0;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.62rem;
+  line-height: 1;
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
 }
 
 .focus-tier {
@@ -553,6 +655,31 @@ body.cs-has-nav-shell .td-shell {
   line-height: var(--lh-normal);
   color: var(--text-primary);
   max-width: 80ch;
+}
+
+.focus-insight-line {
+  font-size: var(--fs-base);
+  line-height: 1.35;
+}
+
+.focus-insight-line strong {
+  color: var(--text-strong);
+  font-weight: var(--fw-semibold);
+}
+
+.focus-why-toggle {
+  width: fit-content;
+  min-height: 26px;
+  padding: 3px 10px;
+  font-size: var(--fs-0);
+  color: var(--text-secondary);
+}
+
+.focus-why-line {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
 }
 
 .focus-fidelity-line {
@@ -664,6 +791,19 @@ body.cs-has-nav-shell .td-shell {
 
 .focus-start.is-launching::after {
   animation: tdLaunchShimmer 200ms ease-in-out 1;
+}
+
+.focus-card.is-engine-active {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(38, 70, 112, 0.18);
+}
+
+.focus-engine-cue {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+  color: color-mix(in oklab, var(--accent) 70%, var(--text-secondary) 30%);
+  font-weight: var(--fw-medium);
 }
 
 @keyframes tdLaunchShimmer {
@@ -978,10 +1118,13 @@ body.td-wow-eval-active .td-shell {
 }
 
 .launch-card {
-  min-height: calc(var(--sp-6) + var(--space-1));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 114px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 4px;
+  padding: 10px 12px;
+  text-align: left;
   font-size: var(--fs-sm);
   font-weight: var(--fw-regular);
   border-radius: var(--radius-2);
@@ -993,6 +1136,46 @@ body.td-wow-eval-active .td-shell {
 
 .launch-card:hover {
   background: var(--surface-elev-1);
+}
+
+.launch-card-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: inline-grid;
+  place-items: center;
+  background: color-mix(in oklab, var(--surface-elev-2) 84%, #deebfa 16%);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.launch-card-title {
+  font-size: var(--fs-base);
+  line-height: 1.2;
+  color: var(--text-strong);
+  font-weight: var(--fw-semibold);
+}
+
+.launch-card-desc {
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.launch-card-map {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: var(--fs-0);
+  line-height: 1.2;
+  color: var(--text-secondary);
+  background: color-mix(in oklab, var(--surface-elev-2) 80%, #dce8f8 20%);
+}
+
+.launch-card-engine {
+  background: color-mix(in oklab, var(--surface-elev-1) 90%, #e7f0fd 10%);
 }
 
 #td-coach-ribbon { display: none !important; }
@@ -1042,6 +1225,14 @@ body.td-page .td-modal-card {
 
   .focus-student-name {
     font-size: var(--fs-6);
+  }
+
+  .focus-right-signals {
+    gap: 8px;
+  }
+
+  .focus-trend-spark {
+    width: 118px;
   }
 
   .numeracy-meta-grid {
