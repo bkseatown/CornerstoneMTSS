@@ -5,7 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 const root = process.cwd();
-const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const gameplayHtmlPath = fs.existsSync(path.join(root, 'cornerstone-mtss.html'))
+  ? path.join(root, 'cornerstone-mtss.html')
+  : path.join(root, 'word-quest.html');
+const gameplayHtml = fs.readFileSync(gameplayHtmlPath, 'utf8');
 const appSource = fs.readFileSync(path.join(root, 'js/app.js'), 'utf8');
 
 function requireText(source, pattern, message) {
@@ -13,9 +16,9 @@ function requireText(source, pattern, message) {
 }
 
 requireText(
-  indexHtml,
+  gameplayHtml,
   /id="focus-inline-search"[\s\S]*placeholder="Select your quest or track"/,
-  'Focus search placeholder text changed unexpectedly in index.html.'
+  'Focus search placeholder text changed unexpectedly in gameplay HTML.'
 );
 requireText(
   appSource,

@@ -6,14 +6,17 @@ const path = require('path');
 
 const root = process.cwd();
 const appSource = fs.readFileSync(path.join(root, 'js/app.js'), 'utf8');
-const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const gameplayHtmlPath = fs.existsSync(path.join(root, 'cornerstone-mtss.html'))
+  ? path.join(root, 'cornerstone-mtss.html')
+  : path.join(root, 'word-quest.html');
+const gameplayHtml = fs.readFileSync(gameplayHtmlPath, 'utf8');
 
 function requireText(source, pattern, message) {
   if (!pattern.test(source)) throw new Error(message);
 }
 
 requireText(
-  indexHtml,
+  gameplayHtml,
   /id="session-copy-outcomes-btn"[^>]*>Copy Session Outcomes</,
   'Session outcomes export button is missing.'
 );

@@ -5,7 +5,12 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = process.cwd();
-const HTML_PATH = path.join(ROOT, 'index.html');
+const HTML_PATHS = [
+  path.join(ROOT, 'index.html'),
+  path.join(ROOT, 'teacher-dashboard.html'),
+  path.join(ROOT, 'cornerstone-mtss.html'),
+  path.join(ROOT, 'word-quest.html')
+];
 const CHECK_FILES = [
   path.join(ROOT, 'js', 'app.js'),
   path.join(ROOT, 'js', 'theme-nav.js')
@@ -26,7 +31,14 @@ const ALLOWED_DYNAMIC_IDS = new Set([
   'wq-demo-launch-btn',
   'wq-demo-restart-btn',
   'wq-demo-retry-btn',
-  'wq-demo-skip-btn'
+  'wq-demo-skip-btn',
+  'cs-demo-close',
+  'cs-demo-restart',
+  'cs-demo-skip',
+  'cs-demo-toast',
+  'cs-demo-toast-bar',
+  'cs-demo-toast-text',
+  'csHeaderTitleCenter'
 ]);
 
 const SELECTOR_PATTERNS = [
@@ -39,6 +51,16 @@ const SELECTOR_PATTERNS = [
 function readIdsFromHtml(filePath) {
   const source = fs.readFileSync(filePath, 'utf8');
   return new Set(Array.from(source.matchAll(/\sid="([^"]+)"/g), (match) => match[1]));
+}
+
+function readAllIdsFromHtml(paths) {
+  const ids = new Set();
+  paths.forEach((filePath) => {
+    if (!fs.existsSync(filePath)) return;
+    const fileIds = readIdsFromHtml(filePath);
+    fileIds.forEach((id) => ids.add(id));
+  });
+  return ids;
 }
 
 function collectSelectors(filePath, validIds) {
@@ -57,12 +79,13 @@ function collectSelectors(filePath, validIds) {
   return missing;
 }
 
-if (!fs.existsSync(HTML_PATH)) {
-  console.error(`Missing required file: ${HTML_PATH}`);
+const existingHtmlPaths = HTML_PATHS.filter((filePath) => fs.existsSync(filePath));
+if (!existingHtmlPaths.length) {
+  console.error('Missing required HTML files for DOM hook checks.');
   process.exit(1);
 }
 
-const validIds = readIdsFromHtml(HTML_PATH);
+const validIds = readAllIdsFromHtml(existingHtmlPaths);
 const files = CHECK_FILES.filter((filePath) => fs.existsSync(filePath));
 const findings = [];
 

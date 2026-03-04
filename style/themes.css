@@ -185,8 +185,8 @@
 /* ── COFFEE / STARBUCKS ── Green #00704A + espresso + cream
    Rich espresso atmosphere. Cream keys like a latte             */
 [data-theme="coffee"] {
-  --page-bg:      #2d1e16;
-  --page-bg2:     #1f1510;
+  --page-bg:      #35241b;
+  --page-bg2:     #241913;
   --plate-bg:     rgba(203,160,95,0.08);
   --plate-border: rgba(203,160,95,0.28);
   --tile-face:    linear-gradient(160deg, #fff8ef 0%, #f0dcc8 100%);
@@ -220,8 +220,8 @@
 /* ── MATRIX ── Electric green on deep green. INTENTIONALLY high contrast.
    Dark forest green page — the dark IS the brand here. Mint keys readable. */
 [data-theme="matrix"] {
-  --page-bg:      #13241d;
-  --page-bg2:     #0c1813;
+  --page-bg:      #173126;
+  --page-bg2:     #102319;
   --plate-bg:     rgba(65,175,118,0.08);
   --plate-border: rgba(82,217,152,0.36);
   --tile-face:    linear-gradient(160deg, #e8efe8 0%, #d6e2d8 100%);
@@ -681,7 +681,7 @@
 /* ── AMONG US ── deep space with crewmate red + visor cyan ── */
 [data-theme="amongus"] {
   --page-bg:      #202543;
-  --page-bg2:     #0c0f22;
+  --page-bg2:     #11162d;
   --plate-bg:     rgba(94,112,190,0.10);
   --plate-border: rgba(225,29,72,0.30);
   --tile-face:    linear-gradient(160deg, #f6f8ff 0%, #e5e9ff 100%);

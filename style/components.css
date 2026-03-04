@@ -2158,7 +2158,7 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 @media (max-width: 1080px) {
-  .settings-panel {
+  body .settings-panel {
     width: calc(100vw - 16px);
     margin: 6px auto 9px;
     border-radius: 18px;
@@ -2166,7 +2166,7 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 @media (max-width: 720px) {
-  .settings-panel {
+  body .settings-panel {
     width: calc(100vw - 10px);
     margin: 5px auto 8px;
     border-radius: 15px;
@@ -2184,7 +2184,7 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 @media (max-width: 380px) {
-  .settings-panel {
+  body .settings-panel {
     width: calc(100vw - 6px);
     margin: 4px auto 7px;
     border-radius: 12px;
@@ -7606,7 +7606,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
     min-width: 86px;
   }
 
-  #keyboard {
+  body #keyboard {
     min-height: clamp(200px, 30vh, 280px);
   }
 }
