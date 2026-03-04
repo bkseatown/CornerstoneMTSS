@@ -38,6 +38,11 @@
   var AlignmentLoader = window.CSAlignmentLoader;
   var InterventionPlanner = window.CSInterventionPlanner;
   var ShareSummaryAPI = window.CSShareSummary;
+  var DashboardState = window.CSDashboardState;
+  var DashboardRole = window.CSDashboardRole;
+  var DashboardUI = window.CSDashboardUI;
+  var DashboardFocus = window.CSDashboardFocus;
+  var DashboardMeeting = window.CSDashboardMeeting;
   var SupportStore = window.CSSupportStore;
   var MeetingNotes = window.CSMeetingNotes;
   var MeetingTranslation = window.CSMeetingTranslation;
@@ -82,6 +87,14 @@
   var skillStoreLogged = false;
 
   var LAST_ACTIVITY_KEY = "cs.lastActivityByStudent.v1";
+  var DASHBOARD_RUNTIME_KEY = "cs.dashboard.runtime.v1";
+  var appState = DashboardState && typeof DashboardState.create === "function"
+    ? DashboardState.create()
+    : {
+      get: function () { return { role: "teacher", mode: "daily", selectedStudentId: "", meetingWorkspace: { open: false, tab: "summary" }, featureFlags: { demoMode: false, adminMode: false } }; },
+      set: function () {},
+      updateMeetingWorkspace: function () {}
+    };
 
   var el = {
     search: document.getElementById("td-search-input"),
@@ -105,7 +118,6 @@
     last7Summary: document.getElementById("td-last7-summary"),
     quickCheck: document.getElementById("td-quick-check"),
     startIntervention: document.getElementById("td-start-intervention"),
-    meetingModeBtn: document.getElementById("td-meeting-mode"),
     meetingWorkspaceBtn: document.getElementById("td-meeting-workspace"),
     tier1PackBtn: document.getElementById("td-tier1-pack"),
     openStudentDrawer: document.getElementById("td-open-student-drawer"),
@@ -152,24 +164,6 @@
     workspaceTabExport: document.getElementById("td-workspace-tab-export"),
     workspaceSummaryPanel: document.getElementById("td-workspace-summary-panel"),
     workspaceDeckPanel: document.getElementById("td-workspace-deck-panel"),
-    reportModal: document.getElementById("td-report-modal"),
-    reportClose: document.getElementById("td-report-close"),
-    reportLanguage: document.getElementById("td-report-language"),
-    reportPreview: document.getElementById("td-report-preview"),
-    reportCopy: document.getElementById("td-report-copy"),
-    reportDownloadPdf: document.getElementById("td-report-download-pdf"),
-    meetingDeckModal: document.getElementById("td-meeting-deck-modal"),
-    meetingDeckClose: document.getElementById("td-meeting-deck-close"),
-    meetingDeckPrev: document.getElementById("td-meeting-deck-prev"),
-    meetingDeckNext: document.getElementById("td-meeting-deck-next"),
-    meetingDeckCounter: document.getElementById("td-meeting-deck-counter"),
-    meetingDeckLanguage: document.getElementById("td-meeting-deck-language"),
-    meetingDeckConcern: document.getElementById("td-meeting-deck-concern"),
-    meetingDeckCopy: document.getElementById("td-meeting-deck-copy"),
-    meetingDeckJson: document.getElementById("td-meeting-deck-json"),
-    meetingDeckPdf: document.getElementById("td-meeting-deck-pdf"),
-    meetingDeckPrint: document.getElementById("td-meeting-deck-print"),
-    meetingDeckSlide: document.getElementById("td-meeting-deck-slide"),
     sasLibraryBtn: document.getElementById("td-sas-library-btn"),
     sasLibraryModal: document.getElementById("td-sas-library-modal"),
     sasLibraryClose: document.getElementById("td-sas-library-close"),
@@ -767,9 +761,9 @@
     if (el.confidenceLine) {
       var trend = String(s.trendDecision || "HOLD").toUpperCase();
       var fidelityState = Math.round(Number(input.fidelityPercent || 0)) >= 70 ? "active" : "watch";
-      el.confidenceLine.textContent = "Tier signal " + (trend === "HOLD" || trend === "FADE" ? "stable" : "active") +
+      el.confidenceLine.textContent = "Tier engine " + (trend === "HOLD" || trend === "FADE" ? "stable" : "active") +
         " • Fidelity tracking " + fidelityState +
-        " • Curriculum alignment active";
+        " • Curriculum alignment mapped • Guardrails passed";
     }
   }
 
@@ -814,14 +808,6 @@
     renderNumeracyAlignmentLine();
   }
 
-  function reportLanguageLabel(code) {
-    var c = String(code || "en").toLowerCase();
-    if (c === "zh") return "Mandarin";
-    if (c === "es") return "Spanish";
-    if (c === "hi") return "Hindi";
-    return "English";
-  }
-
   function escHtml(value) {
     return String(value == null ? "" : value)
       .replace(/&/g, "&amp;")
@@ -829,69 +815,6 @@
       .replace(/>/g, "&gt;")
       .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#39;");
-  }
-
-  function buildReportText(report, language) {
-    var nextSteps = Array.isArray(report && report.recommendedNextSteps) ? report.recommendedNextSteps : [];
-    var lines = [
-      "Unified Student Summary (" + reportLanguageLabel(language) + ")",
-      "",
-      "Executive Summary",
-      String(report && report.executiveSummary || ""),
-      "",
-      "Literacy Progress",
-      String(report && report.literacyProgress || ""),
-      "",
-      "Numeracy Progress",
-      String(report && report.numeracyProgress || ""),
-      "",
-      "Tier Statement",
-      String(report && report.tierStatement || ""),
-      "",
-      "Curriculum Alignment",
-      String(report && report.curriculumAlignment || ""),
-      "",
-      "Instructional Framework Alignment",
-      String(report && report.instructionalFrameworkAlignment || ""),
-      "",
-      "Intervention Fidelity Summary",
-      String(report && report.interventionFidelitySummary || ""),
-      "",
-      "Tier Decision Explanation",
-      String(report && report.tierDecisionExplanation || ""),
-      "",
-      "Executive Function & Organizational Support",
-      String(report && report.executiveFunctionSupport || ""),
-      "",
-      "Recommended Next Steps",
-      nextSteps.map(function (step, idx) { return (idx + 1) + ". " + step; }).join("\n"),
-      "",
-      "Parent Summary",
-      String(report && report.parentSummary || "")
-    ];
-    return lines.join("\n");
-  }
-
-  function renderReportPreview() {
-    if (!el.reportPreview || !state.reportDraft) return;
-    var language = el.reportLanguage ? String(el.reportLanguage.value || "en") : "en";
-    var translated = ReportingGenerator && typeof ReportingGenerator.translateReport === "function"
-      ? ReportingGenerator.translateReport(state.reportDraft, language)
-      : state.reportDraft;
-    var nextSteps = Array.isArray(translated && translated.recommendedNextSteps) ? translated.recommendedNextSteps : [];
-    el.reportPreview.innerHTML = [
-      "<section><h3>Executive Summary</h3><p>" + escHtml(translated.executiveSummary || "") + "</p></section>",
-      "<section><h3>Literacy Progress</h3><p>" + escHtml(translated.literacyProgress || "") + "</p></section>",
-      "<section><h3>Numeracy Progress</h3><p>" + escHtml(translated.numeracyProgress || "") + "</p></section>",
-      "<section><h3>Tier Statement</h3><p>" + escHtml(translated.tierStatement || "") + "</p></section>",
-      "<section><h3>Curriculum Alignment</h3><p>" + escHtml(translated.curriculumAlignment || "") + "</p></section>",
-      "<section><h3>Instructional Framework Alignment</h3><p>" + escHtml(translated.instructionalFrameworkAlignment || "") + "</p></section>",
-      "<section><h3>Intervention Fidelity Summary</h3><p>" + escHtml(translated.interventionFidelitySummary || "") + "</p></section>",
-      "<section><h3>Tier Decision Explanation</h3><p>" + escHtml(translated.tierDecisionExplanation || "") + "</p></section>",
-      "<section><h3>Executive Function &amp; Organizational Support</h3><p>" + escHtml(translated.executiveFunctionSupport || "") + "</p></section>",
-      "<section><h3>Recommended Next Steps</h3><ul>" + nextSteps.map(function (step) { return "<li>" + escHtml(step) + "</li>"; }).join("") + "</ul></section>",
-      "<section><h3>Parent Summary</h3><p>" + escHtml(translated.parentSummary || "") + "</p></section>"
-    ].join("");
   }
 
   function buildReportingContext(row) {
@@ -954,121 +877,38 @@
     };
   }
 
-  function meetingDeckLanguage() {
-    return el.meetingDeckLanguage ? String(el.meetingDeckLanguage.value || "en") : "en";
-  }
-
-  function translateSlideBlock(text, language) {
-    if (language === "en") return text;
-    if (!ReportingGenerator || typeof ReportingGenerator.translateReport !== "function") {
-      return "[" + language + " placeholder] " + text;
+  function initRuntimeState() {
+    var params;
+    var stored = safeJsonParse(localStorage.getItem(DASHBOARD_RUNTIME_KEY), {});
+    try {
+      params = new URLSearchParams(window.location.search || "");
+    } catch (_e) {
+      params = new URLSearchParams("");
     }
-    var translated = ReportingGenerator.translateReport({ parentSummary: text }, language);
-    return String(translated && translated.parentSummary || text);
-  }
-
-  function renderMeetingDeckSlide() {
-    if (!el.meetingDeckSlide) return;
-    var deck = Array.isArray(state.meetingDeck) ? state.meetingDeck : [];
-    if (!deck.length) {
-      el.meetingDeckSlide.innerHTML = "<h3>No slides available</h3><p>Select a student to generate meeting slides.</p>";
-      if (el.meetingDeckCounter) el.meetingDeckCounter.textContent = "Slide 0 of 0";
-      return;
-    }
-    state.meetingDeckIndex = Math.max(0, Math.min(deck.length - 1, Number(state.meetingDeckIndex || 0)));
-    var slide = deck[state.meetingDeckIndex] || { title: "Slide", contentBlocks: [], notes: "" };
-    var language = meetingDeckLanguage();
-    var blocks = Array.isArray(slide.contentBlocks) ? slide.contentBlocks : [];
-    var renderedBlocks = blocks.map(function (block) { return translateSlideBlock(String(block || ""), language); });
-    el.meetingDeckSlide.innerHTML = [
-      "<h3>" + escHtml(slide.title || "Slide") + "</h3>",
-      "<ul>" + renderedBlocks.map(function (line) { return "<li>" + escHtml(line) + "</li>"; }).join("") + "</ul>",
-      "<p class=\"td-meeting-deck-note\"><strong>Presenter notes:</strong> " + escHtml(slide.notes || "") + "</p>"
-    ].join("");
-    if (el.meetingDeckCounter) {
-      el.meetingDeckCounter.textContent = "Slide " + (state.meetingDeckIndex + 1) + " of " + deck.length;
-    }
-  }
-
-  function buildMeetingDeckText(language) {
-    var deck = Array.isArray(state.meetingDeck) ? state.meetingDeck : [];
-    var lines = [];
-    deck.forEach(function (slide, idx) {
-      lines.push("Slide " + (idx + 1) + ": " + String(slide.title || ""));
-      (Array.isArray(slide.contentBlocks) ? slide.contentBlocks : []).forEach(function (block) {
-        lines.push("- " + translateSlideBlock(String(block || ""), language));
-      });
-      lines.push("Notes: " + String(slide.notes || ""));
-      lines.push("");
+    var roleFromUrl = params.get("role");
+    var roleFromStore = stored && stored.role;
+    var role = DashboardRole && typeof DashboardRole.normalizeRole === "function"
+      ? DashboardRole.normalizeRole(roleFromUrl || roleFromStore || "teacher")
+      : String(roleFromUrl || roleFromStore || "teacher").toLowerCase() === "admin" ? "admin" : "teacher";
+    var demoMode = params.get("demo") === "1" || !!(stored && stored.featureFlags && stored.featureFlags.demoMode);
+    appState.set({
+      role: role,
+      featureFlags: {
+        demoMode: demoMode,
+        adminMode: role === "admin"
+      }
     });
-    return lines.join("\n");
-  }
-
-  function openMeetingDeckMode() {
-    if (!el.meetingDeckModal || !state.selectedId) return;
-    var row = getSelectedPlanRow();
-    var ctx = buildReportingContext(row);
-    if (ReportingGenerator && typeof ReportingGenerator.generateStudentReport === "function") {
-      state.reportDraft = ReportingGenerator.generateStudentReport(ctx.studentProfile, ctx.literacyData, ctx.numeracyData);
-    }
-    if (!MeetingGenerator || typeof MeetingGenerator.generateMeetingDeck !== "function") return;
-    state.meetingDeckConcernMode = false;
-    state.meetingDeck = MeetingGenerator.generateMeetingDeck({
-      studentProfile: ctx.studentProfile,
-      literacyData: ctx.literacyData,
-      numeracyData: ctx.numeracyData,
-      tierSignal: ctx.tierSignal,
-      fidelityData: ctx.fidelityData,
-      parentSummary: state.reportDraft && state.reportDraft.parentSummary
-    }) || [];
-    state.meetingDeckIndex = 0;
-    if (el.meetingDeckConcern) el.meetingDeckConcern.textContent = "Students of Concern Mode";
-    document.body.classList.add("td-meeting-mode");
-    el.meetingDeckModal.classList.remove("hidden");
-    renderMeetingDeckSlide();
-  }
-
-  function closeMeetingDeckMode() {
-    if (el.meetingDeckModal) el.meetingDeckModal.classList.add("hidden");
-    document.body.classList.remove("td-meeting-mode");
-  }
-
-  function openReportModal() {
-    if (!el.reportModal || !el.reportPreview || !state.selectedId) return;
-    var focusRows = state.todayPlan && Array.isArray(state.todayPlan.students) ? state.todayPlan.students : [];
-    var row = focusRows.find(function (item) { return item && item.student && String(item.student.id || "") === String(state.selectedId); }) || null;
-    var ctx = buildReportingContext(row);
-    var studentProfile = ctx.studentProfile;
-    var literacyData = ctx.literacyData;
-    var numeracyData = ctx.numeracyData;
-
-    if (ReportingGenerator && typeof ReportingGenerator.generateStudentReport === "function") {
-      state.reportDraft = ReportingGenerator.generateStudentReport(studentProfile, literacyData, numeracyData);
-    } else {
-      state.reportDraft = {
-        executiveSummary: "Summary is unavailable.",
-        literacyProgress: "",
-        numeracyProgress: "",
-        tierStatement: "",
-        curriculumAlignment: "",
-        instructionalFrameworkAlignment: "",
-        interventionFidelitySummary: "",
-        tierDecisionExplanation: "",
-        recommendedNextSteps: [],
-        parentSummary: ""
-      };
-    }
-    renderReportPreview();
-    el.reportModal.classList.remove("hidden");
-  }
-
-  function closeReportModal() {
-    if (el.reportModal) el.reportModal.classList.add("hidden");
+    try {
+      localStorage.setItem(DASHBOARD_RUNTIME_KEY, JSON.stringify({
+        role: role,
+        featureFlags: appState.get().featureFlags
+      }));
+    } catch (_e2) {}
   }
 
   function detectDemoMode() {
     try {
-      state.demoMode = new URLSearchParams(window.location.search).get("demo") === "1";
+      state.demoMode = !!(appState.get() && appState.get().featureFlags && appState.get().featureFlags.demoMode);
     } catch (_e) {
       state.demoMode = false;
     }
@@ -1077,31 +917,27 @@
 
   function getRuntimeRole() {
     try {
-      var role = String(new URLSearchParams(window.location.search || "").get("role") || "teacher").toLowerCase();
-      return role === "admin" ? "admin" : "teacher";
+      return String(appState.get().role || "teacher");
     } catch (_e) {
       return "teacher";
     }
   }
 
   function setDashboardMode(mode) {
-    var next = String(mode || "daily").toLowerCase();
-    document.body.classList.remove("td-daily-mode", "td-advanced-mode", "td-reports-mode", "td-classroom-mode");
-    if (next === "advanced") document.body.classList.add("td-advanced-mode");
-    else if (next === "reports") document.body.classList.add("td-reports-mode");
-    else if (next === "classroom") document.body.classList.add("td-classroom-mode");
-    else document.body.classList.add("td-daily-mode");
-
-    if (el.modeDaily) el.modeDaily.classList.toggle("is-active", next === "daily");
-    if (el.modeAdvanced) el.modeAdvanced.classList.toggle("is-active", next === "advanced");
-    if (el.modeReports) el.modeReports.classList.toggle("is-active", next === "reports");
-    if (el.modeClassroom) el.modeClassroom.classList.toggle("is-active", next === "classroom");
+    var next = DashboardUI && typeof DashboardUI.applyMode === "function"
+      ? DashboardUI.applyMode(mode, el)
+      : String(mode || "daily").toLowerCase();
+    appState.set({ mode: next });
   }
 
   function applyRoleBasedSimplification() {
     var role = getRuntimeRole();
-    document.body.classList.toggle("td-admin-role", role === "admin");
-    document.body.classList.toggle("td-teacher-role", role !== "admin");
+    if (DashboardRole && typeof DashboardRole.applyRoleClasses === "function") {
+      DashboardRole.applyRoleClasses(role);
+    } else {
+      document.body.classList.toggle("td-admin-role", role === "admin");
+      document.body.classList.toggle("td-teacher-role", role !== "admin");
+    }
     if (role !== "admin") {
       if (el.activitySelect) el.activitySelect.closest(".td-activity-pick") && el.activitySelect.closest(".td-activity-pick").classList.add("hidden");
       if (el.coachChip) el.coachChip.classList.add("hidden");
@@ -1953,6 +1789,11 @@
 
   function selectStudent(studentId) {
     state.selectedId = String(studentId || "");
+    if (DashboardFocus && typeof DashboardFocus.setSelectedStudent === "function") {
+      DashboardFocus.setSelectedStudent(appState, state.selectedId);
+    } else {
+      appState.set({ selectedStudentId: state.selectedId });
+    }
     state.generatedPlanner = null;
     renderCaseload();
     if (!state.selectedId) {
@@ -3473,6 +3314,11 @@
 
   function openMeetingModal() {
     if (!el.meetingModal) return;
+    if (DashboardMeeting && typeof DashboardMeeting.setWorkspaceState === "function") {
+      DashboardMeeting.setWorkspaceState(appState, { open: true });
+    } else {
+      appState.updateMeetingWorkspace({ open: true });
+    }
     var row = getSelectedPlanRow();
     var ctx = buildReportingContext(row);
     if (ReportingGenerator && typeof ReportingGenerator.generateStudentReport === "function") {
@@ -3524,6 +3370,11 @@
 
   function closeMeetingModal() {
     stopMeetingRecognition();
+    if (DashboardMeeting && typeof DashboardMeeting.setWorkspaceState === "function") {
+      DashboardMeeting.setWorkspaceState(appState, { open: false });
+    } else {
+      appState.updateMeetingWorkspace({ open: false });
+    }
     if (el.meetingModal) el.meetingModal.classList.add("hidden");
   }
 
@@ -3716,6 +3567,11 @@
   function setWorkspaceTab(tab) {
     var next = String(tab || "summary");
     state.workspaceTab = next;
+    if (DashboardMeeting && typeof DashboardMeeting.setWorkspaceState === "function") {
+      DashboardMeeting.setWorkspaceState(appState, { tab: next });
+    } else {
+      appState.updateMeetingWorkspace({ tab: next });
+    }
     var map = {
       summary: el.workspaceTabSummary,
       deck: el.workspaceTabDeck,
@@ -4124,7 +3980,7 @@
       hasTier1EvidenceTool: !!document.getElementById("td-tier1-pack") || !!document.querySelector("[data-tier1-action='start']"),
       hasAccommodationsPanel: !!document.querySelector("[data-support-tab='accommodations']"),
       hasAccommodationButtons: !!document.querySelector("[data-accommodation-toggle]") || !!document.querySelector("[data-support-tab='accommodations']"),
-      hasMeetingNotesTool: !!document.getElementById("td-meeting-mode") || !!document.getElementById("td-open-meeting-notes"),
+      hasMeetingNotesTool: !!document.getElementById("td-meeting-workspace") || !!document.getElementById("td-open-meeting-notes"),
       hasReferralPacketExport: !!document.getElementById("td-support-export-packet"),
       hasShareControls: !!document.getElementById("td-share-cluster"),
       hasCopySummary: !!document.getElementById("td-share-quick-copy"),
@@ -4541,20 +4397,24 @@
       });
     }
 
-    el.exportJson.addEventListener("click", function () {
-      var id = state.selectedId || (state.caseload[0] && state.caseload[0].id) || "demo-student";
-      var jsonPayload = (window.CSEvidence && typeof window.CSEvidence.exportStudentJSON === "function")
-        ? window.CSEvidence.exportStudentJSON(id)
-        : JSON.stringify(Evidence.exportStudentSnapshot(id).json, null, 2);
-      download("student-summary-" + id + ".json", jsonPayload, "application/json");
-      setCoachLine("Exported student summary JSON.");
-    });
+    if (el.exportJson) {
+      el.exportJson.addEventListener("click", function () {
+        var id = state.selectedId || (state.caseload[0] && state.caseload[0].id) || "demo-student";
+        var jsonPayload = (window.CSEvidence && typeof window.CSEvidence.exportStudentJSON === "function")
+          ? window.CSEvidence.exportStudentJSON(id)
+          : JSON.stringify(Evidence.exportStudentSnapshot(id).json, null, 2);
+        download("student-summary-" + id + ".json", jsonPayload, "application/json");
+        setCoachLine("Exported student summary JSON.");
+      });
+    }
 
-    el.copyCsv.addEventListener("click", function () {
-      var csv = Evidence.rosterCSV();
-      if (navigator.clipboard) navigator.clipboard.writeText(csv).catch(function () {});
-      setCoachLine("Copied roster CSV.");
-    });
+    if (el.copyCsv) {
+      el.copyCsv.addEventListener("click", function () {
+        var csv = Evidence.rosterCSV();
+        if (navigator.clipboard) navigator.clipboard.writeText(csv).catch(function () {});
+        setCoachLine("Copied roster CSV.");
+      });
+    }
 
     if (el.copySummary) {
       el.copySummary.addEventListener("click", function () {
@@ -4640,129 +4500,6 @@
     }
     if (el.modeClassroom) {
       el.modeClassroom.addEventListener("click", function () { setDashboardMode("classroom"); });
-    }
-    if (el.reportClose) {
-      el.reportClose.addEventListener("click", closeReportModal);
-    }
-    if (el.reportModal) {
-      el.reportModal.addEventListener("click", function (event) {
-        if (event.target === el.reportModal) closeReportModal();
-      });
-    }
-    if (el.reportLanguage) {
-      el.reportLanguage.addEventListener("change", function () {
-        renderReportPreview();
-      });
-    }
-    if (el.reportCopy) {
-      el.reportCopy.addEventListener("click", function () {
-        if (!state.reportDraft) return;
-        var lang = el.reportLanguage ? String(el.reportLanguage.value || "en") : "en";
-        var report = ReportingGenerator && typeof ReportingGenerator.translateReport === "function"
-          ? ReportingGenerator.translateReport(state.reportDraft, lang)
-          : state.reportDraft;
-        var text = buildReportText(report, lang);
-        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
-        setCoachLine("Meeting summary copied to clipboard.");
-      });
-    }
-    if (el.reportDownloadPdf) {
-      el.reportDownloadPdf.addEventListener("click", function () {
-        if (!state.reportDraft) return;
-        var lang = el.reportLanguage ? String(el.reportLanguage.value || "en") : "en";
-        var report = ReportingGenerator && typeof ReportingGenerator.translateReport === "function"
-          ? ReportingGenerator.translateReport(state.reportDraft, lang)
-          : state.reportDraft;
-        var text = buildReportText(report, lang);
-        var sid = state.selectedId || "student";
-        download("meeting-summary-" + sid + ".pdf.txt", text, "text/plain");
-        setCoachLine("PDF export stub downloaded as text payload.");
-      });
-    }
-    if (el.meetingDeckClose) {
-      el.meetingDeckClose.addEventListener("click", closeMeetingDeckMode);
-    }
-    if (el.meetingDeckModal) {
-      el.meetingDeckModal.addEventListener("click", function (event) {
-        if (event.target === el.meetingDeckModal) closeMeetingDeckMode();
-      });
-    }
-    if (el.meetingDeckPrev) {
-      el.meetingDeckPrev.addEventListener("click", function () {
-        state.meetingDeckIndex = Math.max(0, Number(state.meetingDeckIndex || 0) - 1);
-        renderMeetingDeckSlide();
-      });
-    }
-    if (el.meetingDeckNext) {
-      el.meetingDeckNext.addEventListener("click", function () {
-        var max = Math.max(0, (Array.isArray(state.meetingDeck) ? state.meetingDeck.length : 1) - 1);
-        state.meetingDeckIndex = Math.min(max, Number(state.meetingDeckIndex || 0) + 1);
-        renderMeetingDeckSlide();
-      });
-    }
-    if (el.meetingDeckLanguage) {
-      el.meetingDeckLanguage.addEventListener("change", function () {
-        renderMeetingDeckSlide();
-      });
-    }
-    if (el.meetingDeckConcern) {
-      el.meetingDeckConcern.addEventListener("click", function () {
-        var row = getSelectedPlanRow();
-        var ctx = buildReportingContext(row);
-        if (!MeetingGenerator || typeof MeetingGenerator.generateConcernSummary !== "function" || typeof MeetingGenerator.generateMeetingDeck !== "function") return;
-        if (state.meetingDeckConcernMode) {
-          state.meetingDeck = MeetingGenerator.generateMeetingDeck({
-            studentProfile: ctx.studentProfile,
-            literacyData: ctx.literacyData,
-            numeracyData: ctx.numeracyData,
-            tierSignal: ctx.tierSignal,
-            fidelityData: ctx.fidelityData,
-            parentSummary: state.reportDraft && state.reportDraft.parentSummary
-          }) || [];
-          state.meetingDeckConcernMode = false;
-          el.meetingDeckConcern.textContent = "Students of Concern Mode";
-        } else {
-          state.meetingDeck = MeetingGenerator.generateConcernSummary({
-            studentProfile: ctx.studentProfile,
-            tierSignal: ctx.tierSignal,
-            fidelityData: ctx.fidelityData,
-            recommendation: ctx.numeracyData.recommendedAction
-          }) || [];
-          state.meetingDeckConcernMode = true;
-          el.meetingDeckConcern.textContent = "Full Deck Mode";
-        }
-        state.meetingDeckIndex = 0;
-        renderMeetingDeckSlide();
-      });
-    }
-    if (el.meetingDeckCopy) {
-      el.meetingDeckCopy.addEventListener("click", function () {
-        var lang = meetingDeckLanguage();
-        var text = buildMeetingDeckText(lang);
-        if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
-        setCoachLine("Meeting deck summary copied.");
-      });
-    }
-    if (el.meetingDeckJson) {
-      el.meetingDeckJson.addEventListener("click", function () {
-        var sid = state.selectedId || "student";
-        download("meeting-deck-" + sid + ".json", JSON.stringify(state.meetingDeck || [], null, 2), "application/json");
-        setCoachLine("Structured meeting deck JSON downloaded.");
-      });
-    }
-    if (el.meetingDeckPdf) {
-      el.meetingDeckPdf.addEventListener("click", function () {
-        var sid = state.selectedId || "student";
-        var lang = meetingDeckLanguage();
-        var text = buildMeetingDeckText(lang);
-        download("meeting-deck-" + sid + ".pdf.txt", text, "text/plain");
-        setCoachLine("PDF export stub downloaded.");
-      });
-    }
-    if (el.meetingDeckPrint) {
-      el.meetingDeckPrint.addEventListener("click", function () {
-        window.print();
-      });
     }
     function bindAccommodationQuickLog(button, supportType, successLine) {
       if (!button) return;
@@ -4894,6 +4631,7 @@
   }
 
   Evidence.init();
+  initRuntimeState();
   detectDemoMode();
   bootstrapSkillStore();
   refreshBuildLine();
@@ -4907,26 +4645,6 @@
   void loadIllustrativeMathMapData();
   initNumeracyCurriculumSelectors();
   document.addEventListener("keydown", function (event) {
-    if (el.meetingDeckModal && !el.meetingDeckModal.classList.contains("hidden")) {
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        state.meetingDeckIndex = Math.max(0, Number(state.meetingDeckIndex || 0) - 1);
-        renderMeetingDeckSlide();
-        return;
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        var max = Math.max(0, (Array.isArray(state.meetingDeck) ? state.meetingDeck.length : 1) - 1);
-        state.meetingDeckIndex = Math.min(max, Number(state.meetingDeckIndex || 0) + 1);
-        renderMeetingDeckSlide();
-        return;
-      }
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeMeetingDeckMode();
-        return;
-      }
-    }
     if (event.key === "H" && event.shiftKey) {
       var tag = event.target && event.target.tagName ? String(event.target.tagName).toLowerCase() : "";
       if (tag === "input" || tag === "textarea" || (event.target && event.target.isContentEditable)) return;

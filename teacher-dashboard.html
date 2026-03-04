@@ -94,7 +94,7 @@
             </details>
             <div class="focus-actions">
               <button id="td-focus-start-btn" class="btn-primary td-top-btn focus-start" type="button">Start Recommended Session</button>
-              <button id="td-focus-view-details-btn" class="td-top-btn" type="button">View Details</button>
+              <button id="td-focus-view-details-btn" class="td-top-btn focus-view-details-btn" type="button">View Details</button>
             </div>
           </article>
           <article class="focus-card card td-surface numeracy-focus-card" aria-labelledby="td-num-title">
@@ -217,82 +217,82 @@
         </section>
         <footer class="dashboard-confidence card td-surface" aria-label="System confidence">
           <h2 class="dashboard-section-title">Today's System Confidence</h2>
-          <p id="td-confidence-line">Tier signal stable • Fidelity tracking active • Curriculum alignment active</p>
+          <p id="td-confidence-line">Tier engine active • Fidelity tracking active • Curriculum alignment mapped • Guardrails passed</p>
         </footer>
       </main>
 
-      <section id="td-compat-sink" class="td-compat-sink hidden" aria-hidden="true">
-        <div id="td-no-caseload"></div>
-        <div id="td-caseload-list"></div>
-        <div id="td-center-empty"></div>
-        <div id="td-center-selected" class="hidden"></div>
-        <div id="td-right-empty"></div>
-        <div id="td-right-content" class="hidden"></div>
-        <p id="td-student-label"></p>
-        <h2 id="td-focus-title"></h2>
-        <p id="td-reco-line"></p>
-        <p id="td-next-tier-badge"></p>
-        <p id="td-metric-accuracy"></p>
-        <p id="td-metric-tier"></p>
-        <p id="td-next-step-sub"></p>
-        <svg id="td-sparkline" viewBox="0 0 180 48" preserveAspectRatio="none"></svg>
-        <p id="td-last7-summary"></p>
-        <button id="td-quick-check" type="button"></button>
-        <button id="td-start-intervention" type="button"></button>
-        <div id="td-evidence-chips"></div>
-        <div id="td-skill-tiles"></div>
-        <div id="td-mastery-list"></div>
-        <div id="td-next-skill"></div>
-        <div id="td-needs-chip-list"></div>
-        <section id="td-support-hub"></section>
-        <div id="td-support-body"></div>
-        <section id="td-today-plan"></section>
-        <div id="td-plan-list"></div>
-        <section id="td-progress-note">
-          <p id="td-progress-note-text"></p>
-        </section>
-        <textarea id="td-notes-input"></textarea>
-        <button id="td-copy-note" type="button"></button>
-        <button id="td-share-all-notes" type="button"></button>
-        <article id="td-last-session-card">
-          <h3 id="td-last-session-title"></h3>
-          <p id="td-last-session-meta"></p>
-        </article>
-        <div id="td-share-cluster"></div>
-        <button id="td-share-summary" type="button"></button>
-        <button id="td-share-quick-copy" type="button"></button>
-        <button id="td-share-quick-packet" type="button"></button>
-        <button id="td-share-link" type="button"></button>
-        <p id="td-share-buildline"></p>
-        <button id="td-export-student-csv" type="button"></button>
-        <button id="td-export-json" type="button"></button>
-        <button id="td-copy-csv" type="button"></button>
-        <button id="td-copy-summary" type="button"></button>
-        <button id="td-open-student-drawer" type="button"></button>
-        <button id="td-open-meeting-notes" type="button"></button>
-        <button id="td-support-export-packet" type="button"></button>
-        <div id="td-recommended-plan-list"></div>
-        <div id="td-next-moves-list"></div>
-        <div id="td-implementation-today"></div>
-        <div id="td-implementation-today-body"></div>
-        <div id="td-executive-support"></div>
-        <div id="td-executive-support-body"></div>
-        <input id="td-show-alignment" type="checkbox">
-        <section id="td-today"></section>
-        <div id="td-today-list"></div>
-        <div id="td-caseload-snapshot"></div>
-        <button id="td-today-refresh" type="button"></button>
-        <button id="td-view-all-students" type="button"></button>
-        <button id="td-priority-review" type="button"></button>
-        <div id="td-today-group"></div>
-        <button id="td-group-open" type="button"></button>
-        <button id="td-group-build" type="button"></button>
-        <details id="td-group-panel"></details>
-        <div id="td-group-output"></div>
-        <details id="td-exec-panel"></details>
-        <div id="td-exec-output"></div>
-        <button data-support-tab="accommodations" type="button"></button>
+    </section>
+    <section id="td-render-hooks" class="hidden" aria-hidden="true">
+      <div id="td-no-caseload"></div>
+      <div id="td-caseload-list"></div>
+      <div id="td-center-empty"></div>
+      <div id="td-center-selected" class="hidden"></div>
+      <div id="td-right-empty"></div>
+      <div id="td-right-content" class="hidden"></div>
+      <p id="td-student-label"></p>
+      <h2 id="td-focus-title"></h2>
+      <p id="td-reco-line"></p>
+      <p id="td-next-tier-badge"></p>
+      <p id="td-metric-accuracy"></p>
+      <p id="td-metric-tier"></p>
+      <p id="td-next-step-sub"></p>
+      <svg id="td-sparkline" viewBox="0 0 180 48" preserveAspectRatio="none"></svg>
+      <p id="td-last7-summary"></p>
+      <button id="td-quick-check" type="button"></button>
+      <button id="td-start-intervention" type="button"></button>
+      <div id="td-evidence-chips"></div>
+      <div id="td-skill-tiles"></div>
+      <div id="td-mastery-list"></div>
+      <div id="td-next-skill"></div>
+      <div id="td-needs-chip-list"></div>
+      <section id="td-support-hub"></section>
+      <div id="td-support-body"></div>
+      <section id="td-today-plan"></section>
+      <div id="td-plan-list"></div>
+      <section id="td-progress-note">
+        <p id="td-progress-note-text"></p>
       </section>
+      <textarea id="td-notes-input"></textarea>
+      <button id="td-copy-note" type="button"></button>
+      <button id="td-share-all-notes" type="button"></button>
+      <article id="td-last-session-card">
+        <h3 id="td-last-session-title"></h3>
+        <p id="td-last-session-meta"></p>
+      </article>
+      <div id="td-share-cluster"></div>
+      <button id="td-share-summary" type="button"></button>
+      <button id="td-share-quick-copy" type="button"></button>
+      <button id="td-share-quick-packet" type="button"></button>
+      <button id="td-share-link" type="button"></button>
+      <p id="td-share-buildline"></p>
+      <button id="td-export-student-csv" type="button"></button>
+      <button id="td-export-json" type="button"></button>
+      <button id="td-copy-csv" type="button"></button>
+      <button id="td-copy-summary" type="button"></button>
+      <button id="td-open-student-drawer" type="button"></button>
+      <button id="td-open-meeting-notes" type="button"></button>
+      <button id="td-support-export-packet" type="button"></button>
+      <div id="td-recommended-plan-list"></div>
+      <div id="td-next-moves-list"></div>
+      <div id="td-implementation-today"></div>
+      <div id="td-implementation-today-body"></div>
+      <div id="td-executive-support"></div>
+      <div id="td-executive-support-body"></div>
+      <input id="td-show-alignment" type="checkbox">
+      <section id="td-today"></section>
+      <div id="td-today-list"></div>
+      <div id="td-caseload-snapshot"></div>
+      <button id="td-today-refresh" type="button"></button>
+      <button id="td-view-all-students" type="button"></button>
+      <button id="td-priority-review" type="button"></button>
+      <div id="td-today-group"></div>
+      <button id="td-group-open" type="button"></button>
+      <button id="td-group-build" type="button"></button>
+      <details id="td-group-panel"></details>
+      <div id="td-group-output"></div>
+      <details id="td-exec-panel"></details>
+      <div id="td-exec-output"></div>
+      <button data-support-tab="accommodations" type="button"></button>
     </section>
   </main>
 
@@ -471,6 +471,13 @@
   <script src="./js/meeting-notes.js?v=20260301y" defer></script>
   <script src="./js/meeting-translation.js?v=20260302b" defer></script>
   <script src="./js/sas-alignment-library.js?v=20260302a" defer></script>
-  <script src="./teacher-dashboard.js?v=20260301y" defer></script>
+  <script src="./js/dashboard/utils/dashboard-utils.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-state.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-role.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-ui.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-focus.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-support.js?v=20260304b" defer></script>
+  <script src="./js/dashboard/dashboard-meeting.js?v=20260304b" defer></script>
+  <script src="./teacher-dashboard.js?v=20260304b" defer></script>
 </body>
 </html>
