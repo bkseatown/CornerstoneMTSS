@@ -77,6 +77,29 @@
     try { return fn(); } catch (_e) { return null; }
   }
 
+  /* ── Toast notifications ─────────────────────────────── */
+  var _toastHost = null;
+  function showToast(msg, type) {
+    if (!_toastHost) {
+      _toastHost = document.getElementById("th2-toast-host");
+      if (!_toastHost) return;
+    }
+    var t = document.createElement("div");
+    t.className = "th2-toast th2-toast--" + (type || "info");
+    t.setAttribute("role", "status");
+    t.textContent = msg;
+    _toastHost.appendChild(t);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { t.classList.add("is-visible"); });
+    });
+    setTimeout(function () {
+      t.classList.remove("is-visible");
+      t.addEventListener("transitionend", function () {
+        if (t.parentNode) t.parentNode.removeChild(t);
+      }, { once: true });
+    }, 3000);
+  }
+
   /* Deterministic gradient palette from student ID */
   function studentColor(id) {
     var palettes = [
@@ -1086,6 +1109,7 @@
               } else if (currId === "illustrative-math") {
                 setLessonNavState("illustrative-math", gradeKey, { unitIdx: uIdx, lessonN: lVal });
               }
+              showToast("Position saved.", "success");
               rerender();
             });
           }
@@ -1577,6 +1601,34 @@
     showFocusCard();
   }
 
+  /* ── Hero card for morning brief ─────────────────────── */
+  function buildHeroCard(r) {
+    if (!r) return "";
+    var lastStr  = r.daysSince === 0 ? "Today" : r.daysSince < 999 ? r.daysSince + "d ago" : "Never";
+    var gradeStr = escapeHtml(r.student.grade || r.student.gradeBand || "");
+    var tierMod  = "th2-hero-card--t" + r.tier;
+    var showPriority = r.tier >= 2 || r.daysSince >= 5;
+    return [
+      '<button class="th2-hero-card ' + tierMod + '" data-id="' + escapeHtml(r.student.id) + '" data-tier="' + r.tier + '" type="button">',
+      '  <div class="th2-hero-card-top">',
+      '    ' + buildAvatar(r.student.name, r.student.id, false),
+      '    <div class="th2-hero-card-identity">',
+      '      <span class="th2-hero-card-name">' + escapeHtml(r.student.name) + '</span>',
+      '      <div class="th2-hero-card-meta">',
+      '        <span class="th2-tier-chip" data-tier="' + r.tier + '">T' + r.tier + '</span>',
+      (gradeStr ? '        <span class="th2-hero-card-grade">' + gradeStr + '</span>' : ''),
+      '        <span class="th2-hero-card-last">&middot; ' + escapeHtml(lastStr) + '</span>',
+      '      </div>',
+      '    </div>',
+      (showPriority ? '    <span class="th2-hero-priority-badge">Priority</span>' : ''),
+      '  </div>',
+      (r.recTitle
+        ? '<div class="th2-hero-card-rec"><span class="th2-hero-rec-label">Recommended next</span><span class="th2-hero-rec-title">' + escapeHtml(r.recTitle) + '</span></div>'
+        : ''),
+      '</button>'
+    ].join("\n");
+  }
+
   /* ── Morning brief ──────────────────────────────────────── */
 
   function renderMorningBrief() {
@@ -1613,7 +1665,9 @@
       ? '<span class="th2-urgency-count">' + needCount + '</span>'
       : "";
 
-    var cardsHtml = ranked.slice(0, 5).map(function (r) {
+    /* Hero = most urgent; rest become compact cards */
+    var heroHtml = buildHeroCard(ranked[0]);
+    var cardsHtml = ranked.slice(1, 5).map(function (r) {
       var lastStr = r.daysSince === 0 ? "Today" : r.daysSince < 999 ? r.daysSince + "d ago" : "Never";
       var gradeStr = escapeHtml(r.student.grade || r.student.gradeBand || "");
       return [
@@ -1638,15 +1692,16 @@
     }).join("\n");
 
     el.emptyState.innerHTML = [
-      '<div class="th2-morning">',
+      '<div class="th2-morning th2-morning--entered">',
       '  <p class="th2-morning-greeting">' + greetingWord() + '</p>',
       '  <p class="th2-morning-date">' + todayDateStr() + '</p>',
       '  <p class="th2-morning-sub">' + escapeHtml(subText) + '</p>',
-      '  <div class="th2-brief-list">' + cardsHtml + '</div>',
+      heroHtml,
+      (cardsHtml ? '<div class="th2-brief-list">' + cardsHtml + '</div>' : ''),
       '</div>'
     ].join("\n");
 
-    el.emptyState.querySelectorAll(".th2-brief-card").forEach(function (btn) {
+    el.emptyState.querySelectorAll(".th2-hero-card,.th2-brief-card").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var sid = btn.getAttribute("data-id") || "";
         if (sid) selectStudent(sid);
@@ -1668,6 +1723,8 @@
   function showEmptyState() {
     if (el.emptyState) { el.emptyState.classList.remove("hidden"); el.emptyState.removeAttribute("aria-hidden"); }
     if (el.focusCard)  { el.focusCard.classList.add("hidden"); el.focusCard.setAttribute("aria-hidden", "true"); }
+    var mode = hubState.get().context.mode;
+    if (mode === "class") { renderClassSnapshot(); return; }
     if (caseload.length) renderMorningBrief();
   }
 
@@ -1676,9 +1733,82 @@
     if (el.focusCard)  { el.focusCard.classList.remove("hidden"); el.focusCard.removeAttribute("aria-hidden"); }
   }
 
+  /* ── Today's Classes snapshot ─────────────────────────── */
+  function buildSnapshotCard(student) {
+    var summary  = safe(function () { return Evidence.getStudentSummary(student.id); });
+    var tier     = quickTier(summary);
+    var gradeStr = escapeHtml(student.grade || student.gradeBand || "");
+    return [
+      '<button class="th2-snapshot-card" data-id="' + escapeHtml(student.id) + '" data-tier="' + tier + '" type="button">',
+      '  ' + buildAvatar(student.name, student.id, true),
+      '  <div class="th2-snapshot-card-body">',
+      '    <span class="th2-snapshot-card-name">' + escapeHtml(student.name) + '</span>',
+      '    <span class="th2-snapshot-card-meta">' + (gradeStr ? 'Gr ' + gradeStr + ' &middot; ' : '') + '<span class="th2-tier-chip" data-tier="' + tier + '">T' + tier + '</span></span>',
+      '  </div>',
+      '</button>'
+    ].join("\n");
+  }
+
+  function renderClassSnapshot() {
+    if (!el.emptyState) return;
+    var byTier = { "3": [], "2": [], "1": [] };
+    caseload.forEach(function (s) {
+      var summary = safe(function () { return Evidence.getStudentSummary(s.id); });
+      var tier    = quickTier(summary);
+      var key     = String(tier);
+      if (!byTier[key]) byTier[key] = [];
+      byTier[key].push(s);
+    });
+    var groups = [];
+    [3, 2, 1].forEach(function (t) {
+      var arr = byTier[String(t)] || [];
+      if (!arr.length) return;
+      groups.push(
+        '<div class="th2-snapshot-group">' +
+        '<p class="th2-snapshot-group-label">Tier ' + t +
+          ' <span style="opacity:0.65;font-weight:400;">(' + arr.length + ')</span></p>' +
+        '<div class="th2-snapshot-grid">' + arr.map(buildSnapshotCard).join("") + '</div>' +
+        '</div>'
+      );
+    });
+    if (!groups.length) {
+      el.emptyState.innerHTML =
+        '<div class="th2-today-panel">' +
+        '<p class="th2-today-title">Today\'s Classes</p>' +
+        '<p class="th2-today-sub">No students in caseload.</p>' +
+        '</div>';
+      return;
+    }
+    el.emptyState.innerHTML =
+      '<div class="th2-today-panel">' +
+      '<p class="th2-today-title">Today\'s Classes</p>' +
+      groups.join("") + '</div>';
+    el.emptyState.querySelectorAll(".th2-snapshot-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var sid = btn.getAttribute("data-id") || "";
+        if (!sid) return;
+        el.modeTabs.forEach(function (t) {
+          var active = t.getAttribute("data-mode") === "caseload";
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        hubState.set({ context: { mode: "caseload" } });
+        selectStudent(sid);
+      });
+    });
+  }
+
+  function showTodaysClasses() {
+    if (el.emptyState) { el.emptyState.classList.remove("hidden"); el.emptyState.removeAttribute("aria-hidden"); }
+    if (el.focusCard)  { el.focusCard.classList.add("hidden"); el.focusCard.setAttribute("aria-hidden", "true"); }
+    renderClassSnapshot();
+  }
+
   /* ── HubState subscription → render ────────────────────── */
 
   hubState.subscribe(function (state) {
+    var mode = state.context.mode || "caseload";
+    if (mode === "class") { showTodaysClasses(); return; }
     var studentId = state.context.studentId || "";
     if (!studentId) {
       showEmptyState();
@@ -1694,6 +1824,139 @@
       openDrawer(studentId);
     }
   });
+
+  /* ── Add Student drawer ──────────────────────────────── */
+  function openAddDrawer() {
+    var addDrawer = document.getElementById("th2-add-drawer");
+    if (!addDrawer) return;
+    renderAddStudentForm();
+    addDrawer.classList.add("is-open");
+    addDrawer.removeAttribute("aria-hidden");
+    var overlay = document.getElementById("th2-overlay");
+    if (overlay) { overlay.classList.remove("hidden"); overlay.removeAttribute("aria-hidden"); }
+  }
+
+  function closeAddDrawer() {
+    var addDrawer = document.getElementById("th2-add-drawer");
+    if (!addDrawer) return;
+    addDrawer.classList.remove("is-open");
+    addDrawer.setAttribute("aria-hidden", "true");
+    if (!hubState.get().ui.drawerOpen) {
+      var overlay = document.getElementById("th2-overlay");
+      if (overlay) { overlay.classList.add("hidden"); overlay.setAttribute("aria-hidden", "true"); }
+    }
+  }
+
+  function renderAddStudentForm() {
+    var body = document.getElementById("th2-add-body");
+    if (!body) return;
+    var grades   = ["K","1","2","3","4","5"];
+    var domains  = ["Phonics","Phonemic Awareness","Fluency","Comprehension","Numeracy","Vocabulary"];
+    var fpLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    body.innerHTML = [
+      '<form id="th2-add-form" class="th2-add-form" autocomplete="off">',
+      '  <label class="th2-add-field">',
+      '    <span class="th2-add-label">Student name</span>',
+      '    <input id="th2-add-name" class="th2-add-input" type="text" placeholder="First Last" required maxlength="60">',
+      '  </label>',
+      '  <div class="th2-add-field">',
+      '    <p class="th2-add-label">Grade</p>',
+      '    <div class="th2-add-chip-row" id="th2-add-grade-chips">',
+      grades.map(function (g) {
+        return '      <button type="button" class="th2-add-chip" data-grade="' + g + '">' + g + '</button>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-add-field">',
+      '    <p class="th2-add-label">Focus domain <span class="th2-add-label-opt">(optional)</span></p>',
+      '    <div class="th2-add-chip-row" id="th2-add-domain-chips">',
+      domains.map(function (d) {
+        return '      <button type="button" class="th2-add-chip" data-domain="' + escapeHtml(d) + '">' + escapeHtml(d) + '</button>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-add-field">',
+      '    <p class="th2-add-label">F&amp;P level <span class="th2-add-label-opt">(optional)</span></p>',
+      '    <div class="th2-add-fp-grid">',
+      fpLetters.map(function (l) {
+        return '      <button type="button" class="th2-add-fp-btn" data-fp="' + l + '">' + l + '</button>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-add-actions">',
+      '    <button type="submit" class="th2-btn th2-btn-primary">Add Student</button>',
+      '    <button type="button" id="th2-add-cancel" class="th2-btn th2-btn-quiet">Cancel</button>',
+      '  </div>',
+      '</form>'
+    ].join("\n");
+
+    var selectedGrade   = "";
+    var selectedDomains = [];
+    var selectedFp      = "";
+
+    body.querySelectorAll("[data-grade]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        body.querySelectorAll("[data-grade]").forEach(function (b) { b.classList.remove("is-selected"); });
+        if (selectedGrade === btn.getAttribute("data-grade")) {
+          selectedGrade = "";
+        } else {
+          selectedGrade = btn.getAttribute("data-grade");
+          btn.classList.add("is-selected");
+        }
+      });
+    });
+
+    body.querySelectorAll("[data-domain]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var d   = btn.getAttribute("data-domain");
+        var idx = selectedDomains.indexOf(d);
+        if (idx === -1) { selectedDomains.push(d); btn.classList.add("is-selected"); }
+        else            { selectedDomains.splice(idx, 1); btn.classList.remove("is-selected"); }
+      });
+    });
+
+    body.querySelectorAll(".th2-add-fp-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        body.querySelectorAll(".th2-add-fp-btn").forEach(function (b) { b.classList.remove("is-selected"); });
+        if (selectedFp === btn.getAttribute("data-fp")) {
+          selectedFp = "";
+        } else {
+          selectedFp = btn.getAttribute("data-fp");
+          btn.classList.add("is-selected");
+        }
+      });
+    });
+
+    var cancelBtn = document.getElementById("th2-add-cancel");
+    if (cancelBtn) cancelBtn.addEventListener("click", closeAddDrawer);
+
+    var form = document.getElementById("th2-add-form");
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        submitAddStudent(selectedGrade, selectedDomains, selectedFp);
+      });
+    }
+  }
+
+  function submitAddStudent(grade, domains, fpLevel) {
+    var nameEl = document.getElementById("th2-add-name");
+    var name   = nameEl ? nameEl.value.trim() : "";
+    if (!name) { showToast("Please enter a student name.", "warn"); return; }
+    var id = "s_" + Date.now();
+    safe(function () {
+      Evidence.upsertStudent({ id: id, name: name, gradeBand: grade || "", tags: [] });
+      if (domains && domains.length && window.CSSupportStore) {
+        window.CSSupportStore.setNeeds(id, domains);
+      }
+      if (fpLevel) setFpLevel(id, fpLevel);
+    });
+    caseload.push({ id: id, name: name, grade: grade || "", gradeBand: grade || "", tags: [] });
+    renderCaseload(caseload);
+    closeAddDrawer();
+    showToast(name + " added to caseload.", "success");
+    selectStudent(id);
+  }
 
   /* ── Event wiring ──────────────────────────────────────── */
 
@@ -1723,8 +1986,10 @@
       });
       tab.classList.add("is-active");
       tab.setAttribute("aria-selected", "true");
-      hubState.set({ context: { mode: tab.getAttribute("data-mode") || "caseload" } });
-      // Phase 3: Today's Classes will trigger class-context panel
+      var mode = tab.getAttribute("data-mode") || "caseload";
+      hubState.set({ context: { mode: mode, studentId: "" } });
+      if (mode === "class") { showTodaysClasses(); }
+      else { showEmptyState(); }
     });
   });
 
@@ -1754,6 +2019,7 @@
     btn.classList.add("is-logged");
     btn.textContent = "Session logged ✓";
     btn.disabled = true;
+    showToast("Session logged.", "success");
     var status = document.getElementById("th2-log-status");
     if (status) status.textContent = relativeDate(Date.now());
   });
@@ -1776,6 +2042,7 @@
     // Re-render badge in place
     badge.textContent = level ? "F&P " + level : "";
     if (!level) badge.style.display = "none";
+    showToast(level ? "F&P updated to " + level + "." : "F&P level cleared.", "info");
   });
 
   // Drawer close button
@@ -1785,12 +2052,28 @@
 
   // Overlay click closes drawer
   document.addEventListener("click", function (e) {
-    if (e.target && e.target.id === "th2-overlay") closeDrawer();
+    if (e.target && e.target.id === "th2-overlay") {
+      closeDrawer();
+      closeAddDrawer();
+    }
   });
 
   // Escape key closes drawer
   document.addEventListener("keydown", function (e) {
-    if ((e.key === "Escape" || e.key === "Esc") && hubState.get().ui.drawerOpen) closeDrawer();
+    if (e.key !== "Escape" && e.key !== "Esc") return;
+    var addDrawer = document.getElementById("th2-add-drawer");
+    if (addDrawer && addDrawer.classList.contains("is-open")) { closeAddDrawer(); return; }
+    if (hubState.get().ui.drawerOpen) closeDrawer();
+  });
+
+  // Add Student button
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "th2-add-student-btn") openAddDrawer();
+  });
+
+  // Add Student drawer close button
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "th2-add-drawer-close") closeAddDrawer();
   });
 
   /* ── Boot sequence ─────────────────────────────────────── */

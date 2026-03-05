@@ -1426,3 +1426,430 @@ body.th2-page {
   background: color-mix(in oklab, #7c3aed 20%, transparent);
   border-color: color-mix(in oklab, #7c3aed 50%, transparent);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE 7 — Toast · Today's Classes · Add Student · Morning Hero
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Toast notification ─────────────────────────────────── */
+.th2-toast-host {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.th2-toast {
+  min-width: 220px;
+  max-width: 340px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font: 500 13px/1.4 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  background: var(--surface-elev-1, #fff);
+  border: 1px solid var(--border-subtle, #e0ddd8);
+  box-shadow: 0 4px 20px rgba(0,0,0,.12), 0 1px 4px rgba(0,0,0,.06);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.th2-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.th2-toast--success {
+  border-left: 3px solid var(--status-secure, #4e8d6a);
+  background: color-mix(in oklab, var(--status-secure, #4e8d6a) 6%, var(--surface-elev-1, #fff));
+}
+
+.th2-toast--warn {
+  border-left: 3px solid var(--status-developing, #b58a45);
+  background: color-mix(in oklab, var(--status-developing, #b58a45) 6%, var(--surface-elev-1, #fff));
+}
+
+.th2-toast--info {
+  border-left: 3px solid var(--accent, #2b5da8);
+  background: color-mix(in oklab, var(--accent, #2b5da8) 6%, var(--surface-elev-1, #fff));
+}
+
+/* ── Add Student button ──────────────────────────────────── */
+.th2-add-student-btn {
+  width: 100%;
+  height: 32px;
+  border: 1px dashed color-mix(in oklab, var(--accent, #2b5da8) 40%, var(--border-subtle, #e0ddd8));
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent, #2b5da8);
+  font: 500 12px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: background 0.13s, border-color 0.13s;
+  margin-top: 6px;
+}
+.th2-add-student-btn:hover {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 8%, transparent);
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 55%, transparent);
+}
+
+/* ── Add Student drawer ──────────────────────────────────── */
+.th2-add-drawer { right: 0; }
+
+.th2-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.th2-add-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.th2-add-label {
+  margin: 0;
+  font: 600 11.5px/1 var(--font-ui, system-ui);
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.th2-add-label-opt {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.th2-add-input {
+  height: 40px;
+  padding: 0 12px;
+  background: var(--surface-2, #f5f4f1);
+  border: 1.5px solid var(--border, #d5d2cc);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font: 400 14px/1 var(--font-ui, system-ui);
+  outline: none;
+  transition: border-color 0.13s, box-shadow 0.13s;
+}
+.th2-add-input:focus {
+  border-color: var(--accent, #2b5da8);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #2b5da8) 16%, transparent);
+}
+
+.th2-add-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.th2-add-chip {
+  height: 32px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border, #d5d2cc);
+  border-radius: 99px;
+  background: var(--surface-2, #f5f4f1);
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.th2-add-chip:hover {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 8%, var(--surface-2, #f5f4f1));
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 35%, transparent);
+}
+.th2-add-chip.is-selected {
+  background: var(--accent, #2b5da8);
+  border-color: var(--accent, #2b5da8);
+  color: #fff;
+}
+
+/* F&P 26-letter grid */
+.th2-add-fp-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.th2-add-fp-btn {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--border, #d5d2cc);
+  border-radius: 6px;
+  background: var(--surface-2, #f5f4f1);
+  color: var(--text-secondary);
+  font: 600 12px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.th2-add-fp-btn:hover {
+  border-color: #7c3aed;
+  color: #7c3aed;
+  background: color-mix(in oklab, #7c3aed 8%, var(--surface-2, #f5f4f1));
+}
+.th2-add-fp-btn.is-selected {
+  background: color-mix(in oklab, #7c3aed 16%, transparent);
+  border-color: #7c3aed;
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+.th2-add-fp-selected {
+  margin: 4px 0 0;
+  font: 400 11.5px/1.4 var(--font-ui, system-ui);
+  color: var(--text-muted);
+}
+
+.th2-add-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.th2-btn {
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font: 600 13px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.12s, transform 0.1s;
+}
+.th2-btn-primary {
+  background: var(--accent, #2b5da8);
+  color: #fff;
+  flex: 1;
+}
+.th2-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.th2-btn-quiet {
+  background: var(--surface-2, #f5f4f1);
+  color: var(--text-secondary);
+  border: 1px solid var(--border, #d5d2cc);
+}
+.th2-btn-quiet:hover { background: var(--surface-3, #ece9e4); }
+
+.th2-add-error {
+  margin: 0;
+  font: 400 12.5px/1.4 var(--font-ui, system-ui);
+  color: var(--status-risk, #b25e5e);
+  padding: 8px 12px;
+  background: color-mix(in oklab, var(--status-risk, #b25e5e) 8%, transparent);
+  border-radius: 6px;
+}
+
+/* ── Today's Classes snapshot ──────────────────────────── */
+.th2-today-panel {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: th2-reveal 0.22s ease-out;
+}
+
+.th2-today-head { margin-bottom: 4px; }
+
+.th2-today-title {
+  margin: 0;
+  font: 700 26px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+}
+
+.th2-today-sub {
+  margin: 5px 0 0;
+  font: 400 13px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+}
+
+.th2-snapshot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.th2-snapshot-group-label {
+  margin: 0;
+  font: 600 10.5px/1 var(--font-ui, system-ui);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--border-subtle, #e8e5e0);
+}
+
+.th2-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+
+.th2-snapshot-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface-elev-1, #fff);
+  border: 1px solid var(--border-subtle, #e8e5e0);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.14s, box-shadow 0.14s, transform 0.1s;
+}
+.th2-snapshot-card:hover {
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 35%, transparent);
+  box-shadow: 0 2px 12px rgba(43,93,168,.1);
+  transform: translateY(-1px);
+}
+
+.th2-snapshot-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.th2-snapshot-card-name {
+  font: 600 13px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.th2-snapshot-card-meta {
+  font: 400 11px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th2-snapshot-card-signals {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.th2-snapshot-trend {
+  font: 700 13px/1 var(--font-ui, system-ui);
+  width: 18px;
+  text-align: center;
+}
+.th2-snapshot-trend[data-trend="up"]   { color: var(--status-secure,    #4e8d6a); }
+.th2-snapshot-trend[data-trend="down"] { color: var(--status-risk,       #b25e5e); }
+.th2-snapshot-trend[data-trend="stable"] { color: var(--text-muted); }
+
+/* ── Morning brief hero card ────────────────────────────── */
+@keyframes th2-brief-slide {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.th2-morning--entered > * {
+  animation: th2-brief-slide 0.32s ease-out both;
+}
+.th2-morning--entered > *:nth-child(1) { animation-delay: 0.00s; }
+.th2-morning--entered > *:nth-child(2) { animation-delay: 0.04s; }
+.th2-morning--entered > *:nth-child(3) { animation-delay: 0.08s; }
+.th2-morning--entered > *:nth-child(4) { animation-delay: 0.13s; }
+.th2-morning--entered > *:nth-child(5) { animation-delay: 0.19s; }
+
+.th2-hero-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  background: var(--surface-elev-1, #fff);
+  border: 1px solid var(--border-subtle, #e8e5e0);
+  border-radius: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: box-shadow 0.16s ease, transform 0.12s ease;
+  margin-bottom: 4px;
+}
+.th2-hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(43,93,168,.13);
+}
+.th2-hero-card--t3 {
+  border-left: 4px solid var(--status-risk, #b25e5e);
+  background: color-mix(in oklab, var(--status-risk, #b25e5e) 4%, var(--surface-elev-1, #fff));
+}
+.th2-hero-card--t2 {
+  border-left: 4px solid var(--status-developing, #b58a45);
+  background: color-mix(in oklab, var(--status-developing, #b58a45) 4%, var(--surface-elev-1, #fff));
+}
+.th2-hero-card--t1 {
+  border-left: 4px solid var(--status-secure, #4e8d6a);
+  background: color-mix(in oklab, var(--status-secure, #4e8d6a) 4%, var(--surface-elev-1, #fff));
+}
+
+.th2-hero-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.th2-hero-card-identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.th2-hero-card-name {
+  font: 700 18px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.th2-hero-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.th2-hero-card-grade, .th2-hero-card-last {
+  font: 400 12px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+}
+.th2-hero-priority-badge {
+  flex-shrink: 0;
+  font: 700 9px/1 var(--font-ui, system-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--status-risk, #b25e5e) 14%, transparent);
+  color: var(--status-risk, #b25e5e);
+  border: 1px solid color-mix(in oklab, var(--status-risk, #b25e5e) 30%, transparent);
+}
+.th2-hero-card-rec {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 11px 14px;
+  background: color-mix(in oklab, var(--accent, #2b5da8) 5%, var(--surface-2, #f5f4f1));
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 14%, transparent);
+}
+.th2-hero-rec-label {
+  font: 500 9.5px/1 var(--font-ui, system-ui);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent, #2b5da8);
+  opacity: 0.8;
+}
+.th2-hero-rec-title {
+  font: 600 13px/1.3 var(--font-ui, system-ui);
+  color: var(--text-primary);
+}

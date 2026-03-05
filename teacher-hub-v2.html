@@ -45,6 +45,10 @@
             Today's Classes
           </button>
         </div>
+
+        <button id="th2-add-student-btn" class="th2-add-student-btn" type="button" aria-label="Add a student to caseload">
+          + Add Student
+        </button>
       </div>
 
       <div id="th2-list" class="th2-list" role="list" aria-label="Students"></div>
@@ -88,6 +92,18 @@
     </div>
     <div id="th2-drawer-body" class="th2-drawer-body"></div>
   </div>
+
+  <!-- ── Add Student drawer ───────────────────────────── -->
+  <div id="th2-add-drawer" class="th2-drawer th2-add-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="th2-add-drawer-title">
+    <div class="th2-drawer-head">
+      <h2 id="th2-add-drawer-title" class="th2-drawer-title">Add Student</h2>
+      <button id="th2-add-drawer-close" class="th2-drawer-close" aria-label="Close add student panel">&#x2715;</button>
+    </div>
+    <div id="th2-add-body" class="th2-drawer-body"></div>
+  </div>
+
+  <!-- ── Toast host ───────────────────────────────────── -->
+  <div id="th2-toast-host" class="th2-toast-host" aria-live="polite" aria-atomic="false"></div>
 
   <!-- ── Demo badge (hidden unless demo mode) ─────────── -->
   <div id="th2-demo-badge" class="th2-demo-badge hidden" aria-hidden="true">
