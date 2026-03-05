@@ -76,8 +76,6 @@
     generatedPlanner: null,
     efTimer: null,
     efSecondsLeft: 0,
-    fidelitySeeded: {},
-    numeracyPracticeSeeded: {},
     meetingFormat: "sas",
     meetingLanguage: "en",
     liveTranslate: false,
@@ -96,7 +94,41 @@
 
   var LAST_ACTIVITY_KEY = "cs.lastActivityByStudent.v1";
   var DASHBOARD_RUNTIME_KEY = "cs.dashboard.runtime.v1";
+  var FIDELITY_SEEDED_KEY = "cs.fidelity-seeded.v1";
+  var NUMERACY_SEEDED_KEY = "cs.numeracy-seeded.v1";
   var FOCUS_RING_RADIUS = 16;
+
+  function readSeededSet(lsKey) {
+    try {
+      var raw = localStorage.getItem(lsKey);
+      var parsed = raw ? JSON.parse(raw) : {};
+      return (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed : {};
+    } catch (_e) { return {}; }
+  }
+
+  function writeSeededSet(lsKey, set) {
+    try { localStorage.setItem(lsKey, JSON.stringify(set)); } catch (_e) {}
+  }
+
+  function isFidelitySeeded(sid) {
+    return !!readSeededSet(FIDELITY_SEEDED_KEY)[sid];
+  }
+
+  function markFidelitySeeded(sid) {
+    var set = readSeededSet(FIDELITY_SEEDED_KEY);
+    set[sid] = true;
+    writeSeededSet(FIDELITY_SEEDED_KEY, set);
+  }
+
+  function isNumeracySeeded(key) {
+    return !!readSeededSet(NUMERACY_SEEDED_KEY)[key];
+  }
+
+  function markNumeracySeeded(key) {
+    var set = readSeededSet(NUMERACY_SEEDED_KEY);
+    set[key] = true;
+    writeSeededSet(NUMERACY_SEEDED_KEY, set);
+  }
   var appState = DashboardState && typeof DashboardState.create === "function"
     ? DashboardState.create()
     : {
@@ -565,7 +597,7 @@
       String(recommendation && recommendation.strategyStage || ""),
       mode
     ].join("|");
-    if (state.numeracyPracticeSeeded[key]) return;
+    if (isNumeracySeeded(key)) return;
     var attempts = Array.isArray(practice && practice.problemSet) ? practice.problemSet.length : 4;
     var timePerProblem = mode === "Skill Sprint" ? 18 : (mode === "Quick Check" ? 25 : 38);
     NumeracyPracticeEngine.recordPracticeSession({
@@ -576,7 +608,7 @@
       modeUsed: mode,
       timeSpentSeconds: attempts * timePerProblem
     });
-    state.numeracyPracticeSeeded[key] = true;
+    markNumeracySeeded(key);
   }
 
   function toPct(value) {
@@ -604,7 +636,7 @@
     var stableCount = recentAccuracy >= goalAccuracy ? 3 : (recentAccuracy >= goalAccuracy - 0.08 ? 2 : 1);
     var weeksInIntervention = recentAccuracy < goalAccuracy ? 8 : 4;
     var sid = row && row.student ? String(row.student.id || "") : "";
-    if (sid && FidelityEngine && typeof FidelityEngine.logInterventionSession === "function" && !state.fidelitySeeded[sid]) {
+    if (sid && FidelityEngine && typeof FidelityEngine.logInterventionSession === "function" && !isFidelitySeeded(sid)) {
       FidelityEngine.logInterventionSession({
         studentId: sid,
         minutesDelivered: 20,
@@ -647,7 +679,7 @@
         mode: "1:1",
         interventionType: "Literacy"
       });
-      state.fidelitySeeded[sid] = true;
+      markFidelitySeeded(sid);
     }
     var fidelitySummary = FidelityEngine && typeof FidelityEngine.getFidelitySummary === "function"
       ? FidelityEngine.getFidelitySummary(sid, "Literacy")
