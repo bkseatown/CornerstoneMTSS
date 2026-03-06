@@ -49,6 +49,7 @@
   var DashboardBindings = window.CSDashboardBindings;
   var DashboardMeeting = window.CSDashboardMeeting;
   var DashboardModals = window.CSDashboardModals;
+  var WorkspaceCaseload = window.CSWorkspaceCaseload;
   var WorkspaceReports = window.CSWorkspaceReports;
   var WorkspaceMeetings = window.CSWorkspaceMeetings;
   var WorkspaceFamilyCommunication = window.CSWorkspaceFamilyCommunication;
@@ -1943,34 +1944,22 @@
   }
 
   function filterCaseload(query) {
-    var q = String(query || "").trim().toLowerCase();
-    state.filtered = state.caseload.filter(function (row) {
-      if (!q) return true;
-      return row.name.toLowerCase().includes(q) || row.id.toLowerCase().includes(q) || row.focus.toLowerCase().includes(q);
-    });
+    state.filtered = WorkspaceCaseload && typeof WorkspaceCaseload.filterRows === "function"
+      ? WorkspaceCaseload.filterRows(state.caseload, query)
+      : [];
     renderCaseload();
   }
 
   function renderCaseload() {
-    if (!state.filtered.length) {
-      el.list.innerHTML = '<div class="td-empty">No matches. Try name, student ID, or focus.</div>';
+    if (WorkspaceCaseload && typeof WorkspaceCaseload.renderList === "function") {
+      WorkspaceCaseload.renderList({
+        listEl: el.list,
+        rows: state.filtered,
+        selectedId: state.selectedId,
+        onSelect: selectStudent
+      });
       return;
     }
-    el.list.innerHTML = state.filtered.map(function (row) {
-      var selected = row.id === state.selectedId ? "is-active" : "";
-      return [
-        '<button class="td-student-chip ' + selected + '" data-student-id="' + row.id + '" type="button">',
-        '<div class="td-chip-top"><strong>' + row.name + '</strong><span class="td-risk ' + row.risk + '">' + row.risk + '</span></div>',
-        '<div class="td-chip-top"><span>' + row.id + '</span><span>' + row.focus + '</span></div>',
-        '</button>'
-      ].join("");
-    }).join("");
-
-    Array.prototype.forEach.call(el.list.querySelectorAll("[data-student-id]"), function (node) {
-      node.addEventListener("click", function () {
-        selectStudent(node.getAttribute("data-student-id") || "");
-      });
-    });
   }
 
   function buildSparkPath(points) {

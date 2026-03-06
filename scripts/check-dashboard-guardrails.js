@@ -37,8 +37,10 @@ assert(!dashboardHtml.includes('id="td-compat-sink"'), 'Compatibility sink still
 assert(dashboardHtml.includes('Teacher Workspace'), 'Teacher Workspace labeling missing in dashboard HTML', failures);
 assert(dashboardHtml.includes('./teacher-hub-v2.html'), 'Teacher Workspace must retain route back to Teacher Hub', failures);
 assert(dashboardHtml.includes('js/teacher-runtime-state.js'), 'Teacher Workspace must load unified teacher runtime state', failures);
+assert(dashboardHtml.includes('js/dashboard/workspace-caseload.js'), 'Teacher Workspace must load caseload workspace module', failures);
 
 assert(dashboardJs.includes('initRuntimeState();'), 'App state initialization missing at boot', failures);
+assert(dashboardJs.includes('WorkspaceCaseload'), 'Teacher Workspace must route caseload rendering through workspace module', failures);
 assert(dashboardJs.includes('appState.set({ mode: next })'), 'Centralized mode state write missing', failures);
 assert(dashboardJs.includes('DashboardFocus.setSelectedStudent(appState, state.selectedId)'), 'Centralized selected student state write missing', failures);
 assert(dashboardJs.includes('openMeetingModal();'), 'Meeting generation path missing', failures);
