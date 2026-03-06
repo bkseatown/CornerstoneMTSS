@@ -10,6 +10,7 @@
 
     var Evidence = deps.Evidence || null;
     var SupportStore = deps.SupportStore || null;
+    var TeacherSupportService = deps.TeacherSupportService || null;
 
     function escAttr(value) {
       if (typeof hooks.escAttr === "function") return hooks.escAttr(value);
@@ -61,6 +62,36 @@
       if (typeof hooks.setCoachLine === "function") hooks.setCoachLine(text);
     }
 
+    function getStudentSummary(studentId) {
+      if (TeacherSupportService && typeof TeacherSupportService.getStudentSummary === "function") {
+        return TeacherSupportService.getStudentSummary(studentId, {
+          Evidence: Evidence,
+          SupportStore: SupportStore,
+          TeacherIntelligence: deps.TeacherIntelligence || null,
+          TeacherSelectors: deps.TeacherSelectors || null
+        });
+      }
+      return Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(studentId) : null;
+    }
+
+    function getSupportStudent(studentId) {
+      if (TeacherSupportService && typeof TeacherSupportService.getSupportStudent === "function") {
+        return TeacherSupportService.getSupportStudent(studentId, { SupportStore: SupportStore });
+      }
+      return SupportStore && typeof SupportStore.getStudent === "function"
+        ? SupportStore.getStudent(studentId)
+        : { goals: [], interventions: [] };
+    }
+
+    function getExecutiveFunction(studentId) {
+      if (TeacherSupportService && typeof TeacherSupportService.getExecutiveFunction === "function") {
+        return TeacherSupportService.getExecutiveFunction(studentId, { SupportStore: SupportStore });
+      }
+      return SupportStore && typeof SupportStore.getExecutiveFunction === "function"
+        ? SupportStore.getExecutiveFunction(studentId)
+        : { upcomingTasks: [] };
+    }
+
     function renderSupportHub(studentId) {
       if (typeof hooks.renderSupportHub === "function") hooks.renderSupportHub(studentId);
     }
@@ -72,17 +103,13 @@
         el.drawerBody.innerHTML = '<div class="td-support-item"><p>Select a student to open the drawer.</p></div>';
         return;
       }
-      if (!Evidence || typeof Evidence.getStudentSummary !== "function") return;
-      var summary = Evidence.getStudentSummary(studentId);
-      var support = SupportStore && typeof SupportStore.getStudent === "function"
-        ? SupportStore.getStudent(studentId)
-        : { goals: [], interventions: [] };
+      var summary = getStudentSummary(studentId);
+      if (!summary) return;
+      var support = getSupportStudent(studentId);
       el.drawerTitle.textContent = String(summary.student.name || "Student") + " • " + String(summary.student.id || studentId);
       if (state.activeDrawerTab === "snapshot") {
         var drawerAnchorPanel = renderInstitutionalAnchorPanel(studentId, true);
-        var efRow = SupportStore && typeof SupportStore.getExecutiveFunction === "function"
-          ? SupportStore.getExecutiveFunction(studentId)
-          : { upcomingTasks: [] };
+        var efRow = getExecutiveFunction(studentId);
         var upcomingTasks = Array.isArray(efRow.upcomingTasks) ? efRow.upcomingTasks.slice(0, 3) : [];
         var assignmentSnapshot = '<div class="td-support-item"><h4>Upcoming Tasks</h4>' + (
           upcomingTasks.length
@@ -183,7 +210,7 @@
             return;
           }
           if (action === "add-datapoint") {
-            var tier1 = (SupportStore.getStudent(studentId).interventions || []).find(function (row) { return Number(row.tier || 1) === 1; });
+            var tier1 = (getSupportStudent(studentId).interventions || []).find(function (row) { return Number(row.tier || 1) === 1; });
             if (!tier1 || typeof SupportStore.addInterventionDatapoint !== "function") return;
             var value = Number(window.prompt("Datapoint value", "70") || 0);
             var note = window.prompt("Datapoint note", "") || "";
