@@ -23,6 +23,13 @@
     studentName: "",
     grade: ""
   };
+  var _googleState = {
+    status: "",
+    busy: false,
+    driveResults: [],
+    youtubeResults: [],
+    lastCreated: null
+  };
 
   var SUPPORT_TYPES = [
     { id: "push-in", label: "Push-in class support" },
@@ -234,6 +241,10 @@
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (_err) {}
+  }
+
+  function setGoogleStatus(message) {
+    _googleState.status = String(message || "");
   }
 
   function defaultSelection() {
@@ -786,6 +797,7 @@
     ];
     if (brief) bodyParts.push(renderBriefCard(brief));
     else bodyParts.push('<section class="cs-brief-card"><p class="cs-brief-empty">Choose a block, student, and lesson context to generate the quick briefing.</p></section>');
+    bodyParts.push(renderGoogleWorkspaceCard(brief));
     body.innerHTML = bodyParts.join("\n");
 
     if (brief) notifySelection(brief);
@@ -855,6 +867,7 @@
       "  </div>",
       '  <div class="cs-brief-actions">',
       '    <button class="cs-brief-btn cs-brief-btn--primary" data-brief-save-block="1" type="button">' + (_selection.blockId ? "Update block" : "Add block") + "</button>",
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-calendar-sync="1" type="button">Import Google Calendar</button>',
       '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-new-block="1" type="button">New block</button>',
       (_selection.blockId ? '<button class="cs-brief-btn cs-brief-btn--quiet" data-brief-delete-block="' + escapeHtml(_selection.blockId) + '" type="button">Delete block</button>' : ""),
       "  </div>",
@@ -1132,6 +1145,96 @@
       '    <button class="cs-brief-btn cs-brief-btn--primary" data-brief-save-context="' + escapeHtml(brief.key) + '" type="button">Save today\'s context</button>',
       '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-copy="' + escapeHtml(brief.key) + '" type="button">Copy briefing</button>',
       '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-save-note="' + escapeHtml(noteKey) + '" type="button">Save note</button>',
+      "  </div>",
+      "</section>"
+    ].join("\n");
+  }
+
+  function googleWorkspaceModule() {
+    return root.CSGoogleWorkspace || null;
+  }
+
+  function googleWorkspaceReady() {
+    var api = googleWorkspaceModule();
+    return !!(api && api.isConfigured && api.isConfigured());
+  }
+
+  function googleSignedIn() {
+    var api = googleWorkspaceModule();
+    return !!(api && api.isSignedIn && api.isSignedIn());
+  }
+
+  function currentProgramLabel() {
+    var program = programById(_selection.programId);
+    return program ? program.label : "";
+  }
+
+  function currentGoogleQuery(brief) {
+    var bits = [
+      brief && brief.title || "",
+      _selection.lessonLabel || "",
+      _selection.customUnit || "",
+      _selection.blockLabel || "",
+      currentProgramLabel()
+    ];
+    return bits.filter(Boolean).join(" ").trim() || "lesson support";
+  }
+
+  function renderLinkList(items, kind) {
+    if (!Array.isArray(items) || !items.length) return '<p class="cs-brief-empty">No ' + escapeHtml(kind) + " results loaded yet.</p>";
+    return '<div class="cs-brief-link-list">' + items.map(function (item) {
+      var meta = [];
+      if (item.channel) meta.push(item.channel);
+      if (item.mimeType) meta.push(String(item.mimeType).split(".").pop());
+      if (item.modifiedTime) meta.push(new Date(item.modifiedTime).toLocaleDateString());
+      return [
+        '<a class="cs-brief-link-item" href="' + escapeHtml(item.url || item.webViewLink || "#") + '" target="_blank" rel="noopener">',
+        '  <strong>' + escapeHtml(item.title || item.name || kind) + "</strong>",
+        (meta.length ? '  <span>' + escapeHtml(meta.join(" - ")) + "</span>" : ""),
+        "</a>"
+      ].join("");
+    }).join("") + "</div>";
+  }
+
+  function renderGoogleWorkspaceCard(brief) {
+    var configured = googleWorkspaceReady();
+    var signedIn = googleSignedIn();
+    var query = currentGoogleQuery(brief);
+    var lastCreated = _googleState.lastCreated
+      ? '<a class="cs-brief-inline-link" href="' + escapeHtml(_googleState.lastCreated.url) + '" target="_blank" rel="noopener">Open latest: ' + escapeHtml(_googleState.lastCreated.label) + "</a>"
+      : "";
+    var stateLine = configured
+      ? (signedIn ? "Connected. Pull today's blocks from Calendar or create lesson-linked Google files." : "Google is configured. Sign in to import schedule blocks and open Workspace tools.")
+      : "Add your Google client details in js/google-auth-config.js to enable Calendar, Drive, Docs, Sheets, Slides, and YouTube.";
+    return [
+      '<section class="cs-brief-card">',
+      '  <p class="cs-brief-kicker">Google Workspace</p>',
+      '  <p class="cs-brief-summary">' + escapeHtml(stateLine) + "</p>",
+      (_googleState.status ? '  <p class="cs-brief-status">' + escapeHtml(_googleState.status) + "</p>" : ""),
+      (lastCreated ? '  <p class="cs-brief-status">' + lastCreated + "</p>" : ""),
+      '  <div class="cs-brief-actions">',
+      (configured && !signedIn ? '    <button class="cs-brief-btn cs-brief-btn--primary" data-brief-google-connect="1" type="button">Sign in with Google</button>' : ""),
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-calendar-sync="1" type="button">Sync today from Calendar</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-calendar-open="1" type="button">Open Calendar</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-doc="1" type="button">New Doc</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-sheet="1" type="button">New Sheet</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-slide="1" type="button">New Slides</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-drive="1" type="button">Search Drive</button>',
+      '    <button class="cs-brief-btn cs-brief-btn--quiet" data-brief-google-youtube="1" type="button">Find YouTube support</button>',
+      "  </div>",
+      '  <div class="cs-brief-grid">',
+      '    <div class="cs-brief-field cs-brief-field--full">',
+      "      <label>Current query</label>",
+      '      <p class="cs-brief-copy">' + escapeHtml(query) + "</p>",
+      "    </div>",
+      '    <div class="cs-brief-field cs-brief-field--full">',
+      "      <label>Drive results</label>",
+      renderLinkList(_googleState.driveResults, "Drive"),
+      "    </div>",
+      '    <div class="cs-brief-field cs-brief-field--full">',
+      "      <label>YouTube supports</label>",
+      renderLinkList(_googleState.youtubeResults, "YouTube"),
+      "    </div>",
       "  </div>",
       "</section>"
     ].join("\n");
@@ -1743,6 +1846,167 @@
     render();
   }
 
+  function mergeImportedBlocks(imported) {
+    var existing = getBlocks();
+    var byKey = {};
+    existing.forEach(function (row) {
+      byKey[(row.timeLabel + "|" + row.label).toLowerCase()] = row;
+    });
+    (imported || []).forEach(function (row) {
+      var block = normalizeBlock(row);
+      var key = (block.timeLabel + "|" + block.label).toLowerCase();
+      if (byKey[key]) {
+        byKey[key].timeLabel = block.timeLabel;
+        byKey[key].label = block.label;
+        byKey[key].supportType = block.supportType;
+        byKey[key].area = block.area;
+        byKey[key].programId = block.programId;
+      } else {
+        existing.push(block);
+        byKey[key] = block;
+      }
+    });
+    saveBlocks(existing);
+  }
+
+  function workspaceContext(brief) {
+    return {
+      studentName: _selection.studentName || "",
+      blockLabel: _selection.blockLabel || "",
+      title: brief && brief.title || _selection.lessonLabel || "",
+      programLabel: currentProgramLabel()
+    };
+  }
+
+  function openExternal(url) {
+    if (!url) return;
+    try {
+      root.open(url, "_blank", "noopener");
+    } catch (_err) {}
+  }
+
+  function ensureGoogleConnection() {
+    var api = googleWorkspaceModule();
+    if (!api) return Promise.reject(new Error("Google Workspace module is unavailable on this page."));
+    if (!api.isConfigured || !api.isConfigured()) {
+      return Promise.reject(new Error("Google auth is not configured yet. Update js/google-auth-config.js."));
+    }
+    if (api.isSignedIn && api.isSignedIn()) return Promise.resolve();
+    return api.connect().then(function () {
+      setGoogleStatus("Connected to Google.");
+    });
+  }
+
+  function importGoogleCalendarBlocks() {
+    var api = googleWorkspaceModule();
+    if (!api) return;
+    _googleState.busy = true;
+    setGoogleStatus("Importing today's calendar blocks...");
+    render();
+    ensureGoogleConnection()
+      .then(function () {
+        return api.importCalendarBlocks();
+      })
+      .then(function (blocks) {
+        mergeImportedBlocks(blocks);
+        setGoogleStatus(blocks && blocks.length ? ("Imported " + blocks.length + " block(s) from Google Calendar.") : "No calendar events found for today.");
+        if (!_selection.blockId) {
+          var rows = getBlocks();
+          if (rows.length) selectBlock(rows[0].id);
+        }
+      })
+      .catch(function (err) {
+        setGoogleStatus(err && err.message ? err.message : "Google Calendar import failed.");
+      })
+      .finally(function () {
+        _googleState.busy = false;
+        render();
+      });
+  }
+
+  function createGoogleFile(kind) {
+    var api = googleWorkspaceModule();
+    var brief = currentBrief();
+    if (!api) return;
+    _googleState.busy = true;
+    setGoogleStatus("Creating Google " + kind + "...");
+    render();
+    ensureGoogleConnection()
+      .then(function () {
+        if (kind === "Doc") return api.createDoc(workspaceContext(brief));
+        if (kind === "Sheet") return api.createSheet(workspaceContext(brief));
+        return api.createSlideDeck(workspaceContext(brief));
+      })
+      .then(function (file) {
+        var url = file.webViewLink || file.webContentLink || "";
+        _googleState.lastCreated = { label: kind, url: url };
+        setGoogleStatus(kind + " created in Google Drive.");
+        openExternal(url);
+      })
+      .catch(function (err) {
+        setGoogleStatus(err && err.message ? err.message : ("Google " + kind + " creation failed."));
+      })
+      .finally(function () {
+        _googleState.busy = false;
+        render();
+      });
+  }
+
+  function searchGoogleDrive() {
+    var api = googleWorkspaceModule();
+    var brief = currentBrief();
+    if (!api) return;
+    _googleState.busy = true;
+    setGoogleStatus("Searching Google Drive...");
+    render();
+    ensureGoogleConnection()
+      .then(function () {
+        return api.searchDriveFiles(currentGoogleQuery(brief));
+      })
+      .then(function (files) {
+        _googleState.driveResults = (files || []).map(function (file) {
+          return {
+            name: file.name || "Drive file",
+            webViewLink: file.webViewLink || "",
+            mimeType: file.mimeType || "",
+            modifiedTime: file.modifiedTime || ""
+          };
+        });
+        setGoogleStatus(_googleState.driveResults.length ? ("Loaded " + _googleState.driveResults.length + " Drive file(s).") : "No matching Drive files found.");
+      })
+      .catch(function (err) {
+        setGoogleStatus(err && err.message ? err.message : "Google Drive search failed.");
+      })
+      .finally(function () {
+        _googleState.busy = false;
+        render();
+      });
+  }
+
+  function searchGoogleYouTube() {
+    var api = googleWorkspaceModule();
+    var brief = currentBrief();
+    if (!api) return;
+    _googleState.busy = true;
+    setGoogleStatus("Searching YouTube supports...");
+    render();
+    ensureGoogleConnection()
+      .then(function () {
+        return api.searchYouTube(currentGoogleQuery(brief));
+      })
+      .then(function (items) {
+        _googleState.youtubeResults = items || [];
+        setGoogleStatus(_googleState.youtubeResults.length ? ("Loaded " + _googleState.youtubeResults.length + " YouTube support video(s).") : "No matching YouTube supports found.");
+      })
+      .catch(function (err) {
+        setGoogleStatus(err && err.message ? err.message : "YouTube search failed.");
+      })
+      .finally(function () {
+        _googleState.busy = false;
+        render();
+      });
+  }
+
   function chooseStudent(studentId) {
     var student = findStudent(studentId);
     _selection.studentId = String(studentId || "");
@@ -1950,6 +2214,47 @@
     var noteKey = target.getAttribute("data-brief-save-note");
     if (noteKey) {
       saveCurrentNote(noteKey);
+      setGoogleStatus("Local note saved.");
+      render();
+      return;
+    }
+    if (target.getAttribute("data-brief-google-connect")) {
+      ensureGoogleConnection().then(function () {
+        render();
+      }).catch(function (err) {
+        setGoogleStatus(err && err.message ? err.message : "Google sign-in failed.");
+        render();
+      });
+      return;
+    }
+    if (target.getAttribute("data-brief-google-calendar-sync")) {
+      importGoogleCalendarBlocks();
+      return;
+    }
+    if (target.getAttribute("data-brief-google-calendar-open")) {
+      var api = googleWorkspaceModule();
+      openExternal(api && api.openCalendarUrl ? api.openCalendarUrl() : "https://calendar.google.com/");
+      return;
+    }
+    if (target.getAttribute("data-brief-google-doc")) {
+      createGoogleFile("Doc");
+      return;
+    }
+    if (target.getAttribute("data-brief-google-sheet")) {
+      createGoogleFile("Sheet");
+      return;
+    }
+    if (target.getAttribute("data-brief-google-slide")) {
+      createGoogleFile("Slides");
+      return;
+    }
+    if (target.getAttribute("data-brief-google-drive")) {
+      searchGoogleDrive();
+      return;
+    }
+    if (target.getAttribute("data-brief-google-youtube")) {
+      searchGoogleYouTube();
+      return;
     }
   }
 
