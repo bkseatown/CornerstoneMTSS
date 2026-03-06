@@ -51,6 +51,7 @@
   var DashboardModals = window.CSDashboardModals;
   var WorkspaceCaseload = window.CSWorkspaceCaseload;
   var WorkspaceFocusShell = window.CSWorkspaceFocusShell;
+  var WorkspaceRecommendations = window.CSWorkspaceRecommendations;
   var WorkspaceReports = window.CSWorkspaceReports;
   var WorkspaceMeetings = window.CSWorkspaceMeetings;
   var WorkspaceFamilyCommunication = window.CSWorkspaceFamilyCommunication;
@@ -2304,42 +2305,16 @@
   }
 
   function renderRecommendedPlan(studentId) {
-    if (!el.recommendedPlanList) return;
-    if (!studentId) {
-      el.recommendedPlanList.innerHTML = '<p class="td-reco-line">Select a student to generate today\'s micro-plan.</p>';
-      return;
-    }
-    var model = Evidence && typeof Evidence.getSkillModel === "function"
-      ? Evidence.getSkillModel(studentId)
-      : null;
-    var rows = SessionPlanner && typeof SessionPlanner.buildDailyPlan === "function"
-      ? SessionPlanner.buildDailyPlan({
-          studentId: studentId,
-          skillModel: model,
-          topNeeds: model && Array.isArray(model.topNeeds) ? model.topNeeds : [],
-          timeBudgetMin: 20
-        })
-      : [];
-    if (!rows.length) {
-      el.recommendedPlanList.innerHTML = '<p class="td-reco-line">Run a quick check to auto-build a recommended plan.</p>';
-      return;
-    }
-    el.recommendedPlanList.innerHTML = rows.map(function (row) {
-      var focusLabel = getSkillLabelSafe(row.focusSkillId || "decoding.short_vowels");
-      return [
-        '<article class="td-plan-quick-item">',
-        '<div><strong>' + row.title + '</strong><p class="td-reco-line">' + focusLabel + '</p></div>',
-        '<span class="td-chip">' + row.minutes + ' min</span>',
-        '<button class="td-top-btn" type="button" data-reco-launch="' + String(row.href || "word-quest.html?quick=1") + '">Launch</button>',
-        '</article>'
-      ].join("");
-    }).join("");
-    Array.prototype.forEach.call(el.recommendedPlanList.querySelectorAll("[data-reco-launch]"), function (button) {
-      button.addEventListener("click", function () {
-        var href = String(button.getAttribute("data-reco-launch") || "word-quest.html?quick=1");
-        window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+    if (WorkspaceRecommendations && typeof WorkspaceRecommendations.renderRecommendedPlan === "function") {
+      WorkspaceRecommendations.renderRecommendedPlan({
+        listEl: el.recommendedPlanList,
+        studentId: studentId,
+        Evidence: Evidence,
+        SessionPlanner: SessionPlanner,
+        getSkillLabelSafe: getSkillLabelSafe,
+        appendStudentParam: appendStudentParam
       });
-    });
+    }
   }
 
   function toSequencerRoute(moduleName, fallbackHref) {
@@ -2391,80 +2366,21 @@
   }
 
   function renderInstructionalSequencer(studentId) {
-    if (!el.nextMovesList) return;
-    if (!studentId) {
-      el.nextMovesList.innerHTML = '<p class="td-reco-line">Select a student to generate 3 ranked instructional moves.</p>';
-      return;
-    }
-    var rows = InstructionalSequencer && typeof InstructionalSequencer.generateInstructionalOptions === "function"
-      ? InstructionalSequencer.generateInstructionalOptions(studentId)
-      : [];
-    rows = applyInstitutionalAnchorOverlay(studentId, rows);
-    if (SupportStore && typeof SupportStore.calculateImplementationConsistency === "function") {
-      var fidelity = SupportStore.calculateImplementationConsistency(studentId, 21);
-      if (fidelity && Number(fidelity.percent || 0) < 40) {
-        rows = rows.map(function (row) {
-          return Object.assign({}, row, {
-            reason: String(row.reason || "") + " Low implementation consistency detected; prioritize structured routine support."
-          });
-        });
-      }
-    }
-    if (SupportStore && typeof SupportStore.getExecutiveFunction === "function") {
-      var ef = SupportStore.getExecutiveFunction(studentId);
-      var recentFocus = Array.isArray(ef.focusHistory) ? ef.focusHistory.slice(0, 3) : [];
-      if (recentFocus.length >= 3) {
-        var lowFocusCount = recentFocus.filter(function (f) {
-          var r = String(f && f.selfRating || "");
-          return r === "Struggled" || r === "Mostly";
-        }).length;
-        if (lowFocusCount >= 3) {
-          rows = rows.map(function (row) {
-            return Object.assign({}, row, {
-              reason: String(row.reason || "") + " Low sustained focus detected; begin with 10-min structured sprint."
-            });
-          });
-        }
-      }
-    }
-    if (!Array.isArray(rows) || !rows.length) {
-      el.nextMovesList.innerHTML = '<p class="td-reco-line">No recommendation data yet. Run a quick check and refresh.</p>';
-      return;
-    }
-    var showAlignment = !!(el.showAlignment && el.showAlignment.checked);
-    el.nextMovesList.innerHTML = rows.slice(0, 3).map(function (row, idx) {
-      var rank = Math.max(1, Math.min(3, Number(row.rank || (idx + 1))));
-      var moduleName = String(row.module || "WordQuest");
-      var title = String(row.title || "Focused skill reinforcement");
-      var skillId = String(row.skillId || "");
-      var skillLabel = skillId ? formatSkillBreadcrumb(skillId) : "Foundational skill";
-      var duration = Math.max(5, Math.min(10, Number(row.durationMin || 6)));
-      var reason = String(row.reason || "Targeted reinforcement based on recent evidence.");
-      var alignment = showAlignment && AlignmentLoader && typeof AlignmentLoader.getAlignmentForSkill === "function"
-        ? AlignmentLoader.getAlignmentForSkill(skillId)
-        : null;
-      var anchorContext = showAlignment ? formatAnchorContextLine(row.anchorContext) : "";
-      var launchHref = toSequencerRoute(moduleName, row.href);
-      return [
-        '<article class="td-sequencer-item">',
-        '<span class="td-sequencer-rank">' + rank + '</span>',
-        '<div class="td-sequencer-main">',
-        '<div class="td-sequencer-head"><strong>' + title + '</strong><span class="td-chip">' + moduleName + '</span></div>',
-        '<p class="td-sequencer-meta">' + skillLabel + " • " + duration + ' min</p>',
-        '<p class="td-sequencer-reason">' + reason + '</p>',
-        (showAlignment ? formatAlignmentLine(alignment) : ""),
-        anchorContext,
-        '</div>',
-        '<button class="td-top-btn" type="button" data-sequencer-launch="' + launchHref + '">Start This</button>',
-        '</article>'
-      ].join("");
-    }).join("");
-    Array.prototype.forEach.call(el.nextMovesList.querySelectorAll("[data-sequencer-launch]"), function (button) {
-      button.addEventListener("click", function () {
-        var launch = String(button.getAttribute("data-sequencer-launch") || "word-quest.html?play=1");
-        window.location.href = appendStudentParam("./" + launch.replace(/^\.\//, ""), studentId);
+    if (WorkspaceRecommendations && typeof WorkspaceRecommendations.renderInstructionalSequencer === "function") {
+      WorkspaceRecommendations.renderInstructionalSequencer({
+        listEl: el.nextMovesList,
+        studentId: studentId,
+        InstructionalSequencer: InstructionalSequencer,
+        SupportStore: SupportStore,
+        AlignmentLoader: AlignmentLoader,
+        showAlignment: !!(el.showAlignment && el.showAlignment.checked),
+        formatSkillBreadcrumb: formatSkillBreadcrumb,
+        formatAlignmentLine: formatAlignmentLine,
+        formatAnchorContextLine: formatAnchorContextLine,
+        applyInstitutionalAnchorOverlay: applyInstitutionalAnchorOverlay,
+        appendStudentParam: appendStudentParam
       });
-    });
+    }
   }
 
   function renderImplementationToday(studentId) {
