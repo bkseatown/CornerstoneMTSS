@@ -20,6 +20,7 @@
     var ShareSummaryAPI = deps.ShareSummaryAPI || null;
     var SupportStore = deps.SupportStore || null;
     var SASLibrary = deps.SASLibrary || null;
+    var TeacherSupportService = deps.TeacherSupportService || null;
 
     function setCoachLine(text) {
       if (typeof hooks.setCoachLine === "function") hooks.setCoachLine(text);
@@ -65,12 +66,29 @@
       return "9-12";
     }
 
+    function getStudentSummary(studentId) {
+      if (TeacherSupportService && typeof TeacherSupportService.getStudentSummary === "function") {
+        return TeacherSupportService.getStudentSummary(studentId, {
+          Evidence: Evidence,
+          SupportStore: SupportStore,
+          TeacherIntelligence: deps.TeacherIntelligence || null,
+          TeacherSelectors: deps.TeacherSelectors || null
+        });
+      }
+      return Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(studentId) : null;
+    }
+
+    function getRecentSessions(studentId, query) {
+      if (TeacherSupportService && typeof TeacherSupportService.getRecentSessions === "function") {
+        return TeacherSupportService.getRecentSessions(studentId, query, { Evidence: Evidence });
+      }
+      return Evidence && typeof Evidence.getRecentSessions === "function" ? Evidence.getRecentSessions(studentId, query || {}) : [];
+    }
+
     function buildShareSummaryText(studentId) {
-      if (!Evidence || typeof Evidence.getStudentSummary !== "function") return "";
-      var summary = Evidence.getStudentSummary(studentId);
-      var sessions = (window.CSEvidence && typeof window.CSEvidence.getRecentSessions === "function")
-        ? window.CSEvidence.getRecentSessions(studentId, { limit: 1 })
-        : [];
+      var summary = getStudentSummary(studentId);
+      if (!summary) return "";
+      var sessions = getRecentSessions(studentId, { limit: 1 });
       var row = sessions[0] || {};
       var sig = row.signals || {};
       var rec = (window.CSEvidence && typeof window.CSEvidence.recommendNextSteps === "function")
@@ -92,17 +110,15 @@
     }
 
     function buildSharePayload(studentId) {
-      if (!Evidence || typeof Evidence.getStudentSummary !== "function") {
+      if (!getStudentSummary(studentId)) {
         return { text: "", json: {}, csv: "" };
       }
       var sid = String(studentId || "");
-      var summary = Evidence.getStudentSummary(sid);
+      var summary = getStudentSummary(sid);
       var model = Evidence && typeof Evidence.getSkillModel === "function"
         ? Evidence.getSkillModel(sid)
         : { studentId: sid, mastery: {}, topNeeds: [] };
-      var recentSessions = window.CSEvidence && typeof window.CSEvidence.getRecentSessions === "function"
-        ? window.CSEvidence.getRecentSessions(sid, { limit: 7 })
-        : [];
+      var recentSessions = getRecentSessions(sid, { limit: 7 });
       var plan = SessionPlanner && typeof SessionPlanner.buildDailyPlan === "function"
         ? SessionPlanner.buildDailyPlan({
             studentId: sid,
@@ -375,8 +391,9 @@
       }
       if (el.copySummary) {
         el.copySummary.addEventListener("click", function () {
-          if (!state.selectedId || !Evidence || typeof Evidence.getStudentSummary !== "function") return;
-          var summary = Evidence.getStudentSummary(state.selectedId);
+          if (!state.selectedId) return;
+          var summary = getStudentSummary(state.selectedId);
+          if (!summary) return;
           var text = [
             summary.student.name + " (" + summary.student.id + ")",
             "Focus: " + summary.focus,

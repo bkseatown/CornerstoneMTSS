@@ -68,6 +68,7 @@
   var TeacherStorage = window.CSTeacherStorage;
   var TeacherSelectors = window.CSTeacherSelectors;
   var TeacherIntelligence = window.CSTeacherIntelligence;
+  var TeacherSupportService = window.CSTeacherSupportService;
   if (!Evidence) return;
 
   var state = {
@@ -2258,7 +2259,10 @@
         ReportingGenerator: ReportingGenerator,
         MeetingGenerator: MeetingGenerator,
         SupportStore: SupportStore,
-        Evidence: Evidence
+        Evidence: Evidence,
+        TeacherSupportService: TeacherSupportService,
+        TeacherIntelligence: TeacherIntelligence,
+        TeacherSelectors: TeacherSelectors
       }
     });
   }
@@ -2281,7 +2285,10 @@
         SessionPlanner: SessionPlanner,
         ShareSummaryAPI: ShareSummaryAPI,
         SupportStore: SupportStore,
-        SASLibrary: SASLibrary
+        SASLibrary: SASLibrary,
+        TeacherSupportService: TeacherSupportService,
+        TeacherIntelligence: TeacherIntelligence,
+        TeacherSelectors: TeacherSelectors
       }
     });
   }
@@ -2344,7 +2351,10 @@
       },
       deps: {
         Evidence: Evidence,
-        SupportStore: SupportStore
+        SupportStore: SupportStore,
+        TeacherSupportService: TeacherSupportService,
+        TeacherIntelligence: TeacherIntelligence,
+        TeacherSelectors: TeacherSelectors
       }
     });
   }

@@ -24,6 +24,7 @@ const searchIndex = read('js/search/teacher-search-index.js');
 const searchService = read('js/search/teacher-search-service.js');
 const teacherSelectors = read('js/teacher/teacher-selectors.js');
 const teacherIntelligence = read('js/teacher/teacher-intelligence.js');
+const teacherSupportService = read('js/teacher/teacher-support-service.js');
 const literacySequencer = read('js/instructional-sequencer.js');
 const wordConnectionsEngine = read('js/literacy/word-connections-engine.js');
 const teacherStorage = read('js/teacher/teacher-storage.js');
@@ -40,6 +41,7 @@ assert(dashboardHtml.includes('Teacher Workspace'), 'Teacher Workspace labeling 
 assert(dashboardHtml.includes('./teacher-hub-v2.html'), 'Teacher Workspace must retain route back to Teacher Hub', failures);
 assert(dashboardHtml.includes('js/teacher-runtime-state.js'), 'Teacher Workspace must load unified teacher runtime state', failures);
 assert(dashboardHtml.includes('js/teacher/teacher-intelligence.js'), 'Teacher Workspace must load shared teacher intelligence service', failures);
+assert(dashboardHtml.includes('js/teacher/teacher-support-service.js'), 'Teacher Workspace must load shared teacher support service', failures);
 assert(dashboardHtml.includes('js/dashboard/workspace-caseload.js'), 'Teacher Workspace must load caseload workspace module', failures);
 assert(dashboardHtml.includes('js/dashboard/workspace-focus-shell.js'), 'Teacher Workspace must load focus shell workspace module', failures);
 assert(dashboardHtml.includes('js/dashboard/workspace-student-intelligence.js'), 'Teacher Workspace must load student intelligence workspace module', failures);
@@ -55,6 +57,7 @@ assert(dashboardJs.includes('WorkspaceSelection'), 'Teacher Workspace must route
 assert(dashboardJs.includes('WorkspaceRecommendations'), 'Teacher Workspace must route recommendation rendering through workspace module', failures);
 assert(dashboardJs.includes('WorkspaceSupportOps'), 'Teacher Workspace must route implementation/executive support through workspace module', failures);
 assert(dashboardJs.includes('TeacherIntelligence'), 'Teacher Workspace must use shared teacher intelligence service', failures);
+assert(dashboardJs.includes('TeacherSupportService'), 'Teacher Workspace must use shared teacher support service', failures);
 assert(dashboardJs.includes('TeacherIntelligence.buildTodayPlan'), 'Teacher Workspace must route today plan ranking through shared teacher intelligence service', failures);
 assert(dashboardJs.includes('appState.set({ mode: next })'), 'Centralized mode state write missing', failures);
 assert(dashboardJs.includes('WorkspaceSelection.selectStudent'), 'Centralized selected student selection flow missing', failures);
@@ -84,6 +87,7 @@ assert(searchIndex.includes('CSTeacherSearchIndex'), 'Teacher search index modul
 assert(searchService.includes('CSTeacherSearchService'), 'Teacher search service module missing', failures);
 assert(teacherSelectors.includes('CSTeacherSelectors'), 'Shared teacher selector module missing', failures);
 assert(teacherIntelligence.includes('CSTeacherIntelligence'), 'Shared teacher intelligence module missing', failures);
+assert(teacherSupportService.includes('CSTeacherSupportService'), 'Shared teacher support service module missing', failures);
 assert(teacherStorage.includes('cs.schedule.blocks.v1'), 'Canonical teacher schedule store key missing', failures);
 assert(teacherStorage.includes('migrateLessonBriefBlocks'), 'Legacy lesson-brief block migration missing', failures);
 assert(teacherStorage.includes('migrateLegacyTeacherData'), 'Canonical teacher storage migration entry point missing', failures);

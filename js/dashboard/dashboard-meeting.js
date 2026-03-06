@@ -21,6 +21,7 @@
     var MeetingGenerator = deps.MeetingGenerator || null;
     var SupportStore = deps.SupportStore || null;
     var Evidence = deps.Evidence || null;
+    var TeacherSupportService = deps.TeacherSupportService || null;
 
     function escHtml(value) {
       if (typeof hooks.escHtml === "function") return hooks.escHtml(value);
@@ -104,11 +105,21 @@
         .trim();
     }
 
+    function getStudentSummary(studentId) {
+      if (TeacherSupportService && typeof TeacherSupportService.getStudentSummary === "function") {
+        return TeacherSupportService.getStudentSummary(studentId, {
+          Evidence: Evidence,
+          SupportStore: SupportStore,
+          TeacherIntelligence: deps.TeacherIntelligence || null,
+          TeacherSelectors: deps.TeacherSelectors || null
+        });
+      }
+      return Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(studentId) : null;
+    }
+
     function meetingStudentContext() {
       var sid = state.selectedId || "student";
-      var summary = Evidence && typeof Evidence.getStudentSummary === "function"
-        ? Evidence.getStudentSummary(sid)
-        : null;
+      var summary = getStudentSummary(sid);
       var model = Evidence && typeof Evidence.getSkillModel === "function"
         ? Evidence.getSkillModel(sid)
         : { topNeeds: [] };
