@@ -236,6 +236,109 @@ body.th2-page {
   text-overflow: ellipsis;
 }
 
+/* ── Schedule block card (class mode sidebar) ───────────── */
+
+.th2-block-card {
+  width: 100%;
+  display: block;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.11s ease, border-color 0.11s ease;
+}
+
+.th2-block-card:hover {
+  background: var(--surface-elev-2);
+  border-color: var(--border-subtle);
+}
+
+.th2-block-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.th2-block-card.is-active {
+  background: color-mix(in oklab, var(--surface-elev-2) 80%, var(--accent) 20%);
+  border-color: color-mix(in oklab, var(--accent) 50%, transparent);
+}
+
+.th2-block-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.th2-block-card-time {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.th2-block-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th2-block-card-meta {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th2-block-card-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Empty schedule state in sidebar */
+
+.th2-sidebar-empty-schedule {
+  padding: 24px 14px;
+  text-align: center;
+}
+
+.th2-sidebar-empty-msg {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 4px 0;
+}
+
+.th2-sidebar-empty-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 0 0 14px 0;
+}
+
+.th2-sidebar-setup-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 40%, transparent);
+  background: var(--accent, #2b5da8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.th2-sidebar-setup-btn:hover { opacity: 0.88; }
+
 /* Tier chip — right side of student item */
 
 .th2-tier-chip {
@@ -319,6 +422,25 @@ body.th2-page {
   margin: 0;
   font-size: 13px;
   color: var(--text-muted);
+}
+
+.th2-back-to-schedule {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 12px;
+  padding: 5px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: 500 12px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  transition: color 0.14s;
+  font-family: inherit;
+}
+
+.th2-back-to-schedule:hover {
+  color: var(--text-primary);
 }
 
 .th2-command-center {
@@ -2647,6 +2769,156 @@ body.th2-page {
   color: var(--text-muted);
 }
 
+.th2-today-setup-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* ── Daily Schedule Main View ───────────────────────────── */
+
+.th2-day-schedule-view {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: th2-reveal 0.22s ease-out;
+}
+
+.th2-day-sched-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.th2-day-sched-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.th2-day-sched-date {
+  margin: 0;
+  font: 700 22px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.th2-day-sched-summary {
+  margin: 0;
+  font: 400 13px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+}
+
+.th2-day-sched-add-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-primary, #3a6fd8);
+  background: transparent;
+  color: var(--color-primary, #3a6fd8);
+  font: 600 13px/1 var(--font-ui, system-ui);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+  white-space: nowrap;
+}
+
+.th2-day-sched-add-btn:hover {
+  background: var(--color-primary, #3a6fd8);
+  color: #fff;
+}
+
+.th2-day-sched-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.th2-day-sched-block {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  row-gap: 3px;
+  align-items: start;
+  width: 100%;
+  padding: 16px 18px;
+  background: var(--surface-card, #fff);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, box-shadow 0.14s, transform 0.1s;
+  font-family: var(--font-ui, system-ui);
+}
+
+.th2-day-sched-block:hover {
+  background: var(--surface-hover, #f4f6fb);
+  border-color: rgba(58,111,216,0.3);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+  transform: translateY(-1px);
+}
+
+.th2-day-sched-time {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  font: 600 12px/1.4 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.th2-day-sched-name {
+  grid-column: 2;
+  grid-row: 1;
+  font: 600 15px/1.3 var(--font-ui, system-ui);
+  color: var(--text-primary);
+}
+
+.th2-day-sched-sub {
+  grid-column: 2;
+  grid-row: 2;
+  font: 400 12px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.th2-day-sched-count {
+  grid-column: 3;
+  grid-row: 1;
+  font: 500 11px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  background: var(--surface-alt, #eef1f8);
+  border-radius: 6px;
+  padding: 3px 7px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.th2-day-sched-empty {
+  padding: 32px 24px;
+  border: 1.5px dashed rgba(0,0,0,0.12);
+  border-radius: 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.th2-day-sched-empty-msg {
+  margin: 0;
+  font: 500 14px/1.4 var(--font-ui, system-ui);
+  color: var(--text-secondary, #6b7591);
+}
+
+.th2-day-sched-empty-sub {
+  margin: 0;
+  font: 400 12px/1.4 var(--font-ui, system-ui);
+  color: var(--text-muted);
+}
+
 .th2-snapshot-group {
   display: flex;
   flex-direction: column;
@@ -2736,10 +3008,48 @@ body.th2-page {
 .th2-section-label,
 .th2-search-section-title {
   margin: 4px 0 0;
-  font: 700 11px/1.2 var(--font-ui, system-ui);
-  letter-spacing: 0.08em;
+  font: 700 11.5px/1.2 var(--font-ui, system-ui);
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-secondary);
+}
+
+/* ── First-run banner ──────────────────────────────────── */
+
+.th2-firstrun-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--accent, #2b5da8) 8%, #fff);
+  border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 22%, transparent);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.th2-firstrun-banner strong {
+  color: var(--text-primary);
+}
+
+.th2-firstrun-banner__btn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 40%, transparent);
+  background: var(--accent, #2b5da8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.14s, box-shadow 0.14s;
+}
+
+.th2-firstrun-banner__btn:hover {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 85%, #000);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--accent, #2b5da8) 30%, transparent);
 }
 
 .th2-brief-block-chip,

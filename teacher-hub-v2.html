@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="color-scheme" content="only light">
   <base href="./">
-  <title>Cornerstone MTSS — Teacher Hub</title>
+  <title>Cornerstone MTSS — Specialist Hub</title>
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260306h">
   <link rel="stylesheet" href="./style/typography.css?v=20260306h">
-  <link rel="stylesheet" href="./teacher-hub-v2.css?v=20260306n">
+  <link rel="stylesheet" href="./teacher-hub-v2.css?v=20260306p">
   <link rel="stylesheet" href="./css/curriculum-panel.css?v=20260306h">
   <link rel="stylesheet" href="./css/lesson-brief-panel.css?v=20260306i">
   <link rel="stylesheet" href="./css/onboarding-tour.css?v=20260306j">
 </head>
 <body class="th2-page">
 
-  <div id="th2-shell" class="th2-shell" aria-label="Cornerstone MTSS Teacher Hub">
+  <div id="th2-shell" class="th2-shell" aria-label="Cornerstone MTSS Specialist Hub">
 
     <!-- ── Left: Caseload panel ─────────────────────────── -->
     <aside id="th2-sidebar" class="th2-sidebar" aria-label="Student caseload">
@@ -71,10 +71,10 @@
         </div>
 
         <div class="th2-mode-row" role="tablist" aria-label="Context mode">
-          <button class="th2-mode-tab is-active" data-mode="caseload" role="tab" aria-selected="true">
+          <button class="th2-mode-tab" data-mode="caseload" role="tab" aria-selected="false">
             My Caseload
           </button>
-          <button class="th2-mode-tab" data-mode="class" role="tab" aria-selected="false">
+          <button class="th2-mode-tab is-active" data-mode="class" role="tab" aria-selected="true">
             Today's Classes
           </button>
         </div>
@@ -103,15 +103,18 @@
           Lesson Brief
         </button>
         <button id="th2-cur-btn" class="th2-cur-btn" type="button" aria-label="Open curriculum quick reference">
-          📚 Curriculum
+          Curriculum
         </button>
         <div class="th2-sidebar-footer-row">
           <button id="th2-tour-btn" class="th2-footer-icon-btn" type="button" aria-label="Replay tour / help" title="Replay tour">
-            🧭 Tour
+            Tour
           </button>
           <button id="th2-analytics-btn" class="th2-footer-icon-btn" type="button" aria-label="Open usage analytics" title="Usage analytics">
-            📊 Analytics
+            Analytics
           </button>
+          <a id="th2-reports-btn" class="th2-footer-icon-btn" href="./teacher-dashboard.html" aria-label="Open progress reports and meeting prep" title="Progress reports">
+            Reports
+          </a>
         </div>
       </div>
 
@@ -282,7 +285,7 @@
   <script src="./js/onboarding-tour.js?v=20260306j"></script>
 
   <!-- ── Application ───────────────────────────────────── -->
-  <script src="./teacher-hub-v2.js?v=20260306o"></script>
+  <script src="./teacher-hub-v2.js?v=20260306q"></script>
 
   <!-- ── Build infrastructure ──────────────────────────── -->
   <script src="./build-stamp.js?v=20260306h"></script>

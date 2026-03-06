@@ -788,22 +788,126 @@
     ].join("");
   }
 
+  function buildFirstRunContext() {
+    var block = {
+      id: "demo-first-run",
+      label: "ELA Intervention",
+      timeLabel: "9:00 – 9:45",
+      teacher: "Ms. Rivera",
+      subject: "Intervention",
+      curriculum: "UFLI Foundations",
+      lesson: "Unit 5 · Lesson 12",
+      classSection: "ELA Intervention",
+      supportType: "small-group",
+      area: "ela",
+      programId: "ufli",
+      studentIds: [],
+      rosterRefs: []
+    };
+    return {
+      block: block,
+      classContext: { teacher: "Ms. Rivera", lessonContextId: "" },
+      lessonContext: null,
+      derived: {
+        subject: "Intervention",
+        curriculum: "UFLI Foundations",
+        unit: "Unit 5",
+        lesson: "Lesson 12",
+        lessonFocus: "Closed Syllable Exceptions",
+        mainConcept: "Distinguish closed syllable exceptions (ild, ind, old, olt, ost) from standard closed syllable patterns",
+        languageDemands: ["Explain", "compare", "apply"],
+        supportType: "small-group",
+        prioritySignal: {
+          label: "2 students need targeted support · Lesson ready",
+          level: "watch"
+        },
+        students: [
+          {
+            studentId: "demo-s1",
+            name: "Maya R.",
+            supportPriority: "T2",
+            primaryGoal: "Accurate decoding of closed syllable exceptions in connected text",
+            relatedSupport: ["Phonics", "Fluency"],
+            accommodations: ["ext", "vis"],
+            trendSummary: { label: "Improving" }
+          },
+          {
+            studentId: "demo-s2",
+            name: "Liam T.",
+            supportPriority: "T3",
+            primaryGoal: "Build phonemic awareness of long vowel sounds before syllable instruction",
+            relatedSupport: ["Phonics", "Decoding"],
+            accommodations: ["eal", "vis"],
+            trendSummary: { label: "Watch" }
+          },
+          {
+            studentId: "demo-s3",
+            name: "Sofia K.",
+            supportPriority: "T2",
+            primaryGoal: "Transfer vowel team knowledge to multisyllabic reading",
+            relatedSupport: ["Fluency"],
+            accommodations: ["eal"],
+            trendSummary: { label: "Steady" }
+          }
+        ],
+        studentIds: [],
+        targetSkills: ["LIT.DEC.SYLL"]
+      },
+      companion: {
+        mainConcept: "Closed Syllable Exceptions — when the vowel goes long",
+        languageDemands: ["Explain", "compare", "apply"],
+        misconceptions: [
+          "Students assume all CVC patterns have a short vowel (e.g., reading 'find' as /fĭnd/).",
+          "Confusion between ild/ind vs. standard closed syllable words.",
+          "EAL students may over-generalise spelling patterns from first language."
+        ],
+        supportMoves: [
+          "Word sort: closed exception vs. standard closed syllable.",
+          "Build a pattern anchor wall entry for ild, ind, old, olt, ost.",
+          "Use sentence frames: 'This word has a long vowel because…'"
+        ],
+        flexibleGroups: [
+          { label: "Guided Phonics", focus: "Closed exception words with teacher modelling", students: ["Maya R.", "Liam T."] },
+          { label: "Independent Practice", focus: "Apply pattern in decodable text", students: ["Sofia K."] }
+        ]
+      },
+      insight: null
+    };
+  }
+
+  function renderFirstRunBanner() {
+    return [
+      '<div class="th2-firstrun-banner" role="note">',
+      '  <span>Sample class shown — open <strong>Lesson Brief</strong> to add your real class blocks and unlock full context.</span>',
+      '  <button class="th2-firstrun-banner__btn" data-open-brief="1" type="button">Set up my classes</button>',
+      "</div>"
+    ].join("");
+  }
+
   function renderCommandCenter(activeBlock, options) {
     if (!el.emptyState) return;
     var blocks = getTodayLessonBlocks();
     var block = activeBlock || blocks[0] || null;
     if (!block) {
+      var seedCtx = buildFirstRunContext();
+      var seedBlock = seedCtx.block;
       el.emptyState.innerHTML = [
         '<div class="th2-command-center">',
-        renderCommandHeader({ block: {}, derived: { prioritySignal: { label: "No schedule blocks saved yet." } } }, []),
-        '<section class="th2-active-context"><p class="th2-today-sub">Add today\'s classes in Lesson Brief to unlock Smart Lesson Companion, student priorities, and contextual game launches.</p></section>',
-        renderQuickAccessRail({ block: {}, classContext: {}, lessonContext: {}, derived: { subject: "", studentIds: [], targetSkills: [] } }),
+        renderFirstRunBanner(),
+        renderCommandHeader(seedCtx, [seedBlock]),
+        '<section class="th2-active-context">',
+        '  <div class="th2-active-context__grid">',
+        renderStudentPriorityZone(seedCtx),
+        renderCompanionZone(seedCtx),
+        "  </div>",
+        "</section>",
         "</div>"
       ].join("");
       return;
     }
     var contextData = buildTeacherContextForBlock(block);
     el.emptyState.innerHTML = [
+      '<button class="th2-back-to-schedule" data-back-to-schedule="1" type="button">← Today\'s schedule</button>',
       '<div class="th2-command-center">',
       renderCommandHeader(contextData, blocks),
       renderDayStrip(blocks, block.id),
@@ -2607,6 +2711,45 @@
     if (q) showEmptyState();
   }
 
+  /* ── Sidebar schedule rendering (class mode) ───────────── */
+
+  function renderSidebarSchedule() {
+    if (!el.list) return;
+    var blocks = getTodayLessonBlocks();
+    var selectedBlockId = hubState.get().context.classId || "";
+    if (!blocks.length) {
+      el.list.innerHTML = [
+        '<div class="th2-sidebar-empty-schedule">',
+        '  <p class="th2-sidebar-empty-msg">No classes scheduled yet.</p>',
+        '  <p class="th2-sidebar-empty-sub">Add your schedule to see class context here.</p>',
+        '  <button class="th2-sidebar-setup-btn" data-open-brief="1" type="button">Set up my classes</button>',
+        '</div>'
+      ].join("");
+      return;
+    }
+    el.list.innerHTML = blocks.map(function (block) {
+      var isActive = block.id === selectedBlockId;
+      var label = escapeHtml(block.label || block.classSection || "Class");
+      var time = escapeHtml(block.timeLabel || "");
+      var sub = [escapeHtml(block.subject || ""), escapeHtml(block.programId || "")].filter(Boolean).join(" · ");
+      var studentCount = block.studentIds && block.studentIds.length;
+      return [
+        '<button class="th2-block-card' + (isActive ? " is-active" : "") + '"',
+        '  data-open-block="' + escapeHtml(block.id) + '"',
+        '  type="button"',
+        '  aria-pressed="' + isActive + '"',
+        '>',
+        '  <div class="th2-block-card-body">',
+        (time ? '    <span class="th2-block-card-time">' + time + '</span>' : ""),
+        '    <span class="th2-block-card-name">' + label + '</span>',
+        (sub ? '    <span class="th2-block-card-meta">' + sub + '</span>' : ""),
+        (studentCount ? '    <span class="th2-block-card-count">' + studentCount + ' student' + (studentCount !== 1 ? 's' : '') + '</span>' : ""),
+        '  </div>',
+        '</button>'
+      ].join("\n");
+    }).join("");
+  }
+
   /* ── Student list rendering ────────────────────────────── */
 
   function renderStudentList() {
@@ -3058,7 +3201,7 @@
     var mode = hubState.get().context.mode;
     if (mode === "class") { renderClassSnapshot(); return; }
     if (el.search && String(el.search.value || "").trim()) { renderSearchResults(); return; }
-    if (!caseload.length) { renderOnboarding(); return; }
+    if (!caseload.length) { renderCommandCenter(null); return; }
     renderMorningBrief();
   }
 
@@ -3087,61 +3230,77 @@
     if (!el.emptyState) return;
     var blocks = getTodayLessonBlocks();
     var selectedBlockId = hubState.get().context.classId || "";
-    var activeBlock = blocks.filter(function (block) { return block.id === selectedBlockId; })[0] || blocks[0] || null;
-    if (blocks.length && activeBlock) {
-      renderCommandCenter(activeBlock, { mode: "class" });
+
+    // If a block is explicitly selected, show its command center
+    if (selectedBlockId) {
+      var activeBlock = blocks.filter(function (b) { return b.id === selectedBlockId; })[0] || null;
+      if (activeBlock) {
+        renderCommandCenter(activeBlock, { mode: "class" });
+        return;
+      }
+    }
+
+    // Default: show the daily schedule view
+    renderDailyScheduleMain(blocks);
+  }
+
+  function renderDailyScheduleMain(blocks) {
+    if (!el.emptyState) return;
+
+    // No caseload and no blocks → demo seed
+    if (!caseload.length && !blocks.length) {
+      renderCommandCenter(null);
       return;
     }
-    var byTier = { "3": [], "2": [], "1": [] };
-    caseload.forEach(function (s) {
-      var summary = getStudentSummaryForHub(s.id, s);
-      var tier    = quickTier(summary);
-      var key     = String(tier);
-      if (!byTier[key]) byTier[key] = [];
-      byTier[key].push(s);
-    });
-    var groups = [];
-    [3, 2, 1].forEach(function (t) {
-      var arr = byTier[String(t)] || [];
-      if (!arr.length) return;
-      groups.push(
-        '<div class="th2-snapshot-group">' +
-        '<p class="th2-snapshot-group-label">Tier ' + t +
-          ' <span style="opacity:0.65;font-weight:400;">(' + arr.length + ')</span></p>' +
-        '<div class="th2-snapshot-grid">' + arr.map(buildSnapshotCard).join("") + '</div>' +
-        '</div>'
-      );
-    });
-    if (!groups.length) {
-      el.emptyState.innerHTML =
-        '<div class="th2-today-panel">' +
-        '<p class="th2-today-title">Today\'s Classes</p>' +
-        '<p class="th2-today-sub">No students in caseload.</p>' +
-        '</div>';
-      return;
-    }
-    el.emptyState.innerHTML =
-      '<div class="th2-today-panel">' +
-      '<p class="th2-today-title">Today\'s Classes</p>' +
-      groups.join("") + '</div>';
-    el.emptyState.querySelectorAll(".th2-snapshot-card").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var sid = btn.getAttribute("data-id") || "";
-        if (!sid) return;
-        el.modeTabs.forEach(function (t) {
-          var active = t.getAttribute("data-mode") === "caseload";
-          t.classList.toggle("is-active", active);
-          t.setAttribute("aria-selected", active ? "true" : "false");
-        });
-        hubState.set({ context: { mode: "caseload" }, active_class_context: { classId: "", label: "", supportType: "", lessonContextId: "" } });
-        selectStudent(sid);
-      });
-    });
+
+    var today = new Date();
+    var dayStr = today.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    var totalStudents = blocks.reduce(function (acc, b) {
+      return acc + (b.studentIds ? b.studentIds.length : 0);
+    }, 0);
+    var summaryLine = blocks.length
+      ? blocks.length + " class" + (blocks.length !== 1 ? "es" : "") + (totalStudents ? " · " + totalStudents + " student" + (totalStudents !== 1 ? "s" : "") : "")
+      : "No classes scheduled";
+
+    var blockCards = blocks.map(function (block) {
+      var label = escapeHtml(block.label || block.classSection || "Class");
+      var time = escapeHtml(block.timeLabel || "");
+      var sub = [escapeHtml(block.subject || ""), escapeHtml(block.supportType || "")].filter(Boolean).join(" · ");
+      var count = block.studentIds && block.studentIds.length;
+      return [
+        '<button class="th2-day-sched-block" data-open-block="' + escapeHtml(block.id) + '" type="button">',
+        (time ? '<span class="th2-day-sched-time">' + time + '</span>' : ""),
+        '<span class="th2-day-sched-name">' + label + "</span>",
+        (sub ? '<span class="th2-day-sched-sub">' + sub + "</span>" : ""),
+        (count ? '<span class="th2-day-sched-count">' + count + " student" + (count !== 1 ? "s" : "") + "</span>" : ""),
+        "</button>"
+      ].join("");
+    }).join("");
+
+    var emptySlot = !blocks.length
+      ? '<div class="th2-day-sched-empty"><p class="th2-day-sched-empty-msg">Your day is clear — no classes have been added yet.</p><p class="th2-day-sched-empty-sub">Use the panel below to add intervention sessions and support groups for today.</p></div>'
+      : "";
+
+    el.emptyState.innerHTML = [
+      '<div class="th2-day-schedule-view">',
+      '<header class="th2-day-sched-header">',
+      '<div class="th2-day-sched-meta">',
+      '<p class="th2-day-sched-date">' + escapeHtml(dayStr) + "</p>",
+      '<p class="th2-day-sched-summary">' + escapeHtml(summaryLine) + "</p>",
+      "</div>",
+      '<button class="th2-day-sched-add-btn" data-open-brief="1" type="button">+ Add class</button>',
+      "</header>",
+      '<div class="th2-day-sched-list">',
+      blockCards + emptySlot,
+      "</div>",
+      "</div>"
+    ].join("");
   }
 
   function showTodaysClasses() {
     if (el.emptyState) { el.emptyState.classList.remove("hidden"); el.emptyState.removeAttribute("aria-hidden"); }
     if (el.focusCard)  { el.focusCard.classList.add("hidden"); el.focusCard.setAttribute("aria-hidden", "true"); }
+    renderSidebarSchedule();
     renderClassSnapshot();
   }
 
@@ -3158,6 +3317,17 @@
     // Intelligence is populated by HubContext after studentId changes
     if (state.intelligence && state.intelligence.plan) {
       renderFocusCard(state);
+    } else {
+      // Student selected but plan not yet ready — show a clear loading placeholder
+      if (el.emptyState) {
+        el.emptyState.classList.remove("hidden");
+        el.emptyState.removeAttribute("aria-hidden");
+        var studentName = state.active_student_context && state.active_student_context.studentName || "";
+        el.emptyState.innerHTML = '<div class="th2-empty-inner"><p class="th2-empty-label">' +
+          escapeHtml(studentName || "Student") + '</p>' +
+          '<p class="th2-empty-sub">Loading recommendation\u2026</p></div>';
+      }
+      if (el.focusCard) { el.focusCard.classList.add("hidden"); el.focusCard.setAttribute("aria-hidden", "true"); }
     }
     // Sync drawer open state
     var drawer = document.getElementById("th2-drawer");
@@ -3404,7 +3574,7 @@
       var mode = tab.getAttribute("data-mode") || "caseload";
       hubState.set({ context: { mode: mode, studentId: "" } });
       if (mode === "class") { showTodaysClasses(); }
-      else { showEmptyState(); }
+      else { renderStudentList(); showEmptyState(); }
     });
   });
 
@@ -3445,7 +3615,16 @@
       t.classList.toggle("is-active", active);
       t.setAttribute("aria-selected", active ? "true" : "false");
     });
+    hubState.set({ context: { mode: "caseload" } });
+    renderStudentList();
     selectStudent(sid);
+  });
+
+  document.addEventListener("click", function (e) {
+    var backBtn = e.target.closest && e.target.closest("[data-back-to-schedule]");
+    if (!backBtn) return;
+    hubState.set({ context: { mode: "class", classId: "", studentId: "" } });
+    renderDailyScheduleMain(getTodayLessonBlocks());
   });
 
   document.addEventListener("click", function (e) {
@@ -4131,27 +4310,34 @@
     // Load caseload (reads from evidence store)
     loadCaseload();
 
-    // If a student was passed via URL, select them; otherwise morning brief or onboarding
+    // If a student was passed via URL, select them; otherwise default to schedule view
     if (initialStudentId && caseload.some(function (s) { return s.id === initialStudentId; })) {
+      el.modeTabs.forEach(function (t) {
+        var active = t.getAttribute("data-mode") === "caseload";
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      hubState.set({ context: { mode: "caseload" } });
+      renderStudentList();
       selectStudent(initialStudentId);
     } else if (caseload.length) {
-      renderMorningBrief();
+      // Default to Today's Classes view so teachers see their schedule first
+      showTodaysClasses();
     } else if (isDemoMode) {
-      /* Demo resilience: dev-servers (serve, python) sometimes strip query params
-         or redirect before localStorage is readable. Re-seed and re-render once
-         after a minimal delay to catch any timing quirks. */
+      /* Demo resilience: dev-servers sometimes strip query params.
+         Re-seed and re-render once after a minimal delay. */
       setTimeout(function () {
         ensureDemoCaseload();
         loadCaseload();
         if (caseload.length) {
-          renderMorningBrief();
+          showTodaysClasses();
           if (el.demoBadge) el.demoBadge.classList.remove("hidden");
         } else {
-          renderOnboarding();
+          renderCommandCenter(null);
         }
       }, 120);
     } else {
-      renderOnboarding();
+      renderCommandCenter(null);
     }
   }
 

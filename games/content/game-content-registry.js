@@ -29,10 +29,37 @@
   "use strict";
 
   var WORD_QUEST_PACK = [
+    // K-2 — ELA / Intervention
+    { id: "wq-k1", word: "blend", clue: "Combine two or more sounds together.", gradeBands: ["K-2"], subjects: ["ELA", "Intervention"] },
+    { id: "wq-k2", word: "vowel", clue: "A sound made with an open mouth — a, e, i, o, u.", gradeBands: ["K-2"], subjects: ["ELA", "Intervention"] },
+    { id: "wq-k3", word: "chunk", clue: "A group of letters that go together in a word.", gradeBands: ["K-2"], subjects: ["Intervention"] },
+    // 3-5 — ELA
     { id: "wq-1", word: "trace", clue: "Follow or mark the path.", gradeBands: ["3-5"], subjects: ["ELA"] },
-    { id: "wq-2", word: "ratio", clue: "A comparison between two quantities.", gradeBands: ["6-8"], subjects: ["Math"] },
+    { id: "wq-35a", word: "infer", clue: "Use clues in the text to figure out what the author means.", gradeBands: ["3-5"], subjects: ["ELA"] },
+    { id: "wq-35b", word: "theme", clue: "The central message or big idea of a story.", gradeBands: ["3-5"], subjects: ["ELA"] },
+    { id: "wq-35c", word: "prefix", clue: "A word part added to the beginning that changes meaning.", gradeBands: ["3-5"], subjects: ["ELA", "Intervention"] },
+    { id: "wq-35d", word: "context", clue: "The information around a word that helps explain its meaning.", gradeBands: ["3-5"], subjects: ["ELA"] },
+    // 3-5 — Math
+    { id: "wq-35m1", word: "product", clue: "The answer when you multiply two numbers.", gradeBands: ["3-5"], subjects: ["Math"] },
+    { id: "wq-35m2", word: "factor", clue: "A number that divides evenly into another number.", gradeBands: ["3-5"], subjects: ["Math"] },
+    // 3-5 — Science
+    { id: "wq-4", word: "roots", clue: "Plant structures that anchor and absorb water.", gradeBands: ["3-5"], subjects: ["Science"] },
+    { id: "wq-35s1", word: "predict", clue: "Say what you think will happen based on evidence.", gradeBands: ["3-5"], subjects: ["Science"] },
+    // 6-8 — ELA / Writing
     { id: "wq-3", word: "claim", clue: "A statement a writer supports with evidence.", gradeBands: ["6-8", "9-12"], subjects: ["Writing", "ELA"] },
-    { id: "wq-4", word: "roots", clue: "Plant structures that anchor and absorb.", gradeBands: ["3-5"], subjects: ["Science"] }
+    { id: "wq-68a", word: "syntax", clue: "The arrangement of words and phrases to form sentences.", gradeBands: ["6-8"], subjects: ["ELA", "Writing"] },
+    { id: "wq-68b", word: "cite", clue: "Point directly to evidence in a text to support your idea.", gradeBands: ["6-8", "9-12"], subjects: ["ELA", "Writing"] },
+    { id: "wq-68c", word: "perspective", clue: "The viewpoint or position from which someone sees something.", gradeBands: ["6-8"], subjects: ["ELA"] },
+    // 6-8 — Math
+    { id: "wq-2", word: "ratio", clue: "A comparison between two quantities.", gradeBands: ["6-8"], subjects: ["Math"] },
+    { id: "wq-68m1", word: "variable", clue: "A symbol — often a letter — that represents an unknown value.", gradeBands: ["6-8"], subjects: ["Math"] },
+    { id: "wq-68m2", word: "equation", clue: "A mathematical statement that two expressions are equal.", gradeBands: ["6-8"], subjects: ["Math"] },
+    // 6-8 — Science
+    { id: "wq-68s1", word: "hypothesis", clue: "A testable prediction about what will happen in an experiment.", gradeBands: ["6-8"], subjects: ["Science"] },
+    // 9-12 — ELA / Writing
+    { id: "wq-912a", word: "synthesis", clue: "Combining ideas from multiple sources into a unified whole.", gradeBands: ["9-12"], subjects: ["ELA", "Writing"] },
+    { id: "wq-912b", word: "rhetoric", clue: "The art of effective and persuasive communication.", gradeBands: ["9-12"], subjects: ["ELA", "Writing"] },
+    { id: "wq-912c", word: "nuance", clue: "A subtle difference in meaning, expression, or tone.", gradeBands: ["9-12"], subjects: ["ELA"] }
   ];
 
   var WORD_CONNECTIONS_PACK = [
@@ -55,6 +82,66 @@
       skillTag: "MATH.CONCEPT.PARTWHOLE",
       gradeBands: ["3-5", "6-8"],
       subjects: ["Math"]
+    },
+    {
+      id: "wc-3",
+      target: "summarize",
+      forbidden: ["copy", "list", "write", "say"],
+      scaffolds: ["Use your own words.", "Include the most important idea and two key details."],
+      requiredMove: "Summarize in 1–2 sentences without looking at the text.",
+      skillTag: "LIT.COMP.SUMMARIZE",
+      gradeBands: ["3-5", "6-8"],
+      subjects: ["ELA"]
+    },
+    {
+      id: "wc-4",
+      target: "evidence",
+      forbidden: ["proof", "fact", "example", "quote"],
+      scaffolds: ["Connect your evidence to your claim.", "Use: 'This shows that…'"],
+      requiredMove: "Use evidence in a sentence that supports a specific claim.",
+      skillTag: "LIT.WRITING.ARGUMENT",
+      gradeBands: ["5-8", "6-8", "9-12"],
+      subjects: ["ELA", "Writing"]
+    },
+    {
+      id: "wc-5",
+      target: "equivalent",
+      forbidden: ["same", "equal", "match", "similar"],
+      scaffolds: ["Use a representation (fraction bar, number line, or area model).", "Explain why two forms represent the same value."],
+      requiredMove: "Explain equivalent without using the word 'same'.",
+      skillTag: "MATH.CONCEPT.EQUIVALENCE",
+      gradeBands: ["3-5", "6-8"],
+      subjects: ["Math"]
+    },
+    {
+      id: "wc-6",
+      target: "decompose",
+      forbidden: ["break", "split", "divide", "cut"],
+      scaffolds: ["Use a place value chart or area model.", "Name the parts you broke the number into."],
+      requiredMove: "Use decompose in a sentence about a specific number or shape.",
+      skillTag: "MATH.CONCEPT.DECOMPOSE",
+      gradeBands: ["K-2", "3-5"],
+      subjects: ["Math"]
+    },
+    {
+      id: "wc-7",
+      target: "infer",
+      forbidden: ["guess", "think", "know", "feel"],
+      scaffolds: ["Use a text clue + background knowledge together.", "Sentence frame: 'I infer ___ because the text says ___ and I know ___.'" ],
+      requiredMove: "Make an inference and cite the evidence you used.",
+      skillTag: "LIT.COMP.INFERENCE",
+      gradeBands: ["3-5", "6-8"],
+      subjects: ["ELA"]
+    },
+    {
+      id: "wc-8",
+      target: "justify",
+      forbidden: ["explain", "show", "prove", "tell"],
+      scaffolds: ["State your answer first, then support it.", "Use: 'I know this because…'"],
+      requiredMove: "Justify your answer using at least one piece of evidence.",
+      skillTag: "LIT.WRITING.JUSTIFY",
+      gradeBands: ["3-5", "6-8", "9-12"],
+      subjects: ["ELA", "Writing", "Math"]
     }
   ];
 

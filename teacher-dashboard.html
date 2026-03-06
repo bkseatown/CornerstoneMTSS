@@ -52,7 +52,7 @@
       <a class="td-wordmark td-brand-home" href="./index.html" aria-label="Home">
         <strong>Cornerstone MTSS</strong>
         <span>Teacher Workspace</span>
-        <p class="td-top-description">Reports, meetings, family communication, fidelity review, history, and student profile depth.</p>
+        <p class="td-top-description">Weekly insights, meeting prep, family communication, and progress history.</p>
         <small id="td-buildline" class="td-buildline">Build: checking...</small>
       </a>
 
@@ -63,18 +63,17 @@
       <div class="td-top-actions">
         <!-- Teacher Hub entry point — links to the daily operating surface -->
         <a id="td-hub-cta" class="td-top-btn td-hub-cta" href="./teacher-hub-v2.html" aria-label="Open Teacher Hub">
-          ✦ Teacher Hub
-          <span class="td-hub-cta-badge">New</span>
+          Teacher Hub
         </a>
         <button id="td-lesson-brief" class="td-top-btn" type="button">Lesson Brief</button>
-        <button id="td-add-student" class="td-top-btn" type="button">Add Student</button>
-        <button id="td-new-session" class="td-top-btn" type="button">New Session</button>
-        <button id="td-settings" class="td-top-btn" type="button">Settings</button>
-        <button id="td-meeting-workspace" class="td-top-btn" type="button">Meeting Workspace</button>
+        <button id="td-meeting-workspace" class="td-top-btn" type="button">Meeting Prep</button>
         <div class="td-top-overflow">
           <button id="td-top-overflow-toggle" class="td-top-btn" type="button" aria-expanded="false" aria-controls="td-top-overflow-menu">More</button>
           <div id="td-top-overflow-menu" class="td-top-overflow-menu hidden">
             <button id="td-home-btn" class="td-top-btn td-nav-btn" type="button">Home</button>
+            <button id="td-add-student" class="td-top-btn" type="button">Add Student</button>
+            <button id="td-new-session" class="td-top-btn" type="button">New Session</button>
+            <button id="td-settings" class="td-top-btn" type="button">Settings</button>
             <label class="td-activity-pick" for="td-activity-select">
               <span>Activities</span>
               <select id="td-activity-select" class="td-top-btn">
@@ -122,7 +121,7 @@
                 </div>
               </div>
               <div class="focus-right-signals">
-                <div id="td-focus-confidence-ring" class="focus-confidence-ring" aria-label="Recommendation confidence">
+                <div id="td-focus-confidence-ring" class="focus-confidence-ring" aria-hidden="true" style="display:none">
                   <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">
                     <circle class="focus-confidence-track" cx="20" cy="20" r="16"></circle>
                     <circle id="td-focus-confidence-progress" class="focus-confidence-progress" cx="20" cy="20" r="16"></circle>
@@ -144,7 +143,7 @@
               <span class="focus-signal-pill"><span class="focus-signal-dot" aria-hidden="true"></span>Guardrails passed</span>
             </div>
             <div id="td-lit-framework-badges" class="framework-badge-row" aria-label="Literacy framework alignment"></div>
-            <details class="td-explainability">
+            <details class="td-explainability" style="display:none" aria-hidden="true">
               <summary>Why this recommendation?</summary>
               <div class="td-explainability-grid">
                 <span>Recent Accuracy</span><strong id="td-exp-recent-accuracy">--</strong>
