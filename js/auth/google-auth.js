@@ -12,7 +12,12 @@
  * 3. APIs & Services → Enable APIs:
  *    • "Google Identity" (free, always-on)
  *    • "Google Classroom API" (free, for roster sync)
- *    • "Google Drive API" (free, for video upload)
+ *    • "Google Calendar API" (free, for daily schedule import)
+ *    • "Google Drive API" (free, for Docs/Sheets/Slides file creation)
+ *    • "Google Docs API" (free, optional for richer doc workflows)
+ *    • "Google Sheets API" (free, optional for richer sheet workflows)
+ *    • "Google Slides API" (free, optional for richer slide workflows)
+ *    • "YouTube Data API v3" (free quota, for lesson support video search)
  * 4. APIs & Services → Credentials → + Create Credentials
  *    → OAuth 2.0 Client ID → Web Application
  * 5. Authorized JavaScript origins — add ALL of these:
@@ -30,7 +35,12 @@
  *      scopes: [
  *        "https://www.googleapis.com/auth/classroom.courses.readonly",
  *        "https://www.googleapis.com/auth/classroom.rosters.readonly",
- *        "https://www.googleapis.com/auth/drive.file"
+ *        "https://www.googleapis.com/auth/calendar.events.readonly",
+ *        "https://www.googleapis.com/auth/drive.file",
+ *        "https://www.googleapis.com/auth/documents",
+ *        "https://www.googleapis.com/auth/spreadsheets",
+ *        "https://www.googleapis.com/auth/presentations",
+ *        "https://www.googleapis.com/auth/youtube.readonly"
  *      ]
  *    };
  *
@@ -77,13 +87,32 @@
     return (c && c.schoolDomains) || [];
   }
 
+  function normalizeScopeList(raw) {
+    if (Array.isArray(raw)) return raw.slice();
+    if (typeof raw === "string") return raw.split(/\s+/);
+    return [];
+  }
+
   function scopes() {
     var c = cfg();
     var defaultScopes = [
       "https://www.googleapis.com/auth/classroom.courses.readonly",
-      "https://www.googleapis.com/auth/classroom.rosters.readonly"
+      "https://www.googleapis.com/auth/classroom.rosters.readonly",
+      "https://www.googleapis.com/auth/calendar.events.readonly",
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/documents",
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/presentations",
+      "https://www.googleapis.com/auth/youtube.readonly"
     ];
-    return (c && c.scopes) ? c.scopes.join(" ") : defaultScopes.join(" ");
+    var combined = defaultScopes.concat(normalizeScopeList(c && c.scopes));
+    var seen = {};
+    return combined.filter(function (scope) {
+      scope = String(scope || "").trim();
+      if (!scope || seen[scope]) return false;
+      seen[scope] = true;
+      return true;
+    }).join(" ");
   }
 
   /* ── User helpers ───────────────────────────────────────── */
@@ -275,7 +304,7 @@
     getSetupInstructions: function () {
       return [
         "1. Go to console.cloud.google.com → Create project",
-        "2. Enable: Google Identity + Classroom API + Drive API",
+        "2. Enable: Google Identity + Classroom API + Calendar API + Drive API + Docs + Sheets + Slides + YouTube Data API v3",
         "3. Credentials → OAuth 2.0 Client ID → Web Application",
         "4. Add origins: http://localhost:4242 and http://127.0.0.1:4242",
         "5. Copy Client ID",

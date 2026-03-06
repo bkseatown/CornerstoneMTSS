@@ -287,6 +287,52 @@
   color: #4b5d75;
 }
 
+.cs-brief-status {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #36506f;
+}
+
+.cs-brief-inline-link {
+  color: #214e91;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.cs-brief-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cs-brief-link-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid #d7e2f2;
+  border-radius: 10px;
+  background: #f6f9fe;
+  color: #163860;
+  text-decoration: none;
+}
+
+.cs-brief-link-item:hover {
+  border-color: #b7cbe6;
+  background: #edf4fd;
+}
+
+.cs-brief-link-item strong {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.cs-brief-link-item span {
+  font-size: 12px;
+  color: #58708e;
+}
+
 @media (max-width: 720px) {
   .cs-brief-grid {
     grid-template-columns: 1fr;
