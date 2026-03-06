@@ -21,6 +21,7 @@
     var SupportStore = deps.SupportStore || null;
     var SASLibrary = deps.SASLibrary || null;
     var TeacherSupportService = deps.TeacherSupportService || null;
+    var WorkspaceSupportContent = deps.WorkspaceSupportContent || null;
 
     function setCoachLine(text) {
       if (typeof hooks.setCoachLine === "function") hooks.setCoachLine(text);
@@ -94,27 +95,21 @@
       var rec = (window.CSEvidence && typeof window.CSEvidence.recommendNextSteps === "function")
         ? window.CSEvidence.recommendNextSteps(sig)
         : { bullets: [summary.nextMove.line] };
-      return [
-        "Student: " + summary.student.name + " (" + summary.student.id + ")",
-        "Date: " + new Date().toISOString().slice(0, 10),
-        "Activity: Word Quest (90s)",
-        "Observed:",
-        "- Attempts: " + (row.outcomes && row.outcomes.attemptsUsed != null ? row.outcomes.attemptsUsed : "--"),
-        "- Vowel swaps: " + (sig.vowelSwapCount != null ? sig.vowelSwapCount : "--"),
-        "- Repeat same slot: " + (sig.repeatSameBadSlotCount != null ? sig.repeatSameBadSlotCount : "--"),
-        "Next step (Tier 2):",
-        "- " + (rec.bullets && rec.bullets[0] ? rec.bullets[0] : summary.nextMove.line),
-        "Progress note:",
-        "- " + summary.nextMove.line
-      ].join("\n");
+      return WorkspaceSupportContent && typeof WorkspaceSupportContent.buildShareSummaryText === "function"
+        ? WorkspaceSupportContent.buildShareSummaryText({
+            summary: summary,
+            sessions: sessions,
+            recommendation: rec
+          })
+        : "";
     }
 
     function buildSharePayload(studentId) {
-      if (!getStudentSummary(studentId)) {
+      var summary = getStudentSummary(studentId);
+      if (!summary) {
         return { text: "", json: {}, csv: "" };
       }
       var sid = String(studentId || "");
-      var summary = getStudentSummary(sid);
       var model = Evidence && typeof Evidence.getSkillModel === "function"
         ? Evidence.getSkillModel(sid)
         : { studentId: sid, mastery: {}, topNeeds: [] };
@@ -130,30 +125,21 @@
       var teacherNotes = el.notesInput && typeof el.notesInput.value === "string"
         ? el.notesInput.value.trim()
         : "";
-      if (ShareSummaryAPI && typeof ShareSummaryAPI.buildShareSummary === "function") {
-        return ShareSummaryAPI.buildShareSummary({
-          studentId: sid,
-          studentProfile: summary.student,
-          skillModel: model,
-          recentSessions: recentSessions,
-          plan: plan,
-          teacherNotes: teacherNotes
-        });
-      }
-      var fallbackText = buildShareSummaryText(sid);
-      return {
-        text: fallbackText,
-        json: {
-          studentId: sid,
-          student: summary.student,
-          topNeeds: model.topNeeds || [],
-          skillModel: model,
-          recentSessions: recentSessions,
-          plan: plan,
-          teacherNotes: teacherNotes
-        },
-        csv: "studentId,summary\\n\"" + sid + "\",\"" + fallbackText.replace(/\"/g, '""') + "\""
-      };
+      var recommendation = recentSessions[0] && recentSessions[0].signals && window.CSEvidence && typeof window.CSEvidence.recommendNextSteps === "function"
+        ? window.CSEvidence.recommendNextSteps(recentSessions[0].signals)
+        : { bullets: [summary.nextMove && summary.nextMove.line || "Continue focused support."] };
+      return WorkspaceSupportContent && typeof WorkspaceSupportContent.buildSharePayload === "function"
+        ? WorkspaceSupportContent.buildSharePayload({
+            studentId: sid,
+            summary: summary,
+            model: model,
+            recentSessions: recentSessions,
+            plan: plan,
+            teacherNotes: teacherNotes,
+            recommendation: recommendation,
+            ShareSummaryAPI: ShareSummaryAPI
+          })
+        : { text: "", json: {}, csv: "" };
     }
 
     function closeShareModal() {

@@ -54,6 +54,7 @@
   var WorkspaceStudentIntelligence = window.CSWorkspaceStudentIntelligence;
   var WorkspaceSelection = window.CSWorkspaceSelection;
   var WorkspaceRecommendations = window.CSWorkspaceRecommendations;
+  var WorkspaceSupportContent = window.CSWorkspaceSupportContent;
   var WorkspaceSupportOps = window.CSWorkspaceSupportOps;
   var WorkspaceReports = window.CSWorkspaceReports;
   var WorkspaceMeetings = window.CSWorkspaceMeetings;
@@ -2336,7 +2337,8 @@
         SASLibrary: SASLibrary,
         TeacherSupportService: TeacherSupportService,
         TeacherIntelligence: TeacherIntelligence,
-        TeacherSelectors: TeacherSelectors
+        TeacherSelectors: TeacherSelectors,
+        WorkspaceSupportContent: WorkspaceSupportContent
       }
     });
   }
