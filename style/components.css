@@ -1331,13 +1331,23 @@ html[data-home-mode="play"] .header-main-row {
 
 html[data-home-mode="play"] header {
   padding: 4px 10px 2px;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--panel-bg) 78%, #f4f8fc 22%),
-      color-mix(in oklab, var(--panel-bg) 64%, #7e94aa 36%)
-    );
-  box-shadow: 0 10px 20px rgba(8, 18, 30, 0.14);
+  background: var(--wq-play-header-bg);
+  border-bottom: 1px solid var(--wq-play-header-border);
+  box-shadow: var(--wq-play-header-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-home-mode="play"] header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--wq-play-header-art-width);
+  height: var(--wq-play-header-art-height);
+  background: var(--wq-play-header-art-bg);
+  opacity: var(--wq-play-header-art-opacity);
+  pointer-events: none;
 }
 
 html[data-home-mode="play"] .play-mode-label {
@@ -1565,26 +1575,29 @@ html[data-home-mode="play"] .focus-action-btn {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 54%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 72%, #ffffff 28%);
-  box-shadow: none;
-  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
+  border: 1px solid var(--wq-play-focus-chip-border);
+  background: var(--wq-play-focus-chip-bg);
+  box-shadow: var(--wq-play-focus-chip-shadow);
+  color: var(--wq-play-control-color);
 }
 
 html[data-home-mode="play"] .focus-inline-search {
   height: 36px;
   border-radius: 999px;
-  border-color: color-mix(in oklab, var(--panel-border) 54%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 70%, #ffffff 30%);
+  border-color: var(--wq-play-focus-surface-border);
+  background: var(--wq-play-focus-surface-bg);
   box-shadow: none;
 }
 
 html[data-home-mode="play"] .grade-target-inline {
   min-height: 36px;
   padding: 0 14px;
-  border-color: color-mix(in oklab, var(--panel-border) 54%, transparent);
-  background: color-mix(in oklab, var(--panel-bg) 68%, #ffffff 32%);
-  box-shadow: none;
+  border-color: var(--wq-play-focus-chip-border);
+  background: var(--wq-play-focus-chip-bg);
+  box-shadow: var(--wq-play-focus-chip-shadow);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .curriculum-main-bar { display: none !important; }
@@ -1630,6 +1643,12 @@ html[data-home-mode="play"] .grade-target-inline {
   letter-spacing: 0.01em;
   padding: 0 12px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+html[data-home-mode="play"] .curriculum-main-step-field select {
+  border-color: var(--wq-play-focus-surface-border);
+  background: var(--wq-play-focus-surface-bg);
+  box-shadow: none;
 }
 
 .curriculum-main-step-field select:hover {
@@ -3909,7 +3928,7 @@ html[data-home-mode="play"] .grade-target-inline,
 html[data-home-mode="play"] .curriculum-main-step-field select,
 html[data-home-mode="play"] .quest-stat,
 html[data-home-mode="play"] .quest-next {
-  color: color-mix(in oklab, var(--text) 95%, #ffffff 5%);
+  color: var(--wq-play-control-color);
 }
 
 html[data-home-mode="play"] .logo {
@@ -3921,38 +3940,10 @@ html[data-home-mode="play"] .logo span {
   color: color-mix(in oklab, var(--logo-quest, var(--accent)) 82%, #d7f7a7 18%);
 }
 
-html[data-home-mode="play"][data-theme="seahawks"] .logo span {
-  color: #69be28;
-  text-shadow: 0 1px 0 rgba(5, 18, 34, 0.5), 0 0 8px rgba(105, 190, 40, 0.2);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] header {
-  background:
-    radial-gradient(circle at 10% 18%, rgba(105, 190, 40, 0.15) 0 10%, transparent 28%),
-    linear-gradient(118deg, transparent 0 68%, rgba(165, 172, 175, 0.12) 68% 71%, transparent 71% 100%),
-    linear-gradient(180deg, #0f3152 0%, #002244 58%, #001831 100%);
-  border-color: rgba(105, 190, 40, 0.48);
-  box-shadow: 0 10px 24px rgba(0, 18, 36, 0.22);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] header::before {
-  content: '';
-  position: absolute;
-  inset: 8px 12px auto auto;
-  width: 180px;
-  height: 42px;
-  border-radius: 999px 0 999px 999px;
-  background:
-    linear-gradient(115deg, transparent 0 44%, rgba(165, 172, 175, 0.14) 44% 52%, transparent 52%),
-    linear-gradient(115deg, transparent 0 64%, rgba(105, 190, 40, 0.18) 64% 69%, transparent 69%);
-  opacity: 0.72;
-  pointer-events: none;
-}
-
 html[data-home-mode="play"] .icon-btn {
-  color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
-  border-color: color-mix(in oklab, var(--brand) 52%, #ffffff 48%);
-  background: color-mix(in oklab, var(--panel-bg) 74%, #ffffff 26%);
+  color: var(--wq-play-control-color);
+  border-color: var(--wq-play-control-border);
+  background: var(--wq-play-control-bg);
 }
 
 html[data-home-mode="play"] #theme-dock-toggle-btn,
@@ -3978,23 +3969,24 @@ html[data-home-mode="play"] .case-toggle-glyph {
   font-size: 1rem;
   letter-spacing: 0.01em;
   font-weight: 900;
-  color: color-mix(in oklab, #1d2f40 84%, #ffffff 16%);
+  color: var(--wq-play-control-color);
 }
 
 html[data-home-mode="play"] .focus-search-label span {
-  border-color: color-mix(in oklab, var(--panel-border) 78%, #ffffff 22%);
-  background: color-mix(in oklab, var(--panel-bg) 62%, #ffffff 38%);
+  border-color: var(--wq-play-focus-chip-border);
+  background: var(--wq-play-focus-chip-bg);
+  box-shadow: var(--wq-play-focus-chip-shadow);
 }
 
 html[data-home-mode="play"] .focus-inline-search,
 html[data-home-mode="play"] .curriculum-main-step-field select {
-  border-color: color-mix(in oklab, var(--header-border) 56%, #ffffff 44%);
-  background: linear-gradient(180deg, #f5f9fd 0%, #e8eff7 100%);
-  color: #122a42;
+  border-color: var(--wq-play-focus-surface-border);
+  background: var(--wq-play-focus-surface-bg);
+  color: var(--wq-play-control-color);
 }
 
 html[data-home-mode="play"] .focus-inline-search::placeholder {
-  color: color-mix(in oklab, #5b7290 64%, #ffffff 36%);
+  color: color-mix(in oklab, var(--wq-play-control-color) 36%, #ffffff 64%);
 }
 
 html[data-home-mode="play"] .hover-note-toast {
@@ -4009,32 +4001,14 @@ html[data-home-mode="play"] .hover-note-toast {
 }
 
 html[data-home-mode="play"] .grade-target-inline {
-  border-color: color-mix(in oklab, var(--panel-border) 74%, #ffffff 26%);
-  background: color-mix(in oklab, var(--panel-bg) 58%, #ffffff 42%);
+  border-color: var(--wq-play-focus-chip-border);
+  background: var(--wq-play-focus-chip-bg);
+  box-shadow: var(--wq-play-focus-chip-shadow);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
-
-html[data-home-mode="play"][data-theme="seahawks"] .focus-bar {
-  border-top-color: rgba(105, 190, 40, 0.34);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .focus-search-label span,
-html[data-home-mode="play"][data-theme="seahawks"] .grade-target-inline,
-html[data-home-mode="play"][data-theme="seahawks"] .focus-inline-search,
-html[data-home-mode="play"][data-theme="seahawks"] .curriculum-main-step-field select {
-  border-color: rgba(0, 34, 68, 0.2);
-  background:
-    linear-gradient(180deg, rgba(245, 248, 251, 0.98) 0%, rgba(224, 231, 235, 0.98) 100%);
-  color: #0f2740;
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .focus-search-label span {
-  box-shadow: inset 0 3px 0 rgba(105, 190, 40, 0.58);
-}
-
 html[data-home-mode="play"] #new-game-btn.is-demo-stop {
   background: linear-gradient(145deg, color-mix(in oklab, #d65b5b 72%, #8d1b1b 28%), color-mix(in oklab, #8d1b1b 72%, #000000 28%));
   border-color: color-mix(in oklab, #ff9e9e 46%, #822525 54%);
@@ -4158,22 +4132,19 @@ html[data-home-mode="play"] .board-zone {
 }
 
 html[data-home-mode="play"] .board-plate {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--plate-bg) 72%, #ffffff 28%) 0%,
-      color-mix(in oklab, var(--plate-bg) 86%, #d7e0e8 14%) 100%
-    );
-  border-color: color-mix(in oklab, var(--plate-border) 84%, #d7e0e8 16%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.62),
-    inset 0 -2px 0 rgba(10, 18, 28, 0.08),
-    0 5px 0 color-mix(in oklab, var(--plate-border) 76%, #7f8ea0 24%),
-    0 14px 24px rgba(8, 18, 28, 0.14);
+  background: var(--wq-play-board-bg);
+  border-color: var(--wq-play-board-border);
+  box-shadow: var(--wq-play-board-shadow);
 }
 
 html[data-home-mode="play"] .board-plate::before {
-  opacity: 0.12;
+  opacity: var(--wq-play-board-before-opacity);
+  background: var(--wq-play-board-before-bg);
+}
+
+html[data-home-mode="play"] .board-plate::after {
+  opacity: var(--wq-play-board-after-opacity);
+  background: var(--wq-play-board-after-bg);
 }
 
 .board-plate::before,
@@ -4203,7 +4174,7 @@ html[data-theme="default"] .board-plate::before {
     );
 }
 
-html[data-theme-family="sports"] .board-plate::before {
+html:not([data-home-mode="play"])[data-theme-family="sports"] .board-plate::before {
   opacity: 0.14;
   background: repeating-linear-gradient(
     -24deg,
@@ -4212,14 +4183,14 @@ html[data-theme-family="sports"] .board-plate::before {
   );
 }
 
-html[data-theme-family="inspired"] .board-plate::before {
+html:not([data-home-mode="play"])[data-theme-family="inspired"] .board-plate::before {
   opacity: 0.18;
   background:
     radial-gradient(circle at 20% 14%, color-mix(in oklab, var(--accent) 24%, transparent) 0 20%, transparent 52%),
     radial-gradient(circle at 78% 84%, color-mix(in oklab, var(--brand) 18%, transparent) 0 18%, transparent 48%);
 }
 
-html[data-theme-family="dark"] .board-plate::before {
+html:not([data-home-mode="play"])[data-theme-family="dark"] .board-plate::before {
   opacity: 0.16;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.06), transparent 34%),
@@ -4378,6 +4349,13 @@ html[data-board-style="soundcard"] #game-board {
   filter: saturate(1.03);
 }
 
+html[data-home-mode="play"] .tile {
+  border-color: var(--wq-play-tile-border);
+  border-radius: var(--wq-play-tile-radius);
+  background: var(--wq-play-tile-bg);
+  box-shadow: var(--wq-play-tile-shadow);
+}
+
 /* Keep board tiles less rounded when oval keyboard style is selected. */
 html[data-key-style="pebble"] .tile {
   border-radius: 10px;
@@ -4402,6 +4380,10 @@ html[data-key-style="pebble"] .tile {
   pointer-events: none;
 }
 
+html[data-home-mode="play"] .tile::after {
+  background: var(--wq-play-tile-gloss);
+}
+
 .tile.filled:not(.correct):not(.present):not(.absent) {
   border-color: color-mix(in oklab, var(--tile-filled-border) 72%, var(--brand) 28%);
   background: linear-gradient(
@@ -4419,59 +4401,6 @@ html[data-key-style="pebble"] .tile {
     inset 0 -2px 0 rgba(12, 22, 40, 0.2);
   color: var(--tile-filled-text, color-mix(in oklab, var(--tile-text) 88%, #101820 12%));
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
-}
-
-html[data-theme="seahawks"] .tile.filled:not(.correct):not(.present):not(.absent) {
-  background: linear-gradient(
-    170deg,
-    color-mix(in oklab, var(--key-bg) 86%, #ffffff 14%) 0%,
-    color-mix(in oklab, var(--key-bg) 94%, #1b2d42 6%) 100%
-  );
-  color: #001433;
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .board-plate {
-  background:
-    linear-gradient(180deg, rgba(232, 238, 242, 0.94) 0%, rgba(184, 196, 204, 0.96) 100%);
-  border-color: rgba(96, 117, 134, 0.84);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.76),
-    inset 0 -3px 0 rgba(3, 17, 34, 0.08),
-    0 6px 0 rgba(74, 92, 108, 0.76),
-    0 18px 28px rgba(8, 22, 38, 0.16);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .board-plate::before {
-  opacity: 0.46;
-  background:
-    linear-gradient(128deg, transparent 0 66%, rgba(105, 190, 40, 0.14) 66% 69%, transparent 69% 100%),
-    linear-gradient(128deg, transparent 0 76%, rgba(0, 34, 68, 0.12) 76% 79%, transparent 79% 100%),
-    radial-gradient(circle at 12% 20%, rgba(255, 255, 255, 0.46) 0 6%, transparent 24%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.1) 0 2px, transparent 2px 34px);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .board-plate::after {
-  opacity: 0.34;
-  background:
-    radial-gradient(110px 70px at 8% 12%, rgba(0, 34, 68, 0.16) 0 40%, transparent 58%),
-    radial-gradient(120px 80px at 92% 88%, rgba(105, 190, 40, 0.14) 0 36%, transparent 56%);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .tile {
-  border-radius: 15px;
-  border-color: #6f8697;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(236, 241, 244, 0.98) 100%);
-  box-shadow:
-    0 4px 0 #31485f,
-    0 10px 18px rgba(8, 18, 34, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.88),
-    inset 0 -2px 0 rgba(0,34,68,0.1);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .tile::after {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.42) 0%, transparent 100%);
 }
 
 html[data-board-style="soundcard"] .tile {
@@ -5048,57 +4977,27 @@ html[data-key-style="bubble"] .key {
 }
 
 html[data-home-mode="play"] .key {
-  box-shadow:
-    0 3px 0 color-mix(in oklab, var(--key-bg) 44%, #2f4054 56%),
-    0 7px 12px rgba(8, 18, 30, 0.16),
-    inset 0 1px 0 rgba(255,255,255,0.72),
-    inset 0 -1px 0 rgba(0,0,0,0.12);
+  border-radius: var(--wq-play-key-radius);
+  border-color: var(--wq-play-key-border);
+  background: var(--wq-play-key-bg);
+  color: var(--wq-play-key-color);
+  text-shadow: var(--wq-play-key-text-shadow);
+  box-shadow: var(--wq-play-key-shadow);
 }
 
-html[data-home-mode="play"] .key {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--key-bg) 78%, #ffffff 22%) 0%,
-      color-mix(in oklab, var(--key-bg) 92%, #eef3f8 8%) 58%,
-      color-mix(in oklab, var(--key-bg) 78%, #8ea1b4 22%) 100%
-    );
-  color: var(--key-text);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.34);
+html[data-home-mode="play"] .key:hover {
+  background: var(--wq-play-key-hover-bg);
 }
 
-html[data-home-mode="play"][data-theme="seahawks"] .key {
-  border-radius: 14px;
-  border-color: rgba(88, 107, 123, 0.92);
-  background:
-    linear-gradient(180deg, rgba(105, 190, 40, 0.18) 0 10%, transparent 10% 100%),
-    linear-gradient(180deg, rgba(244, 248, 251, 0.98) 0%, rgba(206, 214, 219, 0.98) 62%, rgba(170, 181, 188, 0.98) 100%);
-  color: #0d2439;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.54);
-  box-shadow:
-    0 4px 0 #5f7384,
-    0 10px 18px rgba(8, 18, 34, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.84),
-    inset 0 -1px 0 rgba(0,34,68,0.12);
+html[data-home-mode="play"] .key.wide {
+  background: var(--wq-play-key-wide-bg);
 }
 
-html[data-home-mode="play"][data-theme="seahawks"] .key:hover {
-  background:
-    linear-gradient(180deg, rgba(105, 190, 40, 0.24) 0 10%, transparent 10% 100%),
-    linear-gradient(180deg, rgba(252, 253, 254, 0.98) 0%, rgba(220, 228, 233, 0.98) 62%, rgba(183, 194, 201, 0.98) 100%);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .key.wide {
-  background:
-    linear-gradient(180deg, rgba(105, 190, 40, 0.2) 0 10%, transparent 10% 100%),
-    linear-gradient(180deg, rgba(237, 242, 246, 0.98) 0%, rgba(191, 202, 210, 0.98) 100%);
-}
-
-html[data-home-mode="play"][data-theme="seahawks"] .icon-btn,
-html[data-home-mode="play"][data-theme="seahawks"] .header-quick-btn {
-  border-color: rgba(105, 190, 40, 0.34);
-  background: linear-gradient(180deg, rgba(244,248,251,0.98) 0%, rgba(214,221,226,0.98) 100%);
-  color: #10283f;
+html[data-home-mode="play"] .icon-btn,
+html[data-home-mode="play"] .header-quick-btn {
+  border-color: var(--wq-play-control-border);
+  background: var(--wq-play-control-bg);
+  color: var(--wq-play-control-color);
 }
 
 @media (max-height: 820px) and (min-width: 980px) {
