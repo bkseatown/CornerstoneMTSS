@@ -470,7 +470,7 @@
     if (context.subject) url.searchParams.set("subject", context.subject);
     if (context.programId) url.searchParams.set("programId", context.programId);
     url.searchParams.set("from", "game-platform");
-    return url.pathname.replace(/^\//, "./") + (url.search || "");
+    return url.toString();
   }
 
   function galleryLaunchHref(gameId, context) {
