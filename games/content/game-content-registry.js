@@ -357,9 +357,12 @@
   }
 
   function deriveForbiddenWords(entry) {
-    var banned = tokenize(entry.definition).slice(0, 2).concat(["thing", "word"]);
-    return uniqueList(banned.filter(function (token) {
-      return token !== entry.word;
+    // Pull content words from definition first, then sentence as backup — no generic filler
+    var defTokens = tokenize(entry.definition);
+    var senTokens = tokenize(entry.sentence || "");
+    var pool = uniqueList(defTokens.concat(senTokens), 12);
+    return uniqueList(pool.filter(function (token) {
+      return token !== entry.word && token.length > 2;
     }), 4);
   }
 
