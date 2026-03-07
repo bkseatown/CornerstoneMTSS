@@ -167,7 +167,8 @@
         roundId: current.round.id,
         label: current.round.promptLabel || current.round.entryLabel || "",
         result: outcome.correct ? "correct" : outcome.nearMiss ? "near-miss" : "incorrect",
-        points: points
+        points: points,
+        streak: nextStreak
       };
       var history = current.history.concat(historyRow).slice(-20);
       var roundsCompleted = current.roundsCompleted + 1;
@@ -193,6 +194,25 @@
       });
 
       if (cfg.sound && outcome.correct) cfg.sound.play("correct");
+
+      /* ── Auto difficulty arc (gate: not on the very first round) ── */
+      if (roundsCompleted > 1 && !finished) {
+        var curDiff = current.settings.difficulty;
+        var recentHistory = history.slice(-3);
+        var recentIncorrect = recentHistory.filter(function (r) { return r.result === "incorrect"; }).length;
+        var newDiff = curDiff;
+        if (nextStreak >= 4 && curDiff === "scaffolded") newDiff = "core";
+        else if (nextStreak >= 4 && curDiff === "core") newDiff = "stretch";
+        else if (recentIncorrect >= 2 && curDiff === "stretch") newDiff = "core";
+        else if (recentIncorrect >= 2 && curDiff === "core") newDiff = "scaffolded";
+        if (newDiff !== curDiff) {
+          var nextSettings = Object.assign({}, current.settings, { difficulty: newDiff });
+          state.patch({
+            settings: nextSettings,
+            feedback: GameFeedback.build("reveal", newDiff === "stretch" ? "Stepping up — stretch mode." : "Adjusting pace.", "positive")
+          });
+        }
+      }
     }
 
     function teacherOverride() {

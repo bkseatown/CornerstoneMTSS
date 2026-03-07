@@ -4868,3 +4868,65 @@ textarea::placeholder {
   padding: 8px 22px 14px;
   flex-shrink: 0;
 }
+
+/* ── Recommendation annotation strip ──────────── */
+.th2-rec-annotation {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 0 2px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-top: 4px;
+}
+.th2-rec-annotation-label {
+  font-size: 11px; color: rgba(255,255,255,0.35);
+  white-space: nowrap; font-weight: 600; letter-spacing: 0.02em;
+}
+.th2-rec-btn {
+  padding: 4px 12px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent; color: rgba(255,255,255,0.45);
+  font-size: 11.5px; font-weight: 600; cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.th2-rec-btn:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.75); }
+.th2-rec-btn.is-selected {
+  background: rgba(105,190,40,0.18); border-color: #69be28;
+  color: #8dd44a;
+}
+
+/* ── Quick log ─────────────────────────────────── */
+.th2-quick-log { margin-top: 10px; }
+.th2-quick-log-trigger {
+  background: none; border: 1px dashed rgba(255,255,255,0.2);
+  border-radius: 6px; color: rgba(255,255,255,0.4);
+  font-size: 11.5px; font-weight: 600; cursor: pointer;
+  padding: 5px 12px; width: 100%; text-align: left;
+  transition: border-color 0.14s, color 0.14s;
+}
+.th2-quick-log-trigger:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); }
+.th2-quick-log-form { margin-top: 6px; }
+.th2-hidden { display: none !important; }
+.th2-quick-log-textarea {
+  width: 100%; box-sizing: border-box;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 6px; color: #eaeff6; font-size: 12px; font-family: inherit;
+  padding: 7px 10px; resize: vertical; min-height: 52px;
+}
+.th2-quick-log-textarea::placeholder { color: rgba(255,255,255,0.3); }
+.th2-quick-log-actions {
+  display: flex; gap: 8px; margin-top: 6px;
+}
+.th2-quick-log-cancel {
+  background: none; border: none; color: rgba(255,255,255,0.35);
+  font-size: 11.5px; cursor: pointer; padding: 4px 8px;
+  font-family: inherit;
+}
+.th2-quick-log-cancel:hover { color: rgba(255,255,255,0.6); }
+
+/* ── Mobile polish for new elements ──────────── */
+@media (max-width: 600px) {
+  .th2-rec-annotation { gap: 5px; }
+  .th2-rec-btn { padding: 4px 9px; font-size: 11px; }
+  .th2-quick-log-trigger { padding: 6px 12px; }
+  .th2-quick-log-textarea { font-size: 14px; }
+}

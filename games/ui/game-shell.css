@@ -1438,3 +1438,68 @@ html[data-view-mode="projector"] .cg-brand-copy h1 {
 .cg-stat { cursor: default; }
 .cg-stat:hover { transform: none; }
 }
+
+/* ── Streak chip ──────────────────────────────── */
+.cg-chip-streak { color: var(--cg-cta, #69be28); font-weight: 700; }
+
+/* ── Session summary stats ────────────────────── */
+.cg-summary-stats {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin: 8px 0 12px;
+}
+.cg-stat-streak { color: var(--cg-cta, #69be28); }
+
+/* ── Word Connections forbidden flash ────────── */
+.cg-focus-panel--forbidden {
+  animation: cg-forbidden-flash 0.4s ease;
+  border-color: var(--cg-danger, #ef4444) !important;
+}
+@keyframes cg-forbidden-flash {
+  0%   { background: rgba(239,68,68,0.22); }
+  100% { background: transparent; }
+}
+
+/* ── Rapid Category countdown bar ────────────── */
+.cg-countdown-bar {
+  position: relative;
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden; margin: 8px 0 12px;
+  display: flex; align-items: center;
+}
+.cg-countdown-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.9s linear, background 0.4s;
+}
+.cg-countdown-fill[data-tone="positive"] { background: var(--cg-cta, #69be28); }
+.cg-countdown-fill[data-tone="warning"]  { background: #f59e0b; }
+.cg-countdown-fill[data-tone="danger"]   { background: #ef4444; }
+.cg-countdown-label {
+  position: absolute; right: 6px;
+  font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,0.6); line-height: 1;
+}
+
+/* ── Gallery quick-setup bar ──────────────────── */
+.cg-gallery-setup {
+  max-width: 960px; margin: 0 auto 18px;
+  padding: 0 24px;
+}
+.cg-setup-row {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+}
+.cg-setup-label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.cg-select-sm {
+  font-size: 12px !important;
+  padding: 5px 8px !important;
+  min-width: 110px;
+}
+@media (max-width: 600px) {
+  .cg-gallery-setup { padding: 0 14px; }
+  .cg-setup-row { flex-direction: column; }
+  .cg-select-sm { width: 100%; }
+}

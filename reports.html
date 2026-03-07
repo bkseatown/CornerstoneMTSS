@@ -102,12 +102,6 @@
 
     <section class="td-body">
       <main class="dashboard cs-stage" aria-label="Reports and meeting surface">
-        <section class="dashboard-mode-strip card td-surface" aria-label="Workflow mode">
-          <button id="td-mode-daily" class="td-top-btn" type="button">Meeting Prep</button>
-          <button id="td-mode-reports" class="td-top-btn is-active" type="button">Aggregate Reports</button>
-          <button id="td-mode-advanced" class="td-top-btn hidden" type="button" tabindex="-1" aria-hidden="true">Advanced</button>
-          <button id="td-mode-classroom" class="td-top-btn hidden" type="button" tabindex="-1" aria-hidden="true">Classroom Mode</button>
-        </section>
         <section class="td-reports-overview card td-surface" aria-label="Reports overview">
           <div class="td-reports-overview__head">
             <div>
@@ -120,7 +114,7 @@
               <a class="td-top-btn" href="./student-profile.html">Open Student Profile</a>
             </div>
           </div>
-          <div class="td-reports-overview__grid">
+          <div class="td-reports-overview__grid" id="td-overview-grid">
             <article>
               <strong>Caseload patterns</strong>
               <p>Review who is missing evidence, due for review, or ready for follow-up.</p>

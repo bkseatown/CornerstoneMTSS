@@ -3201,6 +3201,74 @@
     if (addBtn) addBtn.addEventListener("click", openAddDrawer);
   }
 
+  /* ── Recommendation annotation ─────────────────────────── */
+
+  function bindRecAnnotation(container, studentId) {
+    var strip = container && container.querySelector(".th2-rec-annotation");
+    if (!strip) return;
+    var todayKey = "cs.rec.verdict." + studentId + "." + new Date().toISOString().slice(0, 10);
+    var saved;
+    try { saved = localStorage.getItem(todayKey) || ""; } catch (_e) { saved = ""; }
+    if (saved) {
+      var btn = strip.querySelector('[data-verdict="' + saved + '"]');
+      if (btn) btn.classList.add("is-selected");
+    }
+    strip.querySelectorAll(".th2-rec-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        strip.querySelectorAll(".th2-rec-btn").forEach(function (b) { b.classList.remove("is-selected"); });
+        btn.classList.add("is-selected");
+        try { localStorage.setItem(todayKey, btn.getAttribute("data-verdict") || ""); } catch (_e) {}
+      });
+    });
+  }
+
+  /* ── Quick log ──────────────────────────────────────────── */
+
+  function bindQuickLog(container, studentId) {
+    var trigger = container && container.querySelector(".th2-quick-log-trigger");
+    var form = container && container.querySelector(".th2-quick-log-form");
+    var textarea = container && container.querySelector(".th2-quick-log-textarea");
+    var saveBtn = container && container.querySelector(".th2-quick-log-save");
+    var cancelBtn = container && container.querySelector(".th2-quick-log-cancel");
+    if (!trigger || !form) return;
+
+    trigger.addEventListener("click", function () {
+      form.classList.toggle("th2-hidden");
+      if (!form.classList.contains("th2-hidden") && textarea) textarea.focus();
+    });
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", function () {
+        form.classList.add("th2-hidden");
+        if (textarea) textarea.value = "";
+      });
+    }
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        var note = textarea ? textarea.value.trim() : "";
+        if (!note) return;
+        var sid = saveBtn.getAttribute("data-log-student") || studentId;
+        var entry = {
+          id: "qlog-" + Date.now(),
+          studentId: sid,
+          createdAt: new Date().toISOString(),
+          activity: "quick-log",
+          durationSec: 0,
+          signals: {},
+          outcomes: { note: note }
+        };
+        try {
+          if (window.CSEvidence && typeof CSEvidence.addSession === "function") {
+            CSEvidence.addSession(sid, entry);
+          }
+        } catch (_e) {}
+        form.classList.add("th2-hidden");
+        if (textarea) textarea.value = "";
+        trigger.textContent = "\u2713 Note saved";
+        setTimeout(function () { trigger.textContent = "+ Log note"; }, 2500);
+      });
+    }
+  }
+
   /* ── Focus card rendering ──────────────────────────────── */
 
   function renderFocusCard(state) {
@@ -3244,8 +3312,14 @@
     el.focusCard.setAttribute("data-tier", String(tier));
 
     var grade = escapeHtml(student.gradeBand || student.grade || "");
-    var lastSeenLabel = summary && summary.lastSession
-      ? relativeDate(summary.lastSession.timestamp) : "No sessions yet";
+    var lastSeenLabel = "No sessions yet";
+    if (summary && summary.lastSession) {
+      var moduleNameMap = { wordquest: "Word Quest", reading_lab: "Reading Lab",
+        sentence_surgery: "Sentence Surgery", writing_studio: "Writing Studio",
+        numeracy: "Numeracy", "quick-log": "Quick Note" };
+      var sessionModule = moduleNameMap[summary.lastSession.module] || summary.lastSession.module || "";
+      lastSeenLabel = relativeDate(summary.lastSession.timestamp) + (sessionModule ? " · " + sessionModule : "");
+    }
     var nameMeta = [grade, lastSeenLabel].filter(Boolean).join(" · ");
 
     el.focusCard.innerHTML = [
@@ -3303,6 +3377,24 @@
       '  <a class="th2-btn th2-btn-quiet" href="' + escapeHtml(appendGameContextParams("game-platform.html")) + '">Open Game Platform</a>',
       '  <a class="th2-btn th2-btn-quiet" href="student-profile.html?student=' + encodeURIComponent(studentId) + '&from=hub">Open Student Profile</a>',
       '</div>',
+
+      /* Recommendation annotation */
+      '<div class="th2-rec-annotation" data-rec-student="' + escapeHtml(studentId) + '">',
+      '  <span class="th2-rec-annotation-label">Recommendation:</span>',
+      '  <button class="th2-rec-btn" type="button" data-verdict="followed">Followed</button>',
+      '  <button class="th2-rec-btn" type="button" data-verdict="modified">Modified</button>',
+      '  <button class="th2-rec-btn" type="button" data-verdict="skipped">Skipped</button>',
+      '</div>',
+
+      /* Quick log */
+      '<div class="th2-quick-log">',
+      '  <button class="th2-quick-log-trigger" type="button">+ Log note</button>',
+      '  <div class="th2-quick-log-form th2-hidden">',
+      '    <textarea class="th2-quick-log-textarea" rows="2" placeholder="Brief session note\u2026"></textarea>',
+      '    <div class="th2-quick-log-actions"><button class="th2-quick-log-save th2-btn th2-btn-primary" type="button" data-log-student="' + escapeHtml(studentId) + '">Save</button><button class="th2-quick-log-cancel" type="button">Cancel</button></div>',
+      '  </div>',
+      '</div>',
+
       buildProgressNoteActions(plan),
 
       /* Support panel — auto-surfaces below actions */
@@ -3311,6 +3403,12 @@
 
     /* Wire lesson navigator prev/next buttons */
     bindLessonNavEvents(el.focusCard);
+
+    /* Wire recommendation annotation */
+    bindRecAnnotation(el.focusCard, studentId);
+
+    /* Wire quick log */
+    bindQuickLog(el.focusCard, studentId);
 
     showFocusCard();
   }

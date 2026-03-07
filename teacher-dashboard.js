@@ -2729,6 +2729,48 @@
     });
   }
 
+  function renderReportsOverviewGrid() {
+    var grid = document.getElementById("td-overview-grid");
+    if (!grid) return;
+    var caseload = state.caseload || [];
+    if (!caseload.length) return;
+    var now = Date.now();
+    var sevenDays = 7 * 24 * 60 * 60 * 1000;
+    var activeCount = 0, overdueCount = 0, neverCount = 0;
+    var focusTally = {};
+    caseload.forEach(function (student) {
+      var summary;
+      try { summary = Evidence.getStudentSummary(student.id); } catch (_e) { summary = null; }
+      var lastSession = summary && summary.lastSession;
+      if (!lastSession) {
+        neverCount++;
+      } else if ((now - lastSession.timestamp) > sevenDays) {
+        overdueCount++;
+      } else {
+        activeCount++;
+      }
+      var focus = (summary && summary.focus) || student.focus || "";
+      if (focus) focusTally[focus] = (focusTally[focus] || 0) + 1;
+    });
+    var topFocus = Object.keys(focusTally).sort(function (a, b) { return focusTally[b] - focusTally[a]; })[0] || "";
+    var total = caseload.length;
+    grid.innerHTML = [
+      '<article class="td-overview-stat">',
+      '  <strong class="td-stat-num">' + activeCount + '<span class="td-stat-denom"> / ' + total + '</span></strong>',
+      '  <p class="td-stat-label">Active this week</p>',
+      '</article>',
+      '<article class="td-overview-stat' + (overdueCount > 0 ? " td-overview-stat--warn" : "") + '">',
+      '  <strong class="td-stat-num">' + overdueCount + '<span class="td-stat-denom"> / ' + total + '</span></strong>',
+      '  <p class="td-stat-label">Overdue — 7+ days without a session</p>',
+      '</article>',
+      '<article class="td-overview-stat">',
+      '  <strong class="td-stat-num">' + (neverCount > 0 ? neverCount : "\u2713") + '</strong>',
+      '  <p class="td-stat-label">' + (neverCount > 0 ? "Students with no sessions yet" : "All students have session data") + '</p>',
+      (topFocus ? '  <p class="td-stat-meta">Top need: ' + escAttr(topFocus) + '</p>' : ""),
+      '</article>'
+    ].join("");
+  }
+
   Evidence.init();
   initRuntimeState();
   detectDemoMode();
@@ -2766,6 +2808,7 @@
     return state.caseload[0] && state.caseload[0].id || "";
   })();
   selectStudent(initial);
+  renderReportsOverviewGrid();
 })();
 (() => {
   const topOverflowToggle = document.getElementById("td-top-overflow-toggle");

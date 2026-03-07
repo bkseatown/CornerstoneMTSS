@@ -257,10 +257,13 @@
           if (usesTarget && !blocked && text.split(/\s+/).filter(Boolean).length >= 4) {
             return { correct: true, message: "Strong clue. The blocked words stayed out." };
           }
+          if (blocked) {
+            return { correct: false, nearMiss: false, forbidden: true, message: "Blocked word used — find a different angle." };
+          }
           return {
             correct: false,
-            nearMiss: !blocked && text.length > 12,
-            message: blocked ? "A blocked word slipped in. Try another route." : "You are close. Add one more useful clue."
+            nearMiss: text.length > 12,
+            message: "Close. Add one more useful clue."
           };
         }
       },
@@ -370,7 +373,7 @@
           var value = String(response.value || "");
           return value === String(round.answer || "")
             ? { correct: true, message: "Case closed. That fix repairs the misconception." }
-            : { correct: false, nearMiss: !!value, message: "That choice does not fully fix the thinking." };
+            : { correct: false, nearMiss: !!value, message: value ? "Not quite. The right fix: \u201c" + String(round.answer || "") + "\u201d" : "No correction selected." };
         }
       },
       "rapid-category": {
@@ -729,6 +732,15 @@
     var recommendedGame = params.gameId || (runtimeRoot.CSGameContentRegistry && runtimeRoot.CSGameContentRegistry.recommendedGame
       ? runtimeRoot.CSGameContentRegistry.recommendedGame(context)
       : "word-quest");
+    /* Restore gallery context from localStorage when not in URL */
+    try {
+      if (!params.gradeBand && localStorage.getItem("cs.gallery.grade")) {
+        context.gradeBand = localStorage.getItem("cs.gallery.grade");
+      }
+      if (!params.subject && localStorage.getItem("cs.gallery.subject")) {
+        context.subject = localStorage.getItem("cs.gallery.subject");
+      }
+    } catch (_e) {}
     var games = createGames(context);
     var live = runtimeRoot.CSGameA11y.createLiveRegion(document.getElementById("cg-live-region"));
     var sound = runtimeRoot.CSGameSound.create({ enabled: false });
@@ -797,10 +809,29 @@
           "  </div>",
           "</div>",
           '<section class="cg-gallery-shell">',
+          '  <div class="cg-gallery-setup">',
+          '    <div class="cg-setup-row">',
+          '      <label class="cg-setup-label">Grade<select id="cg-setup-grade" class="cg-select cg-select-sm">',
+          '        <option value="">Any</option>',
+          '        <option value="K-2"' + (context.gradeBand === "K-2" ? " selected" : "") + '>K-2</option>',
+          '        <option value="3-5"' + (context.gradeBand === "3-5" ? " selected" : "") + '>3-5</option>',
+          '        <option value="6-8"' + (context.gradeBand === "6-8" ? " selected" : "") + '>6-8</option>',
+          '        <option value="9-12"' + (context.gradeBand === "9-12" ? " selected" : "") + '>9-12</option>',
+          '      </select></label>',
+          '      <label class="cg-setup-label">Subject<select id="cg-setup-subject" class="cg-select cg-select-sm">',
+          '        <option value="ELA"' + (!context.subject || context.subject === "ELA" ? " selected" : "") + '>ELA</option>',
+          '        <option value="Intervention"' + (context.subject === "Intervention" ? " selected" : "") + '>Intervention</option>',
+          '        <option value="Writing"' + (context.subject === "Writing" ? " selected" : "") + '>Writing</option>',
+          '        <option value="Math"' + (context.subject === "Math" ? " selected" : "") + '>Math</option>',
+          '        <option value="Science"' + (context.subject === "Science" ? " selected" : "") + '>Science</option>',
+          '      </select></label>',
+          '    </div>',
+          '  </div>',
           '  <div class="cg-gallery-grid">' + Object.keys(games).map(function (id) {
-            return runtimeRoot.CSGameComponents.renderGameCard(games[id], false, {
+            var isRec = id === recommendedGame;
+            return runtimeRoot.CSGameComponents.renderGameCard(games[id], isRec, {
               href: galleryLaunchHref(id, context),
-              actionLabel: "Open Game",
+              actionLabel: isRec ? "Start Recommended" : "Open Game",
               caption: galleryCaption(id)
             });
           }).join("") + "</div>",
@@ -840,6 +871,7 @@
         '          <span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("projector") + runtimeRoot.CSGameComponents.escapeHtml((runtimeRoot.CSGameModes.VIEW_MODES[state.settings.viewMode] || {}).label || "Individual") + '</span>',
         '          <span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("progress") + runtimeRoot.CSGameComponents.escapeHtml((runtimeRoot.CSGameModes.DIFFICULTY[state.settings.difficulty] || {}).label || "Core") + '</span>',
         '          <span class="cg-chip" data-tone="' + (state.settings.timerEnabled ? "positive" : "warning") + '">' + runtimeRoot.CSGameComponents.iconFor("timer") + (state.settings.timerEnabled ? "Timed" : "Untimed") + '</span>',
+        (state.streak >= 2 ? '          <span class="cg-chip cg-chip-streak" data-tone="positive">' + runtimeRoot.CSGameComponents.iconFor("progress") + state.streak + '\u2009streak</span>' : ""),
         "        </div>",
         "      </div>",
         '      <div class="cg-context-chips">',
@@ -879,13 +911,22 @@
     function renderRoundBoard(state, game) {
       var round = state.round || {};
       if (state.status === "round-summary") {
+        var peakStreak = state.history.reduce(function (max, r) { return Math.max(max, r.streak || 0); }, 0);
+        var strongWords = state.history.filter(function (r) { return r.result === "correct"; }).map(function (r) { return r.label; }).filter(Boolean).slice(0, 5);
+        var missedWords = state.history.filter(function (r) { return r.result === "incorrect"; }).map(function (r) { return r.label; }).filter(Boolean).slice(0, 5);
         return [
           '<div class="cg-focus-panel">',
-          '  <p class="cg-kicker">End of Round Summary</p>',
-          '  <h3 class="cg-display">Session target met</h3>',
-          '  <p class="cg-focus-line">Correct: ' + state.metrics.correct + ' · Near miss: ' + state.metrics.nearMiss + ' · Incorrect: ' + state.metrics.incorrect + "</p>",
-          '  <p class="cg-focus-line">Next move: ' + runtimeRoot.CSGameComponents.escapeHtml(game.id === "word-typing" ? "advance to the next keyboard zone or spelling family." : "keep the same game running while the routine is hot.") + "</p>",
-          '  <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="restart">' + runtimeRoot.CSGameComponents.iconFor("progress") + 'Start New Session</button><button class="cg-action cg-action-quiet" type="button" data-action="repeat-game">Keep Same Game</button></div>',
+          '  <p class="cg-kicker">Session Complete</p>',
+          '  <h3 class="cg-display">Score: ' + state.score + '</h3>',
+          '  <div class="cg-summary-stats">',
+          '    <span class="cg-stat"><strong>' + state.metrics.correct + '</strong> correct</span>',
+          (state.metrics.nearMiss ? '    <span class="cg-stat"><strong>' + state.metrics.nearMiss + '</strong> near miss</span>' : ""),
+          (state.metrics.incorrect ? '    <span class="cg-stat"><strong>' + state.metrics.incorrect + '</strong> incorrect</span>' : ""),
+          (peakStreak >= 2 ? '    <span class="cg-stat cg-stat-streak"><strong>' + peakStreak + '</strong> best streak</span>' : ""),
+          '  </div>',
+          (strongWords.length ? '  <p class="cg-focus-line"><strong>Strong:</strong> ' + runtimeRoot.CSGameComponents.escapeHtml(strongWords.join(", ")) + "</p>" : ""),
+          (missedWords.length ? '  <p class="cg-focus-line"><strong>Review:</strong> ' + runtimeRoot.CSGameComponents.escapeHtml(missedWords.join(", ")) + "</p>" : ""),
+          '  <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="restart">' + runtimeRoot.CSGameComponents.iconFor("progress") + 'New Session</button><button class="cg-action cg-action-quiet" type="button" data-action="repeat-game">Same Game</button></div>',
           "</div>"
         ].join("");
       }
@@ -915,10 +956,11 @@
       }
 
       if (game.id === "word-connections") {
+        var forbiddenStrike = state.lastOutcome && state.lastOutcome.forbidden;
         return [
           roundGuide(game, state, round),
           renderHostControls(game, state, round),
-          '<div class="cg-focus-panel">',
+          '<div class="cg-focus-panel' + (forbiddenStrike ? " cg-focus-panel--forbidden" : "") + '">',
           '  <p class="cg-kicker">Focus Panel</p>',
           '  <h3 class="cg-prompt-title">Clue <strong>' + runtimeRoot.CSGameComponents.escapeHtml(round.targetWord) + "</strong> without these words</h3>",
           '  <div class="cg-context-chips">' + (round.forbiddenWords || []).map(function (word) {
@@ -943,11 +985,13 @@
       }
 
       if (game.id === "concept-ladder") {
+        var totalClues = (round.clues || []).length;
+        var shownClues = Math.min(uiState.revealedClues, totalClues);
         return [
           roundGuide(game, state, round),
           renderHostControls(game, state, round),
           '<div class="cg-focus-panel">',
-          '  <p class="cg-kicker">Progressive Reveal</p>',
+          '  <p class="cg-kicker">Clue ' + shownClues + ' of ' + totalClues + '</p>',
           '  <h3 class="cg-prompt-title">' + runtimeRoot.CSGameComponents.escapeHtml(round.prompt) + "</h3>",
           '  <p class="cg-focus-line">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state)
             ? "Pause after each rung so partners or teams can commit before you reveal more."
@@ -980,12 +1024,17 @@
       }
 
       if (game.id === "rapid-category") {
+        var timerSec = round.timerSeconds || game.baseTimerSeconds || 40;
+        var remaining = typeof state.timerRemaining === "number" ? state.timerRemaining : timerSec;
+        var timerPct = timerSec > 0 ? Math.round((remaining / timerSec) * 100) : 100;
+        var timerTone = timerPct > 50 ? "positive" : timerPct > 25 ? "warning" : "danger";
         return [
           roundGuide(game, state, round),
           renderHostControls(game, state, round),
           '<div class="cg-focus-panel">',
           '  <p class="cg-kicker">Challenge Meter</p>',
           '  <h3 class="cg-prompt-title">' + runtimeRoot.CSGameComponents.escapeHtml(round.prompt) + "</h3>",
+          (state.settings.timerEnabled ? '  <div class="cg-countdown-bar" aria-live="polite" aria-label="Time remaining: ' + remaining + ' seconds"><div class="cg-countdown-fill" data-tone="' + timerTone + '" style="width:' + timerPct + '%"></div><span class="cg-countdown-label">' + remaining + 's</span></div>' : ""),
           '  <p class="cg-focus-line">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state)
             ? "Teams call out ideas while one person records only the strongest unique responses."
             : "Enter relevant responses only. Unique ideas score better than repeated ones.") + "</p>",
@@ -1212,6 +1261,17 @@
         engine.updateSettings({ soundEnabled: !!soundToggle.checked });
       });
     }
+
+    /* ── Gallery setup selects ───────────────────────────── */
+    var setupGrade   = document.getElementById("cg-setup-grade");
+    var setupSubject = document.getElementById("cg-setup-subject");
+    function applyGallerySetup() {
+      if (setupGrade)   { context.gradeBand = setupGrade.value || context.gradeBand; try { localStorage.setItem("cs.gallery.grade", setupGrade.value); } catch (_e) {} }
+      if (setupSubject) { context.subject = setupSubject.value || context.subject;   try { localStorage.setItem("cs.gallery.subject", setupSubject.value); } catch (_e) {} }
+      render();
+    }
+    if (setupGrade)   setupGrade.addEventListener("change", applyGallerySetup);
+    if (setupSubject) setupSubject.addEventListener("change", applyGallerySetup);
 
     function handleSubmit(gameId) {
       if (gameId === "word-quest") {
