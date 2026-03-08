@@ -1339,6 +1339,7 @@ html[data-home-mode="play"] .logo {
   min-width: 0;
   font-size: clamp(0.98rem, 1.8vw, 1.08rem);
   line-height: 1;
+  max-width: 100%;
 }
 
 html[data-home-mode="play"] .header-right {
@@ -1404,6 +1405,33 @@ html[data-home-mode="play"] .header-icon-controls {
   justify-content: center;
   gap: 4px;
   flex: 0 0 auto;
+}
+
+html[data-home-mode="play"] #teacher-dashboard-btn,
+html[data-home-mode="play"] #new-game-btn {
+  align-self: center;
+}
+
+@media (max-width: 1180px) {
+  html[data-home-mode="play"] .header-main-row {
+    align-items: flex-start;
+  }
+
+  html[data-home-mode="play"] .logo {
+    flex: 1 1 100%;
+  }
+
+  html[data-home-mode="play"] .header-right {
+    flex: 1 1 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  html[data-home-mode="play"] .header-icon-controls,
+  html[data-home-mode="play"] .header-quick-controls {
+    flex: 0 1 auto;
+  }
 }
 
 html[data-home-mode="play"] #play-tools-btn.hidden {
@@ -1526,6 +1554,7 @@ html[data-home-mode="play"] .focus-bar {
   height: 19px;
   display: block;
   flex: 0 0 auto;
+  stroke: currentColor;
 }
 
 .focus-action-emoji {
@@ -1605,7 +1634,7 @@ html[data-home-mode="play"] .focus-action-btn {
   border: 1px solid var(--wq-play-focus-chip-border);
   background: var(--wq-play-focus-chip-bg);
   box-shadow: var(--wq-play-focus-chip-shadow);
-  color: var(--wq-play-control-color);
+  color: color-mix(in oklab, var(--wq-play-control-color) 92%, #12253a 8%);
 }
 
 html[data-home-mode="play"] .focus-inline-search {
@@ -5039,8 +5068,8 @@ html[data-home-mode="play"] .key[data-key="Backspace"] {
 }
 
 html[data-home-mode="play"] .key-backspace-glyph {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   display: block;
   margin: 0 auto;
 }
@@ -7887,7 +7916,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: center;
     justify-self: end;
     gap: 4px;
     justify-content: flex-end;
