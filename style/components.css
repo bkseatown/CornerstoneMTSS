@@ -1325,25 +1325,29 @@ html[data-home-mode="play"] .gameplay-audio {
 }
 
 html[data-home-mode="play"] .header-main-row {
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas: 'logo right';
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
-  column-gap: 14px;
-  row-gap: 0;
+  gap: 8px 12px;
   min-height: 0;
 }
 
 html[data-home-mode="play"] .logo {
   justify-self: start;
-  font-size: 1.08rem;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: clamp(0.98rem, 1.8vw, 1.08rem);
+  line-height: 1;
 }
 
 html[data-home-mode="play"] .header-right {
-  grid-area: right;
   display: flex;
+  flex: 1 1 420px;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px 10px;
   min-width: 0;
 }
 
@@ -1373,8 +1377,6 @@ html[data-home-mode="play"] .play-mode-label {
 }
 
 html[data-home-mode="play"] .header-quick-controls {
-  grid-area: auto;
-  justify-self: auto;
   width: auto;
   display: inline-flex !important;
   align-items: center;
@@ -1398,8 +1400,8 @@ html[data-home-mode="play"] #teacher-dashboard-btn {
 
 html[data-home-mode="play"] .header-icon-controls {
   display: inline-flex !important;
-  grid-area: auto;
-  justify-self: auto;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
   flex: 0 0 auto;
 }
@@ -1498,28 +1500,32 @@ html[data-home-mode="play"] .focus-bar {
 }
 
 .focus-action-btn {
-  width: 33px;
-  height: 33px;
+  width: 37px;
+  height: 37px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, #96a4b8 24%);
-  background: color-mix(in oklab, var(--panel-bg) 84%, #d3dbe6 16%);
-  color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--panel-border) 66%, #8aa0b7 34%);
+  background: color-mix(in oklab, var(--panel-bg) 92%, #edf3f8 8%);
+  color: color-mix(in oklab, var(--text) 94%, #ffffff 6%);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  box-shadow: 0 3px 10px rgba(20, 42, 66, 0.12);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .focus-action-btn:hover {
   border-color: color-mix(in oklab, var(--panel-border) 60%, #8193aa 40%);
-  background: color-mix(in oklab, var(--panel-bg) 74%, #c3cedb 26%);
-  color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
+  background: color-mix(in oklab, var(--panel-bg) 84%, #dde7f0 16%);
+  color: color-mix(in oklab, var(--text) 96%, #ffffff 4%);
+  transform: translateY(-1px);
 }
 
 .focus-action-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
+  display: block;
+  flex: 0 0 auto;
 }
 
 .focus-action-emoji {
@@ -1593,8 +1599,8 @@ html[data-home-mode="play"] .focus-inline-actions {
 }
 
 html[data-home-mode="play"] .focus-action-btn {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   border: 1px solid var(--wq-play-focus-chip-border);
   background: var(--wq-play-focus-chip-bg);
@@ -5032,6 +5038,13 @@ html[data-home-mode="play"] .key[data-key="Backspace"] {
   font-weight: 900;
 }
 
+html[data-home-mode="play"] .key-backspace-glyph {
+  width: 24px;
+  height: 24px;
+  display: block;
+  margin: 0 auto;
+}
+
 html[data-home-mode="play"] .icon-btn,
 html[data-home-mode="play"] .header-quick-btn {
   border-color: var(--wq-play-control-border);
@@ -7859,7 +7872,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   .header-main-row {
-    align-items: start;
+    align-items: center;
     column-gap: 6px;
     row-gap: 5px;
   }
@@ -7871,11 +7884,13 @@ html[data-layout-mode="compact"] .key.key-chunk {
   }
 
   .header-right {
-    display: inline-flex;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-end;
     justify-self: end;
     gap: 4px;
+    justify-content: flex-end;
   }
 
   .header-icon-controls {
@@ -7888,7 +7903,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
     width: auto;
     max-width: min(52vw, 248px);
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: center;
     padding: 0;
     overflow-x: auto;
   }
