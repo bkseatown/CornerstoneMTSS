@@ -9750,7 +9750,10 @@
     const inlineLabel = formatGradeBandInlineLabel(activeGrade);
     const titleLabel = formatGradeBandLabel(activeGrade);
     if (gradeEl) {
-      gradeEl.textContent = `Grade: ${inlineLabel}`;
+      const isDefaultSafeBand = String(activeGrade || 'all').toLowerCase() === 'all';
+      gradeEl.textContent = isDefaultSafeBand ? '' : `Grade ${inlineLabel}`;
+      gradeEl.classList.toggle('is-subtle-hidden', isDefaultSafeBand);
+      gradeEl.setAttribute('aria-hidden', isDefaultSafeBand ? 'true' : 'false');
       if (preset.kind === 'subject') {
         gradeEl.setAttribute('title', `Grade band currently follows the selected subject focus: ${titleLabel}.`);
       } else {

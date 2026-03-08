@@ -1421,7 +1421,8 @@ html[data-home-mode="play"] .focus-bar {
   min-height: 0;
   gap: 8px;
   padding: 2px 0 0;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 560px) auto;
+  justify-content: center;
 }
 
 .focus-search-label {
@@ -1583,6 +1584,7 @@ html[data-home-mode="play"] .focus-action-btn {
 
 html[data-home-mode="play"] .focus-inline-search {
   height: 36px;
+  max-width: 560px;
   border-radius: 999px;
   border-color: var(--wq-play-focus-surface-border);
   background: var(--wq-play-focus-surface-bg);
@@ -1590,14 +1592,20 @@ html[data-home-mode="play"] .focus-inline-search {
 }
 
 html[data-home-mode="play"] .grade-target-inline {
-  min-height: 36px;
-  padding: 0 14px;
+  min-height: 30px;
+  padding: 0 10px;
   border-color: var(--wq-play-focus-chip-border);
   background: var(--wq-play-focus-chip-bg);
   box-shadow: var(--wq-play-focus-chip-shadow);
   align-items: center;
   justify-content: center;
   text-align: center;
+  font-size: 0.68rem;
+  opacity: 0.82;
+}
+
+html[data-home-mode="play"] .grade-target-inline.is-subtle-hidden {
+  display: none;
 }
 
 .curriculum-main-bar { display: none !important; }
@@ -4333,6 +4341,7 @@ html[data-board-style="soundcard"] #game-board {
   justify-content: center;
   font-size:       calc(var(--tile-size) * 0.44);
   font-weight:     700;
+  font-family:     var(--wq-play-letter-font, var(--font));
   background:      var(--tile-face);
   color:           var(--tile-text);
   box-shadow:
@@ -4983,6 +4992,10 @@ html[data-home-mode="play"] .key {
   color: var(--wq-play-key-color);
   text-shadow: var(--wq-play-key-text-shadow);
   box-shadow: var(--wq-play-key-shadow);
+  font-family: var(--wq-play-letter-font, var(--font));
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
 html[data-home-mode="play"] .key:hover {
@@ -4991,6 +5004,12 @@ html[data-home-mode="play"] .key:hover {
 
 html[data-home-mode="play"] .key.wide {
   background: var(--wq-play-key-wide-bg);
+  font-size: 0.96rem;
+}
+
+html[data-home-mode="play"] .key[data-key="Backspace"] {
+  font-size: 1.22rem;
+  font-weight: 900;
 }
 
 html[data-home-mode="play"] .icon-btn,
@@ -5060,10 +5079,17 @@ html[data-key-style="bubble"] .key.vowel:not(.correct):not(.present):not(.absent
   opacity: 0.9;
 }
 
-.key.is-vowel:not(.correct):not(.present):not(.absent) {
+html:not([data-home-mode="play"]) .key.is-vowel:not(.correct):not(.present):not(.absent) {
   color: rgba(255, 255, 255, 0.96);
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
   filter: brightness(1.08) saturate(1.05);
+}
+
+html[data-home-mode="play"] .key.vowel:not(.correct):not(.present):not(.absent),
+html[data-home-mode="play"] .key.is-vowel:not(.correct):not(.present):not(.absent) {
+  color: var(--wq-play-vowel-color);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.28);
+  filter: none;
 }
 
 html[data-key-style="classic"] .key {
@@ -5172,7 +5198,7 @@ html[data-key-style="pebble"] .key::after {
 /* ── Vowel cue ───────────────────────────────────── */
 /* Hint cue uses a tiny top "smile" notch: no dot and no border ring. */
 html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent) {
-  color: #eef8ff;
+  color: var(--wq-play-vowel-color);
 }
 
 html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent)::before {
