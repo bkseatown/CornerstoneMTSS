@@ -7,6 +7,7 @@
       require("./category-content"),
       require("./sentence-content"),
       require("./typing-content"),
+      require("./typing-placement-content"),
       require("./game-content-generator")
     );
     return;
@@ -18,6 +19,7 @@
     root.CSCategoryContent,
     root.CSSentenceContent,
     root.CSTypingContent,
+    root.CSTypingPlacementContent,
     root.CSGameContentGenerator
   );
 })(typeof globalThis !== "undefined" ? globalThis : window, function createGameContentRegistry(
@@ -27,6 +29,7 @@
   categoryContent,
   sentenceContent,
   typingContent,
+  typingPlacementContent,
   generator
 ) {
   "use strict";
@@ -99,6 +102,8 @@
     "sentence-builder": sentenceContent || [],
     "word-typing": typingContent || []
   });
+
+  var TYPING_PLACEMENT = typingPlacementContent || [];
 
   function normalizeGradeBand(value) {
     var raw = String(value || "").trim().toUpperCase();
@@ -546,9 +551,9 @@
   function inferKeyboardZone(word) {
     var text = String(word || "").toLowerCase();
     if (!text) return "home row";
-    if (/^[asdfjkl;]+$/.test(text)) return "home row";
-    if (/^[asdfjkl;qwertyuiop]+$/.test(text)) return "home row + top row";
-    if (/^[asdfjkl;zxcvbnm]+$/.test(text)) return "home row + bottom row";
+    if (/^[asdfghjkl;\s]+$/.test(text)) return "home row";
+    if (/^[asdfghjkl;qwertyuiop\s]+$/.test(text)) return "home row + top row";
+    if (/^[asdfghjkl;zxcvbnm\s]+$/.test(text)) return "home row + bottom row";
     return "full keyboard";
   }
 
@@ -587,7 +592,10 @@
     if (gameId === "error-detective") return buildErrorDetectiveRows(entries);
     if (gameId === "rapid-category") return buildRapidCategoryRows(entries, context);
     if (gameId === "sentence-builder") return buildSentenceRows(entries, context);
-    if (gameId === "word-typing") return buildTypingRows(entries, context);
+    if (gameId === "word-typing") {
+      if (String(context && context.contentMode || "lesson").toLowerCase() === "lesson") return [];
+      return buildTypingRows(entries, context);
+    }
     return [];
   }
 
@@ -613,14 +621,33 @@
   }
 
   function filterDeck(gameId, context) {
+    if (gameId === "word-typing" && String(context && context.typingCourseMode || "").toLowerCase() === "placement") {
+      return TYPING_PLACEMENT.slice().sort(function (left, right) {
+        return Number(left && left.lessonOrder || 0) - Number(right && right.lessonOrder || 0);
+      });
+    }
     var dynamic = buildDynamicRows(gameId, context);
     var rows = filterStaticDeck(gameId, context);
-    if (dynamic.length) return dynamic.concat(rows);
-    return rows;
+    var deck = dynamic.length ? dynamic.concat(rows) : rows;
+    if (gameId === "word-typing") {
+      return deck.slice().sort(function (left, right) {
+        var a = Number(left && left.lessonOrder || 999);
+        var b = Number(right && right.lessonOrder || 999);
+        if (a !== b) return a - b;
+        return String(left && left.id || "").localeCompare(String(right && right.id || ""));
+      });
+    }
+    return deck;
   }
 
   function pickRound(gameId, context, history) {
     var rows = filterDeck(gameId, context);
+    if (gameId === "word-typing" && context && context.currentTypingLessonId) {
+      var forced = rows.filter(function (row) {
+        return String(row && row.id || "") === String(context.currentTypingLessonId || "");
+      })[0];
+      if (forced) return forced;
+    }
     var used = {};
     (Array.isArray(history) ? history : []).forEach(function (row) {
       used[String(row && (row.label || row.prompt || row.word || row.target || row.answer || row.id) || "")] = true;
@@ -640,6 +667,9 @@
           })
         : null;
     }
+    if (gameId === "word-typing") {
+      return pool[0];
+    }
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
@@ -648,6 +678,19 @@
     recommendedGame: recommendedGame,
     pickRound: pickRound,
     filterDeck: filterDeck,
+    getTypingPlacementRows: function () {
+      return TYPING_PLACEMENT.slice().sort(function (left, right) {
+        return Number(left && left.lessonOrder || 0) - Number(right && right.lessonOrder || 0);
+      });
+    },
+    getTypingCourseRows: function (context) {
+      return filterStaticDeck("word-typing", context).slice().sort(function (left, right) {
+        var a = Number(left && left.lessonOrder || 999);
+        var b = Number(right && right.lessonOrder || 999);
+        if (a !== b) return a - b;
+        return String(left && left.id || "").localeCompare(String(right && right.id || ""));
+      });
+    },
     generateGameContent: generator && generator.generateGameContent
       ? generator.generateGameContent
       : function () { return null; }

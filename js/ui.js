@@ -282,8 +282,23 @@ const WQUI = (() => {
   // ─── Modal ──────────────────────────────────────
   function showModal(state) {
     const { won, word, entry, guesses } = state;
+    const winMessages = [
+      '🎉 You got it!',
+      '🎊 Nice solve!',
+      '🌟 Word cracked!',
+      '✨ Brilliant!',
+      '🟩 Nailed it!'
+    ];
+    const lossMessages = [
+      'Nice try!',
+      'Almost there!',
+      'Good attempt!'
+    ];
+    const guessCount = Array.isArray(guesses) ? guesses.length : 0;
+    const winMessage = winMessages[Math.max(0, Math.min(winMessages.length - 1, guessCount - 1))] || winMessages[0];
+    const lossMessage = lossMessages[word?.length % lossMessages.length] || lossMessages[0];
 
-    _el('modal-result').textContent  = won ? '🎉 You got it!' : 'Nice try!';
+    _el('modal-result').textContent  = won ? winMessage : lossMessage;
     _el('modal-guesses').textContent = won
       ? `Solved in ${guesses.length} guess${guesses.length === 1 ? '' : 'es'}`
       : 'The word was:';
@@ -324,6 +339,11 @@ const WQUI = (() => {
     _modal.classList.remove('hidden');
     _modal.classList.toggle('win', won);
     _modal.classList.toggle('loss', !won);
+    window.dispatchEvent(new CustomEvent('wq:result-modal-open', {
+      detail: {
+        won: !!won
+      }
+    }));
   }
 
   function hideModal() {

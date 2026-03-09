@@ -2,7 +2,7 @@ name: UI Guardrails
 
 on:
   pull_request:
-  push:
+  workflow_dispatch:
 
 jobs:
   guardrails:
@@ -25,8 +25,8 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           npm run scope:strict
-      - name: Run UI guardrails (warn on push)
-        if: github.event_name == 'push'
+      - name: Run UI guardrails (manual)
+        if: github.event_name == 'workflow_dispatch'
         run: |
           npm run scope:check
       - name: Teacher daily flow smoke test

@@ -15488,8 +15488,6 @@
             } else {
               WQUI.showModal(result);
               _el('new-game-btn')?.classList.add('pulse');
-              const settings = WQUI.getSettings();
-              if (result.won && settings.confetti){ launchConfetti(); launchStars(); }
             }
             if (normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()) !== themeAtSubmit) {
               applyTheme(themeAtSubmit);
@@ -18462,17 +18460,25 @@
     canvas.height = window.innerHeight;
     const ctx = canvas.getContext('2d');
     const COLORS = ['#22c55e','#f59e0b','#3b82f6','#ec4899','#f97316','#a855f7','#06b6d4','#fbbf24'];
-    const pieces = Array.from({ length: 140 }, () => ({
-      x:     Math.random() * canvas.width,
-      y:     -20 - Math.random() * 140,
-      w:     5 + Math.random() * 8,
-      h:     3 + Math.random() * 5,
+    const burstOrigins = [
+      { x: canvas.width * 0.22, y: canvas.height * 0.14 },
+      { x: canvas.width * 0.5, y: canvas.height * 0.1 },
+      { x: canvas.width * 0.78, y: canvas.height * 0.14 }
+    ];
+    const pieces = Array.from({ length: 180 }, (_, index) => {
+      const origin = burstOrigins[index % burstOrigins.length];
+      return {
+      x:     origin.x + (Math.random() - 0.5) * 140,
+      y:     origin.y + (Math.random() - 0.5) * 40,
+      w:     6 + Math.random() * 10,
+      h:     4 + Math.random() * 6,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      vx:    (Math.random() - 0.5) * 4.5,
-      vy:    2.5 + Math.random() * 4,
+      vx:    (Math.random() - 0.5) * 6.2,
+      vy:    1.8 + Math.random() * 3.4,
       angle: Math.random() * Math.PI * 2,
       spin:  (Math.random() - 0.5) * 0.2,
-    }));
+      };
+    });
     let frame;
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -18494,6 +18500,19 @@
     frame = requestAnimationFrame(draw);
     setTimeout(() => { cancelAnimationFrame(frame); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 5500);
   }
+
+  let lastModalCelebrateAt = 0;
+  window.addEventListener('wq:result-modal-open', (event) => {
+    const won = !!event?.detail?.won;
+    if (!won) return;
+    const settings = WQUI?.getSettings?.();
+    if (settings && settings.confetti === false) return;
+    const now = Date.now();
+    if (now - lastModalCelebrateAt < 700) return;
+    lastModalCelebrateAt = now;
+    launchConfetti();
+    launchStars();
+  });
 
   
   // ─── Music (catalog tracks + synth fallback) ───────

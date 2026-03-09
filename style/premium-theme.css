@@ -544,6 +544,89 @@ html[data-ui-skin="premium"] .starter-word-card {
   box-shadow: var(--wq-shadow-md);
 }
 
+html[data-ui-skin="premium"] #end-modal {
+  border: 1px solid color-mix(in srgb, #88aee0 30%, var(--wq-border-soft) 70%);
+  background:
+    linear-gradient(180deg, rgba(248, 252, 255, 0.98), rgba(232, 242, 255, 0.94)),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.92), transparent 58%);
+}
+
+html[data-ui-skin="premium"] #end-modal.win {
+  background:
+    linear-gradient(180deg, rgba(244, 255, 244, 0.99), rgba(227, 248, 230, 0.96)),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.96), transparent 58%);
+  border-color: color-mix(in srgb, #7bc47f 44%, var(--wq-border-soft) 56%);
+}
+
+html[data-ui-skin="premium"] #end-modal.loss {
+  background:
+    linear-gradient(180deg, rgba(246, 250, 255, 0.98), rgba(225, 237, 252, 0.95)),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.94), transparent 58%);
+  border-color: color-mix(in srgb, #7aa9dd 42%, var(--wq-border-soft) 58%);
+}
+
+html[data-ui-skin="premium"] #modal-result {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1f4f94;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+html[data-ui-skin="premium"] #end-modal.win #modal-result {
+  color: #1f8f46;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9),
+    0 10px 24px rgba(55, 171, 85, 0.18);
+}
+
+html[data-ui-skin="premium"] #end-modal.loss #modal-result {
+  color: #6b8ab6;
+}
+
+html[data-ui-skin="premium"] #modal-word span {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 0 var(--correct-dk), 0 14px 28px rgba(34, 139, 34, 0.14);
+}
+
+html[data-ui-skin="premium"] #end-modal.win #modal-word span {
+  background: linear-gradient(180deg, #7fe08d, #34b84e);
+  color: #ffffff;
+  box-shadow: 0 6px 0 #24813a, 0 14px 28px rgba(36, 129, 58, 0.2);
+  animation: pop-in 0.3s ease calc(var(--i, 0) * 0.07s) both, tile-settle 260ms ease-out calc(var(--i, 0) * 0.07s + 90ms);
+}
+
+html[data-ui-skin="premium"] #end-modal.loss #modal-word span {
+  background: linear-gradient(180deg, #9cb4d9, #6f89b4);
+  color: #ffffff;
+  box-shadow: 0 6px 0 #4f6791, 0 14px 28px rgba(79, 103, 145, 0.18);
+}
+
+html[data-ui-skin="premium"] .modal-meaning-highlight {
+  border-color: color-mix(in srgb, #5679a8 46%, var(--wq-border-soft) 54%);
+  background:
+    linear-gradient(145deg, rgba(103, 126, 156, 0.95), rgba(79, 104, 135, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 10px 22px rgba(27, 54, 89, 0.14);
+}
+
+html[data-ui-skin="premium"] #modal-meaning-highlight-line {
+  color: #ffffff;
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+html[data-ui-skin="premium"] .audio-row-core .audio-btn {
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff, #e7f1ff);
+}
+
+html[data-ui-skin="premium"] #play-again-btn {
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0b3d78, #022d5b);
+  box-shadow: 0 12px 24px rgba(2, 45, 91, 0.26);
+}
+
 html[data-ui-skin="premium"] .modal-head,
 html[data-ui-skin="premium"] .challenge-modal-head,
 html[data-ui-skin="premium"] .phonics-clue-modal-head,

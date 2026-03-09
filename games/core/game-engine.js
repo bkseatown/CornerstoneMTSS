@@ -42,6 +42,20 @@
       return games[String(gameId || state.get().selectedGameId)] || null;
     }
 
+    function resolveRoundTargetFor(game, snapshot) {
+      var current = snapshot || state.get();
+      var nextGame = game || getGame(current.selectedGameId);
+      var explicit = nextGame && typeof nextGame.resolveRoundTarget === "function"
+        ? nextGame.resolveRoundTarget({
+            context: current.context,
+            settings: current.settings,
+            roundIndex: current.roundIndex,
+            history: current.history.slice()
+          })
+        : nextGame && nextGame.roundTarget;
+      return GameModes.resolveRoundTarget(current.settings.viewMode, explicit);
+    }
+
     function buildRound() {
       var current = state.get();
       var game = getGame(current.selectedGameId);
@@ -98,7 +112,7 @@
         round: null,
         feedback: GameFeedback.build("reveal", game.subtitle || "Ready for the first round."),
         metrics: { correct: 0, incorrect: 0, nearMiss: 0 },
-        roundTarget: GameModes.resolveRoundTarget(state.get().settings.viewMode, game.roundTarget)
+        roundTarget: resolveRoundTargetFor(game, state.get())
       });
       buildRound();
     }
@@ -107,7 +121,7 @@
       var nextSettings = Object.assign({}, state.get().settings, patch || {});
       state.patch({
         settings: nextSettings,
-        roundTarget: GameModes.resolveRoundTarget(nextSettings.viewMode, getGame().roundTarget)
+        roundTarget: resolveRoundTargetFor(getGame(), Object.assign({}, state.get(), { settings: nextSettings }))
       });
       if (Object.prototype.hasOwnProperty.call(patch || {}, "soundEnabled") && cfg.sound && cfg.sound.update) {
         cfg.sound.update({ enabled: !!nextSettings.soundEnabled });
@@ -115,8 +129,10 @@
     }
 
     function updateContext(patch) {
+      var nextContext = Object.assign({}, state.get().context, patch || {});
       state.patch({
-        context: Object.assign({}, state.get().context, patch || {})
+        context: nextContext,
+        roundTarget: resolveRoundTargetFor(getGame(), Object.assign({}, state.get(), { context: nextContext }))
       });
     }
 
@@ -232,7 +248,7 @@
 
     function start() {
       state.patch({
-        roundTarget: GameModes.resolveRoundTarget(state.get().settings.viewMode, getGame().roundTarget)
+        roundTarget: resolveRoundTargetFor(getGame(), state.get())
       });
       buildRound();
     }

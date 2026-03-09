@@ -20,6 +20,7 @@
 
   function parseParams() {
     var params = new URLSearchParams(runtimeRoot.location.search || "");
+    var pathname = String(runtimeRoot.location && runtimeRoot.location.pathname || "");
     return {
       playMode: params.get("play") === "1",
       studentId: String(params.get("student") || "").trim(),
@@ -31,7 +32,11 @@
       gradeBand: String(params.get("gradeBand") || params.get("grade") || "").trim(),
       lessonTitle: String(params.get("lesson") || "").trim(),
       skillFocus: String(params.get("skillFocus") || "").trim(),
-      contentMode: String(params.get("contentMode") || "").trim()
+      contentMode: String(params.get("contentMode") || "").trim(),
+      typingPage: /(?:^|\/)typing-quest\.html$/i.test(pathname) || params.get("typingPage") === "1",
+      typingCourseMode: String(params.get("typingCourseMode") || params.get("courseMode") || "").trim(),
+      typingLessonId: String(params.get("lessonId") || "").trim(),
+      typingLessonOrder: Math.max(0, Number(params.get("lessonOrder") || 0))
     };
   }
 
@@ -207,22 +212,63 @@
         tags: ["Typing + Literacy", "Orthographic Mapping", "Home Row to Full Keyboard"],
         modeLabel: "Type",
         baseTimerSeconds: 50,
-        roundTarget: 6,
+        roundTarget: 1,
+        resolveRoundTarget: function (input) {
+          var currentContext = input && input.context || {};
+          return String(currentContext.typingCourseMode || "").toLowerCase() === "placement" ? 4 : 1;
+        },
         createRound: function (input) {
-          var row = registry.pickRound("word-typing", roundContext(input), input.history) || {};
+          var currentContext = roundContext(input);
+          var deck = registry.filterDeck("word-typing", currentContext) || [];
+          var row = registry.pickRound("word-typing", currentContext, input.history) || {};
+          var lessonIndex = deck.findIndex(function (item) { return item && item.id === row.id; });
+          var unitDeck = deck.filter(function (item) {
+            return String(item && item.unitLabel || "") === String(row.unitLabel || "");
+          });
+          var unitIndex = unitDeck.findIndex(function (item) { return item && item.id === row.id; });
+          var lessonTotal = deck.length || 1;
+          var unitTotal = unitDeck.length || 1;
           return {
             id: row.id || ("typing-" + Date.now()),
-            promptLabel: row.prompt || "Type the word.",
+            promptLabel: String(currentContext.typingCourseMode || "").toLowerCase() === "placement"
+              ? "Placement check"
+              : (row.prompt || "Begin the typing lesson."),
             entryLabel: input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
-              ? "Model once, then type the word together."
-              : "Eyes on the full word. Type with steady rhythm.",
-            prompt: row.prompt || "Type the word.",
-            target: String(row.target || "said").toLowerCase(),
+              ? "Model the pattern first, then type the lesson target together."
+              : "Eyes on the full target. Accuracy first, then rhythm.",
+            prompt: row.prompt || "Type the lesson target.",
+            target: String(row.target || "fjfj").toUpperCase(),
             keyboardZone: row.keyboardZone || "home row",
             orthographyFocus: row.orthographyFocus || "high-frequency pattern",
             fingerCue: row.fingerCue || "Look across the whole word before you type.",
             hint: row.meaningHint || "Notice the spelling chunk that stays stable in the word.",
-            timerSeconds: 50,
+            swbat: row.swbat || "I can type the lesson target with accuracy and rhythm.",
+            unitLabel: row.unitLabel || "Unit 0",
+            lessonLabel: row.lessonLabel || ("Lesson " + String(Math.max(1, lessonIndex + 1))),
+            stageLabel: row.stageLabel || "Typing practice",
+            typingKind: row.typingKind || "word",
+            lessonOrder: Number(row.lessonOrder || lessonIndex + 1 || 1),
+            heartLetters: row.heartLetters || "",
+            masteryGoalWpm: Number(row.masteryGoalWpm || 12),
+            masteryGoalAccuracy: Number(row.masteryGoalAccuracy || 95),
+            sequenceIndex: lessonIndex >= 0 ? lessonIndex + 1 : 1,
+            sequenceTotal: lessonTotal,
+            unitIndex: unitIndex >= 0 ? unitIndex + 1 : 1,
+            unitTotal: unitTotal,
+            courseMode: String(currentContext.typingCourseMode || "").toLowerCase() === "placement" ? "placement" : "lesson",
+            placementRequired: currentContext.typingPlacementRequired === true,
+            unitPath: unitDeck.slice(0, 8).map(function (item, index) {
+              var itemOrder = Number(item && item.lessonOrder || index + 1);
+              return {
+                id: item.id,
+                order: itemOrder,
+                label: item.lessonLabel || ("Lesson " + String(index + 1)),
+                shortLabel: item.target || item.stageLabel || ("L" + String(index + 1)),
+                locked: String(currentContext.typingCourseMode || "").toLowerCase() === "lesson" && itemOrder > Number(currentContext.typingUnlockedOrder || 1),
+                completed: Array.isArray(currentContext.typingCompletedLessons) && currentContext.typingCompletedLessons.indexOf(item.id) >= 0
+              };
+            }),
+            timerSeconds: Number(row.timerSeconds || (row.typingKind === "phrase" ? 65 : row.typingKind === "keys" ? 35 : 50)),
             basePoints: 115
           };
         },
@@ -231,17 +277,28 @@
           var round = payload.round || {};
           if (response.teacherOverride) return { correct: true, teacherOverride: true, message: "Teacher moved the class to the next typing word." };
           if (response.timedOut) return { correct: false, message: "Time ended. The word was " + String(round.target || "").toUpperCase() + "." };
-          var typed = String(response.value || "").trim().toLowerCase();
-          var target = String(round.target || "").toLowerCase();
+          var typed = lockTypingProgress(String(response.value || ""), round.target || "");
+          var target = String(round.target || "").toUpperCase();
+          var stats = response.stats || null;
           if (!typed) return { correct: false, message: "No word typed. The target was " + target.toUpperCase() + "." };
-          if (typed === target) return { correct: true, message: "Typed cleanly. Pattern locked in." };
-          var states = guessState(typed, target);
-          var hitCount = states.filter(function (value) { return value === "correct" || value === "present"; }).length;
+          if (typed === target) {
+            return {
+              correct: true,
+              message: stats
+                ? ("Typed cleanly at " + stats.wpm + " WPM and " + stats.accuracy + "% accuracy.")
+                : "Typed cleanly. Pattern locked in.",
+              evaluation: typingEvaluation(target, typed),
+              stats: stats
+            };
+          }
+          var hitCount = typingMeaningfulCharCount(typed);
+          var targetCount = Math.max(1, typingMeaningfulCharCount(target));
           return {
             correct: false,
-            nearMiss: hitCount >= Math.max(1, Math.floor(target.length / 2)),
-            message: hitCount ? "Close. Recheck the spelling chunk and try again." : "Reset the pattern and type it once more.",
-            evaluation: states
+            nearMiss: hitCount >= Math.max(1, Math.floor(targetCount / 2)),
+            message: hitCount ? "Close. Recheck the next chunk and type it again." : "Reset the pattern and type it once more.",
+            evaluation: typingEvaluation(target, typed),
+            stats: stats
           };
         }
       },
@@ -540,6 +597,9 @@
   function supportLine(context, state) {
     var subject = context.subject || "ELA";
     var mode = (runtimeRoot.CSGameModes.VIEW_MODES[state.settings.viewMode] || {}).label || "Individual";
+    if (String(state && state.selectedGameId || "") === "word-typing") {
+      return "Typing Quest Foundations · " + mode + " · " + (context.typingPlacementRequired ? "Placement" : ("Lesson " + String(context.currentTypingLessonOrder || 1)));
+    }
     return subject + " · " + mode + " · " + (context.lessonTitle || context.classLabel || "Context-aware set");
   }
 
@@ -558,7 +618,7 @@
 
   function galleryCaption(gameId) {
     if (gameId === "word-quest") return "Best for: solo, pairs, fast warm-ups";
-    if (gameId === "word-typing") return "Best for: literacy typing, centers, keyboard warm-ups";
+    if (gameId === "word-typing") return "Best for: typing instruction, intervention, centers";
     if (gameId === "word-connections") return "Best for: partners, teams, projector play";
     if (gameId === "morphology-builder") return "Best for: intervention, word study, pairs";
     if (gameId === "concept-ladder") return "Best for: lesson launch, teams, projector";
@@ -577,7 +637,7 @@
 
   function roundFocusLabel(game, round) {
     if (!game || !round) return "";
-    if (game.id === "word-typing") return [round.keyboardZone, round.orthographyFocus].filter(Boolean).join(" · ");
+    if (game.id === "word-typing") return [round.unitLabel, round.keyboardZone, round.orthographyFocus].filter(Boolean).join(" · ");
     if (game.id === "word-quest") return round.answer ? ("Target length · " + String(round.answer).length + " letters") : "";
     if (game.id === "word-connections") return "Blocked words stay out";
     if (game.id === "morphology-builder") return round.meaningHint ? "Meaning unlock after build" : "Build from parts";
@@ -600,9 +660,9 @@
       turnCue = group ? "Teacher chooses when to lock the team answer." : "Use the tile reveal to decide your next move fast.";
       winCue = "Land the correct word before the timer runs out.";
     } else if (game.id === "word-typing") {
-      firstMove = group ? "Model the word once, then have the class type it together." : "Look across the whole word, then type it smoothly.";
-      turnCue = group ? "Pause after each word so students notice the spelling chunk before the next round." : "Accuracy comes first. Speed follows once the pattern feels automatic.";
-      winCue = "Type the target word exactly and lock in the keyboard pattern.";
+      firstMove = group ? "Model the target once, then have students name the pattern before anyone types." : "Look at the whole target, notice the pattern, then type without looking down.";
+      turnCue = group ? "Use projector mode for modeling, but save real fluency scores for individual keyboards." : "Accuracy comes first. Build to 5 stars before moving on.";
+      winCue = "Type the full lesson target and meet the WPM and accuracy goal.";
     } else if (game.id === "word-connections") {
       firstMove = group ? "One speaker gives the first clue while the team listens for the target word." : "Give one clear clue without using any blocked words.";
       turnCue = group ? "Rotate speakers each round so every team member gets a clue turn." : "Keep the clue short, useful, and lesson-linked.";
@@ -642,7 +702,7 @@
   function nextStepLine(game, outcome) {
     if (!game || !outcome) return "";
     if (outcome.correct || outcome.teacherOverride) {
-      if (game.id === "word-typing") return "Next move: add one more word from the same spelling pattern.";
+      if (game.id === "word-typing") return "Next move: check the star rating, then either replay for mastery or move to the next lesson.";
       if (game.id === "concept-ladder") return "Next move: start the next round with one clue fewer if the class is ready.";
       if (game.id === "rapid-category") return "Next move: raise the category challenge or switch teams.";
       return "Next move: take the next round while the pattern is still fresh.";
@@ -855,8 +915,18 @@
     }).join(" ");
   }
 
+  function splitTypingChars(value) {
+    return String(value || "").toUpperCase().split("");
+  }
+
   function normalizeTypingInput(raw, target) {
-    var source = String(raw || "").toUpperCase().replace(/[^A-Z]/g, "");
+    var source = String(raw || "").toUpperCase().replace(/[^A-Z;,'!.?\-\/ ]/g, "");
+    var goal = String(target || "").toUpperCase();
+    return source.slice(0, goal.length);
+  }
+
+  function lockTypingProgress(raw, target) {
+    var source = normalizeTypingInput(raw, target);
     var goal = String(target || "").toUpperCase();
     var locked = "";
     for (var i = 0; i < source.length && i < goal.length; i += 1) {
@@ -866,25 +936,329 @@
     return locked;
   }
 
-  function paintTypingPreview(target, typed) {
-    var cells = document.querySelectorAll(".cg-typing-track .cg-letter-box");
-    var keys = document.querySelectorAll(".cg-key-strip--typing .cg-key-strip__key");
+  function typingMeaningfulCharCount(value) {
+    return String(value || "").replace(/\s+/g, "").length;
+  }
+
+  function typingEvaluation(target, typed) {
+    var goal = splitTypingChars(target);
+    var value = String(typed || "").toUpperCase();
+    return goal.map(function (_ch, index) {
+      return index < value.length ? "correct" : "";
+    });
+  }
+
+  function typingLiveMetrics(uiState, round, typed) {
+    var goalsWpm = Math.max(6, Number(round && round.masteryGoalWpm || 12));
+    var goalsAccuracy = Math.max(85, Math.min(100, Number(round && round.masteryGoalAccuracy || 95)));
+    var typedCount = typingMeaningfulCharCount(typed);
+    var targetCount = Math.max(1, typingMeaningfulCharCount(round && round.target || ""));
+    var mistakes = Math.max(0, Number(uiState && uiState.typingMistakes || 0));
+    var startedAt = Number(uiState && uiState.typingRoundStartedAt || 0) || Date.now();
+    var elapsedMinutes = Math.max(1 / 60, (Date.now() - startedAt) / 60000);
+    var attempts = typedCount + mistakes;
+    var wpm = typedCount ? Math.round((typedCount / 5) / elapsedMinutes) : 0;
+    var accuracy = attempts ? Math.round((typedCount / attempts) * 100) : 100;
+    var progress = Math.round((typedCount / targetCount) * 100);
+    return {
+      wpm: Math.max(0, wpm),
+      accuracy: Math.max(0, Math.min(100, accuracy)),
+      progress: Math.max(0, Math.min(100, progress)),
+      typedCount: typedCount,
+      targetCount: targetCount,
+      mistakes: mistakes,
+      goalWpm: goalsWpm,
+      goalAccuracy: goalsAccuracy
+    };
+  }
+
+  function typingMasteryStars(metrics, round, complete) {
+    var row = metrics || {};
+    var isComplete = complete || row.progress >= 100;
+    var stars = 0;
+    if (row.progress >= 25) stars += 1;
+    if (isComplete) stars += 1;
+    if (isComplete && row.accuracy >= Math.max(88, row.goalAccuracy - 3)) stars += 1;
+    if (isComplete && row.accuracy >= row.goalAccuracy) stars += 1;
+    if (isComplete && row.wpm >= row.goalWpm) stars += 1;
+    return Math.max(0, Math.min(5, stars));
+  }
+
+  function typingReadyToAdvance(metrics, round, complete) {
+    var row = metrics || {};
+    var isComplete = complete || row.progress >= 100;
+    return Boolean(isComplete && row.accuracy >= Number(row.goalAccuracy || round && round.masteryGoalAccuracy || 95) && row.wpm >= Number(row.goalWpm || round && round.masteryGoalWpm || 12));
+  }
+
+  function typingProgressKey(context) {
+    var studentKey = String(context && context.studentId || "").trim() || "local";
+    var gradeKey = String(context && context.gradeBand || "K-2").trim().replace(/[^A-Za-z0-9_-]/g, "_");
+    return "cs.typingquest.progress.v1." + studentKey + "." + gradeKey;
+  }
+
+  function defaultTypingProgress() {
+    return {
+      placementCompleted: false,
+      placementRecommendedLessonOrder: 1,
+      currentLessonOrder: 1,
+      currentLessonId: "",
+      unlockedLessonOrder: 1,
+      completedLessonIds: [],
+      lessonResults: {}
+    };
+  }
+
+  function loadTypingProgress(context) {
+    var base = defaultTypingProgress();
+    var raw = storageGet(typingProgressKey(context), "");
+    if (!raw) return base;
+    try {
+      raw = JSON.parse(raw);
+      return {
+        placementCompleted: raw.placementCompleted === true,
+        placementRecommendedLessonOrder: Math.max(1, Number(raw.placementRecommendedLessonOrder || 1)),
+        currentLessonOrder: Math.max(1, Number(raw.currentLessonOrder || 1)),
+        currentLessonId: String(raw.currentLessonId || ""),
+        unlockedLessonOrder: Math.max(1, Number(raw.unlockedLessonOrder || 1)),
+        completedLessonIds: Array.isArray(raw.completedLessonIds) ? raw.completedLessonIds.map(function (value) { return String(value || ""); }).filter(Boolean) : [],
+        lessonResults: raw.lessonResults && typeof raw.lessonResults === "object" ? raw.lessonResults : {}
+      };
+    } catch (_e) {
+      return base;
+    }
+  }
+
+  function saveTypingProgress(context, progress) {
+    storageSet(typingProgressKey(context), JSON.stringify(progress || defaultTypingProgress()));
+  }
+
+  function typingPlacementRecommendation(progress, placementRows, history) {
+    var rows = Array.isArray(placementRows) ? placementRows : [];
+    var outcomes = {};
+    (Array.isArray(history) ? history : []).forEach(function (row) {
+      outcomes[String(row && row.roundId || "")] = row && row.result === "correct";
+    });
+    var passed = rows.filter(function (row) {
+      return outcomes[String(row && row.id || "")] === true;
+    }).length;
+    if (passed >= 4) return 13;
+    if (passed === 3) return 10;
+    if (passed === 2) return 8;
+    if (passed === 1) return 4;
+    return 1;
+  }
+
+  function renderTypingStars(stars) {
+    var filled = Math.max(0, Math.min(5, Number(stars) || 0));
+    return '<div class="cg-typing-stars" aria-label="' + filled + ' out of 5 stars">' + [0, 1, 2, 3, 4].map(function (index) {
+      return '<span class="cg-typing-star' + (index < filled ? ' is-earned' : '') + '" aria-hidden="true">★</span>';
+    }).join("") + "</div>";
+  }
+
+  var TYPING_UNIT_META = {
+    "Unit 0": { title: "Home Row", subtitle: "Anchors and first reaches" },
+    "Unit 1": { title: "Short a", subtitle: "Decodable word fluency" },
+    "Unit 2": { title: "Top Row", subtitle: "Reach + heart words" },
+    "Unit 3": { title: "Bottom Row", subtitle: "Digraphs and phrases" },
+    "Unit 4": { title: "Connected Text", subtitle: "Lesson and content phrases" }
+  };
+
+  function typingCourseSummary(progress, rows) {
+    var courseRows = Array.isArray(rows) ? rows : [];
+    var results = progress && progress.lessonResults || {};
+    var completed = Array.isArray(progress && progress.completedLessonIds) ? progress.completedLessonIds.length : 0;
+    var totalLessons = Math.max(1, courseRows.length);
+    var stars = Object.keys(results).reduce(function (sum, key) {
+      return sum + Math.max(0, Math.min(5, Number(results[key] && results[key].stars || 0)));
+    }, 0);
+    return {
+      progressPercent: Math.round((completed / totalLessons) * 100),
+      completedLessons: completed,
+      totalLessons: totalLessons,
+      totalStars: stars,
+      totalPoints: stars * 200
+    };
+  }
+
+  function typingUnitMeta(unitLabel, rows) {
+    var list = Array.isArray(rows) ? rows : [];
+    var fallbackTitle = list[0] && list[0].stageLabel || String(unitLabel || "Typing Unit");
+    var fallbackSubtitle = list[0] && (list[0].keyboardZone || list[0].orthographyFocus) || "Typing practice";
+    var meta = TYPING_UNIT_META[String(unitLabel || "")] || {};
+    return {
+      title: meta.title || fallbackTitle,
+      subtitle: meta.subtitle || fallbackSubtitle
+    };
+  }
+
+  function typingLessonGlyph(row) {
+    var stage = String(row && row.stageLabel || "").toLowerCase();
+    var target = String(row && row.target || "").toUpperCase().replace(/\s+/g, " ").trim();
+    if (row && String(row.unitLabel || "").toLowerCase() === "placement") return "▶";
+    if (stage.indexOf("review") >= 0) return "⌕";
+    if (stage.indexOf("practice") >= 0) return "◔";
+    if (stage.indexOf("hand") >= 0) return "⌨";
+    if (stage.indexOf("play") >= 0) return "★";
+    if (row && row.heartLetters) return "♥";
+    if (!target) return "KEY";
+    if (row && row.typingKind === "phrase") return "Aa";
+    if (row && row.typingKind === "keys") return target.replace(/\s+/g, "").slice(0, 2);
+    return target.slice(0, 3);
+  }
+
+  function typingLessonBadge(row) {
+    var stage = String(row && row.stageLabel || "").toLowerCase();
+    if (!row) return "Lesson";
+    if (String(row.unitLabel || "").toLowerCase() === "placement") return "Check";
+    if (stage.indexOf("review") >= 0) return "Review";
+    if (stage.indexOf("practice") >= 0) return "Practice";
+    if (stage.indexOf("play") >= 0) return "Game";
+    if (stage.indexOf("introduc") >= 0) return "Intro";
+    if (row.heartLetters) return "Heart";
+    if (row.typingKind === "phrase") return "Phrase";
+    if (row.typingKind === "keys") return "Keys";
+    return "Word";
+  }
+
+  function renderTypingProgressStrip(summary, options) {
+    var stats = summary || { progressPercent: 0, totalStars: 0, totalPoints: 0 };
+    var extras = options || {};
+    return [
+      '<div class="cg-typing-progress-strip">',
+      '  <span><strong>' + Number(stats.progressPercent || 0) + '%</strong> progress</span>',
+      '  <span><strong>' + Number(stats.totalStars || 0) + '</strong> stars</span>',
+      '  <span><strong>' + Number(stats.totalPoints || 0) + '</strong> points</span>',
+      (extras.label ? '  <span class="cg-typing-progress-strip__label">' + runtimeRoot.CSGameComponents.escapeHtml(extras.label) + '</span>' : ""),
+      "</div>"
+    ].join("");
+  }
+
+  function typingPromptTitle(round) {
+    if (!round) return "Start typing.";
+    if (round.courseMode === "placement") return "Take a quick check to find the right lesson start.";
+    if (round.typingKind === "keys") return "Find the keys, then type the pattern without looking down.";
+    if (round.typingKind === "phrase") return "Read the full phrase first, then type it in one smooth rhythm.";
+    return "Look at the whole word, then type it with control and rhythm.";
+  }
+
+  var TYPING_GUIDE_ROWS = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"],
+    ["z", "x", "c", "v", "b", "n", "m"],
+    ["space"]
+  ];
+
+  var TYPING_FINGER_MAP = {
+    q: "Left pinky",
+    a: "Left pinky",
+    z: "Left pinky",
+    w: "Left ring",
+    s: "Left ring",
+    x: "Left ring",
+    e: "Left middle",
+    d: "Left middle",
+    c: "Left middle",
+    r: "Left index",
+    f: "Left index",
+    v: "Left index",
+    t: "Left index",
+    g: "Left index",
+    b: "Left index",
+    y: "Right index",
+    h: "Right index",
+    n: "Right index",
+    u: "Right index",
+    j: "Right index",
+    m: "Right index",
+    i: "Right middle",
+    k: "Right middle",
+    o: "Right ring",
+    l: "Right ring",
+    p: "Right pinky",
+    ";": "Right pinky",
+    " ": "Thumbs",
+    space: "Thumbs"
+  };
+
+  function typingGuideKeys(target) {
+    var seen = {};
+    return splitTypingChars(target || "").map(function (key) {
+      return key === " " ? "space" : key.toLowerCase();
+    }).filter(function (key) {
+      if (!key || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function renderTypingKeyboardGuide(round) {
+    var activeKeys = typingGuideKeys(round && round.target || "");
+    var activeLookup = {};
+    var fingerLookup = {};
+    activeKeys.forEach(function (key) {
+      activeLookup[key] = true;
+      fingerLookup[TYPING_FINGER_MAP[key] || "Watch target"] = true;
+    });
+    var activeFingers = Object.keys(fingerLookup);
+    return [
+      '<div class="cg-typing-guide" aria-label="Keyboard and finger guide">',
+      '  <div class="cg-typing-guide-head">',
+      '    <div>',
+      '      <p class="cg-micro-label">' + runtimeRoot.CSGameComponents.escapeHtml(round && round.courseMode === "placement" ? "Placement keyboard check" : (round && round.typingKind === "keys" ? "New key introduction" : "Keyboard guide")) + "</p>",
+      '      <h4>' + runtimeRoot.CSGameComponents.escapeHtml(round && round.fingerCue || "Keep your eyes on the target and return to home row after each reach.") + '</h4>',
+      "    </div>",
+      '    <div class="cg-typing-hand-legend">' + activeFingers.map(function (label) {
+        return '<span class="cg-typing-finger-chip">' + runtimeRoot.CSGameComponents.escapeHtml(label) + "</span>";
+      }).join("") + "</div>",
+      "  </div>",
+      '  <div class="cg-typing-guide-keys">' + TYPING_GUIDE_ROWS.map(function (row) {
+        var rowIndex = TYPING_GUIDE_ROWS.indexOf(row) + 1;
+        return '<div class="cg-typing-guide-row cg-typing-guide-row--' + rowIndex + '">' + row.map(function (key) {
+          var displayKey = key === "space" ? "Space" : key.toUpperCase();
+          var fingerLabel = TYPING_FINGER_MAP[key] || "Typing key";
+          var isActive = activeLookup[key];
+          var isHome = key === "f" || key === "j";
+          return '<span class="cg-typing-guide-key' + (isActive ? ' is-active' : '') + (isHome ? ' is-home' : '') + (key === "space" ? ' is-space' : '') + '" aria-label="' + runtimeRoot.CSGameComponents.escapeHtml(displayKey + " · " + fingerLabel) + '"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(displayKey) + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(fingerLabel) + "</small></span>";
+        }).join("") + "</div>";
+      }).join("") + "</div>",
+      "</div>"
+    ].join("");
+  }
+
+  function paintTypingPreview(round, typed, uiState) {
+    var target = round && round.target || "";
+    var cells = document.querySelectorAll(".cg-typing-text-entry__char");
+    var promptCells = document.querySelectorAll(".cg-typing-text-line .cg-typing-text-char");
+    var metrics = typingLiveMetrics(uiState, round, typed);
+    var stars = typingMasteryStars(metrics, round, false);
     Array.prototype.forEach.call(cells, function (cell, index) {
       var letter = String(typed || "").charAt(index) || "";
       var state = letter ? "correct" : "";
-      cell.textContent = letter;
+      cell.textContent = letter || (String(target || "").charAt(index) === " " ? " " : "");
       cell.setAttribute("data-state", state);
       if (state) cell.classList.add("is-revealed");
       else cell.classList.remove("is-revealed");
     });
-    Array.prototype.forEach.call(keys, function (key, index) {
-      var letter = String(target || "").charAt(index) || "";
-      key.textContent = letter || key.textContent;
-      key.setAttribute("data-state", index < String(typed || "").length ? "correct" : "");
+    Array.prototype.forEach.call(promptCells, function (cell, index) {
+      cell.classList.toggle("is-correct", index < String(typed || "").length);
+      cell.classList.toggle("is-current", index === String(typed || "").length);
     });
-    Array.prototype.forEach.call(document.querySelectorAll(".cg-typing-char"), function (cell, index) {
-      cell.classList.toggle("is-locked", index < String(typed || "").length);
-    });
+    var progressFill = document.getElementById("cg-typing-progress-fill");
+    if (progressFill) progressFill.style.width = metrics.progress + "%";
+    var questRunner = document.getElementById("cg-typing-quest-runner");
+    if (questRunner) questRunner.style.left = "calc(" + metrics.progress + "% - 16px)";
+    var wpmNode = document.getElementById("cg-typing-live-wpm");
+    if (wpmNode) wpmNode.textContent = String(metrics.wpm);
+    var accuracyNode = document.getElementById("cg-typing-live-accuracy");
+    if (accuracyNode) accuracyNode.textContent = String(metrics.accuracy) + "%";
+    var goalNode = document.getElementById("cg-typing-live-goal");
+    if (goalNode) goalNode.textContent = metrics.goalWpm + " WPM · " + metrics.goalAccuracy + "%";
+    var progressNode = document.getElementById("cg-typing-live-progress");
+    if (progressNode) progressNode.textContent = metrics.typedCount + " / " + metrics.targetCount;
+    var mistakesNode = document.getElementById("cg-typing-live-errors");
+    if (mistakesNode) mistakesNode.textContent = String(metrics.mistakes);
+    var starsNode = document.getElementById("cg-typing-live-stars");
+    if (starsNode) starsNode.innerHTML = renderTypingStars(stars);
   }
 
   function paintCategoryPreview(items) {
@@ -993,6 +1367,98 @@
     var recommendedGame = params.gameId || (runtimeRoot.CSGameContentRegistry && runtimeRoot.CSGameContentRegistry.recommendedGame
       ? runtimeRoot.CSGameContentRegistry.recommendedGame(context)
       : "word-quest");
+    var typingProgress = loadTypingProgress(context);
+    var typingCourseRows = runtimeRoot.CSGameContentRegistry && typeof runtimeRoot.CSGameContentRegistry.getTypingCourseRows === "function"
+      ? runtimeRoot.CSGameContentRegistry.getTypingCourseRows(context)
+      : [];
+    var typingPlacementRows = runtimeRoot.CSGameContentRegistry && typeof runtimeRoot.CSGameContentRegistry.getTypingPlacementRows === "function"
+      ? runtimeRoot.CSGameContentRegistry.getTypingPlacementRows(context)
+      : [];
+
+    function typingLessonByOrder(order) {
+      var rows = typingCourseRows || [];
+      var desired = Math.max(1, Number(order || 1));
+      var exact = rows.filter(function (row) {
+        return Number(row && row.lessonOrder || 0) === desired;
+      })[0];
+      if (exact) return exact;
+      if (!rows.length) return null;
+      return rows[Math.max(0, Math.min(rows.length - 1, desired - 1))] || rows[rows.length - 1] || null;
+    }
+
+    function typingLessonById(id) {
+      var key = String(id || "").trim();
+      if (!key) return null;
+      return (typingCourseRows || []).filter(function (row) {
+        return String(row && row.id || "") === key;
+      })[0] || null;
+    }
+
+    function typingQuestHref(options) {
+      var next = options || {};
+      var url = new URL(withAppBase("typing-quest.html"));
+      url.searchParams.set("play", "1");
+      url.searchParams.set("game", "word-typing");
+      url.searchParams.set("typingPage", "1");
+      if (params.studentId) url.searchParams.set("student", params.studentId);
+      if (params.classId) url.searchParams.set("classId", params.classId);
+      if (params.lessonContextId) url.searchParams.set("lessonContextId", params.lessonContextId);
+      if (context.subject) url.searchParams.set("subject", context.subject);
+      if (context.gradeBand) url.searchParams.set("gradeBand", context.gradeBand);
+      if (context.contentMode) url.searchParams.set("contentMode", context.contentMode);
+      url.searchParams.set("typingCourseMode", String(next.typingCourseMode || "lesson"));
+      if (next.lessonId) url.searchParams.set("lessonId", String(next.lessonId));
+      if (next.lessonOrder) url.searchParams.set("lessonOrder", String(next.lessonOrder));
+      return url.toString();
+    }
+
+    function refreshTypingCourseContext() {
+      if (String(context.contentMode || "lesson").toLowerCase() !== "lesson") {
+        context.typingCourseMode = "lesson";
+        context.typingPlacementRequired = false;
+        context.currentTypingLessonId = "";
+        context.currentTypingLessonOrder = 0;
+        context.typingUnlockedOrder = 999;
+        context.typingCompletedLessons = [];
+        return;
+      }
+      var recommendedOrder = Math.max(1, Number(typingProgress.placementRecommendedLessonOrder || 1));
+      var currentOrder = Math.max(recommendedOrder, Number(typingProgress.currentLessonOrder || recommendedOrder));
+      var lesson = typingProgress.currentLessonId
+        ? typingCourseRows.filter(function (row) { return String(row && row.id || "") === String(typingProgress.currentLessonId || ""); })[0]
+        : typingLessonByOrder(currentOrder);
+      if (!lesson) lesson = typingLessonByOrder(recommendedOrder);
+      context.typingCourseMode = typingProgress.placementCompleted ? "lesson" : "placement";
+      context.typingPlacementRequired = !typingProgress.placementCompleted;
+      context.currentTypingLessonId = lesson ? lesson.id : "";
+      context.currentTypingLessonOrder = lesson ? Number(lesson.lessonOrder || 1) : 1;
+      context.typingUnlockedOrder = typingProgress.placementCompleted ? Math.max(recommendedOrder, Number(typingProgress.unlockedLessonOrder || context.currentTypingLessonOrder || 1)) : 1;
+      context.typingCompletedLessons = Array.isArray(typingProgress.completedLessonIds) ? typingProgress.completedLessonIds.slice() : [];
+      context.typingPlacementRecommendedLessonOrder = recommendedOrder;
+      context.typingPlacementRows = typingPlacementRows.slice();
+
+      if (params.typingPage && recommendedGame === "word-typing") {
+        var requestedMode = String(params.typingCourseMode || (params.typingLessonId || params.typingLessonOrder ? "lesson" : "") || "").toLowerCase();
+        if (requestedMode === "placement") {
+          context.typingCourseMode = "placement";
+          context.typingPlacementRequired = true;
+          context.currentTypingLessonId = "";
+          context.currentTypingLessonOrder = 1;
+          context.typingUnlockedOrder = 1;
+        } else if (requestedMode === "lesson") {
+          var requestedLesson = typingLessonById(params.typingLessonId) || typingLessonByOrder(params.typingLessonOrder || context.currentTypingLessonOrder || 1);
+          if (requestedLesson) {
+            context.typingCourseMode = "lesson";
+            context.typingPlacementRequired = false;
+            context.currentTypingLessonId = requestedLesson.id;
+            context.currentTypingLessonOrder = Number(requestedLesson.lessonOrder || 1);
+            context.typingUnlockedOrder = Math.max(Number(context.typingUnlockedOrder || 1), Number(requestedLesson.lessonOrder || 1));
+          }
+        }
+      }
+    }
+
+    refreshTypingCourseContext();
     /* Restore gallery context from localStorage when not in URL */
     try {
       if (!params.gradeBand && localStorage.getItem("cs.gallery.grade")) {
@@ -1102,11 +1568,17 @@
       detectiveSelection: "",
       typingLockedValue: "",
       typingErrorUntil: 0,
+      typingRoundId: "",
+      typingStartedRoundId: "",
+      typingRoundStartedAt: 0,
+      typingAcceptedChars: 0,
+      typingMistakes: 0,
       categoryPreview: [],
       previous: { score: 0, streak: 0, rounds: 0 },
       bumpUntil: { score: 0, streak: 0, rounds: 0 },
       lastLoggedSummaryKey: "",
-      lastSubmittedGuess: ""
+      lastSubmittedGuess: "",
+      lastTypingPersistKey: ""
     };
 
     if (!shell) return;
@@ -1294,13 +1766,103 @@
         viewMode: "individual",
         difficulty: "core",
         contentMode: context.contentMode || "lesson",
-        timerEnabled: true,
+        timerEnabled: recommendedGame === "word-typing" ? false : !(recommendedGame === "word-typing" && context.typingPlacementRequired),
         hintsEnabled: true,
         soundEnabled: false,
         customWordSet: "",
         lessonLock: true
       }
     });
+
+    function setTypingCurrentLessonByOrder(order) {
+      var nextLesson = typingLessonByOrder(order);
+      if (!nextLesson) return null;
+      typingProgress.currentLessonOrder = Number(nextLesson.lessonOrder || order || 1);
+      typingProgress.currentLessonId = nextLesson.id;
+      saveTypingProgress(context, typingProgress);
+      refreshTypingCourseContext();
+      return nextLesson;
+    }
+
+    function persistTypingContextToEngine() {
+      engine.updateContext({
+        contentMode: context.contentMode,
+        typingCourseMode: context.typingCourseMode,
+        typingPlacementRequired: context.typingPlacementRequired,
+        currentTypingLessonId: context.currentTypingLessonId,
+        currentTypingLessonOrder: context.currentTypingLessonOrder,
+        typingUnlockedOrder: context.typingUnlockedOrder,
+        typingCompletedLessons: context.typingCompletedLessons.slice(),
+        typingPlacementRecommendedLessonOrder: context.typingPlacementRecommendedLessonOrder
+      });
+    }
+
+    function startTypingRound() {
+      var state = engine.getState();
+      if (state.selectedGameId !== "word-typing" || !state.round) return;
+      uiState.typingStartedRoundId = state.round.id;
+      if (!uiState.typingRoundStartedAt) uiState.typingRoundStartedAt = 0;
+      render();
+      runtimeRoot.requestAnimationFrame(function () {
+        var input = document.getElementById("cg-word-typing-input");
+        if (input && typeof input.focus === "function") input.focus();
+      });
+    }
+
+    function restartTypingLesson(order) {
+      if (typeof order === "number") setTypingCurrentLessonByOrder(order);
+      refreshTypingCourseContext();
+      persistTypingContextToEngine();
+      resetRoundUi();
+      engine.updateSettings({ timerEnabled: false });
+      engine.restartGame();
+    }
+
+    function syncTypingProgressFromState(state) {
+      if (state.selectedGameId !== "word-typing" || !state.round || !state.lastOutcome || state.status !== "round-summary") return;
+      var lessonKey = [
+        state.round.id,
+        state.status,
+        state.lastOutcome.correct,
+        state.lastOutcome.stats && state.lastOutcome.stats.wpm || 0,
+        state.lastOutcome.stats && state.lastOutcome.stats.accuracy || 0
+      ].join(":");
+      if (uiState.lastTypingPersistKey === lessonKey) return;
+      uiState.lastTypingPersistKey = lessonKey;
+
+      if (state.round.courseMode === "placement") {
+        var recommendedOrder = typingPlacementRecommendation(typingProgress, typingPlacementRows, state.history);
+        typingProgress.placementCompleted = true;
+        typingProgress.placementRecommendedLessonOrder = recommendedOrder;
+        typingProgress.unlockedLessonOrder = Math.max(typingProgress.unlockedLessonOrder || 1, recommendedOrder);
+        setTypingCurrentLessonByOrder(recommendedOrder);
+        saveTypingProgress(context, typingProgress);
+        refreshTypingCourseContext();
+        persistTypingContextToEngine();
+        return;
+      }
+
+      var complete = !!(state.lastOutcome && state.lastOutcome.correct);
+      var stats = Object.assign({}, typingLiveMetrics(uiState, state.round, state.round.target || ""), state.lastOutcome.stats || {});
+      var stars = typingMasteryStars(stats, state.round, complete);
+      var ready = typingReadyToAdvance(stats, state.round, complete);
+      typingProgress.lessonResults[state.round.id] = {
+        stars: Math.max(stars, Number(typingProgress.lessonResults[state.round.id] && typingProgress.lessonResults[state.round.id].stars || 0)),
+        wpm: Math.max(Number(stats.wpm || 0), Number(typingProgress.lessonResults[state.round.id] && typingProgress.lessonResults[state.round.id].wpm || 0)),
+        accuracy: Math.max(Number(stats.accuracy || 0), Number(typingProgress.lessonResults[state.round.id] && typingProgress.lessonResults[state.round.id].accuracy || 0)),
+        complete: ready
+      };
+      if (ready) {
+        if (typingProgress.completedLessonIds.indexOf(state.round.id) < 0) typingProgress.completedLessonIds.push(state.round.id);
+        typingProgress.unlockedLessonOrder = Math.max(Number(typingProgress.unlockedLessonOrder || 1), Number(state.round.lessonOrder || 1) + 1);
+        setTypingCurrentLessonByOrder(Number(state.round.lessonOrder || 1) + 1);
+      } else {
+        setTypingCurrentLessonByOrder(Number(state.round.lessonOrder || 1));
+      }
+      saveTypingProgress(context, typingProgress);
+      refreshTypingCourseContext();
+      persistTypingContextToEngine();
+    }
 
     function resetRoundUi() {
       uiState.selectedChoice = "";
@@ -1310,6 +1872,11 @@
       uiState.detectiveSelection = "";
       uiState.typingLockedValue = "";
       uiState.typingErrorUntil = 0;
+      uiState.typingRoundId = "";
+      uiState.typingStartedRoundId = "";
+      uiState.typingRoundStartedAt = 0;
+      uiState.typingAcceptedChars = 0;
+      uiState.typingMistakes = 0;
       uiState.categoryPreview = [];
     }
 
@@ -1378,6 +1945,88 @@
         return;
       }
 
+      var typingHubMode = currentGame.id === "word-typing" && !params.typingPage;
+      var typingRuntimeMode = currentGame.id === "word-typing" && params.typingPage;
+      var teacherPanelMarkup = [
+        '<section class="cg-main-card cg-surface' + (uiState.teacherPanelOpen ? "" : " cg-hidden") + '" id="cg-teacher-panel">',
+        '  <p class="cg-kicker">Teacher Control Panel</p>',
+        '  <div class="cg-control-grid">',
+        '    <div class="cg-field"><label for="cg-view-mode">Mode</label><select id="cg-view-mode" class="cg-select"><option value="individual">Individual</option><option value="smallGroup">Small Group</option><option value="classroom">Classroom</option><option value="projector">Projector</option></select></div>',
+        '    <div class="cg-field"><label for="cg-difficulty">Difficulty</label><select id="cg-difficulty" class="cg-select"><option value="scaffolded">Scaffolded</option><option value="core">Core</option><option value="stretch">Stretch</option></select></div>',
+        '    <div class="cg-field"><label for="cg-subject">Subject</label><select id="cg-subject" class="cg-select"><option value="ELA">ELA</option><option value="Intervention">Intervention</option><option value="Writing">Writing</option><option value="Math">Math</option><option value="Science">Science</option></select></div>',
+        '    <div class="cg-field"><label for="cg-grade-band">Grade Band</label><select id="cg-grade-band" class="cg-select"><option value="K-2">K-2</option><option value="3-5">3-5</option><option value="6-8">6-8</option><option value="9-12">9-12</option></select></div>',
+        '    <div class="cg-field"><label for="cg-content-mode">Content Set</label><select id="cg-content-mode" class="cg-select"><option value="lesson">Lesson-aligned</option><option value="subject">Broader subject bank</option><option value="morphology">Morphology family</option><option value="custom">Custom word lock</option></select></div>',
+        '    <div class="cg-field"><label for="cg-skill-focus">Skill Focus</label><input id="cg-skill-focus" class="cg-input" type="text" value="' + runtimeRoot.CSGameComponents.escapeHtml(context.skillFocus || "") + '" placeholder="LIT.MOR.ROOT"></div>',
+        '    <div class="cg-field"><label for="cg-custom-word-set">Custom Word Set / Lesson Lock</label><input id="cg-custom-word-set" class="cg-input" type="text" value="' + runtimeRoot.CSGameComponents.escapeHtml(state.settings.customWordSet || "") + '" placeholder="prefix, claim, ratio"></div>',
+        '    <label class="cg-checkbox"><input id="cg-toggle-timer" type="checkbox"' + (state.settings.timerEnabled ? " checked" : "") + '>Timer enabled</label>',
+        '    <label class="cg-checkbox"><input id="cg-toggle-hints" type="checkbox"' + (state.settings.hintsEnabled ? " checked" : "") + '>Hints enabled</label>',
+        '    <label class="cg-checkbox"><input id="cg-toggle-sound" type="checkbox"' + (state.settings.soundEnabled ? " checked" : "") + '>Optional sound layer</label>',
+        '    <button class="cg-action cg-action-quiet" type="button" data-action="teacher-override">' + runtimeRoot.CSGameComponents.iconFor("teacher") + 'Teacher Override</button>',
+        "  </div>",
+        "</section>"
+      ].join("");
+      var stageKicker = typingHubMode ? "Course Hub" : (typingRuntimeMode ? "Typing Lesson" : "Now Playing");
+      var stageTitle = currentGame.title;
+      var stageSubtitle = typingHubMode
+        ? "Typing Quest Foundations"
+        : (typingRuntimeMode
+          ? ((state.round && state.round.lessonLabel || "Lesson") + " · " + (state.round && state.round.stageLabel || "Typing practice"))
+          : (state.round && state.round.promptLabel || currentGame.subtitle));
+      var toolbarHomeHref = typingRuntimeMode
+        ? withAppBase("game-platform.html?play=1&game=word-typing")
+        : withAppBase("game-platform.html");
+      var toolbarParts = [
+        '<a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(toolbarHomeHref) + '">' + runtimeRoot.CSGameComponents.iconFor("context") + (typingRuntimeMode ? 'Course Hub' : 'All Games') + '</a>',
+        '<button class="cg-action cg-action-quiet" type="button" data-action="toggle-teacher">' + runtimeRoot.CSGameComponents.iconFor("teacher") + (uiState.teacherPanelOpen ? "Hide Controls" : "Teacher Controls") + "</button>"
+      ];
+      if (!typingHubMode) {
+        toolbarParts.push('<button class="cg-action cg-action-quiet" type="button" data-action="hint">' + runtimeRoot.CSGameComponents.iconFor("hint") + "Hint</button>");
+      }
+      if (!typingHubMode || typingRuntimeMode) {
+        toolbarParts.push('<button class="cg-action cg-action-primary" type="button" data-action="restart">' + runtimeRoot.CSGameComponents.iconFor("progress") + (typingRuntimeMode ? "Restart Lesson" : "Restart") + "</button>");
+      }
+
+      if (typingHubMode || typingRuntimeMode) {
+        var typingSummary = typingCourseSummary(typingProgress, typingCourseRows);
+        var typingHeaderSubtitle = typingRuntimeMode
+          ? ((state.round && state.round.unitLabel || "Typing Quest Foundations") + " · " + (state.round && state.round.keyboardZone || "Keyboarding"))
+          : "Typing Quest Foundations";
+        var typingNavParts = [
+          '<a class="cg-typing-appbar__brand" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Typing Quest</a>',
+          '<nav class="cg-typing-appbar__nav">',
+          '  <a class="cg-typing-appbar__link' + (typingHubMode ? ' is-active' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Course</a>',
+          (typingRuntimeMode ? '  <a class="cg-typing-appbar__link is-active" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: state.round && state.round.courseMode || "lesson", lessonId: state.round && state.round.id || "", lessonOrder: state.round && state.round.lessonOrder || 1 })) + '">Lesson</a>' : ""),
+          '  <button class="cg-typing-appbar__link" type="button" data-action="toggle-teacher">' + (uiState.teacherPanelOpen ? "Hide Controls" : "Teacher Controls") + '</button>',
+          (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="hint">Hint</button>' : ""),
+          (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="restart">Restart</button>' : ""),
+          "</nav>"
+        ].join("");
+        shell.innerHTML = [
+          '<div class="cg-typing-app-shell' + (typingRuntimeMode ? " is-runtime" : " is-hub") + '">',
+          '  <header class="cg-typing-appbar">',
+          '    <div class="cg-typing-appbar__left">' + typingNavParts + '</div>',
+          '    <div class="cg-typing-appbar__right">',
+          '      <span class="cg-typing-appbar__status">' + runtimeRoot.CSGameComponents.escapeHtml((runtimeRoot.CSGameModes.VIEW_MODES[state.settings.viewMode] || {}).label || "Individual") + '</span>',
+          '      <a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingRuntimeMode ? withAppBase("game-platform.html?play=1&game=word-typing") : withAppBase("game-platform.html")) + '">' + (typingRuntimeMode ? "Course Hub" : "All Games") + '</a>',
+          '    </div>',
+          "  </header>",
+          '  <div class="cg-typing-page-wrap">',
+          renderTypingProgressStrip(typingSummary, { label: typingHeaderSubtitle }),
+          '    <section class="cg-typing-page-shell">',
+          '      <div id="cg-stage-board" class="cg-stage-board cg-stage-board--typing"></div>',
+          "    </section>",
+          teacherPanelMarkup,
+          "  </div>",
+          "</div>"
+        ].join("");
+
+        var typingStageBoard = document.getElementById("cg-stage-board");
+        if (typingStageBoard && state.round) typingStageBoard.innerHTML = renderRoundBoard(state, currentGame);
+        bindInteractions();
+        hydrateControls(state);
+        return;
+      }
+
       shell.innerHTML = [
         '<div class="cg-brandbar cg-brandbar--play">',
         '  <div class="cg-brand">',
@@ -1388,26 +2037,21 @@
         '      <p>' + runtimeRoot.CSGameComponents.escapeHtml(currentGame.subtitle) + "</p>",
         "    </div>",
         "  </div>",
-        '  <div class="cg-toolbar">',
-        '    <a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html")) + '">' + runtimeRoot.CSGameComponents.iconFor("context") + 'All Games</a>',
-        '    <button class="cg-action cg-action-quiet" type="button" data-action="toggle-teacher">' + runtimeRoot.CSGameComponents.iconFor("teacher") + (uiState.teacherPanelOpen ? "Hide Controls" : "Teacher Controls") + "</button>",
-        '    <button class="cg-action cg-action-quiet" type="button" data-action="hint">' + runtimeRoot.CSGameComponents.iconFor("hint") + "Hint</button>",
-        '    <button class="cg-action cg-action-primary" type="button" data-action="restart">' + runtimeRoot.CSGameComponents.iconFor("progress") + "Restart</button>",
-        "  </div>",
+        '  <div class="cg-toolbar">' + toolbarParts.join("") + '</div>',
         "</div>",
         '<div class="cg-play-shell">',
         '  <section class="cg-main-card cg-surface cg-stage-shell cg-stage-shell--focused">',
         '    <div class="cg-stage-meta">',
         '      <div class="cg-stage-head">',
         "        <div>",
-        '          <p class="cg-kicker">Now Playing</p>',
-        '          <h2 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml(currentGame.title) + '</h2>',
-        '          <p>' + runtimeRoot.CSGameComponents.escapeHtml(state.round && state.round.promptLabel || currentGame.subtitle) + '</p>',
+        '          <p class="cg-kicker">' + runtimeRoot.CSGameComponents.escapeHtml(stageKicker) + '</p>',
+        '          <h2 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml(stageTitle) + '</h2>',
+        '          <p>' + runtimeRoot.CSGameComponents.escapeHtml(stageSubtitle) + '</p>',
         "        </div>",
         '        <div class="cg-stage-toolbar">',
         '          <span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("projector") + runtimeRoot.CSGameComponents.escapeHtml((runtimeRoot.CSGameModes.VIEW_MODES[state.settings.viewMode] || {}).label || "Individual") + '</span>',
         '          <span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("progress") + runtimeRoot.CSGameComponents.escapeHtml((runtimeRoot.CSGameModes.DIFFICULTY[state.settings.difficulty] || {}).label || "Core") + '</span>',
-        '          <span class="cg-chip" data-tone="' + (state.settings.timerEnabled ? "positive" : "warning") + '">' + runtimeRoot.CSGameComponents.iconFor("timer") + (state.settings.timerEnabled ? "Timed" : "Untimed") + '</span>',
+        (typingHubMode ? '          <span class="cg-chip" data-tone="focus">' + runtimeRoot.CSGameComponents.iconFor("context") + 'Lesson plans</span>' : '          <span class="cg-chip" data-tone="' + (state.settings.timerEnabled ? "positive" : "warning") + '">' + runtimeRoot.CSGameComponents.iconFor("timer") + (state.settings.timerEnabled ? "Timed" : "Untimed") + '</span>'),
         (state.streak >= 2 ? '          <span class="cg-chip cg-chip-streak" data-tone="positive">' + runtimeRoot.CSGameComponents.iconFor("progress") + state.streak + '\u2009streak</span>' : ""),
         "        </div>",
         "      </div>",
@@ -1415,27 +2059,12 @@
         '        <span class="cg-chip" data-tone="focus">' + runtimeRoot.CSGameComponents.iconFor("context") + runtimeRoot.CSGameComponents.escapeHtml(supportLine(context, state)) + '</span>',
         (projectorSuggested ? '<span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("projector") + 'Projector-safe layout ready</span>' : ""),
         "      </div>",
-        renderFeedback(state.feedback),
-        renderResultBanner(state, currentGame),
+        (currentGame.id === "word-typing" ? "" : renderFeedback(state.feedback)),
+        (currentGame.id === "word-typing" ? "" : renderResultBanner(state, currentGame)),
         '      <div id="cg-stage-board" class="cg-stage-board"></div>',
         "    </div>",
         "  </section>",
-        '  <section class="cg-main-card cg-surface' + (uiState.teacherPanelOpen ? "" : " cg-hidden") + '" id="cg-teacher-panel">',
-        '    <p class="cg-kicker">Teacher Control Panel</p>',
-        '    <div class="cg-control-grid">',
-        '      <div class="cg-field"><label for="cg-view-mode">Mode</label><select id="cg-view-mode" class="cg-select"><option value="individual">Individual</option><option value="smallGroup">Small Group</option><option value="classroom">Classroom</option><option value="projector">Projector</option></select></div>',
-        '      <div class="cg-field"><label for="cg-difficulty">Difficulty</label><select id="cg-difficulty" class="cg-select"><option value="scaffolded">Scaffolded</option><option value="core">Core</option><option value="stretch">Stretch</option></select></div>',
-        '      <div class="cg-field"><label for="cg-subject">Subject</label><select id="cg-subject" class="cg-select"><option value="ELA">ELA</option><option value="Intervention">Intervention</option><option value="Writing">Writing</option><option value="Math">Math</option><option value="Science">Science</option></select></div>',
-        '      <div class="cg-field"><label for="cg-grade-band">Grade Band</label><select id="cg-grade-band" class="cg-select"><option value="K-2">K-2</option><option value="3-5">3-5</option><option value="6-8">6-8</option><option value="9-12">9-12</option></select></div>',
-        '      <div class="cg-field"><label for="cg-content-mode">Content Set</label><select id="cg-content-mode" class="cg-select"><option value="lesson">Lesson-aligned</option><option value="subject">Broader subject bank</option><option value="morphology">Morphology family</option><option value="custom">Custom word lock</option></select></div>',
-        '      <div class="cg-field"><label for="cg-skill-focus">Skill Focus</label><input id="cg-skill-focus" class="cg-input" type="text" value="' + runtimeRoot.CSGameComponents.escapeHtml(context.skillFocus || "") + '" placeholder="LIT.MOR.ROOT"></div>',
-        '      <div class="cg-field"><label for="cg-custom-word-set">Custom Word Set / Lesson Lock</label><input id="cg-custom-word-set" class="cg-input" type="text" value="' + runtimeRoot.CSGameComponents.escapeHtml(state.settings.customWordSet || "") + '" placeholder="prefix, claim, ratio"></div>',
-        '      <label class="cg-checkbox"><input id="cg-toggle-timer" type="checkbox"' + (state.settings.timerEnabled ? " checked" : "") + '>Timer enabled</label>',
-        '      <label class="cg-checkbox"><input id="cg-toggle-hints" type="checkbox"' + (state.settings.hintsEnabled ? " checked" : "") + '>Hints enabled</label>',
-        '      <label class="cg-checkbox"><input id="cg-toggle-sound" type="checkbox"' + (state.settings.soundEnabled ? " checked" : "") + '>Optional sound layer</label>',
-        '      <button class="cg-action cg-action-quiet" type="button" data-action="teacher-override">' + runtimeRoot.CSGameComponents.iconFor("teacher") + 'Teacher Override</button>',
-        "    </div>",
-        "  </section>",
+        teacherPanelMarkup,
         "</div>"
       ].join("");
 
@@ -1447,6 +2076,314 @@
 
     function renderRoundBoard(state, game) {
       var round = state.round || {};
+      function renderTypingPathMarkup(currentRound) {
+        return '<div class="cg-typing-path" aria-label="Lesson path">' + (currentRound.unitPath || []).map(function (item, index) {
+          var isCurrent = item.id === currentRound.id;
+          var result = typingProgress.lessonResults && typingProgress.lessonResults[item.id] || {};
+          var isDone = item.completed || result.complete;
+          var stars = Math.max(0, Math.min(5, Number(result.stars || 0)));
+          var statusLabel = item.locked
+            ? "Locked"
+            : isDone
+              ? "Mastered"
+              : isCurrent
+                ? "Current"
+                : "Open";
+          return '<button class="cg-typing-path-card' + (isCurrent ? ' is-current' : '') + (isDone ? ' is-done' : '') + (item.locked ? ' is-locked' : '') + '" type="button" data-action="jump-typing-lesson" data-lesson-order="' + Number(item.order || index + 1) + '"' + (item.locked ? ' disabled aria-disabled="true"' : "") + '><span>' + runtimeRoot.CSGameComponents.escapeHtml(item.label || ("L" + (index + 1))) + '</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(String(item.shortLabel || "").toUpperCase()) + '</strong><small class="cg-typing-path-meta">' + runtimeRoot.CSGameComponents.escapeHtml(statusLabel) + '</small>' + (item.locked ? '<span class="cg-typing-path-lock">Locked</span>' : stars ? renderTypingStars(stars) : "") + "</button>";
+        }).join("") + "</div>";
+      }
+
+      function renderTypingCourseMap(currentRound) {
+        var units = [];
+        var grouped = {};
+        (typingCourseRows || []).forEach(function (row) {
+          var unitKey = String(row && row.unitLabel || "Unit");
+          var meta = typingUnitMeta(unitKey, (typingCourseRows || []).filter(function (candidate) {
+            return String(candidate && candidate.unitLabel || "") === unitKey;
+          }));
+          if (!grouped[unitKey]) {
+            grouped[unitKey] = {
+              unitLabel: unitKey,
+              lessonCount: 0,
+              completedCount: 0,
+              startOrder: Number(row && row.lessonOrder || 1),
+              focusLabel: meta.title,
+              preview: []
+            };
+            units.push(grouped[unitKey]);
+          }
+          grouped[unitKey].lessonCount += 1;
+          if (typingProgress.completedLessonIds.indexOf(String(row && row.id || "")) >= 0) grouped[unitKey].completedCount += 1;
+          if (grouped[unitKey].preview.length < 3 && row && row.target) grouped[unitKey].preview.push(String(row.target).toUpperCase());
+        });
+        return '<div class="cg-typing-course-map" aria-label="Typing course map">' + units.map(function (unit) {
+          var active = Number(currentRound.lessonOrder || 1) >= unit.startOrder && Number(currentRound.lessonOrder || 1) < (unit.startOrder + unit.lessonCount);
+          var unlocked = Number(context.typingUnlockedOrder || typingProgress.unlockedLessonOrder || 1) >= unit.startOrder;
+          return '<button class="cg-typing-unit-card' + (active ? ' is-current' : '') + (unlocked ? '' : ' is-locked') + '" type="button" data-action="jump-typing-lesson" data-lesson-order="' + unit.startOrder + '"' + (unlocked ? '' : ' disabled aria-disabled="true"') + '><span class="cg-typing-unit-label">' + runtimeRoot.CSGameComponents.escapeHtml(unit.unitLabel) + '</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(unit.focusLabel) + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(unit.completedCount + " / " + unit.lessonCount + " complete") + '</small><div class="cg-typing-unit-preview">' + unit.preview.map(function (item) {
+            return '<span>' + runtimeRoot.CSGameComponents.escapeHtml(item) + "</span>";
+          }).join("") + '</div></button>';
+          }).join("") + "</div>";
+      }
+
+      function renderTypingLessonTiles(rows, currentRound) {
+        var list = Array.isArray(rows) ? rows : [];
+        return '<div class="cg-typing-lesson-grid" aria-label="Typing lessons">' + list.map(function (item) {
+          var result = typingProgress.lessonResults && typingProgress.lessonResults[item.id] || {};
+          var isDone = typingProgress.completedLessonIds.indexOf(String(item.id || "")) >= 0 || result.complete;
+          var isCurrent = currentRound && String(currentRound.id || "") === String(item.id || "");
+          var locked = Number(item.lessonOrder || 1) > Number(context.typingUnlockedOrder || typingProgress.unlockedLessonOrder || 1);
+          var href = typingQuestHref({ typingCourseMode: "lesson", lessonId: item.id, lessonOrder: item.lessonOrder });
+          var stars = Math.max(0, Math.min(5, Number(result.stars || 0)));
+          var status = locked ? "Locked" : isDone ? "Mastered" : isCurrent ? "Current" : "Open";
+          return '<a class="cg-typing-lesson-tile' + (isCurrent ? ' is-current' : '') + (isDone ? ' is-done' : '') + (locked ? ' is-locked' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(locked ? "#" : href) + '"' + (locked ? ' aria-disabled="true"' : '') + '><span class="cg-typing-lesson-number">' + Number(item.lessonOrder || 0) + '</span><span class="cg-typing-lesson-glyph">' + runtimeRoot.CSGameComponents.escapeHtml(typingLessonGlyph(item)) + '</span><span class="cg-typing-lesson-badge">' + runtimeRoot.CSGameComponents.escapeHtml(typingLessonBadge(item)) + '</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(item.stageLabel || item.lessonLabel || "Lesson") + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(String(item.target || "").toUpperCase()) + '</small><span class="cg-typing-lesson-status">' + runtimeRoot.CSGameComponents.escapeHtml(status) + '</span>' + (stars ? renderTypingStars(stars) : "") + "</a>";
+        }).join("") + "</div>";
+      }
+
+      function renderTypingPlacementTiles() {
+        return '<div class="cg-typing-lesson-grid cg-typing-lesson-grid--placement" aria-label="Placement checks">' + (typingPlacementRows || []).map(function (item, index) {
+          var current = index === 0;
+          return '<a class="cg-typing-lesson-tile' + (current ? ' is-current' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "placement" })) + '"><span class="cg-typing-lesson-number">' + (index + 1) + '</span><span class="cg-typing-lesson-glyph">' + runtimeRoot.CSGameComponents.escapeHtml(typingLessonGlyph(item)) + '</span><span class="cg-typing-lesson-badge">Check</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(item.stageLabel || item.prompt || "Placement") + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(String(item.target || "").toUpperCase()) + '</small><span class="cg-typing-lesson-status">' + runtimeRoot.CSGameComponents.escapeHtml(current ? "Start here" : "Placement") + "</span></a>";
+        }).join("") + "</div>";
+      }
+
+      function renderTypingUnitSections(currentRound) {
+        var grouped = {};
+        var order = [];
+        (typingCourseRows || []).forEach(function (item) {
+          var key = String(item && item.unitLabel || "Unit");
+          if (!grouped[key]) {
+            grouped[key] = [];
+            order.push(key);
+          }
+          grouped[key].push(item);
+        });
+        return order.map(function (key) {
+          var rows = grouped[key] || [];
+          var meta = typingUnitMeta(key, rows);
+          return [
+            '<section class="cg-typing-unit-section">',
+            '  <div class="cg-typing-unit-section__head">',
+            '    <div><p class="cg-kicker">' + runtimeRoot.CSGameComponents.escapeHtml(key) + '</p><h3>' + runtimeRoot.CSGameComponents.escapeHtml(meta.title) + '</h3><p>' + runtimeRoot.CSGameComponents.escapeHtml(meta.subtitle) + '</p></div>',
+            '    <span class="cg-typing-unit-section__count">' + runtimeRoot.CSGameComponents.escapeHtml(rows.length + " lessons") + '</span>',
+            "  </div>",
+            renderTypingLessonTiles(rows, currentRound),
+            "</section>"
+          ].join("");
+        }).join("");
+      }
+
+      function renderTypingRuntimeSidebar(currentRound, metrics, stars, ready) {
+        return [
+          '<aside class="cg-typing-runtime-sidebar">',
+          '  <div class="cg-typing-runtime-panel">',
+          '    <p class="cg-kicker">Lesson rating</p>',
+          '    <div class="cg-typing-summary-rating"><div id="cg-typing-live-stars">' + renderTypingStars(stars) + '</div><span>' + runtimeRoot.CSGameComponents.escapeHtml(ready ? "Ready to move on" : "Build to 5 stars") + '</span></div>',
+          '  </div>',
+          '  <div class="cg-typing-runtime-panel cg-typing-runtime-panel--stats">',
+          '    <div class="cg-typing-runtime-stat"><span>Goal</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(metrics.goalWpm + " WPM") + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(metrics.goalAccuracy + "% accuracy") + '</small></div>',
+          '    <div class="cg-typing-runtime-stat"><span>Speed</span><strong id="cg-typing-live-wpm">' + metrics.wpm + '</strong><small>WPM</small></div>',
+          '    <div class="cg-typing-runtime-stat"><span>Accuracy</span><strong id="cg-typing-live-accuracy">' + metrics.accuracy + '%</strong><small>live</small></div>',
+          '    <div class="cg-typing-runtime-stat"><span>Errors</span><strong id="cg-typing-live-errors">' + metrics.mistakes + '</strong><small>this run</small></div>',
+          "  </div>",
+          "</aside>"
+        ].join("");
+      }
+
+      if (game.id === "word-typing" && !params.typingPage) {
+        var courseSummary = typingCourseSummary(typingProgress, typingCourseRows);
+        var currentLesson = typingLessonById(context.currentTypingLessonId) || typingLessonByOrder(context.currentTypingLessonOrder || 1) || round;
+        var currentUnitMeta = typingUnitMeta(currentLesson && currentLesson.unitLabel || "Unit 0", (typingCourseRows || []).filter(function (row) {
+          return String(row && row.unitLabel || "") === String(currentLesson && currentLesson.unitLabel || "");
+        }));
+        var continueHref = context.typingPlacementRequired
+          ? typingQuestHref({ typingCourseMode: "placement" })
+          : typingQuestHref({
+              typingCourseMode: "lesson",
+              lessonId: currentLesson && currentLesson.id || "",
+              lessonOrder: currentLesson && currentLesson.lessonOrder || 1
+            });
+        return [
+          '<div class="cg-typing-course-page">',
+          '  <section class="cg-typing-course-hero">',
+          '    <div class="cg-typing-course-hero__main">',
+          '      <p class="cg-kicker">Course Map</p>',
+          '      <h3 class="cg-display">Typing Quest Foundations</h3>',
+          '      <p class="cg-typing-course-hero__subtitle">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement opens the right lesson path." : ("Continue with " + currentUnitMeta.title + ".")) + '</p>',
+          '      <div class="cg-typing-course-ribbon"><span>Home row</span><span>Short vowels</span><span>Heart words</span><span>Top row</span><span>Bottom row</span><span>Connected text</span></div>',
+          '      <div class="cg-typing-plan-progress"><div class="cg-typing-plan-progress-fill" style="width:' + courseSummary.progressPercent + '%"></div></div>',
+          '      <div class="cg-typing-plan-meta"><span>' + courseSummary.completedLessons + ' of ' + courseSummary.totalLessons + ' lessons mastered</span><span>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement ready" : ((currentLesson && currentLesson.lessonLabel) || "Lesson 1")) + '</span></div>',
+          '    </div>',
+          '    <div class="cg-typing-course-hero__card">',
+          '      <span class="cg-typing-course-hero__eyebrow">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement check" : "Continue lesson") + '</span>',
+          '      <strong class="cg-typing-course-hero__target">' + runtimeRoot.CSGameComponents.escapeHtml(String((context.typingPlacementRequired ? "FJFJ" : (currentLesson && currentLesson.target) || round.target || "FJFJ")).toUpperCase()) + '</strong>',
+          '      <span class="cg-typing-course-hero__note">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "4 quick checks" : ((currentLesson && currentLesson.stageLabel) || "Typing practice")) + '</span>',
+          '      <a class="cg-action cg-action-primary" href="' + runtimeRoot.CSGameComponents.escapeHtml(continueHref) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Take Placement Check" : "Open Lesson") + '</a>',
+          '    </div>',
+          '  </section>',
+          renderTypingCourseMap(currentLesson || round),
+          (context.typingPlacementRequired ? '<section class="cg-typing-unit-section"><div class="cg-typing-unit-section__head"><div><p class="cg-kicker">Placement</p><h3>Find the right start point</h3><p>Four quick checks before the course map opens.</p></div><span class="cg-typing-unit-section__count">4 checks</span></div>' + renderTypingPlacementTiles() + '</section>' : ""),
+          renderTypingUnitSections(currentLesson || round),
+          '</div>'
+        ].join("");
+      }
+
+      if (game.id === "word-typing") {
+        var typedValue = String(uiState.typingLockedValue || uiState.lastSubmittedGuess || "").toUpperCase();
+        var summaryMetrics = Object.assign({}, typingLiveMetrics(uiState, round, typedValue), state.lastOutcome && state.lastOutcome.stats || {});
+        var summaryStars = typingMasteryStars(summaryMetrics, round, !!(state.lastOutcome && state.lastOutcome.correct));
+        var canAdvance = typingReadyToAdvance(summaryMetrics, round, !!(state.lastOutcome && state.lastOutcome.correct));
+        var nextLesson = typingLessonByOrder(Number(round.lessonOrder || 1) + 1);
+        var recommendedLesson = typingLessonByOrder(Number(context.currentTypingLessonOrder || typingProgress.currentLessonOrder || 1));
+
+        if (state.status === "round-complete" || state.status === "round-summary") {
+          if (round.courseMode === "placement" && state.status === "round-summary") {
+            return [
+              '<div class="cg-typing-runtime">',
+              '  <div class="cg-typing-runtime-main">',
+              '    <div class="cg-typing-runtime-card cg-typing-runtime-card--summary">',
+              '      <p class="cg-kicker">Placement Complete</p>',
+              '      <h3 class="cg-display">Start with ' + runtimeRoot.CSGameComponents.escapeHtml((recommendedLesson && recommendedLesson.lessonLabel || "Lesson 1") + " · " + (recommendedLesson && recommendedLesson.stageLabel || "Foundations")) + '</h3>',
+              '      <p class="cg-typing-summary-copy">The placement checks are done. Open the first lesson that matches the learner’s current control.</p>',
+              '      <div class="cg-typing-summary-stats">',
+              '        <span class="cg-stat"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(String(Math.max(1, Number(context.currentTypingLessonOrder || typingProgress.currentLessonOrder || 1)))) + '</strong> recommended lesson</span>',
+              '        <span class="cg-stat"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(String((state.history || []).filter(function (row) { return row.result === "correct"; }).length)) + '</strong> checks passed</span>',
+              '        <span class="cg-stat"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(String(Number(typingProgress.unlockedLessonOrder || 1))) + '</strong> lessons unlocked</span>',
+              '      </div>',
+              (recommendedLesson ? '<div class="cg-typing-summary-goal"><strong>SWBAT</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml(recommendedLesson.swbat || "") + '</span></div>' : ""),
+              '      <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="next-typing-lesson">Start ' + runtimeRoot.CSGameComponents.escapeHtml(recommendedLesson && recommendedLesson.lessonLabel || "Lesson 1") + '</button><button class="cg-action cg-action-quiet" type="button" data-action="retake-typing-placement">Retake Placement</button></div>',
+              "    </div>",
+              renderTypingKeyboardGuide(recommendedLesson || round),
+              "  </div>",
+              renderTypingRuntimeSidebar(recommendedLesson || round, summaryMetrics, 5, true),
+              "</div>"
+            ].join("");
+          }
+
+          if (round.courseMode === "placement") {
+            return [
+              '<div class="cg-typing-runtime">',
+              '  <div class="cg-typing-runtime-main">',
+              '    <div class="cg-typing-runtime-card cg-typing-runtime-card--summary">',
+              '      <p class="cg-kicker">Placement Check</p>',
+              '      <h3 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml((round.lessonLabel || "Check") + " complete") + '</h3>',
+              '      <p class="cg-typing-summary-copy">' + runtimeRoot.CSGameComponents.escapeHtml(state.feedback && state.feedback.label || "Placement check recorded.") + '</p>',
+              '      <div class="cg-typing-summary-stats">',
+              '        <span class="cg-stat"><strong>' + summaryMetrics.wpm + '</strong> WPM</span>',
+              '        <span class="cg-stat"><strong>' + summaryMetrics.accuracy + '%</strong> accuracy</span>',
+              '        <span class="cg-stat"><strong>' + summaryMetrics.mistakes + '</strong> errors</span>',
+              '      </div>',
+              '      <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="next-typing-check">Next Check</button><button class="cg-action cg-action-quiet" type="button" data-action="repeat-typing-lesson">Retry Check</button></div>',
+              "    </div>",
+              renderTypingKeyboardGuide(round),
+              "  </div>",
+              renderTypingRuntimeSidebar(round, summaryMetrics, summaryStars, false),
+              "</div>"
+            ].join("");
+          }
+
+          return [
+            '<div class="cg-typing-runtime">',
+            '  <div class="cg-typing-runtime-main">',
+            '    <div class="cg-typing-runtime-card cg-typing-runtime-card--summary">',
+            '      <p class="cg-kicker">Lesson Result</p>',
+            '      <h3 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml((round.lessonLabel || "Lesson") + " · " + (round.stageLabel || "Typing practice")) + '</h3>',
+            '      <p class="cg-typing-summary-copy">' + runtimeRoot.CSGameComponents.escapeHtml(canAdvance ? "Goal met. This lesson is ready to count as mastered." : "Replay the lesson until both the speed and accuracy goals are met.") + '</p>',
+            '      <div class="cg-typing-summary-rating">' + renderTypingStars(summaryStars) + '<span>' + runtimeRoot.CSGameComponents.escapeHtml(canAdvance ? "Ready to move on" : "Not yet at 5 stars") + '</span></div>',
+            '      <div class="cg-typing-summary-stats">',
+            '        <span class="cg-stat"><strong>' + summaryMetrics.wpm + '</strong> WPM</span>',
+            '        <span class="cg-stat"><strong>' + summaryMetrics.accuracy + '%</strong> accuracy</span>',
+            '        <span class="cg-stat"><strong>' + summaryMetrics.goalWpm + ' / ' + summaryMetrics.goalAccuracy + '</strong> goal</span>',
+            '      </div>',
+            '      <div class="cg-typing-summary-goal"><strong>SWBAT</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml(round.swbat || "") + '</span></div>',
+            '      <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="repeat-typing-lesson">Replay Lesson</button>' + (canAdvance && nextLesson && nextLesson.id !== round.id ? '<button class="cg-action cg-action-quiet" type="button" data-action="next-typing-lesson">Open ' + runtimeRoot.CSGameComponents.escapeHtml(nextLesson.lessonLabel || "Next Lesson") + '</button>' : "") + '</div>',
+            "    </div>",
+            renderTypingKeyboardGuide(round),
+            "  </div>",
+            renderTypingRuntimeSidebar(round, summaryMetrics, summaryStars, canAdvance),
+            "</div>"
+          ].join("");
+        }
+
+        if (uiState.typingStartedRoundId !== round.id) {
+          return [
+            '<div class="cg-typing-runtime">',
+            '  <div class="cg-typing-runtime-main">',
+            renderHostControls(game, state, round),
+            '    <div class="cg-typing-runtime-card cg-typing-runtime-card--launch">',
+            '      <div class="cg-typing-runtime-intro">',
+            '        <div class="cg-typing-runtime-intro__copy">',
+            '          <p class="cg-kicker">' + runtimeRoot.CSGameComponents.escapeHtml(round.courseMode === "placement" ? "Placement check" : (round.lessonLabel || "Lesson")) + '</p>',
+            '          <h3 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml(typingPromptTitle(round)) + '</h3>',
+            '          <p>' + runtimeRoot.CSGameComponents.escapeHtml(round.courseMode === "placement" ? "Four quick checks, then the course opens at the right lesson." : (round.swbat || "I can type the lesson target with accuracy and rhythm.")) + '</p>',
+            "        </div>",
+            '        <div class="cg-typing-launch-target"><span class="cg-typing-launch-label">Target</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(String(round.target || "").toUpperCase()) + '</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml(round.orthographyFocus || round.keyboardZone || "typing focus") + '</span></div>',
+            "      </div>",
+            '      <div class="cg-feedback-actions"><button class="cg-action cg-action-primary" type="button" data-action="start-typing-round">' + runtimeRoot.CSGameComponents.escapeHtml(round.courseMode === "placement" ? "Start Placement" : "Start Lesson") + '</button>' + (round.courseMode === "lesson" ? '<button class="cg-action cg-action-quiet" type="button" data-action="repeat-typing-lesson">Reset Lesson</button>' : "") + '</div>',
+            "    </div>",
+            renderTypingKeyboardGuide(round),
+            "  </div>",
+            renderTypingRuntimeSidebar(round, summaryMetrics, summaryStars, false),
+            "</div>"
+          ].join("");
+        }
+
+        var typed = String(uiState.typingLockedValue || uiState.lastSubmittedGuess || "").toUpperCase();
+        var typedEvaluation = state.lastOutcome && state.lastOutcome.evaluation || typingEvaluation(round.target, typed);
+        var targetChars = splitTypingChars(round.target || "");
+        var typingMetrics = state.status === "playing"
+          ? typingLiveMetrics(uiState, round, typed)
+          : Object.assign({}, typingLiveMetrics(uiState, round, typed), state.lastOutcome && state.lastOutcome.stats || {});
+        var typingStars = typingMasteryStars(state.lastOutcome && state.lastOutcome.stats || typingMetrics, round, typed === String(round.target || "").toUpperCase());
+        var readyToAdvance = typed === String(round.target || "").toUpperCase()
+          && typingMetrics.accuracy >= typingMetrics.goalAccuracy
+          && typingMetrics.wpm >= typingMetrics.goalWpm;
+        return [
+          '<div class="cg-typing-runtime">',
+          '  <div class="cg-typing-runtime-main">',
+          renderHostControls(game, state, round),
+          '    <div class="cg-typing-runtime-card cg-typing-runtime-card--lesson">',
+          '      <div class="cg-typing-runtime-card__head">',
+          '        <div>',
+          '          <p class="cg-kicker">' + runtimeRoot.CSGameComponents.escapeHtml(round.unitLabel || "Typing Quest Foundations") + '</p>',
+          '          <h3>' + runtimeRoot.CSGameComponents.escapeHtml((round.lessonLabel || "Lesson") + " · " + (round.stageLabel || "Typing practice")) + '</h3>',
+          '          <p>' + runtimeRoot.CSGameComponents.escapeHtml(round.fingerCue || "Look across the whole word before you type.") + '</p>',
+          "        </div>",
+          '        <div class="cg-typing-runtime-goal"><span>Goal</span><strong id="cg-typing-live-goal">' + runtimeRoot.CSGameComponents.escapeHtml(typingMetrics.goalWpm + " WPM · " + typingMetrics.goalAccuracy + "%") + '</strong></div>',
+          "      </div>",
+          '      <div class="cg-typing-progress-panel">',
+          '        <div class="cg-typing-progress-head"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(round.swbat || "I can type the lesson target with accuracy and rhythm.") + '</strong><span id="cg-typing-live-progress">' + typingMetrics.typedCount + ' / ' + typingMetrics.targetCount + '</span></div>',
+          '        <div class="cg-typing-progress-bar"><div id="cg-typing-progress-fill" class="cg-typing-progress-fill" style="width:' + typingMetrics.progress + '%"></div></div>',
+          '        <div class="cg-typing-quest-lane"><div class="cg-typing-quest-track"></div><div id="cg-typing-quest-runner" class="cg-typing-quest-runner" style="left:calc(' + typingMetrics.progress + '% - 16px)"></div><div class="cg-typing-quest-goal">Finish</div></div>',
+          "      </div>",
+          '      <div class="cg-typing-text-board">',
+          '        <div class="cg-typing-text-line" aria-label="Typing target">' + targetChars.map(function (ch, index) {
+            var charClass = "cg-typing-text-char";
+            if (index < typed.length) charClass += " is-correct";
+            else if (index === typed.length) charClass += " is-current";
+            if (ch === " ") charClass += " is-space";
+            return '<span class="' + charClass + '">' + (ch === " " ? "&nbsp;" : runtimeRoot.CSGameComponents.escapeHtml(ch)) + "</span>";
+          }).join("") + "</div>",
+          '        <div class="cg-typing-text-entry">' + targetChars.map(function (_ch, index) {
+            var stateLabel = typedEvaluation[index] || (index < typed.length ? "correct" : "");
+            var displayChar = typed[index] || (_ch === " " ? " " : "");
+            return '<span class="cg-typing-text-entry__char' + (stateLabel ? " is-revealed" : "") + (_ch === " " ? ' is-space' : '') + '" data-state="' + runtimeRoot.CSGameComponents.escapeHtml(stateLabel || "") + '">' + (displayChar === " " ? "&nbsp;" : runtimeRoot.CSGameComponents.escapeHtml(displayChar || "")) + "</span>";
+          }).join("") + "</div>",
+          "      </div>",
+          '      <div class="cg-typing-entry">',
+          '        <input id="cg-word-typing-input" class="cg-input' + (Date.now() < uiState.typingErrorUntil ? " is-invalid" : "") + '" maxlength="' + String(round.target || "").length + '" value="' + runtimeRoot.CSGameComponents.escapeHtml(typed) + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type the lesson target for the class…" : "Type the lesson target…") + '" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Type the target word">',
+          '        <button class="cg-action cg-action-quiet" type="button" data-action="hint">Pattern Hint</button>',
+          '        <button class="cg-action cg-action-primary" type="button" data-submit="word-typing">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Lesson" : "Complete Lesson") + '</button>',
+          '        <button class="cg-action cg-action-quiet" type="button" data-action="repeat-typing-lesson">Restart Lesson</button>',
+          '      </div>',
+          (state.status !== "playing" ? '<div class="cg-typing-rating-summary"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(readyToAdvance ? "5-star lesson. Move to the next target." : "Replay once more to hit the mastery goal.") + '</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml("Goal: " + typingMetrics.goalWpm + " WPM and " + typingMetrics.goalAccuracy + "% accuracy") + '</span></div>' : ""),
+          "    </div>",
+          renderTypingKeyboardGuide(round),
+          "  </div>",
+          renderTypingRuntimeSidebar(round, typingMetrics, typingStars, readyToAdvance),
+          "</div>"
+        ].join("");
+      }
+
       if (state.status === "round-summary") {
         var peakStreak = state.history.reduce(function (max, r) { return Math.max(max, r.streak || 0); }, 0);
         var strongWords = state.history.filter(function (r) { return r.result === "correct"; }).map(function (r) { return r.label; }).filter(Boolean).slice(0, 5);
@@ -1715,45 +2652,6 @@
         });
       }
 
-      if (game.id === "word-typing") {
-        var typed = String(uiState.typingLockedValue || uiState.lastSubmittedGuess || "").toUpperCase();
-        var typedEvaluation = state.lastOutcome && state.lastOutcome.evaluation || [];
-        var targetChars = String(round.target || "").toUpperCase().split("");
-        return renderGameScaffold(game, state, round, {
-          beforePlay: renderHostControls(game, state, round),
-          play: [
-            '<div class="cg-game-layout cg-game-layout--typing">',
-            '<div class="cg-typing-studio">',
-            '  <div class="cg-typing-zone-badge">',
-            '    <span class="cg-chip" data-tone="focus">' + runtimeRoot.CSGameComponents.escapeHtml(round.keyboardZone || "full keyboard") + '</span>',
-            '    <span class="cg-chip">' + runtimeRoot.CSGameComponents.escapeHtml(round.orthographyFocus || "typing pattern") + '</span>',
-            '  </div>',
-            '  <div class="cg-typing-target">' + targetChars.map(function (ch, index) {
-              var isLocked = index < typed.length;
-              return '<div class="cg-typing-char' + (isLocked ? ' is-locked' : '') + '">' + runtimeRoot.CSGameComponents.escapeHtml(ch) + "</div>";
-            }).join("") + "</div>",
-            '<div class="cg-typing-track">' + targetChars.map(function (_ch, index) {
-              var stateLabel = typedEvaluation[index] || (index < typed.length ? "correct" : "");
-              return '<div class="cg-letter-box' + (stateLabel ? " is-revealed" : "") + '" data-state="' + runtimeRoot.CSGameComponents.escapeHtml(stateLabel || "") + '" style="animation-delay:' + (index * 40) + 'ms">' + runtimeRoot.CSGameComponents.escapeHtml(typed[index] || "") + "</div>";
-            }).join("") + "</div>",
-            buildKeyboardStrip(round.target, typedEvaluation, typed || round.target, "cg-key-strip cg-key-strip--typing" + (Date.now() < uiState.typingErrorUntil ? " is-error" : "")),
-            '  <p class="cg-typing-cue">' + runtimeRoot.CSGameComponents.escapeHtml(round.fingerCue || "Look across the whole word before you type.") + "</p>",
-            (state.hintVisible ? '<div class="cg-clue-reveal">' + runtimeRoot.CSGameComponents.iconFor("hint") + '<span>' + runtimeRoot.CSGameComponents.escapeHtml(round.hint) + "</span></div>" : ""),
-            "</div>",
-            "</div>"
-          ].join(""),
-          controls: [
-            '<div class="cg-typing-entry">',
-            '  <input id="cg-word-typing-input" class="cg-input' + (Date.now() < uiState.typingErrorUntil ? " is-invalid" : "") + '" maxlength="' + String(round.target || "").length + '" value="' + runtimeRoot.CSGameComponents.escapeHtml(typed) + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type the word for the class…" : "Type the word…") + '" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Type the target word">',
-            '  <button class="cg-action cg-action-quiet" type="button" data-action="hint">Show Pattern Hint</button>',
-            '  <button class="cg-action cg-action-primary" type="button" data-submit="word-typing">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Check Class Word" : "Check Word") + '</button>',
-            '  <button class="cg-action cg-action-quiet" type="button" data-action="next-round">Next Word</button>',
-            '</div>'
-          ].join(""),
-          guide: roundGuide(game, state, round)
-        });
-      }
-
       return '<div class="cg-focus-panel">Round ready.</div>';
     }
 
@@ -1784,10 +2682,21 @@
             return;
           }
           resetRoundUi();
+          if (gameId === "word-typing") {
+            refreshTypingCourseContext();
+            persistTypingContextToEngine();
+            engine.updateSettings({ timerEnabled: false });
+          }
           engine.updateContext({
             subject: context.subject,
             gradeBand: context.gradeBand,
-            skillFocus: context.skillFocus
+            skillFocus: context.skillFocus,
+            contentMode: context.contentMode,
+            typingCourseMode: context.typingCourseMode,
+            currentTypingLessonId: context.currentTypingLessonId,
+            currentTypingLessonOrder: context.currentTypingLessonOrder,
+            typingUnlockedOrder: context.typingUnlockedOrder,
+            typingCompletedLessons: context.typingCompletedLessons
           });
           engine.selectGame(gameId);
         });
@@ -1804,6 +2713,9 @@
       Array.prototype.forEach.call(shell.querySelectorAll("[data-action]"), function (button) {
         button.addEventListener("click", function () {
           var action = button.getAttribute("data-action");
+          var currentState = engine.getState();
+          var inTypingHub = currentState.selectedGameId === "word-typing" && !params.typingPage;
+          var inTypingRuntime = currentState.selectedGameId === "word-typing" && params.typingPage;
           if (action === "toggle-teacher") {
             uiState.teacherPanelOpen = !uiState.teacherPanelOpen;
             render();
@@ -1816,6 +2728,82 @@
           if (action === "restart" || action === "repeat-game") {
             resetRoundUi();
             engine.restartGame();
+            return;
+          }
+          if (action === "start-typing-round") {
+            if (inTypingHub) {
+              runtimeRoot.location.href = typingQuestHref({
+                typingCourseMode: context.typingPlacementRequired ? "placement" : "lesson",
+                lessonId: context.currentTypingLessonId,
+                lessonOrder: context.currentTypingLessonOrder
+              });
+              return;
+            }
+            startTypingRound();
+            return;
+          }
+          if (action === "repeat-typing-lesson") {
+            if (inTypingHub) {
+              runtimeRoot.location.href = typingQuestHref({
+                typingCourseMode: context.typingPlacementRequired ? "placement" : "lesson",
+                lessonId: context.currentTypingLessonId,
+                lessonOrder: context.currentTypingLessonOrder
+              });
+              return;
+            }
+            restartTypingLesson(Number(currentState.round && currentState.round.lessonOrder || context.currentTypingLessonOrder || 1));
+            return;
+          }
+          if (action === "next-typing-check") {
+            uiState.typingStartedRoundId = "";
+            uiState.typingRoundStartedAt = 0;
+            uiState.typingLockedValue = "";
+            uiState.typingAcceptedChars = 0;
+            uiState.typingMistakes = 0;
+            uiState.lastSubmittedGuess = "";
+            engine.nextRound();
+            return;
+          }
+          if (action === "next-typing-lesson") {
+            if (inTypingHub) {
+              runtimeRoot.location.href = typingQuestHref({
+                typingCourseMode: context.typingPlacementRequired ? "placement" : "lesson",
+                lessonId: context.currentTypingLessonId,
+                lessonOrder: context.currentTypingLessonOrder
+              });
+              return;
+            }
+            restartTypingLesson(Number(context.currentTypingLessonOrder || typingProgress.currentLessonOrder || 1));
+            return;
+          }
+          if (action === "retake-typing-placement") {
+            typingProgress = defaultTypingProgress();
+            saveTypingProgress(context, typingProgress);
+            refreshTypingCourseContext();
+            persistTypingContextToEngine();
+            if (inTypingHub) {
+              runtimeRoot.location.href = typingQuestHref({ typingCourseMode: "placement" });
+              return;
+            }
+            resetRoundUi();
+            engine.updateSettings({ timerEnabled: false });
+            engine.restartGame();
+            return;
+          }
+          if (action === "jump-typing-lesson") {
+            var lessonOrder = Number(button.getAttribute("data-lesson-order") || 0);
+            if (!lessonOrder) return;
+            if (inTypingHub) {
+              var jumpLesson = typingLessonByOrder(lessonOrder);
+              if (!jumpLesson || lessonOrder > Number(context.typingUnlockedOrder || 1)) return;
+              runtimeRoot.location.href = typingQuestHref({
+                typingCourseMode: "lesson",
+                lessonId: jumpLesson.id,
+                lessonOrder: jumpLesson.lessonOrder
+              });
+              return;
+            }
+            restartTypingLesson(lessonOrder);
             return;
           }
           if (action === "next-round") {
@@ -1927,16 +2915,24 @@
       if (typingInput) {
         typingInput.addEventListener("input", function () {
           var round = engine.getState().round || {};
-          var target = String(round.target || "");
+          var target = String(round.target || "").toUpperCase();
           var previous = uiState.typingLockedValue || "";
-          var nextValue = normalizeTypingInput(typingInput.value, target);
-          if (String(typingInput.value || "").toUpperCase() !== nextValue && String(typingInput.value || "").length > nextValue.length) {
-            uiState.typingErrorUntil = Date.now() + 180;
+          var nextRaw = normalizeTypingInput(typingInput.value, target);
+          var nextValue = lockTypingProgress(nextRaw, target);
+          if (!uiState.typingRoundStartedAt) uiState.typingRoundStartedAt = Date.now();
+          if (nextRaw.length > previous.length) {
+            for (var i = previous.length; i < nextRaw.length; i += 1) {
+              if (nextRaw.charAt(i) === target.charAt(i)) {
+                if (nextRaw.charAt(i) !== " ") uiState.typingAcceptedChars += 1;
+              } else {
+                uiState.typingMistakes += 1;
+                uiState.typingErrorUntil = Date.now() + 180;
+              }
+            }
           }
-          if (nextValue.length < previous.length) nextValue = previous;
           uiState.typingLockedValue = nextValue;
           typingInput.value = nextValue;
-          paintTypingPreview(target.toUpperCase(), nextValue);
+          paintTypingPreview(round, nextValue, uiState);
         });
         typingInput.addEventListener("keydown", function (event) {
           if (event.key === "Enter") {
@@ -2002,8 +2998,13 @@
       var contentMode = document.getElementById("cg-content-mode");
       if (contentMode) contentMode.addEventListener("change", function () {
         context.contentMode = contentMode.value;
+        refreshTypingCourseContext();
         engine.updateContext({ contentMode: contentMode.value });
+        persistTypingContextToEngine();
         engine.updateSettings({ contentMode: contentMode.value });
+        if (engine.getState().selectedGameId === "word-typing" && String(contentMode.value || "").toLowerCase() === "lesson") {
+          engine.updateSettings({ timerEnabled: false });
+        }
         resetRoundUi();
         engine.restartGame();
       });
@@ -2208,7 +3209,7 @@
         var typedWord = document.getElementById("cg-word-typing-input");
         var typedValue = uiState.typingLockedValue || (typedWord ? typedWord.value : "");
         uiState.lastSubmittedGuess = String(typedValue || "").trim();
-        engine.submit({ value: typedValue });
+        engine.submit({ value: typedValue, stats: typingLiveMetrics(uiState, engine.getState().round || {}, typedValue) });
         return;
       }
       if (gameId === "word-connections") {
@@ -2240,6 +3241,16 @@
     }
 
     engine.subscribe(function (state) {
+      if (state.selectedGameId === "word-typing" && state.round && state.round.id !== uiState.typingRoundId) {
+        uiState.typingRoundId = state.round.id;
+        uiState.typingStartedRoundId = "";
+        uiState.typingLockedValue = "";
+        uiState.typingErrorUntil = 0;
+        uiState.typingRoundStartedAt = 0;
+        uiState.typingAcceptedChars = 0;
+        uiState.typingMistakes = 0;
+      }
+      syncTypingProgressFromState(state);
       applyMetricBumps(state);
       if (state.status === "round-summary") {
         var sessionKey = [
