@@ -70,7 +70,11 @@
       id: String(src.id || makeStudentId(name)),
       name: name,
       tier: sanitizeTier(src.tier),
+      grade: String(src.grade || src.gradeBand || ""),
+      gradeBand: String(src.gradeBand || src.grade || ""),
       focusSkill: String(src.focusSkill || "strategy").toLowerCase(),
+      focus: String(src.focus || src.focusSkill || ""),
+      tags: Array.isArray(src.tags) ? src.tags.slice() : [],
       notes: String(src.notes || ""),
       updatedAt: String(src.updatedAt || nowIso())
     };
@@ -285,12 +289,11 @@
     if (!shouldSeedDemo()) return loadCaseload();
     var seeded = normalizeCaseload({
       students: [
-        { id: "stu_ava", name: "Ava", tier: "tier3", focusSkill: "decoding" },
-        { id: "stu_leo", name: "Leo", tier: "tier2", focusSkill: "strategy" },
-        { id: "stu_mia", name: "Mia", tier: "tier2", focusSkill: "reasoning" },
-        { id: "stu_noah", name: "Noah", tier: "tier3", focusSkill: "fluency" },
-        { id: "stu_iris", name: "Iris", tier: "monitor", focusSkill: "fluency" },
-        { id: "stu_zane", name: "Zane", tier: "tier2", focusSkill: "strategy" }
+        { id: "demo-ava", name: "Ava M.", tier: "tier2", grade: "G3", gradeBand: "G3", focusSkill: "decoding", focus: "Reading", tags: ["iesp"] },
+        { id: "demo-liam", name: "Liam T.", tier: "tier3", grade: "G2", gradeBand: "G2", focusSkill: "phonics", focus: "Phonics", tags: ["ip"] },
+        { id: "demo-maya", name: "Maya R.", tier: "monitor", grade: "G3", gradeBand: "G3", focusSkill: "reading", focus: "Reading", tags: [] },
+        { id: "demo-noah", name: "Noah K.", tier: "tier2", grade: "G4", gradeBand: "G4", focusSkill: "numeracy", focus: "Numeracy", tags: [] },
+        { id: "demo-zoe", name: "Zoe W.", tier: "tier3", grade: "G1", gradeBand: "G1", focusSkill: "phonics", focus: "Phonics", tags: ["bip"] }
       ]
     });
     saveCaseload(seeded);

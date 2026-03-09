@@ -3,6 +3,7 @@
 
   var Evidence = window.CSEvidence || null;
   var SupportStore = window.CSSupportStore || null;
+  var CaseloadStore = window.CSCaseloadStore || null;
   var TeacherSelectors = window.CSTeacherSelectors || null;
   var TeacherIntelligence = window.CSTeacherIntelligence || null;
   var WeeklyInsightGenerator = window.CSWeeklyInsightGenerator || null;
@@ -97,9 +98,33 @@
   }
 
   function loadCaseload() {
-    state.caseload = TeacherSelectors && typeof TeacherSelectors.loadCaseload === "function"
-      ? TeacherSelectors.loadCaseload({ Evidence: Evidence })
+    var rows = TeacherSelectors && typeof TeacherSelectors.loadCaseload === "function"
+      ? TeacherSelectors.loadCaseload({ CaseloadStore: CaseloadStore, Evidence: Evidence })
       : [];
+    if ((!rows || !rows.length) && CaseloadStore && typeof CaseloadStore.loadCaseload === "function") {
+      var seeded = CaseloadStore.loadCaseload();
+      rows = seeded && Array.isArray(seeded.students) ? seeded.students.map(function (student) {
+        var src = student && typeof student === "object" ? student : {};
+        return {
+          id: String(src.id || ""),
+          name: String(src.name || src.id || "Student"),
+          grade: String(src.grade || src.gradeBand || ""),
+          gradeBand: String(src.gradeBand || src.grade || ""),
+          tier: String(src.tier || ""),
+          risk: "steady",
+          focus: String(src.focus || src.focusSkill || ""),
+          tags: Array.isArray(src.tags) ? src.tags.slice() : []
+        };
+      }) : [];
+    }
+    state.caseload = Array.isArray(rows) ? rows : [];
+  }
+
+  function ensureDemoCaseload() {
+    if (!CaseloadStore || typeof CaseloadStore.seedDemoCaseload !== "function") return;
+    if (state.caseload.length) return;
+    CaseloadStore.seedDemoCaseload();
+    loadCaseload();
   }
 
   function filteredCaseload() {
@@ -164,7 +189,7 @@
         '<a class="sp-student-link' + (student.id === state.studentId ? ' is-active' : '') + '" href="student-profile.html?student=' + encodeURIComponent(student.id) + '">',
         '  <strong>' + esc(student.name || "Student") + '</strong>',
         '  <span>' + esc([student.gradeBand || student.grade || "", summary.focus || student.focus || "Support profile"].filter(Boolean).join(" · ")) + '</span>',
-        '  <span>' + esc((summary.nextMove && summary.nextMove.line) || "Open profile") + '</span>',
+        '  <span>' + esc(summary && summary.risk ? ("Status: " + summary.risk) : "Open profile") + '</span>',
         '</a>'
       ].join("");
     }).join("") : '<p class="sp-muted">No students match this search yet.</p>';
@@ -176,8 +201,11 @@
     var reminders = StudentProfileStore && typeof StudentProfileStore.listReminders === "function"
       ? StudentProfileStore.listReminders(student.id)
       : [];
+    var evidenceCount = (SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
+      ? SupportStore.getRecentEvidencePoints(student.id, 30, 40)
+      : []).length || 0;
     return [
-      '<div>',
+      '<div class="sp-hero-main">',
       '  <p class="sp-kicker">Dedicated support record</p>',
       '  <h1>' + esc(student.name || "Student") + '</h1>',
       '  <p class="sp-subline">' + esc([
@@ -196,11 +224,15 @@
       }).join("") +
       '</div>',
       '</div>',
-      '<div>',
+      '<div class="sp-hero-side">',
       '  <div class="sp-meta-grid">',
       '    <div class="sp-meta-card"><span>Last session</span><strong>' + esc(summary && summary.lastSession ? relativeDate(summary.lastSession.timestamp) : "No sessions yet") + '</strong></div>',
-      '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String((SupportStore && typeof SupportStore.getRecentEvidencePoints === "function" ? SupportStore.getRecentEvidencePoints(student.id, 30, 40) : []).length || 0)) + '</strong></div>',
+      '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String(evidenceCount)) + '</strong></div>',
       '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect baseline") : "Collect baseline") + '</strong></div>',
+      '  </div>',
+      '  <div class="sp-evidence-story">',
+      '    <p class="sp-kicker">Momentum</p>',
+      '    <div id="sp-hero-evidence-visual"></div>',
       '  </div>',
       '  <div class="sp-reminder-list">' + (reminders.length ? reminders.map(function (row) {
         return '<span class="sp-reminder" data-tone="' + esc(row.tone || "info") + '">' + esc(row.label) + '</span>';
@@ -213,10 +245,11 @@
     var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
     var interventions = Array.isArray(support.interventions) ? support.interventions : [];
     el.supportSnapshot.innerHTML = [
+      '<p class="sp-kicker">Support Snapshot</p>',
       '<div class="sp-list">',
-      '<div class="sp-list-item"><strong>Current priority</strong><p>' + esc((summary && summary.nextMove && summary.nextMove.line) || "Priority still forming from available support data.") + '</p></div>',
-      '<div class="sp-list-item"><strong>Top needs</strong><p>' + esc(needs.length ? needs.slice(0, 3).map(function (row) { return row.label || row.key || row.skillId || "Need"; }).join(" • ") : "No need profile captured yet.") + '</p></div>',
-      '<div class="sp-list-item"><strong>Intervention history</strong><p>' + esc(interventions.length ? interventions.slice(0, 3).map(function (row) { return (row.domain || row.tier || "Support") + ": " + (row.strategy || row.focus || "Recorded"); }).join(" • ") : "No intervention history recorded yet.") + '</p></div>',
+      '<div class="sp-list-item"><strong>Current move</strong><p>' + esc((summary && summary.nextMove && summary.nextMove.line) || "Priority still forming from available support data.") + '</p></div>',
+      '<div class="sp-list-item"><strong>Needs surfacing</strong><p>' + esc(needs.length ? needs.slice(0, 3).map(function (row) { return row.label || row.key || row.skillId || "Need"; }).join(" • ") : "No need profile captured yet.") + '</p></div>',
+      '<div class="sp-list-item"><strong>Recent support</strong><p>' + esc(interventions.length ? interventions.slice(0, 2).map(function (row) { return (row.domain || row.tier || "Support") + ": " + (row.strategy || row.focus || "Recorded"); }).join(" • ") : "No intervention history recorded yet.") + '</p></div>',
       '</div>'
     ].join("");
   }
@@ -225,9 +258,10 @@
     var goals = Array.isArray(support.goals) ? support.goals : [];
     var accs = Array.isArray(support.accommodations) ? support.accommodations : [];
     el.goalsPanel.innerHTML = [
+      '<p class="sp-kicker">Goals & Accommodations</p>',
       '<div class="sp-list">',
-      '<div class="sp-list-item"><strong>Goals</strong><p>' + esc(goals.length ? goals.slice(0, 5).map(function (row) { return row.skill || row.domain || row.target || "Goal"; }).join(" • ") : "No goals recorded yet. Use ghost guidance only until real goals are saved.") + '</p></div>',
-      '<div class="sp-list-item"><strong>Accommodations</strong><p>' + esc(accs.length ? accs.slice(0, 5).map(function (row) { return row.title || row.whenToUse || "Accommodation"; }).join(" • ") : "No accommodations logged yet.") + '</p></div>',
+      '<div class="sp-list-item"><strong>Goals in play</strong><p>' + esc(goals.length ? goals.slice(0, 4).map(function (row) { return row.skill || row.domain || row.target || "Goal"; }).join(" • ") : "No goals recorded yet.") + '</p></div>',
+      '<div class="sp-list-item"><strong>Supports on deck</strong><p>' + esc(accs.length ? accs.slice(0, 4).map(function (row) { return row.title || row.whenToUse || "Accommodation"; }).join(" • ") : "No accommodations logged yet.") + '</p></div>',
       '</div>'
     ].join("");
   }
@@ -237,25 +271,33 @@
       ? SupportStore.getRecentEvidencePoints(studentId, 30, 8)
       : [];
     var chips = summary && Array.isArray(summary.evidenceChips) ? summary.evidenceChips : [];
-    el.evidencePanel.innerHTML = evidenceRows.length ? (
-      '<div class="sp-timeline">' + evidenceRows.map(function (row) {
-        return '<div class="sp-timeline-item"><strong>' + esc(row.module || "Support evidence") + '</strong><p>' + esc(relativeDate(row.createdAt) + " · " + ((row.chips || []).join(" • ") || "Evidence logged")) + '</p></div>';
-      }).join("") + '</div>'
-    ) : (
-      '<div class="sp-list"><div class="sp-list-item"><strong>Recent evidence</strong><p>' + esc(chips.length ? chips.map(function (chip) { return chip.label + ": " + chip.value; }).join(" • ") : "No recent evidence points yet. As soon as support data is logged, the placeholder disappears.") + '</p></div></div>'
-    );
+    var series = evidenceRows.length ? evidenceRows.map(function (row, index) {
+      return 30 + Math.round((((index + 1) / evidenceRows.length) * 48));
+    }) : [22, 28, 18, 34, 26, 40, 22, 30];
+    el.evidencePanel.innerHTML = [
+      '<p class="sp-kicker">Evidence Pulse</p>',
+      '<div class="sp-evidence-story">',
+      '  <div class="sp-signal-bar">' + series.map(function (value) {
+        return '<span style="height:' + value + 'px"></span>';
+      }).join("") + '</div>',
+      '  <div class="sp-signal-caption"><span>' + esc(evidenceRows.length ? "Recent data flowing" : "Baseline still thin") + '</span><span>' + esc(evidenceRows.length ? (evidenceRows.length + " points") : "0 points") + '</span></div>',
+      '</div>',
+      '<div class="sp-list">',
+      '<div class="sp-list-item"><strong>What changed lately</strong><p>' + esc(evidenceRows.length ? evidenceRows.slice(0, 3).map(function (row) { return (row.module || "Support") + " · " + relativeDate(row.createdAt); }).join(" • ") : (chips.length ? chips.map(function (chip) { return chip.label + ": " + chip.value; }).join(" • ") : "No recent evidence points yet.")) + '</p></div>',
+      '</div>'
+    ].join("");
   }
 
   function renderWeekly(weekly) {
     if (!weekly) {
-      el.weeklyPanel.innerHTML = '<div class="sp-list-item"><strong>Weekly summary</strong><p>No weekly insight generated yet.</p></div>';
+      el.weeklyPanel.innerHTML = '<div class="sp-weekly-card"><strong>Weekly summary</strong><p>No weekly insight generated yet.</p></div>';
       return;
     }
     el.weeklyPanel.innerHTML = [
       '<div class="sp-list">',
-      '<div class="sp-list-item"><strong>Strengths</strong><p>' + esc((weekly.strengths || []).join(" • ")) + '</p></div>',
-      '<div class="sp-list-item"><strong>Growth focus</strong><p>' + esc((weekly.growthFocus || []).join(" • ")) + '</p></div>',
-      '<div class="sp-list-item"><strong>Recent activities</strong><p>' + esc((weekly.recentActivities || []).join(" • ")) + '</p></div>',
+      '<div class="sp-weekly-card"><strong>Strengths</strong><p>' + esc((weekly.strengths || []).join(" • ")) + '</p></div>',
+      '<div class="sp-weekly-card"><strong>Growth focus</strong><p>' + esc((weekly.growthFocus || []).join(" • ")) + '</p></div>',
+      '<div class="sp-weekly-card"><strong>Recent activities</strong><p>' + esc((weekly.recentActivities || []).join(" • ")) + '</p></div>',
       '</div>'
     ].join("");
   }
@@ -302,6 +344,23 @@
     ].join("");
   }
 
+  function renderHeroEvidence(studentId) {
+    var target = document.getElementById("sp-hero-evidence-visual");
+    if (!target) return;
+    var evidenceRows = SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
+      ? SupportStore.getRecentEvidencePoints(studentId, 30, 8)
+      : [];
+    var bars = evidenceRows.length ? evidenceRows.map(function (_row, index) {
+      return 24 + (index * 8);
+    }) : [18, 26, 20, 34, 28, 42, 36, 46];
+    target.innerHTML = [
+      '<div class="sp-signal-bar">' + bars.map(function (value) {
+        return '<span style="height:' + value + 'px"></span>';
+      }).join("") + '</div>',
+      '<div class="sp-signal-caption"><span>' + esc(evidenceRows.length ? "More signal than noise" : "Collect first signal") + '</span><span>' + esc(evidenceRows.length ? "last 30 days" : "start with one check") + '</span></div>'
+    ].join("");
+  }
+
   function render() {
     renderStudentList();
     var student = state.studentId ? getStudent(state.studentId) : null;
@@ -319,6 +378,7 @@
     el.empty.classList.add("hidden");
     el.content.classList.remove("hidden");
     el.hero.innerHTML = buildHero(student, support, summary, snapshot, record);
+    renderHeroEvidence(student.id);
     renderSnapshot(student, support, summary, snapshot);
     renderGoals(support);
     renderEvidence(student.id, summary);
@@ -416,6 +476,7 @@
 
   function init() {
     loadCaseload();
+    ensureDemoCaseload();
     bindSearch();
     bindForms();
     state.studentId = readStudentId() || (state.caseload[0] && state.caseload[0].id) || "";

@@ -9,7 +9,7 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260307d">
   <link rel="stylesheet" href="./style/typography.css?v=20260307d">
-  <link rel="stylesheet" href="./student-profile.css?v=20260307g">
+  <link rel="stylesheet" href="./student-profile.css?v=20260309a">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260308a">
 </head>
 <body class="sp-page">
@@ -36,7 +36,7 @@
           <p class="sp-kicker">Caseload</p>
           <div id="sp-student-list" class="sp-student-list"></div>
         </div>
-        <div class="sp-panel sp-panel-ghost">
+        <div class="sp-panel sp-panel-ghost sp-search-guide">
           <p class="sp-kicker">Search Guide</p>
           <p id="sp-search-ghost" class="sp-ghost-line" aria-live="polite">Try: Maya R.</p>
         </div>
@@ -51,41 +51,31 @@
 
         <div id="sp-content" class="sp-content hidden">
           <section id="sp-hero" class="sp-hero"></section>
-          <section class="sp-section">
-            <div class="sp-section-head">
-              <div>
-                <p class="sp-kicker">Profile Overview</p>
-                <h2 class="sp-section-title">Current support, goals, and evidence in one view.</h2>
+          <section class="sp-storyboard">
+            <article class="sp-panel sp-visual-panel">
+              <div class="sp-section-head">
+                <div>
+                  <p class="sp-kicker">At A Glance</p>
+                  <h2 class="sp-section-title">See the story before editing the record.</h2>
+                </div>
               </div>
-            </div>
-            <div class="sp-subgrid sp-subgrid-3">
-              <article class="sp-panel">
-                <p class="sp-kicker">Support Snapshot</p>
-                <div id="sp-support-snapshot"></div>
-              </article>
-              <article class="sp-panel">
-                <p class="sp-kicker">Goals & Accommodations</p>
-                <div id="sp-goals-panel"></div>
-              </article>
-              <article class="sp-panel">
-                <p class="sp-kicker">Evidence Timeline</p>
-                <div id="sp-evidence-panel"></div>
-              </article>
-            </div>
+              <div class="sp-visual-grid">
+                <div id="sp-support-snapshot" class="sp-visual-card"></div>
+                <div id="sp-goals-panel" class="sp-visual-card"></div>
+                <div id="sp-evidence-panel" class="sp-visual-card"></div>
+              </div>
+            </article>
           </section>
 
-          <section class="sp-section">
-            <div class="sp-section-head">
-              <div>
-                <p class="sp-kicker">Behavior Support</p>
-                <h2 class="sp-section-title">Capture function-based data and keep the support plan current.</h2>
-              </div>
-            </div>
-            <div class="sp-subgrid sp-subgrid-2">
-              <article class="sp-panel">
-              <p class="sp-kicker">FBA Quick Log</p>
-              <p class="sp-panel-intro">Capture objective ABC data, context, and a working function hypothesis.</p>
-              <form id="sp-fba-form" class="sp-form">
+          <section class="sp-workbench">
+            <div class="sp-workbench-main">
+              <details class="sp-panel sp-disclosure">
+                <summary>
+                  <span class="sp-kicker">Behavior Support</span>
+                  <strong>FBA Quick Log</strong>
+                  <small>Capture one clear incident, not a long report.</small>
+                </summary>
+                <form id="sp-fba-form" class="sp-form">
                 <div class="sp-form-grid">
                   <label><span>Routine / time</span><input name="when" type="text" placeholder="Transition to writing"></label>
                   <label><span>Setting</span><input name="setting" type="text" placeholder="Small group table"></label>
@@ -127,11 +117,14 @@
                 <button class="sp-btn sp-btn-primary" type="submit">Save FBA Entry</button>
               </form>
               <div id="sp-fba-list" class="sp-stack"></div>
-            </article>
-            <article class="sp-panel">
-              <p class="sp-kicker">BIP Quick Plan</p>
-              <p class="sp-panel-intro">Use a function-based plan: prevent, teach, respond, reinforce, and monitor.</p>
-              <form id="sp-bip-form" class="sp-form">
+              </details>
+              <details class="sp-panel sp-disclosure">
+                <summary>
+                  <span class="sp-kicker">Plan</span>
+                  <strong>BIP Quick Plan</strong>
+                  <small>Prevent, teach, respond, reinforce, review.</small>
+                </summary>
+                <form id="sp-bip-form" class="sp-form">
                 <div class="sp-form-grid">
                   <label class="sp-span-2"><span>Target behavior</span><input name="targetBehavior" type="text" placeholder="Leaves seat during writing"></label>
                   <label class="sp-span-2"><span>Hypothesized function</span><input name="hypothesizedFunction" type="text" placeholder="Escape difficult writing task"></label>
@@ -146,25 +139,20 @@
                 <button class="sp-btn sp-btn-primary" type="submit">Save BIP Plan</button>
               </form>
               <div id="sp-bip-view"></div>
-            </article>
+              </details>
             </div>
-          </section>
-
-          <section class="sp-section">
-            <div class="sp-section-head">
-              <div>
-                <p class="sp-kicker">Communication & Next Steps</p>
-                <h2 class="sp-section-title">Weekly drafts, stakeholder check-ins, and optional files stay tied to this student.</h2>
-              </div>
-            </div>
-            <div class="sp-subgrid sp-subgrid-3">
+            <aside class="sp-workbench-side">
               <article class="sp-panel">
-                <p class="sp-kicker">Weekly Insight Draft</p>
+                <p class="sp-kicker">Weekly Insight</p>
                 <div id="sp-weekly-panel"></div>
               </article>
-              <article class="sp-panel">
-              <p class="sp-kicker">Stakeholder Check-ins</p>
-              <form id="sp-checkin-form" class="sp-form">
+              <details class="sp-panel sp-disclosure">
+                <summary>
+                  <span class="sp-kicker">Communication</span>
+                  <strong>Stakeholder Check-ins</strong>
+                  <small>Teacher, family, student, specialist.</small>
+                </summary>
+                <form id="sp-checkin-form" class="sp-form">
                 <div class="sp-form-grid">
                   <label><span>Role</span>
                     <select name="role">
@@ -181,12 +169,12 @@
                 <button class="sp-btn sp-btn-primary" type="submit">Save Check-in</button>
               </form>
               <div id="sp-checkin-list" class="sp-stack"></div>
-            </article>
-            <article class="sp-panel">
-              <p class="sp-kicker">Calendar & Files</p>
-              <div id="sp-google-panel"></div>
-            </article>
-            </div>
+              </details>
+              <article class="sp-panel">
+                <p class="sp-kicker">Calendar & Files</p>
+                <div id="sp-google-panel"></div>
+              </article>
+            </aside>
           </section>
         </div>
       </section>
@@ -197,6 +185,7 @@
   <script src="./js/google-auth-config.js?v=20260307d"></script>
   <script src="./js/auth/google-auth.js?v=20260307d"></script>
   <script src="./js/auth/google-workspace.js?v=20260307d"></script>
+  <script src="./js/caseload-store.js?v=20260309a"></script>
   <script src="./js/evidence-store.js?v=20260307d"></script>
   <script src="./js/support-store.js?v=20260307d"></script>
   <script src="./js/teacher/teacher-selectors.js?v=20260307d"></script>
@@ -204,7 +193,7 @@
   <script src="./js/weekly-insight-generator.js?v=20260307d"></script>
   <script src="./js/student-profile-store.js?v=20260307g"></script>
   <script src="./js/backup-manager.js?v=20260308a"></script>
-  <script src="./student-profile.js?v=20260307g"></script>
+  <script src="./student-profile.js?v=20260309a"></script>
   <script>window.CSBackupManager&&window.CSBackupManager.init&&window.CSBackupManager.init();</script>
 </body>
 </html>
