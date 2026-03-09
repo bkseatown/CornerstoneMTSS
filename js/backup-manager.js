@@ -7,6 +7,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function createBackupManager() {
   "use strict";
 
+  var root = typeof globalThis !== "undefined" ? globalThis : window;
+
   var META_KEY = "cs.backup.meta.v1";
   var VERSION = 1;
   var REMINDER_DAYS = 14;

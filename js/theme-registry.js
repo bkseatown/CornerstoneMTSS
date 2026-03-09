@@ -13,7 +13,7 @@
     Object.freeze({ id: 'huskies', label: '🐾 Huskies', family: 'sports' }),
     Object.freeze({ id: 'superman', label: '🦸 Superman', family: 'inspired' }),
     Object.freeze({ id: 'mario', label: '🍄 Mushroom Sprint', family: 'inspired' }),
-    Object.freeze({ id: 'zelda', label: '🗡️ Forest Relic', family: 'inspired' }),
+    Object.freeze({ id: 'zelda', label: '🗡️ Hero of Hyrule', family: 'inspired' }),
     Object.freeze({ id: 'amongus', label: '🚀 Cosmic Crew', family: 'inspired' }),
     Object.freeze({ id: 'rainbowfriends', label: '🌈 Neon Squad', family: 'inspired' }),
     Object.freeze({ id: 'minecraft', label: '⛏️ Minecraft', family: 'inspired' }),
@@ -22,7 +22,7 @@
     Object.freeze({ id: 'harleyquinn', label: '🎨 Pop Duo', family: 'inspired' }),
     Object.freeze({ id: 'kuromi', label: '🖤 Kuromi', family: 'inspired' }),
     Object.freeze({ id: 'poppink', label: '💖 Pop Pink', family: 'inspired' }),
-    Object.freeze({ id: 'harrypotter', label: '🪄 Wizard House', family: 'inspired' }),
+    Object.freeze({ id: 'harrypotter', label: '🪄 Hogwarts House', family: 'inspired' }),
     Object.freeze({ id: 'demonhunter', label: '🌸 Demon Hunter', family: 'inspired' }),
     Object.freeze({ id: 'dark', label: '🌙 Dark', family: 'dark' }),
     Object.freeze({ id: 'matrix', label: '💻 Matrix', family: 'dark' })

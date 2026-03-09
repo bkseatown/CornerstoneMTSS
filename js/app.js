@@ -557,38 +557,25 @@
   const ALLOWED_VOICE_MODES = new Set(['recorded', 'auto', 'device', 'off']);
   const MUSIC_LABELS = Object.freeze({
     auto: 'Auto',
-    deepfocus: 'Deep Focus',
-    classicalbeats: 'Classical Beats',
-    nerdcore: 'Nerdcore Instrumental',
-    focus: 'Focus Flow',
-    chill: 'Chill',
-    lofi: 'Lo-fi',
-    coffee: 'Coffeehouse',
-    fantasy: 'Fantasy',
-    scifi: 'Sci-fi',
-    upbeat: 'Upbeat',
-    arcade: '8-bit Arcade',
-    sports: 'Sports Hype',
-    stealth: 'Space Mystery',
-    team: 'Team Game Hype',
+    deepfocus: 'Lo-fi Focus',
+    classicalbeats: 'Coffeehouse Groove',
+    nerdcore: 'Timed Mode Boost',
+    focus: 'Chill Beats',
+    chill: 'Chill Beats',
+    lofi: 'Lo-fi Focus',
+    coffee: 'Coffeehouse Groove',
+    fantasy: 'Lo-fi Focus',
+    scifi: 'Timed Mode Boost',
+    upbeat: 'Timed Mode Boost',
+    arcade: 'Timed Mode Boost',
+    sports: 'Timed Mode Boost',
+    stealth: 'Lo-fi Focus',
+    team: 'Timed Mode Boost',
     off: 'Off'
   });
-  const QUICK_MUSIC_VIBE_ORDER = Object.freeze([
-    'deepfocus',
-    'classicalbeats',
-    'nerdcore',
-    'focus',
-    'chill',
-    'lofi',
-    'coffee',
-    'fantasy',
-    'scifi',
-    'upbeat',
-    'arcade',
-    'sports',
-    'stealth',
-    'team'
-  ]);
+  const CURATED_MUSIC_MODE_ORDER = Object.freeze(['chill', 'lofi', 'coffee', 'team']);
+  const CURATED_MUSIC_MODES = new Set(['off', 'auto', ...CURATED_MUSIC_MODE_ORDER]);
+  const QUICK_MUSIC_VIBE_ORDER = CURATED_MUSIC_MODE_ORDER;
   const DEFAULT_PREFS = Object.freeze({
     focus: 'all',
     lessonPack: 'custom',
@@ -597,6 +584,7 @@
     length: '5',
     guesses: '6',
     caseMode: 'lower',
+    smartKeyLock: 'off',
     hint: 'on',
     playStyle: 'detective',
     confidenceCoaching: 'off',
@@ -613,18 +601,19 @@
     voicePractice: 'optional',
     teamMode: 'off',
     teamCount: '2',
-    turnTimer: 'off',
+    teamSet: 'mascots',
+    turnTimer: '60',
     probeRounds: '3',
     reportCompact: 'off',
     assessmentLock: 'off',
     boostPopups: 'off',
-    starterWords: 'after_3',
-    music: 'off',
+    starterWords: 'on_demand',
+    music: 'auto',
     musicVol: '0.50',
     voice: 'recorded',
-    themeSave: 'off',
+    themeSave: 'on',
     boardStyle: 'card',
-    keyStyle: 'bubble',
+    keyStyle: 'classic',
     keyboardLayout: 'standard',
     chunkTabs: 'auto',
     atmosphere: 'minimal',
@@ -669,19 +658,20 @@
     alphabet: 'Alphabet'
   });
   const STARTER_WORD_SUPPORT_MODES = new Set(['off', 'on_demand', 'after_2', 'after_3']);
+  const SUPPORT_PROMPT_PREF_KEY = 'wq_v2_support_prompt_auto_v1';
   const ALLOWED_UI_SKINS = new Set(['premium', 'classic']);
   const KEYBOARD_PRESET_CONFIG = Object.freeze({
-    'qwerty-bubble': Object.freeze({
-      id: 'qwerty-bubble',
+    'qwerty-classic': Object.freeze({
+      id: 'qwerty-classic',
       layout: 'standard',
-      keyStyle: 'bubble',
-      label: 'QWERTY · Puffy Rounded'
+      keyStyle: 'classic',
+      label: 'QWERTY · Classroom'
     }),
-    'alphabet-bubble': Object.freeze({
-      id: 'alphabet-bubble',
+    'alphabet-classic': Object.freeze({
+      id: 'alphabet-classic',
       layout: 'alphabet',
-      keyStyle: 'bubble',
-      label: 'Alphabet · Puffy Rounded'
+      keyStyle: 'classic',
+      label: 'Alphabet · Classroom'
     })
   });
 
@@ -698,6 +688,30 @@
     if (raw === 'auto2' || raw === 'after2') return 'after_2';
     if (raw === 'auto3' || raw === 'after3') return 'after_3';
     return STARTER_WORD_SUPPORT_MODES.has(raw) ? raw : DEFAULT_PREFS.starterWords;
+  }
+
+  function normalizeCuratedMusicMode(mode) {
+    const normalized = normalizeMusicMode(mode);
+    if (CURATED_MUSIC_MODES.has(normalized)) return normalized;
+    if (normalized === 'deepfocus' || normalized === 'fantasy' || normalized === 'stealth') return 'lofi';
+    if (normalized === 'classicalbeats') return 'coffee';
+    if (normalized === 'focus') return 'chill';
+    if (normalized === 'nerdcore' || normalized === 'scifi' || normalized === 'upbeat' || normalized === 'arcade' || normalized === 'sports') return 'team';
+    return DEFAULT_PREFS.music;
+  }
+
+  function getSupportPromptMode() {
+    try {
+      return localStorage.getItem(SUPPORT_PROMPT_PREF_KEY) === 'off' ? 'off' : 'on';
+    } catch {
+      return 'on';
+    }
+  }
+
+  function setSupportPromptMode(mode) {
+    try {
+      localStorage.setItem(SUPPORT_PROMPT_PREF_KEY, mode === 'off' ? 'off' : 'on');
+    } catch {}
   }
 
   function normalizeUiSkin(mode) {
@@ -727,13 +741,13 @@
   function normalizeKeyboardPresetId(mode) {
     const raw = String(mode || '').trim().toLowerCase();
     if (Object.prototype.hasOwnProperty.call(KEYBOARD_PRESET_CONFIG, raw)) return raw;
-    return 'qwerty-bubble';
+    return 'qwerty-classic';
   }
 
   function deriveKeyboardPresetId(layoutMode, keyStyleMode) {
     const layout = normalizeKeyboardLayout(layoutMode);
     const family = layout === 'alphabet' ? 'alphabet' : 'qwerty';
-    return normalizeKeyboardPresetId(`${family}-bubble`);
+    return normalizeKeyboardPresetId(`${family}-classic`);
   }
 
   function detectPreferredKeyboardLayout() {
@@ -772,6 +786,7 @@
   var focusSupportUnlockAt = 0;
   var focusSupportUnlockTimer = 0;
   var focusSupportUnlockedByMiss = false;
+  var currentRoundSupportPromptShown = false;
 
   // One-time baseline migration so existing installs land on your intended defaults.
   if (localStorage.getItem(PREF_MIGRATION_KEY) !== 'done') {
@@ -784,6 +799,7 @@
     if (prefs.lessonPack === undefined) prefs.lessonPack = DEFAULT_PREFS.lessonPack;
     if (prefs.lessonTarget === undefined) prefs.lessonTarget = DEFAULT_PREFS.lessonTarget;
     if (prefs.grade === undefined) prefs.grade = DEFAULT_PREFS.grade;
+    if (prefs.smartKeyLock === undefined) prefs.smartKeyLock = DEFAULT_PREFS.smartKeyLock;
     if (prefs.themeSave === undefined) prefs.themeSave = DEFAULT_PREFS.themeSave;
     if (prefs.keyboardLayout === undefined) prefs.keyboardLayout = preferredInitialKeyboardLayout;
     if (prefs.boardStyle === undefined) {
@@ -921,7 +937,7 @@
     prefs.keyboardLayout = DEFAULT_PREFS.keyboardLayout;
     savePrefs(prefs);
   }
-  if (prefs.keyStyle !== 'bubble') {
+  if (!ALLOWED_KEY_STYLES.has(String(prefs.keyStyle || '').toLowerCase()) || prefs.keyStyle === 'bubble') {
     prefs.keyStyle = DEFAULT_PREFS.keyStyle;
     savePrefs(prefs);
   }
@@ -2641,7 +2657,12 @@
     'r_controlled',
     'floss'
   ]);
-  const TEAM_LABELS = Object.freeze(['Team A', 'Team B', 'Team C', 'Team D']);
+  const TEAM_LABEL_SETS = Object.freeze({
+    mascots: Object.freeze(['Foxes', 'Owls', 'Sharks', 'Dragons']),
+    colors: Object.freeze(['Blue Team', 'Gold Team', 'Red Team', 'Green Team']),
+    space: Object.freeze(['Comets', 'Rockets', 'Nova Crew', 'Star Wings']),
+    wizards: Object.freeze(['Lions', 'Eagles', 'Badgers', 'Serpents'])
+  });
 
   function getThemeFallback() {
     return 'seahawks';
@@ -2793,6 +2814,11 @@
     return '60';
   }
 
+  function normalizeTeamSet(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return TEAM_LABEL_SETS[normalized] ? normalized : DEFAULT_PREFS.teamSet;
+  }
+
   function normalizeReportCompactMode(value) {
     return String(value || '').trim().toLowerCase() === 'on' ? 'on' : 'off';
   }
@@ -2830,6 +2856,63 @@
     }
     status.textContent = `Fixed music vibe: ${activeLabel}.`;
     syncQuickMusicDock(selectedMode, activeMode);
+  }
+
+  function syncMediaSessionControls(selectedMode, activeMode) {
+    if (!('mediaSession' in navigator)) return;
+    const selected = normalizeMusicMode(selectedMode || _el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
+    const active = normalizeMusicMode(activeMode || (selected === 'auto'
+      ? resolveAutoMusicMode(normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()))
+      : selected));
+    const playbackState = selected === 'off'
+      ? 'paused'
+      : (musicController && typeof musicController.getPlaybackState === 'function'
+        ? musicController.getPlaybackState()
+        : 'playing');
+    const vibeLabel = MUSIC_LABELS[active] || active;
+    try {
+      navigator.mediaSession.playbackState = playbackState === 'paused' ? 'paused' : 'playing';
+    } catch {}
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: `Word Quest ${vibeLabel}`,
+        artist: 'Cornerstone MTSS',
+        album: 'Word Quest'
+      });
+    } catch {}
+  }
+
+  function installMediaSessionControls() {
+    if (!('mediaSession' in navigator)) return;
+    const safeBind = (action, handler) => {
+      try { navigator.mediaSession.setActionHandler(action, handler); } catch {}
+    };
+    safeBind('play', () => {
+      const selected = normalizeMusicMode(_el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
+      if (selected === 'off') {
+        const next = getPreferredMusicOnMode();
+        applyMusicModeFromQuick(next, { toast: false });
+        return;
+      }
+      if (musicController && typeof musicController.resume === 'function') {
+        musicController.resume();
+      } else {
+        syncMusicForTheme({ toast: false });
+      }
+      syncMediaSessionControls();
+    });
+    safeBind('pause', () => {
+      if (musicController && typeof musicController.pause === 'function') {
+        musicController.pause();
+      }
+      syncMediaSessionControls();
+    });
+    safeBind('nexttrack', () => {
+      stepMusicVibe(1);
+    });
+    safeBind('previoustrack', () => {
+      stepMusicVibe(-1);
+    });
   }
 
   function syncQuickMusicDock(selectedMode, activeMode) {
@@ -2970,6 +3053,7 @@
     const effective = selected === 'auto' ? resolveAutoMusicMode(activeTheme) : selected;
     if (musicController) musicController.setMode(effective);
     updateMusicStatus(selected, effective);
+    syncMediaSessionControls(selected, effective);
     const signature = `${selected}::${effective}`;
     if (telemetryLastMusicSignature !== signature) {
       telemetryLastMusicSignature = signature;
@@ -3004,12 +3088,14 @@
     's-voice-task': 'voicePractice',
     's-team-mode': 'teamMode',
     's-team-count': 'teamCount',
+    's-team-set': 'teamSet',
     's-turn-timer': 'turnTimer',
     's-probe-rounds': 'probeRounds',
     's-boost-popups': 'boostPopups',
     's-starter-words': 'starterWords',
     's-grade': 'grade', 's-length': 'length',
     's-guesses': 'guesses', 's-case': 'caseMode', 's-hint': 'hint',
+    's-smart-key-lock': 'smartKeyLock',
     's-dupe': 'dupe', 's-confetti': 'confetti',
     's-projector': 'projector', 's-motion': 'motion'
   };
@@ -3050,7 +3136,7 @@
   }
   const musicSelect = _el('s-music');
   if (musicSelect) {
-    const selectedMusic = normalizeMusicMode(prefs.music || DEFAULT_PREFS.music);
+    const selectedMusic = normalizeCuratedMusicMode(prefs.music || DEFAULT_PREFS.music);
     musicSelect.value = selectedMusic;
     if (prefs.music !== selectedMusic) setPref('music', selectedMusic);
   }
@@ -3090,6 +3176,12 @@
     const selectedTeamCount = normalizeTeamCount(prefs.teamCount || DEFAULT_PREFS.teamCount);
     teamCountSelect.value = selectedTeamCount;
     if (prefs.teamCount !== selectedTeamCount) setPref('teamCount', selectedTeamCount);
+  }
+  const teamSetSelect = _el('s-team-set');
+  if (teamSetSelect) {
+    const selectedTeamSet = normalizeTeamSet(prefs.teamSet || DEFAULT_PREFS.teamSet);
+    teamSetSelect.value = selectedTeamSet;
+    if (prefs.teamSet !== selectedTeamSet) setPref('teamSet', selectedTeamSet);
   }
   const turnTimerSelect = _el('s-turn-timer');
   if (turnTimerSelect) {
@@ -3152,6 +3244,7 @@
   syncCaseToggleUI();
   updateWilsonModeToggle();
   syncHintToggleUI();
+  syncQuickSetupControls();
   applyReportCompactMode(prefs.reportCompact || DEFAULT_PREFS.reportCompact, { persist: false });
 
   // Voice picker populated after brief delay
@@ -3401,23 +3494,24 @@
     const toggle = _el('play-style-toggle');
     if (!toggle) return;
     const listening = mode === 'listening';
+    const gradeLabel = formatGradeBandInlineLabel(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade);
+    const themeLabel = getThemeDisplayLabel(document.documentElement.getAttribute('data-theme'));
     toggle.innerHTML = `
-      <span class="play-style-toggle-label">Game Mode</span>
+      <span class="play-style-toggle-label">Quick Setup</span>
       <span class="play-style-toggle-pills" aria-hidden="true">
-        <span class="play-style-pill ${listening ? '' : 'is-active'}"><span class="pill-emoji" aria-hidden="true">🕵️</span>Detective</span>
-        <span class="play-style-pill ${listening ? 'is-active' : ''}"><span class="pill-emoji" aria-hidden="true">📝</span>Spelling</span>
+        <span class="play-style-pill is-meta">${gradeLabel}</span>
+        <span class="play-style-pill ${listening ? 'is-active' : ''}">${listening ? 'Listen & Spell' : 'Guess & Check'}</span>
+        <span class="play-style-pill is-meta">${themeLabel}</span>
       </span>
     `;
-    toggle.setAttribute('aria-pressed', listening ? 'true' : 'false');
+    toggle.setAttribute('aria-pressed', 'false');
     toggle.classList.toggle('is-listening', listening);
     toggle.setAttribute('aria-label', listening
-      ? 'Spelling mode on. Hear meaning and encode what you hear.'
-      : 'Detective mode on. Use tile colors and clues to encode.');
+      ? `Quick setup. Grade ${gradeLabel}, Listen and Spell mode, theme ${themeLabel}.`
+      : `Quick setup. Grade ${gradeLabel}, Guess and Check mode, theme ${themeLabel}.`);
     setHoverNoteForElement(
       toggle,
-      listening
-        ? 'Spelling mode: hear word plus meaning, then spell by sound.'
-        : 'Detective mode: use color feedback and clues.'
+      'Open quick setup for grade band, mode, and theme.'
     );
   }
 
@@ -3454,13 +3548,16 @@
 
   function syncHeaderClueLauncherUI(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
     const button = _el('phonics-clue-open-btn');
-    const focusButton = _el('focus-clue-btn');
+    const focusButton = _el('focus-help-btn');
     if (!button) return;
     const listening = mode === 'listening';
-    button.innerHTML = '<span class="quick-btn-label">Clue</span><span class="quick-btn-emoji" aria-hidden="true">🧩</span>';
+    const helpSuppressed = isHelpSuppressedForTeamMode();
+    button.innerHTML = `<span class="quick-btn-label">Clue</span>${getHeaderIconMarkup('puzzle')}`;
     setHoverNoteForElement(
       button,
-      listening
+      helpSuppressed
+        ? 'Clue support is off during team mode.'
+        : listening
         ? 'Open listening coach support.'
         : 'Open Clue Sprint for detective-style clue practice.'
     );
@@ -3472,23 +3569,24 @@
       const missionMode = isMissionLabStandaloneMode();
       const unlocked = areFocusSupportsUnlocked();
       focusButton.classList.toggle('hidden', missionMode);
-      focusButton.disabled = !unlocked;
-      focusButton.setAttribute('aria-disabled', unlocked ? 'false' : 'true');
-      focusButton.classList.toggle('is-locked', !unlocked);
-      focusButton.setAttribute('aria-label', listening ? 'Open listening coach support' : 'Open clue support');
+      const disabled = helpSuppressed || !unlocked;
+      focusButton.disabled = disabled;
+      focusButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+      focusButton.classList.toggle('is-locked', disabled);
+      focusButton.setAttribute('aria-label', 'Open help options');
       setHoverNoteForElement(
         focusButton,
-        !unlocked
-          ? 'Clue support unlocks after a miss.'
-          : listening
-          ? 'Open listening coach support.'
-          : 'Open Clue Sprint for detective clue practice.'
+        helpSuppressed
+          ? 'Help options are off during team mode.'
+          : !unlocked
+          ? 'Help options unlock after a miss.'
+          : 'Open clue and starter help options.'
       );
     }
   }
 
   function getStarterWordMode() {
-    return normalizeStarterWordMode(_el('s-starter-words')?.value || prefs.starterWords || DEFAULT_PREFS.starterWords);
+    return 'on_demand';
   }
 
   function getStarterWordAutoThreshold(mode = getStarterWordMode()) {
@@ -3499,41 +3597,40 @@
 
   function syncStarterWordLauncherUI(mode = getStarterWordMode()) {
     const button = _el('starter-word-open-btn');
-    const focusButton = _el('focus-ideas-btn');
+    const focusButton = _el('focus-help-btn');
     if (!button) return;
-    button.innerHTML = '<span class="quick-btn-label">Need Ideas</span><span class="quick-btn-emoji" aria-hidden="true">💡</span>';
+    button.innerHTML = `<span class="quick-btn-label">Need Ideas</span>${getHeaderIconMarkup('bulb')}`;
     const normalized = normalizeStarterWordMode(mode);
     const missionMode = isMissionLabStandaloneMode();
+    const helpSuppressed = isHelpSuppressedForTeamMode();
     const hidden = normalized === 'off' || missionMode;
     const unlocked = areFocusSupportsUnlocked();
     button.classList.add('hidden');
     if (focusButton) {
       focusButton.classList.toggle('hidden', hidden);
-      focusButton.disabled = hidden ? true : !unlocked;
-      focusButton.setAttribute('aria-disabled', hidden ? 'true' : (unlocked ? 'false' : 'true'));
-      focusButton.classList.toggle('is-locked', !hidden && !unlocked);
+      const disabled = hidden ? true : (helpSuppressed || !unlocked);
+      focusButton.disabled = disabled;
+      focusButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+      focusButton.classList.toggle('is-locked', !hidden && disabled);
     }
     if (hidden) return;
-    const threshold = getStarterWordAutoThreshold(normalized);
     button.setAttribute('aria-label', 'Show try these words list');
-    button.title = threshold > 0
-      ? `Show starter word ideas. Auto-opens after ${threshold} guesses if needed.`
-      : 'Show starter word ideas.';
+    button.title = 'Show starter word ideas.';
     setHoverNoteForElement(
       button,
-      threshold > 0
-        ? `Starter words are available now and auto-open after ${threshold} guesses.`
+      helpSuppressed
+        ? 'Starter ideas are off during team mode.'
         : 'Starter words are available on demand.'
     );
     if (focusButton) {
-      focusButton.setAttribute('aria-label', 'Show starter word ideas');
+      focusButton.setAttribute('aria-label', 'Open help options');
       setHoverNoteForElement(
         focusButton,
-        !unlocked
-          ? 'Pattern ideas unlock after a miss.'
-          : threshold > 0
-          ? `Starter words are available now and auto-open after ${threshold} guesses.`
-          : 'Starter words are available on demand.'
+        helpSuppressed
+          ? 'Help options are off during team mode.'
+          : !unlocked
+          ? 'Help options unlock after a miss.'
+          : 'Open clue and starter help options.'
       );
     }
   }
@@ -4315,19 +4412,21 @@
     card.classList.toggle('is-compact', !hasExamples && !showAction);
     clearInformantHintHideTimer();
     card.classList.remove('hidden');
+    positionHintClueCard();
     requestAnimationFrame(() => {
       card.classList.add('visible');
     });
   }
 
   function showInformantHintToast() {
+    if (isHelpSuppressedForTeamMode()) return false;
     hideStarterWordCard();
     const card = _el('hint-clue-card');
     if (card && !card.classList.contains('hidden')) {
       hideInformantHintCard();
-      return;
+      return false;
     }
-    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return;
+    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
 
     const state = WQGame.getState?.() || {};
     if (!state?.word) {
@@ -4337,7 +4436,7 @@
         examples: [],
         actionMode: 'none'
       });
-      return;
+      return true;
     }
     if (!state.entry) state.entry = WQData.getEntry(state.word) || null;
     const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
@@ -4350,7 +4449,7 @@
         examples: [],
         actionMode: 'none'
       });
-      return;
+      return true;
     }
     if (playStyle === 'listening' && currentRoundHintRequested) {
       showInformantHintCard({
@@ -4359,7 +4458,7 @@
         examples: [],
         actionMode: state.entry ? 'word-meaning' : 'none'
       });
-      return;
+      return true;
     }
     currentRoundHintRequested = true;
     emitTelemetry('wq_support_used', {
@@ -4367,6 +4466,7 @@
       guess_count: guessCount
     });
     showInformantHintCard(buildInformantHintPayload(state));
+    return true;
   }
 
   function hideStarterWordCard() {
@@ -4374,6 +4474,167 @@
     if (!card) return;
     card.classList.remove('visible');
     card.classList.add('hidden');
+  }
+
+  function hideSupportChoiceCard() {
+    _el('support-choice-card')?.classList.add('hidden');
+  }
+
+  function positionHintClueCard() {
+    const card = _el('hint-clue-card');
+    if (!(card instanceof HTMLElement)) return;
+    card.style.left = '';
+    card.style.top = '';
+    card.style.right = '';
+    card.style.bottom = '';
+    card.style.transform = '';
+    const boardZone = document.querySelector('.board-zone');
+    const header = document.querySelector('header');
+    const boardRect = boardZone?.getBoundingClientRect?.();
+    const headerRect = header?.getBoundingClientRect?.();
+    if (!boardRect || window.innerWidth < 980) {
+      card.style.left = '50%';
+      card.style.top = `${Math.max(92, Math.round((headerRect?.bottom || 82) + 12))}px`;
+      card.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const roomRight = window.innerWidth - boardRect.right - 18;
+    const top = Math.max(Math.round(boardRect.top + 8), Math.round((headerRect?.bottom || 82) + 12));
+    if (roomRight >= 300) {
+      card.style.left = `${Math.max(8, Math.round(boardRect.right + 18))}px`;
+      card.style.top = `${top}px`;
+      return;
+    }
+    card.style.left = `${Math.max(8, Math.round(boardRect.left - 330))}px`;
+    card.style.top = `${top}px`;
+  }
+
+  function positionSupportChoiceCard() {
+    const card = _el('support-choice-card');
+    if (!(card instanceof HTMLElement)) return;
+    card.style.left = '';
+    card.style.top = '';
+    card.style.right = '';
+    card.style.bottom = '';
+    card.style.transform = '';
+    const boardZone = document.querySelector('.board-zone');
+    const header = document.querySelector('header');
+    const boardRect = boardZone?.getBoundingClientRect?.();
+    const headerRect = header?.getBoundingClientRect?.();
+    if (!boardRect || window.innerWidth < 980) {
+      card.style.left = '50%';
+      card.style.top = `${Math.max(92, Math.round((headerRect?.bottom || 82) + 12))}px`;
+      card.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const roomRight = window.innerWidth - boardRect.right - 18;
+    const top = Math.max(Math.round(boardRect.top + 8), Math.round((headerRect?.bottom || 82) + 12));
+    if (roomRight >= 278) {
+      card.style.left = `${Math.max(8, Math.round(boardRect.right + 18))}px`;
+      card.style.top = `${top}px`;
+      return;
+    }
+    card.style.left = `${Math.max(8, Math.round(boardRect.left - 308))}px`;
+    card.style.top = `${top}px`;
+  }
+
+  function showSupportChoiceCard(state) {
+    if (isHelpSuppressedForTeamMode()) return false;
+    if (getSupportPromptMode() === 'off') return false;
+    if (currentRoundSupportPromptShown) return false;
+    if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
+    const card = _el('support-choice-card');
+    if (!card) return false;
+    const liveState = state || (WQGame.getState?.() || {});
+    if (!liveState?.word || liveState.gameOver) return false;
+    const suggestionBtn = _el('support-choice-suggestion');
+    const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
+    if (suggestionBtn) {
+      const enabled = suggestionCount >= 4;
+      suggestionBtn.disabled = !enabled;
+      suggestionBtn.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+      suggestionBtn.textContent = enabled ? 'Suggestion' : 'No suggestion yet';
+    }
+    const neverToggle = _el('support-choice-never');
+    if (neverToggle) neverToggle.checked = false;
+    positionSupportChoiceCard();
+    card.classList.remove('hidden');
+    currentRoundSupportPromptShown = true;
+    return true;
+  }
+
+  function enableDraggableSupportChoiceCard() {
+    const card = _el('support-choice-card');
+    const handle = card?.querySelector('.support-choice-head');
+    if (!(card instanceof HTMLElement) || !(handle instanceof HTMLElement) || card.dataset.dragBound === '1') return;
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+    const stopDragging = () => {
+      dragging = false;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', stopDragging);
+    };
+    const onPointerMove = (event) => {
+      if (!dragging) return;
+      const left = Math.max(8, Math.min(window.innerWidth - card.offsetWidth - 8, event.clientX - offsetX));
+      const top = Math.max(8, Math.min(window.innerHeight - card.offsetHeight - 8, event.clientY - offsetY));
+      card.style.left = `${left}px`;
+      card.style.top = `${top}px`;
+      card.style.transform = 'none';
+    };
+    handle.addEventListener('pointerdown', (event) => {
+      if (event.target instanceof HTMLElement && event.target.closest('#support-choice-close')) return;
+      dragging = true;
+      const rect = card.getBoundingClientRect();
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', stopDragging);
+    });
+    card.dataset.dragBound = '1';
+  }
+
+  function positionStarterWordCard() {
+    const card = _el('starter-word-card');
+    if (!(card instanceof HTMLElement)) return;
+    card.style.left = '';
+    card.style.top = '';
+    card.style.right = '';
+    card.style.bottom = '';
+    card.style.transform = '';
+
+    const boardZone = document.querySelector('.board-zone');
+    const header = document.querySelector('header');
+    const boardRect = boardZone?.getBoundingClientRect?.();
+    const headerRect = header?.getBoundingClientRect?.();
+    const margin = 18;
+    const cardWidth = Math.min(320, Math.max(280, Math.round(window.innerWidth * 0.24)));
+    card.style.width = `${Math.min(cardWidth, window.innerWidth - 24)}px`;
+
+    if (!boardRect || window.innerWidth < 980) {
+      card.style.left = '50%';
+      card.style.top = `${Math.max(92, Math.round((headerRect?.bottom || 82) + 12))}px`;
+      card.style.transform = 'translateX(-50%)';
+      return;
+    }
+
+    const roomRight = window.innerWidth - boardRect.right - margin;
+    const top = Math.max(
+      Math.round((headerRect?.bottom || 82) + 14),
+      Math.round(boardRect.top + 8)
+    );
+
+    if (roomRight >= card.offsetWidth - 12 || roomRight >= 280) {
+      card.style.left = `${Math.max(8, Math.round(boardRect.right + margin))}px`;
+      card.style.top = `${top}px`;
+      card.style.transform = 'none';
+      return;
+    }
+
+    card.style.left = `${Math.max(8, Math.round(boardRect.left - card.offsetWidth - margin))}px`;
+    card.style.top = `${top}px`;
+    card.style.transform = 'none';
   }
 
   function replaceCurrentGuessWithWord(word) {
@@ -4598,7 +4859,7 @@
       pool.forEach((rawWord) => {
         const normalized = normalizeReviewWord(rawWord);
         if (!normalized || normalized.length !== Number(state.wordLength || 0)) return;
-        if (normalized === targetWord || guessedWords.has(normalized)) return;
+        if (guessedWords.has(normalized)) return;
         bucket.add(normalized);
       });
     };
@@ -4634,17 +4895,13 @@
     let filtered = candidates;
     if (constraint.guessCount >= 1) {
       const strict = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: true }));
-      const soft = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: false }));
-      if (strict.length >= 3) {
-        filtered = strict;
-      } else if (strict.length > 0) {
-        const merged = strict.slice();
-        for (const word of soft) {
-          if (!merged.includes(word)) merged.push(word);
-        }
-        filtered = merged;
-      } else if (soft.length >= 1) {
-        filtered = soft;
+      filtered = strict;
+      if (
+        targetWord &&
+        wordMatchesStarterConstraint(targetWord, constraint, { enforceMaxCounts: true }) &&
+        !filtered.includes(targetWord)
+      ) {
+        filtered.unshift(targetWord);
       }
     }
 
@@ -4709,6 +4966,7 @@
   }
 
   function showStarterWordCard(options = {}) {
+    if (isHelpSuppressedForTeamMode()) return false;
     const card = _el('starter-word-card');
     if (!card) return false;
     if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
@@ -4732,9 +4990,9 @@
     }
 
     const words = pickStarterWordsForRound(state, 9);
-    if (guessCount >= 1 && words.length > 0 && words.length <= 3) {
+    if (guessCount >= 1 && words.length <= 3) {
       if (source !== 'auto') {
-        WQUI.showToast('Try one more guess before using a pattern match.');
+        WQUI.showToast('Pattern Match only opens when there are 4 or more strong matches.');
       }
       hideStarterWordCard();
       return false;
@@ -4753,13 +5011,13 @@
     }
     renderStarterWordList(words);
     card.classList.remove('hidden');
+    positionStarterWordCard();
     card.classList.add('visible');
     emitTelemetry('wq_support_used', {
       support_type: 'starter_word_list',
       guess_count: guessCount,
       source
     });
-    initializeStarterWordCardDrag();
     return true;
   }
 
@@ -4825,13 +5083,9 @@
   }
 
   function maybeAutoShowStarterWords(state) {
-    const mode = getStarterWordMode();
-    const threshold = getStarterWordAutoThreshold(mode);
-    if (threshold <= 0) return;
+    if (!focusSupportUnlockedByMiss) return;
     if (currentRoundStarterWordsShown) return;
-    const guessCount = Array.isArray(state?.guesses) ? state.guesses.length : 0;
-    if (guessCount !== threshold) return;
-    showStarterWordCard({ source: 'auto' });
+    showSupportChoiceCard(state);
   }
 
   function applyFeedback(mode) {
@@ -4910,6 +5164,22 @@
     writingBtn.setAttribute('disabled', 'true');
   }
 
+  function getHeaderIconMarkup(kind) {
+    if (kind === 'keyboard') {
+      return '<svg class="icon-glyph icon-glyph-keyboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.25" y="6.25" width="17.5" height="11.5" rx="2.25"></rect><path d="M6.4 10.1h.01"></path><path d="M9.1 10.1h.01"></path><path d="M11.8 10.1h.01"></path><path d="M14.5 10.1h.01"></path><path d="M17.2 10.1h.01"></path><path d="M6.4 12.9h.01"></path><path d="M9.1 12.9h.01"></path><path d="M11.8 12.9h.01"></path><path d="M14.5 12.9h.01"></path><path d="M17.2 12.9h.01"></path><path d="M8.2 15.7h7.6"></path></svg>';
+    }
+    if (kind === 'settings') {
+      return '<svg class="icon-glyph icon-glyph-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.1"></circle><path d="M12 3.2v2.1"></path><path d="M12 18.7v2.1"></path><path d="m5.78 5.78 1.5 1.5"></path><path d="m16.72 16.72 1.5 1.5"></path><path d="M3.2 12h2.1"></path><path d="M18.7 12h2.1"></path><path d="m5.78 18.22 1.5-1.5"></path><path d="m16.72 7.28 1.5-1.5"></path><path d="M9.2 4.8 8.1 6.4"></path><path d="m15.9 17.6-1.1 1.6"></path><path d="m4.8 14.8 1.6-1.1"></path><path d="m17.6 9.2 1.6-1.1"></path><path d="m4.8 9.2 1.6 1.1"></path><path d="m17.6 14.8 1.6 1.1"></path><path d="m9.2 19.2-1.1-1.6"></path><path d="m15.9 6.4-1.1-1.6"></path></svg>';
+    }
+    if (kind === 'puzzle') {
+      return '<svg class="icon-glyph icon-glyph-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.2 12.2a2 2 0 1 0 0-4h-.8V5.8a1.8 1.8 0 0 0-1.8-1.8h-2.4v.8a2 2 0 1 1-4 0V4H7.8A1.8 1.8 0 0 0 6 5.8v2.4h-.8a2 2 0 1 0 0 4H6v2.4a1.8 1.8 0 0 0 1.8 1.8h2.4v-.8a2 2 0 1 1 4 0v.8h2.4a1.8 1.8 0 0 0 1.8-1.8v-2.4Z"></path></svg>';
+    }
+    if (kind === 'bulb') {
+      return '<svg class="icon-glyph icon-glyph-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M8.4 14.8h7.2"></path><path d="M12 3.8a5.4 5.4 0 0 0-3.55 9.48c.78.66 1.25 1.29 1.46 2.02h4.18c.21-.73.68-1.36 1.46-2.02A5.4 5.4 0 0 0 12 3.8Z"></path></svg>';
+    }
+    return '';
+  }
+
   function syncHeaderStaticIcons() {
     const teacherBtn = _el('teacher-panel-btn');
     if (teacherBtn) {
@@ -4924,7 +5194,7 @@
     setHoverNoteForElement(musicBtn, 'Open music controls.');
     const settingsBtn = _el('settings-btn');
     if (settingsBtn) {
-      settingsBtn.innerHTML = '<span class="icon-emoji" aria-hidden="true">⚙️</span>';
+      settingsBtn.innerHTML = getHeaderIconMarkup('settings');
       setHoverNoteForElement(settingsBtn, 'Open settings.');
     }
     const playToolsBtn = _el('play-tools-btn');
@@ -4951,7 +5221,7 @@
 
   function applyKeyboardPreset(mode, options = {}) {
     const normalized = normalizeKeyboardPresetId(mode);
-    const preset = KEYBOARD_PRESET_CONFIG[normalized] || KEYBOARD_PRESET_CONFIG['qwerty-bubble'];
+    const preset = KEYBOARD_PRESET_CONFIG[normalized] || KEYBOARD_PRESET_CONFIG['qwerty-classic'];
     const layout = applyKeyboardLayout(preset.layout);
     const keyStyle = applyKeyStyle(preset.keyStyle);
     let boardStyle = document.documentElement.getAttribute('data-board-style') || prefs.boardStyle || DEFAULT_PREFS.boardStyle;
@@ -4981,7 +5251,7 @@
     const layout = normalizeKeyboardLayout(document.documentElement.getAttribute('data-keyboard-layout') || 'standard');
     const next = getNextKeyboardLayout(layout);
     const keyboardHint = `${getKeyboardLayoutLabel(layout)} keys ready. Tap to try ${getKeyboardLayoutLabel(next)}.`;
-    toggle.innerHTML = '<span class="icon-emoji" aria-hidden="true">⌨️</span>';
+    toggle.innerHTML = getHeaderIconMarkup('keyboard');
     toggle.setAttribute('aria-pressed', layout === 'alphabet' ? 'true' : 'false');
     toggle.setAttribute('aria-label', keyboardHint);
     toggle.dataset.hint = keyboardHint;
@@ -5051,7 +5321,7 @@
       return;
     }
     const boardStyle = applyBoardStyle('card');
-    const keyStyle = applyKeyStyle('bubble');
+    const keyStyle = applyKeyStyle('classic');
     const keyboardLayout = applyKeyboardLayout('standard');
     setPref('boardStyle', boardStyle);
     setPref('keyStyle', keyStyle);
@@ -5326,13 +5596,7 @@
   }
 
   function syncFirstRunGradeSelectFromPrefs() {
-    const modalGradeSelect = _el('first-run-grade-band');
-    if (!modalGradeSelect) return;
-    if (firstRunSetupPending) {
-      modalGradeSelect.value = '';
-      return;
-    }
-    modalGradeSelect.value = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
+    return;
   }
 
   function syncFirstRunSetupControlsFromPrefs() {
@@ -5342,31 +5606,16 @@
       skipBtn.classList.toggle('hidden', !!firstRunSetupPending);
       skipBtn.setAttribute('aria-hidden', firstRunSetupPending ? 'true' : 'false');
     }
-    syncFirstRunGradeSelectFromPrefs();
-    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
-    setFirstRunModeChoice(playStyle);
     const hideAgainToggle = _el('first-run-hide-again');
     if (hideAgainToggle) hideAgainToggle.checked = true;
   }
 
   function applyFirstRunGradeSelection() {
-    const modalGradeSelect = _el('first-run-grade-band');
-    const gradeSelect = _el('s-grade');
-    if (!modalGradeSelect || !gradeSelect) return;
-    const nextGradeBand = String(modalGradeSelect.value || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
-    if (String(gradeSelect.value || '').trim() === nextGradeBand) return;
-    gradeSelect.value = nextGradeBand;
-    gradeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    return;
   }
 
   function applyFirstRunPlayStyleSelection() {
-    const selectedButton = document.querySelector('[data-play-style-choice].is-active');
-    const selected = normalizePlayStyle(selectedButton?.getAttribute('data-play-style-choice') || '');
-    const select = _el('s-play-style');
-    if (!select) return;
-    if (String(select.value || '').trim() === selected) return;
-    select.value = selected;
-    select.dispatchEvent(new Event('change', { bubbles: true }));
+    return;
   }
 
   function openFirstRunSetupModal() {
@@ -5381,19 +5630,7 @@
 
   function bindFirstRunSetupModal() {
     if (document.body.dataset.wqFirstRunSetupBound === '1') return;
-    const closeTutorial = (source = 'dismiss') => {
-      const selectedGradeBand = String(_el('first-run-grade-band')?.value || '').trim();
-      if (firstRunSetupPending && source !== 'start') {
-        WQUI.showToast('Choose a grade band, then tap Start Quest.');
-        return;
-      }
-      if (!selectedGradeBand) {
-        WQUI.showToast('Choose a grade band to continue.');
-        _el('first-run-grade-band')?.focus();
-        return;
-      }
-      applyFirstRunGradeSelection();
-      applyFirstRunPlayStyleSelection();
+    const closeTutorial = () => {
       if (_el('first-run-hide-again')?.checked) markFirstRunSetupDone();
       else clearFirstRunSetupPreference();
       firstRunSetupPending = false;
@@ -5404,16 +5641,11 @@
       }
       updateNextActionLine();
     };
-    _el('first-run-skip-btn')?.addEventListener('click', () => closeTutorial('skip'));
-    _el('first-run-start-btn')?.addEventListener('click', () => closeTutorial('start'));
-    document.querySelectorAll('[data-play-style-choice]').forEach((button) => {
-      button.addEventListener('click', () => {
-        setFirstRunModeChoice(button.getAttribute('data-play-style-choice') || 'detective');
-      });
-    });
+    _el('first-run-skip-btn')?.addEventListener('click', closeTutorial);
+    _el('first-run-start-btn')?.addEventListener('click', closeTutorial);
     _el('first-run-setup-modal')?.addEventListener('click', (event) => {
       if (event.target?.id === 'first-run-setup-modal') {
-        closeTutorial('backdrop');
+        closeTutorial();
       }
     });
     document.body.dataset.wqFirstRunSetupBound = '1';
@@ -5479,7 +5711,9 @@
     setPref('revealAutoNext', DEFAULT_PREFS.revealAutoNext);
     setPref('teamMode', DEFAULT_PREFS.teamMode);
     setPref('teamCount', DEFAULT_PREFS.teamCount);
+    setPref('teamSet', DEFAULT_PREFS.teamSet);
     setPref('turnTimer', DEFAULT_PREFS.turnTimer);
+    setPref('smartKeyLock', DEFAULT_PREFS.smartKeyLock);
     setPref('confidenceCoaching', DEFAULT_PREFS.confidenceCoaching);
 
     _el('s-theme-save').value = DEFAULT_PREFS.themeSave;
@@ -5494,7 +5728,9 @@
     _el('s-reveal-auto-next').value = DEFAULT_PREFS.revealAutoNext;
     _el('s-team-mode').value = DEFAULT_PREFS.teamMode;
     _el('s-team-count').value = DEFAULT_PREFS.teamCount;
+    _el('s-team-set').value = DEFAULT_PREFS.teamSet;
     _el('s-turn-timer').value = DEFAULT_PREFS.turnTimer;
+    _el('s-smart-key-lock').value = DEFAULT_PREFS.smartKeyLock;
     const confidenceToggle = _el('s-confidence-coaching');
     if (confidenceToggle) confidenceToggle.checked = DEFAULT_PREFS.confidenceCoaching === 'on';
 
@@ -5834,6 +6070,24 @@
     return normalizeTeamMode(_el('s-team-mode')?.value || prefs.teamMode || DEFAULT_PREFS.teamMode) === 'on';
   }
 
+  function isHelpSuppressedForTeamMode() {
+    return isTeamModeEnabled();
+  }
+
+  function syncTeamHelpSuppressionUI() {
+    const disabled = isHelpSuppressedForTeamMode();
+    const helpBtn = _el('focus-help-btn');
+    [helpBtn].forEach((button) => {
+      if (!button) return;
+      button.disabled = disabled || button.disabled;
+      button.setAttribute('aria-disabled', button.disabled ? 'true' : 'false');
+      button.classList.toggle('is-locked', button.disabled);
+    });
+    if (disabled) {
+      setHoverNoteForElement(helpBtn, 'Help options are off during team mode.');
+    }
+  }
+
   function getTeamCount() {
     return Number.parseInt(
       normalizeTeamCount(_el('s-team-count')?.value || prefs.teamCount || DEFAULT_PREFS.teamCount),
@@ -5846,10 +6100,15 @@
     return mode === 'off' ? 0 : (Number.parseInt(mode, 10) || 0);
   }
 
+  function getTeamSet() {
+    return normalizeTeamSet(_el('s-team-set')?.value || prefs.teamSet || DEFAULT_PREFS.teamSet);
+  }
+
   function getCurrentTeamLabel() {
     const count = getTeamCount();
     const index = Math.max(0, Math.min(count - 1, classroomTeamIndex));
-    return TEAM_LABELS[index] || `Team ${index + 1}`;
+    const labels = TEAM_LABEL_SETS[getTeamSet()] || TEAM_LABEL_SETS.mascots;
+    return labels[index] || `Team ${index + 1}`;
   }
 
   function formatTurnClock(seconds) {
@@ -5873,18 +6132,88 @@
     if (!line) return;
     const state = WQGame.getState?.() || {};
     const activeRound = Boolean(state.word && !state.gameOver);
-    const hasGuess = Array.isArray(state.guesses) && state.guesses.length > 0;
-    if (!isTeamModeEnabled() || !activeRound || !hasGuess) {
+    if (!isTeamModeEnabled() || !activeRound) {
       line.textContent = '';
       line.classList.add('hidden');
+      line.style.left = '';
+      line.style.top = '';
+      line.style.transform = '';
       return;
     }
     const seconds = getTurnTimerSeconds();
-    const timerPart = seconds > 0
-      ? ` · ${formatTurnClock(Math.max(0, classroomTurnRemaining || seconds))} left`
-      : '';
-    line.textContent = `${getCurrentTeamLabel()} turn${timerPart} · Type a guess, then press Enter.`;
+    const remaining = Math.max(0, classroomTurnRemaining || seconds);
+    const teamLabel = getCurrentTeamLabel();
+    const urgencyClass = seconds > 0
+      ? (remaining <= 10 ? 'is-critical' : (remaining <= 20 ? 'is-warning' : 'is-steady'))
+      : 'is-steady';
+    const progress = seconds > 0
+      ? Math.max(0.06, Math.min(1, remaining / Math.max(1, seconds)))
+      : 1;
+    line.className = `classroom-turn-line ${urgencyClass}`;
+    line.innerHTML = `
+      <div class="classroom-turn-badge">
+        <div class="classroom-turn-copy">
+          <span class="classroom-turn-kicker">Your turn</span>
+          <span class="classroom-turn-team">${teamLabel}</span>
+        </div>
+        <div class="classroom-turn-clock" aria-label="${seconds > 0 ? `${formatTurnClock(remaining)} remaining` : 'Free play'}">
+          <span class="classroom-turn-clock-ring" style="--turn-progress:${Math.round(progress * 100)}%"></span>
+          <span class="classroom-turn-timer">${seconds > 0 ? formatTurnClock(remaining) : 'GO'}</span>
+        </div>
+      </div>
+    `;
     line.classList.remove('hidden');
+    positionClassroomTurnLine();
+  }
+
+  function positionClassroomTurnLine() {
+    const line = _el('classroom-turn-line');
+    if (!(line instanceof HTMLElement) || line.classList.contains('hidden')) return;
+    line.style.left = '';
+    line.style.top = '';
+    line.style.right = '';
+    line.style.transform = '';
+
+    const boardZone = document.querySelector('.board-zone');
+    const focusBar = document.querySelector('.focus-bar');
+    const boardRect = boardZone?.getBoundingClientRect?.();
+    const focusRect = focusBar?.getBoundingClientRect?.();
+    const topFallback = Math.max(88, Math.round((focusRect?.bottom || 92) + 8));
+    const lineRect = line.getBoundingClientRect();
+    const desiredTop = Math.max(Math.round((boardRect?.top || topFallback) + 8), topFallback);
+
+    if (!boardRect) {
+      line.style.left = '50%';
+      line.style.top = `${topFallback}px`;
+      line.style.transform = 'translateX(-50%)';
+      return;
+    }
+
+    if (window.innerWidth < 1180) {
+      const centeredLeft = Math.round(boardRect.left + (boardRect.width - lineRect.width) / 2);
+      const boardSafeTop = Math.round(boardRect.top - lineRect.height - 8);
+      line.style.left = `${Math.max(8, centeredLeft)}px`;
+      line.style.top = `${Math.max(84, boardSafeTop)}px`;
+      return;
+    }
+
+    const gutter = Math.min(28, Math.max(14, Math.round((window.innerWidth - boardRect.right) * 0.22)));
+    const roomRight = window.innerWidth - boardRect.right - gutter;
+    if (roomRight >= lineRect.width - 8) {
+      line.style.left = `${Math.max(8, Math.round(boardRect.right + gutter))}px`;
+      line.style.top = `${desiredTop}px`;
+      return;
+    }
+
+    line.style.left = `${Math.max(8, Math.round(boardRect.left + boardRect.width - lineRect.width))}px`;
+    line.style.top = `${Math.max(topFallback, Math.round(boardRect.top - lineRect.height - 12))}px`;
+  }
+
+  function reflowGameplayLayoutForTurnLine() {
+    const state = WQGame.getState?.() || {};
+    if (!state?.wordLength || !state?.maxGuesses || !WQUI || typeof WQUI.calcLayout !== 'function') return;
+    WQUI.calcLayout(state.wordLength, state.maxGuesses);
+    positionClassroomTurnLine();
   }
 
   function isKnownAbsentLetter(letter) {
@@ -5920,9 +6249,14 @@
     return deriveWordState(WQGame.getState?.() || {});
   }
 
+  function isSmartKeyLockEnabled() {
+    return String(_el('s-smart-key-lock')?.value || prefs.smartKeyLock || DEFAULT_PREFS.smartKeyLock).toLowerCase() === 'on';
+  }
+
   function checkLetterEntryConstraints(letter, state, wordState) {
     const normalized = String(letter || '').toLowerCase();
     if (!/^[a-z]$/.test(normalized)) return { ok: true };
+    if (!isSmartKeyLockEnabled()) return { ok: true };
     const liveState = state || (WQGame.getState?.() || {});
     const liveWordState = wordState || deriveWordState(liveState);
     const slot = Math.max(0, Number(liveState?.guess?.length || 0));
@@ -5973,18 +6307,14 @@
       if (!/^[a-z]$/.test(raw)) {
         keyEl.removeAttribute('disabled');
         keyEl.setAttribute('aria-disabled', 'false');
+        keyEl.classList.remove('is-blocked');
         return;
       }
       const check = checkLetterEntryConstraints(raw, liveState, liveWordState);
       const blocked = !check.ok;
       keyEl.classList.toggle('is-blocked', blocked);
-      if (blocked) {
-        keyEl.setAttribute('disabled', 'disabled');
-        keyEl.setAttribute('aria-disabled', 'true');
-      } else {
-        keyEl.removeAttribute('disabled');
-        keyEl.setAttribute('aria-disabled', 'false');
-      }
+      keyEl.removeAttribute('disabled');
+      keyEl.setAttribute('aria-disabled', 'false');
       if (requiredAtSlot && raw === requiredAtSlot) keyEl.classList.add('in-play');
       const status = String(liveWordState.usedLetters?.[raw] || '').toLowerCase();
       if (status === 'correct') {
@@ -6030,24 +6360,28 @@
     const activeRound = Boolean(state.word && !state.gameOver);
     if (!isTeamModeEnabled() || !activeRound) {
       updateClassroomTurnLine();
+      reflowGameplayLayoutForTurnLine();
       return;
     }
 
     const seconds = getTurnTimerSeconds();
     if (seconds <= 0) {
       updateClassroomTurnLine();
+      reflowGameplayLayoutForTurnLine();
       return;
     }
 
     classroomTurnRemaining = seconds;
     classroomTurnEndsAt = Date.now() + (seconds * 1000);
     updateClassroomTurnLine();
+    reflowGameplayLayoutForTurnLine();
 
     classroomTurnTimer = setInterval(() => {
       const round = WQGame.getState?.() || {};
       if (!round.word || round.gameOver || !isTeamModeEnabled()) {
         clearClassroomTurnTimer();
         updateClassroomTurnLine();
+        reflowGameplayLayoutForTurnLine();
         return;
       }
       const remaining = Math.max(0, Math.ceil((classroomTurnEndsAt - Date.now()) / 1000));
@@ -6079,6 +6413,7 @@
 
   function syncClassroomTurnRuntime(options = {}) {
     startClassroomTurnClock({ resetTurn: !!options.resetTurn });
+    syncTeamHelpSuppressionUI();
   }
 
   function updateNextActionLine(options = {}) {
@@ -6182,21 +6517,28 @@
   function syncQuickPopoverPositions() {
     const themePopover = _el('theme-preview-strip');
     const musicPopover = _el('quick-music-strip');
+    const setupPopover = _el('quick-setup-strip');
     if (themePopover && !themePopover.classList.contains('hidden')) {
       positionQuickPopover(themePopover, _el('theme-dock-toggle-btn'));
     }
     if (musicPopover && !musicPopover.classList.contains('hidden')) {
       positionQuickPopover(musicPopover, _el('music-dock-toggle-btn'));
     }
+    if (setupPopover && !setupPopover.classList.contains('hidden')) {
+      positionQuickPopover(setupPopover, _el('play-style-toggle'));
+    }
   }
 
   function closeQuickPopover(kind = 'all') {
     const closeTheme = kind === 'all' || kind === 'theme';
     const closeMusic = kind === 'all' || kind === 'music';
+    const closeSetup = kind === 'all' || kind === 'setup';
     const themePopover = _el('theme-preview-strip');
     const musicPopover = _el('quick-music-strip');
+    const setupPopover = _el('quick-setup-strip');
     const themeBtn = _el('theme-dock-toggle-btn');
     const musicBtn = _el('music-dock-toggle-btn');
+    const setupBtn = _el('play-style-toggle');
     if (closeTheme && themePopover) {
       themePopover.classList.add('hidden');
       themePopover.setAttribute('aria-hidden', 'true');
@@ -6205,6 +6547,10 @@
       musicPopover.classList.add('hidden');
       musicPopover.setAttribute('aria-hidden', 'true');
     }
+    if (closeSetup && setupPopover) {
+      setupPopover.classList.add('hidden');
+      setupPopover.setAttribute('aria-hidden', 'true');
+    }
     if (closeTheme && themeBtn) {
       themeBtn.classList.remove('is-active');
       themeBtn.setAttribute('aria-expanded', 'false');
@@ -6212,6 +6558,10 @@
     if (closeMusic && musicBtn) {
       musicBtn.classList.remove('is-active');
       musicBtn.setAttribute('aria-expanded', 'false');
+    }
+    if (closeSetup && setupBtn) {
+      setupBtn.classList.remove('is-active');
+      setupBtn.setAttribute('aria-expanded', 'false');
     }
   }
 
@@ -6222,16 +6572,26 @@
     }
     const themePopover = _el('theme-preview-strip');
     const musicPopover = _el('quick-music-strip');
+    const setupPopover = _el('quick-setup-strip');
     const themeBtn = _el('theme-dock-toggle-btn');
     const musicBtn = _el('music-dock-toggle-btn');
+    const setupBtn = _el('play-style-toggle');
     if (kind === 'theme' && themePopover) {
       if (musicPopover) {
         musicPopover.classList.add('hidden');
         musicPopover.setAttribute('aria-hidden', 'true');
       }
+      if (setupPopover) {
+        setupPopover.classList.add('hidden');
+        setupPopover.setAttribute('aria-hidden', 'true');
+      }
       if (musicBtn) {
         musicBtn.classList.remove('is-active');
         musicBtn.setAttribute('aria-expanded', 'false');
+      }
+      if (setupBtn) {
+        setupBtn.classList.remove('is-active');
+        setupBtn.setAttribute('aria-expanded', 'false');
       }
       themePopover.classList.remove('hidden');
       themePopover.setAttribute('aria-hidden', 'false');
@@ -6247,9 +6607,17 @@
         themePopover.classList.add('hidden');
         themePopover.setAttribute('aria-hidden', 'true');
       }
+      if (setupPopover) {
+        setupPopover.classList.add('hidden');
+        setupPopover.setAttribute('aria-hidden', 'true');
+      }
       if (themeBtn) {
         themeBtn.classList.remove('is-active');
         themeBtn.setAttribute('aria-expanded', 'false');
+      }
+      if (setupBtn) {
+        setupBtn.classList.remove('is-active');
+        setupBtn.setAttribute('aria-expanded', 'false');
       }
       musicPopover.classList.remove('hidden');
       musicPopover.setAttribute('aria-hidden', 'false');
@@ -6258,11 +6626,41 @@
         musicBtn.setAttribute('aria-expanded', 'true');
         positionQuickPopover(musicPopover, musicBtn);
       }
+      return;
+    }
+    if (kind === 'setup' && setupPopover) {
+      if (themePopover) {
+        themePopover.classList.add('hidden');
+        themePopover.setAttribute('aria-hidden', 'true');
+      }
+      if (musicPopover) {
+        musicPopover.classList.add('hidden');
+        musicPopover.setAttribute('aria-hidden', 'true');
+      }
+      if (themeBtn) {
+        themeBtn.classList.remove('is-active');
+        themeBtn.setAttribute('aria-expanded', 'false');
+      }
+      if (musicBtn) {
+        musicBtn.classList.remove('is-active');
+        musicBtn.setAttribute('aria-expanded', 'false');
+      }
+      setupPopover.classList.remove('hidden');
+      setupPopover.setAttribute('aria-hidden', 'false');
+      if (setupBtn) {
+        setupBtn.classList.add('is-active');
+        setupBtn.setAttribute('aria-expanded', 'true');
+        positionQuickPopover(setupPopover, setupBtn);
+      }
     }
   }
 
   function toggleQuickPopover(kind) {
-    const popover = kind === 'music' ? _el('quick-music-strip') : _el('theme-preview-strip');
+    const popover = kind === 'music'
+      ? _el('quick-music-strip')
+      : kind === 'setup'
+        ? _el('quick-setup-strip')
+        : _el('theme-preview-strip');
     if (!popover || popover.classList.contains('hidden')) {
       openQuickPopover(kind);
       return;
@@ -6274,7 +6672,8 @@
     const allowed = isQuickPopoverAllowed();
     const themeBtn = _el('theme-dock-toggle-btn');
     const musicBtn = _el('music-dock-toggle-btn');
-    [themeBtn, musicBtn].forEach((btn) => {
+    const setupBtn = _el('play-style-toggle');
+    [themeBtn, musicBtn, setupBtn].forEach((btn) => {
       if (!btn) return;
       btn.setAttribute('aria-disabled', allowed ? 'false' : 'true');
     });
@@ -6877,6 +7276,7 @@
   syncTeacherPresetButtons();
   syncAssessmentLockRuntime({ closeFocus: false });
   bindFirstRunSetupModal();
+  enableDraggableSupportChoiceCard();
   bindSettingsModeCards();
   if (firstRunSetupPending) {
     openFirstRunSetupModal();
@@ -6894,12 +7294,65 @@
     _el('teacher-panel-btn')?.click();
   });
   window.addEventListener('resize', () => {
+    if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
+      positionHintClueCard();
+    }
+    if (_el('starter-word-card') && !_el('starter-word-card')?.classList.contains('hidden')) {
+      positionStarterWordCard();
+    }
+    if (_el('support-choice-card') && !_el('support-choice-card')?.classList.contains('hidden')) {
+      positionSupportChoiceCard();
+    }
     syncQuickPopoverPositions();
+    positionSettingsPanel();
     logOverflowDiagnostics('resize');
   }, { passive: true });
   window.addEventListener('scroll', () => {
+    if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
+      positionHintClueCard();
+    }
+    if (_el('starter-word-card') && !_el('starter-word-card')?.classList.contains('hidden')) {
+      positionStarterWordCard();
+    }
+    if (_el('support-choice-card') && !_el('support-choice-card')?.classList.contains('hidden')) {
+      positionSupportChoiceCard();
+    }
     syncQuickPopoverPositions();
+    positionSettingsPanel();
   }, { passive: true });
+
+  function positionSettingsPanel() {
+    const panel = _el('settings-panel');
+    if (!(panel instanceof HTMLElement) || panel.classList.contains('hidden')) return;
+    if ((window.innerWidth || 0) <= 1080) {
+      panel.style.left = '50%';
+      panel.style.top = 'clamp(78px, 10vh, 108px)';
+      panel.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const board = document.querySelector('.board-plate');
+    const header = document.querySelector('header');
+    if (!(board instanceof HTMLElement)) {
+      panel.style.left = '50%';
+      panel.style.top = 'clamp(78px, 10vh, 108px)';
+      panel.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const boardRect = board.getBoundingClientRect();
+    const headerBottom = header instanceof HTMLElement ? header.getBoundingClientRect().bottom : 72;
+    const gap = 18;
+    const top = Math.max(headerBottom + 10, Math.min(boardRect.top, window.innerHeight - panel.offsetHeight - 12));
+    const rightSpace = window.innerWidth - boardRect.right - gap - 12;
+    const leftSpace = boardRect.left - gap - 12;
+    let left = boardRect.right + gap;
+    if (rightSpace < panel.offsetWidth && leftSpace > rightSpace) {
+      left = Math.max(12, boardRect.left - panel.offsetWidth - gap);
+    }
+    left = Math.max(12, Math.min(left, window.innerWidth - panel.offsetWidth - 12));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${Math.max(12, top)}px`;
+    panel.style.transform = 'none';
+  }
 
   _el('settings-btn')?.addEventListener('click', () => {
     if (isAssessmentRoundLocked()) {
@@ -6914,9 +7367,7 @@
     if (opening) {
       setSettingsView('quick');
       void renderDiagnosticsPanel();
-      panel.style.left = '50%';
-      panel.style.top = 'clamp(78px, 10vh, 108px)';
-      panel.style.transform = 'translateX(-50%)';
+      positionSettingsPanel();
     }
     syncHeaderControlsVisibility();
   });
@@ -7156,15 +7607,19 @@
     }
     const themeDockBtn = _el('theme-dock-toggle-btn');
     const musicDockBtn = _el('music-dock-toggle-btn');
+    const setupBtn = _el('play-style-toggle');
     const playToolsBtn = _el('play-tools-btn');
     const playToolsDrawer = _el('play-tools-drawer');
     const themePopover = _el('theme-preview-strip');
     const musicPopover = _el('quick-music-strip');
+    const setupPopover = _el('quick-setup-strip');
     const clickInsideQuickPopover =
       themePopover?.contains(e.target) ||
       musicPopover?.contains(e.target) ||
+      setupPopover?.contains(e.target) ||
       themeDockBtn?.contains(e.target) ||
-      musicDockBtn?.contains(e.target);
+      musicDockBtn?.contains(e.target) ||
+      setupBtn?.contains(e.target);
     if (!clickInsideQuickPopover) {
       closeQuickPopover('all');
     }
@@ -7197,6 +7652,8 @@
       setPref('theme', normalized);
     }
     WQUI.showToast(`Theme: ${getThemeDisplayLabel(normalized)}`);
+    syncQuickSetupControls();
+    syncPlayStyleToggleUI();
     syncHeaderControlsVisibility();
   });
   _el('s-theme-save')?.addEventListener('change', e => {
@@ -7443,6 +7900,7 @@
     updateGradeTargetInline();
     refreshStandaloneMissionLabHub();
     syncFocusSearchForCurrentGrade();
+    syncQuickSetupControls();
   });
   _el('s-length')?.addEventListener('change',  e => {
     setPref('length', e.target.value);
@@ -7478,17 +7936,6 @@
     }
     WQUI.showToast(`Max guesses saved: ${normalized}.`);
   });
-  _el('s-starter-words')?.addEventListener('change', e => {
-    const mode = applyStarterWordMode(e.target.value);
-    if (mode === 'off') {
-      WQUI.showToast('Starter word suggestions are off.');
-      return;
-    }
-    const threshold = getStarterWordAutoThreshold(mode);
-    WQUI.showToast(threshold > 0
-      ? `Starter word suggestions will auto-open after ${threshold} guesses.`
-      : 'Starter word suggestions are available on demand.');
-  });
   _el('s-confidence-coaching')?.addEventListener('change', e => {
     setConfidenceCoachingMode(!!e.target.checked, { toast: true });
   });
@@ -7496,6 +7943,13 @@
     const normalized = normalizeTeamMode(e.target.value);
     e.target.value = normalized;
     setPref('teamMode', normalized);
+    if (normalized === 'on') {
+      closeHintClueCard();
+      hideStarterWordCard();
+      hideSupportChoiceCard();
+    }
+    syncHeaderClueLauncherUI();
+    syncStarterWordLauncherUI();
     syncClassroomTurnRuntime({ resetTurn: true });
     updateNextActionLine();
     WQUI.showToast(normalized === 'on'
@@ -7510,6 +7964,13 @@
     updateNextActionLine();
     WQUI.showToast(`${normalized} team${normalized === '1' ? '' : 's'} ready.`);
   });
+  _el('s-team-set')?.addEventListener('change', e => {
+    const normalized = normalizeTeamSet(e.target.value);
+    e.target.value = normalized;
+    setPref('teamSet', normalized);
+    updateClassroomTurnLine();
+    WQUI.showToast(`Team names: ${normalized}.`);
+  });
   _el('s-turn-timer')?.addEventListener('change', e => {
     const normalized = normalizeTurnTimer(e.target.value);
     e.target.value = normalized;
@@ -7519,6 +7980,15 @@
     WQUI.showToast(normalized === 'off'
       ? 'Team turn timer is off.'
       : `Team turn timer: ${normalized} seconds.`);
+  });
+  _el('s-smart-key-lock')?.addEventListener('change', e => {
+    const normalized = String(e.target?.value || DEFAULT_PREFS.smartKeyLock).toLowerCase() === 'on' ? 'on' : 'off';
+    e.target.value = normalized;
+    setPref('smartKeyLock', normalized);
+    syncKeyboardInputLocks(WQGame.getState?.() || {});
+    WQUI.showToast(normalized === 'on'
+      ? 'Smart Key Guard is on.'
+      : 'Smart Key Guard is off.');
   });
   _el('s-probe-rounds')?.addEventListener('change', e => {
     const normalized = normalizeProbeRounds(e.target.value);
@@ -7544,6 +8014,7 @@
   _el('s-hint')?.addEventListener('change',    e => { setHintMode(e.target.value); syncTeacherPresetButtons(); });
   _el('s-play-style')?.addEventListener('change', e => {
     const next = applyPlayStyle(e.target.value);
+    syncQuickSetupControls();
     WQUI.showToast(next === 'listening'
       ? 'Spelling Mode on: hear word + meaning, then spell.'
       : 'Detective Mode on: use tile colors and clues.');
@@ -7613,12 +8084,35 @@
     void WQAudio.playSentence(current);
   });
   _el('play-style-toggle')?.addEventListener('click', () => {
-    const current = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
-    const next = current === 'listening' ? 'detective' : 'listening';
-    applyPlayStyle(next);
+    syncQuickSetupControls();
+    toggleQuickPopover('setup');
+  });
+  _el('quick-setup-done')?.addEventListener('click', () => {
+    closeQuickPopover('setup');
+  });
+  _el('quick-setup-grade')?.addEventListener('change', (event) => {
+    const gradeSelect = _el('s-grade');
+    const next = String(event.target?.value || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
+    if (!gradeSelect || gradeSelect.value === next) return;
+    gradeSelect.value = next;
+    gradeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  _el('quick-setup-mode')?.addEventListener('change', (event) => {
+    const modeSelect = _el('s-play-style');
+    const next = normalizePlayStyle(event.target?.value || DEFAULT_PREFS.playStyle);
+    if (!modeSelect || modeSelect.value === next) return;
+    modeSelect.value = next;
+    modeSelect.dispatchEvent(new Event('change', { bubbles: true }));
     WQUI.showToast(next === 'listening'
       ? 'Spelling Mode on: spell what you hear.'
       : 'Detective Mode on.');
+  });
+  _el('quick-setup-theme')?.addEventListener('change', (event) => {
+    const themeSelect = _el('s-theme');
+    const next = normalizeTheme(event.target?.value, getThemeFallback());
+    if (!themeSelect || themeSelect.value === next) return;
+    themeSelect.value = next;
+    themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
   });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => {
@@ -7935,7 +8429,7 @@
     shuffleMusicVibe();
   });
   _el('s-music')?.addEventListener('change', e => {
-    const selected = normalizeMusicMode(e.target.value);
+    const selected = normalizeCuratedMusicMode(e.target.value);
     e.target.value = selected;
     setPref('music', selected);
     syncMusicForTheme({ toast: true });
@@ -8818,7 +9312,9 @@
       const nextActionH = nextActionEl && !nextActionEl.classList.contains('hidden')
         ? Math.max(0, nextActionEl.offsetHeight || 0)
         : 0;
-      const classroomTurnH = classroomTurnEl && !classroomTurnEl.classList.contains('hidden')
+      const classroomTurnPosition = classroomTurnEl ? getComputedStyle(classroomTurnEl).position : '';
+      const classroomTurnOverlay = classroomTurnPosition === 'fixed' || classroomTurnPosition === 'absolute';
+      const classroomTurnH = classroomTurnEl && !classroomTurnEl.classList.contains('hidden') && !classroomTurnOverlay
         ? Math.max(0, classroomTurnEl.offsetHeight || 0)
         : 0;
       const themeNestedInHeader = Boolean(themeStripEl && headerEl && headerEl.contains(themeStripEl));
@@ -8875,7 +9371,8 @@
       const playModeSafety = homeMode === 'play' ? 12 : 0;
       const extraSafetyH = extraSafetyBase + playModeSafety;
       const listeningReserveH = playStyle === 'listening' ? 12 : 0;
-      const reservedH = headerH + focusH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + (keyboardBottomGap + listeningBottomGapBoost) + boardZoneGap + supportReserveH + extraSafetyH + listeningReserveH;
+      const teamTimerSafetyReserve = (isTeamModeEnabled() && getTurnTimerSeconds() > 0) ? 8 : 0;
+      const reservedH = headerH + focusH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + (keyboardBottomGap + listeningBottomGapBoost) + boardZoneGap + supportReserveH + extraSafetyH + listeningReserveH + teamTimerSafetyReserve;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
       const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) + 2) / maxGuesses);
@@ -8901,7 +9398,10 @@
         layoutMode === 'compact' ? 36 : layoutMode === 'tight' ? 42 : 48,
         Math.round(preferredKeyH * 0.88)
       );
-      const adaptiveKeyCeil = Math.max(layoutMode === 'wide' ? 62 : 60, Math.round(preferredKeyH));
+      const adaptiveKeyCeil = Math.min(
+        Math.max(layoutMode === 'wide' ? 62 : 60, Math.round(preferredKeyH)),
+        Math.max(36, size - 4)
+      );
       const keyScale = layoutMode === 'compact' ? 0.84 : layoutMode === 'tight' ? 0.85 : 0.86;
       const adaptiveKeyH = Math.max(adaptiveKeyFloor, Math.min(adaptiveKeyCeil, Math.round(size * keyScale)));
       let adaptiveKeyMinW = Math.max(
@@ -8926,7 +9426,7 @@
       document.documentElement.style.setProperty('--gap-tile', `${tileGap}px`);
       document.documentElement.style.setProperty('--playfield-width', `${playfieldW}px`);
       document.documentElement.style.setProperty('--playfield-height', `${playfieldH}px`);
-      document.documentElement.style.setProperty('--key-h', `${adaptiveKeyH}px`);
+      document.documentElement.style.setProperty('--key-h', `${Math.min(adaptiveKeyH, Math.max(36, size - 4))}px`);
       document.documentElement.style.setProperty('--key-min-w', `${adaptiveKeyMinW}px`);
       document.documentElement.style.setProperty('--gap-key', `${Math.max(6, adaptiveKeyGap).toFixed(1)}px`);
       document.documentElement.style.setProperty('--keyboard-max-width', `${Math.ceil(maxKeyboardW)}px`);
@@ -9766,8 +10266,8 @@
     inputEl.value = '';
     delete inputEl.dataset.lockedLabel;
     // Legacy regression sentinels:
-    inputEl.placeholder = 'Select your quest or track';
-    inputEl.setAttribute('aria-label', `Select your quest or track. Current selection: ${currentLabel}`);
+    inputEl.placeholder = 'Select your quest';
+    inputEl.setAttribute('aria-label', `Select your quest. Current selection: ${currentLabel}`);
     inputEl.setAttribute('title', `Current selection: ${currentLabel}`);
   }
 
@@ -9809,6 +10309,8 @@
       }
     }
     updateActiveGradeLockChip(titleLabel, preset.kind === 'subject');
+    syncQuickSetupControls();
+    syncPlayStyleToggleUI();
   }
 
   function updateActiveGradeLockChip(gradeLabel, fromSubjectPreset) {
@@ -9817,6 +10319,24 @@
     const sourceLabel = fromSubjectPreset ? 'subject preset' : 'teacher/session grade';
     chipEl.textContent = `Active Grade Band locked: ${gradeLabel}`;
     chipEl.setAttribute('title', `New rounds use ${gradeLabel} from ${sourceLabel}.`);
+  }
+
+  function syncQuickSetupControls() {
+    const quickGrade = _el('quick-setup-grade');
+    const quickMode = _el('quick-setup-mode');
+    const quickTheme = _el('quick-setup-theme');
+    const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade).trim() || DEFAULT_PREFS.grade;
+    const modeValue = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    const themeValue = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
+    if (quickGrade && quickGrade.value !== gradeValue) quickGrade.value = gradeValue;
+    if (quickMode && quickMode.value !== modeValue) quickMode.value = modeValue;
+    if (quickTheme) {
+      const sourceTheme = _el('s-theme');
+      if (sourceTheme && quickTheme.options.length !== sourceTheme.options.length) {
+        quickTheme.innerHTML = sourceTheme.innerHTML;
+      }
+      if (quickTheme.value !== themeValue) quickTheme.value = themeValue;
+    }
   }
 
   function escapeHtml(value) {
@@ -10911,7 +11431,7 @@
       return;
     }
     clearPinnedFocusSearchValue(event.target);
-    // Keep closed on passive focus; open on explicit click or typing.
+    renderFocusSearchList(String(event.target?.value || '').trim(), { userInitiated: true });
   });
 
   _el('focus-inline-search')?.addEventListener('click', (event) => {
@@ -11176,7 +11696,7 @@
     const card = nextMidgameBoostCard();
     if (!card) return;
     const content = splitBoostQuestionAndAnswer(card.type, card.text);
-    const isQnA = card.type === 'joke' && Boolean(content.answer);
+    const isQnA = (card.type === 'joke' || card.type === 'riddle') && Boolean(content.answer);
     const isRiddle = isQnA && content.question.includes('?');
     const hasAnswer = isQnA;
     const label =
@@ -11191,62 +11711,33 @@
         : card.type === 'joke'
           ? (isRiddle ? '🕵️' : '😄')
           : '🛰️';
-    const tickerText = hasAnswer
-      ? `${label}: ${content.question} Tap Clue Peek to reveal the answer.`
-      : `${label}: ${content.question}`;
-    const tickerClass = tickerText.length < 84
-      ? 'midgame-boost-ticker is-static'
-      : 'midgame-boost-ticker';
     boost.innerHTML = `
-      <button type="button" class="midgame-boost-peek" aria-expanded="true" aria-label="Toggle clue peek">
-        <span class="midgame-boost-peek-dot" aria-hidden="true"></span>
-        Clue Peek
-      </button>
       <div class="midgame-boost-bubble">
         <span class="midgame-boost-mascot" aria-hidden="true">${mascot}</span>
-        <button type="button" class="midgame-boost-close" aria-label="Close clue bubble">✕</button>
         <span class="midgame-boost-tag">${label}</span>
         <p class="midgame-boost-question">${escapeHtml(content.question)}</p>
         ${hasAnswer ? '<button type="button" class="midgame-boost-answer-btn">Reveal answer</button><p class="midgame-boost-answer hidden"></p>' : ''}
         <div class="midgame-boost-actions">
-          <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off popups</button>
-        </div>
-      </div>
-      <div class="${tickerClass}" aria-live="polite">
-        <div class="midgame-boost-ticker-track">
-          <span>${escapeHtml(tickerText)}</span>
+          <span class="midgame-boost-round-note">Visible for this round.</span>
+          <button type="button" class="midgame-boost-action midgame-boost-turn-off">Turn off round cards</button>
         </div>
       </div>
     `;
-    const peekBtn = boost.querySelector('.midgame-boost-peek');
-    const bubble = boost.querySelector('.midgame-boost-bubble');
-    const closeBubble = () => {
-      if (!bubble) return;
-      bubble.classList.add('hidden');
-      peekBtn?.setAttribute('aria-expanded', 'false');
-    };
     const answerEl = boost.querySelector('.midgame-boost-answer');
     const answerBtn = boost.querySelector('.midgame-boost-answer-btn');
     if (answerEl) answerEl.textContent = content.answer;
-    peekBtn?.addEventListener('click', () => {
-      if (!bubble) return;
-      const reveal = bubble.classList.contains('hidden');
-      bubble.classList.toggle('hidden', !reveal);
-      peekBtn.setAttribute('aria-expanded', reveal ? 'true' : 'false');
-    });
     answerBtn?.addEventListener('click', () => {
       if (!answerEl) return;
       const reveal = answerEl.classList.contains('hidden');
       answerEl.classList.toggle('hidden', !reveal);
       answerBtn.textContent = reveal ? 'Hide answer' : 'Reveal answer';
     });
-    boost.querySelector('.midgame-boost-close')?.addEventListener('click', closeBubble);
     boost.querySelector('.midgame-boost-turn-off')?.addEventListener('click', () => {
       const select = _el('s-boost-popups');
       if (select) select.value = 'off';
       setPref('boostPopups', 'off');
       hideMidgameBoost();
-      WQUI.showToast('Engagement popups are off. Turn them back on in Settings.');
+      WQUI.showToast('Round cards are off. Turn them back on in Settings.');
     });
     boost.classList.remove('hidden');
     requestAnimationFrame(() => boost.classList.add('is-visible'));
@@ -14654,9 +15145,11 @@
     });
     focusSupportUnlockedByMiss = false;
     focusSupportUnlockAt = Date.now() + 20000;
+    currentRoundSupportPromptShown = false;
     scheduleFocusSupportUnlock();
     hideInformantHintCard();
     hideStarterWordCard();
+    hideSupportChoiceCard();
     closeRevealChallengeModal({ silent: true });
     clearClassroomTurnTimer();
     resetRoundTracking();
@@ -14787,6 +15280,15 @@
   const reflowLayout = () => {
     const s = WQGame.getState();
     if (s?.word) WQUI.calcLayout(s.wordLength, s.maxGuesses);
+    if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
+      positionHintClueCard();
+    }
+    if (_el('starter-word-card') && !_el('starter-word-card')?.classList.contains('hidden')) {
+      positionStarterWordCard();
+    }
+    if (_el('support-choice-card') && !_el('support-choice-card')?.classList.contains('hidden')) {
+      positionSupportChoiceCard();
+    }
     logOverflowDiagnostics('reflowLayout');
   };
   window.addEventListener('resize', reflowLayout);
@@ -14858,6 +15360,9 @@
     if (_el('starter-word-card') && !_el('starter-word-card')?.classList.contains('hidden')) {
       hideStarterWordCard();
     }
+    if (_el('support-choice-card') && !_el('support-choice-card')?.classList.contains('hidden')) {
+      hideSupportChoiceCard();
+    }
     if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) return;
     const s = WQGame.getState();
     if (s.gameOver) return;
@@ -14906,6 +15411,11 @@
         }
         if (!result.lost && avaWqWrongStreak >= 3 && avaWqRapidEvents.length >= 6) {
           speakAvaWordQuestAdaptive('rapid_wrong_streak');
+        }
+        if (!result.lost && Number(result.guesses?.length || 0) >= 1) {
+          setTimeout(() => {
+            showSupportChoiceCard(WQGame.getState?.() || result);
+          }, 360);
         }
       } else {
         avaWqCorrectStreak += 1;
@@ -15097,6 +15607,14 @@
       if (e.key === 'Escape') {
         e.preventDefault();
         closeQuickPopover('all');
+        return;
+      }
+      if (themePopoverOpen && ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(e.key)) {
+        const direction = (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 1;
+        if (window.WQThemeNav && typeof window.WQThemeNav.cycleTheme === 'function') {
+          e.preventDefault();
+          window.WQThemeNav.cycleTheme(direction);
+        }
       }
       return;
     }
@@ -15163,8 +15681,13 @@
   _el('phonics-clue-open-btn')?.addEventListener('click', () => {
     showInformantHintToast();
   });
-  _el('focus-clue-btn')?.addEventListener('click', () => {
-    showInformantHintToast();
+  _el('focus-help-btn')?.addEventListener('click', () => {
+    const card = _el('support-choice-card');
+    if (card && !card.classList.contains('hidden')) {
+      hideSupportChoiceCard();
+      return;
+    }
+    showSupportChoiceCard();
   });
   _el('starter-word-open-btn')?.addEventListener('click', () => {
     const card = _el('starter-word-card');
@@ -15177,19 +15700,33 @@
   _el('starter-word-refresh-btn')?.addEventListener('click', () => {
     showStarterWordCard({ source: 'manual' });
   });
-  _el('focus-ideas-btn')?.addEventListener('click', () => {
-    const card = _el('starter-word-card');
-    if (card && !card.classList.contains('hidden')) {
-      hideStarterWordCard();
-      return;
-    }
-    showStarterWordCard({ source: 'manual' });
-  });
   _el('starter-word-close-btn')?.addEventListener('click', () => {
     hideStarterWordCard();
   });
   _el('starter-word-close-icon')?.addEventListener('click', () => {
     hideStarterWordCard();
+  });
+  _el('support-choice-suggestion')?.addEventListener('click', () => {
+    const never = _el('support-choice-never');
+    if (never?.checked) setSupportPromptMode('off');
+    hideSupportChoiceCard();
+    showStarterWordCard({ source: 'manual' });
+  });
+  _el('support-choice-clue')?.addEventListener('click', () => {
+    const never = _el('support-choice-never');
+    if (never?.checked) setSupportPromptMode('off');
+    hideSupportChoiceCard();
+    showInformantHintToast();
+  });
+  _el('support-choice-no')?.addEventListener('click', () => {
+    const never = _el('support-choice-never');
+    if (never?.checked) setSupportPromptMode('off');
+    hideSupportChoiceCard();
+  });
+  _el('support-choice-close')?.addEventListener('click', () => {
+    const never = _el('support-choice-never');
+    if (never?.checked) setSupportPromptMode('off');
+    hideSupportChoiceCard();
   });
   document.addEventListener('pointerdown', (event) => {
     const card = _el('starter-word-card');
@@ -15197,8 +15734,17 @@
     const target = event.target instanceof Node ? event.target : null;
     if (!target) return;
     if (card.contains(target)) return;
-    if (target instanceof Element && target.closest('#starter-word-open-btn, #focus-ideas-btn')) return;
+    if (target instanceof Element && target.closest('#starter-word-open-btn')) return;
     hideStarterWordCard();
+  }, { passive: true });
+  document.addEventListener('pointerdown', (event) => {
+    const card = _el('support-choice-card');
+    if (!card || card.classList.contains('hidden')) return;
+    const target = event.target instanceof Node ? event.target : null;
+    if (!target) return;
+    if (card.contains(target)) return;
+    if (target instanceof Element && target.closest('#starter-word-open-btn, #phonics-clue-open-btn, #focus-help-btn')) return;
+    hideSupportChoiceCard();
   }, { passive: true });
   _el('listening-mode-close')?.addEventListener('click', () => {
     hideListeningModeExplainer();
@@ -17993,6 +18539,10 @@
     let activeTrackId = '';
     let playbackToken = 0;
     let customTracks = [];
+    let transportPaused = false;
+    const speechPauseTokens = new Set();
+    let speechPausedActive = false;
+    let shouldResumeAfterSpeech = false;
 
     const PLAYBACK_PRESETS = Object.freeze({
       deepfocus: Object.freeze({ seq: [196, 0, 220, 0, 247, 0, 220, 0], tempo: 500, dur: 0.15, wave: 'sine', level: 0.1 }),
@@ -18049,10 +18599,11 @@
     };
 
     const resumeAllAudio = () => {
+      if (speechPauseTokens.size) return;
       if (ctx && ctx.state === 'suspended') {
         ctx.resume().catch(() => {});
       }
-      if (audioEl && mode !== 'off' && audioEl.paused) {
+      if (audioEl && mode !== 'off' && audioEl.paused && !transportPaused) {
         audioEl.play().catch(() => {});
       }
     };
@@ -18121,6 +18672,28 @@
       audioEl.pause();
       audioEl.removeAttribute('src');
       try { audioEl.load(); } catch {}
+    };
+
+    const pauseTransport = () => {
+      transportPaused = true;
+      stopSynth();
+      if (audioEl) audioEl.pause();
+    };
+
+    const resumeTransport = async () => {
+      if (mode === 'off') return;
+      if (speechPauseTokens.size) return;
+      transportPaused = false;
+      if (ctx && ctx.state === 'suspended') {
+        try { await ctx.resume(); } catch {}
+      }
+      if (audioEl && audioEl.src) {
+        try {
+          await audioEl.play();
+          return;
+        } catch {}
+      }
+      await start();
     };
 
     const normalizeTrack = (rawTrack) => {
@@ -18200,6 +18773,25 @@
       audioEl.volume = clamp01(vol * clamp01(trackGain, 1), vol);
     };
 
+    const pauseForSpeech = (token) => {
+      if (!token) return;
+      speechPauseTokens.add(token);
+      if (speechPausedActive) return;
+      shouldResumeAfterSpeech = !transportPaused && mode !== 'off' && (!!synthInterval || !!(audioEl && !audioEl.paused));
+      speechPausedActive = true;
+      stopSynth();
+      if (audioEl) audioEl.pause();
+    };
+
+    const resumeAfterSpeech = (token) => {
+      if (token) speechPauseTokens.delete(token);
+      if (speechPauseTokens.size) return;
+      const shouldResume = speechPausedActive && shouldResumeAfterSpeech && mode !== 'off';
+      speechPausedActive = false;
+      shouldResumeAfterSpeech = false;
+      if (shouldResume) void start();
+    };
+
     const playCatalogTrack = async (playMode, token) => {
       await loadCatalog();
       if (token !== playbackToken || playMode !== mode || !catalog) {
@@ -18237,11 +18829,14 @@
       const playMode = normalizePlaybackMode(mode);
       const token = ++playbackToken;
       stopSynth();
+      if (speechPauseTokens.size) return;
       if (playMode === 'off') {
+        transportPaused = false;
         activeTrackId = '';
         stopTrack();
         return;
       }
+      if (transportPaused) return;
 
       const catalogPlayback = await playCatalogTrack(playMode, token);
       if (token !== playbackToken || playMode !== mode) return;
@@ -18261,6 +18856,7 @@
     return {
       setMode(nextMode) {
         mode = normalizePlaybackMode(nextMode);
+        transportPaused = false;
         void start();
       },
       setVolume(value) {
@@ -18269,6 +18865,22 @@
         if (synthGain) synthGain.gain.value = vol;
         const trackGain = parseFloat(audioEl?.dataset?.wqTrackGain || '1');
         setTrackVolume(Number.isFinite(trackGain) ? trackGain : 1);
+      },
+      pauseForSpeech,
+      resumeAfterSpeech,
+      isPausedForSpeech() {
+        return speechPausedActive || speechPauseTokens.size > 0;
+      },
+      pause() {
+        pauseTransport();
+      },
+      resume() {
+        void resumeTransport();
+      },
+      getPlaybackState() {
+        if (mode === 'off') return 'paused';
+        if (speechPausedActive || speechPauseTokens.size || transportPaused) return 'paused';
+        return 'playing';
       },
       initFromPrefs(prefState) {
         mode = normalizePlaybackMode(prefState.music || DEFAULT_PREFS.music);
@@ -18310,6 +18922,29 @@
     void WQAudio.primeAudioManifest();
   }
   musicController = WQMusic;
+  window.WQMusicSpeechBridge = {
+    pauseForSpeech(token) {
+      WQMusic.pauseForSpeech(token);
+    },
+    resumeAfterSpeech(token) {
+      WQMusic.resumeAfterSpeech(token);
+    },
+    isPausedForSpeech() {
+      return WQMusic.isPausedForSpeech();
+    }
+  };
+  window.WQMusicControls = {
+    pause() {
+      WQMusic.pause();
+    },
+    resume() {
+      WQMusic.resume();
+    },
+    getPlaybackState() {
+      return WQMusic.getPlaybackState();
+    }
+  };
+  installMediaSessionControls();
   WQMusic.initFromPrefs(prefs);
   syncMusicForTheme();
   initQuestLoop();

@@ -1,85 +1,50 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-02-25T06:49:49.028Z",
-  "trackCount": 12,
+  "trackCount": 17,
   "modeIndex": {
-    "nerdcore": [
-      "arcade-algorithm-99433352",
-      "boss-stage-blueprint-7d1172f5",
-      "code-cipher-run-85612e41",
-      "pixel-sonata-rush-37d34e94"
-    ],
-    "focus": [
-      "arcade-algorithm-99433352",
-      "baroque-pulse-e921cfb3",
-      "boss-stage-blueprint-7d1172f5",
-      "code-cipher-run-85612e41",
-      "cognitive-anchor-81271724",
-      "counterpoint-drive-9fdf791c",
-      "flow-state-lattice-6d250682",
-      "fugue-runner-7c9284bf",
-      "hyperfocus-halo-91d03a10",
-      "pixel-sonata-rush-37d34e94",
-      "string-theory-sprint-093d703c",
-      "task-tunnel-a89071cb"
-    ],
-    "arcade": [
-      "arcade-algorithm-99433352",
-      "baroque-pulse-e921cfb3",
-      "code-cipher-run-85612e41",
-      "fugue-runner-7c9284bf",
-      "pixel-sonata-rush-37d34e94"
-    ],
-    "scifi": [
-      "arcade-algorithm-99433352",
-      "boss-stage-blueprint-7d1172f5",
-      "code-cipher-run-85612e41"
-    ],
-    "upbeat": [
-      "arcade-algorithm-99433352",
-      "baroque-pulse-e921cfb3",
-      "code-cipher-run-85612e41",
-      "fugue-runner-7c9284bf",
-      "string-theory-sprint-093d703c",
-      "task-tunnel-a89071cb"
-    ],
-    "classicalbeats": [
-      "baroque-pulse-e921cfb3",
-      "counterpoint-drive-9fdf791c",
-      "fugue-runner-7c9284bf",
-      "string-theory-sprint-093d703c"
-    ],
     "team": [
+      "arcade-algorithm-99433352",
       "boss-stage-blueprint-7d1172f5",
+      "code-cipher-run-85612e41",
       "counterpoint-drive-9fdf791c",
+      "fugue-runner-7c9284bf",
       "pixel-sonata-rush-37d34e94",
+      "string-theory-sprint-093d703c",
       "task-tunnel-a89071cb"
     ],
-    "deepfocus": [
+    "coffee": [
+      "baroque-pulse-e921cfb3",
       "cognitive-anchor-81271724",
       "flow-state-lattice-6d250682",
-      "hyperfocus-halo-91d03a10",
-      "task-tunnel-a89071cb"
+      "study-sessions-lofi-231879",
+      "classroom-chill-495123",
+      "elegant-groove-490165",
+      "piano-calm-487704"
     ],
     "chill": [
       "cognitive-anchor-81271724",
-      "hyperfocus-halo-91d03a10"
+      "flow-state-lattice-6d250682",
+      "hyperfocus-halo-91d03a10",
+      "study-sessions-lofi-231879",
+      "classroom-chill-495123",
+      "soft-focus-485904"
     ],
-    "coffee": [
+    "focus": [
       "cognitive-anchor-81271724",
-      "flow-state-lattice-6d250682"
-    ],
-    "stealth": [
-      "cognitive-anchor-81271724"
-    ],
-    "sports": [
-      "counterpoint-drive-9fdf791c",
-      "pixel-sonata-rush-37d34e94",
-      "string-theory-sprint-093d703c"
+      "flow-state-lattice-6d250682",
+      "hyperfocus-halo-91d03a10",
+      "study-sessions-lofi-231879",
+      "classroom-chill-495123",
+      "piano-calm-487704",
+      "soft-focus-485904"
     ],
     "lofi": [
       "flow-state-lattice-6d250682",
-      "hyperfocus-halo-91d03a10"
+      "hyperfocus-halo-91d03a10",
+      "study-sessions-lofi-231879",
+      "elegant-groove-490165",
+      "soft-focus-485904"
     ]
   },
   "tracks": [
@@ -89,15 +54,11 @@
       "src": "./assets/music/tracks/focus-flow/arcade-algorithm__modes-nerdcore+focus+arcade+scifi+upbeat__bpm-128__energy-low__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "nerdcore",
-        "focus",
-        "arcade",
-        "scifi",
-        "upbeat"
+        "team"
       ],
       "bpm": 128,
       "energy": "low",
-      "gain": 1,
+      "gain": 0.78,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -108,14 +69,11 @@
       "src": "./assets/music/tracks/focus-flow/baroque-pulse__modes-classicalbeats+focus+arcade+upbeat__bpm-112__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "classicalbeats",
-        "focus",
-        "arcade",
-        "upbeat"
+        "coffee"
       ],
       "bpm": 112,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.82,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -126,14 +84,11 @@
       "src": "./assets/music/tracks/focus-flow/boss-stage-blueprint__modes-nerdcore+focus+scifi+team__bpm-142__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "nerdcore",
-        "focus",
-        "scifi",
         "team"
       ],
       "bpm": 142,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.74,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -144,15 +99,11 @@
       "src": "./assets/music/tracks/focus-flow/code-cipher-run__modes-nerdcore+focus+scifi+arcade+upbeat__bpm-132__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "nerdcore",
-        "focus",
-        "scifi",
-        "arcade",
-        "upbeat"
+        "team"
       ],
       "bpm": 132,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.76,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -163,15 +114,13 @@
       "src": "./assets/music/tracks/focus-flow/cognitive-anchor__modes-deepfocus+focus+chill+coffee+stealth__bpm-72__energy-low__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "deepfocus",
-        "focus",
         "chill",
         "coffee",
-        "stealth"
+        "focus"
       ],
       "bpm": 72,
       "energy": "low",
-      "gain": 1,
+      "gain": 0.84,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -182,14 +131,11 @@
       "src": "./assets/music/tracks/focus-flow/counterpoint-drive__modes-classicalbeats+focus+sports+team__bpm-118__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "classicalbeats",
-        "focus",
-        "sports",
         "team"
       ],
       "bpm": 118,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.8,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -200,14 +146,14 @@
       "src": "./assets/music/tracks/focus-flow/flow-state-lattice__modes-deepfocus+focus+lofi+coffee__bpm-80__energy-low__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "deepfocus",
+        "chill",
+        "coffee",
         "focus",
-        "lofi",
-        "coffee"
+        "lofi"
       ],
       "bpm": 80,
       "energy": "low",
-      "gain": 1,
+      "gain": 0.86,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -218,14 +164,11 @@
       "src": "./assets/music/tracks/focus-flow/fugue-runner__modes-classicalbeats+focus+upbeat+arcade__bpm-126__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "classicalbeats",
-        "focus",
-        "upbeat",
-        "arcade"
+        "team"
       ],
       "bpm": 126,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.78,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -236,14 +179,13 @@
       "src": "./assets/music/tracks/focus-flow/hyperfocus-halo__modes-deepfocus+focus+lofi+chill__bpm-88__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "deepfocus",
+        "chill",
         "focus",
-        "lofi",
-        "chill"
+        "lofi"
       ],
       "bpm": 88,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.86,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -254,15 +196,11 @@
       "src": "./assets/music/tracks/focus-flow/pixel-sonata-rush__modes-nerdcore+focus+arcade+sports+team__bpm-138__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "nerdcore",
-        "focus",
-        "arcade",
-        "sports",
         "team"
       ],
       "bpm": 138,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.74,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -273,14 +211,11 @@
       "src": "./assets/music/tracks/focus-flow/string-theory-sprint__modes-classicalbeats+focus+upbeat+sports__bpm-104__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "classicalbeats",
-        "focus",
-        "upbeat",
-        "sports"
+        "team"
       ],
       "bpm": 104,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.78,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
@@ -291,17 +226,98 @@
       "src": "./assets/music/tracks/focus-flow/task-tunnel__modes-deepfocus+focus+upbeat+team__bpm-96__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "deepfocus",
-        "focus",
-        "upbeat",
         "team"
       ],
       "bpm": 96,
       "energy": "mid",
-      "gain": 1,
+      "gain": 0.82,
       "collection": "focus-flow",
       "sourceType": "file-drop",
       "licenseRef": "original-focus-flow-pack"
+    },
+    {
+      "id": "study-sessions-lofi-231879",
+      "title": "Study Sessions Lofi",
+      "src": "./nickpanekaiassets-chill-lofi-instrumental-for-study-sessions-231879.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill",
+        "coffee",
+        "focus",
+        "lofi"
+      ],
+      "bpm": 84,
+      "energy": "low",
+      "gain": 0.88,
+      "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "classroom-chill-495123",
+      "title": "Classroom Chill",
+      "src": "./nickpanekaiassets-chill-and-use-reason-plz-495123.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill",
+        "coffee",
+        "focus"
+      ],
+      "bpm": 92,
+      "energy": "low",
+      "gain": 0.86,
+      "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "elegant-groove-490165",
+      "title": "Elegant Groove",
+      "src": "./nastelbom-elegant-490165.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee",
+        "lofi"
+      ],
+      "bpm": 90,
+      "energy": "low",
+      "gain": 0.84,
+      "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "piano-calm-487704",
+      "title": "Piano Calm",
+      "src": "./nastelbom-piano-piano-music-487704.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee",
+        "focus"
+      ],
+      "bpm": 76,
+      "energy": "low",
+      "gain": 0.82,
+      "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "soft-focus-485904",
+      "title": "Soft Focus",
+      "src": "./nastelbom-no-copyright-music-485904.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill",
+        "focus",
+        "lofi"
+      ],
+      "bpm": 88,
+      "energy": "low",
+      "gain": 0.84,
+      "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
     }
   ]
 }

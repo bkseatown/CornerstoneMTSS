@@ -6,6 +6,7 @@
   'use strict';
 
   const TEACHER_POOL_KEY = 'wq_teacher_words';
+  const TEACHER_SUPPORT_KEY = 'wq_teacher_custom_support_v1';
   const EVENT_BUS_EVENTS = window.WQEventBusContract?.events || {};
   const TEACHER_PANEL_TOGGLE_EVENT = EVENT_BUS_EVENTS.teacherPanelToggle || 'wq:teacher-panel-toggle';
   const OPEN_TEACHER_HUB_EVENT = EVENT_BUS_EVENTS.openTeacherHub || 'wq:open-teacher-hub';
@@ -115,6 +116,11 @@
     updateNavLabels(nextTheme);
   }
 
+  function isThemePopoverOpen() {
+    const popover = byId('theme-preview-strip');
+    return !!(popover && !popover.classList.contains('hidden'));
+  }
+
   function ensureThemeNav() {
     if (byId('wq-theme-nav')) return;
 
@@ -140,12 +146,12 @@
     byId('wq-theme-next')?.addEventListener('click', () => cycleTheme(1));
     byId('wq-theme-label-btn')?.addEventListener('click', () => cycleTheme(1));
     nav.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowLeft') {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
         event.preventDefault();
         cycleTheme(-1);
         return;
       }
-      if (event.key === 'ArrowRight') {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
         event.preventDefault();
         cycleTheme(1);
       }
@@ -170,6 +176,11 @@
     updateNavLabels(getCurrentTheme());
   }
 
+  window.WQThemeNav = Object.freeze({
+    cycleTheme,
+    isThemePopoverOpen
+  });
+
   function parseTeacherWords(raw) {
     return String(raw || '')
       .split(/[\n,]+/)
@@ -188,12 +199,149 @@
     return next;
   }
 
+  function normalizeSupportPayload(raw) {
+    return {
+      definition: String(raw?.definition || '').replace(/\s+/g, ' ').trim(),
+      sentence: String(raw?.sentence || '').replace(/\s+/g, ' ').trim()
+    };
+  }
+
+  function readTeacherSupportMap() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(TEACHER_SUPPORT_KEY) || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (_error) {
+      return {};
+    }
+  }
+
+  function writeTeacherSupportMap(map) {
+    try {
+      localStorage.setItem(TEACHER_SUPPORT_KEY, JSON.stringify(map || {}));
+    } catch (_error) {
+      // Ignore storage failures and keep UI usable.
+    }
+  }
+
+  function getTeacherSupport(word) {
+    const normalizedWord = String(word || '').trim().toLowerCase();
+    if (!normalizedWord) return { definition: '', sentence: '' };
+    return normalizeSupportPayload(readTeacherSupportMap()[normalizedWord]);
+  }
+
+  function setTeacherSupport(word, payload) {
+    const normalizedWord = String(word || '').trim().toLowerCase();
+    if (!normalizedWord) return;
+    const next = readTeacherSupportMap();
+    const normalized = normalizeSupportPayload(payload);
+    if (!normalized.definition && !normalized.sentence) {
+      delete next[normalizedWord];
+    } else {
+      next[normalizedWord] = normalized;
+    }
+    writeTeacherSupportMap(next);
+  }
+
+  function hasBankEntry(word) {
+    if (!window.WQData || typeof window.WQData.hasWord !== 'function') return false;
+    return !!window.WQData.hasWord(word);
+  }
+
+  function getAuditStatus(word) {
+    const normalizedWord = String(word || '').trim().toLowerCase();
+    const support = getTeacherSupport(normalizedWord);
+    const inBank = hasBankEntry(normalizedWord);
+    if (inBank) {
+      return {
+        status: 'ready',
+        label: 'In bank',
+        detail: 'Built-in clue support is ready.'
+      };
+    }
+    if (support.definition || support.sentence) {
+      return {
+        status: 'custom',
+        label: 'Custom support',
+        detail: 'Teacher support will be used for clue help.'
+      };
+    }
+    return {
+      status: 'missing',
+      label: 'Needs info',
+      detail: 'Add a definition or sentence to enable clue help.'
+    };
+  }
+
+  function summarizeAudit(words) {
+    const list = Array.isArray(words) ? words : [];
+    if (!list.length) return 'No words yet.';
+    let ready = 0;
+    let custom = 0;
+    let missing = 0;
+    list.forEach((word) => {
+      const status = getAuditStatus(word).status;
+      if (status === 'ready') ready += 1;
+      else if (status === 'custom') custom += 1;
+      else missing += 1;
+    });
+    return `${ready} ready, ${custom} custom, ${missing} need support`;
+  }
+
+  function renderTeacherAudit(words) {
+    const panel = byId('wq-teacher-audit');
+    const listEl = byId('wq-teacher-audit-list');
+    const summaryEl = byId('wq-teacher-audit-summary');
+    if (!panel || !listEl || !summaryEl) return;
+    const list = Array.isArray(words) ? words : [];
+    if (!list.length) {
+      panel.classList.add('hidden');
+      listEl.innerHTML = '';
+      summaryEl.textContent = 'No words yet.';
+      return;
+    }
+    panel.classList.remove('hidden');
+    summaryEl.textContent = summarizeAudit(list);
+    listEl.innerHTML = list.map((word) => {
+      const audit = getAuditStatus(word);
+      const actionLabel = audit.status === 'ready' ? 'View' : (audit.status === 'custom' ? 'Edit' : 'Add support');
+      return [
+        `<div class="teacher-audit-item" data-status="${audit.status}">`,
+        '  <span class="teacher-audit-dot" aria-hidden="true"></span>',
+        '  <div>',
+        `    <div class="teacher-audit-word">${word}</div>`,
+        `    <div class="teacher-audit-meta">${audit.label}: ${audit.detail}</div>`,
+        '  </div>',
+        `  <button class="teacher-audit-action" type="button" data-word-action="edit-support" data-word="${word}">${actionLabel}</button>`,
+        '</div>'
+      ].join('');
+    }).join('');
+  }
+
+  function openTeacherSupportEditor(word) {
+    const normalizedWord = String(word || '').trim().toUpperCase();
+    const editor = byId('wq-teacher-support-editor');
+    if (!editor) return;
+    const support = getTeacherSupport(normalizedWord);
+    editor.dataset.word = normalizedWord;
+    byId('wq-teacher-support-title').textContent = `Support for ${normalizedWord}`;
+    byId('wq-teacher-support-definition').value = support.definition;
+    byId('wq-teacher-support-sentence').value = support.sentence;
+    editor.classList.remove('hidden');
+  }
+
+  function closeTeacherSupportEditor() {
+    const editor = byId('wq-teacher-support-editor');
+    if (!editor) return;
+    editor.classList.add('hidden');
+    editor.dataset.word = '';
+  }
+
   function persistTeacherWords(words) {
     try {
       if (Array.isArray(words) && words.length) {
-        sessionStorage.setItem(TEACHER_POOL_KEY, JSON.stringify(words));
+        localStorage.setItem(TEACHER_POOL_KEY, JSON.stringify(words));
       } else {
-        sessionStorage.removeItem(TEACHER_POOL_KEY);
+        localStorage.removeItem(TEACHER_POOL_KEY);
       }
     } catch (_error) {
       // Storage can be unavailable in private browsing.
@@ -202,7 +350,7 @@
 
   function loadTeacherWords() {
     try {
-      const raw = sessionStorage.getItem(TEACHER_POOL_KEY);
+      const raw = localStorage.getItem(TEACHER_POOL_KEY);
       const parsed = JSON.parse(raw || '[]');
       return Array.isArray(parsed) ? parsed : [];
     } catch (_error) {
@@ -235,6 +383,7 @@
     window.__WQ_TEACHER_POOL__ = next.length ? next : null;
     persistTeacherWords(next);
     setTeacherStatus(next);
+    renderTeacherAudit(next);
 
     if (!options.silent) {
       if (next.length) {
@@ -299,6 +448,8 @@
     syncTeacherHubSelectsFromSettings();
     byId('settings-panel')?.classList.add('hidden');
     panel.classList.remove('hidden');
+    renderTeacherAudit(parseTeacherWords(byId('wq-teacher-words')?.value || ''));
+    positionTeacherPanel();
     window.dispatchEvent(new CustomEvent(TEACHER_PANEL_TOGGLE_EVENT, { detail: { open: true } }));
     byId('wq-teacher-words')?.focus();
   }
@@ -308,6 +459,40 @@
     if (!panel) return;
     panel.classList.add('hidden');
     window.dispatchEvent(new CustomEvent(TEACHER_PANEL_TOGGLE_EVENT, { detail: { open: false } }));
+  }
+
+  function positionTeacherPanel() {
+    const panel = byId('teacher-panel');
+    const card = byId('teacher-panel')?.querySelector('.teacher-panel-card');
+    if (!(panel instanceof HTMLElement) || !(card instanceof HTMLElement) || panel.classList.contains('hidden')) return;
+    if ((window.innerWidth || 0) <= 1080) {
+      panel.style.left = '50%';
+      panel.style.top = 'clamp(84px, 11vh, 120px)';
+      panel.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const board = document.querySelector('.board-plate');
+    const header = document.querySelector('header');
+    if (!(board instanceof HTMLElement)) {
+      panel.style.left = '50%';
+      panel.style.top = 'clamp(84px, 11vh, 120px)';
+      panel.style.transform = 'translateX(-50%)';
+      return;
+    }
+    const boardRect = board.getBoundingClientRect();
+    const headerBottom = header instanceof HTMLElement ? header.getBoundingClientRect().bottom : 72;
+    const gap = 18;
+    const rightSpace = window.innerWidth - boardRect.right - gap - 12;
+    const leftSpace = boardRect.left - gap - 12;
+    let left = boardRect.right + gap;
+    if (rightSpace < card.offsetWidth && leftSpace > rightSpace) {
+      left = Math.max(12, boardRect.left - card.offsetWidth - gap);
+    }
+    left = Math.max(12, Math.min(left, window.innerWidth - card.offsetWidth - 12));
+    const top = Math.max(headerBottom + 10, Math.min(boardRect.top, window.innerHeight - card.offsetHeight - 12));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${Math.max(12, top)}px`;
+    panel.style.transform = 'none';
   }
 
   function launchTeacherWordRound() {
@@ -333,6 +518,39 @@
       closeTeacherPanel();
     });
     window.addEventListener(OPEN_TEACHER_HUB_EVENT, openTeacherPanel);
+    window.addEventListener('resize', positionTeacherPanel, { passive: true });
+    window.addEventListener('scroll', positionTeacherPanel, { passive: true });
+    {
+      const panel = byId('teacher-panel');
+      const card = panel?.querySelector('.teacher-panel-card');
+      const header = panel?.querySelector('.teacher-panel-head');
+      let dragging = false;
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
+      const onPointerMove = (event) => {
+        if (!dragging || !(panel instanceof HTMLElement) || !(card instanceof HTMLElement)) return;
+        const x = Math.max(8, Math.min(window.innerWidth - card.offsetWidth - 8, event.clientX - dragOffsetX));
+        const y = Math.max(8, Math.min(window.innerHeight - card.offsetHeight - 8, event.clientY - dragOffsetY));
+        panel.style.left = `${x}px`;
+        panel.style.top = `${y}px`;
+        panel.style.transform = 'none';
+      };
+      const stopDragging = () => {
+        dragging = false;
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', stopDragging);
+      };
+      header?.addEventListener('pointerdown', (event) => {
+        if (!(panel instanceof HTMLElement) || !(card instanceof HTMLElement)) return;
+        if ((event.target instanceof HTMLElement) && event.target.closest('#teacher-panel-close')) return;
+        dragging = true;
+        const rect = card.getBoundingClientRect();
+        dragOffsetX = event.clientX - rect.left;
+        dragOffsetY = event.clientY - rect.top;
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', stopDragging);
+      });
+    }
     document.body.dataset.wqTeacherPanelBound = '1';
   }
 
@@ -364,6 +582,29 @@
     byId('wq-teacher-clear')?.addEventListener('click', () => {
       if (wordsInput) wordsInput.value = '';
       applyTeacherPool([]);
+      closeTeacherSupportEditor();
+    });
+
+    byId('wq-teacher-support-save')?.addEventListener('click', () => {
+      const editor = byId('wq-teacher-support-editor');
+      const word = String(editor?.dataset.word || '').trim();
+      if (!word) return;
+      const definition = byId('wq-teacher-support-definition')?.value || '';
+      const sentence = byId('wq-teacher-support-sentence')?.value || '';
+      setTeacherSupport(word, { definition, sentence });
+      renderTeacherAudit(parseTeacherWords(wordsInput?.value || ''));
+      setTeacherMessage(`Saved support for ${word}.`, false);
+      closeTeacherSupportEditor();
+    });
+
+    byId('wq-teacher-support-cancel')?.addEventListener('click', () => {
+      closeTeacherSupportEditor();
+    });
+
+    byId('wq-teacher-audit-list')?.addEventListener('click', (event) => {
+      const btn = event.target?.closest?.('[data-word-action="edit-support"]');
+      if (!btn) return;
+      openTeacherSupportEditor(btn.getAttribute('data-word') || '');
     });
 
     wordsInput.addEventListener('keydown', (event) => {
@@ -372,12 +613,17 @@
       applyTeacherWords({ shuffle: false });
     });
 
+    wordsInput.addEventListener('input', () => {
+      renderTeacherAudit(parseTeacherWords(wordsInput.value || ''));
+    });
+
     const restoredWords = loadTeacherWords();
     if (restoredWords.length) {
       wordsInput.value = restoredWords.join('\n');
       applyTeacherPool(restoredWords, { silent: true });
     } else {
       setTeacherStatus([]);
+      renderTeacherAudit([]);
     }
 
     bindTeacherHubControlSync();

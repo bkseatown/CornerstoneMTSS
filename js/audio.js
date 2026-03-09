@@ -23,6 +23,33 @@ const WQAudio = (() => {
   let _audioManifestReady = false;
   let _audioManifestLoad = null;
   let _assetBasePath = null;
+  let _activeSpeechSessionToken = null;
+
+  function _resolveMusicBridge() {
+    const bridge = window.WQMusicSpeechBridge;
+    return bridge && typeof bridge.pauseForSpeech === 'function' && typeof bridge.resumeAfterSpeech === 'function'
+      ? bridge
+      : null;
+  }
+
+  function _beginSpeechSession() {
+    if (_activeSpeechSessionToken) {
+      const priorBridge = _resolveMusicBridge();
+      try { priorBridge?.resumeAfterSpeech(_activeSpeechSessionToken); } catch {}
+    }
+    const token = `wq-speech-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    _activeSpeechSessionToken = token;
+    const bridge = _resolveMusicBridge();
+    try { bridge?.pauseForSpeech(token); } catch {}
+    return token;
+  }
+
+  function _endSpeechSession(token) {
+    if (!token) return;
+    if (_activeSpeechSessionToken === token) _activeSpeechSessionToken = null;
+    const bridge = _resolveMusicBridge();
+    try { bridge?.resumeAfterSpeech(token); } catch {}
+  }
 
   function _getAssetBasePath() {
     if (_assetBasePath !== null) return _assetBasePath;
@@ -172,28 +199,46 @@ const WQAudio = (() => {
   // ─── Playback ───────────────────────────────────
   let _active = null;
 
-  function _stop() {
+  function _stop(options = {}) {
     if (_active) { _active.pause(); _active.currentTime = 0; _active = null; }
     if (window.speechSynthesis) window.speechSynthesis.cancel();
+    if (options.keepSpeechSession !== true && _activeSpeechSessionToken) {
+      _endSpeechSession(_activeSpeechSessionToken);
+    }
   }
 
-  function _playFile(path) {
+  function _playFile(path, options = {}) {
     return new Promise((res, rej) => {
-      _stop();
+      const keepSpeechSession = options.keepSpeechSession === true;
+      if (options.stopFirst !== false) _stop({ keepSpeechSession });
+      const sessionToken = options.sessionToken || _beginSpeechSession();
       const a = new Audio(path);
       a.preload = 'auto';
       _active = a;
-      a.onended = () => { _active = null; res(); };
-      a.onerror = () => { _active = null; rej(); };
-      a.play().catch(rej);
+      a.onended = () => {
+        _active = null;
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        res();
+      };
+      a.onerror = () => {
+        _active = null;
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        rej();
+      };
+      a.play().catch((error) => {
+        _active = null;
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        rej(error);
+      });
     });
   }
 
   function _speak(text, rate = 0.88, pitch = 1, options = {}) {
     return new Promise(res => {
       const stopFirst = options.stopFirst !== false;
+      const keepSpeechSession = options.keepSpeechSession === true;
       if (stopFirst) {
-        _stop();
+        _stop({ keepSpeechSession });
       } else {
         if (_active) { res(false); return; }
         if (window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
@@ -201,7 +246,12 @@ const WQAudio = (() => {
           return;
         }
       }
-      if (!window.speechSynthesis) { res(); return; }
+      const sessionToken = options.sessionToken || _beginSpeechSession();
+      if (!window.speechSynthesis) {
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        res();
+        return;
+      }
       if (!_voicesReady) _loadVoices();
 
       const utt = new SpeechSynthesisUtterance(text);
@@ -209,8 +259,14 @@ const WQAudio = (() => {
       utt.pitch = pitch;
       utt.lang  = 'en-US';
       if (_selectedVoice) utt.voice = _selectedVoice;
-      utt.onend   = () => res(true);
-      utt.onerror = () => res(false);
+      utt.onend   = () => {
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        res(true);
+      };
+      utt.onerror = () => {
+        if (!options.sessionToken) _endSpeechSession(sessionToken);
+        res(false);
+      };
       window.speechSynthesis.speak(utt);
     });
   }
@@ -272,35 +328,40 @@ const WQAudio = (() => {
     const funPath = includeFun ? _normalizeAudioPath(entry?.audio?.fun) : null;
     const hasDefRecorded = canUseRecorded && !!defPath && _isKnownAudioPath(defPath) !== false;
     const hasFunRecorded = includeFun && !!readFun && canUseRecorded && !!funPath && _isKnownAudioPath(funPath) !== false;
+    const sessionToken = _beginSpeechSession();
 
-    // If both recorded clips exist, keep the natural studio voice.
-    if (hasDefRecorded && (!readFun || hasFunRecorded)) {
-      try {
-        await _playFile(defPath);
-        if (readFun && hasFunRecorded) await _playFile(funPath);
-        return true;
-      } catch {
-        // Fall through to TTS fallback.
+    try {
+      // If both recorded clips exist, keep the natural studio voice.
+      if (hasDefRecorded && (!readFun || hasFunRecorded)) {
+        try {
+          await _playFile(defPath, { sessionToken });
+          if (readFun && hasFunRecorded) await _playFile(funPath, { sessionToken, stopFirst: true, keepSpeechSession: true });
+          return true;
+        } catch {
+          // Fall through to TTS fallback.
+        }
       }
-    }
 
-    if (allowTtsFallback && fallbackText) {
-      const spoken = await _speak(fallbackText, 0.9, 1, { stopFirst: true });
-      if (spoken) return true;
-    }
-
-    // If TTS fallback is disabled, attempt whatever recorded audio is available.
-    if (hasDefRecorded) {
-      try {
-        await _playFile(defPath);
-        if (readFun && hasFunRecorded) await _playFile(funPath);
-        return true;
-      } catch {
-        return false;
+      if (allowTtsFallback && fallbackText) {
+        const spoken = await _speak(fallbackText, 0.9, 1, { stopFirst: true, sessionToken, keepSpeechSession: true });
+        if (spoken) return true;
       }
-    }
 
-    return false;
+      // If TTS fallback is disabled, attempt whatever recorded audio is available.
+      if (hasDefRecorded) {
+        try {
+          await _playFile(defPath, { sessionToken });
+          if (readFun && hasFunRecorded) await _playFile(funPath, { sessionToken, stopFirst: true, keepSpeechSession: true });
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      return false;
+    } finally {
+      _endSpeechSession(sessionToken);
+    }
   }
 
   async function playCoachPhrase(input = {}, options = {}) {

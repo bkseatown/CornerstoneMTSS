@@ -91,3 +91,41 @@ Use this log for continuity across agents and sessions.
   - Sprint timer resets on panel re-render by design (v1 lightweight behavior).
 - Next Step:
   - Capture optional UX screenshots for EF panel and assignment snapshot if needed.
+
+## 2026-03-08 (Word Quest Seahawks Stabilization)
+- Timestamp: 2026-03-08 (Asia/Singapore)
+- Operator: Codex
+- Branch: `main`
+- Scope: Stabilize Word Quest Seahawks play routing, header, controls, support visibility, and theme-owned play surfaces while keeping student-facing game pages routed back to `Game Gallery`.
+- Files Changed:
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/style/themes.css`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/style/components.css`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/js/ui.js`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/js/app.js`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/word-quest.html`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/.github/workflows/qa.yml`
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/.github/workflows/deploy-pages.yml`
+- Commands Run:
+  - `node --check js/ui.js`: pass
+  - `npm run dom:hooks:check`: pass
+  - `npm run hud:check`: pass
+  - Local screenshot validation against rendered Word Quest play page: pass
+- Result:
+  - Word Quest play page now routes back to `Game Gallery`, not Hub.
+  - `Next Word` green fill and the blue banner/green `Quest` relationship were restored.
+  - Support buttons remain visible in play mode instead of disappearing entirely.
+  - Broad slash-heavy Seahawks board treatment was removed in favor of more carved/totem-like board styling.
+  - GitHub notification noise was reduced by limiting redundant QA/deploy alert behavior.
+  - Latest pushed stabilization commit: `8e17d453`
+  - Latest confirmed live build at handoff time: `8e17d453ea00-356`
+- Regressions Found:
+  - Header overlap between the Word Quest logo and icon strip on narrower windows.
+  - Repeated theme regressions from shared play-mode overrides flattening bespoke theme identity.
+  - Live/public links often lagging behind pushes until `build.json` confirms the new deploy.
+- Risks / Follow-ups:
+  - Seahawks board frame and keyboard still are not bespoke enough visually.
+  - Continue to treat local screenshots as the source of truth before claiming a visual fix.
+  - Do not present public links as current until the deployed `build.json` matches the target commit.
+- Next Step:
+  - Continue the Seahawks theme pass, but only on the board frame object and keyboard object.
+  - Preserve the current spacing and routing unless a validated screenshot shows a problem.

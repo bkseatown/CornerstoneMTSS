@@ -31,11 +31,13 @@
   --radius-key:      16px;
   --radius-plate:    20px;
   --radius-panel:    16px;
-  --wq-play-header-bg: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--panel-bg) 78%, #f4f8fc 22%),
-    color-mix(in oklab, var(--panel-bg) 64%, #7e94aa 36%)
-  );
+  --wq-play-header-bg:
+    linear-gradient(180deg, rgba(255,255,255,0.16) 0 3%, transparent 3% 100%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--header-bg) 92%, #ffffff 8%) 0 50%,
+      color-mix(in oklab, var(--panel-bg) 88%, #c8d1db 12%) 50% 100%
+    );
   --wq-play-header-border: color-mix(in oklab, var(--header-border) 86%, transparent);
   --wq-play-header-shadow: 0 10px 20px rgba(8, 18, 30, 0.14);
   --wq-play-header-art-width: 0px;
@@ -97,9 +99,26 @@
   --wq-play-key-hover-bg: var(--key-hover);
   --wq-play-key-wide-bg: var(--wq-play-key-bg);
   --wq-play-vowel-color: #2d7f88;
+  --wq-play-vowel-shadow: #84b7a4;
+  --wq-play-vowel-fill: color-mix(in oklab, var(--vowel-accent) 24%, #f8fbff 76%);
+  --wq-play-vowel-border: color-mix(in oklab, var(--vowel-accent) 58%, var(--wq-play-key-border) 42%);
   --wq-play-control-bg: linear-gradient(180deg, rgba(244,248,251,0.98) 0%, rgba(214,221,226,0.98) 100%);
   --wq-play-control-border: rgba(0, 34, 68, 0.18);
   --wq-play-control-color: #10283f;
+  --wq-play-menu-bg:
+    linear-gradient(180deg, rgba(255,255,255,0.1) 0 3%, transparent 3% 100%),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--header-bg) 88%, var(--panel-bg) 12%) 0%,
+      color-mix(in oklab, var(--brand-dk) 66%, var(--panel-bg) 34%) 100%
+    );
+  --wq-play-menu-border: color-mix(in oklab, var(--header-border) 72%, rgba(255,255,255,0.34));
+  --wq-play-menu-text: color-mix(in oklab, var(--brand-text) 84%, #ffffff 16%);
+  --wq-play-menu-subtext: color-mix(in oklab, var(--brand-text) 62%, #dce7f4 38%);
+  --wq-play-menu-card-bg: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
+  --wq-play-menu-card-border: color-mix(in oklab, var(--panel-border) 68%, #ffffff 32%);
+  --wq-play-menu-card-hover-bg: color-mix(in oklab, var(--panel-bg) 82%, var(--accent) 18%);
+  --wq-play-menu-card-active-bg: color-mix(in oklab, var(--panel-bg) 70%, var(--accent) 30%);
   --theme-backdrop:
     radial-gradient(circle at 16% 6%, color-mix(in oklab, var(--brand) 16%, transparent), transparent 44%),
     linear-gradient(180deg, var(--page-bg), var(--page-bg2));
@@ -249,6 +268,7 @@
   --wq-play-header-art-opacity: 0.82;
   --wq-play-focus-surface-bg: linear-gradient(180deg, rgba(247, 250, 252, 0.98) 0%, rgba(226, 233, 237, 0.98) 100%);
   --wq-play-focus-surface-border: rgba(0, 34, 68, 0.2);
+  --wq-play-vowel-shadow: #69be28;
   --wq-play-focus-chip-bg: linear-gradient(180deg, rgba(236, 240, 243, 0.98) 0%, rgba(207, 215, 221, 0.98) 100%);
   --wq-play-focus-chip-border: rgba(53, 72, 90, 0.3);
   --wq-play-focus-chip-shadow:
@@ -330,40 +350,45 @@
 /* ── HUSKIES ── Purple #4B2E83 + Gold #B7A57A/#85754D
    Medium purple page — not dark. Gold keys dominate = UW game day feel */
 [data-theme="huskies"] {
-  --page-bg:      #98a8bb;
-  --page-bg2:     #7187a0;
-  --plate-bg:     rgba(198, 206, 216, 0.42);
-  --plate-border: rgba(96, 112, 132, 0.58);
-  --tile-face:    linear-gradient(160deg, #fdfcf9 0%, #edf0f4 100%);
-  --tile-border:  #77889d;
-  --tile-text:    #1e2530;
-  --tile-shadow:  0 4px 0 #4f647b, 0 8px 18px rgba(20, 28, 40, 0.2);
-  --tile-filled-border: #b7a57a;
-  --key-bg:       #dde4ea;
-  --key-text:     #202f42;
-  --key-shadow:   0 4px 0 #7c8da0, 0 8px 16px rgba(24, 34, 48, 0.16);
-  --key-hover:    #e9eef3;
-  --vowel-accent: #b7a57a;
+  --page-bg:      #5b4290;
+  --page-bg2:     #6a52a1;
+  --plate-bg:     rgba(27, 26, 31, 0.44);
+  --plate-border: rgba(183, 165, 122, 0.42);
+  --tile-face:    linear-gradient(160deg, #f7f1e5 0%, #eadfc9 100%);
+  --tile-border:  #b7a57a;
+  --tile-text:    #241d12;
+  --tile-shadow:  0 4px 0 #6e6347, 0 10px 22px rgba(14, 12, 20, 0.28);
+  --tile-filled-border: #39275d;
+  --key-bg:       #e6dcc5;
+  --key-text:     #221c14;
+  --key-shadow:   0 4px 0 #84775a, 0 10px 18px rgba(13, 11, 18, 0.22);
+  --key-hover:    #f0e7d5;
+  --vowel-accent: #2a8f9d;
   --brand:        #4b2e83;
   --brand-dk:     #2d1757;
-  --brand-text:   #f4f0ff;
+  --brand-text:   #f8f2ff;
   --accent:       #b7a57a;
   --header-bg:    #4b2e83;
-  --header-border: rgba(183, 165, 122, 0.62);
-  --focusbar-bg:  rgba(223, 229, 235, 0.94);
-  --panel-bg:     #d5dde5;
-  --panel-border: rgba(80, 95, 116, 0.28);
-  --panel-shadow: 0 12px 28px rgba(18, 28, 42, 0.2);
-  --theme-text:         #263548;
-  --theme-text-muted:   #58697d;
-  --modal-bg:     #d9e0e7;
-  --fun-bg:       #24163f;
-  --fun-text:     #e7d29b;
-  --fun-border:   #7b6a43;
+  --header-border: rgba(183, 165, 122, 0.74);
+  --focusbar-bg:  rgba(245, 238, 224, 0.94);
+  --panel-bg:     #f1ebdc;
+  --panel-border: rgba(75, 46, 131, 0.24);
+  --panel-shadow: 0 12px 28px rgba(18, 14, 28, 0.22);
+  --theme-text:         #231c31;
+  --theme-text-muted:   #5d536c;
+  --modal-bg:     #f4eedf;
+  --fun-bg:       #2a2138;
+  --fun-text:     #e9d8a8;
+  --fun-border:   #8d7b52;
+  --logo-word:    #f7f1e3;
+  --logo-quest:   #d7b56d;
+  --logo-dot:     #d7b56d;
   --theme-backdrop:
-    radial-gradient(circle at 16% 8%, rgba(75,46,131,0.18), transparent 30%),
-    linear-gradient(135deg, rgba(183,165,122,0.10) 0 14%, transparent 14% 48%, rgba(75,46,131,0.08) 48% 64%, transparent 64% 100%),
-    linear-gradient(180deg, #98a8bb, #7187a0);
+    radial-gradient(circle at 18% 10%, rgba(183,165,122,0.16), transparent 24%),
+    linear-gradient(90deg, rgba(24,16,38,0.04) 0 7%, transparent 7% 93%, rgba(24,16,38,0.04) 93% 100%),
+    linear-gradient(135deg, rgba(183,165,122,0.06) 0 12%, transparent 12% 42%, rgba(255,255,255,0.10) 42% 52%, transparent 52% 100%),
+    linear-gradient(180deg, #6d56a5, #6d56a5);
+  --wq-play-vowel-shadow: #3e9aa8;
 }
 
 /* ── COFFEE / STARBUCKS ── Green #00704A + espresso + cream
@@ -404,6 +429,7 @@
     radial-gradient(circle at 84% 16%, rgba(255,244,224,0.08), transparent 18%),
     linear-gradient(180deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 100%),
     linear-gradient(180deg, #35241b, #241913);
+  --wq-play-vowel-shadow: #5d8f80;
 }
 
 /* ── MATRIX ── Electric green on deep green. INTENTIONALLY high contrast.
@@ -443,6 +469,7 @@
     radial-gradient(circle at 14% 8%, rgba(152,242,143,0.16), transparent 28%),
     repeating-linear-gradient(180deg, rgba(152,242,143,0.05) 0 2px, transparent 2px 8px),
     linear-gradient(180deg, #173126, #102319);
+  --wq-play-vowel-shadow: #5be39e;
 }
 
 /* ── SUNSET ── warm peach-orange ──────────────────────── */
@@ -467,6 +494,7 @@
   --accent:       #f7b851;
   --header-bg:    linear-gradient(90deg, #f06a1d 0%, #ef7d31 100%);
   --header-border: rgba(120,44,14,0.30);
+  --wq-play-vowel-shadow: #4aa6b8;
   --focusbar-bg:  rgba(252,234,214,0.90);
   --panel-bg:     #fffaf5;
   --panel-border: rgba(145,68,30,0.15);
@@ -522,6 +550,7 @@
     radial-gradient(circle at 16% 10%, rgba(26,77,179,0.16), transparent 28%),
     linear-gradient(90deg, rgba(245,201,74,0.14) 0 6%, transparent 6% 94%, rgba(214,40,57,0.14) 94% 100%),
     linear-gradient(180deg, #adc5ee, #9bb9ea);
+  --wq-play-vowel-shadow: #f2c94c;
 }
 
 /* ── IRON MAN ── red armor + REAL gold keys
@@ -562,6 +591,7 @@
     radial-gradient(circle at 16% 8%, rgba(240,195,97,0.18), transparent 26%),
     linear-gradient(135deg, rgba(170,5,5,0.12) 0 18%, transparent 18% 50%, rgba(240,195,97,0.08) 50% 68%, transparent 68% 100%),
     linear-gradient(180deg, #4a1e1a, #35140f);
+  --wq-play-vowel-shadow: #f0c361;
 }
 
 /* ── MARVEL ── COMIC BOOK transformation (NOT dark horror!)
@@ -604,6 +634,7 @@
     radial-gradient(circle at 82% 18%, rgba(95,168,255,0.14), transparent 20%),
     radial-gradient(circle, rgba(255,255,255,0.06) 0 1.2px, transparent 1.2px) 0 0 / 18px 18px,
     linear-gradient(180deg, #2b3e69, #1d2b4a);
+  --wq-play-vowel-shadow: #5fa8ff;
 }
 
 /* ── DEMON HUNTER ── electric teal-purple neon ─────────── */
@@ -643,6 +674,7 @@
     radial-gradient(circle at 82% 18%, rgba(244,114,182,0.14), transparent 20%),
     repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 10px, transparent 10px 26px),
     linear-gradient(180deg, #1b2444, #121a34);
+  --wq-play-vowel-shadow: #f48bbf;
 }
 
 /* ── HARLEY QUINN ── ANIMATED SERIES palette (chaotic fun, not dark cave!)
@@ -686,6 +718,7 @@
     linear-gradient(90deg, rgba(190,18,10,0.10) 0 50%, rgba(0,18,118,0.10) 50% 100%),
     radial-gradient(circle at 18% 10%, rgba(177,20,102,0.12), transparent 24%),
     linear-gradient(180deg, #ebe6ee, #cabed0);
+  --wq-play-vowel-shadow: #5fb8ef;
 }
 
 /* ── KUROMI ── Sanrio: purple #514283 + pink bow #F181B2
@@ -726,44 +759,47 @@
     radial-gradient(circle at 84% 18%, rgba(192,160,240,0.14), transparent 20%),
     radial-gradient(circle, rgba(255,255,255,0.05) 0 1.4px, transparent 1.4px) 0 0 / 22px 22px,
     linear-gradient(180deg, #332046, #251436);
+  --wq-play-vowel-shadow: #c2a5f6;
 }
 
 /* ── HARRY POTTER ── burgundy, parchment, and brass ─────── */
 [data-theme="harrypotter"] {
-  --page-bg:      #4a272f;
-  --page-bg2:     #2f181d;
-  --plate-bg:     rgba(212,175,55,0.10);
-  --plate-border: rgba(212,175,55,0.30);
-  --tile-face:    linear-gradient(160deg, #fff8e9 0%, #f0dfc2 100%);
-  --tile-border:  #b48d4d;
-  --tile-text:    #211205;
-  --tile-shadow:  0 4px 0 #6d4f27, 0 10px 22px rgba(0,0,0,0.28);
-  --tile-filled-border: #7a1f2b;
-  --key-bg:       #eedcbc;
-  --key-text:     #231406;
-  --key-shadow:   0 4px 0 #7f5f2a, 0 8px 18px rgba(0,0,0,0.24);
-  --key-hover:    #f3e2c2;
-  --vowel-accent: #4f8ed8;
-  --brand:        #7a1f2b;
-  --brand-dk:     #58161f;
-  --brand-text:   #f3ddb0;
-  --accent:       #d4af37;
-  --header-bg:    linear-gradient(90deg, #5a1e2a 0%, #442126 100%);
-  --header-border: rgba(212,175,55,0.42);
-  --focusbar-bg:  rgba(49,24,31,0.76);
-  --panel-bg:     #311b22;
-  --panel-border: rgba(212,175,55,0.26);
-  --panel-shadow: 0 8px 32px rgba(0,0,0,0.62);
-  --theme-text:         #f3e3c2;
-  --theme-text-muted:   #dbc6a6;
-  --modal-bg:     #2a171d;
-  --fun-bg:       #1a0f13;
-  --fun-text:     #d4af37;
-  --fun-border:   #6f5828;
+  --page-bg:      #8b7b69;
+  --page-bg2:     #3b3027;
+  --plate-bg:     rgba(92, 66, 40, 0.28);
+  --plate-border: rgba(160, 126, 67, 0.42);
+  --tile-face:    linear-gradient(160deg, #fbf3df 0%, #ead9b6 100%);
+  --tile-border:  #b6914e;
+  --tile-text:    #21160d;
+  --tile-shadow:  0 4px 0 #70542e, 0 10px 22px rgba(22, 14, 10, 0.24);
+  --tile-filled-border: #7b2432;
+  --key-bg:       #ebdcc0;
+  --key-text:     #23160d;
+  --key-shadow:   0 4px 0 #876539, 0 8px 18px rgba(20, 13, 9, 0.20);
+  --key-hover:    #f4e8cf;
+  --vowel-accent: #304f77;
+  --brand:        #7b2432;
+  --brand-dk:     #4b1a24;
+  --brand-text:   #f7ecd0;
+  --accent:       #caa34f;
+  --header-bg:    linear-gradient(90deg, #7b2432 0%, #5b3f2c 52%, #273a57 100%);
+  --header-border: rgba(202,163,79,0.54);
+  --focusbar-bg:  rgba(243, 233, 209, 0.94);
+  --panel-bg:     #f0e4c9;
+  --panel-border: rgba(104, 74, 42, 0.26);
+  --panel-shadow: 0 12px 32px rgba(26,18,12,0.28);
+  --theme-text:         #2b2018;
+  --theme-text-muted:   #685545;
+  --modal-bg:     #efe2c5;
+  --fun-bg:       #2a1f19;
+  --fun-text:     #e0bd69;
+  --fun-border:   #7b5b34;
   --theme-backdrop:
-    radial-gradient(circle at 18% 9%, rgba(212,175,55,0.16), transparent 26%),
-    linear-gradient(135deg, rgba(212,175,55,0.06) 0 14%, transparent 14% 52%, rgba(122,31,43,0.10) 52% 66%, transparent 66% 100%),
-    linear-gradient(180deg, #4a272f, #2f181d);
+    radial-gradient(circle at 18% 9%, rgba(202,163,79,0.18), transparent 24%),
+    linear-gradient(90deg, rgba(123,36,50,0.10) 0 12%, transparent 12% 20%, rgba(202,163,79,0.10) 20% 28%, transparent 28% 100%),
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0 10%, transparent 10% 46%, rgba(48,79,119,0.10) 46% 58%, transparent 58% 100%),
+    linear-gradient(180deg, #8b7b69, #3b3027);
+  --wq-play-vowel-shadow: #6b8fbd;
 }
 
 /* ── OCEAN ── clear tropical water ──────────────────────── */
@@ -803,6 +839,7 @@
     radial-gradient(circle at 82% 18%, rgba(255,143,74,0.12), transparent 18%),
     repeating-linear-gradient(180deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 12px),
     linear-gradient(180deg, #bfe1ec, #79b8cc);
+  --wq-play-vowel-shadow: #20b8a9;
 }
 
 /* ── MINECRAFT ── Dirt brown page, stone gray keys, grass green header
@@ -842,6 +879,7 @@
     linear-gradient(90deg, rgba(0,0,0,0.12) 0 8%, transparent 8% 92%, rgba(0,0,0,0.12) 92% 100%),
     linear-gradient(180deg, rgba(126,186,76,0.08) 0 12%, transparent 12% 24%, rgba(78,104,56,0.12) 24% 36%, transparent 36% 100%),
     linear-gradient(180deg, #34422d, #24301f);
+  --wq-play-vowel-shadow: #94c96f;
 }
 
 /* ── MARIO ── Mushroom Kingdom red+blue with warm cream playfield */
@@ -883,44 +921,47 @@
     linear-gradient(90deg, rgba(220,38,38,0.10) 0 52%, rgba(37,99,235,0.10) 52% 100%),
     radial-gradient(circle at 18% 10%, rgba(255,255,255,0.16), transparent 22%),
     linear-gradient(180deg, #f3deb2, #efc87f);
+  --wq-play-vowel-shadow: #3f7eff;
 }
 
 /* ── ZELDA ── Hyrule green + relic gold ─────────────────── */
 [data-theme="zelda"] {
-  --page-bg:      #8fb0c8;
-  --page-bg2:     #6f91b0;
-  --plate-bg:     rgba(19,53,92,0.14);
-  --plate-border: rgba(210,175,78,0.30);
-  --tile-face:    linear-gradient(160deg, #fcfaf6 0%, #ece6d9 100%);
-  --tile-border:  #9ba5b3;
-  --tile-text:    #1a2532;
-  --tile-shadow:  0 4px 0 #536884, 0 10px 22px rgba(9,20,34,0.26);
-  --tile-filled-border: #2f608f;
-  --key-bg:       #e7e4dc;
-  --key-text:     #263342;
-  --key-shadow:   0 4px 0 #8b918f, 0 8px 18px rgba(0,0,0,0.18);
-  --key-hover:    #f0ede7;
-  --vowel-accent: #d9b24f;
-  --brand:        #2f608f;
-  --brand-dk:     #21476b;
-  --brand-text:   #f6f9ff;
-  --accent:       #d9b24f;
-  --header-bg:    #335f8a;
-  --header-border: rgba(217,178,79,0.44);
-  --focusbar-bg:  rgba(224,232,241,0.90);
-  --panel-bg:     #f2f4f5;
-  --panel-border: rgba(58,81,104,0.20);
-  --panel-shadow: 0 8px 32px rgba(10,26,44,0.30);
-  --theme-text:         #203246;
-  --theme-text-muted:   #5d7287;
-  --modal-bg:     #f1f4f7;
-  --fun-bg:       #f5f0df;
-  --fun-text:     #7a6124;
-  --fun-border:   #d7be7a;
+  --page-bg:      #70836f;
+  --page-bg2:     #344640;
+  --plate-bg:     rgba(112,90,48,0.24);
+  --plate-border: rgba(194,156,82,0.40);
+  --tile-face:    linear-gradient(160deg, #f7f0df 0%, #e6dcc4 100%);
+  --tile-border:  #bba06a;
+  --tile-text:    #1d2217;
+  --tile-shadow:  0 4px 0 #756543, 0 10px 20px rgba(17,22,18,0.24);
+  --tile-filled-border: #2f5f69;
+  --key-bg:       #e0d4b7;
+  --key-text:     #1d2018;
+  --key-shadow:   0 4px 0 #8e7850, 0 8px 16px rgba(19,23,18,0.20);
+  --key-hover:    #ecdfc5;
+  --vowel-accent: #2f5f69;
+  --brand:        #47684f;
+  --brand-dk:     #2d4534;
+  --brand-text:   #f5ecd8;
+  --accent:       #c59c52;
+  --header-bg:    linear-gradient(90deg, #47684f 0%, #3a5a46 54%, #2f5f69 100%);
+  --header-border: rgba(197,156,82,0.50);
+  --focusbar-bg:  rgba(238,229,207,0.94);
+  --panel-bg:     #ece2c8;
+  --panel-border: rgba(80,101,74,0.26);
+  --panel-shadow: 0 12px 28px rgba(17,23,18,0.22);
+  --theme-text:         #243025;
+  --theme-text-muted:   #5f6b5b;
+  --modal-bg:     #efe5cb;
+  --fun-bg:       #20352c;
+  --fun-text:     #e2bf70;
+  --fun-border:   #847047;
   --theme-backdrop:
-    radial-gradient(circle at 18% 8%, rgba(217,178,79,0.14), transparent 24%),
-    linear-gradient(135deg, rgba(47,96,143,0.10) 0 18%, transparent 18% 50%, rgba(217,178,79,0.08) 50% 66%, transparent 66% 100%),
-    linear-gradient(180deg, #8fb0c8, #6f91b0);
+    radial-gradient(circle at 18% 8%, rgba(197,156,82,0.18), transparent 24%),
+    linear-gradient(90deg, rgba(47,95,105,0.10) 0 14%, transparent 14% 22%, rgba(197,156,82,0.08) 22% 30%, transparent 30% 100%),
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0 10%, transparent 10% 44%, rgba(71,104,79,0.10) 44% 56%, transparent 56% 100%),
+    linear-gradient(180deg, #70836f, #344640);
+  --wq-play-vowel-shadow: #4d8794;
 }
 
 /* ── AMONG US ── deep space with crewmate red + visor cyan ── */
@@ -960,6 +1001,7 @@
     radial-gradient(circle at 72% 18%, rgba(255,255,255,0.16) 0 1px, transparent 1px) 0 0 / 26px 26px,
     radial-gradient(circle at 16% 8%, rgba(225,29,72,0.18), transparent 24%),
     linear-gradient(180deg, #202543, #11162d);
+  --wq-play-vowel-shadow: #59daf3;
 }
 
 /* ── RAINBOW FRIENDS ── playful cyan-lime-orange palette ── */
@@ -998,6 +1040,7 @@
     radial-gradient(circle at 16% 8%, rgba(31,134,207,0.16), transparent 24%),
     radial-gradient(circle at 82% 18%, rgba(255,122,27,0.18), transparent 20%),
     linear-gradient(180deg, #c2d3e8, #a4b9d1);
+  --wq-play-vowel-shadow: #ff962f;
 }
 
 /* ── POP PINK ── bright pop header with soft blush gameplay field */
@@ -1040,6 +1083,7 @@
     radial-gradient(circle at 82% 18%, rgba(176,123,255,0.16), transparent 20%),
     repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0 10px, transparent 10px 24px),
     linear-gradient(180deg, #f6e8f2, #eed7ea);
+  --wq-play-vowel-shadow: #b07bff;
 }
 
 [data-theme] {
@@ -1115,12 +1159,13 @@
 }
 
 .wordquest-root.theme-harrypotter {
-  --text: #f3e3c2;
-  --text-muted: #dbc6a6;
+  --text: #2b2018;
+  --text-muted: #685545;
   --theme-backdrop:
-    radial-gradient(circle at 18% 9%, rgba(212,175,55,0.16), transparent 26%),
-    linear-gradient(135deg, rgba(212,175,55,0.06) 0 14%, transparent 14% 52%, rgba(122,31,43,0.10) 52% 66%, transparent 66% 100%),
-    linear-gradient(180deg, #4a272f, #2f181d);
+    radial-gradient(circle at 18% 9%, rgba(202,163,79,0.18), transparent 24%),
+    linear-gradient(90deg, rgba(123,36,50,0.10) 0 12%, transparent 12% 20%, rgba(202,163,79,0.10) 20% 28%, transparent 28% 100%),
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0 10%, transparent 10% 46%, rgba(48,79,119,0.10) 46% 58%, transparent 58% 100%),
+    linear-gradient(180deg, #8b7b69, #3b3027);
 }
 
 .wordquest-root.theme-minecraft {
@@ -1150,10 +1195,13 @@
 }
 
 .wordquest-root.theme-huskies {
+  --text: #231c31;
+  --text-muted: #5d536c;
   --theme-backdrop:
-    radial-gradient(circle at 16% 8%, rgba(75,46,131,0.18), transparent 30%),
-    linear-gradient(135deg, rgba(183,165,122,0.10) 0 14%, transparent 14% 48%, rgba(75,46,131,0.08) 48% 64%, transparent 64% 100%),
-    linear-gradient(180deg, #98a8bb, #7187a0);
+    radial-gradient(circle at 18% 10%, rgba(183,165,122,0.16), transparent 24%),
+    linear-gradient(90deg, rgba(0,0,0,0.16) 0 7%, transparent 7% 93%, rgba(0,0,0,0.16) 93% 100%),
+    linear-gradient(135deg, rgba(183,165,122,0.10) 0 12%, transparent 12% 42%, rgba(255,255,255,0.06) 42% 52%, transparent 52% 100%),
+    linear-gradient(180deg, #4b2e83, #1f1d22);
 }
 
 .wordquest-root.theme-sunset {
@@ -1193,10 +1241,13 @@
 }
 
 .wordquest-root.theme-zelda {
+  --text: #243025;
+  --text-muted: #5f6b5b;
   --theme-backdrop:
-    radial-gradient(circle at 18% 8%, rgba(217,178,79,0.14), transparent 24%),
-    linear-gradient(135deg, rgba(47,96,143,0.10) 0 18%, transparent 18% 50%, rgba(217,178,79,0.08) 50% 66%, transparent 66% 100%),
-    linear-gradient(180deg, #8fb0c8, #6f91b0);
+    radial-gradient(circle at 18% 8%, rgba(197,156,82,0.18), transparent 24%),
+    linear-gradient(90deg, rgba(47,95,105,0.10) 0 14%, transparent 14% 22%, rgba(197,156,82,0.08) 22% 30%, transparent 30% 100%),
+    linear-gradient(135deg, rgba(255,255,255,0.05) 0 10%, transparent 10% 44%, rgba(71,104,79,0.10) 44% 56%, transparent 56% 100%),
+    linear-gradient(180deg, #70836f, #344640);
 }
 
 .wordquest-root.theme-rainbowfriends {

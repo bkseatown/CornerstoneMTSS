@@ -12,18 +12,46 @@ The long-term direction is larger than a single game page: the page should becom
 Primary product-vision reference:
 - `/Users/robertwilliamknaus/Desktop/WordQuest/VISION.md`
 
-## 2) Current Stabilization Status (Feb 22, 2026)
+## 2) Current Stabilization Status (March 8, 2026)
 Completed:
-- Canonical theme registry added and used as source of truth.
-- Theme dropdown rendered from registry (not hardcoded HTML list).
-- Theme nav arrows synced with canonical theme state.
-- Theme persistence unified to app prefs (`wq_v2_prefs` in localStorage).
-- Inline-style-heavy theme nav refactored to class-based CSS ownership.
-- HUD docs/checklist/check script added.
-- Contract checks pass (`npm run hud:check`).
+- App architecture is now centered around:
+  - `Home`
+  - `Specialist Hub`
+  - `Games`
+  - `Student Profile`
+  - `Reports`
+- `reports.html` is the canonical reports route.
+- `student-profile.html` is the canonical one-student detail route.
+- Local-first backup/export/import exists, including optional Google Drive upload flow.
+- Shared games and Word Quest now use the restored full theme library again.
+- Word Quest play routing now returns to `Game Gallery`, not directly to Hub.
+- GitHub Pages deploy noise was reduced by limiting redundant QA triggers and removing the extra deploy-alert issue behavior.
+- HUD/DOM contract checks pass on the current Word Quest / Seahawks work.
+- Latest pushed Word Quest stabilization commit is `8e17d453`.
+- Latest confirmed live Word Quest build is `8e17d453ea00-356`.
+- Latest validated local screenshot for the current Seahawks state:
+  - `/Users/robertwilliamknaus/Desktop/WordQuest/artifacts/wordquest-seahawks-validate-25.png`
 
-Known active issue:
-- Voice help modal close action can be blocked by settings panel layering in some UI states.
+Current active focus:
+- Word Quest Seahawks theme refinement in play mode.
+- The correct mental model is:
+  - `themes.css` owns bespoke visual identity
+  - `components.css` owns shared structure/layout
+
+Known active issues:
+- Seahawks theme still needs deeper bespoke object styling for:
+  - board frame
+  - keyboard
+  - theme-specific visual identity beyond color/header
+- Current stable traits that should not regress:
+  - `Back to Game Gallery` on student-facing Word Quest play pages
+  - action-green `Next Word` fill
+  - blue-only banner behind the Word Quest logo
+  - support buttons remain visible in play mode
+  - broad slash-heavy Seahawks board treatment removed
+- Word Quest play header has improved, but still needs continued responsive visual QA at narrower widths.
+- Some live screenshots may appear stale if GitHub Pages is behind the latest push; always verify `build.json` before judging the public URL.
+- Do not share a public link as “updated” unless the live `build.json` matches the commit being referenced.
 
 ## 3) Critical File Ownership
 
@@ -123,11 +151,15 @@ Failed:
 - voice help modal close interaction can be blocked by stacking/pointer interception.
 
 ## 8) Next Priority Fixes
-1. Resolve voice-help modal stacking and close interaction.
-2. Tighten motion personality:
-   - more elastic key bounce,
-   - optional lock-in burst effect in fun mode only.
-3. Tune theme 60-30-10 balance by family with measurable acceptance thresholds.
+1. Continue Seahawks v2/v3 bespoke pass:
+   - stronger board frame object
+   - stronger keyboard object
+   - cleaner Northwest/totem-inspired detailing
+   - preserve current spacing unless a validated screenshot proves otherwise
+   - do not regress the current blue banner / green Quest / green Next Word relationship
+2. Apply the same theme-ownership model to the next bespoke theme after Seahawks.
+3. Keep validating visual changes with rendered screenshots before presenting public links.
+4. Continue hardening student-safe routing so student-facing game pages never expose teacher-only destinations.
 
 ## 9) Operational Discipline
 - Always edit live source folder:
@@ -140,24 +172,23 @@ Failed:
 - Non-coder quick reference:
   - `/Users/robertwilliamknaus/Desktop/WordQuest/docs/NONCODER_SAFETY_GUIDE.md`
 
-## 10) Baseline Assessment (1-100)
-Scored from current code + smoke test, not from classroom outcome data.
+## 10) Current Practical Assessment
+Scored from current code + validated local renders, not classroom outcome data.
 
-1. Student engagement and delight: **82**
-2. Learning-loop clarity (guess/feedback/audio reinforcement): **78**
-3. Teacher usability and control surface: **74**
-4. Accessibility/readability safety: **68**
-5. Theme-system maintainability: **85**
-6. Visual balance consistency (including 60-30-10 discipline): **66**
-7. Motion quality/personality fit: **61**
-8. Audio integration reliability: **80**
-9. Platform scalability readiness (for broader feature growth): **76**
-10. Regression resistance and collaboration safety: **84**
+1. Student engagement and delight: **86**
+2. Learning-loop clarity: **82**
+3. Teacher usability and control surface: **81**
+4. Accessibility/readability safety: **78**
+5. Theme-system maintainability: **88**
+6. Visual balance consistency: **73**
+7. Motion quality/personality fit: **72**
+8. Audio integration reliability: **82**
+9. Platform scalability readiness: **84**
+10. Regression resistance and collaboration safety: **79**
 
-Overall baseline: **75/100**
+Overall current baseline: **80/100**
 
 Main reasons score is not higher yet:
-- one active modal layering bug,
-- motion personality tuning still in progress,
-- visual balance consistency still uneven across theme families,
-- accessibility and responsive QA can be deepened.
+- bespoke theme object design is still stronger in the header than in the board/keyboard
+- live-vs-local validation discipline improved late and needs to stay strict
+- visual regressions have been caused by overlapping shared/theme layers, especially in Word Quest play mode

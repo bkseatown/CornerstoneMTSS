@@ -6,6 +6,7 @@
  */
 
 const WQData = (() => {
+  const CUSTOM_SUPPORT_KEY = 'wq_teacher_custom_support_v1';
   const VALID_GRADE_BANDS = new Set(['K-2', 'G3-5', 'G6-8', 'G9-12']);
   const GRADE_BAND_ORDER = Object.freeze(['K-2', 'G3-5', 'G6-8', 'G9-12']);
   const GRADE_BAND_ALIASES = new Map([
@@ -42,6 +43,26 @@ const WQData = (() => {
   let _playable = [];     // words with game_tag === 'playable'
   let _quarantineItems = [];
   let _loaded = false;
+
+  function _readCustomSupport() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(CUSTOM_SUPPORT_KEY) || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (_err) {
+      return {};
+    }
+  }
+
+  function _getCustomSupport(word) {
+    const normalized = String(word || '').trim().toLowerCase();
+    if (!normalized) return null;
+    const support = _readCustomSupport()[normalized];
+    if (!support || typeof support !== 'object') return null;
+    const definition = String(support.definition || '').replace(/\s+/g, ' ').trim();
+    const sentence = String(support.sentence || '').replace(/\s+/g, ' ').trim();
+    if (!definition && !sentence) return null;
+    return { definition, sentence };
+  }
 
   function _normalizeGradeBand(rawGradeBand) {
     const raw = String(rawGradeBand || '').trim();
@@ -216,7 +237,38 @@ const WQData = (() => {
 
   // ─── Public API ────────────────────────────────────────────────────
   function getEntry(word) {
-    return _entries[(word || '').toLowerCase()] || null;
+    const normalized = (word || '').toLowerCase();
+    const base = _entries[normalized] || null;
+    const support = _getCustomSupport(normalized);
+    if (!support) return base;
+    if (!base) {
+      return {
+        word: normalized,
+        definition: support.definition,
+        sentence: support.sentence,
+        fun_add_on: '',
+        syllables: normalized,
+        phonics: null,
+        grade_band: '',
+        grade_band_raw: '',
+        tier: '',
+        game_tag: 'teacher_custom',
+        audio: { word: null, def: null, sentence: null, fun: null },
+        teacher_support: true,
+        support_source: 'custom'
+      };
+    }
+    return {
+      ...base,
+      definition: support.definition || base.definition || '',
+      sentence: support.sentence || base.sentence || '',
+      teacher_support: true,
+      support_source: base ? 'bank+custom' : 'custom'
+    };
+  }
+
+  function hasWord(word) {
+    return Boolean(_entries[(word || '').toLowerCase()]);
   }
 
   function getPlayableWords(opts = {}) {
@@ -254,5 +306,5 @@ const WQData = (() => {
     };
   }
 
-  return { load, getEntry, getPlayableWords, isLoaded, getQuarantineReport };
+  return { load, getEntry, getPlayableWords, isLoaded, getQuarantineReport, hasWord };
 })();
