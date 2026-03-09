@@ -49,7 +49,7 @@
           "decoding-diagnostic.html"
         ]
       },
-      { href: withBase("reports.html"), label: "Reports", pages: ["teacher-dashboard.html", "reports.html"] }
+      { href: withBase("reports.html"), label: "Reports & Prep", pages: ["teacher-dashboard.html", "reports.html"] }
     ];
     return links;
   }

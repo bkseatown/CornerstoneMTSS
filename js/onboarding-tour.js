@@ -18,8 +18,9 @@
       id: "morning-brief",
       icon: "☀️",
       title: "Your Morning Brief",
-      body: "Every morning the hub ranks your caseload by urgency. The student at the top needs attention first — based on their Tier, recent assessments, and days since last intervention.",
-      target: ".th2-brief-card, .th2-morning-brief, .th2-focus-card",
+      body: "Start here to see what matters first today.",
+      bullets: ["Top priority first", "Built from recent evidence", "Updates as the day changes"],
+      target: ".th2-brief-card, .th2-morning-brief, .th2-sidebar-context, .th2-list",
       position: "right",
       highlight: true
     },
@@ -27,7 +28,8 @@
       id: "caseload",
       icon: "👥",
       title: "Your Caseload",
-      body: "Click any student in the sidebar to pull up their full profile — Tier, active domains, support plan, evidence timeline, and AI-generated coaching notes.",
+      body: "Pick a student. The rest of the workspace follows.",
+      bullets: ["One tap opens the student story", "Support, evidence, and next step stay connected"],
       target: ".th2-list, .th2-sidebar",
       position: "right",
       highlight: true
@@ -36,7 +38,8 @@
       id: "focus-card",
       icon: "🎯",
       title: "Focus Card",
-      body: "The focus card shows a student's live profile: their Tier stripe, session sparkline, active support strategies, and a one-click path to generate or update their plan.",
+      body: "This is the live decision surface for the selected student or class.",
+      bullets: ["See the signal", "See the next move", "Launch without hunting"],
       target: ".th2-focus-card, .th2-main",
       position: "left",
       highlight: false
@@ -45,8 +48,9 @@
       id: "quick-log",
       icon: "⚡",
       title: "Quick Log",
-      body: "Tap Quick Log after any session to record accuracy, notes, or a fluency score. These data points feed directly into the student's evidence timeline and inform MTSS decisions.",
-      target: ".th2-action-btn[data-action='log'], .th2-quick-log-btn, .th2-log-btn, [id*='quick-log']",
+      body: "Log one fast data point right after teaching.",
+      bullets: ["Accuracy or score", "Short note", "Feeds reports automatically"],
+      target: ".th2-action-btn[data-action='log'], .th2-quick-log-btn, .th2-log-btn, [id*='quick-log'], .th2-focus-card",
       position: "top",
       highlight: true
     },
@@ -54,7 +58,8 @@
       id: "curriculum",
       icon: "📚",
       title: "Curriculum Quick-Reference",
-      body: "Click the Curriculum button at the bottom of the sidebar anytime for instant access to ORF passages with a 60-second timer, number talks, screeners, curriculum deep-links, and curated video resources.",
+      body: "Open curriculum help without leaving the hub.",
+      bullets: ["Passages and screeners", "Lesson support", "Fast resource lookup"],
       target: "#th2-cur-btn, .th2-cur-btn",
       position: "right",
       highlight: true
@@ -63,8 +68,9 @@
       id: "ai",
       icon: "✦",
       title: "AI Planning",
-      body: "The hub can generate a sub plan, coaching narrative, or daily brief using Azure OpenAI. Look for the ✦ AI buttons in the focus card. All AI calls are tracked in the cost dashboard (bottom-right in dev mode).",
-      target: ".th2-ai-btn, [data-action='ai-plan'], .th2-generate-btn",
+      body: "Use AI only where it saves time on real work.",
+      bullets: ["Draft plans", "Summarize patterns", "Keep teacher control"],
+      target: ".th2-ai-btn, [data-action='ai-plan'], .th2-generate-btn, .th2-focus-card",
       position: "top",
       highlight: false
     }
@@ -95,10 +101,18 @@
     for (var i = 0; i < parts.length; i++) {
       try {
         var el = document.querySelector(parts[i]);
-        if (el) return el;
+        if (el && isVisible(el)) return el;
       } catch (e) { /* invalid selector — skip */ }
     }
     return null;
+  }
+
+  function isVisible(el) {
+    if (!el) return false;
+    var style = window.getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity || 1) === 0) return false;
+    var rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
   }
 
   function isFirstVisit() {
@@ -209,6 +223,7 @@
     var ttH  = tt.offsetHeight || 200;
     var vW   = window.innerWidth;
     var vH   = window.innerHeight;
+    var hasTarget = !!targetEl;
     var r    = targetEl ? targetEl.getBoundingClientRect() : { top: vH/2 - 100, left: vW/2 - 100, right: vW/2+100, bottom: vH/2+100, width: 200, height: 200 };
     var top, left;
     var GAP  = 18;
@@ -236,7 +251,7 @@
 
     tt.style.top  = top  + "px";
     tt.style.left = left + "px";
-    tt.setAttribute("data-arrow", (pos === "right" ? "left" : pos === "left" ? "right" : pos === "top" ? "bottom" : "top"));
+    tt.setAttribute("data-arrow", hasTarget ? (pos === "right" ? "left" : pos === "left" ? "right" : pos === "top" ? "bottom" : "top") : "none");
   }
 
   /* ── Render step ────────────────────────────────────────── */
@@ -283,12 +298,22 @@
       "<button class='cs-tour-btn cs-tour-btn-next' data-action='next'>Next →</button>" :
       "<button class='cs-tour-btn cs-tour-btn-finish' data-action='finish'>Get started ✓</button>";
 
+    var bullets = Array.isArray(step.bullets) && step.bullets.length
+      ? ("<ul class='cs-tour-tooltip-list'>" + step.bullets.map(function (item) {
+          return "<li>" + item + "</li>";
+        }).join("") + "</ul>")
+      : "";
+
     state.tooltip.innerHTML =
       "<div class='cs-tour-tooltip-head'>" +
         "<span class='cs-tour-tooltip-icon'>" + (step.icon || "✦") + "</span>" +
-        "<h3 class='cs-tour-tooltip-title'>" + step.title + "</h3>" +
+        "<div class='cs-tour-tooltip-title-wrap'>" +
+          "<p class='cs-tour-tooltip-kicker'>Quick Tour</p>" +
+          "<h3 class='cs-tour-tooltip-title'>" + step.title + "</h3>" +
+        "</div>" +
       "</div>" +
       "<p class='cs-tour-tooltip-body'>" + step.body + "</p>" +
+      bullets +
       "<div class='cs-tour-tooltip-footer'>" +
         "<div class='cs-tour-step-dots'>" + dots + "</div>" +
         "<div class='cs-tour-nav'>" +

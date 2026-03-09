@@ -42,8 +42,15 @@
   function open(tab) {
     _tab = tab || _tab || "resources";
     var panel = el("cs-cur-panel");
-    if (!panel) { buildPanel(); panel = el("cs-cur-panel"); }
+    if (!panel || !el("cs-cur-body")) {
+      if (panel && !el("cs-cur-body")) {
+        panel.parentNode.removeChild(panel);
+      }
+      buildPanel();
+      panel = el("cs-cur-panel");
+    }
     panel.classList.add("is-open");
+    panel.setAttribute("aria-hidden", "false");
     loadData();
     renderTab(_tab);
   }
@@ -51,7 +58,10 @@
   function close() {
     stopTimer();
     var panel = el("cs-cur-panel");
-    if (panel) panel.classList.remove("is-open");
+    if (panel) {
+      panel.classList.remove("is-open");
+      panel.setAttribute("aria-hidden", "true");
+    }
   }
 
   /* ── Build panel DOM (once) ─────────────────────────────── */

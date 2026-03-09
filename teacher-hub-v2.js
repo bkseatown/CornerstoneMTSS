@@ -82,7 +82,22 @@
     main:        document.getElementById("th2-main"),
     emptyState:  document.getElementById("th2-empty-state"),
     focusCard:   document.getElementById("th2-focus-card"),
-    demoBadge:   document.getElementById("th2-demo-badge")
+    demoBadge:   document.getElementById("th2-demo-badge"),
+    toolsFab:    document.getElementById("th2-tools-fab"),
+    toolsPanel:  document.getElementById("th2-tools-panel"),
+    toolsHead:   document.getElementById("th2-tools-head"),
+    toolsBody:   document.getElementById("th2-tools-body"),
+    toolsTitle:  document.getElementById("th2-tools-title")
+  };
+
+  var toolState = {
+    open: false,
+    minimized: false,
+    timerMode: "focus",
+    timerTotalSec: 900,
+    timerRemainingSec: 900,
+    timerTick: 0,
+    timerRunning: false
   };
 
   /* ── Utilities ─────────────────────────────────────────── */
@@ -262,6 +277,19 @@
     try { return raw ? JSON.parse(raw) : fallback; } catch (_e) { return fallback; }
   }
 
+  function storageGet(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw === null ? fallback : raw;
+    } catch (_e) {
+      return fallback;
+    }
+  }
+
+  function storageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (_e) {}
+  }
+
   function todayKey() {
     var d = new Date();
     return [
@@ -324,6 +352,57 @@
 
   function studentById(studentId) {
     return caseload.find(function (row) { return row.id === studentId; }) || null;
+  }
+
+  function currentBlockFromState() {
+    var blockId = hubState.get().context.classId || "";
+    var blocks = getTodayLessonBlocks();
+    return blocks.filter(function (row) { return row.id === blockId; })[0]
+      || blocks.filter(function (row) { return row && Array.isArray(row.studentIds) && row.studentIds.length > 0 && String(row.subject || "").toLowerCase() !== "specials"; })[0]
+      || blocks[0]
+      || null;
+  }
+
+  function currentBlockContextForTools() {
+    var block = currentBlockFromState();
+    return block ? buildTeacherContextForBlock(block) : buildFirstRunContext();
+  }
+
+  function deriveLearningTarget(contextData) {
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var focus = String(derived.mainConcept || derived.lessonFocus || "").trim();
+    if (!focus) return "SWBAT explain the lesson focus and complete the next support task.";
+    var normalized = focus.charAt(0).toLowerCase() + focus.slice(1);
+    return "SWBAT " + normalized.replace(/\.$/, "") + ".";
+  }
+
+  function getAgendaState(blockId) {
+    return safeJsonParse(storageGet("cs.hub.tools.agenda." + blockId, "[]"), []);
+  }
+
+  function saveAgendaState(blockId, rows) {
+    storageSet("cs.hub.tools.agenda." + blockId, JSON.stringify(rows || []));
+  }
+
+  function defaultAgendaForContext(contextData) {
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var block = contextData && contextData.block ? contextData.block : {};
+    return [
+      { id: "launch", label: "Open with the learning target and visual agenda", done: false },
+      { id: "model", label: "Model one example before release", done: false },
+      { id: "support", label: "Pull priority students for targeted support", done: false },
+      { id: "evidence", label: "Capture one evidence point before the block ends", done: false },
+      { id: "close", label: "Close with a quick check for " + (derived.subject || block.subject || "today's lesson"), done: false }
+    ];
+  }
+
+  function getAgendaForContext(contextData) {
+    var blockId = contextData && contextData.block && contextData.block.id || "default";
+    var saved = getAgendaState(blockId);
+    if (Array.isArray(saved) && saved.length) return saved;
+    var seeded = defaultAgendaForContext(contextData);
+    saveAgendaState(blockId, seeded);
+    return seeded;
   }
 
   function studentSupportSnapshot(student, area) {
@@ -629,9 +708,7 @@
 
   function renderCommandHeader(contextData, blocks) {
     var derived = contextData && contextData.derived ? contextData.derived : {};
-    var teacherName = TeacherStorage && typeof TeacherStorage.loadTeacherProfile === "function"
-      ? firstName(TeacherStorage.loadTeacherProfile().name)
-      : "Teacher";
+    var teacherName = currentTeacherFirstName();
     var nextBlock = (Array.isArray(blocks) ? blocks : [])[0] || contextData.block || null;
     var nextLabel = nextBlock
       ? [nextBlock.timeLabel || nextBlock.label, nextBlock.subject].filter(Boolean).join(" · ")
@@ -652,6 +729,33 @@
       '      <strong>' + escapeHtml(priority) + '</strong>',
       "    </div>",
       '    <p class="th2-command-header__next">Next block: ' + escapeHtml(nextLabel) + "</p>",
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
+  function currentTeacherFirstName() {
+    return TeacherStorage && typeof TeacherStorage.loadTeacherProfile === "function"
+      ? firstName(TeacherStorage.loadTeacherProfile().name)
+      : "Teacher";
+  }
+
+  function renderBlockContextHeader(contextData) {
+    var block = contextData && contextData.block ? contextData.block : {};
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var priority = derived.prioritySignal && derived.prioritySignal.label
+      ? derived.prioritySignal.label
+      : "Block context loaded.";
+    return [
+      '<section class="th2-block-context-header">',
+      '  <div class="th2-block-context-header__main">',
+      '    <p class="th2-section-label">Current Block</p>',
+      '    <h1 class="th2-block-context-header__title">' + escapeHtml(block.label || block.classSection || "Support block") + "</h1>",
+      '    <p class="th2-block-context-header__meta">' + escapeHtml([block.timeLabel, derived.subject || block.subject, derived.supportType || block.supportType].filter(Boolean).join(" · ")) + "</p>",
+      "  </div>",
+      '  <div class="th2-block-context-header__signal">',
+      '    <span>Priority signal</span>',
+      '    <strong>' + escapeHtml(priority) + "</strong>",
       "  </div>",
       "</section>"
     ].join("");
@@ -693,6 +797,7 @@
       '    <p class="th2-mission-card__title">' + escapeHtml((derived.subject || "Subject") + " · " + (derived.curriculum || "Curriculum")) + "</p>",
       '    <h2 class="th2-mission-card__headline">' + escapeHtml([derived.unit, derived.lesson].filter(Boolean).join(" ") || derived.lessonFocus || "Lesson context loading") + "</h2>",
       '    <p class="th2-mission-card__sub">' + escapeHtml(derived.mainConcept || "Lesson focus not fully mapped yet.") + "</p>",
+      '    <p class="th2-mission-card__target">' + escapeHtml(deriveLearningTarget(contextData)) + "</p>",
       '    <div class="th2-mission-card__meta">',
       '      <div><span>Teacher</span><strong>' + escapeHtml((contextData.classContext && contextData.classContext.teacher) || contextData.block.teacher || "Not set") + '</strong></div>',
       '      <div><span>Support</span><strong>' + escapeHtml(derived.supportType || contextData.block.supportType || "push-in") + '</strong></div>',
@@ -910,7 +1015,7 @@
     el.emptyState.innerHTML = [
       '<button class="th2-back-to-schedule" data-back-to-schedule="1" type="button">← Today\'s schedule</button>',
       '<div class="th2-command-center">',
-      renderCommandHeader(contextData, blocks),
+      renderBlockContextHeader(contextData),
       renderDayStrip(blocks, block.id),
       '<section class="th2-active-context">',
       '  <div class="th2-active-context__grid">',
@@ -920,6 +1025,12 @@
       "  </div>",
       "</section>",
       renderQuickAccessRail(contextData),
+      '<div class="th2-day-mobile-sections">',
+      renderMobileSection("Lesson Context", renderLessonContextZone(contextData), true, "block-lesson"),
+      renderMobileSection("Lesson Companion", renderCompanionZone(contextData), false, "block-companion"),
+      renderMobileSection("Student Priorities", renderStudentPriorityZone(contextData), false, "block-priorities"),
+      renderMobileSection("Quick Access", renderQuickAccessRail(contextData), false, "block-quick"),
+      "</div>",
       "</div>"
     ].join("");
 
@@ -2757,23 +2868,49 @@
       localStorage.setItem(SUPPORT_KEY, "1");
     }
 
-    var CONTEXT_KEY = "cs.hub.demo.context.v1";
+    var CONTEXT_KEY = "cs.hub.demo.context.v2";
     if (!localStorage.getItem(CONTEXT_KEY) && TeacherStorage) {
       safe(function () {
         var today = typeof TeacherStorage.todayStamp === "function" ? TeacherStorage.todayStamp() : todayKey();
         var existingBlocks = typeof TeacherStorage.loadScheduleBlocks === "function"
           ? TeacherStorage.loadScheduleBlocks(today)
           : [];
+        var demoBlockIds = {
+          "demo-block-morning": true,
+          "demo-block-math": true,
+          "demo-block-recess": true,
+          "demo-block-ela": true,
+          "demo-block-writing": true,
+          "demo-block-intervention": true,
+          "demo-block-specials": true,
+          "demo-block-reading": true
+        };
         var byId = {};
         existingBlocks.forEach(function (block) {
-          byId[String(block.id || "")] = block;
+          var id = String(block.id || "");
+          if (!demoBlockIds[id]) byId[id] = block;
         });
         [
           {
+            id: "demo-block-morning",
+            timeLabel: "8:00 AM - 8:20 AM",
+            label: "Morning Meeting",
+            classSection: "Elementary Homeroom Community Block",
+            teacher: "Ms. Smith",
+            subject: "Advisory",
+            curriculum: "Community Circle",
+            curriculumId: "community-circle",
+            lesson: "Daily launch and attendance routines",
+            supportType: "push-in",
+            notes: "Set the day, preview transitions, and gather quick student check-ins.",
+            studentIds: [],
+            lessonContextId: "demo-lesson-morning"
+          },
+          {
             id: "demo-block-math",
-            timeLabel: "8:15 AM",
-            label: "Block A",
-            classSection: "G4 Math Support",
+            timeLabel: "8:20 AM - 9:10 AM",
+            label: "Math Core Support",
+            classSection: "Grade 4 Math",
             teacher: "Ms. Smith",
             subject: "Math",
             curriculum: "Illustrative Math",
@@ -2785,46 +2922,103 @@
             lessonContextId: "demo-lesson-math"
           },
           {
-            id: "demo-block-reading",
-            timeLabel: "10:05 AM",
-            label: "Block B",
-            classSection: "G2 Foundational Reading",
+            id: "demo-block-recess",
+            timeLabel: "9:10 AM - 9:35 AM",
+            label: "Recess + Snack",
+            classSection: "Transition / Unstructured Time",
+            teacher: "Grade Team",
+            subject: "Community",
+            curriculum: "Student break",
+            curriculumId: "student-break",
+            lesson: "Reset and transition",
+            supportType: "coverage",
+            notes: "Recess, snack, and reset before literacy.",
+            studentIds: [],
+            lessonContextId: "demo-lesson-recess"
+          },
+          {
+            id: "demo-block-ela",
+            timeLabel: "9:35 AM - 10:30 AM",
+            label: "ELA Reading + Science/Social Studies",
+            classSection: "Grade 3 ELA",
             teacher: "Ms. Rivera",
-            subject: "Intervention",
-            curriculum: "UFLI Foundations",
-            curriculumId: "ufli-foundations",
-            lesson: "Lesson 42 · Closed Syllables",
-            supportType: "pull-out",
-            notes: "Keep decoding and meaning work tight in the same round.",
-            studentIds: ["demo-liam", "demo-zoe"],
-            lessonContextId: "demo-lesson-reading"
+            subject: "ELA",
+            curriculum: "Fish Tank ELA",
+            curriculumId: "fishtank-ela",
+            lesson: "Unit 2 · Knowledge Building Text",
+            supportType: "push-in",
+            notes: "Blend close reading with science/social studies content vocabulary.",
+            studentIds: ["demo-ava", "demo-maya", "demo-zoe"],
+            lessonContextId: "demo-lesson-ela"
           },
           {
             id: "demo-block-writing",
-            timeLabel: "1:10 PM",
-            label: "Block C",
-            classSection: "G3 Writing Push-In",
+            timeLabel: "10:30 AM - 11:20 AM",
+            label: "ELA Writing + Content Response",
+            classSection: "Grade 3 Writing",
             teacher: "Ms. Patel",
             subject: "Writing",
-            curriculum: "Core Writing Workshop",
-            curriculumId: "writing-workshop",
+            curriculum: "Fish Tank Writing",
+            curriculumId: "fishtank-writing",
             lesson: "Claim + Evidence Paragraph",
             supportType: "push-in",
             notes: "Support oral rehearsal before independent writing.",
             studentIds: ["demo-ava", "demo-maya"],
             lessonContextId: "demo-lesson-writing"
+          },
+          {
+            id: "demo-block-intervention",
+            timeLabel: "1:10 PM - 1:55 PM",
+            label: "Literacy Intervention / Fundations",
+            classSection: "T3 Literacy Intervention",
+            teacher: "Ms. Rivera",
+            subject: "Intervention",
+            curriculum: "Fundations + UFLI",
+            curriculumId: "fundations-ufli",
+            lesson: "Word reading intervention group",
+            supportType: "pull-out",
+            notes: "T3 students meet here instead of world language for targeted literacy support.",
+            studentIds: ["demo-liam", "demo-zoe"],
+            lessonContextId: "demo-lesson-intervention"
+          },
+          {
+            id: "demo-block-specials",
+            timeLabel: "1:10 PM - 1:55 PM",
+            label: "World Language / Specials",
+            classSection: "Art · Music · PE · World Language",
+            teacher: "Specials Team",
+            subject: "Specials",
+            curriculum: "Encore Rotation",
+            curriculumId: "specials-rotation",
+            lesson: "Afternoon rotation",
+            supportType: "core",
+            notes: "Most students attend specials while intervention students are pulled for support.",
+            studentIds: ["demo-noah", "demo-ava", "demo-maya"],
+            lessonContextId: "demo-lesson-specials"
           }
         ].forEach(function (block) {
-          if (!byId[block.id]) byId[block.id] = block;
+          byId[block.id] = block;
         });
         if (typeof TeacherStorage.saveScheduleBlocks === "function") {
           TeacherStorage.saveScheduleBlocks(today, Object.keys(byId).map(function (id) { return byId[id]; }));
         }
 
         if (typeof TeacherStorage.saveClassContext === "function") {
+          TeacherStorage.saveClassContext("demo-block-morning", {
+            classId: "demo-block-morning",
+            label: "Morning Meeting",
+            teacher: "Ms. Smith",
+            subject: "Advisory",
+            curriculum: "Community Circle",
+            lesson: "Daily launch and attendance routines",
+            supportType: "push-in",
+            conceptFocus: "Build readiness, emotional check-in, and day preview.",
+            languageDemands: ["share", "listen", "reflect"],
+            lessonContextId: "demo-lesson-morning"
+          });
           TeacherStorage.saveClassContext("demo-block-math", {
             classId: "demo-block-math",
-            label: "Block A",
+            label: "Math Core Support",
             teacher: "Ms. Smith",
             subject: "Math",
             curriculum: "Illustrative Math",
@@ -2834,33 +3028,89 @@
             languageDemands: ["compare", "justify", "explain"],
             lessonContextId: "demo-lesson-math"
           });
-          TeacherStorage.saveClassContext("demo-block-reading", {
-            classId: "demo-block-reading",
-            label: "Block B",
+          TeacherStorage.saveClassContext("demo-block-recess", {
+            classId: "demo-block-recess",
+            label: "Recess + Snack",
+            teacher: "Grade Team",
+            subject: "Community",
+            curriculum: "Student break",
+            lesson: "Reset and transition",
+            supportType: "coverage",
+            conceptFocus: "Transition, regulation, and prepare for literacy.",
+            languageDemands: ["transition", "reset"],
+            lessonContextId: "demo-lesson-recess"
+          });
+          TeacherStorage.saveClassContext("demo-block-ela", {
+            classId: "demo-block-ela",
+            label: "ELA Reading + Science/Social Studies",
             teacher: "Ms. Rivera",
-            subject: "Intervention",
-            curriculum: "UFLI Foundations",
-            lesson: "Lesson 42 · Closed Syllables",
-            supportType: "pull-out",
-            conceptFocus: "Blend and read closed-syllable words while monitoring meaning.",
-            languageDemands: ["blend", "read", "explain"],
-            lessonContextId: "demo-lesson-reading"
+            subject: "ELA",
+            curriculum: "Fish Tank ELA",
+            lesson: "Unit 2 · Knowledge Building Text",
+            supportType: "push-in",
+            conceptFocus: "Read for understanding and connect text ideas to science/social studies content.",
+            languageDemands: ["read", "cite", "explain"],
+            lessonContextId: "demo-lesson-ela"
           });
           TeacherStorage.saveClassContext("demo-block-writing", {
             classId: "demo-block-writing",
-            label: "Block C",
+            label: "ELA Writing + Content Response",
             teacher: "Ms. Patel",
             subject: "Writing",
-            curriculum: "Core Writing Workshop",
+            curriculum: "Fish Tank Writing",
             lesson: "Claim + Evidence Paragraph",
             supportType: "push-in",
             conceptFocus: "Write a claim and support it with one precise piece of evidence.",
             languageDemands: ["claim", "evidence", "justify"],
             lessonContextId: "demo-lesson-writing"
           });
+          TeacherStorage.saveClassContext("demo-block-intervention", {
+            classId: "demo-block-intervention",
+            label: "Literacy Intervention / Fundations",
+            teacher: "Ms. Rivera",
+            subject: "Intervention",
+            curriculum: "Fundations + UFLI",
+            lesson: "Word reading intervention group",
+            supportType: "pull-out",
+            conceptFocus: "Provide Tier 3 decoding intervention during the world language block.",
+            languageDemands: ["blend", "segment", "explain"],
+            lessonContextId: "demo-lesson-intervention"
+          });
+          TeacherStorage.saveClassContext("demo-block-specials", {
+            classId: "demo-block-specials",
+            label: "World Language / Specials",
+            teacher: "Specials Team",
+            subject: "Specials",
+            curriculum: "Encore Rotation",
+            lesson: "Afternoon rotation",
+            supportType: "core",
+            conceptFocus: "Students rotate through world language and specials while intervention groups pull as needed.",
+            languageDemands: ["follow directions", "participate"],
+            lessonContextId: "demo-lesson-specials"
+          });
         }
 
         if (typeof TeacherStorage.saveLessonContext === "function") {
+          TeacherStorage.saveLessonContext("demo-lesson-morning", {
+            lessonContextId: "demo-lesson-morning",
+            blockId: "demo-block-morning",
+            subject: "Advisory",
+            programId: "community-circle",
+            unit: "Morning Meeting",
+            title: "Daily launch",
+            conceptFocus: "Build belonging and preview the day so transitions feel predictable.",
+            languageDemands: ["share", "listen", "reflect"],
+            misconceptions: [
+              "Students can miss the academic purpose if the meeting becomes only procedural.",
+              "Some students need visual cues to follow the meeting sequence."
+            ],
+            supportMoves: [
+              "Use a visual agenda and one fast emotional check-in.",
+              "Preview any schedule changes before moving into academics."
+            ],
+            targetSkills: ["transition readiness", "self-advocacy", "community participation"],
+            vocabulary: ["meeting", "schedule", "goal", "share"]
+          });
           TeacherStorage.saveLessonContext("demo-lesson-math", {
             lessonContextId: "demo-lesson-math",
             blockId: "demo-block-math",
@@ -2881,25 +3131,45 @@
             targetSkills: ["fraction comparison", "comparison language", "visual model reasoning"],
             vocabulary: ["fraction", "benchmark", "greater than", "justify"]
           });
-          TeacherStorage.saveLessonContext("demo-lesson-reading", {
-            lessonContextId: "demo-lesson-reading",
-            blockId: "demo-block-reading",
-            subject: "Intervention",
-            programId: "ufli-foundations",
-            unit: "Lesson 42",
-            title: "Closed Syllables",
-            conceptFocus: "Read, build, and explain closed-syllable words with automaticity.",
-            languageDemands: ["blend", "segment", "explain"],
+          TeacherStorage.saveLessonContext("demo-lesson-recess", {
+            lessonContextId: "demo-lesson-recess",
+            blockId: "demo-block-recess",
+            subject: "Community",
+            programId: "student-break",
+            unit: "Reset",
+            title: "Recess + snack",
+            conceptFocus: "Support regulation and transition before literacy.",
+            languageDemands: ["transition", "reset"],
             misconceptions: [
-              "Students omit the medial vowel when blending quickly.",
-              "Students can decode the word but cannot connect it to meaning."
+              "Unstructured time can create dysregulation for some students.",
+              "Students may need explicit transition cues to re-enter instruction."
             ],
             supportMoves: [
-              "Keep sound boxes visible during the first two rounds.",
-              "After decoding, ask for a meaning clue or sentence."
+              "Use a two-minute warning and visual return routine.",
+              "Prime intervention students before moving into ELA."
             ],
-            targetSkills: ["closed syllables", "phoneme blending", "decoding to meaning"],
-            vocabulary: ["closed syllable", "blend", "segment", "vowel"]
+            targetSkills: ["self-regulation", "transition readiness"],
+            vocabulary: ["reset", "transition", "routine"]
+          });
+          TeacherStorage.saveLessonContext("demo-lesson-ela", {
+            lessonContextId: "demo-lesson-ela",
+            blockId: "demo-block-ela",
+            subject: "ELA",
+            programId: "fishtank-ela",
+            unit: "Unit 2",
+            title: "Knowledge Building Text",
+            conceptFocus: "Use text evidence to build understanding in reading and connected science/social studies content.",
+            languageDemands: ["read", "cite", "explain"],
+            misconceptions: [
+              "Students retell loosely without grounding answers in text evidence.",
+              "Content vocabulary may block comprehension even when decoding is solid."
+            ],
+            supportMoves: [
+              "Pre-teach two content words before the first read.",
+              "Use a text-evidence sentence frame during discussion."
+            ],
+            targetSkills: ["text evidence", "content vocabulary", "knowledge building"],
+            vocabulary: ["evidence", "topic", "details", "explain"]
           });
           TeacherStorage.saveLessonContext("demo-lesson-writing", {
             lessonContextId: "demo-lesson-writing",
@@ -2920,6 +3190,46 @@
             ],
             targetSkills: ["argument writing", "evidence sentence", "reasoning language"],
             vocabulary: ["claim", "evidence", "reasoning", "therefore"]
+          });
+          TeacherStorage.saveLessonContext("demo-lesson-intervention", {
+            lessonContextId: "demo-lesson-intervention",
+            blockId: "demo-block-intervention",
+            subject: "Intervention",
+            programId: "fundations-ufli",
+            unit: "Fundations",
+            title: "Word reading intervention group",
+            conceptFocus: "Provide Tier 3 literacy intervention during the world language block.",
+            languageDemands: ["blend", "segment", "read"],
+            misconceptions: [
+              "Students over-rely on memorized words instead of applying sound-symbol knowledge.",
+              "Automatic word reading can break down when vowel patterns shift."
+            ],
+            supportMoves: [
+              "Use Fundations tapping and rapid decoding in the first round.",
+              "Bridge immediately into decodable reading with feedback."
+            ],
+            targetSkills: ["phonics intervention", "automatic word reading", "Fundations routines"],
+            vocabulary: ["tap", "blend", "pattern", "word reading"]
+          });
+          TeacherStorage.saveLessonContext("demo-lesson-specials", {
+            lessonContextId: "demo-lesson-specials",
+            blockId: "demo-block-specials",
+            subject: "Specials",
+            programId: "specials-rotation",
+            unit: "Encore",
+            title: "Afternoon rotation",
+            conceptFocus: "Students rotate through world language and specials while intervention pulls continue.",
+            languageDemands: ["participate", "respond"],
+            misconceptions: [
+              "Students in intervention can feel they are missing a preferred activity.",
+              "Transitions need to be clear so students know where to report."
+            ],
+            supportMoves: [
+              "Preview intervention pull-outs during lunch or morning meeting.",
+              "Use visual schedules to show specials versus intervention."
+            ],
+            targetSkills: ["transition clarity", "schedule awareness"],
+            vocabulary: ["rotation", "specials", "world language", "intervention"]
           });
         }
       });
@@ -3646,6 +3956,262 @@
     renderDailyScheduleMain(blocks);
   }
 
+  function buildDemoCalendarEvents(blocks) {
+    var rows = Array.isArray(blocks) ? blocks.slice(0, 5) : [];
+    if (!rows.length) {
+      return [
+        { time: "8:00 AM - 8:20 AM", label: "Morning meeting", kind: "prep" },
+        { time: "8:20 AM - 9:10 AM", label: "Math core support", kind: "block" },
+        { time: "1:10 PM - 1:55 PM", label: "Intervention / specials split", kind: "meeting" }
+      ];
+    }
+    return rows.map(function (block, index) {
+      return {
+        time: block.timeLabel || "",
+        label: block.label || block.classSection || "Support block",
+        kind: index === 0 ? "block" : index % 2 === 0 ? "meeting" : "prep"
+      };
+    });
+  }
+
+  function renderDayCalendar(events) {
+    var rows = Array.isArray(events) ? events : [];
+    return [
+      '<section class="th2-day-calendar">',
+      '  <div class="th2-day-calendar__head">',
+      '    <p class="th2-section-label">Calendar</p>',
+      '    <button class="th2-day-calendar__sync" data-connect-calendar="1" type="button">Sync Google Calendar</button>',
+      "  </div>",
+      '  <div class="th2-day-calendar__list">',
+      rows.map(function (item) {
+        return [
+          '<div class="th2-day-calendar__item">',
+          '  <span class="th2-day-calendar__dot th2-day-calendar__dot--' + escapeHtml(item.kind || "prep") + '"></span>',
+          '  <div class="th2-day-calendar__copy">',
+          '    <strong>' + escapeHtml(item.time || "All day") + "</strong>",
+          '    <span>' + escapeHtml(item.label || "") + "</span>",
+          "  </div>",
+          "</div>"
+        ].join("");
+      }).join(""),
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
+  function renderFeaturedBlockPreview(contextData) {
+    var block = contextData && contextData.block ? contextData.block : null;
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var students = Array.isArray(derived.students) ? derived.students.slice(0, 4) : [];
+    var lessonHeadline = [derived.unit, derived.lesson].filter(Boolean).join(" ") || derived.lessonFocus || (block && block.lesson) || "Lesson context ready";
+    var lessonSub = derived.mainConcept || "Open Lesson Brief to confirm the exact support moves, language demands, and accommodations for this block.";
+    var learningTarget = deriveLearningTarget(contextData);
+    return [
+      '<section class="th2-day-preview">',
+      '  <div class="th2-day-preview__hero">',
+      '    <div class="th2-day-preview__copy">',
+      '      <p class="th2-section-label">Selected Block</p>',
+      '      <h2 class="th2-day-preview__title">' + escapeHtml((block && (block.label || block.classSection)) || "Support block") + "</h2>",
+      '      <p class="th2-day-preview__meta">' + escapeHtml([block && block.timeLabel, derived.subject || block && block.subject, derived.supportType || block && block.supportType].filter(Boolean).join(" · ")) + "</p>",
+      '      <p class="th2-day-preview__lesson">' + escapeHtml(lessonHeadline) + "</p>",
+      '      <p class="th2-day-preview__sub">' + escapeHtml(lessonSub) + "</p>",
+      '      <p class="th2-day-preview__target">' + escapeHtml(learningTarget) + "</p>",
+      "    </div>",
+      '    <div class="th2-day-preview__actions">',
+      '      <button class="th2-day-preview__primary" data-open-brief="1" data-open-brief-block="' + escapeHtml(block && block.id || "") + '" type="button">Open Lesson Brief</button>',
+      '      <button class="th2-day-preview__secondary" data-open-block="' + escapeHtml(block && block.id || "") + '" type="button">Open Full Block View</button>',
+      '      <button class="th2-day-preview__secondary" data-open-curriculum="1" type="button">Browse Curriculum</button>',
+      "    </div>",
+      "  </div>",
+      '  <div class="th2-day-preview__grid">',
+      '    <div class="th2-day-preview__card">',
+      '      <p class="th2-section-label">Students In This Block</p>',
+      '      <div class="th2-day-preview__students">' +
+      (students.length ? students.map(function (student) {
+        return [
+          '<a class="th2-day-preview__student" data-context-student="' + escapeHtml(student.studentId || "") + '" href="student-profile.html?student=' + encodeURIComponent(student.studentId || "") + '&from=hub">',
+          '  <strong>' + escapeHtml(student.name || "Student") + '</strong>',
+          '  <span>' + escapeHtml((student.supportPriority || "Tier") + " · " + ((student.relatedSupport || []).slice(0, 2).join(" • ") || "Support ready")) + "</span>",
+          "</a>"
+        ].join("");
+      }).join("") : '<p class="th2-today-sub">Students will appear here once the block roster is set.</p>') +
+      "</div>",
+      "    </div>",
+      '    <div class="th2-day-preview__card">',
+      '      <p class="th2-section-label">Support Snapshot</p>',
+      '      <div class="th2-day-preview__tags">' + ((derived.languageDemands || []).slice(0, 3).map(function (item) {
+        return '<span class="th2-chip">' + escapeHtml(item) + "</span>";
+      }).join("") || '<span class="th2-chip">Explain</span><span class="th2-chip">Compare</span><span class="th2-chip">Apply</span>') + "</div>",
+      '      <p class="th2-day-preview__support">' + escapeHtml((derived.prioritySignal && derived.prioritySignal.label) || "Support priorities are ready for this lesson block.") + "</p>",
+      "    </div>",
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
+  function renderMobileSection(title, bodyHtml, open, sectionId) {
+    return [
+      '<details class="th2-mobile-section"' + (open ? " open" : "") + ' data-mobile-section="' + escapeHtml(sectionId || title.toLowerCase()) + '">',
+      '  <summary class="th2-mobile-section__summary"><span>' + escapeHtml(title) + '</span><span class="th2-mobile-section__hint">' + (open ? "Hide" : "Show") + "</span></summary>",
+      '  <div class="th2-mobile-section__body">' + bodyHtml + "</div>",
+      "</details>"
+    ].join("");
+  }
+
+  function toolsTimerModes() {
+    return {
+      focus: { label: "Focus", mins: 15, accent: "#2d6df0" },
+      small: { label: "Small Group", mins: 10, accent: "#1f9d6b" },
+      reset: { label: "Reset", mins: 5, accent: "#c79069" }
+    };
+  }
+
+  function setTimerMode(mode) {
+    var map = toolsTimerModes();
+    var next = map[mode] ? mode : "focus";
+    toolState.timerMode = next;
+    toolState.timerTotalSec = map[next].mins * 60;
+    toolState.timerRemainingSec = toolState.timerTotalSec;
+    toolState.timerRunning = false;
+    if (toolState.timerTick) {
+      clearInterval(toolState.timerTick);
+      toolState.timerTick = 0;
+    }
+  }
+
+  function formatClock(totalSec) {
+    var mins = Math.floor(Math.max(0, totalSec) / 60);
+    var secs = Math.max(0, totalSec) % 60;
+    return String(mins) + ":" + String(secs).padStart(2, "0");
+  }
+
+  function toggleToolsTimer() {
+    if (toolState.timerRunning) {
+      toolState.timerRunning = false;
+      if (toolState.timerTick) {
+        clearInterval(toolState.timerTick);
+        toolState.timerTick = 0;
+      }
+      renderToolsPanel();
+      return;
+    }
+    toolState.timerRunning = true;
+    toolState.timerTick = setInterval(function () {
+      toolState.timerRemainingSec = Math.max(0, toolState.timerRemainingSec - 1);
+      if (toolState.timerRemainingSec <= 0) {
+        toolState.timerRunning = false;
+        clearInterval(toolState.timerTick);
+        toolState.timerTick = 0;
+        showToast("Timer complete.", "success");
+      }
+      renderToolsPanel();
+    }, 1000);
+    renderToolsPanel();
+  }
+
+  function openGoogleWorkspaceAction(kind, contextData) {
+    var api = window.CSGoogleWorkspace;
+    var auth = window.CSGoogleAuth;
+    var title = contextData && contextData.block ? (contextData.block.label || contextData.block.classSection || "Cornerstone MTSS Support") : "Cornerstone MTSS Support";
+    var fileContext = {
+      blockLabel: title,
+      title: contextData && contextData.derived && contextData.derived.lesson || title,
+      programLabel: contextData && contextData.derived && contextData.derived.curriculum || ""
+    };
+    if (!api) {
+      showToast("Google Workspace is not available on this page.", "warn");
+      return;
+    }
+    if (auth && auth.isConfigured && auth.isConfigured() && auth.isSignedIn && !auth.isSignedIn()) {
+      auth.signIn().then(function () {
+        openGoogleWorkspaceAction(kind, contextData);
+      }).catch(function (err) {
+        showToast(err && err.message ? err.message : "Google sign-in failed.", "error");
+      });
+      return;
+    }
+    var action;
+    if (kind === "doc") action = api.createDoc && api.createDoc(fileContext);
+    else if (kind === "sheet") action = api.createSheet && api.createSheet(fileContext);
+    else if (kind === "slides") action = api.createSlideDeck && api.createSlideDeck(fileContext);
+    else if (kind === "drive") action = api.searchDriveFiles && api.searchDriveFiles(title);
+    else if (kind === "youtube") action = api.searchYouTube && api.searchYouTube(title);
+    else if (kind === "calendar") {
+      window.open("https://calendar.google.com/calendar/u/0/r/day", "_blank", "noopener");
+      return;
+    }
+    if (!action || !action.then) {
+      showToast("That Google action is not ready yet.", "warn");
+      return;
+    }
+    action.then(function (result) {
+      if (Array.isArray(result) && result[0] && (result[0].url || result[0].webViewLink)) {
+        window.open(result[0].url || result[0].webViewLink, "_blank", "noopener");
+        return;
+      }
+      if (result && (result.url || result.webViewLink)) {
+        window.open(result.url || result.webViewLink, "_blank", "noopener");
+        return;
+      }
+      showToast("Google action completed.", "success");
+    }).catch(function (err) {
+      showToast(err && err.message ? err.message : "Google action failed.", "error");
+    });
+  }
+
+  function renderToolsPanel() {
+    if (!el.toolsBody || !el.toolsPanel) return;
+    var contextData = currentBlockContextForTools();
+    var block = contextData && contextData.block ? contextData.block : {};
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var swbat = deriveLearningTarget(contextData);
+    var agenda = getAgendaForContext(contextData);
+    var modeMeta = toolsTimerModes()[toolState.timerMode] || toolsTimerModes().focus;
+    var progress = toolState.timerTotalSec ? ((toolState.timerTotalSec - toolState.timerRemainingSec) / toolState.timerTotalSec) * 360 : 0;
+    var games = getRecommendedGameActions(contextData).slice(0, 3);
+    if (el.toolsTitle) el.toolsTitle.textContent = block.label || block.classSection || "Ready for this block";
+    el.toolsBody.innerHTML = [
+      '<div class="th2-tools-stack">',
+      '  <section class="th2-tools-card th2-tools-card--timer">',
+      '    <div class="th2-tools-card__head"><p class="th2-tools-card__kicker">Timer</p><div class="th2-tools-chip-row">' +
+            Object.keys(toolsTimerModes()).map(function (key) {
+              return '<button class="th2-tools-chip' + (key === toolState.timerMode ? ' is-active' : '') + '" type="button" data-tools-timer-mode="' + escapeHtml(key) + '">' + escapeHtml(toolsTimerModes()[key].label) + '</button>';
+            }).join("") +
+      '</div></div>',
+      '    <div class="th2-tools-timer-visual" style="--th2-timer-accent:' + escapeHtml(modeMeta.accent) + ';--th2-timer-deg:' + progress.toFixed(2) + 'deg;">',
+      '      <div class="th2-tools-timer-visual__inner"><strong>' + escapeHtml(formatClock(toolState.timerRemainingSec)) + '</strong><span>' + escapeHtml(modeMeta.label) + "</span></div>",
+      "    </div>",
+      '    <div class="th2-tools-inline-actions"><button class="th2-tools-primary" type="button" data-tools-timer-toggle="1">' + (toolState.timerRunning ? "Pause Timer" : "Start Timer") + '</button><button class="th2-tools-quiet" type="button" data-tools-timer-reset="1">Reset</button></div>',
+      "  </section>",
+      '  <section class="th2-tools-card">',
+      '    <div class="th2-tools-card__head"><p class="th2-tools-card__kicker">SWBAT</p><span class="th2-tools-card__meta">' + escapeHtml(block.timeLabel || "") + "</span></div>",
+      '    <p class="th2-tools-learning-target">' + escapeHtml(swbat) + "</p>",
+      '    <p class="th2-tools-note">' + escapeHtml((derived.mainConcept || "Use this target to anchor your opening and closing moves.") ) + "</p>",
+      "  </section>",
+      '  <section class="th2-tools-card">',
+      '    <div class="th2-tools-card__head"><p class="th2-tools-card__kicker">Agenda</p><button class="th2-tools-quiet" type="button" data-tools-agenda-reset="1">Reset</button></div>',
+      '    <div class="th2-tools-agenda">' + agenda.map(function (item, index) {
+            return '<label class="th2-tools-agenda__item"><input type="checkbox" data-tools-agenda-check="' + escapeHtml(String(index)) + '"' + (item.done ? " checked" : "") + '><span>' + escapeHtml(item.label) + "</span></label>";
+          }).join("") + '</div>',
+      "  </section>",
+      '  <section class="th2-tools-card">',
+      '    <div class="th2-tools-card__head"><p class="th2-tools-card__kicker">Quick Launch</p><span class="th2-tools-card__meta">Same app workflow</span></div>',
+      '    <div class="th2-tools-launch-grid">',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="doc"><strong>Docs</strong><span>Lesson notes</span></button>',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="sheet"><strong>Sheets</strong><span>Checklist / tracker</span></button>',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="slides"><strong>Slides</strong><span>Project visuals</span></button>',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="youtube"><strong>YouTube</strong><span>Support video</span></button>',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="drive"><strong>Drive</strong><span>Find linked files</span></button>',
+      '      <button class="th2-tools-launch th2-tools-launch--google" type="button" data-tools-google="calendar"><strong>Calendar</strong><span>Open today</span></button>',
+      games.map(function (game) {
+        return '<a class="th2-tools-launch th2-tools-launch--game" href="' + escapeHtml(game.href) + '"><strong>' + escapeHtml(game.label.replace(/^Launch\s+/i, "")) + '</strong><span>' + escapeHtml(game.subtitle) + '</span></a>';
+      }).join(""),
+      "    </div>",
+      "  </section>",
+      "</div>"
+    ].join("");
+  }
+
   function renderDailyScheduleMain(blocks) {
     if (!el.emptyState) return;
 
@@ -3660,6 +4226,12 @@
     var totalStudents = blocks.reduce(function (acc, b) {
       return acc + (b.studentIds ? b.studentIds.length : 0);
     }, 0);
+    var featuredBlock = blocks.filter(function (block) {
+      return block && Array.isArray(block.studentIds) && block.studentIds.length > 0 && String(block.subject || "").toLowerCase() !== "specials";
+    })[0] || blocks[0] || null;
+    var featuredContext = featuredBlock ? buildTeacherContextForBlock(featuredBlock) : buildFirstRunContext();
+    var calendarEvents = buildDemoCalendarEvents(blocks);
+    var greetingLine = greetingWord() + ", " + currentTeacherFirstName();
     var summaryLine = blocks.length
       ? blocks.length + " class" + (blocks.length !== 1 ? "es" : "") + (totalStudents ? " · " + totalStudents + " student" + (totalStudents !== 1 ? "s" : "") : "")
       : "No classes scheduled";
@@ -3680,20 +4252,41 @@
     }).join("");
 
     var emptySlot = !blocks.length
-      ? '<div class="th2-day-sched-empty"><p class="th2-day-sched-empty-msg">Your day is clear — no classes have been added yet.</p><p class="th2-day-sched-empty-sub">Use the panel below to add intervention sessions and support groups for today.</p></div>'
+      ? '<div class="th2-day-sched-empty"><p class="th2-day-sched-empty-msg">Demo day loaded — replace it with your real schedule anytime.</p><p class="th2-day-sched-empty-sub">Connect Google Calendar or update Lesson Brief to turn this sample day into your live plan.</p></div>'
       : "";
 
     el.emptyState.innerHTML = [
       '<div class="th2-day-schedule-view">',
       '<header class="th2-day-sched-header">',
       '<div class="th2-day-sched-meta">',
+      '<p class="th2-day-sched-greeting">' + escapeHtml(greetingLine) + "</p>",
       '<p class="th2-day-sched-date">' + escapeHtml(dayStr) + "</p>",
       '<p class="th2-day-sched-summary">' + escapeHtml(summaryLine) + "</p>",
       "</div>",
-      '<button class="th2-day-sched-add-btn" data-open-brief="1" type="button">+ Add class</button>',
+      '<div class="th2-day-sched-cta-row">',
+      '<button class="th2-day-sched-add-btn" data-open-brief="1" type="button">Open Lesson Brief</button>',
+      '<button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Calendar</button>',
+      "</div>",
       "</header>",
-      '<div class="th2-day-sched-list">',
+      '<section class="th2-day-sched-hero">',
+      '  <div class="th2-day-sched-list-wrap">',
+      '    <div class="th2-day-sched-list-head"><p class="th2-section-label">Today\'s Blocks</p><p class="th2-today-sub">Select any block to open the full teaching context.</p></div>',
+      '    <div class="th2-day-sched-list">',
       blockCards + emptySlot,
+      "    </div>",
+      "  </div>",
+      renderDayCalendar(calendarEvents),
+      "</section>",
+      renderFeaturedBlockPreview(featuredContext),
+      '<div class="th2-day-sched-deep-grid">',
+      renderLessonContextZone(featuredContext),
+      renderStudentPriorityZone(featuredContext),
+      renderQuickAccessRail(featuredContext),
+      "</div>",
+      '<div class="th2-day-mobile-sections">',
+      renderMobileSection("Lesson Context", renderLessonContextZone(featuredContext), true, "lesson-context"),
+      renderMobileSection("Student Priorities", renderStudentPriorityZone(featuredContext), false, "student-priorities"),
+      renderMobileSection("Quick Access", renderQuickAccessRail(featuredContext), false, "quick-access"),
       "</div>",
       "</div>"
     ].join("");
@@ -3736,6 +4329,7 @@
     if (state.ui && state.ui.drawerOpen && drawer && !drawer.classList.contains("is-open")) {
       openDrawer(studentId);
     }
+    if (toolState.open) renderToolsPanel();
   });
 
   /* ── Add Student drawer ──────────────────────────────── */
@@ -4045,6 +4639,70 @@
     }
   });
 
+  document.addEventListener("click", function (e) {
+    var curBtn = e.target.closest && e.target.closest("[data-open-curriculum]");
+    if (!curBtn) return;
+    var panel = window.CSCurriculumPanel;
+    if (panel && typeof panel.open === "function") panel.open("resources");
+  });
+
+  document.addEventListener("click", function (e) {
+    var syncBtn = e.target.closest && e.target.closest("[data-connect-calendar]");
+    if (!syncBtn) return;
+    var signInBtn = document.getElementById("th2-google-signin-btn");
+    var syncClassroomBtn = document.getElementById("th2-classroom-sync-btn");
+    if (signInBtn && !signInBtn.closest(".hidden")) {
+      signInBtn.click();
+      return;
+    }
+    if (syncClassroomBtn && !syncClassroomBtn.closest(".hidden")) {
+      syncClassroomBtn.click();
+      return;
+    }
+    showToast("Google Calendar sync will appear here after Google sign-in is configured.", "info");
+  });
+
+  document.addEventListener("click", function (e) {
+    var modeBtn = e.target.closest && e.target.closest("[data-tools-timer-mode]");
+    if (!modeBtn) return;
+    setTimerMode(modeBtn.getAttribute("data-tools-timer-mode") || "focus");
+    renderToolsPanel();
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-tools-timer-toggle]")) {
+      toggleToolsTimer();
+      return;
+    }
+    if (e.target.closest && e.target.closest("[data-tools-timer-reset]")) {
+      setTimerMode(toolState.timerMode);
+      renderToolsPanel();
+      return;
+    }
+    if (e.target.closest && e.target.closest("[data-tools-agenda-reset]")) {
+      var contextData = currentBlockContextForTools();
+      saveAgendaState(contextData && contextData.block && contextData.block.id || "default", defaultAgendaForContext(contextData));
+      renderToolsPanel();
+      return;
+    }
+    var googleBtn = e.target.closest && e.target.closest("[data-tools-google]");
+    if (googleBtn) {
+      openGoogleWorkspaceAction(googleBtn.getAttribute("data-tools-google") || "", currentBlockContextForTools());
+    }
+  });
+
+  document.addEventListener("change", function (e) {
+    var agendaCheck = e.target.closest && e.target.closest("[data-tools-agenda-check]");
+    if (!agendaCheck) return;
+    var contextData = currentBlockContextForTools();
+    var blockId = contextData && contextData.block && contextData.block.id || "default";
+    var agenda = getAgendaForContext(contextData).slice();
+    var index = Number(agendaCheck.getAttribute("data-tools-agenda-check") || -1);
+    if (agenda[index]) agenda[index].done = !!agendaCheck.checked;
+    saveAgendaState(blockId, agenda);
+    renderToolsPanel();
+  });
+
   // Log session inline
   document.addEventListener("click", function (e) {
     var btn = e.target.closest && e.target.closest("#th2-log-session");
@@ -4234,17 +4892,6 @@
   // Add Student button
   document.addEventListener("click", function (e) {
     if (e.target && e.target.id === "th2-add-student-btn") openAddDrawer();
-  });
-
-  document.addEventListener("click", function (e) {
-    if (!(e.target && e.target.id === "th2-sample-btn")) return;
-    resetDemoSeedData();
-    try { localStorage.setItem("cs.hub.demo", "1"); } catch (_err) {}
-    ensureDemoCaseload();
-    loadCaseload();
-    showTodaysClasses();
-    if (el.demoBadge) el.demoBadge.classList.remove("hidden");
-    showToast("Sample class loaded.", "success");
   });
 
   // Phase 9: Progress note copy buttons (focus card)
@@ -4551,7 +5198,7 @@
 
   function initTourAndAnalytics() {
     /* Tour replay button in sidebar footer */
-    var tourBtn = document.getElementById("th2-tour-btn");
+    var tourBtn = document.getElementById("th2-help-btn");
     if (tourBtn && window.CSTour) {
       tourBtn.addEventListener("click", function () {
         /* Init tour on first click (lazy init), replay on subsequent clicks */
@@ -4562,14 +5209,6 @@
           window.CSTour.replay();
         }
         if (window.CSAnalytics) window.CSAnalytics.track("tour_replayed", {});
-      });
-    }
-
-    /* Analytics button in sidebar footer */
-    var analyticsBtn = document.getElementById("th2-analytics-btn");
-    if (analyticsBtn && window.CSAnalytics) {
-      analyticsBtn.addEventListener("click", function () {
-        window.CSAnalytics.openAdminPanel();
       });
     }
 
@@ -4692,6 +5331,82 @@
     });
   }
 
+  function openToolsPanel() {
+    if (!el.toolsPanel || !el.toolsFab) return;
+    toolState.open = true;
+    toolState.minimized = false;
+    el.toolsPanel.classList.remove("hidden", "is-minimized");
+    el.toolsPanel.removeAttribute("aria-hidden");
+    el.toolsFab.setAttribute("aria-expanded", "true");
+    renderToolsPanel();
+  }
+
+  function closeToolsPanel() {
+    if (!el.toolsPanel || !el.toolsFab) return;
+    toolState.open = false;
+    el.toolsPanel.classList.add("hidden");
+    el.toolsPanel.setAttribute("aria-hidden", "true");
+    el.toolsFab.setAttribute("aria-expanded", "false");
+  }
+
+  function initToolsPanel() {
+    if (!el.toolsFab || !el.toolsPanel || !el.toolsBody || !el.toolsHead) return;
+
+    var savedLeft = storageGet("cs.hub.tools.left", "");
+    var savedTop = storageGet("cs.hub.tools.top", "");
+    var savedWidth = storageGet("cs.hub.tools.width", "");
+    var savedHeight = storageGet("cs.hub.tools.height", "");
+    if (savedLeft) el.toolsPanel.style.left = savedLeft;
+    if (savedTop) el.toolsPanel.style.top = savedTop;
+    if (savedWidth) el.toolsPanel.style.width = savedWidth;
+    if (savedHeight) el.toolsPanel.style.height = savedHeight;
+
+    el.toolsFab.addEventListener("click", function () {
+      if (toolState.open) closeToolsPanel();
+      else openToolsPanel();
+    });
+
+    var closeBtn = document.getElementById("th2-tools-close");
+    var minBtn = document.getElementById("th2-tools-min");
+    if (closeBtn) closeBtn.addEventListener("click", closeToolsPanel);
+    if (minBtn) {
+      minBtn.addEventListener("click", function () {
+        toolState.minimized = !toolState.minimized;
+        el.toolsPanel.classList.toggle("is-minimized", toolState.minimized);
+      });
+    }
+
+    var dragState = null;
+    el.toolsHead.addEventListener("pointerdown", function (event) {
+      if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) return;
+      dragState = {
+        x: event.clientX,
+        y: event.clientY,
+        left: el.toolsPanel.offsetLeft,
+        top: el.toolsPanel.offsetTop
+      };
+      el.toolsHead.setPointerCapture(event.pointerId);
+    });
+    el.toolsHead.addEventListener("pointermove", function (event) {
+      if (!dragState) return;
+      var nextLeft = Math.max(12, dragState.left + (event.clientX - dragState.x));
+      var nextTop = Math.max(12, dragState.top + (event.clientY - dragState.y));
+      el.toolsPanel.style.left = nextLeft + "px";
+      el.toolsPanel.style.top = nextTop + "px";
+    });
+    el.toolsHead.addEventListener("pointerup", function () {
+      if (!dragState) return;
+      storageSet("cs.hub.tools.left", el.toolsPanel.style.left || "");
+      storageSet("cs.hub.tools.top", el.toolsPanel.style.top || "");
+      dragState = null;
+    });
+
+    el.toolsPanel.addEventListener("pointerup", function () {
+      storageSet("cs.hub.tools.width", el.toolsPanel.style.width || "");
+      storageSet("cs.hub.tools.height", el.toolsPanel.style.height || "");
+    });
+  }
+
   /* ── Boot sequence ─────────────────────────────────────── */
 
   function boot() {
@@ -4706,6 +5421,7 @@
 
     // Initialize Google auth + Classroom sync
     initGoogleAuth();
+    initToolsPanel();
 
     // Initialize curriculum quick-reference panel
     initCurriculumPanel();
@@ -4716,6 +5432,18 @@
 
     // Load caseload (reads from evidence store)
     loadCaseload();
+
+    var seededBlocks = getTodayLessonBlocks();
+    if (!seededBlocks.length) {
+      isDemoMode = true;
+      try {
+        localStorage.setItem("cs.hub.demo", "1");
+      } catch (err) {}
+      ensureDemoCaseload();
+      loadCaseload();
+      seededBlocks = getTodayLessonBlocks();
+      if (el.demoBadge) el.demoBadge.classList.remove("hidden");
+    }
 
     // If a student was passed via URL, select them; otherwise default to schedule view
     if (initialStudentId && caseload.some(function (s) { return s.id === initialStudentId; })) {
@@ -4728,25 +5456,8 @@
       renderStudentList();
       selectStudent(initialStudentId);
     } else if (caseload.length) {
-      var seededBlocks = getTodayLessonBlocks();
-      if (isDemoMode && seededBlocks.length) {
-        var firstBlock = seededBlocks[0];
-        var firstBlockContext = TeacherSelectors && typeof TeacherSelectors.buildClassContext === "function"
-          ? TeacherSelectors.buildClassContext(firstBlock, { TeacherStorage: TeacherStorage })
-          : null;
-        hubState.set({
-          context: { mode: "class", classId: firstBlock.id, studentId: "" },
-          active_class_context: {
-            classId: firstBlock.id,
-            label: firstBlockContext && firstBlockContext.label || firstBlock.label || "",
-            supportType: firstBlockContext && firstBlockContext.supportType || firstBlock.supportType || "",
-            lessonContextId: firstBlockContext && firstBlockContext.lessonContextId || firstBlock.lessonContextId || ""
-          }
-        });
-      } else {
-        // Default to Today's Classes view so teachers see their schedule first
-        showTodaysClasses();
-      }
+      // Default to Today's Classes view so teachers see their schedule first
+      showTodaysClasses();
     } else if (isDemoMode) {
       /* Demo resilience: dev-servers sometimes strip query params.
          Re-seed and re-render once after a minimal delay. */
