@@ -1872,6 +1872,64 @@ body.td-page .td-modal-card {
   }
 }
 
+@media (max-width: 900px) {
+  body.td-reports-mode.teacher-dashboard,
+  body.td-reports-mode.td-page {
+    overflow: hidden !important;
+  }
+
+  body.td-reports-mode .td-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  body.td-reports-mode .td-body,
+  body.td-reports-mode .dashboard,
+  body.td-reports-mode .td-cockpit-grid,
+  body.td-reports-mode .td-cockpit-main {
+    min-height: 0;
+  }
+
+  body.td-reports-mode .dashboard {
+    overflow: hidden;
+  }
+
+  body.td-reports-mode .td-cockpit-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  body.td-reports-mode .td-cockpit-sidebar {
+    grid-template-rows: auto auto;
+    overflow: hidden;
+  }
+
+  body.td-reports-mode .td-sidebar-section--students,
+  body.td-reports-mode .td-cockpit-timeline {
+    display: none;
+  }
+
+  body.td-reports-mode .td-cockpit-main {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    overflow: auto;
+    padding-right: 0;
+  }
+
+  body.td-reports-mode .td-reports-overview__head,
+  body.td-reports-mode .td-reports-overview__grid,
+  body.td-reports-mode .td-reports-workbench,
+  body.td-reports-mode .td-reports-pattern-list,
+  body.td-reports-mode .td-reports-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.td-reports-mode .td-reports-overview,
+  body.td-reports-mode .td-reports-panel {
+    padding: 16px;
+  }
+}
+
 /* === TODAY ENGINE ================================================= */
 .td-today {
   min-height: 0;

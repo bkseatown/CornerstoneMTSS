@@ -238,7 +238,7 @@
     {
       "id": "study-sessions-lofi-231879",
       "title": "Study Sessions Lofi",
-      "src": "./nickpanekaiassets-chill-lofi-instrumental-for-study-sessions-231879.mp3",
+      "src": "./assets/music/tracks/focus-flow/nickpanekaiassets-chill-lofi-instrumental-for-study-sessions-231879.mp3",
       "format": "mp3",
       "modes": [
         "chill",
@@ -256,7 +256,7 @@
     {
       "id": "classroom-chill-495123",
       "title": "Classroom Chill",
-      "src": "./nickpanekaiassets-chill-and-use-reason-plz-495123.mp3",
+      "src": "./assets/music/tracks/focus-flow/nickpanekaiassets-chill-and-use-reason-plz-495123.mp3",
       "format": "mp3",
       "modes": [
         "chill",
@@ -273,7 +273,7 @@
     {
       "id": "elegant-groove-490165",
       "title": "Elegant Groove",
-      "src": "./nastelbom-elegant-490165.mp3",
+      "src": "./assets/music/tracks/focus-flow/nastelbom-elegant-490165.mp3",
       "format": "mp3",
       "modes": [
         "coffee",
@@ -289,7 +289,7 @@
     {
       "id": "piano-calm-487704",
       "title": "Piano Calm",
-      "src": "./nastelbom-piano-piano-music-487704.mp3",
+      "src": "./assets/music/tracks/focus-flow/nastelbom-piano-piano-music-487704.mp3",
       "format": "mp3",
       "modes": [
         "coffee",
@@ -305,7 +305,7 @@
     {
       "id": "soft-focus-485904",
       "title": "Soft Focus",
-      "src": "./nastelbom-no-copyright-music-485904.mp3",
+      "src": "./assets/music/tracks/focus-flow/nastelbom-no-copyright-music-485904.mp3",
       "format": "mp3",
       "modes": [
         "chill",
