@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Validate live WordQuest freshness
         env:
-          BASE: https://bkseatown.github.io/WordQuest
+          BASE: https://bkseatown.github.io/CornerstoneMTSS
         run: |
           set -euo pipefail
 
@@ -80,9 +80,9 @@ jobs:
               `- Workflow: ${context.workflow}`,
               '',
               'Checks include:',
-              '- /WordQuest/build.json availability + sanity',
+              '- /CornerstoneMTSS/build.json availability + sanity',
               '- teacher-dashboard script markers',
-              '- /WordQuest/style/tokens.css content-type'
+              '- /CornerstoneMTSS/style/tokens.css content-type'
             ].join('\n');
             await github.rest.issues.create({
               owner: context.repo.owner,
