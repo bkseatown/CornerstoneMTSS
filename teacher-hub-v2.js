@@ -808,6 +808,108 @@
     ].join("");
   }
 
+  function getPriorityStudent(contextData) {
+    var students = contextData && contextData.derived && Array.isArray(contextData.derived.students)
+      ? contextData.derived.students
+      : [];
+    return students[0] || null;
+  }
+
+  function compactBlockLabel(block) {
+    if (!block) return "Support block";
+    return [block.timeLabel, block.label || block.classSection].filter(Boolean).join(" ") || "Support block";
+  }
+
+  function compactLessonLabel(contextData) {
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    return [derived.curriculum || derived.subject, derived.lesson || derived.unit].filter(Boolean).join(" ") || "Lesson context ready";
+  }
+
+  function supportStudentsSummary(contextData) {
+    var students = contextData && contextData.derived && Array.isArray(contextData.derived.students)
+      ? contextData.derived.students
+      : [];
+    return students.map(function (student) {
+      return {
+        name: student.name || "Student",
+        label: student.supportPriority || "Monitor",
+        detail: (student.relatedSupport || [])[0] || "Support ready"
+      };
+    });
+  }
+
+  function renderTodayPriorityPanel(contextData) {
+    var block = contextData && contextData.block ? contextData.block : null;
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var companion = contextData && contextData.companion ? contextData.companion : {};
+    var games = getRecommendedGameActions(contextData);
+    var primaryStudent = getPriorityStudent(contextData);
+    var focusSkill = primaryStudent && primaryStudent.primaryGoal
+      ? primaryStudent.primaryGoal
+      : (derived.lessonFocus || deriveLearningTarget(contextData));
+    var suggestedMove = primaryStudent && primaryStudent.relatedSupport && primaryStudent.relatedSupport[0]
+      ? primaryStudent.relatedSupport[0]
+      : ((companion.supportMoves || [])[0] || "Review the current lesson move and reinforce with immediate feedback.");
+    var recommendedActivity = games[0] || { label: "Launch Word Quest", subtitle: "Context-aligned practice", href: appendContextParamsForBlock("game-platform.html?game=word-quest", contextData) };
+    var supportStudents = supportStudentsSummary(contextData);
+    var progressTotal = Math.max((block && block.studentIds && block.studentIds.length) || supportStudents.length || 1, 1);
+    var progressCount = Math.min(supportStudents.length || 1, progressTotal);
+    var progressPct = Math.max(18, Math.round((progressCount / progressTotal) * 100));
+    return [
+      '<section class="th2-priority-panel">',
+      '  <div class="th2-priority-panel__shell">',
+      '    <div class="th2-priority-panel__copy">',
+      '      <p class="th2-priority-panel__kicker">Today</p>',
+      '      <h2 class="th2-priority-panel__student">' + escapeHtml((primaryStudent && primaryStudent.name) || (block && (block.label || block.classSection)) || "Today’s priority") + '</h2>',
+      '      <p class="th2-priority-panel__block">' + escapeHtml(compactBlockLabel(block)) + '</p>',
+      '      <div class="th2-priority-panel__sections">',
+      '        <div class="th2-priority-panel__section"><span>Focus Today</span><strong>' + escapeHtml(focusSkill || "Review the selected lesson focus.") + '</strong></div>',
+      '        <div class="th2-priority-panel__section"><span>Suggested Move</span><strong>' + escapeHtml(suggestedMove) + '</strong></div>',
+      '        <div class="th2-priority-panel__section"><span>Recommended Activity</span><strong>' + escapeHtml(recommendedActivity.label.replace(/^Launch\s+/i, "")) + '</strong><em>' + escapeHtml(recommendedActivity.subtitle || "Context-aligned practice") + '</em></div>',
+      "      </div>",
+      '      <div class="th2-priority-panel__progress" aria-hidden="true">',
+      '        <div class="th2-priority-panel__progress-copy"><span>Support progress</span><strong>' + escapeHtml(String(progressCount) + " of " + String(progressTotal) + " students need direct support") + '</strong></div>',
+      '        <div class="th2-priority-panel__progress-track"><div class="th2-priority-panel__progress-fill" style="width:' + escapeHtml(String(progressPct)) + '%"></div></div>',
+      "      </div>",
+      "    </div>",
+      '    <div class="th2-priority-panel__actions">',
+      '      <button class="th2-priority-panel__start" data-open-block="' + escapeHtml(block && block.id || "") + '" type="button">Start Session</button>',
+      '      <a class="th2-priority-panel__activity" href="' + escapeHtml(recommendedActivity.href) + '"><strong>' + escapeHtml(recommendedActivity.label) + '</strong><span>' + escapeHtml(recommendedActivity.subtitle || "Open the recommended activity for this block.") + '</span></a>',
+      '    </div>',
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
+  function renderClassContextZone(contextData) {
+    var block = contextData && contextData.block ? contextData.block : {};
+    var derived = contextData && contextData.derived ? contextData.derived : {};
+    var students = supportStudentsSummary(contextData);
+    return [
+      '<section class="th2-context-command-zone">',
+      '  <div class="th2-zone-card">',
+      '    <div class="th2-zone-card__head">',
+      '      <p class="th2-section-label">Class Context</p>',
+      '      <p class="th2-zone-card__meta">' + escapeHtml([block.label || block.classSection || "Block", block.teacher || "Teacher", compactLessonLabel(contextData)].filter(Boolean).join(" • ")) + '</p>',
+      "    </div>",
+      '    <div class="th2-zone-card__facts">',
+      '      <div><span>Teacher</span><strong>' + escapeHtml(block.teacher || "Not set") + '</strong></div>',
+      '      <div><span>Subject</span><strong>' + escapeHtml(derived.subject || block.subject || "Support") + '</strong></div>',
+      '      <div><span>Lesson</span><strong>' + escapeHtml([derived.unit, derived.lesson].filter(Boolean).join(" ") || derived.lessonFocus || block.lesson || "Lesson ready") + '</strong></div>',
+      "    </div>",
+      '    <div class="th2-zone-card__support">',
+      '      <p class="th2-zone-card__subhead">Students needing support</p>',
+      '      <div class="th2-zone-card__chips">' +
+      (students.length ? students.map(function (student) {
+        return '<span class="th2-context-chip"><strong>' + escapeHtml(student.name.split(" ")[0] || student.name) + '</strong><em>' + escapeHtml(student.label + " " + student.detail) + '</em></span>';
+      }).join("") : '<span class="th2-context-chip"><strong>Monitor</strong><em>No support students assigned yet</em></span>') +
+      '</div>',
+      "    </div>",
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
   function renderCompanionZone(contextData) {
     var data = contextData && contextData.companion ? contextData.companion : {};
     var groups = Array.isArray(data.flexibleGroups) ? data.flexibleGroups : [];
@@ -869,26 +971,19 @@
   }
 
   function renderQuickAccessRail(contextData) {
-    var actions = getRecommendedGameActions(contextData);
+    var wordQuest = {
+      label: "Launch Word Quest",
+      href: appendContextParamsForBlock("game-platform.html?game=word-quest", contextData),
+      subtitle: "Context-aligned practice"
+    };
     return [
-      '<section class="th2-quick-rail">',
-      '  <div class="th2-quick-rail__primary">',
-      '    <p class="th2-section-label">Quick Access</p>',
-      '    <div class="th2-quick-actions">',
-      '      <button class="th2-quick-action th2-quick-action--brief" data-open-brief="1" data-open-brief-block="' + escapeHtml(contextData.block && contextData.block.id || "") + '" type="button"><strong>Open Lesson Brief</strong><span>Update lesson context and supports from this block.</span></button>',
-      actions.map(function (action) {
-        return '<a class="th2-quick-action" href="' + escapeHtml(action.href) + '"><strong>' + escapeHtml(action.label) + '</strong><span>' + escapeHtml(action.subtitle) + "</span></a>";
-      }).join(""),
-      '      <a class="th2-quick-action" href="' + escapeHtml("reports.html") + '"><strong>Open Reports</strong><span>Weekly insights, meeting prep, history, and exports.</span></a>',
-      "    </div>",
-      "  </div>",
-      '  <div class="th2-quick-rail__secondary">',
-      '    <p class="th2-section-label">Secondary Quick Access</p>',
-      '    <div class="th2-secondary-grid">',
-      '      <article class="th2-secondary-card"><h3>My Caseload</h3><p>' + escapeHtml(String(caseload.length) + " students in active caseload") + "</p></article>",
-      '      <article class="th2-secondary-card"><h3>Recent Students</h3><p>' + escapeHtml(caseload.slice(0, 3).map(function (row) { return row.name; }).join(", ") || "No recent students yet.") + "</p></article>",
-      '      <article class="th2-secondary-card"><h3>Upcoming Meetings</h3><p>Reports &amp; Meetings handles meeting prep and communication drafts.</p></article>',
-      "    </div>",
+      '<section class="th2-quick-command-zone">',
+      '  <p class="th2-section-label">Quick Actions</p>',
+      '  <div class="th2-quick-command-bar">',
+      '    <button class="th2-command-action" data-open-block="' + escapeHtml(contextData.block && contextData.block.id || "") + '" type="button"><strong>Start Small Group</strong><span>Open the selected block and move directly into the live support view.</span></button>',
+      '    <a class="th2-command-action" href="' + escapeHtml(wordQuest.href) + '"><strong>Launch Word Quest</strong><span>' + escapeHtml(wordQuest.subtitle || "Context-aligned practice") + '</span></a>',
+      '    <button class="th2-command-action" data-open-brief="1" data-open-brief-block="' + escapeHtml(contextData.block && contextData.block.id || "") + '" type="button"><strong>Open Lesson Brief</strong><span>Review the lesson focus, supports, and next teaching moves.</span></button>',
+      '    <a class="th2-command-action" href="reports.html"><strong>View Progress</strong><span>Open reports, progress insights, and meeting-ready history.</span></a>',
       "  </div>",
       "</section>"
     ].join("");
@@ -4277,15 +4372,13 @@
       "  </div>",
       renderDayCalendar(calendarEvents),
       "</section>",
-      renderFeaturedBlockPreview(featuredContext),
+      renderTodayPriorityPanel(featuredContext),
       '<div class="th2-day-sched-deep-grid">',
-      renderLessonContextZone(featuredContext),
-      renderStudentPriorityZone(featuredContext),
+      renderClassContextZone(featuredContext),
       renderQuickAccessRail(featuredContext),
       "</div>",
       '<div class="th2-day-mobile-sections">',
-      renderMobileSection("Lesson Context", renderLessonContextZone(featuredContext), true, "lesson-context"),
-      renderMobileSection("Student Priorities", renderStudentPriorityZone(featuredContext), false, "student-priorities"),
+      renderMobileSection("Class Context", renderClassContextZone(featuredContext), false, "class-context"),
       renderMobileSection("Quick Access", renderQuickAccessRail(featuredContext), false, "quick-access"),
       "</div>",
       "</div>"
