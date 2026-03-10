@@ -49,7 +49,7 @@
     return {
       level: "steady",
       count: 0,
-      label: "Core supports are aligned for " + (lessonContext.subject || "today") + ".",
+      label: "Tiered literacy supports are aligned for " + (lessonContext.subject || "today") + ".",
       shortLabel: "Lesson ready"
     };
   }

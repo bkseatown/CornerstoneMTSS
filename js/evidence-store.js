@@ -632,7 +632,7 @@
     var id = encodeURIComponent(String(sid || "demo-student"));
     if (focus === "Decoding") return {
       focus: focus,
-      line: "Run a vowel sweep with immediate letter-position feedback.",
+      line: "Use phoneme-grapheme mapping with immediate corrective feedback on short-vowel decoding.",
       quickHref: "word-quest.html?student=" + id + "&mode=quickcheck",
       interventionHref: "word-quest.html?student=" + id + "&mode=intervention"
     };

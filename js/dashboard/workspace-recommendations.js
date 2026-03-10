@@ -43,7 +43,7 @@
         })
       : [];
     if (!rows.length) {
-      listEl.innerHTML = '<p class="td-reco-line">Run a quick check to auto-build a recommended plan.</p>';
+      listEl.innerHTML = '<p class="td-reco-line">Run a brief literacy probe to build the next-step plan.</p>';
       return;
     }
     listEl.innerHTML = rows.map(function (row) {
@@ -119,7 +119,7 @@
       }
     }
     if (!Array.isArray(rows) || !rows.length) {
-      listEl.innerHTML = '<p class="td-reco-line">No recommendation data yet. Run a quick check and refresh.</p>';
+      listEl.innerHTML = '<p class="td-reco-line">No recommendation data yet. Run a literacy probe and refresh.</p>';
       return;
     }
     listEl.innerHTML = rows.slice(0, 3).map(function (row, idx) {

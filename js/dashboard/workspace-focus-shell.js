@@ -29,8 +29,8 @@
     if (el.metricAccuracy) el.metricAccuracy.textContent = "+0.0%";
     if (el.metricTier) el.metricTier.textContent = "Tier 2";
     if (el.metricSubline) el.metricSubline.textContent = "Accuracy +4.2% over last 3 sessions";
-    if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent quick check yet";
-    if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a 90-second Word Quest quick check to generate signals.";
+    if (el.lastSessionTitle) el.lastSessionTitle.textContent = "No recent literacy probe yet";
+    if (el.lastSessionMeta) el.lastSessionMeta.textContent = "Run a brief decoding or word-reading probe to generate current skill evidence.";
   }
 
   function renderSelectedState(options) {

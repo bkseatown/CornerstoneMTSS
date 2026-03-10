@@ -10,8 +10,8 @@
   function summarizeSession(row) {
     if (!row) {
       return {
-        title: "No recent quick check yet",
-        meta: "Run a 90-second Word Quest quick check to generate signals."
+        title: "No recent literacy probe yet",
+        meta: "Run a brief decoding or word-reading probe to generate current skill evidence."
       };
     }
     var sig = row.signals || {};

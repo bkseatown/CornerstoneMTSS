@@ -228,7 +228,7 @@
       '  <div class="sp-meta-grid">',
       '    <div class="sp-meta-card"><span>Last session</span><strong>' + esc(summary && summary.lastSession ? relativeDate(summary.lastSession.timestamp) : "No sessions yet") + '</strong></div>',
       '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String(evidenceCount)) + '</strong></div>',
-      '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect baseline") : "Collect baseline") + '</strong></div>',
+      '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect current literacy baseline") : "Collect current literacy baseline") + '</strong></div>',
       '  </div>',
       '  <div class="sp-evidence-story">',
       '    <p class="sp-kicker">Momentum</p>',
