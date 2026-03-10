@@ -1,5 +1,16 @@
 @import url("./style/tokens.css");
 
+:root {
+  --ela: #4C7CF3;
+  --math: #F59E0B;
+  --intervention: #10B981;
+  --coverage: #9CA3AF;
+  --specials: #8B5CF6;
+  --correct: #4CAF50;
+  --present: #FFC107;
+  --absent: #9CA3AF;
+}
+
 /* ======================================================
    DASHBOARD NO-SCROLL CONTRACT
    ====================================================== */
@@ -83,7 +94,7 @@ body.cs-has-nav-shell .td-shell {
 
 .td-top {
   display: grid;
-  grid-template-columns: minmax(220px, auto) minmax(360px, 1fr) auto;
+  grid-template-columns: minmax(220px, auto) minmax(260px, 1fr) auto;
   gap: var(--sp-3);
   align-items: center;
   padding: 12px 16px;
@@ -91,6 +102,33 @@ body.cs-has-nav-shell .td-shell {
   top: 0;
   z-index: 9;
 }
+
+.td-top-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.td-top-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #445a78;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.td-top-chip--ela { background: color-mix(in oklab, var(--ela) 14%, white); color: var(--ela); }
+.td-top-chip--math { background: color-mix(in oklab, var(--math) 18%, white); color: #b26900; }
+.td-top-chip--intervention { background: color-mix(in oklab, var(--intervention) 14%, white); color: #0b8e61; }
 
 .td-top.td-surface {
   background: color-mix(in oklab, var(--surface-elev-1) 94%, #f1efeb 6%);
@@ -432,8 +470,303 @@ body.cs-has-nav-shell .td-shell {
   flex-direction: column;
   height: 100%;
   gap: 12px;
-  padding: 12px 18px 16px;
+  padding: 10px 16px 14px;
   overflow: hidden;
+}
+
+.td-cockpit-grid {
+  display: grid;
+  grid-template-columns: minmax(248px, 0.82fr) minmax(0, 1.5fr) minmax(280px, 0.9fr);
+  gap: 12px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.td-cockpit-sidebar,
+.td-cockpit-main,
+.td-cockpit-timeline {
+  min-height: 0;
+}
+
+.td-cockpit-sidebar {
+  padding: 16px;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: 12px;
+  overflow: hidden;
+}
+
+.td-sidebar-section {
+  display: grid;
+  gap: 8px;
+}
+
+.td-sidebar-section--students {
+  min-height: 0;
+}
+
+.td-sidebar-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.td-sidebar-icon-group {
+  font-size: 16px;
+}
+
+.td-search-wrap {
+  display: block;
+}
+
+.td-sidebar-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.td-sidebar-link {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 14px;
+  border: 0;
+  background: color-mix(in oklab, var(--surface-elev-1) 84%, white 16%);
+  color: var(--text-primary);
+  text-decoration: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 50%, transparent);
+  transition: transform var(--dur-1) ease-in-out, box-shadow var(--dur-1) ease-in-out, background-color var(--dur-1) ease-in-out;
+}
+
+.td-sidebar-link:hover,
+.td-sidebar-link:focus-visible {
+  transform: translateY(-1px);
+  background: color-mix(in oklab, white 72%, #dfe8f5 28%);
+  box-shadow: 0 8px 18px rgba(37, 58, 90, 0.08), inset 0 0 0 1px rgba(76, 124, 243, 0.12);
+}
+
+.td-sidebar-link span {
+  font-size: 16px;
+}
+
+.td-sidebar-link strong {
+  font-size: 0.95rem;
+}
+
+.td-cockpit-student-list {
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.td-cockpit-main {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+  gap: 12px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.td-cockpit-timeline {
+  padding: 16px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 14px;
+  overflow: hidden;
+}
+
+.td-timeline-head {
+  display: grid;
+  gap: 4px;
+}
+
+.td-block-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.td-block-card {
+  display: grid;
+  gap: 6px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  border-left: 6px solid var(--coverage);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 52%, transparent);
+}
+
+.td-block-card--ela { border-left-color: var(--ela); }
+.td-block-card--math { border-left-color: var(--math); }
+.td-block-card--coverage { border-left-color: var(--coverage); }
+
+.td-block-card strong {
+  font-size: 0.98rem;
+  line-height: 1.2;
+  color: #223752;
+}
+
+.td-block-card.is-current {
+  box-shadow: 0 10px 22px rgba(40, 71, 117, 0.12), inset 0 0 0 1px rgba(76, 124, 243, 0.18);
+}
+
+.td-block-time {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5b6e88;
+}
+
+.td-block-meta {
+  color: #6d7f95;
+  font-size: 0.86rem;
+}
+
+.td-block-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.td-block-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.74);
+  color: #4f6178;
+  box-shadow: inset 0 0 0 1px rgba(135, 151, 175, 0.18);
+}
+
+.td-block-pill--students {
+  color: #35506f;
+}
+
+.td-block-pill--support {
+  background: color-mix(in oklab, white 80%, #dde6f2 20%);
+}
+
+.td-block-pill--tier {
+  background: color-mix(in oklab, white 78%, #f6e7d0 22%);
+}
+
+.td-timeline {
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  gap: 0;
+  padding-right: 4px;
+}
+
+.td-timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  padding: 0 0 18px;
+}
+
+.td-timeline-item i {
+  position: relative;
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: #8697aa;
+}
+
+.td-timeline-item::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 20px;
+  bottom: 0;
+  width: 2px;
+  background: rgba(125, 141, 160, 0.4);
+}
+
+.td-timeline-item:last-child::after {
+  display: none;
+}
+
+.td-timeline-item div {
+  display: grid;
+  gap: 2px;
+}
+
+.td-timeline-item strong {
+  font-size: 0.86rem;
+  color: #334862;
+}
+
+.td-timeline-item span {
+  color: #6e7f95;
+  font-size: 0.9rem;
+}
+
+.td-timeline-item.is-current i {
+  background: var(--ela);
+  box-shadow: 0 0 0 10px rgba(76, 124, 243, 0.12);
+  animation: tdTimelinePulse 1.4s ease-in-out infinite;
+}
+
+.td-cockpit-sidebar .td-todayCard,
+.td-cockpit-sidebar .student-card {
+  padding: 12px;
+  gap: 6px;
+  border-left-width: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(244, 247, 251, 0.92));
+}
+
+.td-cockpit-sidebar .td-todayCard__name {
+  font-size: 1rem;
+}
+
+.td-cockpit-sidebar .student-actions {
+  grid-template-columns: 1fr;
+}
+
+.td-cockpit-sidebar .td-top-btn,
+.td-cockpit-sidebar .td-btn {
+  font-size: 0.82rem;
+}
+
+.td-cockpit-sidebar .td-todayCard__chips .td-chip:first-child {
+  font-weight: 900;
+}
+
+.td-cockpit-sidebar .student-tier-3 {
+  border-left-color: #e0594d;
+  box-shadow: 0 8px 18px rgba(224, 89, 77, 0.08);
+}
+
+.td-cockpit-sidebar .student-tier-2 {
+  border-left-color: #dca32a;
+  box-shadow: 0 8px 18px rgba(220, 163, 42, 0.08);
+}
+
+.td-cockpit-sidebar .student-tier-1 {
+  border-left-color: #27a56c;
+  box-shadow: 0 8px 18px rgba(39, 165, 108, 0.08);
+}
+
+@keyframes tdTimelinePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(76, 124, 243, 0.14); }
+  50% { box-shadow: 0 0 0 10px rgba(76, 124, 243, 0.06); }
 }
 
 .dashboard-mode-strip {
@@ -2931,6 +3264,9 @@ body.td-page .td-modal-card {
 
 @media (max-width: 1180px) {
   .td-shell { width: min(1160px, calc(100vw - 14px)); }
+  .td-cockpit-grid {
+    grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1.35fr) minmax(240px, 0.82fr);
+  }
   .td-surgical-attention-list {
     grid-template-columns: 1fr;
   }
@@ -2955,11 +3291,30 @@ body.td-page .td-modal-card {
 
 @media (max-width: 900px) {
   .td-shell { width: calc(100vw - 10px); }
+  body.teacher-dashboard,
+  body.td-page {
+    overflow: auto !important;
+  }
   body.cs-has-nav-shell .td-shell {
-    height: 100dvh;
-    max-height: 100dvh;
+    height: auto;
+    max-height: none;
+    min-height: 100dvh;
+  }
+  .td-shell {
+    height: auto;
+    max-height: none;
+    min-height: 100dvh;
   }
   .td-top { grid-template-columns: 1fr; }
+  .dashboard,
+  .td-cockpit-sidebar,
+  .td-cockpit-main,
+  .td-cockpit-timeline {
+    overflow: visible;
+  }
+  .td-cockpit-grid {
+    grid-template-columns: 1fr;
+  }
   .td-sas-library-grid {
     grid-template-columns: 1fr;
     max-height: 52dvh;

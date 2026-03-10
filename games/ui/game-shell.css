@@ -5263,3 +5263,133 @@ body.game-platform-page[data-shell-view="play"] .cg-rush-preview__item {
     min-height: 56vh;
   }
 }
+
+/* 2026-03-10 gallery static preview and scan pass */
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 10px;
+  min-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 122px;
+  padding: 12px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(236,242,249,0.98), rgba(244,247,252,0.98));
+  border: 1px solid rgba(167, 182, 202, 0.26);
+}
+
+.cg-preview-board {
+  display: grid;
+  gap: 6px;
+}
+
+.cg-preview-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.cg-preview-tile {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #dce3ec, #c9d3df);
+  border: 1px solid rgba(154, 169, 190, 0.26);
+}
+
+.cg-mini-taboo-target {
+  color: #203556;
+  font-size: 14px;
+}
+
+.cg-mini-taboo-list li {
+  color: #546983;
+  font-size: 11px;
+}
+
+.cg-mini-typing {
+  display: grid;
+  gap: 8px;
+}
+
+.cg-mini-typing-lane {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 36px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1f314c;
+  font-weight: 800;
+}
+
+.cg-mini-typing-lane .typed {
+  color: var(--correct);
+}
+
+.cg-mini-typing-lane .cursor {
+  display: inline-flex;
+  min-width: 10px;
+  min-height: 20px;
+  margin: 0 2px;
+  border-bottom: 3px solid var(--ela);
+}
+
+.cg-mini-typing-lane .remaining {
+  color: #8091a6;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-key {
+  background: #ffffff;
+  color: #344863;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-key--active {
+  background: rgba(76, 124, 243, 0.14);
+  color: var(--ela);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-key--focus {
+  background: rgba(76, 124, 243, 0.22);
+  color: var(--ela);
+  box-shadow: inset 0 -2px 0 rgba(76, 124, 243, 0.18);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--cg-primary), var(--cg-primary-2));
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 12px 20px rgba(30, 57, 95, 0.16);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play:hover,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play:focus-visible {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1100px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}

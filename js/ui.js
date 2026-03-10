@@ -7,6 +7,15 @@
  */
 
 const WQUI = (() => {
+  const DEFAULT_SAFE_FEATURES = Object.freeze({
+    tileFlipAnimation: true,
+    streakSystem: true,
+    adaptiveDifficulty: true
+  });
+  const FEATURES = (typeof window !== 'undefined' && window.WQSafeFeatures) || DEFAULT_SAFE_FEATURES;
+  if (typeof window !== 'undefined' && !window.WQSafeFeatures) {
+    window.WQSafeFeatures = FEATURES;
+  }
 
   const VOWELS = new Set(['a','e','i','o','u']);
 
@@ -104,6 +113,17 @@ const WQUI = (() => {
     }
   }
 
+  function animateTile(tile, result) {
+    if (!tile) return;
+    if (!FEATURES.tileFlipAnimation) {
+      tile.classList.remove('filled', 'just-typed');
+      tile.classList.add(result);
+      return;
+    }
+    tile.classList.add('flip');
+    tile.classList.add(result);
+  }
+
   // Flip reveal with staggered timing
   function revealRow(guess, result, row, wordLength, onDone) {
     const STAGGER = 285;
@@ -114,15 +134,19 @@ const WQUI = (() => {
       if (!t) return;
       t.textContent = _fmt(guess[col]);
       setTimeout(() => {
-        t.classList.add('flip');
+        t.classList.remove('correct', 'present', 'absent');
+        animateTile(t, status);
         setTimeout(() => {
           t.classList.remove('flip', 'filled', 'just-typed');
-          t.classList.add(status, 'wq-reveal');
+          t.classList.add('wq-reveal');
           setTimeout(()=>t.classList.remove('wq-reveal'), 260);
-        }, FLIP_SETTLE);
+        }, FEATURES.tileFlipAnimation ? FLIP_SETTLE : 0);
       }, col * STAGGER);
     });
-    if (onDone) setTimeout(onDone, ((result.length - 1) * STAGGER) + FLIP_SETTLE + REVEAL_FINISH);
+    if (onDone) {
+      const settleDelay = FEATURES.tileFlipAnimation ? FLIP_SETTLE : 0;
+      setTimeout(onDone, ((result.length - 1) * STAGGER) + settleDelay + REVEAL_FINISH);
+    }
   }
 
   function shakeRow(guesses, wordLength) {
@@ -351,6 +375,17 @@ const WQUI = (() => {
     _overlay.classList.add('hidden');
   }
 
+  function celebrateWinRow(row, wordLength) {
+    for (let col = 0; col < wordLength; col++) {
+      const tile = _el(`tile-${row * wordLength + col}`);
+      if (!tile) continue;
+      tile.classList.remove('win');
+      void tile.offsetWidth;
+      tile.classList.add('win');
+      setTimeout(() => tile.classList.remove('win'), 520);
+    }
+  }
+
   // ─── Shared playfield width + tile size calculator ───
   function calcLayout(wordLength, maxGuesses) {
     const headerH    = _el('header')?.offsetHeight    || 50;
@@ -421,6 +456,7 @@ const WQUI = (() => {
   return {
     init, buildBoard, updateCurrentRow, revealRow, shakeRow,
     buildKeyboard, clearKeyboard, updateKeyboard, pulseDupeKey,
-    showModal, hideModal, showToast, getSettings, setCaseMode, calcLayout
+    showModal, hideModal, showToast, getSettings, setCaseMode, calcLayout,
+    animateTile, celebrateWinRow
   };
 })();

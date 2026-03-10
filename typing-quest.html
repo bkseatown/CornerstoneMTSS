@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./games/ui/game-theme.css?v=20260308c">
   <link rel="stylesheet" href="./games/ui/game-motion.css?v=20260307k">
   <link rel="stylesheet" href="./games/ui/game-feedback.css?v=20260307k">
-  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260308g">
+  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260310c">
   <script src="./js/theme-registry.js?v=20260308b"></script>
   <style>
     html, body { min-height: 100%; overflow-x: hidden; overflow-y: auto; }
@@ -61,9 +61,18 @@
   <script src="./games/content/game-content-generator.js?v=20260306a"></script>
   <script src="./games/content/game-content-registry.js?v=20260307b"></script>
 
-  <script src="./games/ui/game-components.js?v=20260307e"></script>
-  <script src="./games/ui/game-shell.js?v=20260308g"></script>
+  <script src="./games/ui/game-components.js?v=20260310c"></script>
+  <script src="./games/ui/game-shell.js?v=20260310c"></script>
   <script>
+    (function () {
+      var url = new URL(window.location.href);
+      if (url.searchParams.get("play") === "1" && url.searchParams.get("game") === "word-typing") return;
+      url.searchParams.set("play", "1");
+      url.searchParams.set("game", "word-typing");
+      url.searchParams.set("typingPage", "1");
+      if (!url.searchParams.get("typingCourseMode")) url.searchParams.set("typingCourseMode", "placement");
+      window.history.replaceState({}, "", url.toString());
+    })();
     window.CSGameShell && window.CSGameShell.init && window.CSGameShell.init();
   </script>
 </body>

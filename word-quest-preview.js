@@ -5,9 +5,9 @@
     if (!(container instanceof HTMLElement)) return null;
 
     var opts = options && typeof options === "object" ? options : {};
-    var shouldLoop = opts.loop !== false;
+    var shouldLoop = false;
     var onEvent = typeof opts.onEvent === "function" ? opts.onEvent : null;
-    var includeWriting = opts.includeWriting !== false;
+    var includeWriting = false;
     var resetDelayMs = Number(opts.resetDelayMs || 1800);
     var resetFadeMs = Number(opts.resetFadeMs || 250);
     var typeDelayMs = Number(opts.typeDelayMs || 130);
@@ -172,22 +172,13 @@
     function playWordQuestRound(next) {
       if (!running || document.hidden) return;
       emit('round:start');
-      animateGuess(0, 'SLATE', ['absent', 'correct', 'correct', 'present', 'absent'], function () {
-        emit('round:first-feedback');
-          setTimer(function () {
-            emit('round:strategy');
-            animateGuess(1, 'PLAIN', ['correct', 'correct', 'correct', 'absent', 'absent'], function () {
-              setTimer(function () {
-                animateGuess(2, 'PLANT', ['correct', 'correct', 'correct', 'correct', 'correct'], function () {
-                  emit('round:complete');
-                  setTimer(function () {
-                    if (typeof next === 'function') next();
-                  }, resetDelayMs);
-              });
-            }, betweenGuessDelayMs);
-          });
-        }, betweenGuessDelayMs);
-      });
+      resetWordQuest();
+      emit('round:complete');
+      if (typeof next === 'function') {
+        setTimer(function () {
+          next();
+        }, resetDelayMs);
+      }
     }
 
     function playWritingRound(next) {

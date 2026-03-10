@@ -7,6 +7,12 @@
  */
 
 (async () => {
+  const FEATURES = Object.freeze({
+    tileFlipAnimation: true,
+    streakSystem: true,
+    adaptiveDifficulty: true
+  });
+  window.WQSafeFeatures = FEATURES;
   const DEMO_WORDS = Object.freeze(['plant', 'crane', 'shine', 'brave', 'grasp']);
   const DEMO_TARGET_WORD = DEMO_WORDS[0];
   function detectDemoMode() {
@@ -1004,6 +1010,37 @@
   }
   enforceLockedDemoDefaults();
   const _el = id => document.getElementById(id);
+  const SAFE_STREAK_KEY = 'wordquest_streak';
+  function loadStreak() {
+    return parseInt(localStorage.getItem(SAFE_STREAK_KEY) || '0', 10) || 0;
+  }
+  function saveStreak(value) {
+    localStorage.setItem(SAFE_STREAK_KEY, String(Math.max(0, Number(value) || 0)));
+  }
+  function incrementStreak() {
+    let streak = loadStreak();
+    streak += 1;
+    saveStreak(streak);
+    return streak;
+  }
+  function renderSafeStreak() {
+    if (!FEATURES.streakSystem) return;
+    const streakCount = _el('streakCount');
+    if (streakCount) streakCount.textContent = String(loadStreak());
+  }
+  function filterWords(words, difficulty) {
+    if (!FEATURES.adaptiveDifficulty) return words;
+    const list = Array.isArray(words) ? words.slice() : [];
+    if (difficulty === 'easy') {
+      return list.filter((w) => String(w || '').length <= 5);
+    }
+    if (difficulty === 'medium') {
+      return list.filter((w) => String(w || '').length <= 7);
+    }
+    return list;
+  }
+  window.WQSafeFilterWords = filterWords;
+  renderSafeStreak();
   const TELEMETRY_ENABLED_KEY = 'wq_v2_telemetry_enabled_v1';
   const TELEMETRY_DEVICE_ID_KEY = 'wq_v2_device_id_local_v1';
   const TELEMETRY_ENDPOINT_KEY = 'wq_v2_telemetry_endpoint_v1';
@@ -9375,6 +9412,9 @@
       if (layoutMode !== 'compact' && size < sizeCap && byHeight > size + 1 && byWidth > size + 1) {
         size = Math.min(sizeCap, size + 4);
       }
+      if (wordLength === 5 && layoutMode !== 'compact' && viewportW >= 900) {
+        size = Math.max(size, 64);
+      }
       const tileRadius = Math.max(10, Math.min(19, Math.round(size * 0.24)));
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
       const boardHeight = maxGuesses * size + (maxGuesses - 1) * tileGap;
@@ -15423,6 +15463,13 @@
           showMidgameBoost();
         }
         if (result.won || result.lost) {
+          if (result.won) {
+            if (FEATURES.streakSystem) {
+              incrementStreak();
+              renderSafeStreak();
+            }
+            WQUI.celebrateWinRow?.(row, s.wordLength);
+          }
           stopAvaWordQuestIdleWatcher('round complete');
           try {
             if (_wqDiagTimer) {

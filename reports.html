@@ -52,14 +52,16 @@
     <header class="td-top td-surface card">
       <a class="td-wordmark td-brand-home" href="./index.html" aria-label="Home">
         <strong>Cornerstone MTSS</strong>
-        <span>Reports &amp; Prep</span>
-        <p class="td-top-description">A secondary evidence workspace for caseload patterns, weekly drafts, meeting prep, and exports. Use the Hub for daily action and launch decisions.</p>
+        <span>Teacher Cockpit</span>
+        <p class="td-top-description">Scan caseload status, prepare reports, and keep the next support move visible without leaving the workspace.</p>
         <small id="td-buildline" class="td-buildline">Build: checking...</small>
       </a>
-
-      <label class="td-search-wrap" for="td-search-input">
-        <input id="td-search-input" type="search" placeholder="Search student or resource..." autocomplete="off">
-      </label>
+      <div class="td-top-center">
+        <span class="td-top-chip">Cockpit view</span>
+        <span class="td-top-chip td-top-chip--ela">ELA</span>
+        <span class="td-top-chip td-top-chip--math">Math</span>
+        <span class="td-top-chip td-top-chip--intervention">Intervention</span>
+      </div>
 
       <div class="td-top-actions">
         <!-- Teacher Hub entry point — links to the daily operating surface -->
@@ -103,6 +105,37 @@
 
     <section class="td-body">
       <main class="dashboard cs-stage" aria-label="Reports and prep surface">
+        <section class="td-cockpit-grid" aria-label="Teacher cockpit">
+          <aside class="td-cockpit-sidebar card td-surface" aria-label="Sidebar">
+            <div class="td-sidebar-section">
+              <p class="dashboard-kicker">Search</p>
+              <label class="td-search-wrap" for="td-search-input">
+                <input id="td-search-input" type="search" placeholder="Search student or resource..." autocomplete="off">
+              </label>
+            </div>
+            <div class="td-sidebar-section">
+              <p class="dashboard-kicker">Workspace</p>
+              <nav class="td-sidebar-nav" aria-label="Teacher cockpit navigation">
+                <a class="td-sidebar-link" href="./teacher-hub-v2.html"><span>⌂</span><strong>Hub</strong></a>
+                <a class="td-sidebar-link" href="./student-profile.html"><span>👤</span><strong>Students</strong></a>
+                <button class="td-sidebar-link" type="button" onclick="document.getElementById('td-weekly-insights')&&document.getElementById('td-weekly-insights').click()"><span>▣</span><strong>Reports</strong></button>
+                <button class="td-sidebar-link" type="button" onclick="document.getElementById('td-meeting-workspace')&&document.getElementById('td-meeting-workspace').click()"><span>✎</span><strong>Meeting Prep</strong></button>
+              </nav>
+            </div>
+            <div class="td-sidebar-section">
+              <p class="dashboard-kicker">Caseload</p>
+              <div id="td-caseload-snapshot" class="td-caseload-snapshot" aria-live="polite"></div>
+            </div>
+            <div class="td-sidebar-section td-sidebar-section--students">
+              <div class="td-sidebar-section__head">
+                <p class="dashboard-kicker">Students needing support</p>
+                <span class="td-sidebar-icon-group" aria-hidden="true">👤👤👤</span>
+              </div>
+              <div id="td-today-list" class="td-cockpit-student-list" aria-live="polite"></div>
+            </div>
+          </aside>
+
+          <section class="td-cockpit-main" aria-label="Main blocks">
         <div class="dashboard-mode-strip card td-surface hidden" role="toolbar" aria-label="Dashboard view mode" aria-hidden="true">
           <button id="td-mode-daily" class="td-top-btn" type="button" aria-pressed="false">Daily</button>
           <button id="td-mode-classroom" class="td-top-btn" type="button" aria-pressed="false">Classroom</button>
@@ -146,7 +179,6 @@
               <a class="td-top-btn" href="./teacher-hub-v2.html">Open Hub</a>
             </div>
             <p class="dashboard-section-meta">Look for caseload-level risk distribution, missing evidence, and students who need review before meetings, packets, or family communication.</p>
-            <div id="td-caseload-snapshot" class="td-caseload-snapshot" aria-live="polite"></div>
             <div class="td-reports-pattern-list" aria-label="Reports prep checklist">
               <article>
                 <strong>Before meetings</strong>
@@ -386,6 +418,49 @@
             </button>
           </div>
         </section>
+          </section>
+
+          <aside class="td-cockpit-timeline card td-surface" aria-label="Timeline">
+            <div class="td-timeline-head">
+              <p class="dashboard-kicker">Today&apos;s Blocks</p>
+              <h2 class="dashboard-section-title">Vertical Timeline</h2>
+            </div>
+            <div class="td-block-stack" aria-label="Current blocks">
+              <article class="td-block-card td-block-card--ela is-current">
+                <span class="td-block-time">9:35 - 10:30</span>
+                <strong>ELA Writing + Content Response</strong>
+                <div class="td-block-indicators">
+                  <span class="td-block-pill td-block-pill--students">👥👥👥 students</span>
+                  <span class="td-block-pill td-block-pill--support">Push-in</span>
+                  <span class="td-block-pill td-block-pill--tier">🔴 Tier 3</span>
+                </div>
+              </article>
+              <article class="td-block-card td-block-card--math">
+                <span class="td-block-time">8:20 - 9:10</span>
+                <strong>Math Core Support</strong>
+                <div class="td-block-indicators">
+                  <span class="td-block-pill td-block-pill--students">👥👥👥 students</span>
+                  <span class="td-block-pill td-block-pill--support">Small group</span>
+                  <span class="td-block-pill td-block-pill--tier">🟡 Tier 2</span>
+                </div>
+              </article>
+              <article class="td-block-card td-block-card--coverage">
+                <span class="td-block-time">9:10 - 9:35</span>
+                <strong>Snack + Reset</strong>
+                <div class="td-block-indicators">
+                  <span class="td-block-pill td-block-pill--support">Coverage</span>
+                </div>
+              </article>
+            </div>
+            <div class="td-timeline">
+              <div class="td-timeline-item"><i></i><div><strong>8:00</strong><span>Morning Meeting</span></div></div>
+              <div class="td-timeline-item"><i></i><div><strong>8:20</strong><span>Math Core Support</span></div></div>
+              <div class="td-timeline-item"><i></i><div><strong>9:10</strong><span>Snack</span></div></div>
+              <div class="td-timeline-item is-current"><i></i><div><strong>9:35</strong><span>ELA Reading</span></div></div>
+              <div class="td-timeline-item"><i></i><div><strong>10:30</strong><span>Planning + Reports</span></div></div>
+            </div>
+          </aside>
+        </section>
         <details id="td-pilot-evaluation" class="dashboard-eval card td-surface" aria-label="Pilot evaluation">
           <summary class="dashboard-eval-summary">
             <span class="dashboard-eval-summary__copy">
@@ -495,7 +570,7 @@
       <div id="td-executive-support-body"></div>
       <input id="td-show-alignment" type="checkbox">
       <section id="td-today"></section>
-      <div id="td-today-list"></div>
+      <div id="td-today-list-legacy"></div>
       <button id="td-today-refresh" type="button"></button>
       <button id="td-view-all-students" type="button"></button>
       <div id="td-today-group"></div>
