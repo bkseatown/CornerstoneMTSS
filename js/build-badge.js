@@ -29,6 +29,7 @@
     style.id = "cs-build-badge-style";
     style.textContent = [
       "#" + BADGE_ID + "{position:fixed;left:10px;bottom:10px;z-index:100;border:1px solid rgba(15,23,42,.28);background:rgba(248,250,252,.94);color:#334155;border-radius:999px;padding:4px 8px;font:600 10px/1.2 var(--font-sans,system-ui,-apple-system,sans-serif);letter-spacing:.01em;cursor:pointer;box-shadow:0 2px 8px rgba(15,23,42,.12);opacity:.92;transition:background-color .2s,color .2s,opacity .2s,box-shadow .2s}",
+      "#" + BADGE_ID + "[data-inline='1']{position:static;left:auto;bottom:auto;z-index:auto;padding:7px 12px;font:700 12px/1.2 var(--font-sans,system-ui,-apple-system,sans-serif);box-shadow:none;opacity:1}",
       "#" + BADGE_ID + ":hover{background:rgba(241,245,249,.98);color:#0f172a;opacity:1;box-shadow:0 4px 12px rgba(15,23,42,.16)}",
       "#" + BADGE_ID + " .dot{display:none}",
       "#" + BADGE_ID + "[data-stale='1'] .dot{background:#f3c96d}",
@@ -100,6 +101,14 @@
   function ensureBadge() {
     var badge = document.getElementById(BADGE_ID);
     if (badge) return badge;
+    var slot = document.querySelector("[data-build-slot='1']");
+    if (slot) {
+      slot.id = BADGE_ID;
+      slot.dataset.inline = "1";
+      slot.tabIndex = 0;
+      slot.setAttribute("role", "status");
+      return slot;
+    }
     badge = document.createElement("button");
     badge.id = BADGE_ID;
     badge.type = "button";
@@ -195,10 +204,15 @@
     var deployedEl = ensurePopover().querySelector("#cs-build-deployed");
     var shortCurrent = current.length > 18 ? current.slice(0, 18) : current;
     var label = "Build " + shortCurrent;
-    if (txt) txt.textContent = label;
+    if (txt) {
+      txt.textContent = label;
+    } else {
+      badge.textContent = label;
+    }
     if (currentEl) currentEl.textContent = current;
     if (deployedEl) deployedEl.textContent = deployed || "unavailable";
     badge.dataset.stale = deployed && deployed !== current ? "1" : "0";
+    badge.setAttribute("aria-label", "Build version " + current);
   }
 
   async function init() {
@@ -209,10 +223,13 @@
     bindUi();
     var current = currentBuildId();
     var deployedPayload = await fetchDeployedBuild();
-    var deployed = String(deployedPayload && deployedPayload.buildId || "").trim();
+    var deployed = String(deployedPayload && (deployedPayload.buildId || deployedPayload.build) || "").trim();
+    if (isDev() && deployed) {
+      current = deployed;
+    }
     window.CSBuildBadgeState = { currentBuildId: current, deployedBuildId: deployed };
     updateLabels(current, deployed);
-    if (deployed && current && deployed !== current) {
+    if (!isDev() && deployed && current && deployed !== current) {
       ensureToast().hidden = false;
       try {
         var existingCb = String(new URL(window.location.href).searchParams.get("_cb") || "").trim();

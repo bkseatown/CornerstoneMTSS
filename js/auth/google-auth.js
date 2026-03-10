@@ -230,8 +230,11 @@
 
     /** Call once at page load */
     init: function () {
+      if (!root.CSGoogleAuthConfig) {
+        console.info("[CSGoogleAuth] Google auth not configured. Skipping initialization.");
+        return;
+      }
       if (!isConfigured()) {
-        console.info("[CSGoogleAuth] Not configured — see js/google-auth-config.js setup instructions.");
         return;
       }
       /* Try to restore persisted session */
