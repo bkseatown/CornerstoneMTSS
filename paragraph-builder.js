@@ -3,9 +3,16 @@
 
   function withAppBase(path) {
     var p = String((window.location && window.location.pathname) || "");
-    var marker = "/WordQuest/";
-    var idx = p.indexOf(marker);
-    var base = idx >= 0 ? p.slice(0, idx + marker.length - 1) : "";
+    var markers = ["/WordQuest/", "/Cornerstone%20MTSS/", "/Cornerstone MTSS/"];
+    var base = "";
+    for (var i = 0; i < markers.length; i += 1) {
+      var marker = markers[i];
+      var idx = p.indexOf(marker);
+      if (idx >= 0) {
+        base = p.slice(0, idx + marker.length - 1);
+        break;
+      }
+    }
     var clean = String(path || "").replace(/^\.?\//, "");
     return base + "/" + clean;
   }

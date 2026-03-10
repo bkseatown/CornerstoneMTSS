@@ -73,9 +73,12 @@
 
   function appBasePath() {
     var path = String((window.location && window.location.pathname) || '');
-    var marker = '/WordQuest/';
-    var idx = path.indexOf(marker);
-    if (idx >= 0) return path.slice(0, idx + marker.length - 1);
+    var markers = ['/WordQuest/', '/Cornerstone%20MTSS/', '/Cornerstone MTSS/'];
+    for (var i = 0; i < markers.length; i += 1) {
+      var marker = markers[i];
+      var idx = path.indexOf(marker);
+      if (idx >= 0) return path.slice(0, idx + marker.length - 1);
+    }
     try {
       var baseEl = document.querySelector('base[href]');
       if (baseEl) {
