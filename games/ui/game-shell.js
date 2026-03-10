@@ -164,6 +164,50 @@
       });
     }
 
+    function wordConnectionsDifficultyCount(value) {
+      var level = Math.max(1, Math.min(4, Number(value) || 3));
+      return level + 1;
+    }
+
+    function compactTokens(text) {
+      return String(text || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, " ")
+        .split(/\s+/)
+        .map(function (part) { return part.trim(); })
+        .filter(function (part) { return part && part.length > 3; });
+    }
+
+    function buildForbiddenWords(row, generated, desiredCount) {
+      var target = String(generated && generated.targetWord || row && row.target || "").toLowerCase();
+      var seen = Object.create(null);
+      function pushWord(list, value) {
+        var lower = String(value || "").trim().toLowerCase();
+        if (!lower || lower === target || seen[lower]) return;
+        seen[lower] = true;
+        list.push(lower);
+      }
+      var pool = [];
+      (generated && generated.forbiddenWords || row && row.forbidden || row && row.tabooWords || []).forEach(function (value) {
+        pushWord(pool, value);
+      });
+      compactTokens(row && row.definition || "").forEach(function (value) { pushWord(pool, value); });
+      compactTokens(row && row.clue || "").forEach(function (value) { pushWord(pool, value); });
+      compactTokens(row && row.example || row && row.exampleSentence || "").forEach(function (value) { pushWord(pool, value); });
+      compactTokens(generated && generated.instructionalFocus || "").forEach(function (value) { pushWord(pool, value); });
+      while (pool.length < desiredCount) pushWord(pool, "focus");
+      return pool.slice(0, desiredCount).map(function (value) {
+        return value.replace(/\b\w/g, function (letter) { return letter.toUpperCase(); });
+      });
+    }
+
+    function wordConnectionsInstruction(mode) {
+      if (mode === "draw") return "Draw the concept without writing the blocked words.";
+      if (mode === "act") return "Act it out charades-style without saying the blocked words.";
+      if (mode === "mixed") return "Choose whether to speak, draw, or act. Keep the blocked words off limits.";
+      return "Describe the word without saying the blocked words.";
+    }
+
     return {
       "word-quest": {
         id: "word-quest",
@@ -315,6 +359,8 @@
         roundTarget: 6,
         createRound: function (input) {
           var currentContext = roundContext(input);
+          var tabooMode = String(input.settings && input.settings.wordConnectionsMode || "speak").toLowerCase();
+          var tabooDifficulty = Math.max(1, Math.min(4, Number(input.settings && input.settings.wordConnectionsDifficulty) || 3));
           var row = registry.pickRound("word-connections", currentContext, input.history) || {};
           var generated = wordConnectionsEngine && typeof wordConnectionsEngine.generateWordConnectionsRound === "function"
             ? wordConnectionsEngine.generateWordConnectionsRound({
@@ -331,13 +377,17 @@
               ? "One speaker clues. The group locks the guess."
               : "Give just enough clues so a partner can name the word."),
             targetWord: generated && generated.targetWord || row.target || "analyze",
-            forbiddenWords: generated && generated.forbiddenWords || row.forbidden || [],
+            forbiddenWords: buildForbiddenWords(row, generated, wordConnectionsDifficultyCount(tabooDifficulty)),
             scaffolds: generated && generated.scaffolds || row.scaffolds || [],
             requiredMove: row.requiredMove || (input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
               ? "Give one clean clue the whole class can build on without saying the blocked words."
               : "Use a clear clue in one or two complete sentences that fit the lesson."),
-            timerSeconds: generated && generated.timerSeconds || 60,
+            timerSeconds: 45,
             hint: (generated && generated.scaffolds || row.scaffolds || [])[0] || "Try an example, function, or comparison instead of a definition.",
+            playMode: tabooMode,
+            modeInstruction: wordConnectionsInstruction(tabooMode),
+            blockedCount: wordConnectionsDifficultyCount(tabooDifficulty),
+            imageSrc: row.image || row.imageUrl || "",
             basePoints: 100
           };
         },
@@ -850,10 +900,25 @@
     ].join("");
   }
 
+  function renderRoundTimer(state, round) {
+    if (!round) return "";
+    var total = Math.max(1, Number(round.timerSeconds || 45));
+    var remaining = Math.max(0, Number(state && state.timerRemaining || total));
+    var pct = Math.max(0, Math.min(100, Math.round((remaining / total) * 100)));
+    var tone = pct > 50 ? "positive" : pct > 25 ? "warning" : "danger";
+    return [
+      '<div class="cg-inline-timer" data-tone="' + tone + '">',
+      '  <div class="cg-inline-timer__copy"><span>Round timer</span><strong class="timer">' + remaining + "s</strong></div>",
+      '  <div class="cg-inline-timer__track"><span style="width:' + pct + '%"></span></div>',
+      "</div>"
+    ].join("");
+  }
+
   function renderGameScaffold(game, state, round, config) {
     var options = config || {};
     var segments = [];
     if (options.beforePlay) segments.push(options.beforePlay);
+    if (options.timer !== false) segments.push(renderRoundTimer(state, round));
     segments.push(renderZoneCard("play", options.playTitle || "Play Surface", options.play || ""));
     if (options.controls) segments.push(renderZoneCard("controls", options.controlsTitle || "Controls", options.controls));
     segments.push(renderZoneCard("guide", options.guideTitle || "How To Play", (options.guide || "") + renderTeachingContext(game)));
@@ -920,6 +985,22 @@
 
   function splitTypingChars(value) {
     return String(value || "").toUpperCase().split("");
+  }
+
+  function renderTypingLane(round, typed, typedEvaluation) {
+    var target = String(round && round.target || "").toUpperCase();
+    var currentIndex = Math.min(String(typed || "").length, target.length);
+    var typedMarkup = target.slice(0, currentIndex);
+    var currentChar = target.charAt(currentIndex) || "";
+    var remainingMarkup = target.slice(currentIndex + (currentChar ? 1 : 0));
+    var cursorState = typedEvaluation[currentIndex] === "absent" ? "incorrect" : typedEvaluation[currentIndex] === "present" ? "incorrect" : "";
+    return [
+      '<div class="typing-lane cg-typing-lane" aria-label="Typing lane">',
+      '  <span class="typed">' + (typedMarkup ? runtimeRoot.CSGameComponents.escapeHtml(typedMarkup) : "&nbsp;") + '</span>',
+      '  <span class="cursor' + (cursorState ? " is-" + cursorState : "") + '">' + runtimeRoot.CSGameComponents.escapeHtml(currentChar || " ") + '</span>',
+      '  <span class="remaining">' + (remainingMarkup ? runtimeRoot.CSGameComponents.escapeHtml(remainingMarkup) : "&nbsp;") + "</span>",
+      "</div>"
+    ].join("");
   }
 
   function normalizeTypingInput(raw, target) {
@@ -1784,6 +1865,8 @@
       settings: {
         viewMode: "individual",
         difficulty: "core",
+        wordConnectionsDifficulty: 3,
+        wordConnectionsMode: "speak",
         contentMode: context.contentMode || "lesson",
         timerEnabled: recommendedGame === "word-typing" ? false : !(recommendedGame === "word-typing" && context.typingPlacementRequired),
         hintsEnabled: true,
@@ -2399,6 +2482,7 @@
           "      </div>",
           '      <div class="cg-typing-text-board">',
           '        <div class="cg-typing-text-board__target">' + renderTypingTargetMarkup(round) + '</div>',
+          renderTypingLane(round, typed, typedEvaluation),
           '        <div class="cg-typing-text-line" aria-label="Typing target">' + targetChars.map(function (ch, index) {
             var charClass = "cg-typing-text-char";
             if (index < typed.length) charClass += " is-correct";
@@ -2452,20 +2536,27 @@
         var guess = String(uiState.lastSubmittedGuess || "").toUpperCase();
         var evaluation = state.lastOutcome && state.lastOutcome.evaluation || [];
         return [
-          roundGuide(game, state, round),
-          renderHostControls(game, state, round),
-          '<div class="cg-quest-board">',
-          '  <p class="cg-quest-clue">' + runtimeRoot.CSGameComponents.escapeHtml(round.prompt) + "</p>",
-          '  <div class="cg-quest-grid">' + String(round.answer || "").split("").map(function (_letter, index) {
-            return '<div class="cg-letter-box' + (evaluation[index] ? " is-revealed" : "") + '" data-state="' + runtimeRoot.CSGameComponents.escapeHtml(evaluation[index] || "") + '" style="animation-delay:' + (index * 40) + 'ms">' + runtimeRoot.CSGameComponents.escapeHtml(guess[index] || "") + "</div>";
-          }).join("") + "</div>",
-          '  <div class="cg-quest-input-row">',
-          '    <input id="cg-word-guess" class="cg-input" maxlength="' + String(round.answer || "").length + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Class guess…" : "Your guess…") + '" autocomplete="off" autocorrect="off" spellcheck="false">',
-          '    <button class="cg-action cg-action-primary" type="button" data-submit="word-quest">Submit</button>',
-          '    <button class="cg-action cg-action-quiet" type="button" data-action="next-round">Skip</button>',
-          "  </div>",
-          (state.hintVisible ? '<span class="cg-chip" data-tone="warning">' + runtimeRoot.CSGameComponents.iconFor("hint") + runtimeRoot.CSGameComponents.escapeHtml(round.hint) + "</span>" : ""),
-          "</div>"
+          renderGameScaffold(game, state, round, {
+            beforePlay: renderHostControls(game, state, round),
+            play: [
+              '<div class="cg-quest-board' + (state.lastOutcome && state.lastOutcome.correct ? " row-success" : "") + '">',
+              '  <p class="cg-quest-clue">' + runtimeRoot.CSGameComponents.escapeHtml(round.prompt) + "</p>",
+              '  <div class="cg-quest-grid">' + String(round.answer || "").split("").map(function (_letter, index) {
+                return '<div class="cg-letter-box tile-flip' + (evaluation[index] ? " is-revealed" : "") + '" data-state="' + runtimeRoot.CSGameComponents.escapeHtml(evaluation[index] || "") + '" style="animation-delay:' + (index * 40) + 'ms">' + runtimeRoot.CSGameComponents.escapeHtml(guess[index] || "") + "</div>";
+              }).join("") + "</div>",
+              buildKeyboardStrip(round.answer || "", evaluation, guess, "cg-key-strip cg-key-press-strip"),
+              (state.hintVisible ? '<span class="cg-chip" data-tone="warning">' + runtimeRoot.CSGameComponents.iconFor("hint") + runtimeRoot.CSGameComponents.escapeHtml(round.hint) + "</span>" : ""),
+              "</div>"
+            ].join(""),
+            controls: [
+              '<div class="cg-quest-input-row">',
+              '  <input id="cg-word-guess" class="cg-input" maxlength="' + String(round.answer || "").length + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Class guess…" : "Your guess…") + '" autocomplete="off" autocorrect="off" spellcheck="false">',
+              '  <button class="cg-action cg-action-primary" type="button" data-submit="word-quest">Submit</button>',
+              '  <button class="cg-action cg-action-quiet" type="button" data-action="next-round">Skip</button>',
+              '</div>'
+            ].join(""),
+            guide: roundGuide(game, state, round)
+          })
         ].join("");
       }
 
@@ -2485,25 +2576,27 @@
               '</div>'
             ].join("") : ""),
             '<div class="cg-taboo-card">',
-            '  <p class="cg-taboo-label">Target word</p>',
-            '  <div class="cg-taboo-target">' + runtimeRoot.CSGameComponents.escapeHtml(round.targetWord || "") + '</div>',
+            '  <p class="cg-taboo-label">' + runtimeRoot.CSGameComponents.escapeHtml(String(round.playMode || "speak").toUpperCase()) + ' mode</p>',
+            '  <div class="cg-taboo-target target-word">' + runtimeRoot.CSGameComponents.escapeHtml(round.targetWord || "") + '</div>',
+            (round.imageSrc ? '  <img class="cg-taboo-image word-image" src="' + runtimeRoot.CSGameComponents.escapeHtml(round.imageSrc) + '" alt="' + runtimeRoot.CSGameComponents.escapeHtml(round.targetWord || "Target word") + '">' : ""),
+            '  <div class="cg-taboo-divider" role="presentation"></div>',
             '  <div class="cg-taboo-danger-band" aria-label="Blocked words">',
             '    <span class="cg-taboo-ban-label">Blocked words</span>',
-            (round.forbiddenWords || []).map(function (word) {
-              return '    <span class="cg-taboo-pill">' + runtimeRoot.CSGameComponents.escapeHtml(word) + "</span>";
-            }).join(""),
+            '    <ul class="cg-taboo-word-list blocked-words">' + (round.forbiddenWords || []).map(function (word) {
+              return '<li class="cg-taboo-pill">' + runtimeRoot.CSGameComponents.escapeHtml(word) + "</li>";
+            }).join("") + '</ul>',
             '  </div>',
             "</div>",
             '</div>',
             '<aside class="cg-clue-stage__side">',
             '<div class="cg-clue-brief">',
-            '  <p class="cg-micro-label">Clue move</p>',
-            '  <h4>' + runtimeRoot.CSGameComponents.escapeHtml(round.requiredMove || "Give a clear clue without using blocked words.") + '</h4>',
+            '  <p class="cg-micro-label">Instruction</p>',
+            '  <h4>' + runtimeRoot.CSGameComponents.escapeHtml(round.modeInstruction || round.requiredMove || "Give a clear clue without using blocked words.") + '</h4>',
             '  <p>' + runtimeRoot.CSGameComponents.escapeHtml((round.scaffolds || [round.hint || "Use an example, function, or comparison."])[0] || "") + '</p>',
             '</div>',
             '<div class="cg-clue-brief cg-clue-brief--soft">',
-            '  <p class="cg-micro-label">Win the round</p>',
-            '  <h4>Make the guess feel obvious.</h4>',
+            '  <p class="cg-micro-label">Difficulty</p>',
+            '  <h4>' + runtimeRoot.CSGameComponents.escapeHtml(String(round.blockedCount || 4)) + ' blocked words</h4>',
             '  <p>Use examples, function, or context instead of definitions or blocked words.</p>',
             '</div>',
             (uiState.supportRevealOpen ? '<div class="cg-support-reveal"><strong>Reveal</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml((round.scaffolds || [round.hint || "Use an example or comparison."])[0] || "") + "</span></div>" : ""),
@@ -2512,6 +2605,10 @@
             "</div>"
           ].join(""),
           controls: [
+            '<div class="cg-choice-row cg-choice-row--stacked">',
+            '  <label class="cg-field"><span>Mode</span><select id="cg-word-connections-mode" class="cg-select"><option value="speak"' + (round.playMode === "speak" ? " selected" : "") + '>Speak</option><option value="draw"' + (round.playMode === "draw" ? " selected" : "") + '>Draw</option><option value="act"' + (round.playMode === "act" ? " selected" : "") + '>Act</option><option value="mixed"' + (round.playMode === "mixed" ? " selected" : "") + '>Mixed</option></select></label>',
+            '  <label class="cg-field"><span>Difficulty</span><select id="cg-word-connections-difficulty" class="cg-select"><option value="1"' + (round.blockedCount === 2 ? " selected" : "") + '>1 · 2 blocked words</option><option value="2"' + (round.blockedCount === 3 ? " selected" : "") + '>2 · 3 blocked words</option><option value="3"' + (round.blockedCount === 4 ? " selected" : "") + '>3 · 4 blocked words</option><option value="4"' + (round.blockedCount === 5 ? " selected" : "") + '>4 · 5 blocked words</option></select></label>',
+            '</div>',
             '<textarea id="cg-word-connections-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Record the clue or teacher notes for scoring…" : "Write the clue here…") + '" aria-label="Type your clue"></textarea>',
             '<div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-support-reveal">' + (uiState.supportRevealOpen ? "Hide Reveal" : "Reveal Support") + '</button><button class="cg-action cg-action-primary" type="button" data-submit="word-connections">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Clue" : "Check Clue") + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-round">Next Word</button></div>'
           ].join(""),
@@ -2530,6 +2627,7 @@
             '  <div class="cg-forge-layout__main">',
             '    <div class="cg-forge-bench">',
             '      <p class="cg-forge-bench-label">Assembly Area</p>',
+            '      <div class="cg-forge-equation"><span>Prefix</span><span>+</span><span>Root</span><span>+</span><span>Suffix</span></div>',
             '      <div class="cg-forge-slots" aria-label="Word assembly slots">' + (round.solution || []).map(function (_part, index) {
               var val = forgeChosen[index] || "";
               return '<button class="cg-forge-slot' + (val ? " is-filled" : "") + '" type="button" data-slot-index="' + index + '" data-drop-slot="' + index + '" aria-label="Assembly slot ' + (index + 1) + '">' + runtimeRoot.CSGameComponents.escapeHtml(val || "Drop here") + "</button>";
@@ -2687,7 +2785,8 @@
           ].join(""),
           controls: [
             '<div class="cg-rush-entry">',
-            '  <textarea id="cg-category-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Team responses — one per line or comma-separated…" : "Enter responses — one per line or comma-separated…") + '" aria-label="Enter category responses"></textarea>',
+            '  <div class="cg-rush-fast-entry"><input id="cg-category-quick-input" class="cg-input" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type one answer and press Enter…" : "Type one answer and press Enter…") + '" aria-label="Add quick category answer"><button class="cg-action cg-action-quiet" type="button" data-action="add-category-entry">Add</button></div>',
+            '  <textarea id="cg-category-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Team responses — one per line or comma-separated…" : "Enter responses — one per line or comma-separated…") + '" aria-label="Enter category responses">' + runtimeRoot.CSGameComponents.escapeHtml((uiState.categoryPreview || []).join("\n")) + '</textarea>',
             '  <div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="hint">Show Hint</button><button class="cg-action cg-action-primary" type="button" data-submit="rapid-category">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Round" : "Score Responses") + '</button></div>',
             '</div>'
           ].join(""),
@@ -2854,6 +2953,17 @@
             engine.nextRound();
             return;
           }
+          if (action === "add-category-entry") {
+            var quickInput = document.getElementById("cg-category-quick-input");
+            var categoryArea = document.getElementById("cg-category-text");
+            var entry = String(quickInput && quickInput.value || "").trim();
+            if (!entry) return;
+            uiState.categoryPreview = uiState.categoryPreview.concat([entry]).slice(-12);
+            if (categoryArea) categoryArea.value = uiState.categoryPreview.join("\n");
+            if (quickInput) quickInput.value = "";
+            paintCategoryPreview(uiState.categoryPreview);
+            return;
+          }
           if (action === "reveal-clue") {
             uiState.revealedClues = Math.min(uiState.revealedClues + 1, ((engine.getState().round && engine.getState().round.clues) || []).length);
             render();
@@ -2995,6 +3105,20 @@
         });
       }
 
+      var clueMode = document.getElementById("cg-word-connections-mode");
+      if (clueMode) clueMode.addEventListener("change", function () {
+        engine.updateSettings({ wordConnectionsMode: clueMode.value });
+        resetRoundUi();
+        engine.restartGame();
+      });
+
+      var clueDifficulty = document.getElementById("cg-word-connections-difficulty");
+      if (clueDifficulty) clueDifficulty.addEventListener("change", function () {
+        engine.updateSettings({ wordConnectionsDifficulty: Number(clueDifficulty.value || 3) });
+        resetRoundUi();
+        engine.restartGame();
+      });
+
       var categoryInput = document.getElementById("cg-category-text");
       if (categoryInput) {
         categoryInput.addEventListener("input", function () {
@@ -3002,8 +3126,18 @@
             .split(/[\n,]/)
             .map(function (item) { return item.trim(); })
             .filter(Boolean)
-            .slice(0, 8);
+            .slice(0, 12);
           paintCategoryPreview(uiState.categoryPreview);
+        });
+      }
+
+      var categoryQuickInput = document.getElementById("cg-category-quick-input");
+      if (categoryQuickInput) {
+        categoryQuickInput.addEventListener("keydown", function (event) {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          var addButton = shell.querySelector('[data-action="add-category-entry"]');
+          if (addButton) addButton.click();
         });
       }
 

@@ -4898,3 +4898,368 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
     font-size: clamp(34px, 11vw, 56px);
   }
 }
+
+/* 2026-03-10 game platform gameplay-area upgrade */
+.game-surface,
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  display: grid;
+  gap: 14px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-meta {
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-head h2 {
+  font-size: clamp(32px, 4.8vw, 54px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-game-scaffold {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 3.4fr) minmax(280px, 1fr);
+  align-items: start;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+  grid-row: span 3;
+  min-height: min(70vh, 760px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card__body,
+body.game-platform-page[data-shell-view="play"] .cg-game-layout,
+body.game-platform-page[data-shell-view="play"] .cg-quest-board,
+body.game-platform-page[data-shell-view="play"] .cg-clue-stage__main,
+body.game-platform-page[data-shell-view="play"] .cg-forge-layout__main,
+body.game-platform-page[data-shell-view="play"] .cg-rush-arena,
+body.game-platform-page[data-shell-view="play"] .cg-typing-runtime-card--lesson,
+body.game-platform-page[data-shell-view="play"] .cg-typing-runtime-card--launch {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--play .cg-zone-card__body {
+  min-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--controls,
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--guide {
+  min-height: 0;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-action {
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-action:hover,
+body.game-platform-page[data-shell-view="play"] .cg-action:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box,
+body.game-platform-page[data-shell-view="play"] .cg-morph-tile,
+body.game-platform-page[data-shell-view="play"] .cg-phrase-tile,
+body.game-platform-page[data-shell-view="play"] .cg-rush-preview__item,
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card,
+body.game-platform-page[data-shell-view="play"] .cg-typing-guide-key {
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(20, 34, 51, 0.08);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.06);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__copy span {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cg-muted);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__track {
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(210, 220, 232, 0.8);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff9a62, #ff5252);
+}
+
+.timer {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff5252;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer[data-tone="danger"] .timer {
+  animation: cgTimerPulse 1s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card {
+  width: min(100%, 360px);
+  margin: 0 auto;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,0.5);
+  padding: 20px;
+  position: relative;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 28px;
+  background: radial-gradient(circle, rgba(255, 101, 132, 0.14), transparent 60%);
+  z-index: -1;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-target {
+  font-size: clamp(42px, 6vw, 66px);
+  line-height: 0.95;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-image {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-divider {
+  height: 1px;
+  margin: 8px 0 14px;
+  background: linear-gradient(90deg, transparent, rgba(20,34,51,0.18), transparent);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-word-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-pill {
+  justify-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-choice-row--stacked {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-field {
+  display: grid;
+  gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-field span {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cg-muted);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 78px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(210, 220, 233, 0.96);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,248,252,0.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+  font-size: clamp(26px, 4.4vw, 48px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .typed {
+  color: #1d8f5f;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .cursor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.8em;
+  border-bottom: 4px solid #4f96e3;
+  color: #203249;
+  animation: cgCursorBlink 1s steps(1) infinite;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .cursor.is-incorrect {
+  color: #c23636;
+  border-bottom-color: #ff5252;
+  background: rgba(255, 82, 82, 0.08);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .remaining {
+  color: #8a9aac;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-guide-key.is-active {
+  background: rgba(79, 150, 227, 0.16);
+  border-color: rgba(79, 150, 227, 0.4);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-text-entry__char[data-state="correct"] {
+  background: rgba(29, 143, 95, 0.12);
+  color: #1d8f5f;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-text-entry__char[data-state="absent"] {
+  background: rgba(255, 82, 82, 0.12);
+  color: #c23636;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-quest-board {
+  gap: 18px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-quest-grid {
+  min-height: min(34vh, 320px);
+  align-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box {
+  min-width: clamp(52px, 6vw, 78px);
+  min-height: clamp(58px, 8vh, 94px);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 900;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box.is-revealed {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box[data-state="correct"] {
+  background: rgba(29, 143, 95, 0.14);
+  box-shadow: 0 0 0 2px rgba(29, 143, 95, 0.12), 0 18px 30px rgba(29, 143, 95, 0.16);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box[data-state="absent"] {
+  background: rgba(255, 82, 82, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .row-success {
+  animation: cgSuccessGlow 720ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-key-press-strip .cg-key-strip__key {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-forge-equation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-forge-equation span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(13, 94, 102, 0.08);
+  color: var(--cg-primary);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-rush-fast-entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-rush-preview__item {
+  box-shadow: 0 8px 18px rgba(101, 163, 13, 0.1);
+}
+
+@keyframes cgTimerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes cgSuccessGlow {
+  0% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+  40% { box-shadow: 0 0 0 10px rgba(29, 143, 95, 0.12); }
+  100% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+}
+
+@keyframes cgCursorBlink {
+  0%, 49% { border-bottom-color: #4f96e3; }
+  50%, 100% { border-bottom-color: transparent; }
+}
+
+@media (max-width: 960px) {
+  body.game-platform-page[data-shell-view="play"] .cg-game-scaffold {
+    grid-template-columns: 1fr;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+    min-height: min(62vh, 680px);
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .game-surface,
+  body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+    padding: 14px;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-choice-row--stacked,
+  body.game-platform-page[data-shell-view="play"] .cg-rush-fast-entry {
+    grid-template-columns: 1fr;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+    min-height: 56vh;
+  }
+}
