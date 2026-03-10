@@ -114,8 +114,10 @@ const WQAudio = (() => {
   }
 
   function _isKnownAudioPath(path) {
+    const normalized = _normalizeAudioPath(path);
+    if (normalized && normalized.includes('/audio/tts/packs/ava-multi/coach/')) return true;
     if (!_audioManifestSet) return null;
-    return _audioManifestSet.has(path);
+    return _audioManifestSet.has(normalized);
   }
 
   // Score a voice by quality (higher = better)

@@ -303,22 +303,33 @@
     state.manifestPromise = fetchOptionalJSON(LOCAL_MANIFEST_URL)
       .then(function (json) {
         var byText = Object.create(null);
+        var byId = Object.create(null);
+        var entries = [];
         if (json && Array.isArray(json.files)) {
-          json.files.forEach(function (entry) {
+          entries = json.files;
+        } else if (json && json.phrases && typeof json.phrases === "object") {
+          entries = Object.keys(json.phrases).map(function (key) {
+            return json.phrases[key];
+          });
+        }
+        if (entries.length) {
+          entries.forEach(function (entry) {
+            var id = normalizeKey(entry && entry.id);
             var text = normalizeKey(entry && entry.text);
             var file = sanitizeText(entry && entry.file);
+            if (id && file) byId[id] = file;
             if (text && file) byText[text] = file;
           });
         }
-        state.manifest = { byText: byText };
-        state.assetHealth.manifestOk = !!json && Object.keys(byText).length > 0;
+        state.manifest = { byText: byText, byId: byId };
+        state.assetHealth.manifestOk = !!json && (Object.keys(byText).length > 0 || Object.keys(byId).length > 0);
         if (!state.assetHealth.manifestOk) {
           warnAssetOnce("manifest-unavailable", LOCAL_MANIFEST_URL);
         }
         return state.manifest;
       })
       .catch(function () {
-        state.manifest = { byText: Object.create(null) };
+        state.manifest = { byText: Object.create(null), byId: Object.create(null) };
         state.assetHealth.manifestOk = false;
         warnAssetOnce("manifest-fetch-failed", LOCAL_MANIFEST_URL);
         return state.manifest;
@@ -589,6 +600,9 @@
       return text;
     }
     var fromManifest = manifest && manifest.byText ? manifest.byText[normalizeKey(text)] : "";
+    if (!fromManifest && manifest && manifest.byId && selected && selected.id) {
+      fromManifest = manifest.byId[normalizeKey(selected.id)] || "";
+    }
     var localClip = sanitizeText(selected.clip || fromManifest || "");
 
     var spoke = false;
