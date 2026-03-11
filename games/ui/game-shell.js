@@ -153,172 +153,20 @@
   function createGames(context) {
     var registry = runtimeRoot.CSGameContentRegistry;
     var WORD_CLUE_CUSTOM_CARDS_KEY = "cs.wordclue.customcards.v1";
+    var WORD_CLUE_STARTER_DECKS_URL = "data/taboo-phonics-starter-decks.json";
+    var WORD_CLUE_STARTER_CACHE_KEY = "cs.wordclue.starter.cache.v1";
+    var trustedWordClueDeckState = {
+      loaded: false,
+      loading: false,
+      cards: [],
+      unmatchedTargets: [],
+      starterCount: 0,
+      matchedCount: 0
+    };
     var wordClueRoundMemory = {
       lastTarget: "",
       altSetByTarget: Object.create(null)
     };
-    var WORD_CLUE_BASE_CARDS = [
-      {
-        id: "wc-k2-house",
-        target_word: "House",
-        grade_band: "K-2",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act", "challenge"],
-        forbidden_words: ["home", "live", "family", "room"],
-        alt_forbidden_sets: [["Door", "Family", "Building", "Bed"], ["Place", "Sleep", "Windows", "Yard"]],
-        image_keyword: "house",
-        image_supported: true,
-        acting_prompt: "Act out entering and finding a room.",
-        drawing_prompt: "Draw the outside shape and one detail.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-dog",
-        target_word: "Dog",
-        grade_band: "K-2",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act", "challenge"],
-        forbidden_words: ["pet", "bark", "puppy", "tail"],
-        alt_forbidden_sets: [["Tail", "Leash", "Walk", "Furry"], ["Fetch", "Bone", "Cat", "Kennel"]],
-        image_keyword: "dog",
-        image_supported: true,
-        acting_prompt: "Act like the animal without making sounds.",
-        drawing_prompt: "Draw ears, tail, and where it lives.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-pizza",
-        target_word: "Pizza",
-        grade_band: "K-2",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "challenge"],
-        forbidden_words: ["Cheese", "Slice", "Food", "Round"],
-        alt_forbidden_sets: [["Crust", "Toppings", "Oven", "Dinner"], ["Party", "Sauce", "Restaurant", "Hot"]],
-        image_keyword: "pizza",
-        image_supported: true,
-        acting_prompt: "Act out ordering and sharing this food.",
-        drawing_prompt: "Draw the shape and toppings.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-sun",
-        target_word: "Sun",
-        grade_band: "K-2",
-        subject: "Science",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "challenge"],
-        forbidden_words: ["Sky", "Hot", "Day", "Star"],
-        alt_forbidden_sets: [["Light", "Morning", "Bright", "Outside"], ["Summer", "Shine", "Heat", "Circle"]],
-        image_keyword: "sun",
-        image_supported: true,
-        acting_prompt: "Act waking up when this appears.",
-        drawing_prompt: "Draw rays without drawing faces.",
-        curriculum_tag: "Weather",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-school",
-        target_word: "School",
-        grade_band: "K-2",
-        subject: "SEL",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act", "challenge"],
-        forbidden_words: ["Teacher", "Class", "Learn", "Building"],
-        alt_forbidden_sets: [["Students", "Backpack", "Bus", "Recess"], ["Morning", "Homework", "Desk", "Hallway"]],
-        image_keyword: "school",
-        image_supported: true,
-        acting_prompt: "Act out arriving and greeting classmates.",
-        drawing_prompt: "Draw one place inside this location.",
-        curriculum_tag: "Community",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-chair",
-        target_word: "Chair",
-        grade_band: "K-2",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "challenge"],
-        forbidden_words: ["Sit", "Seat", "Legs", "Table"],
-        alt_forbidden_sets: [["Furniture", "Back", "Classroom", "Wood"], ["Kitchen", "Stand", "Cushion", "Room"]],
-        image_keyword: "chair",
-        image_supported: true,
-        acting_prompt: "Act using this item quietly.",
-        drawing_prompt: "Draw side view and one detail.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-bed",
-        target_word: "Bed",
-        grade_band: "K-2",
-        subject: "SEL",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act"],
-        forbidden_words: ["Sleep", "Pillow", "Night", "Blanket"],
-        alt_forbidden_sets: [["Bedroom", "Rest", "Mattress", "Dream"], ["Morning", "Sheets", "Tired", "Nap"]],
-        image_keyword: "bed",
-        image_supported: true,
-        acting_prompt: "Act getting ready for sleep.",
-        drawing_prompt: "Draw it with one pillow and blanket.",
-        curriculum_tag: "Daily Routines",
-        teacher_created: false
-      },
-      {
-        id: "wc-k2-cake",
-        target_word: "Cake",
-        grade_band: "K-2",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act", "challenge"],
-        forbidden_words: ["Birthday", "Sweet", "Frosting", "Dessert"],
-        alt_forbidden_sets: [["Slice", "Party", "Candle", "Bake"], ["Chocolate", "Vanilla", "Treat", "Celebrate"]],
-        image_keyword: "cake",
-        image_supported: true,
-        acting_prompt: "Act out blowing out candles.",
-        drawing_prompt: "Draw layers or decorations.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-35-bank",
-        target_word: "Bank",
-        grade_band: "3-5",
-        subject: "ELA",
-        difficulty: "stretch",
-        modes: ["classic", "picture", "draw", "challenge"],
-        forbidden_words: ["money", "cash", "save", "account"],
-        alt_forbidden_sets: [["vault", "coins", "dollar", "deposit"]],
-        image_keyword: "bank building",
-        image_supported: true,
-        drawing_prompt: "Draw a building where people keep money safely.",
-        acting_prompt: "",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      },
-      {
-        id: "wc-35-bell",
-        target_word: "Bell",
-        grade_band: "3-5",
-        subject: "ELA",
-        difficulty: "core",
-        modes: ["classic", "picture", "draw", "act", "challenge"],
-        forbidden_words: ["ring", "sound", "school", "chime"],
-        alt_forbidden_sets: [["metal", "loud", "tower", "alarm"]],
-        image_keyword: "bell",
-        image_supported: true,
-        drawing_prompt: "Draw the shape and where you might find one.",
-        acting_prompt: "Act like you heard one and it is time to move.",
-        curriculum_tag: "Vocabulary",
-        teacher_created: false
-      }
-    ];
 
     function roundContext(input) {
       return Object.assign({}, input.context || {}, {
@@ -358,7 +206,7 @@
         list.push({
           id: String(card.id || ("wc-card-" + String(index + 1))),
           target_word: targetWord,
-          grade_band: normalizeGradeBand(card.grade_band || "K-2"),
+          grade_band: normalizeStarterGradeBand(card.grade_band || "K-1"),
           subject: String(card.subject || "ELA").toUpperCase(),
           difficulty: String(card.difficulty || "core").toLowerCase(),
           forbidden_words: forbiddenWords,
@@ -377,6 +225,112 @@
       return list;
     }
 
+    function normalizeStarterGradeBand(value) {
+      var band = String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+      if (band === "K-1" || band === "G2-3" || band === "G4-5") return band;
+      if (band === "K-2") return "K-1";
+      if (band === "3-5") return "G2-3";
+      return "K-1";
+    }
+
+    function normalizeWordKey(value) {
+      return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function extractWordBankWordSet() {
+      var data = runtimeRoot && runtimeRoot.WQ_WORD_DATA && typeof runtimeRoot.WQ_WORD_DATA === "object"
+        ? runtimeRoot.WQ_WORD_DATA
+        : {};
+      var set = Object.create(null);
+      Object.keys(data).forEach(function (key) {
+        var entry = data[key] || {};
+        var raw = entry.display_word || key || "";
+        var normalized = normalizeWordKey(raw);
+        if (normalized) set[normalized] = true;
+      });
+      return set;
+    }
+
+    function normalizeStarterCards(raw) {
+      return (Array.isArray(raw) ? raw : []).map(function (card) {
+        return {
+          id: String(card.deck_id || "deck") + "__" + String(card.id || Date.now()),
+          deck_id: String(card.deck_id || "").trim(),
+          grade_band: normalizeStarterGradeBand(card.grade_band || ""),
+          target_word: String(card.target_word || "").trim(),
+          marked_word: String(card.marked_word || card.target_word || "").trim(),
+          taboo_words: Array.isArray(card.taboo_words) ? card.taboo_words.map(function (word) { return String(word || "").trim(); }).filter(Boolean) : [],
+          definition: String(card.definition || "").trim(),
+          example_sentence: String(card.example_sentence || "").trim(),
+          image_keyword: String(card.target_word || "").trim(),
+          image_supported: true,
+          teacher_created: false
+        };
+      }).filter(function (card) {
+        return card.target_word && card.taboo_words.length >= 2;
+      });
+    }
+
+    function setTrustedWordClueCards(rawStarterCards) {
+      var starter = normalizeStarterCards(rawStarterCards);
+      var wordBankWords = extractWordBankWordSet();
+      var unmatched = [];
+      var matched = starter.filter(function (card) {
+        var matchedWord = Boolean(wordBankWords[normalizeWordKey(card.target_word)]);
+        if (!matchedWord) unmatched.push(card.target_word);
+        return matchedWord;
+      });
+      trustedWordClueDeckState.cards = matched;
+      trustedWordClueDeckState.unmatchedTargets = Object.keys(unmatched.reduce(function (acc, word) {
+        acc[String(word)] = true;
+        return acc;
+      }, {})).sort();
+      trustedWordClueDeckState.starterCount = starter.length;
+      trustedWordClueDeckState.matchedCount = matched.length;
+      trustedWordClueDeckState.loaded = true;
+      storageSet(WORD_CLUE_STARTER_CACHE_KEY, JSON.stringify(starter));
+      if (runtimeRoot.console && typeof runtimeRoot.console.info === "function") {
+        runtimeRoot.console.info("[WordClue] Starter cards loaded:", trustedWordClueDeckState.starterCount);
+        runtimeRoot.console.info("[WordClue] Matched to word bank:", trustedWordClueDeckState.matchedCount);
+        if (trustedWordClueDeckState.unmatchedTargets.length && typeof runtimeRoot.console.warn === "function") {
+          runtimeRoot.console.warn("[WordClue] Unmatched starter targets:", trustedWordClueDeckState.unmatchedTargets);
+        }
+      }
+    }
+
+    function ensureTrustedWordClueDecksLoaded() {
+      if (trustedWordClueDeckState.loaded || trustedWordClueDeckState.loading) return;
+      var cached = storageGet(WORD_CLUE_STARTER_CACHE_KEY, "");
+      if (cached) {
+        try {
+          setTrustedWordClueCards(JSON.parse(cached));
+          return;
+        } catch (_e) {}
+      }
+      trustedWordClueDeckState.loading = true;
+      if (typeof runtimeRoot.fetch === "function") {
+        runtimeRoot.fetch(WORD_CLUE_STARTER_DECKS_URL, { cache: "no-store" })
+          .then(function (response) { return response && response.ok ? response.json() : []; })
+          .then(function (data) {
+            setTrustedWordClueCards(data);
+          })
+          .catch(function (error) {
+            if (runtimeRoot.console && typeof runtimeRoot.console.error === "function") {
+              runtimeRoot.console.error("[WordClue] Failed to load trusted starter decks", error);
+            }
+            trustedWordClueDeckState.loaded = true;
+            trustedWordClueDeckState.cards = [];
+          })
+          .finally(function () {
+            trustedWordClueDeckState.loading = false;
+          });
+      } else {
+        trustedWordClueDeckState.loaded = true;
+        trustedWordClueDeckState.cards = [];
+        trustedWordClueDeckState.loading = false;
+      }
+    }
+
     function loadWordClueCustomCards() {
       try {
         return parseWordClueCards(JSON.parse(storageGet(WORD_CLUE_CUSTOM_CARDS_KEY, "[]")), true);
@@ -388,8 +342,8 @@
     function buildWordClueDeck(input, mode, difficultyCount) {
       var settings = input && input.settings || {};
       var filters = {
-        gradeBand: normalizeGradeBand(settings.wordClueGradeBand || input.context && input.context.gradeBand || "K-2"),
-        subject: String(settings.wordClueSubject || input.context && input.context.subject || "ELA").toUpperCase(),
+        gradeBand: normalizeStarterGradeBand(settings.wordClueGradeBand || "K-1"),
+        subject: String(settings.wordClueSubject || "ELA").toUpperCase(),
         curriculum: String(settings.wordClueCurriculum || "").trim().toLowerCase(),
         roundType: String(settings.wordClueRoundType || mode || "any").toLowerCase(),
         difficulty: String(settings.wordClueDifficulty || "").toLowerCase()
@@ -398,19 +352,17 @@
       var normalizedRoundType = normalizedMode === "speak"
         ? (String(settings.wordClueCardStyle || "").toLowerCase() === "challenge" ? "challenge" : "classic")
         : normalizedMode;
-      var deck = parseWordClueCards(WORD_CLUE_BASE_CARDS, false).concat(loadWordClueCustomCards());
+      ensureTrustedWordClueDecksLoaded();
+      var deck = trustedWordClueDeckState.cards.slice();
       deck = deck.filter(function (card) {
-        if (filters.gradeBand && filters.gradeBand !== "ALL" && card.grade_band !== filters.gradeBand) return false;
-        if (filters.subject && filters.subject !== "ALL" && card.subject !== filters.subject) return false;
-        if (filters.curriculum && String(card.curriculum_tag || "").toLowerCase().indexOf(filters.curriculum) === -1) return false;
-        if (filters.difficulty && filters.difficulty !== "all" && card.difficulty !== filters.difficulty) return false;
-        if (card.modes && card.modes.length && card.modes.indexOf(normalizedRoundType) === -1) return false;
+        if (filters.gradeBand && filters.gradeBand !== "ALL" && normalizeStarterGradeBand(card.grade_band) !== filters.gradeBand) return false;
+        if (settings.wordClueDeckId && String(settings.wordClueDeckId).trim() && String(card.deck_id) !== String(settings.wordClueDeckId).trim()) return false;
+        if (filters.curriculum && String(card.deck_id || "").toLowerCase().indexOf(filters.curriculum) === -1) return false;
         if (filters.roundType === "picture") return card.image_supported;
-        if (filters.roundType === "draw") return Boolean(card.drawing_prompt);
-        if (filters.roundType === "act") return Boolean(card.acting_prompt);
+        if (filters.roundType === "draw") return normalizedRoundType === "draw" || normalizedRoundType === "act" || normalizedRoundType === "challenge" || normalizedRoundType === "classic";
+        if (filters.roundType === "act") return normalizedRoundType === "act" || normalizedRoundType === "classic";
         return true;
       });
-      if (!deck.length) deck = parseWordClueCards(WORD_CLUE_BASE_CARDS, false);
       deck = deck.slice().sort(function (a, b) { return String(a.target_word).localeCompare(String(b.target_word)); });
       var previousId = String((input.history || []).slice(-1)[0] || "");
       var filtered = deck.filter(function (card) { return String(card.id) !== previousId && String(card.target_word).toLowerCase() !== String(wordClueRoundMemory.lastTarget || "").toLowerCase(); });
@@ -588,15 +540,15 @@
           if (!row) {
             row = {
               id: "wc-fallback",
-              target_word: "House",
-              forbidden_words: ["home", "live", "family", "room"],
-              grade_band: "K-2",
+              target_word: "No matching cards",
+              forbidden_words: [],
+              grade_band: "K-1",
               subject: "ELA",
-              curriculum_tag: "Vocabulary",
-              drawing_prompt: "Draw a simple place where people live.",
-              acting_prompt: "Act like you are opening the door and going inside.",
-              image_supported: true,
-              image_keyword: "house",
+              curriculum_tag: "Adjust grade/deck filters",
+              drawing_prompt: "",
+              acting_prompt: "",
+              image_supported: false,
+              image_keyword: "",
               teacher_created: false
             };
             cardPick = { card: row, forbiddenWords: row.forbidden_words };
@@ -635,7 +587,7 @@
             modeInstruction: wordConnectionsInstruction(tabooMode),
             blockedCount: desiredBlockedCount,
             imageSrc: row.image_supported ? ("https://source.unsplash.com/featured/640x420/?" + encodeURIComponent(row.image_keyword || row.target_word || "classroom")) : "",
-            gradeBand: row.grade_band || normalizeGradeBand(currentContext.gradeBand || "K-2"),
+            gradeBand: normalizeStarterGradeBand(row.grade_band || "K-1"),
             subject: row.subject || String(currentContext.subject || "ELA").toUpperCase(),
             curriculumTag: row.curriculum_tag || "",
             teacherCreated: Boolean(row.teacher_created),
@@ -1962,15 +1914,16 @@
         paused: false,
         categoryContext: "",
         result: "",
-        filterGradeBand: normalizeGradeBand((context && context.gradeBand) || "K-2"),
-        filterSubject: String((context && context.subject) || "ELA").toUpperCase(),
+        filterGradeBand: "K-1",
+        filterSubject: "ELA",
+        filterDeckId: "",
         filterCurriculum: "",
         filterDifficulty: "all",
         filterRoundType: "any",
         customTargetWord: "",
         customForbiddenWords: "",
         customCurriculumTag: "",
-        customGradeBand: normalizeGradeBand((context && context.gradeBand) || "K-2"),
+        customGradeBand: "K-1",
         customSubject: String((context && context.subject) || "ELA").toUpperCase()
       },
       wordClueTimerId: 0
@@ -2163,8 +2116,9 @@
         wordConnectionsDifficulty: 3,
         wordConnectionsMode: "speak",
         wordClueCardStyle: "standard",
-        wordClueGradeBand: normalizeGradeBand(context.gradeBand || "K-2"),
-        wordClueSubject: String(context.subject || "ELA").toUpperCase(),
+        wordClueGradeBand: "K-1",
+        wordClueSubject: "ELA",
+        wordClueDeckId: "",
         wordClueCurriculum: "",
         wordClueDifficulty: "all",
         contentMode: context.contentMode || "lesson",
@@ -2622,15 +2576,15 @@
           '      <label class="cg-field"><span>Timer</span><select id="cg-word-clue-timer" class="cg-select"><option value="untimed"' + (clue.timerPreset === "untimed" ? " selected" : "") + '>Untimed</option><option value="30"' + (clue.timerPreset === "30" ? " selected" : "") + '>30s</option><option value="45"' + (clue.timerPreset === "45" ? " selected" : "") + '>45s</option><option value="60"' + (clue.timerPreset === "60" ? " selected" : "") + '>60s</option></select></label>',
           '      <label class="cg-field"><span>Category</span><input id="cg-word-clue-category" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.categoryContext || "") + '" placeholder="e.g., Ecosystems"></label>',
           '      <div class="cg-word-clue-setup-divider"></div>',
-          '      <label class="cg-field"><span>Filter grade band</span><select id="cg-word-clue-filter-grade" class="cg-select"><option value="K-2"' + (clue.filterGradeBand === "K-2" ? " selected" : "") + '>K-2</option><option value="3-5"' + (clue.filterGradeBand === "3-5" ? " selected" : "") + '>3-5</option><option value="6-8"' + (clue.filterGradeBand === "6-8" ? " selected" : "") + '>6-8</option><option value="9-12"' + (clue.filterGradeBand === "9-12" ? " selected" : "") + '>9-12</option></select></label>',
-          '      <label class="cg-field"><span>Filter subject</span><select id="cg-word-clue-filter-subject" class="cg-select"><option value="ELA"' + (clue.filterSubject === "ELA" ? " selected" : "") + '>ELA</option><option value="SCIENCE"' + (clue.filterSubject === "SCIENCE" ? " selected" : "") + '>Science</option><option value="SEL"' + (clue.filterSubject === "SEL" ? " selected" : "") + '>SEL</option></select></label>',
+          '      <label class="cg-field"><span>Filter grade band</span><select id="cg-word-clue-filter-grade" class="cg-select"><option value="K-1"' + (clue.filterGradeBand === "K-1" ? " selected" : "") + '>K-1</option><option value="G2-3"' + (clue.filterGradeBand === "G2-3" ? " selected" : "") + '>G2-3</option><option value="G4-5"' + (clue.filterGradeBand === "G4-5" ? " selected" : "") + '>G4-5</option></select></label>',
+          '      <label class="cg-field"><span>Filter deck</span><select id="cg-word-clue-filter-deck" class="cg-select"><option value=""' + (!clue.filterDeckId ? " selected" : "") + '>All decks</option><option value="taboo_phonics_k_1_starter_30"' + (clue.filterDeckId === "taboo_phonics_k_1_starter_30" ? " selected" : "") + '>K-1 starter</option><option value="taboo_phonics_g2_3_starter_30"' + (clue.filterDeckId === "taboo_phonics_g2_3_starter_30" ? " selected" : "") + '>G2-3 starter</option><option value="taboo_phonics_g4_5_starter_30"' + (clue.filterDeckId === "taboo_phonics_g4_5_starter_30" ? " selected" : "") + '>G4-5 starter</option></select></label>',
           '      <label class="cg-field"><span>Curriculum tag</span><input id="cg-word-clue-filter-curriculum" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.filterCurriculum || "") + '" placeholder="e.g., Weather"></label>',
           '      <label class="cg-field"><span>Deck difficulty</span><select id="cg-word-clue-filter-difficulty" class="cg-select"><option value="all"' + (clue.filterDifficulty === "all" ? " selected" : "") + '>All</option><option value="core"' + (clue.filterDifficulty === "core" ? " selected" : "") + '>Core</option><option value="stretch"' + (clue.filterDifficulty === "stretch" ? " selected" : "") + '>Stretch</option></select></label>',
           '      <div class="cg-word-clue-setup-divider"></div>',
           '      <h4 class="cg-word-clue-setup-subhead">Teacher card</h4>',
           '      <label class="cg-field"><span>Target word</span><input id="cg-word-clue-custom-target" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.customTargetWord || "") + '" placeholder="e.g., Chair"></label>',
           '      <label class="cg-field"><span>Forbidden words (comma separated)</span><input id="cg-word-clue-custom-forbidden" class="cg-input" type="text" maxlength="160" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.customForbiddenWords || "") + '" placeholder="sit, seat, table, legs"></label>',
-          '      <label class="cg-field"><span>Grade band</span><select id="cg-word-clue-custom-grade" class="cg-select"><option value="K-2"' + (clue.customGradeBand === "K-2" ? " selected" : "") + '>K-2</option><option value="3-5"' + (clue.customGradeBand === "3-5" ? " selected" : "") + '>3-5</option><option value="6-8"' + (clue.customGradeBand === "6-8" ? " selected" : "") + '>6-8</option><option value="9-12"' + (clue.customGradeBand === "9-12" ? " selected" : "") + '>9-12</option></select></label>',
+          '      <label class="cg-field"><span>Grade band</span><select id="cg-word-clue-custom-grade" class="cg-select"><option value="K-1"' + (clue.customGradeBand === "K-1" ? " selected" : "") + '>K-1</option><option value="G2-3"' + (clue.customGradeBand === "G2-3" ? " selected" : "") + '>G2-3</option><option value="G4-5"' + (clue.customGradeBand === "G4-5" ? " selected" : "") + '>G4-5</option></select></label>',
           '      <label class="cg-field"><span>Subject</span><select id="cg-word-clue-custom-subject" class="cg-select"><option value="ELA"' + (clue.customSubject === "ELA" ? " selected" : "") + '>ELA</option><option value="SCIENCE"' + (clue.customSubject === "SCIENCE" ? " selected" : "") + '>Science</option><option value="SEL"' + (clue.customSubject === "SEL" ? " selected" : "") + '>SEL</option></select></label>',
           '      <label class="cg-field"><span>Curriculum tag</span><input id="cg-word-clue-custom-curriculum" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.customCurriculumTag || "") + '" placeholder="e.g., Classroom routines"></label>',
           '      <button class="cg-action cg-action-quiet" type="button" data-action="wc-save-custom-card">Save to custom deck</button>',
@@ -3517,7 +3471,7 @@
             customCards.push({
               id: "wc-custom-" + Date.now(),
               target_word: customTarget,
-              grade_band: uiState.wordClue.customGradeBand || "K-2",
+              grade_band: normalizeStarterGradeBand(uiState.wordClue.customGradeBand || "K-1"),
               subject: uiState.wordClue.customSubject || "ELA",
               difficulty: "core",
               forbidden_words: customForbidden,
@@ -3832,16 +3786,16 @@
 
       var clueFilterGrade = document.getElementById("cg-word-clue-filter-grade");
       if (clueFilterGrade) clueFilterGrade.addEventListener("change", function () {
-        uiState.wordClue.filterGradeBand = normalizeGradeBand(clueFilterGrade.value || "K-2");
+        uiState.wordClue.filterGradeBand = normalizeStarterGradeBand(clueFilterGrade.value || "K-1");
         engine.updateSettings({ wordClueGradeBand: uiState.wordClue.filterGradeBand });
         resetRoundUi();
         engine.restartGame();
       });
 
-      var clueFilterSubject = document.getElementById("cg-word-clue-filter-subject");
-      if (clueFilterSubject) clueFilterSubject.addEventListener("change", function () {
-        uiState.wordClue.filterSubject = String(clueFilterSubject.value || "ELA").toUpperCase();
-        engine.updateSettings({ wordClueSubject: uiState.wordClue.filterSubject });
+      var clueFilterDeck = document.getElementById("cg-word-clue-filter-deck");
+      if (clueFilterDeck) clueFilterDeck.addEventListener("change", function () {
+        uiState.wordClue.filterDeckId = String(clueFilterDeck.value || "").trim();
+        engine.updateSettings({ wordClueDeckId: uiState.wordClue.filterDeckId });
         resetRoundUi();
         engine.restartGame();
       });
@@ -3876,7 +3830,7 @@
 
       var clueCustomGrade = document.getElementById("cg-word-clue-custom-grade");
       if (clueCustomGrade) clueCustomGrade.addEventListener("change", function () {
-        uiState.wordClue.customGradeBand = normalizeGradeBand(clueCustomGrade.value || "K-2");
+        uiState.wordClue.customGradeBand = normalizeStarterGradeBand(clueCustomGrade.value || "K-1");
       });
 
       var clueCustomSubject = document.getElementById("cg-word-clue-custom-subject");
