@@ -7812,18 +7812,29 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"]
   min-height: 0 !important;
   max-height: min(23dvh, 210px) !important;
   overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow-y: visible !important;
   padding-block: 2px !important;
+  position: relative !important;
+  z-index: 5 !important;
+  isolation: isolate !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
   min-height: clamp(152px, 19vh, 186px) !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage,
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage-grid,
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-card {
   min-height: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage {
+  margin-top: clamp(4px, 0.8vh, 10px) !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-card--portrait {

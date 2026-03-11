@@ -5614,8 +5614,8 @@ html[data-play-style="detective"] .gameplay-audio {
   flex-direction: column;
   align-items:    center;
   gap:            var(--gap-key);
-  width:          min(var(--keyboard-max-width, 540px), calc(100vw - 16px), calc(100% - 6px));
-  max-width:      min(calc(100vw - 16px), calc(100% - 6px));
+  width:          min(var(--keyboard-max-width, 540px), calc(100vw - 24px), calc(100% - 8px));
+  max-width:      min(calc(100vw - 24px), calc(100% - 8px));
   flex-shrink:    0;
   margin-top:     0;
   margin-bottom:  max(var(--keyboard-bottom-gap, 4px), env(safe-area-inset-bottom));
@@ -5653,6 +5653,7 @@ html[data-home-mode="play"] #keyboard {
   gap:             var(--gap-key);
   justify-content: center;
   width:           100%;
+  max-width:       100%;
   min-width:       0;
 }
 
@@ -5693,7 +5694,7 @@ html[data-keyboard-layout="alphabet-arc"] .key-row-3 {
   height:        var(--key-h);
   min-width:     var(--key-min-w);
   flex:          1;
-  max-width:     70px;
+  max-width:     64px;
   padding:       0;
   border:        1.5px solid color-mix(in oklab, var(--key-bg) 66%, #000000 14%);
   border-radius: calc(var(--radius-key) + 2px);
@@ -9346,8 +9347,8 @@ html[data-home-mode="play"] #game-board {
 }
 
 html[data-home-mode="play"] #keyboard {
-  width: min(var(--keyboard-max-width, 540px), calc(100vw - (var(--wq-safe-edge) * 2) - 4px), calc(100% - 2px));
-  max-width: calc(100vw - (var(--wq-safe-edge) * 2));
+  width: min(var(--keyboard-max-width, 520px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
+  max-width: calc(100vw - (var(--wq-safe-edge) * 2) - 2px);
   min-height: var(--wq-bottom-controls-budget);
   max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 172px), 196px);
   margin-top: clamp(2px, 0.5vh, 6px);
