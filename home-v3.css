@@ -28,16 +28,16 @@ body.cs-home-page {
   font-family: var(--font-ui, var(--font-sans, system-ui, -apple-system, Segoe UI, Roboto, sans-serif));
   font-size: 16px;
   line-height: 1.5;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .cs-home-root {
   width: 100%;
   min-height: 100dvh;
-  height: 100dvh;
-  padding: 8px 14px;
+  padding: clamp(14px, 2.2vh, 26px) clamp(14px, 1.8vw, 24px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -45,11 +45,10 @@ body.cs-home-page {
   width: min(1200px, 100%);
   margin: 0 auto;
   display: grid;
-  gap: 10px;
-  padding: 14px;
-  height: min(90dvh, 820px);
-  max-height: calc(100dvh - 16px);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: clamp(16px, 2vw, 24px);
+  min-height: min(900px, calc(100dvh - 34px));
+  grid-template-rows: auto auto auto;
   border-radius: 28px;
   background: linear-gradient(180deg, rgba(228, 236, 246, 0.95), rgba(208, 218, 231, 0.95));
   border: 1px solid rgba(198, 210, 228, 0.3);
@@ -59,8 +58,8 @@ body.cs-home-page {
 
 .home-identity-block {
   display: grid;
-  gap: 4px;
-  padding: 12px 14px 10px;
+  gap: 6px;
+  padding: 14px 16px 12px;
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(247, 249, 252, 0.8), rgba(240, 244, 250, 0.88));
   border: 1px solid rgba(72, 90, 126, 0.1);
@@ -102,23 +101,23 @@ body.cs-home-page {
 
 .home-entry-roles {
   display: grid;
-  gap: 10px;
+  gap: 14px;
   min-height: 0;
-  grid-template-rows: minmax(0, 1.18fr) minmax(0, 0.88fr);
+  grid-template-rows: auto auto;
 }
 
 .home-secondary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 14px;
   min-height: 0;
 }
 
 .home-role-btn {
   display: grid;
   align-content: start;
-  gap: 8px;
-  padding: 14px;
+  gap: 10px;
+  padding: 16px;
   border-radius: 24px;
   text-decoration: none;
   color: inherit;
@@ -154,8 +153,8 @@ body.cs-home-page {
 .home-role-btn--primary {
   grid-template-columns: minmax(320px, 1fr) minmax(300px, 0.88fr);
   align-items: stretch;
-  gap: 12px;
-  padding: 14px;
+  gap: 14px;
+  padding: 16px;
   background: linear-gradient(180deg, rgba(221, 233, 250, 0.98), rgba(204, 219, 240, 0.98));
   border-color: rgba(81, 113, 163, 0.26);
   box-shadow: 0 24px 48px rgba(17, 37, 70, 0.14);
@@ -188,7 +187,7 @@ body.cs-home-page {
 .home-role-preview {
   display: grid;
   gap: 8px;
-  min-height: 138px;
+  min-height: 126px;
   padding: 10px;
   border-radius: 18px;
   border: 1px solid rgba(96, 116, 152, 0.15);
@@ -196,7 +195,7 @@ body.cs-home-page {
 }
 
 .home-role-btn--primary .home-role-preview {
-  min-height: 188px;
+  min-height: 172px;
 }
 
 .home-role-preview--workspace {
@@ -310,7 +309,7 @@ body.cs-home-page {
   display: grid;
   gap: 6px;
   align-content: start;
-  min-height: 118px;
+  min-height: 108px;
   padding: 10px;
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(246,248,252,0.95), rgba(230,235,243,0.92));
@@ -524,28 +523,28 @@ body.cs-home-page {
 .home-entry-utility {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(72, 90, 126, 0.1);
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(245, 248, 252, 0.72);
+  border: 1px solid rgba(72, 90, 126, 0.08);
 }
 
 .home-utility-copy,
 .home-utility-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .home-utility-label {
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(37, 53, 84, 0.58);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(37, 53, 84, 0.54);
 }
 
 .home-utility-link {
@@ -557,9 +556,9 @@ body.cs-home-page {
 
 .home-utility-btn {
   border: 1px solid rgba(52, 72, 120, 0.14);
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 999px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   cursor: pointer;
   font: inherit;
 }
@@ -568,14 +567,14 @@ body.cs-home-page {
 .home-build-slot {
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
-  padding: 6px 10px;
+  min-height: 26px;
+  padding: 4px 9px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  background: rgba(255, 255, 255, 0.64);
-  color: rgba(35, 50, 84, 0.76);
+  background: rgba(255, 255, 255, 0.74);
+  color: rgba(35, 50, 84, 0.7);
 }
 
 .home-backup-status[data-state="ok"] {
@@ -594,12 +593,7 @@ body.cs-home-page {
 }
 
 @media (max-width: 980px) {
-  body.cs-home-page {
-    overflow: auto;
-  }
-
   .cs-home-root {
-    height: auto;
     min-height: 100dvh;
     align-items: stretch;
   }
@@ -614,6 +608,10 @@ body.cs-home-page {
 
   .home-preview-games-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-entry-utility {
+    justify-content: space-between;
   }
 }
 
