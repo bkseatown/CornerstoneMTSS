@@ -6148,3 +6148,20 @@ body.th2-page {
   color: #234165;
   box-shadow: 0 14px 28px rgba(22, 34, 52, 0.18);
 }
+
+/* 2026-03-11 premium readability adjustments */
+.th2-sidebar {
+  box-shadow: inset -1px 0 0 rgba(139, 155, 181, 0.34);
+}
+
+.th2-main {
+  background: linear-gradient(180deg, rgba(240, 245, 252, 0.36), rgba(226, 233, 244, 0.22));
+}
+
+.th2-command-header,
+.th2-block-context-header,
+.th2-active-context,
+.th2-quick-rail {
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}

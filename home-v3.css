@@ -652,3 +652,24 @@ body.cs-home-page {
     width: 100%;
   }
 }
+
+/* 2026-03-11 stabilization/polish overrides
+   Keep landing resilient at desktop sizes without brittle viewport fitting. */
+.cs-home-root {
+  height: auto;
+}
+
+.home-hero-panel {
+  height: auto;
+  max-height: none;
+}
+
+.home-entry-utility {
+  justify-content: space-between;
+  background: rgba(246, 249, 253, 0.7);
+}
+
+.home-build-slot {
+  opacity: 0.62;
+  border: 1px dashed rgba(88, 105, 136, 0.28);
+}
