@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./games/ui/game-theme.css?v=20260308c">
   <link rel="stylesheet" href="./games/ui/game-motion.css?v=20260307k">
   <link rel="stylesheet" href="./games/ui/game-feedback.css?v=20260307k">
-  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260310c">
+  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260311a">
   <script src="./js/theme-registry.js?v=20260308b"></script>
 </head>
 <style>
@@ -32,10 +32,22 @@
 
   /* ── No-scroll layout fixes ─────────────────────────── */
 
-  /* Allow page scroll so content is never trapped on short screens or zoomed layouts */
+  /* Default behavior: allow scroll in non-gallery screens */
   html, body { min-height: 100%; overflow-x: hidden; overflow-y: auto; }
   main.cg-shell { min-height: 100dvh; overflow: visible; padding: 0; max-width: none; }
   #cg-shell { min-height: 100dvh; overflow: visible; }
+
+  /* Gallery must fit one screen without page scroll */
+  body.game-platform-page[data-shell-view="gallery"] {
+    height: 100dvh;
+    overflow: hidden;
+  }
+  body.game-platform-page[data-shell-view="gallery"] main.cg-shell,
+  body.game-platform-page[data-shell-view="gallery"] #cg-shell {
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+  }
 
 
   /* Brandbar: compact */
@@ -257,6 +269,108 @@
   <script src="./games/ui/game-shell.js?v=20260310c"></script>
   <script>
     window.CSGameShell && window.CSGameShell.init && window.CSGameShell.init();
+  </script>
+  <script>
+    (function applyGalleryCardCopyOverrides() {
+      var COPY = {
+        "word-quest": {
+          title: "Word Quest",
+          description: "Solve the clue and guess the hidden word.",
+          tags: "Warm-up • Vocabulary • Small groups"
+        },
+        "word-typing": {
+          title: "Typing Quest",
+          description: "Practice typing real words while building speed and accuracy.",
+          tags: "Fluency • Keyboarding"
+        },
+        "word-connections": {
+          title: "Word Clue",
+          description: "Give clues so your team guesses the word.",
+          tags: "Speaking • Small groups"
+        },
+        "morphology-builder": {
+          title: "Build the Word",
+          description: "Combine prefixes, roots, and endings to build real words.",
+          tags: "Morphology • Word study"
+        },
+        "concept-ladder": {
+          title: "Clue Ladder",
+          description: "Reveal clues step-by-step and guess the word.",
+          tags: "Inference • Teams • Discussion"
+        },
+        "error-detective": {
+          title: "Fix the Sentence",
+          description: "Find the mistake and correct the sentence.",
+          tags: "Grammar • Editing"
+        },
+        "rapid-category": {
+          title: "Word Categories",
+          description: "Name as many words in the category as possible.",
+          tags: "Retrieval • Speaking • Teams"
+        },
+        "sentence-builder": {
+          title: "Build a Sentence",
+          description: "Arrange the words to form a correct sentence.",
+          tags: "Syntax • Writing • Small groups"
+        }
+      };
+
+      function updateCard(card) {
+        var id = card && card.getAttribute("data-game-id");
+        if (!id || !COPY[id]) return;
+        var data = COPY[id];
+        var h3 = card.querySelector("h3");
+        var desc = card.querySelector("p");
+        var caption = card.querySelector(".cg-card-caption");
+        var previewBoard = card.querySelector(".cg-preview-board");
+        var previewTiles = card.querySelectorAll(".cg-preview-tile");
+        var previewRows = card.querySelectorAll(".cg-preview-row");
+        if (h3) {
+          if (h3.textContent !== data.title) h3.textContent = data.title;
+          h3.classList.add("game-title");
+        }
+        if (desc) {
+          if (desc.textContent !== data.description) desc.textContent = data.description;
+          desc.classList.add("game-description");
+        }
+        if (caption) {
+          if (caption.textContent !== data.tags) caption.textContent = data.tags;
+          caption.classList.add("game-tags");
+        }
+        if (previewBoard) previewBoard.classList.add("preview-board");
+        previewRows.forEach(function (row) { row.classList.add("tile-row"); });
+        previewTiles.forEach(function (tile) { tile.classList.add("tile"); });
+      }
+
+      function updateAll() {
+        var cards = document.querySelectorAll(".cg-gallery-grid .cg-game-card[data-game-id]");
+        cards.forEach(updateCard);
+      }
+
+      var root = document.getElementById("cg-shell");
+      if (!root) return;
+      updateAll();
+      var queued = false;
+      function scheduleUpdate() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () {
+          queued = false;
+          updateAll();
+        });
+      }
+      var observer = new MutationObserver(function(mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.type !== "childList") continue;
+          if ((m.target && m.target.closest && m.target.closest(".cg-gallery-grid")) || (m.addedNodes && m.addedNodes.length)) {
+            scheduleUpdate();
+            return;
+          }
+        }
+      });
+      observer.observe(root, { childList: true, subtree: true });
+    })();
   </script>
 </body>
 </html>

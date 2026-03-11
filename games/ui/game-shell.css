@@ -5393,3 +5393,635 @@ body.game-platform-page[data-shell-view="gallery"] .cg-card-play:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* 2026-03-11 layout stabilization override
+   Force a stable, non-overlapping card grid regardless of earlier theme blocks. */
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+body.game-platform-page[data-shell-view="gallery"] .games-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(260px, 1fr)) !important;
+  gap: 28px !important;
+  align-items: stretch !important;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card,
+body.game-platform-page[data-shell-view="gallery"] .game-card {
+  position: static !important;
+  transform: none !important;
+  perspective: none !important;
+  rotate: 0deg !important;
+  translate: none !important;
+  z-index: auto !important;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0;
+  padding: 18px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover,
+body.game-platform-page[data-shell-view="gallery"] .game-card:hover {
+  transform: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card * {
+  max-width: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head {
+  order: 1;
+  margin-bottom: 8px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3 {
+  order: 2;
+  margin: 0 0 8px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  order: 3;
+  margin-bottom: 10px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  order: 4;
+  margin: 0 0 12px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  order: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  order: 6;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-tile {
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 5px;
+  aspect-ratio: auto;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .preview-board,
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: scale(.9);
+  transform-origin: center;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .tile,
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-tile {
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 5px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .tile-row,
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .game-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .game-tags,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  font-size: .8rem;
+  opacity: .8;
+}
+
+@media (max-width: 1240px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    grid-template-columns: repeat(3, minmax(240px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    grid-template-columns: repeat(2, minmax(240px, 1fr)) !important;
+    gap: 18px !important;
+  }
+}
+
+@media (max-width: 620px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 2026-03-11 viewport fit + Word Quest preview color/state polish */
+body.game-platform-page[data-shell-view="gallery"] .cg-shell,
+body.game-platform-page[data-shell-view="gallery"] #cg-shell {
+  height: 100dvh;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-surface {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 8px;
+  padding: 8px 12px 10px;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  margin-bottom: 4px;
+  padding: 4px 6px 0;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
+  font-size: 1.32rem;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  display: none;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-filter-row {
+  margin: 0;
+  min-height: 48px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  min-height: 0;
+  height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  padding: 8px 12px !important;
+  border-radius: 16px !important;
+  margin-bottom: 2px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+body.game-platform-page[data-shell-view="gallery"] .games-grid {
+  height: 100%;
+  min-height: 0;
+  gap: 8px !important;
+  grid-template-columns: repeat(4, minmax(220px, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  align-items: stretch;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card,
+body.game-platform-page[data-shell-view="gallery"] .game-card {
+  padding: 10px !important;
+  border-radius: 16px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto 42px;
+  row-gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3,
+body.game-platform-page[data-shell-view="gallery"] .game-title {
+  font-size: 1rem;
+  line-height: 1.05;
+  margin: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  margin-bottom: 0 !important;
+  min-height: 62px;
+  max-height: 62px;
+  padding: 6px;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin: 0 !important;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p.cg-card-caption,
+body.game-platform-page[data-shell-view="gallery"] .game-tags {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  margin: 0 !important;
+  -webkit-line-clamp: 1;
+  opacity: 0.88;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  min-height: 36px;
+  height: 36px;
+  align-self: end;
+  margin-top: 0 !important;
+  font-size: 0.96rem;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-board,
+body.game-platform-page[data-shell-view="gallery"] .preview-board {
+  transform: none;
+  gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-row,
+body.game-platform-page[data-shell-view="gallery"] .tile-row {
+  gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-tile,
+body.game-platform-page[data-shell-view="gallery"] .tile {
+  width: 22px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  border-radius: 4px;
+  display: inline-block;
+  background: #d9dee5;
+  border: 1px solid #c8cfda;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head {
+  margin: 0 !important;
+}
+
+/* Word Quest preview should show real game states (correct/present/absent). */
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1) {
+  background: #4CAF50;
+  border-color: #3d9143;
+}
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  background: #FFC107;
+  border-color: #d6a106;
+}
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(3) {
+  background: #9CA3AF;
+  border-color: #858c98;
+}
+
+@media (max-width: 1480px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    grid-template-columns: repeat(4, minmax(200px, 1fr)) !important;
+    gap: 12px !important;
+  }
+}
+
+/* 2026-03-11 FINAL HARD-LOCK: prevent smashed gallery layout */
+body.game-platform-page[data-shell-view="gallery"] .cg-surface {
+  height: 100dvh !important;
+  display: grid !important;
+  grid-template-rows: auto auto 1fr !important;
+  gap: 6px !important;
+  padding: 8px 10px !important;
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  margin: 0 !important;
+  padding: 0 2px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
+  font-size: 1.2rem !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  padding: 8px 10px !important;
+  border-radius: 14px !important;
+  margin: 0 !important;
+  min-height: 44px !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-filter-row {
+  min-height: 34px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-tab {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+body.game-platform-page[data-shell-view="gallery"] .games-grid {
+  display: grid !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(0, 1fr) !important;
+  gap: 6px !important;
+  align-items: stretch !important;
+  align-content: stretch !important;
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-rows: auto auto 1fr auto !important;
+  gap: 5px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card *,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head {
+  margin: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3 {
+  margin: 0 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.05 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 52px !important;
+  max-height: 52px !important;
+  margin: 0 !important;
+  padding: 4px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-board,
+body.game-platform-page[data-shell-view="gallery"] .preview-board {
+  transform: none !important;
+  gap: 4px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-row,
+body.game-platform-page[data-shell-view="gallery"] .tile-row {
+  gap: 4px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-preview-tile,
+body.game-platform-page[data-shell-view="gallery"] .tile {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  border-radius: 4px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  margin: 0 !important;
+  font-size: 0.72rem !important;
+  line-height: 1.15 !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 1 !important;
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  min-height: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+  align-self: end !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-select {
+  background: rgba(14, 31, 57, 0.72) !important;
+  border-color: rgba(180, 205, 241, 0.36) !important;
+  color: #eef5ff !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-select option {
+  color: #0f1f36 !important;
+  background: #f2f6fd !important;
+}
+
+/* 2026-03-11 final container correction:
+   ensure setup row is content-height only and cards get remaining space */
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: 6px !important;
+  height: calc(100dvh - 42px) !important;
+  min-height: 0 !important;
+  align-content: stretch !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 72px !important;
+  overflow: hidden !important;
+  align-self: start !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+  min-height: 0 !important;
+  align-self: stretch !important;
+}
+
+/* 2026-03-11 hover gameplay preview animations (CSS-only, preview layer only) */
+@keyframes cg-preview-tile-flip {
+  0%, 100% { transform: rotateX(0deg) scale(1); }
+  40% { transform: rotateX(88deg) scale(1.04); }
+  60% { transform: rotateX(0deg) scale(1.02); }
+}
+
+@keyframes cg-preview-tile-state-correct {
+  0%, 20% { background: #d9dee5; border-color: #c8cfda; }
+  30%, 100% { background: #4CAF50; border-color: #3d9143; }
+}
+
+@keyframes cg-preview-tile-state-present {
+  0%, 30% { background: #d9dee5; border-color: #c8cfda; }
+  40%, 100% { background: #FFC107; border-color: #d6a106; }
+}
+
+@keyframes cg-preview-key-pulse {
+  0%, 100% { transform: translateY(0); box-shadow: none; }
+  50% { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28); }
+}
+
+@keyframes cg-preview-flash-warn {
+  0%, 75%, 100% { color: #4f607a; background: transparent; }
+  82% { color: #ffffff; background: rgba(220, 53, 69, 0.86); }
+}
+
+@keyframes cg-preview-slide-part {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(7px); }
+}
+
+@keyframes cg-preview-rung-reveal {
+  0%, 100% { opacity: 0.45; transform: translateX(0); }
+  35% { opacity: 1; transform: translateX(4px); }
+}
+
+@keyframes cg-preview-error-glow {
+  0%, 100% { color: #223550; background: transparent; }
+  50% { color: #b3261e; background: rgba(179, 38, 30, 0.12); }
+}
+
+@keyframes cg-preview-chip-rise {
+  0%, 100% { opacity: 0.45; transform: translateY(3px); }
+  35% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cg-preview-sentence-shift-a {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(6px); }
+}
+
+@keyframes cg-preview-sentence-shift-b {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(-6px); }
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  animation: cg-preview-tile-flip 1.15s ease-in-out infinite;
+  transform-origin: center;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1) {
+  animation-name: cg-preview-tile-flip, cg-preview-tile-state-correct;
+  animation-duration: 1.15s, 1.15s;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  animation-name: cg-preview-tile-flip, cg-preview-tile-state-present;
+  animation-duration: 1.15s, 1.15s;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+  animation-delay: 0.15s, 0.15s;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+  animation: cg-preview-key-pulse 0.85s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+  animation-delay: 0.42s;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li {
+  animation: cg-preview-flash-warn 1.6s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(3) { animation-delay: 0.4s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(4) { animation-delay: 0.6s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="morphology-builder"] .cg-mini-part--prefix {
+  animation: cg-preview-slide-part 0.9s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="morphology-builder"] .cg-mini-part--root:first-of-type {
+  animation: cg-preview-slide-part 0.9s ease-in-out infinite reverse;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung {
+  animation: cg-preview-rung-reveal 1.6s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(2) { animation-delay: 0.25s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(3) { animation-delay: 0.5s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="error-detective"] .cg-mini-error {
+  animation: cg-preview-error-glow 1.2s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip {
+  animation: cg-preview-chip-rise 1.3s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(3) { animation-delay: 0.4s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(3) {
+  animation: cg-preview-sentence-shift-a 0.95s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(2),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(4) {
+  animation: cg-preview-sentence-shift-b 0.95s ease-in-out infinite;
+}
