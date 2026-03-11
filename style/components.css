@@ -9272,3 +9272,89 @@ html[data-motion="fun"] .tile.wq-reveal {
 .setting-checkbox-help {
   color: #1d3953;
 }
+
+/* 2026-03-11 containment pass: Word Quest responsive fit on common laptop heights
+   UI-only sizing layer; no gameplay logic touched. */
+html[data-home-mode="play"] body {
+  overflow-y: auto;
+}
+
+html[data-home-mode="play"] #play-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+html[data-home-mode="play"] main {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: clamp(6px, 1.1vh, 12px);
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+html[data-home-mode="play"] .board-zone {
+  gap: clamp(6px, 1vh, 10px);
+  justify-content: center;
+  min-height: 0;
+}
+
+html[data-home-mode="play"] .board-plate {
+  width: min(calc(var(--playfield-width) + clamp(22px, 3vw, 44px)), calc(100vw - 14px), calc(100% - 6px));
+  padding: clamp(8px, 1.4vh, 14px) clamp(9px, 1.5vw, 14px);
+}
+
+html[data-home-mode="play"] #game-board {
+  max-width: min(420px, calc(100vw - 42px));
+}
+
+html[data-home-mode="play"] #keyboard {
+  width: min(var(--keyboard-max-width, 540px), calc(100vw - 12px), calc(100% - 4px));
+  min-height: clamp(166px, 23vh, 236px);
+  margin-top: clamp(6px, 1vh, 12px);
+  margin-bottom: max(8px, env(safe-area-inset-bottom));
+  gap: clamp(5px, 0.9vh, 8px);
+}
+
+/* Short laptop heights: reduce chrome/gaps first, keep board+keyboard readable. */
+@media (max-height: 860px) and (min-width: 980px) {
+  html[data-home-mode="play"] {
+    --tile-size: clamp(58px, 7.2vh, 68px);
+    --playfield-width: clamp(320px, 40vw, 370px);
+    --key-h: clamp(48px, 6.1vh, 56px);
+    --gap-key: 6px;
+    --gap-tile: 7px;
+  }
+
+  html[data-home-mode="play"] header {
+    padding-block: 3px 1px;
+  }
+
+  html[data-home-mode="play"] .header-main-row {
+    min-height: 46px;
+  }
+
+  html[data-home-mode="play"] #keyboard {
+    min-height: clamp(154px, 21.5vh, 212px);
+    margin-top: 8px;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 980px) {
+  html[data-home-mode="play"] {
+    --tile-size: clamp(52px, 6.3vh, 60px);
+    --playfield-width: clamp(290px, 36vw, 336px);
+    --key-h: clamp(42px, 5.2vh, 48px);
+    --gap-key: 5px;
+    --gap-tile: 6px;
+  }
+
+  html[data-home-mode="play"] .board-zone {
+    gap: 6px;
+  }
+
+  html[data-home-mode="play"] #keyboard {
+    min-height: clamp(140px, 19.2vh, 186px);
+    margin-top: 6px;
+  }
+}

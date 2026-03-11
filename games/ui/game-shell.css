@@ -6084,3 +6084,59 @@ body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
   border: 1px solid rgba(68, 121, 214, 0.28) !important;
   box-shadow: 0 8px 16px rgba(46, 88, 164, 0.22) !important;
 }
+
+/* 2026-03-11 containment correction: preview motion must never spill or resize cards */
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  contain: layout paint style;
+  overflow: hidden !important;
+  grid-template-rows: auto auto auto auto 1fr auto !important;
+  transform: none;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview,
+body.game-platform-page[data-shell-view="gallery"] .preview-board {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 70px !important;
+  max-height: 70px !important;
+  height: 70px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview > * {
+  max-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing-track {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing {
+  gap: 5px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing-lane {
+  min-height: 28px;
+  padding: 4px 7px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-key {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 10px;
+}
+
+/* Keep hover animation transforms local and clipped in frame. */
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview * {
+  will-change: transform, opacity;
+}
