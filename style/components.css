@@ -77,6 +77,14 @@ html[data-text-size="medium"] { --wq-text-size: 16px; }
 html[data-text-size="large"] { --wq-text-size: 18px; }
 
 :root {
+  /* Global viewport-fit tokens (stage/dashboard/course). */
+  --page-top-gap: clamp(6px, 1.2vh, 14px);
+  --page-side-gap: clamp(8px, 1.2vw, 16px);
+  --page-bottom-gap: clamp(6px, 1.3vh, 14px);
+  --stage-header-height: clamp(40px, 7vh, 58px);
+  --stage-controls-gap: clamp(4px, 0.9vh, 10px);
+  --dashboard-hero-max: min(24vh, 220px);
+  --course-summary-max: min(28vh, 260px);
   --shell-max-width: 560px;
   --focus-max-width: 560px;
   --main-max-width: 560px;
@@ -9390,4 +9398,22 @@ html[data-home-mode="play"] #keyboard {
     margin-top: 4px;
     margin-bottom: max(4px, env(safe-area-inset-bottom));
   }
+}
+
+/* Stage fit refinement: explicitly budget play shell space before allowing scroll. */
+html[data-home-mode="play"] {
+  --stage-header-height: clamp(38px, 6.6vh, 54px);
+  --stage-controls-gap: clamp(4px, 0.8vh, 8px);
+}
+
+html[data-home-mode="play"] header {
+  min-height: var(--stage-header-height);
+}
+
+html[data-home-mode="play"] .header-main-row {
+  min-height: calc(var(--stage-header-height) - 4px);
+}
+
+html[data-home-mode="play"] .board-zone {
+  gap: var(--stage-controls-gap);
 }

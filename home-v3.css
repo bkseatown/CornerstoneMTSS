@@ -713,3 +713,92 @@ body.cs-home-page {
   opacity: 0.45;
   font-size: 10px;
 }
+
+/* 2026-03-11 global viewport-fit: dashboard mode baseline for landing page */
+body.cs-home-page {
+  --page-top-gap: clamp(10px, 1.7vh, 20px);
+  --page-side-gap: clamp(10px, 1.2vw, 20px);
+  --page-bottom-gap: clamp(10px, 1.7vh, 20px);
+  --dashboard-hero-max: min(86svh, 900px);
+}
+
+.cs-home-root {
+  min-height: 100svh;
+  padding: var(--page-top-gap) var(--page-side-gap) var(--page-bottom-gap);
+  align-items: flex-start;
+}
+
+.home-hero-panel {
+  gap: 12px;
+  min-height: auto;
+  max-height: none;
+  padding: clamp(14px, 1.6vw, 22px);
+}
+
+.home-identity-block {
+  padding: 12px 14px 10px;
+  gap: 5px;
+}
+
+.home-entry-title {
+  font-size: clamp(1.68rem, 2.6vw, 2.3rem);
+}
+
+.home-entry-subtitle {
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+}
+
+.home-role-btn--primary {
+  gap: 12px;
+  padding: 14px;
+}
+
+.home-role-btn {
+  padding: 14px;
+  gap: 9px;
+}
+
+.home-role-preview {
+  min-height: 112px;
+}
+
+.home-role-btn--primary .home-role-preview {
+  min-height: 148px;
+}
+
+.home-entry-utility {
+  min-height: 40px;
+}
+
+@media (max-height: 860px) and (min-width: 980px) {
+  .home-hero-panel {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .home-identity-block {
+    padding: 10px 12px;
+  }
+
+  .home-entry-title {
+    font-size: clamp(1.48rem, 2.2vw, 1.9rem);
+  }
+
+  .home-role-btn--primary {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .home-role-btn {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .home-role-preview {
+    min-height: 98px;
+  }
+
+  .home-role-btn--primary .home-role-preview {
+    min-height: 128px;
+  }
+}

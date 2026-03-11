@@ -6176,3 +6176,68 @@ body.th2-page {
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }
+
+/* 2026-03-11 global viewport-fit: dashboard mode stabilization for teacher hub */
+body.th2-page {
+  --page-top-gap: clamp(8px, 1.2vh, 16px);
+  --page-side-gap: clamp(10px, 1.2vw, 18px);
+  --page-bottom-gap: clamp(10px, 1.2vh, 16px);
+}
+
+.th2-shell {
+  min-height: 100svh;
+  height: 100svh;
+}
+
+.th2-main {
+  padding: clamp(16px, 2.2vh, 28px) clamp(18px, 2vw, 30px) clamp(18px, 2.4vh, 32px);
+}
+
+.th2-command-center {
+  gap: 12px;
+}
+
+.th2-command-header {
+  padding: 16px 18px;
+}
+
+.th2-block-context-header,
+.th2-active-context,
+.th2-quick-rail {
+  padding: 14px 16px;
+}
+
+@media (max-height: 860px) and (min-width: 980px) {
+  .th2-shell {
+    grid-template-columns: 250px 1fr;
+  }
+
+  .th2-sidebar-head {
+    padding: 10px 10px 8px;
+    gap: 6px;
+  }
+
+  .th2-main {
+    padding: 12px 16px 16px;
+  }
+
+  .th2-command-center {
+    gap: 10px;
+  }
+
+  .th2-command-header {
+    padding: 13px 15px;
+  }
+
+  .th2-command-header__title,
+  .th2-block-context-header__title {
+    font-size: clamp(23px, 2.3vw, 28px);
+  }
+
+  .th2-block-context-header,
+  .th2-active-context,
+  .th2-quick-rail {
+    padding: 11px 13px;
+    border-radius: 16px;
+  }
+}

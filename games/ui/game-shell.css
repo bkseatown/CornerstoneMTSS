@@ -6189,3 +6189,215 @@ body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing .cursor {
   0%, 45% { opacity: 1; }
   50%, 100% { opacity: 0.3; }
 }
+
+/* 2026-03-11 global viewport-fit system (dashboard/stage/course) */
+body.game-platform-page {
+  --page-top-gap: clamp(6px, 1.2vh, 14px);
+  --page-side-gap: clamp(8px, 1.2vw, 16px);
+  --page-bottom-gap: clamp(6px, 1.3vh, 14px);
+  --stage-header-height: clamp(44px, 7vh, 60px);
+  --stage-controls-gap: clamp(6px, 0.95vh, 10px);
+  --dashboard-hero-max: min(22vh, 190px);
+  --course-summary-max: min(28vh, 260px);
+}
+
+/* Dashboard pages: fit first decision layer above fold. */
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  padding-top: 10px !important;
+  margin-bottom: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  max-height: var(--dashboard-hero-max) !important;
+  min-height: 0 !important;
+}
+
+/* Stage pages: prioritize interaction shell, let secondary panels scroll internally. */
+body.game-platform-page[data-shell-view="play"] .cg-shell {
+  padding-inline: var(--page-side-gap);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  min-height: calc(100dvh - var(--page-top-gap) - var(--page-bottom-gap));
+  gap: var(--stage-controls-gap);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  min-height: 0;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--controls,
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--guide {
+  max-height: min(42dvh, 360px);
+  overflow: auto;
+}
+
+/* Course/library pages: show summary + next actions + visible course structure. */
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-page {
+  min-height: calc(100dvh - var(--page-top-gap) - var(--page-bottom-gap));
+  gap: 14px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-hero {
+  min-height: 0;
+  max-height: var(--course-summary-max);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-map {
+  min-height: 0;
+}
+
+@media (max-height: 780px) and (min-width: 980px) {
+  body.game-platform-page {
+    --stage-header-height: clamp(40px, 6.2vh, 50px);
+    --stage-controls-gap: 6px;
+    --dashboard-hero-max: min(18vh, 146px);
+    --course-summary-max: min(24vh, 210px);
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+    padding: 9px !important;
+    gap: 6px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+    min-height: 68px !important;
+    max-height: 68px !important;
+    height: 68px !important;
+  }
+}
+
+/* 2026-03-11 viewport-fit lock: dashboard/stage/course stabilization layer.
+   Intentionally placed last to beat legacy blocks without touching game engines. */
+body.game-platform-page {
+  --page-top-gap: clamp(6px, 1.1vh, 12px);
+  --page-side-gap: clamp(8px, 1vw, 14px);
+  --page-bottom-gap: clamp(6px, 1vh, 12px);
+  --stage-header-height: clamp(42px, 6.3vh, 54px);
+  --stage-controls-gap: clamp(5px, 0.8vh, 9px);
+  --dashboard-hero-max: min(16vh, 126px);
+  --course-summary-max: min(24vh, 220px);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-shell,
+body.game-platform-page[data-shell-view="gallery"] #cg-shell {
+  min-height: 100dvh;
+  height: auto;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-surface {
+  padding: var(--page-top-gap) var(--page-side-gap) var(--page-bottom-gap) !important;
+  gap: clamp(8px, 1vh, 12px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  margin-bottom: 4px !important;
+  padding: 6px 4px 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  margin-top: 0 !important;
+  line-height: 1.35 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  min-height: 84px !important;
+  max-height: var(--dashboard-hero-max) !important;
+  padding: 10px 14px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget,
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-tab {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+body.game-platform-page[data-shell-view="gallery"] .games-grid {
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  min-height: 232px !important;
+  max-height: 248px !important;
+  padding: 10px !important;
+  gap: 6px !important;
+  contain: layout paint !important;
+  overflow: hidden !important;
+  transform: translateY(0) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  height: 72px !important;
+  min-height: 72px !important;
+  max-height: 72px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview > * {
+  max-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  -webkit-line-clamp: 1 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  margin-top: auto !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-shell {
+  padding: var(--page-top-gap) var(--page-side-gap) var(--page-bottom-gap) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  min-height: calc(100dvh - var(--page-top-gap) - var(--page-bottom-gap));
+  gap: var(--stage-controls-gap) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-page {
+  min-height: calc(100dvh - var(--page-top-gap) - var(--page-bottom-gap));
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-hero {
+  max-height: var(--course-summary-max) !important;
+}
+
+@media (max-height: 860px) and (min-width: 980px) {
+  body.game-platform-page {
+    --dashboard-hero-max: min(14vh, 108px);
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+    margin-bottom: 2px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+    min-height: 214px !important;
+    max-height: 232px !important;
+    padding: 8px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+  }
+}
