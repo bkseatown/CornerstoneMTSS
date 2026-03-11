@@ -154,6 +154,7 @@
     var registry = runtimeRoot.CSGameContentRegistry;
     var WORD_CLUE_CUSTOM_CARDS_KEY = "cs.wordclue.customcards.v1";
     var WORD_CLUE_STARTER_DECKS_URL = "data/taboo-phonics-starter-decks.json";
+    var WORD_CLUE_SUPPLEMENTAL_URL = "data/word-clue-supplemental-approved.json";
     var WORD_CLUE_STARTER_CACHE_KEY = "cs.wordclue.starter.cache.v1";
     var trustedWordClueDeckState = {
       loaded: false,
@@ -321,6 +322,45 @@
       }
     }
 
+    function normalizeSupplementalCards(raw) {
+      return (Array.isArray(raw) ? raw : []).map(function (card) {
+        return {
+          id: String(card.deck_id || "supplemental") + "__" + String(card.id || Date.now()),
+          deck_id: String(card.deck_id || "word_clue_supplemental_k1").trim(),
+          grade_band: normalizeStarterGradeBand(card.grade_band || "K-1"),
+          target_word: String(card.target_word || "").trim(),
+          marked_word: String(card.marked_word || card.target_word || "").trim(),
+          taboo_words: Array.isArray(card.taboo_words) ? card.taboo_words.map(function (word) { return String(word || "").trim(); }).filter(Boolean) : [],
+          definition: String(card.definition || "").trim(),
+          example_sentence: String(card.example_sentence || "").trim(),
+          image_keyword: String(card.target_word || "").trim(),
+          image_supported: true,
+          teacher_created: false,
+          source: String(card.source || "supplemental_word_clue"),
+          approved_for_word_clue: card.approved_for_word_clue === true
+        };
+      }).filter(function (card) {
+        return card.approved_for_word_clue === true && card.target_word && card.taboo_words.length >= 2;
+      });
+    }
+
+    function mergeSupplementalIntoTrustedDeck(rawSupplementalCards) {
+      var supplemental = normalizeSupplementalCards(rawSupplementalCards);
+      if (!supplemental.length) return;
+      var existing = Object.create(null);
+      trustedWordClueDeckState.cards.forEach(function (card) {
+        existing[String(card.id)] = true;
+      });
+      supplemental.forEach(function (card) {
+        if (existing[String(card.id)]) return;
+        trustedWordClueDeckState.cards.push(card);
+      });
+      trustedWordClueDeckState.matchedCount = trustedWordClueDeckState.cards.length;
+      if (runtimeRoot.console && typeof runtimeRoot.console.info === "function") {
+        runtimeRoot.console.info("[WordClue] Supplemental approved cards added:", supplemental.length);
+      }
+    }
+
     function ensureTrustedWordClueDecksLoaded() {
       if (trustedWordClueDeckState.loaded || trustedWordClueDeckState.loading) return;
       var cached = storageGet(WORD_CLUE_STARTER_CACHE_KEY, "");
@@ -336,6 +376,10 @@
           .then(function (response) { return response && response.ok ? response.json() : []; })
           .then(function (data) {
             setTrustedWordClueCards(data);
+            return runtimeRoot.fetch(WORD_CLUE_SUPPLEMENTAL_URL, { cache: "no-store" })
+              .then(function (response) { return response && response.ok ? response.json() : []; })
+              .then(function (supplemental) { mergeSupplementalIntoTrustedDeck(supplemental); })
+              .catch(function () {});
           })
           .catch(function (error) {
             if (runtimeRoot.console && typeof runtimeRoot.console.error === "function") {
