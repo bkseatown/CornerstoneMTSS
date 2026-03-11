@@ -9287,8 +9287,13 @@ html[data-home-mode="play"] {
   --wq-shell-pad-inline: clamp(6px, 0.9vw, 12px);
   --wq-shell-pad-bottom: max(6px, env(safe-area-inset-bottom));
   --wq-top-chrome-budget: clamp(42px, 7.2vh, 58px);
-  --wq-bottom-controls-budget: clamp(146px, 22.5vh, 220px);
+  --wq-bottom-controls-budget: clamp(118px, 18vh, 172px);
   --wq-stage-gap: clamp(4px, 0.8vh, 9px);
+  --tile-size: clamp(50px, 6vh, 62px);
+  --playfield-width: clamp(278px, 34vw, 336px);
+  --key-h: clamp(38px, 4.8vh, 48px);
+  --gap-key: 4px;
+  --gap-tile: 5px;
 }
 
 html[data-home-mode="play"],
@@ -9325,7 +9330,7 @@ html[data-home-mode="play"] .header-main-row {
 html[data-home-mode="play"] .board-zone {
   min-height: 0;
   gap: var(--wq-stage-gap);
-  justify-content: center;
+  justify-content: flex-start;
   align-content: start;
 }
 
@@ -9341,36 +9346,41 @@ html[data-home-mode="play"] #game-board {
 html[data-home-mode="play"] #keyboard {
   width: min(var(--keyboard-max-width, 540px), calc(100vw - 10px), calc(100% - 2px));
   min-height: var(--wq-bottom-controls-budget);
-  max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 170px), 248px);
-  margin-top: clamp(4px, 0.8vh, 8px);
+  max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 172px), 196px);
+  margin-top: clamp(2px, 0.5vh, 6px);
   margin-bottom: var(--wq-shell-pad-bottom);
-  gap: clamp(4px, 0.8vh, 7px);
+  gap: clamp(3px, 0.6vh, 6px);
   overflow: hidden;
+}
+
+html[data-home-mode="play"] .gameplay-audio {
+  margin-top: 3px;
+  margin-bottom: 4px;
 }
 
 @media (max-height: 860px) and (min-width: 980px) {
   html[data-home-mode="play"] {
     --wq-top-chrome-budget: clamp(38px, 6.3vh, 50px);
-    --wq-bottom-controls-budget: clamp(136px, 20.8vh, 190px);
-    --wq-stage-gap: 6px;
-    --tile-size: clamp(56px, 6.8vh, 64px);
-    --playfield-width: clamp(304px, 38vw, 360px);
-    --key-h: clamp(46px, 5.8vh, 52px);
-    --gap-key: 5px;
-    --gap-tile: 6px;
+    --wq-bottom-controls-budget: clamp(108px, 16.6vh, 154px);
+    --wq-stage-gap: 5px;
+    --tile-size: clamp(48px, 5.8vh, 58px);
+    --playfield-width: clamp(266px, 32vw, 312px);
+    --key-h: clamp(36px, 4.4vh, 44px);
+    --gap-key: 3px;
+    --gap-tile: 4px;
   }
 }
 
 @media (max-height: 760px) and (min-width: 980px) {
   html[data-home-mode="play"] {
     --wq-top-chrome-budget: clamp(34px, 5.4vh, 44px);
-    --wq-bottom-controls-budget: clamp(122px, 18.5vh, 164px);
-    --wq-stage-gap: 5px;
-    --tile-size: clamp(50px, 6vh, 58px);
-    --playfield-width: clamp(280px, 34vw, 324px);
-    --key-h: clamp(40px, 4.8vh, 46px);
-    --gap-key: 4px;
-    --gap-tile: 5px;
+    --wq-bottom-controls-budget: clamp(98px, 15vh, 134px);
+    --wq-stage-gap: 4px;
+    --tile-size: clamp(44px, 5.1vh, 52px);
+    --playfield-width: clamp(248px, 30vw, 292px);
+    --key-h: clamp(34px, 4vh, 40px);
+    --gap-key: 3px;
+    --gap-tile: 3px;
   }
 
   html[data-home-mode="play"] .play-support-row {
@@ -9382,12 +9392,12 @@ html[data-home-mode="play"] #keyboard {
 @media (max-height: 700px) and (min-width: 980px) {
   html[data-home-mode="play"] {
     --wq-top-chrome-budget: clamp(30px, 4.8vh, 40px);
-    --wq-bottom-controls-budget: clamp(112px, 16.5vh, 148px);
-    --wq-stage-gap: 4px;
-    --tile-size: clamp(46px, 5.2vh, 52px);
-    --playfield-width: clamp(262px, 32vw, 298px);
-    --key-h: clamp(36px, 4.1vh, 42px);
-    --gap-key: 3px;
-    --gap-tile: 4px;
+    --wq-bottom-controls-budget: clamp(88px, 13.8vh, 116px);
+    --wq-stage-gap: 3px;
+    --tile-size: clamp(40px, 4.5vh, 46px);
+    --playfield-width: clamp(226px, 28vw, 266px);
+    --key-h: clamp(30px, 3.6vh, 36px);
+    --gap-key: 2px;
+    --gap-tile: 2px;
   }
 }
