@@ -152,7 +152,6 @@
 
   function createGames(context) {
     var registry = runtimeRoot.CSGameContentRegistry;
-    var wordConnectionsEngine = runtimeRoot.CSWordConnectionsEngine;
     var WORD_CLUE_CUSTOM_CARDS_KEY = "cs.wordclue.customcards.v1";
     var wordClueRoundMemory = {
       lastTarget: "",
@@ -165,7 +164,8 @@
         grade_band: "K-2",
         subject: "ELA",
         difficulty: "core",
-        forbidden_words: ["Home", "Room", "Live", "Roof"],
+        modes: ["classic", "picture", "draw", "act", "challenge"],
+        forbidden_words: ["home", "live", "family", "room"],
         alt_forbidden_sets: [["Door", "Family", "Building", "Bed"], ["Place", "Sleep", "Windows", "Yard"]],
         image_keyword: "house",
         image_supported: true,
@@ -180,7 +180,8 @@
         grade_band: "K-2",
         subject: "ELA",
         difficulty: "core",
-        forbidden_words: ["Pet", "Bark", "Puppy", "Animal"],
+        modes: ["classic", "picture", "draw", "act", "challenge"],
+        forbidden_words: ["pet", "bark", "puppy", "tail"],
         alt_forbidden_sets: [["Tail", "Leash", "Walk", "Furry"], ["Fetch", "Bone", "Cat", "Kennel"]],
         image_keyword: "dog",
         image_supported: true,
@@ -195,6 +196,7 @@
         grade_band: "K-2",
         subject: "ELA",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "challenge"],
         forbidden_words: ["Cheese", "Slice", "Food", "Round"],
         alt_forbidden_sets: [["Crust", "Toppings", "Oven", "Dinner"], ["Party", "Sauce", "Restaurant", "Hot"]],
         image_keyword: "pizza",
@@ -210,6 +212,7 @@
         grade_band: "K-2",
         subject: "Science",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "challenge"],
         forbidden_words: ["Sky", "Hot", "Day", "Star"],
         alt_forbidden_sets: [["Light", "Morning", "Bright", "Outside"], ["Summer", "Shine", "Heat", "Circle"]],
         image_keyword: "sun",
@@ -225,6 +228,7 @@
         grade_band: "K-2",
         subject: "SEL",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "act", "challenge"],
         forbidden_words: ["Teacher", "Class", "Learn", "Building"],
         alt_forbidden_sets: [["Students", "Backpack", "Bus", "Recess"], ["Morning", "Homework", "Desk", "Hallway"]],
         image_keyword: "school",
@@ -240,6 +244,7 @@
         grade_band: "K-2",
         subject: "ELA",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "challenge"],
         forbidden_words: ["Sit", "Seat", "Legs", "Table"],
         alt_forbidden_sets: [["Furniture", "Back", "Classroom", "Wood"], ["Kitchen", "Stand", "Cushion", "Room"]],
         image_keyword: "chair",
@@ -255,6 +260,7 @@
         grade_band: "K-2",
         subject: "SEL",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "act"],
         forbidden_words: ["Sleep", "Pillow", "Night", "Blanket"],
         alt_forbidden_sets: [["Bedroom", "Rest", "Mattress", "Dream"], ["Morning", "Sheets", "Tired", "Nap"]],
         image_keyword: "bed",
@@ -270,12 +276,45 @@
         grade_band: "K-2",
         subject: "ELA",
         difficulty: "core",
+        modes: ["classic", "picture", "draw", "act", "challenge"],
         forbidden_words: ["Birthday", "Sweet", "Frosting", "Dessert"],
         alt_forbidden_sets: [["Slice", "Party", "Candle", "Bake"], ["Chocolate", "Vanilla", "Treat", "Celebrate"]],
         image_keyword: "cake",
         image_supported: true,
         acting_prompt: "Act out blowing out candles.",
         drawing_prompt: "Draw layers or decorations.",
+        curriculum_tag: "Vocabulary",
+        teacher_created: false
+      },
+      {
+        id: "wc-35-bank",
+        target_word: "Bank",
+        grade_band: "3-5",
+        subject: "ELA",
+        difficulty: "stretch",
+        modes: ["classic", "picture", "draw", "challenge"],
+        forbidden_words: ["money", "cash", "save", "account"],
+        alt_forbidden_sets: [["vault", "coins", "dollar", "deposit"]],
+        image_keyword: "bank building",
+        image_supported: true,
+        drawing_prompt: "Draw a building where people keep money safely.",
+        acting_prompt: "",
+        curriculum_tag: "Vocabulary",
+        teacher_created: false
+      },
+      {
+        id: "wc-35-bell",
+        target_word: "Bell",
+        grade_band: "3-5",
+        subject: "ELA",
+        difficulty: "core",
+        modes: ["classic", "picture", "draw", "act", "challenge"],
+        forbidden_words: ["ring", "sound", "school", "chime"],
+        alt_forbidden_sets: [["metal", "loud", "tower", "alarm"]],
+        image_keyword: "bell",
+        image_supported: true,
+        drawing_prompt: "Draw the shape and where you might find one.",
+        acting_prompt: "Act like you heard one and it is time to move.",
         curriculum_tag: "Vocabulary",
         teacher_created: false
       }
@@ -294,38 +333,6 @@
     function wordConnectionsDifficultyCount(value) {
       var level = Math.max(1, Math.min(4, Number(value) || 3));
       return level + 1;
-    }
-
-    function compactTokens(text) {
-      return String(text || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, " ")
-        .split(/\s+/)
-        .map(function (part) { return part.trim(); })
-        .filter(function (part) { return part && part.length > 3; });
-    }
-
-    function buildForbiddenWords(row, generated, desiredCount) {
-      var target = String(generated && generated.targetWord || row && row.target || "").toLowerCase();
-      var seen = Object.create(null);
-      function pushWord(list, value) {
-        var lower = String(value || "").trim().toLowerCase();
-        if (!lower || lower === target || seen[lower]) return;
-        seen[lower] = true;
-        list.push(lower);
-      }
-      var pool = [];
-      (generated && generated.forbiddenWords || row && row.forbidden || row && row.tabooWords || []).forEach(function (value) {
-        pushWord(pool, value);
-      });
-      compactTokens(row && row.definition || "").forEach(function (value) { pushWord(pool, value); });
-      compactTokens(row && row.clue || "").forEach(function (value) { pushWord(pool, value); });
-      compactTokens(row && row.example || row && row.exampleSentence || "").forEach(function (value) { pushWord(pool, value); });
-      compactTokens(generated && generated.instructionalFocus || "").forEach(function (value) { pushWord(pool, value); });
-      while (pool.length < desiredCount) pushWord(pool, "focus");
-      return pool.slice(0, desiredCount).map(function (value) {
-        return value.replace(/\b\w/g, function (letter) { return letter.toUpperCase(); });
-      });
     }
 
     function wordConnectionsInstruction(mode) {
@@ -356,6 +363,9 @@
           difficulty: String(card.difficulty || "core").toLowerCase(),
           forbidden_words: forbiddenWords,
           alt_forbidden_sets: altSets,
+          modes: Array.isArray(card.modes)
+            ? card.modes.map(function (mode) { return String(mode || "").trim().toLowerCase(); }).filter(Boolean)
+            : ["classic", "picture", "draw", "act", "challenge"],
           image_keyword: String(card.image_keyword || "").trim(),
           image_supported: card.image_supported !== false,
           acting_prompt: String(card.acting_prompt || "").trim(),
@@ -384,12 +394,17 @@
         roundType: String(settings.wordClueRoundType || mode || "any").toLowerCase(),
         difficulty: String(settings.wordClueDifficulty || "").toLowerCase()
       };
+      var normalizedMode = String(mode || "speak").toLowerCase();
+      var normalizedRoundType = normalizedMode === "speak"
+        ? (String(settings.wordClueCardStyle || "").toLowerCase() === "challenge" ? "challenge" : "classic")
+        : normalizedMode;
       var deck = parseWordClueCards(WORD_CLUE_BASE_CARDS, false).concat(loadWordClueCustomCards());
       deck = deck.filter(function (card) {
         if (filters.gradeBand && filters.gradeBand !== "ALL" && card.grade_band !== filters.gradeBand) return false;
         if (filters.subject && filters.subject !== "ALL" && card.subject !== filters.subject) return false;
         if (filters.curriculum && String(card.curriculum_tag || "").toLowerCase().indexOf(filters.curriculum) === -1) return false;
         if (filters.difficulty && filters.difficulty !== "all" && card.difficulty !== filters.difficulty) return false;
+        if (card.modes && card.modes.length && card.modes.indexOf(normalizedRoundType) === -1) return false;
         if (filters.roundType === "picture") return card.image_supported;
         if (filters.roundType === "draw") return Boolean(card.drawing_prompt);
         if (filters.roundType === "act") return Boolean(card.acting_prompt);
@@ -569,54 +584,64 @@
           var tabooDifficulty = Math.max(1, Math.min(4, Number(input.settings && input.settings.wordConnectionsDifficulty) || 3));
           var desiredBlockedCount = wordConnectionsDifficultyCount(tabooDifficulty);
           var cardPick = buildWordClueDeck(input, tabooMode, desiredBlockedCount);
-          var row = registry.pickRound("word-connections", currentContext, input.history) || {};
-          var generated = wordConnectionsEngine && typeof wordConnectionsEngine.generateWordConnectionsRound === "function"
-            ? wordConnectionsEngine.generateWordConnectionsRound({
-                mode: String(input.settings.difficulty || "core").toUpperCase() === "STRETCH" ? "INTERVENTION" : "TARGETED",
-                skillNode: currentContext.skillFocus || row.skillTag || "LIT.VOC.ACAD",
-                tierLevel: input.settings.viewMode === "projector" ? "Tier 2" : "Tier 3",
-                selectedCard: row
-              })
-            : null;
-          if (cardPick && cardPick.card) {
+          var row = (cardPick && cardPick.card) ? cardPick.card : null;
+          if (!row) {
             row = {
-              id: cardPick.card.id,
-              target: cardPick.card.target_word,
-              forbidden: cardPick.forbiddenWords,
-              scaffolds: [cardPick.card.curriculum_tag || ("Grade " + cardPick.card.grade_band + " " + cardPick.card.subject)],
-              image: cardPick.card.image_supported ? ("https://source.unsplash.com/featured/640x420/?" + encodeURIComponent(cardPick.card.image_keyword || cardPick.card.target_word)) : "",
-              requiredMove: tabooMode === "draw"
-                ? (cardPick.card.drawing_prompt || "Draw the concept with no letters or numbers.")
-                : tabooMode === "act"
-                  ? (cardPick.card.acting_prompt || "Act out the idea with movement only.")
-                  : "Give a clue that points to meaning, use, or context.",
-              clue: cardPick.card.curriculum_tag || ""
+              id: "wc-fallback",
+              target_word: "House",
+              forbidden_words: ["home", "live", "family", "room"],
+              grade_band: "K-2",
+              subject: "ELA",
+              curriculum_tag: "Vocabulary",
+              drawing_prompt: "Draw a simple place where people live.",
+              acting_prompt: "Act like you are opening the door and going inside.",
+              image_supported: true,
+              image_keyword: "house",
+              teacher_created: false
             };
+            cardPick = { card: row, forbiddenWords: row.forbidden_words };
+          }
+          var resolvedForbidden = (cardPick.forbiddenWords || row.forbidden_words || []).slice(0, desiredBlockedCount);
+          var normalizedTarget = String(row.target_word || "").trim();
+          var normalizedForbidden = resolvedForbidden.map(function (word) { return String(word || "").trim().toLowerCase(); }).filter(Boolean);
+          if (normalizedForbidden.indexOf(normalizedTarget.toLowerCase()) >= 0) {
+            if (runtimeRoot && runtimeRoot.console && typeof runtimeRoot.console.error === "function") {
+              runtimeRoot.console.error("[WordClue] Invalid card data: target appears in forbidden set", {
+                id: row.id,
+                target: normalizedTarget,
+                forbidden: resolvedForbidden
+              });
+            }
           }
           return {
             id: row.id || ("wc-" + Date.now()),
             promptLabel: "Clue the word without using the blocked words.",
-            entryLabel: generated && generated.instructionalFocus || (input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
+            entryLabel: (input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
               ? "One speaker clues. The group locks the guess."
               : "Give just enough clues so a partner can name the word."),
-            targetWord: generated && generated.targetWord || row.target || "analyze",
-            forbiddenWords: cardPick ? cardPick.forbiddenWords : buildForbiddenWords(row, generated, desiredBlockedCount),
-            scaffolds: generated && generated.scaffolds || row.scaffolds || [],
-            requiredMove: row.requiredMove || (input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
+            targetWord: normalizedTarget || "House",
+            forbiddenWords: resolvedForbidden.map(function (word) { return String(word || "").trim(); }).filter(Boolean),
+            scaffolds: [row.curriculum_tag || ("Grade " + row.grade_band + " " + row.subject)],
+            requiredMove: (tabooMode === "draw"
+                ? (row.drawing_prompt || "Draw the concept with no letters or numbers.")
+                : tabooMode === "act"
+                  ? (row.acting_prompt || "Act out the idea with movement only.")
+                  : "Give a clue that points to meaning, use, or context.") || (input.settings.viewMode === "projector" || input.settings.viewMode === "classroom"
               ? "Give one clean clue the whole class can build on without saying the blocked words."
               : "Use a clear clue in one or two complete sentences that fit the lesson."),
             timerSeconds: 45,
-            hint: (generated && generated.scaffolds || row.scaffolds || [])[0] || "Try an example, function, or comparison instead of a definition.",
+            hint: (row.curriculum_tag || "") || "Try an example, function, or comparison instead of a definition.",
             playMode: tabooMode,
             modeInstruction: wordConnectionsInstruction(tabooMode),
             blockedCount: desiredBlockedCount,
-            imageSrc: row.image || row.imageUrl || "",
-            gradeBand: cardPick && cardPick.card && cardPick.card.grade_band || normalizeGradeBand(currentContext.gradeBand || "K-2"),
-            subject: cardPick && cardPick.card && cardPick.card.subject || String(currentContext.subject || "ELA").toUpperCase(),
-            curriculumTag: cardPick && cardPick.card && cardPick.card.curriculum_tag || "",
-            teacherCreated: Boolean(cardPick && cardPick.card && cardPick.card.teacher_created),
-            drawingPrompt: cardPick && cardPick.card && cardPick.card.drawing_prompt || "",
-            actingPrompt: cardPick && cardPick.card && cardPick.card.acting_prompt || "",
+            imageSrc: row.image_supported ? ("https://source.unsplash.com/featured/640x420/?" + encodeURIComponent(row.image_keyword || row.target_word || "classroom")) : "",
+            gradeBand: row.grade_band || normalizeGradeBand(currentContext.gradeBand || "K-2"),
+            subject: row.subject || String(currentContext.subject || "ELA").toUpperCase(),
+            curriculumTag: row.curriculum_tag || "",
+            teacherCreated: Boolean(row.teacher_created),
+            drawingPrompt: row.drawing_prompt || "",
+            actingPrompt: row.acting_prompt || "",
+            cardRecordId: row.id || "",
             basePoints: 100
           };
         },
@@ -2137,6 +2162,7 @@
         difficulty: "core",
         wordConnectionsDifficulty: 3,
         wordConnectionsMode: "speak",
+        wordClueCardStyle: "standard",
         wordClueGradeBand: normalizeGradeBand(context.gradeBand || "K-2"),
         wordClueSubject: String(context.subject || "ELA").toUpperCase(),
         wordClueCurriculum: "",
@@ -2483,6 +2509,11 @@
 
       if (currentGame.id === "word-connections" && state.round) {
         var clue = uiState.wordClue;
+        if (state.round && (typeof state.round.targetWord !== "string" || !Array.isArray(state.round.forbiddenWords))) {
+          if (runtimeRoot.console && typeof runtimeRoot.console.error === "function") {
+            runtimeRoot.console.error("[WordClue] Invalid active card object", state.round);
+          }
+        }
         var timerSeconds = wordCluePresetSeconds(clue.timerPreset);
         var timerBadge = timerSeconds ? (String(timerSeconds) + "s") : "Untimed";
         var styleBadge = String(clue.cardStyle || "standard").replace(/\b\w/g, function (ch) { return ch.toUpperCase(); });
@@ -2503,6 +2534,17 @@
                 ? "Time ended"
                 : "";
         var blockedWords = (state.round.forbiddenWords || []).slice(0, challengeStyle ? 5 : Math.max(2, Number(clue.blockedCount || 4)));
+        if (String(state.round.targetWord || "").trim() && blockedWords.some(function (word) {
+          return String(word || "").trim().toLowerCase() === String(state.round.targetWord || "").trim().toLowerCase();
+        })) {
+          if (runtimeRoot.console && typeof runtimeRoot.console.error === "function") {
+            runtimeRoot.console.error("[WordClue] Active card failed integrity check: target is inside forbidden words", {
+              targetWord: state.round.targetWord,
+              forbiddenWords: blockedWords,
+              cardRecordId: state.round.cardRecordId || ""
+            });
+          }
+        }
         var revealHint = (state.round.scaffolds || [state.round.hint || "Use examples, function, or context clues."])[0] || "";
         var deckWords = [state.round.targetWord].concat(blockedWords).filter(Boolean).slice(0, 4);
         shell.innerHTML = [
@@ -3616,6 +3658,7 @@
       Array.prototype.forEach.call(shell.querySelectorAll("[data-word-clue-style]"), function (button) {
         button.addEventListener("click", function () {
           uiState.wordClue.cardStyle = String(button.getAttribute("data-word-clue-style") || "standard");
+          engine.updateSettings({ wordClueCardStyle: uiState.wordClue.cardStyle });
           if (uiState.wordClue.cardStyle === "draw") {
             uiState.wordClue.mode = "draw";
             engine.updateSettings({ wordConnectionsMode: "draw" });
@@ -3635,19 +3678,19 @@
           if (previewMode === "picture") {
             uiState.wordClue.cardStyle = "picture";
             uiState.wordClue.mode = "speak";
-            engine.updateSettings({ wordConnectionsMode: "speak" });
+            engine.updateSettings({ wordConnectionsMode: "speak", wordClueCardStyle: "picture" });
           } else if (previewMode === "draw") {
             uiState.wordClue.cardStyle = "draw";
             uiState.wordClue.mode = "draw";
-            engine.updateSettings({ wordConnectionsMode: "draw" });
+            engine.updateSettings({ wordConnectionsMode: "draw", wordClueCardStyle: "draw" });
           } else if (previewMode === "challenge") {
             uiState.wordClue.cardStyle = "challenge";
             uiState.wordClue.mode = "speak";
-            engine.updateSettings({ wordConnectionsMode: "speak" });
+            engine.updateSettings({ wordConnectionsMode: "speak", wordClueCardStyle: "challenge" });
           } else {
             uiState.wordClue.cardStyle = "standard";
             uiState.wordClue.mode = "speak";
-            engine.updateSettings({ wordConnectionsMode: "speak" });
+            engine.updateSettings({ wordConnectionsMode: "speak", wordClueCardStyle: "standard" });
           }
           resetRoundUi();
           engine.restartGame();
@@ -3752,7 +3795,10 @@
       var clueMode = document.getElementById("cg-word-connections-mode");
       if (clueMode) clueMode.addEventListener("change", function () {
         uiState.wordClue.mode = String(clueMode.value || "speak");
-        engine.updateSettings({ wordConnectionsMode: clueMode.value });
+        if (uiState.wordClue.mode === "draw") uiState.wordClue.cardStyle = "draw";
+        if (uiState.wordClue.mode === "act") uiState.wordClue.cardStyle = "relay";
+        if (uiState.wordClue.mode === "speak" && uiState.wordClue.cardStyle === "relay") uiState.wordClue.cardStyle = "standard";
+        engine.updateSettings({ wordConnectionsMode: clueMode.value, wordClueCardStyle: uiState.wordClue.cardStyle });
         resetRoundUi();
         engine.restartGame();
       });
