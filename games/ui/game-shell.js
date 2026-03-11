@@ -2511,11 +2511,29 @@
           '    <div class="cg-word-clue-v2-title"><h1>Word Clue</h1></div>',
           '    <div class="cg-word-clue-v2-actions">' + toolbarParts.join("") + '<button class="cg-action cg-action-quiet" type="button" data-action="wc-toggle-setup">' + runtimeRoot.CSGameComponents.escapeHtml(clue.setupOpen ? "Hide Setup" : "Setup") + "</button></div>",
           "  </header>",
-          '  <div class="cg-word-clue-v2-preview-deck" aria-label="Round type preview deck">',
-          '    <button class="cg-word-clue-v2-preview-card is-classic' + (clue.cardStyle === "standard" ? " is-active" : "") + '" type="button" data-word-clue-style="standard" aria-pressed="' + String(clue.cardStyle === "standard") + '"><span class="cg-word-clue-v2-preview-badge">Classic clue</span><span class="cg-word-clue-v2-preview-word">HOUSE</span><span class="cg-word-clue-v2-preview-meta">Say it without these</span><ul class="cg-word-clue-v2-preview-list"><li>home</li><li>live</li><li>family</li></ul></button>',
-          '    <button class="cg-word-clue-v2-preview-card is-picture' + (clue.cardStyle === "picture" ? " is-active" : "") + '" type="button" data-word-clue-style="picture" aria-pressed="' + String(clue.cardStyle === "picture") + '"><span class="cg-word-clue-v2-preview-badge">Picture clue</span><span class="cg-word-clue-v2-preview-word">DOG</span><span class="cg-word-clue-v2-preview-visual" aria-hidden="true">🐶</span><span class="cg-word-clue-v2-preview-meta">Image support is on</span></button>',
-          '    <button class="cg-word-clue-v2-preview-card is-draw' + (clue.cardStyle === "draw" ? " is-active" : "") + '" type="button" data-word-clue-style="draw" aria-pressed="' + String(clue.cardStyle === "draw") + '"><span class="cg-word-clue-v2-preview-badge">Draw it</span><span class="cg-word-clue-v2-preview-word">SUN</span><span class="cg-word-clue-v2-preview-draw" aria-hidden="true"><span class="cg-word-clue-v2-preview-scribble"></span></span><span class="cg-word-clue-v2-preview-meta">No image, sketch only</span></button>',
-          '    <button class="cg-word-clue-v2-preview-card is-challenge' + (clue.cardStyle === "challenge" ? " is-active" : "") + '" type="button" data-word-clue-style="challenge" aria-pressed="' + String(clue.cardStyle === "challenge") + '"><span class="cg-word-clue-v2-preview-badge">Challenge round</span><span class="cg-word-clue-v2-preview-word">PIZZA</span><span class="cg-word-clue-v2-preview-meta">Harder forbidden set</span><ul class="cg-word-clue-v2-preview-list"><li>cheese</li><li>slice</li><li>eat</li><li>italian</li></ul></button>',
+          '  <div class="wc-preview-portrait-deck" id="wcPreviewPortraitDeck" aria-label="Word Clue preview cards">',
+          '    <button class="wc-mini-card wc-mini-card--classic' + (clue.cardStyle === "standard" ? " is-active" : "") + '" type="button" data-preview-mode="classic" aria-pressed="' + String(clue.cardStyle === "standard") + '">',
+          '      <div class="wc-mini-card__badge">Classic clue</div>',
+          '      <div class="wc-mini-card__word">HOUSE</div>',
+          '      <div class="wc-mini-card__list"><div>home</div><div>live</div><div>family</div></div>',
+          '    </button>',
+          '    <button class="wc-mini-card wc-mini-card--picture' + (clue.cardStyle === "picture" ? " is-active" : "") + '" type="button" data-preview-mode="picture" aria-pressed="' + String(clue.cardStyle === "picture") + '">',
+          '      <div class="wc-mini-card__badge">Picture clue</div>',
+          '      <div class="wc-mini-card__word">DOG</div>',
+          '      <div class="wc-mini-card__image" aria-hidden="true">🐶</div>',
+          '      <div class="wc-mini-card__list wc-mini-card__list--short"><div>pet</div><div>bark</div></div>',
+          '    </button>',
+          '    <button class="wc-mini-card wc-mini-card--draw' + (clue.cardStyle === "draw" ? " is-active" : "") + '" type="button" data-preview-mode="draw" aria-pressed="' + String(clue.cardStyle === "draw") + '">',
+          '      <div class="wc-mini-card__badge">Draw it</div>',
+          '      <div class="wc-mini-card__word">SUN</div>',
+          '      <div class="wc-mini-card__drawpad"></div>',
+          '      <div class="wc-mini-card__hint">No image. Sketch only.</div>',
+          '    </button>',
+          '    <button class="wc-mini-card wc-mini-card--challenge' + (clue.cardStyle === "challenge" ? " is-active" : "") + '" type="button" data-preview-mode="challenge" aria-pressed="' + String(clue.cardStyle === "challenge") + '">',
+          '      <div class="wc-mini-card__badge">Challenge</div>',
+          '      <div class="wc-mini-card__word">PIZZA</div>',
+          '      <div class="wc-mini-card__list"><div>cheese</div><div>slice</div><div>Italian</div><div>eat</div></div>',
+          '    </button>',
           "  </div>",
           '  <main class="cg-word-clue-v2-stage">',
           '    <div class="cg-word-clue-v2-stage-grid">',
@@ -3608,6 +3626,31 @@
           resetRoundUi();
           engine.restartGame();
           render();
+        });
+      });
+
+      Array.prototype.forEach.call(shell.querySelectorAll("[data-preview-mode]"), function (button) {
+        button.addEventListener("click", function () {
+          var previewMode = String(button.getAttribute("data-preview-mode") || "classic");
+          if (previewMode === "picture") {
+            uiState.wordClue.cardStyle = "picture";
+            uiState.wordClue.mode = "speak";
+            engine.updateSettings({ wordConnectionsMode: "speak" });
+          } else if (previewMode === "draw") {
+            uiState.wordClue.cardStyle = "draw";
+            uiState.wordClue.mode = "draw";
+            engine.updateSettings({ wordConnectionsMode: "draw" });
+          } else if (previewMode === "challenge") {
+            uiState.wordClue.cardStyle = "challenge";
+            uiState.wordClue.mode = "speak";
+            engine.updateSettings({ wordConnectionsMode: "speak" });
+          } else {
+            uiState.wordClue.cardStyle = "standard";
+            uiState.wordClue.mode = "speak";
+            engine.updateSettings({ wordConnectionsMode: "speak" });
+          }
+          resetRoundUi();
+          engine.restartGame();
         });
       });
 

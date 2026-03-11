@@ -6747,6 +6747,142 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"]
   margin: 0 2px 2px;
 }
 
+/* WORD CLUE — PORTRAIT PREVIEW DECK */
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-preview-portrait-deck {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 6px 4px 10px;
+  scrollbar-width: thin;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
+  flex: 0 0 180px;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 20px;
+  border: 2px solid rgba(19, 31, 58, 0.18);
+  background: linear-gradient(180deg, #ffffff 0%, #f5f8ff 100%);
+  color: #1b2743;
+  text-align: left;
+  box-shadow: 0 10px 22px rgba(8, 12, 24, 0.18), 0 2px 0 rgba(8, 12, 24, 0.10);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card:hover,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(8, 12, 24, 0.22), 0 2px 0 rgba(8, 12, 24, 0.12);
+  outline: none;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card.is-active {
+  border-color: #7da0ff;
+  box-shadow: 0 16px 30px rgba(8, 12, 24, 0.24), 0 0 0 3px rgba(125, 160, 255, 0.22);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__badge {
+  align-self: flex-start;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eaf0ff;
+  color: #35528d;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__word {
+  font-size: 1.7rem;
+  line-height: 0.95;
+  font-weight: 1000;
+  letter-spacing: 0.01em;
+  color: #23365f;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__list div {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #fff8f4;
+  border: 2px solid #d39a82;
+  color: #94472e;
+  font-weight: 800;
+  text-transform: lowercase;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__list--short div {
+  background: #f6fbff;
+  border-color: #9eb9e8;
+  color: #385d95;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__image {
+  display: grid;
+  place-items: center;
+  height: 78px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #e8f1ff 0%, #dbe8ff 100%);
+  font-size: 2.5rem;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__drawpad {
+  height: 78px;
+  border-radius: 16px;
+  border: 2px dashed #97add5;
+  background: repeating-linear-gradient(0deg, rgba(104, 125, 166, 0.07) 0, rgba(104, 125, 166, 0.07) 2px, transparent 2px, transparent 18px);
+  position: relative;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__drawpad::before,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__drawpad::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  height: 3px;
+  background: #6e88b8;
+  border-radius: 999px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__drawpad::before {
+  top: 34px;
+  transform: rotate(-7deg);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__drawpad::after {
+  top: 48px;
+  transform: rotate(5deg);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card__hint {
+  color: #66789b;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card--challenge {
+  background: linear-gradient(180deg, #fff8f3 0%, #fcebdd 100%);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card--challenge .wc-mini-card__badge {
+  background: #ffe6d8;
+  color: #a0492d;
+}
+
 body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-preview-card {
   position: relative;
   border-radius: 16px;
