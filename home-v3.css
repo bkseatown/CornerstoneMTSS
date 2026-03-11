@@ -853,13 +853,28 @@ body.cs-home-page {
 
   .home-role-btn {
     min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, auto) auto;
+    align-content: start;
     padding: 11px;
     gap: 8px;
+    overflow: hidden;
   }
+
+  .home-role-btn--primary {
+    grid-template-areas:
+      "preview body"
+      "cta body";
+  }
+
+  .home-role-btn--primary .home-role-preview { grid-area: preview; }
+  .home-role-btn--primary .home-role-body { grid-area: body; min-width: 0; }
+  .home-role-btn--primary .home-role-cta { grid-area: cta; align-self: start; }
 
   .home-role-preview {
     min-height: 86px;
     padding: 8px;
+    overflow: hidden;
   }
 
   .home-role-btn--primary .home-role-preview {
@@ -869,6 +884,7 @@ body.cs-home-page {
   .home-role-sub {
     font-size: 0.82rem;
     line-height: 1.3;
+    overflow-wrap: anywhere;
   }
 
   .home-secondary-grid {
