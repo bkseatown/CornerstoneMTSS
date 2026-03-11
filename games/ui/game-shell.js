@@ -251,6 +251,22 @@
       return set;
     }
 
+    function resolveWordBankMatch(targetWord, wordBankWords) {
+      var normalized = normalizeWordKey(targetWord);
+      if (wordBankWords[normalized]) return { matched: true, canonical: normalized, strategy: "exact" };
+      if (normalized.endsWith("ed")) {
+        var baseEd = normalized.slice(0, -2);
+        if (wordBankWords[baseEd]) return { matched: true, canonical: baseEd, strategy: "lemma-ed" };
+      }
+      if (normalized.endsWith("ing")) {
+        var baseIng = normalized.slice(0, -3);
+        var baseIngE = baseIng + "e";
+        if (wordBankWords[baseIng]) return { matched: true, canonical: baseIng, strategy: "lemma-ing" };
+        if (wordBankWords[baseIngE]) return { matched: true, canonical: baseIngE, strategy: "lemma-ing-e" };
+      }
+      return { matched: false, canonical: normalized, strategy: "none" };
+    }
+
     function normalizeStarterCards(raw) {
       return (Array.isArray(raw) ? raw : []).map(function (card) {
         return {
@@ -275,11 +291,18 @@
       var starter = normalizeStarterCards(rawStarterCards);
       var wordBankWords = extractWordBankWordSet();
       var unmatched = [];
-      var matched = starter.filter(function (card) {
-        var matchedWord = Boolean(wordBankWords[normalizeWordKey(card.target_word)]);
-        if (!matchedWord) unmatched.push(card.target_word);
-        return matchedWord;
-      });
+      var matched = starter.reduce(function (acc, card) {
+        var resolved = resolveWordBankMatch(card.target_word, wordBankWords);
+        if (!resolved.matched) {
+          unmatched.push(card.target_word);
+          return acc;
+        }
+        acc.push(Object.assign({}, card, {
+          word_bank_word: resolved.canonical,
+          match_strategy: resolved.strategy
+        }));
+        return acc;
+      }, []);
       trustedWordClueDeckState.cards = matched;
       trustedWordClueDeckState.unmatchedTargets = Object.keys(unmatched.reduce(function (acc, word) {
         acc[String(word)] = true;
