@@ -2265,7 +2265,7 @@
         shell.innerHTML = [
           '<section class="cg-word-clue-v2" data-phase="' + runtimeRoot.CSGameComponents.escapeHtml(clue.phase) + '" data-style="' + runtimeRoot.CSGameComponents.escapeHtml(clue.cardStyle) + '">',
           '  <header class="cg-word-clue-v2-topbar">',
-          '    <div class="cg-word-clue-v2-title"><p class="cg-kicker">Cornerstone MTSS</p><h1>Word Clue</h1></div>',
+          '    <div class="cg-word-clue-v2-title"><h1>Word Clue</h1></div>',
           '    <div class="cg-word-clue-v2-actions">' + toolbarParts.join("") + '<button class="cg-action cg-action-quiet" type="button" data-action="wc-toggle-setup">' + runtimeRoot.CSGameComponents.escapeHtml(clue.setupOpen ? "Hide Setup" : "Setup") + "</button></div>",
           "  </header>",
           '  <div class="cg-word-clue-v2-variant-strip" role="tablist" aria-label="Round style">',
