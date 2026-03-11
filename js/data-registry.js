@@ -25,6 +25,8 @@
 
     buildIdPromise = Promise.resolve().then(function () {
       if (root && root.BUILD_ID) return String(root.BUILD_ID);
+      var host = String(root && root.location && root.location.hostname || '').toLowerCase();
+      if (!host || host === 'localhost' || host === '127.0.0.1' || host === '::1') return '';
       if (typeof fetch !== 'function') return '';
       return fetch('./build.json', { cache: 'no-store' })
         .then(function (resp) { return resp && resp.ok ? resp.json() : null; })

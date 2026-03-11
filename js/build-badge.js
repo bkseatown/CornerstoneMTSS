@@ -47,6 +47,7 @@
   }
 
   async function fetchDeployedBuild() {
+    if (isDev()) return null;
     try {
       var res = await fetch(BUILD_JSON_URL, { cache: "no-store" });
       if (!res.ok) return null;

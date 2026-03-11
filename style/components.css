@@ -9357,6 +9357,27 @@ html[data-home-mode="play"] #keyboard {
   overflow: hidden;
 }
 
+html[data-home-mode="play"] .key-row-1,
+html[data-home-mode="play"] .key-row-2,
+html[data-home-mode="play"] .key-row-3 {
+  padding-inline: 0 !important;
+}
+
+html[data-home-mode="play"] .key {
+  max-width: 60px;
+}
+
+html[data-home-mode="play"] .key.wide {
+  flex: 1.2;
+  min-width: 72px;
+  max-width: 96px;
+  font-size: 0.94rem;
+}
+
+html[data-home-mode="play"] .key[data-key="Enter"] {
+  font-size: 1.1rem;
+}
+
 html[data-home-mode="play"] .gameplay-audio {
   margin-top: 3px;
   margin-bottom: 4px;
