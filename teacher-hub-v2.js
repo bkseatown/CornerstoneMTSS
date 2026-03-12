@@ -108,6 +108,39 @@
     try { return fn(); } catch (_e) { return null; }
   }
 
+  function todayIsoKey() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function blockMemoryKey() {
+    return "cs.hub.block-memory." + todayIsoKey();
+  }
+
+  function readBlockMemory() {
+    try { return JSON.parse(localStorage.getItem(blockMemoryKey()) || "{}"); }
+    catch (_e) { return {}; }
+  }
+
+  function writeBlockMemory(memory) {
+    try { localStorage.setItem(blockMemoryKey(), JSON.stringify(memory || {})); } catch (_e) {}
+  }
+
+  function recordBlockOpen(blockId) {
+    if (!blockId) return;
+    var memory = readBlockMemory();
+    var current = memory[blockId] || {};
+    memory[blockId] = {
+      opens: Number(current.opens || 0) + 1,
+      lastOpenedAt: new Date().toISOString()
+    };
+    writeBlockMemory(memory);
+  }
+
+  function blockOpenMemory(blockId) {
+    var memory = readBlockMemory();
+    return memory[String(blockId || "")] || { opens: 0, lastOpenedAt: "" };
+  }
+
   function setActiveModeTab(mode) {
     el.modeTabs.forEach(function (tab) {
       var isActive = (tab.getAttribute("data-mode") || "") === mode;
@@ -4820,6 +4853,7 @@
 
   function scorePriorityContext(students, block, isCurrent, isNext) {
     var rows = Array.isArray(students) ? students : [];
+    var memory = blockOpenMemory(block && block.id);
     return rows.reduce(function (score, student) {
       var tier = Number(student && student.tier || 2);
       var trend = String(student && student.trend || "stable");
@@ -4833,6 +4867,7 @@
     }, 0)
     + (isCurrent ? 28 : 0)
     + (isNext ? 16 : 0)
+    + (Number(memory.opens || 0) > 0 ? -Math.min(12, Number(memory.opens || 0) * 4) : 0)
     + (/pull/.test(String(block && block.supportType || "").toLowerCase()) ? 6 : 0);
   }
 
@@ -4864,6 +4899,7 @@
       var isCurrent = !!(currentBlock && block && block.id === currentBlock.id);
       var isNext = !!(!isCurrent && nextBlock && block && block.id === nextBlock.id);
       var score = scorePriorityContext(students, block, isCurrent, isNext);
+      var memory = blockOpenMemory(block && block.id);
       var status = isCurrent ? "Urgent" : (supportCount >= 2 || isNext ? "Watch" : "Ready");
       return {
         block: block,
@@ -4873,6 +4909,7 @@
         supportCount: supportCount,
         isCurrent: isCurrent,
         isNext: isNext,
+        opensToday: Number(memory.opens || 0),
         reason: buildPriorityReason(block, supportCount, isCurrent, isNext),
         angle: describePriorityAngle(block, supportCount, isCurrent, isNext),
         cue: isCurrent ? "Now" : (isNext ? "Up next" : "")
@@ -4956,6 +4993,7 @@
         var block = item.block || {};
         var footerBits = [];
         if (item.cue) footerBits.push('<span>' + escapeHtml(item.cue) + '</span>');
+        if (item.opensToday > 0) footerBits.push('<span>Opened ' + escapeHtml(String(item.opensToday)) + 'x today</span>');
         footerBits.push('<span>' + escapeHtml(String(item.supportCount || 0)) + ' priority</span>');
         return [
           '<button class="th2-priority-item" data-open-block="' + escapeHtml(block.id || "") + '" type="button">',
@@ -5344,6 +5382,7 @@
     if (!blockBtn) return;
     var blockId = blockBtn.getAttribute("data-open-block") || "";
     if (!blockId) return;
+    recordBlockOpen(blockId);
     openClassDetailPage(blockId);
   });
 
