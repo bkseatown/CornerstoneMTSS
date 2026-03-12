@@ -5090,6 +5090,8 @@
         var footerBits = [];
         if (item.cue) footerBits.push('<span>' + escapeHtml(item.cue) + '</span>');
         if (item.opensToday > 0) footerBits.push('<span>Opened ' + escapeHtml(String(item.opensToday)) + 'x today</span>');
+        if (item.recentHistory && item.recentHistory.helped > 0) footerBits.push('<span>' + escapeHtml(String(item.recentHistory.helped)) + ' helped recently</span>');
+        if (item.recentHistory && item.recentHistory.notYet > 0) footerBits.push('<span>' + escapeHtml(String(item.recentHistory.notYet)) + ' still in play</span>');
         if (item.followedCount > 0) footerBits.push('<span>' + escapeHtml(String(item.followedCount)) + ' followed</span>');
         if (item.skippedCount > 0) footerBits.push('<span>' + escapeHtml(String(item.skippedCount)) + ' skipped</span>');
         footerBits.push('<span>' + escapeHtml(String(item.supportCount || 0)) + ' priority</span>');

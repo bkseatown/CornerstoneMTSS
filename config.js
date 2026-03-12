@@ -9,6 +9,8 @@
     enableAnalytics: true,
     enableDemo: true,
     aiEndpoint: null,
+    storageEndpoint: null,
+    storageAuthToken: null,
     requestTimeoutMs: 4000
   };
 
@@ -90,6 +92,8 @@
     if (Number.isNaN(base.requestTimeoutMs) || base.requestTimeoutMs < 1000) base.requestTimeoutMs = defaults.requestTimeoutMs;
 
     if (base.aiEndpoint !== null && typeof base.aiEndpoint !== "string") base.aiEndpoint = null;
+    if (base.storageEndpoint !== null && typeof base.storageEndpoint !== "string") base.storageEndpoint = null;
+    if (base.storageAuthToken !== null && typeof base.storageAuthToken !== "string") base.storageAuthToken = null;
 
     return base;
   }
