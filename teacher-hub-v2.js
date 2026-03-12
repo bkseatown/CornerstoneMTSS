@@ -5029,6 +5029,23 @@
     ].join("\n");
   }
 
+  function priorityConfidenceLabel(item) {
+    var score = Number(item && item.score || 0);
+    if (score >= 90) return "High confidence";
+    if (score >= 55) return "Medium confidence";
+    return "Emerging confidence";
+  }
+
+  function priorityWhyLine(item) {
+    if (!item) return "";
+    var parts = [];
+    if (item.supportCount > 0) parts.push(String(item.supportCount) + " priority student" + (item.supportCount === 1 ? "" : "s"));
+    if (item.opensToday > 0) parts.push("opened " + String(item.opensToday) + "x today");
+    if (item.skippedCount > 0) parts.push(String(item.skippedCount) + " skipped");
+    if (item.followedCount > 0) parts.push(String(item.followedCount) + " followed");
+    return parts.length ? "Why: " + parts.join(" · ") : "";
+  }
+
   function renderPriorityRail(items) {
     var rows = Array.isArray(items) ? items : [];
     if (!rows.length) {
@@ -5086,6 +5103,7 @@
       '  <h2 class="th2-day-brief__title">' + escapeHtml(brief.title) + '</h2>',
       '  <p class="th2-day-brief__summary">' + escapeHtml(brief.summary) + '</p>',
       '  <p class="th2-day-brief__prompt">' + escapeHtml(brief.rationale) + '</p>',
+      (brief.primaryItem ? '  <div class="th2-day-brief__trust"><span class="th2-day-brief__confidence">' + escapeHtml(priorityConfidenceLabel(brief.primaryItem)) + '</span>' + (priorityWhyLine(brief.primaryItem) ? '<span class="th2-day-brief__why">' + escapeHtml(priorityWhyLine(brief.primaryItem)) + '</span>' : '') + '</div>' : ''),
       '  <div class="th2-command-brief-grid">',
       '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.now.label) + '</span><strong>' + escapeHtml(brief.now.value) + '</strong><p>' + escapeHtml(brief.now.meta) + '</p></div>',
       '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.next.label) + '</span><strong>' + escapeHtml(brief.next.value) + '</strong><p>' + escapeHtml(brief.next.meta) + '</p></div>',

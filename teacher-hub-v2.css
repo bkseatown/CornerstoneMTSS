@@ -3359,6 +3359,31 @@ body.th2-page {
   color: var(--text-secondary);
 }
 
+.th2-day-brief__trust {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.th2-day-brief__confidence {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(36, 109, 88, 0.12);
+  color: #276b58;
+  font: 800 10px/1 var(--font-ui, system-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.th2-day-brief__why {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #66738c;
+}
+
 .th2-day-brief__actions {
   display: flex;
   align-items: center;
