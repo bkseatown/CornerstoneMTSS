@@ -34,3 +34,6 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - 2026-03-12: Tightened Word Quest protected shell again in `style/components.css` by reducing actual header chrome, row gaps, wide-key widths, and keyboard height; bumped `word-quest.html` stylesheet cache-buster to `20260312f` so live refreshes pick up the owner CSS immediately.
 - 2026-03-12: Stabilized landing destination cards in `home-v3.css` by replacing flex/space-between content stacking with explicit grid rows to prevent preview/text/button overlap; bumped `index.html` cache-buster to `20260312f`.
 - 2026-03-12: Reduced landing page shell shadow/height pressure in `home-v3.css` and added a localhost-safe synthetic `build.json` response in `sw-runtime.js` to remove local QA 404 noise from the service worker path.
+
+- 2026-03-12: Neutralized older Word Quest play-layout rules earlier in `style/components.css` so the protected viewport-fit block later in the file is the single sizing authority; older play key sizes now align with the protected shell instead of fighting it.
+- 2026-03-12: Removed an older duplicated viewport-fit block from `games/ui/game-shell.css`; the later hard-lock/play-shell owner remains active. Local browser sanity check shows Word Quest fit is stable, while Word Clue still reports stage/control overflow and needs a dedicated CG-shell cleanup pass next.

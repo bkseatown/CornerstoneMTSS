@@ -1342,68 +1342,8 @@ html[data-home-mode="play"] .top-control-hub {
   box-shadow: none;
 }
 
-html[data-home-mode="play"] main {
-  height: auto;
-  min-height: calc(100dvh - var(--play-header-h) - var(--play-focus-h, 0px));
-  padding-top: 18px;
-  padding-bottom: 18px;
-  overflow: visible;
-  gap: 22px;
-}
-
-html[data-home-mode="play"] .board-zone {
-  min-height: auto;
-  gap: 28px;
-  padding-top: 12px;
-}
-
 html[data-home-mode="play"] .gameplay-audio {
   margin-bottom: 8px;
-}
-
-html[data-home-mode="play"] .header-main-row {
-  display: grid;
-  grid-template-columns: minmax(220px, max-content) minmax(0, 1fr);
-  grid-template-areas: "logo right";
-  align-items: center;
-  gap: 8px 14px;
-  min-height: 0;
-}
-
-html[data-home-mode="play"] .logo {
-  grid-area: logo;
-  justify-self: start;
-  min-width: 0;
-  max-width: 100%;
-  padding-right: 10px;
-  font-size: clamp(1.28rem, 2vw, 1.56rem);
-  line-height: 1.02;
-}
-
-html[data-home-mode="play"] .header-right {
-  grid-area: right;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: 46px 30px;
-  grid-template-areas:
-    "icons icons"
-    "focus quick";
-  flex: 1 1 auto;
-  align-items: stretch;
-  justify-items: stretch;
-  gap: 6px 12px;
-  min-width: 0;
-  padding: 10px 12px 4px;
-}
-
-html[data-home-mode="play"] .header-focus-inline-wrap {
-  grid-area: focus;
-  justify-self: start;
-  align-self: end;
-  order: 2;
-  width: min(100%, 390px);
-  min-width: min(100%, 260px);
-  max-width: 390px;
 }
 
 html[data-home-mode="play"] header {
@@ -1427,31 +1367,6 @@ html[data-theme="seahawks"][data-home-mode="play"] header {
   padding: 6px 12px 8px;
   overflow: visible;
   box-shadow: var(--wq-play-header-shadow);
-}
-
-html[data-home-mode="play"] .header-main-row {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    "logo"
-    "right";
-  gap: 0;
-  align-items: stretch;
-  position: static;
-  min-height: 88px;
-}
-
-html[data-home-mode="play"] .logo {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  justify-self: center;
-  text-align: center;
-  padding-right: 0;
-  padding-bottom: 0;
-  font-size: clamp(2rem, 3.8vw, 2.84rem);
-  line-height: 0.94;
-  z-index: 2;
 }
 
 html[data-home-mode="play"] #home-logo-btn {
@@ -1579,43 +1494,8 @@ html[data-home-mode="play"] #teacher-dashboard-btn svg {
   height: 18px;
 }
 
-@media (max-width: 1360px) {
-  html[data-home-mode="play"] .header-main-row {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "logo"
-      "right";
-    align-items: center;
-  }
-
-  html[data-home-mode="play"] .logo {
-    justify-self: center;
-    text-align: center;
-    padding-right: 0;
-  }
-
-  html[data-home-mode="play"] .header-right {
-    width: 100%;
-    justify-items: center;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-
-  html[data-home-mode="play"] .header-focus-inline-wrap {
-    order: 2;
-    width: min(100%, 560px);
-    min-width: 0;
-    max-width: min(100%, 560px);
-    justify-content: center;
-  }
-
-  html[data-home-mode="play"] .header-icon-controls,
-  html[data-home-mode="play"] .header-quick-controls {
-    flex: 0 1 auto;
-    justify-content: center;
-  }
-}
+/* Word Quest protected shell owns play-mode layout later in this file.
+   Keep the early block visual-only so old spacing does not fight the fit system. */
 
 html[data-home-mode="play"] #play-tools-btn.hidden {
   display: none !important;
@@ -5755,16 +5635,16 @@ html[data-home-mode="play"] .key {
   text-shadow: var(--wq-play-key-text-shadow);
   box-shadow: var(--wq-play-key-shadow);
   font-family: var(--wq-play-letter-font, var(--font));
-  font-size: 1.72rem;
+  font-size: clamp(1.4rem, 2.35vh, 1.58rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
 }
 
 html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
-  flex: 0 0 min(calc(var(--key-h) + 2px), calc(var(--tile-size) - 4px));
-  min-width: min(calc(var(--key-h) + 2px), calc(var(--tile-size) - 4px));
-  max-width: min(calc(var(--key-h) + 2px), calc(var(--tile-size) - 4px));
+  flex: 0 0 min(calc(var(--key-h) + 1px), calc(var(--tile-size) - 6px));
+  min-width: min(calc(var(--key-h) + 1px), calc(var(--tile-size) - 6px));
+  max-width: min(calc(var(--key-h) + 1px), calc(var(--tile-size) - 6px));
 }
 
 html[data-home-mode="play"] .key.is-vowel,
@@ -5778,27 +5658,27 @@ html[data-home-mode="play"] .key:hover {
 
 html[data-home-mode="play"] .key.wide {
   background: var(--wq-play-key-wide-bg);
-  font-size: 1.18rem;
-  flex: 1.45;
-  min-width: 86px;
-  max-width: 124px;
+  font-size: 0.82rem;
+  flex: 1.1;
+  min-width: 58px;
+  max-width: 76px;
 }
 
 html[data-home-mode="play"] .key[data-key="Enter"] {
-  font-size: 1.74rem;
+  font-size: 0.92rem;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.95;
 }
 
 html[data-home-mode="play"] .key[data-key="Backspace"] {
-  font-size: 1.24rem;
+  font-size: 1rem;
   font-weight: 900;
 }
 
 html[data-home-mode="play"] .key-backspace-glyph {
-  width: 35px;
-  height: 35px;
+  width: 28px;
+  height: 28px;
   display: block;
   margin: 0 auto;
   opacity: 0.9;
