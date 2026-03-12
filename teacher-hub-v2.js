@@ -538,6 +538,54 @@
     return tier + " " + areas.join("/");
   }
 
+  function blockDisplayTitle(block) {
+    var subject = String(block && block.subject || "").trim();
+    if (/^(math|reading|writing)$/i.test(subject)) return subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
+    return block && (block.label || block.classSection || block.subject) || "Class";
+  }
+
+  function studentSupportLineForBlock(student, block) {
+    var blockArea = inferSupportAreaFromText(block && block.subject);
+    var baseArea = blockArea || inferPrimarySupportArea(student, block);
+    var baseTier = displayTierLabel(student);
+    var rows = [baseTier + " " + baseArea];
+    var supports = Array.isArray(student && student.relatedSupport) ? student.relatedSupport : [];
+    var goalRows = student && student.studentId ? getStudentGoals(student.studentId) : [];
+    var supportRecord = SupportStore && typeof SupportStore.getStudent === "function" && student && student.studentId
+      ? (safe(function () { return SupportStore.getStudent(student.studentId); }) || {})
+      : {};
+    supports.forEach(function (item) {
+      var area = inferSupportAreaFromText(item);
+      if (area && area !== baseArea) {
+        var label = baseTier + " " + area;
+        if (rows.indexOf(label) === -1) rows.push(label);
+      }
+    });
+    goalRows.forEach(function (goal) {
+      var area = inferSupportAreaFromText(goal && goal.domain);
+      var tier = goal && goal.level ? areaTierLabel(goal.level) : "";
+      if (area && area !== baseArea && /^T[23]$/.test(tier)) {
+        var label = tier + " " + area;
+        if (rows.indexOf(label) === -1) rows.push(label);
+      }
+    });
+    (Array.isArray(supportRecord.interventions) ? supportRecord.interventions : []).forEach(function (row) {
+      var area = inferSupportAreaFromText(row && row.domain);
+      var tier = String(row && row.tier || "").toUpperCase();
+      if (area && area !== baseArea && /^T[23]$/.test(tier)) {
+        var label = tier + " " + area;
+        if (rows.indexOf(label) === -1) rows.push(label);
+      }
+    });
+    return rows.join(" • ");
+  }
+
+  function isCommunityOwnedBlock(block, contextData) {
+    var subject = String(block && block.subject || contextData && contextData.derived && contextData.derived.subject || "").toLowerCase();
+    var curriculum = String(block && block.curriculum || contextData && contextData.derived && contextData.derived.curriculum || "").toLowerCase();
+    return /(advisory|community)/.test(subject) || /(second step|wayfinder|community circle)/.test(curriculum);
+  }
+
   var HUB_SEARCH_RESOURCES = [
     { id: "tool-curriculum", kind: "resource", label: "Curriculum Quick Reference", subtitle: "Open curriculum supports", action: "curriculum" },
     { id: "tool-workspace", kind: "resource", label: "Reports", subtitle: "Weekly insights, meetings, history, and exports", href: "reports.html" }
@@ -804,21 +852,17 @@
       lessonHeadline = rawLessonHeadline.slice(String(curriculumLabel).length).trim() || rawLessonHeadline;
     }
     var lessonSummary = derived.mainConcept || "Lesson focus not fully mapped yet.";
-    var lessonHref = appendContextParamsForBlock("game-platform.html", contextData);
-    var classTitle = block.label || block.classSection || block.subject || "Class";
+    var classTitle = blockDisplayTitle(block);
     var classMeta = [block.timeLabel, block.teacher].filter(Boolean).join(" · ");
-    var supportSummary = deriveBlockSupportSummary(contextData) + " Support";
+    var communityOwned = isCommunityOwnedBlock(block, contextData);
     return [
       '<section class="th2-context-zone th2-context-zone--lesson">',
       '  <div class="th2-context-zone__heading"><div class="th2-class-hero"><h1 class="th2-class-hero__title">' + escapeHtml(classTitle) + '</h1>' + (classMeta ? '<p class="th2-class-hero__meta">' + escapeHtml(classMeta) + '</p>' : '') + '</div><button class="th2-inline-link" data-open-brief="1" data-open-brief-block="' + escapeHtml(block.id || "") + '" type="button">Edit lesson</button></div>',
       '  <div class="th2-mission-card">',
       (curriculumLabel ? '    <p class="th2-mission-card__title">' + escapeHtml(curriculumLabel) + "</p>" : ""),
-      '    <p class="th2-mission-card__support-line">' + escapeHtml(supportSummary) + "</p>",
       '    <h2 class="th2-mission-card__headline">' + escapeHtml(lessonHeadline) + "</h2>",
       '    <p class="th2-mission-card__sub">' + escapeHtml(lessonSummary) + "</p>",
       '    <p class="th2-mission-card__target">' + escapeHtml(deriveLearningTarget(contextData)) + "</p>",
-      '    <div class="th2-lesson-alignment"><span>Alignment to support goals</span><strong>' + escapeHtml(buildLessonAlignment(contextData)) + '</strong></div>',
-      '    <div class="th2-mission-card__actions"><a class="th2-inline-link" href="' + escapeHtml(lessonHref) + '">Learn more</a></div>',
       "  </div>",
       "</section>"
     ].join("");
@@ -880,7 +924,13 @@
     var students = contextData && contextData.derived && Array.isArray(contextData.derived.students)
       ? contextData.derived.students
       : [];
-    if (!students.length) return "This lesson supports whole-group access and keeps space for in-the-moment scaffolds.";
+    if (!students.length) {
+      var block = contextData && contextData.block ? contextData.block : {};
+      if (isCommunityOwnedBlock(block, contextData)) {
+        return "Class-owned advisory/community routine";
+      }
+      return "Whole-group access with space for in-the-moment scaffolds.";
+    }
     var goals = students.slice(0, 4).map(function (student) {
       return student.primaryGoal || "";
     }).filter(Boolean).filter(function (goal, index, arr) {
@@ -1291,6 +1341,7 @@
   }
 
   function renderBlockSupportZone(contextData) {
+    var block = contextData && contextData.block ? contextData.block : {};
     var students = contextData && contextData.derived && Array.isArray(contextData.derived.students)
       ? contextData.derived.students
       : [];
@@ -1307,7 +1358,7 @@
         return [
           '<div class="th2-class-student-row">',
           '  <div class="th2-class-student-head">',
-          '    <div class="th2-class-student-title"><a class="th2-student-link" data-context-student="' + escapeHtml(student.studentId || "") + '" href="' + escapeHtml(profileHref) + '"><strong>' + escapeHtml(student.name || "Student") + '</strong></a><span class="th2-class-chip th2-class-chip--primary">' + escapeHtml(displayTierGoalLabel(student)) + '</span></div>',
+          '    <div class="th2-class-student-title"><a class="th2-student-link" data-context-student="' + escapeHtml(student.studentId || "") + '" href="' + escapeHtml(profileHref) + '"><strong>' + escapeHtml(student.name || "Student") + '</strong></a><span class="th2-class-chip th2-class-chip--primary">' + escapeHtml(studentSupportLineForBlock(student, block)) + '</span></div>',
           '    <div class="th2-class-accommodation-icons">' + accommodationIcons(student.accommodations) + '</div>',
           '  </div>',
           '  <div class="th2-student-strength-gap">',
@@ -1319,7 +1370,7 @@
           '  <div class="th2-student-link-row"><a class="th2-inline-link" data-context-student="' + escapeHtml(student.studentId || "") + '" href="' + escapeHtml(profileHref) + '">Open student profile</a></div>',
           '</div>'
         ].join("");
-      }).join("") : '<p class="th2-today-sub">Support student details will appear here after the block roster is set.</p>') +
+      }).join("") : (isCommunityOwnedBlock(block, contextData) ? '' : '<p class="th2-today-sub">Support student details will appear here after the block roster is set.</p>')) +
       '</div>',
       '  </div>',
       '</section>'
@@ -1335,7 +1386,6 @@
     }
     var contextData = buildTeacherContextForBlock(block);
     el.emptyState.innerHTML = [
-      '<button class="th2-back-to-schedule" data-back-to-schedule="1" type="button">← Today\'s schedule</button>',
       '<div class="th2-command-center th2-command-center--class-detail">',
       renderBlockContextHeader(contextData),
       '<section class="th2-active-context">',
@@ -1380,7 +1430,6 @@
     }
     var contextData = buildTeacherContextForBlock(block);
     el.emptyState.innerHTML = [
-      '<button class="th2-back-to-schedule" data-back-to-schedule="1" type="button">← Today\'s schedule</button>',
       '<div class="th2-command-center">',
       renderBlockContextHeader(contextData),
       '<section class="th2-active-context">',
@@ -3256,10 +3305,10 @@
             classSection: "Elementary Homeroom Community Block",
             teacher: "Ms. Smith",
             subject: "Advisory",
-            curriculum: "Community Circle",
+            curriculum: "Second Step",
             curriculumId: "community-circle",
-            lesson: "Daily launch and attendance routines",
-            supportType: "push-in",
+            lesson: "Community launch and check-in",
+            supportType: "core",
             notes: "Set the day, preview transitions, and gather quick student check-ins.",
             studentIds: [],
             lessonContextId: "demo-lesson-morning"
@@ -3267,7 +3316,7 @@
           {
             id: "demo-block-math",
             timeLabel: "8:20 AM - 9:10 AM",
-            label: "Math Core Support",
+            label: "Math",
             classSection: "Grade 4 Math",
             teacher: "Ms. Smith",
             subject: "Math",
@@ -3297,7 +3346,7 @@
           {
             id: "demo-block-ela",
             timeLabel: "9:35 AM - 10:30 AM",
-            label: "Reading Workshop",
+            label: "Reading",
             classSection: "Grade 3 Reading",
             teacher: "Ms. Rivera",
             subject: "Reading",
@@ -3312,7 +3361,7 @@
           {
             id: "demo-block-writing",
             timeLabel: "10:30 AM - 11:20 AM",
-            label: "Writing Workshop",
+            label: "Writing",
             classSection: "Grade 3 Writing",
             teacher: "Ms. Patel",
             subject: "Writing",
@@ -3327,7 +3376,7 @@
           {
             id: "demo-block-content",
             timeLabel: "11:20 AM - 12:05 PM",
-            label: "Science / Social Studies Support",
+            label: "Science / Social Studies",
             classSection: "Grade 3 Content Literacy",
             teacher: "Ms. Patel",
             subject: "Science/Social Studies",
@@ -3356,7 +3405,7 @@
           },
           {
             id: "demo-block-specials",
-            timeLabel: "1:10 PM - 1:55 PM",
+            timeLabel: "2:00 PM - 2:45 PM",
             label: "World Language / Specials",
             classSection: "Art · Music · PE · World Language",
             teacher: "Specials Team",
@@ -3382,16 +3431,16 @@
             label: "Morning Meeting",
             teacher: "Ms. Smith",
             subject: "Advisory",
-            curriculum: "Community Circle",
-            lesson: "Daily launch and attendance routines",
-            supportType: "push-in",
-            conceptFocus: "Build readiness, emotional check-in, and day preview.",
+            curriculum: "Second Step",
+            lesson: "Community launch and check-in",
+            supportType: "core",
+            conceptFocus: "Build community, emotional check-in, and a calm launch into the day.",
             languageDemands: ["share", "listen", "reflect"],
             lessonContextId: "demo-lesson-morning"
           });
           TeacherStorage.saveClassContext("demo-block-math", {
             classId: "demo-block-math",
-            label: "Math Core Support",
+            label: "Math",
             teacher: "Ms. Smith",
             subject: "Math",
             curriculum: "Illustrative Math",
@@ -3415,7 +3464,7 @@
           });
           TeacherStorage.saveClassContext("demo-block-ela", {
             classId: "demo-block-ela",
-            label: "Reading Workshop",
+            label: "Reading",
             teacher: "Ms. Rivera",
             subject: "Reading",
             curriculum: "Fish Tank Reading",
@@ -3427,7 +3476,7 @@
           });
           TeacherStorage.saveClassContext("demo-block-writing", {
             classId: "demo-block-writing",
-            label: "Writing Workshop",
+            label: "Writing",
             teacher: "Ms. Patel",
             subject: "Writing",
             curriculum: "Fish Tank Writing",
@@ -3439,7 +3488,7 @@
           });
           TeacherStorage.saveClassContext("demo-block-content", {
             classId: "demo-block-content",
-            label: "Science / Social Studies Support",
+            label: "Science / Social Studies",
             teacher: "Ms. Patel",
             subject: "Science/Social Studies",
             curriculum: "Knowledge Builder",
@@ -3480,10 +3529,10 @@
             lessonContextId: "demo-lesson-morning",
             blockId: "demo-block-morning",
             subject: "Advisory",
-            programId: "community-circle",
-            unit: "Morning Meeting",
-            title: "Daily launch",
-            conceptFocus: "Build belonging and preview the day so transitions feel predictable.",
+            programId: "second-step",
+            unit: "Second Step",
+            title: "Community launch and check-in",
+            conceptFocus: "Build belonging, emotional check-in, and a predictable transition into the day.",
             languageDemands: ["share", "listen", "reflect"],
             misconceptions: [
               "Students can miss the academic purpose if the meeting becomes only procedural.",

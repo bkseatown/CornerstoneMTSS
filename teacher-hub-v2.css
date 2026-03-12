@@ -86,16 +86,38 @@ body.th2-page {
 .th2-brand {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
   text-decoration: none;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
-  opacity: 0.85;
-  transition: opacity 0.12s ease;
-  padding: 2px 0;
+  color: #2d5ea0;
+  opacity: 0.98;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  padding: 6px 10px 6px 0;
+  position: relative;
+}
+
+.th2-brand::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #2d6df0 0%, #204b9a 100%);
+  box-shadow: 0 0 0 3px rgba(45, 109, 240, 0.12);
+  flex: 0 0 auto;
+}
+
+.th2-brand::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 28%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(45, 109, 240, 0.95), rgba(45, 109, 240, 0));
 }
 
 .th2-section-label,
@@ -112,12 +134,19 @@ body.th2-page {
   letter-spacing: -0.015em;
 }
 
-.th2-brand:hover { opacity: 1; }
-.th2-brand-sep { opacity: 0.5; font-size: 14px; letter-spacing: 0; }
+.th2-brand:hover { opacity: 1; transform: translateY(-1px); }
+.th2-brand-word { color: #1d3760; }
+.th2-brand-mtss { color: #4c6ea4; }
+.th2-brand-sep { opacity: 0.45; font-size: 14px; letter-spacing: 0; }
 
 /* ── Search ────────────────────────────────────────────── */
 
 .th2-search-wrap { position: relative; }
+
+.th2-search {
+  width: 100%;
+  min-width: 0;
+}
 
 .th2-search {
   width: 100%;
@@ -682,15 +711,16 @@ body.th2-page {
 }
 
 .th2-mission-card {
-  padding: 20px;
+  padding: 16px 18px;
   background:
     radial-gradient(circle at top right, rgba(200, 75, 49, 0.08), transparent 34%),
     linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .th2-mission-card__title {
-  margin: 0 0 10px;
-  font-size: 11px;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -725,28 +755,28 @@ body.th2-page {
 }
 
 .th2-mission-card__headline {
-  margin: 0 0 10px;
-  font-size: 34px;
+  margin: 0 0 8px;
+  font-size: 28px;
   line-height: 1.02;
   letter-spacing: -0.04em;
   color: var(--text-primary);
 }
 
 .th2-mission-card__sub {
-  margin: 0 0 18px;
-  font-size: 15px;
-  line-height: 1.5;
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.42;
   color: var(--text-secondary);
 }
 
 .th2-mission-card__target {
-  margin: 0 0 18px;
-  padding: 12px 14px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
   border-radius: 14px;
   background: #eef5ff;
   border: 1px solid rgba(45,109,240,0.12);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 12px;
+  line-height: 1.38;
   color: #1f3558;
 }
 
@@ -4560,10 +4590,10 @@ body.th2-page {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  padding: 4px 9px;
+  padding: 4px 8px;
   background: #edf2fb;
   color: #45607f;
-  font: 700 11px/1 var(--font-ui, system-ui);
+  font: 700 10px/1 var(--font-ui, system-ui);
 }
 
 .th2-class-chip--primary {
@@ -4574,7 +4604,7 @@ body.th2-page {
 .th2-class-goal,
 .th2-class-accommodations {
   margin: 0;
-  font: 400 13px/1.45 var(--font-ui, system-ui);
+  font: 400 12px/1.4 var(--font-ui, system-ui);
   color: var(--text-secondary);
 }
 
@@ -4587,7 +4617,7 @@ body.th2-page {
 .th2-student-strength-gap div {
   display: grid;
   gap: 4px;
-  padding: 12px 13px;
+  padding: 10px 12px;
   border-radius: 12px;
   background: #f7faff;
   border: 1px solid rgba(197, 207, 224, 0.72);
@@ -4603,8 +4633,8 @@ body.th2-page {
 
 .th2-student-strength-gap p {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 11px;
+  line-height: 1.35;
   color: var(--text-secondary);
 }
 
@@ -6004,7 +6034,7 @@ textarea::placeholder {
 
 /* ── Tablet landscape (1025–1280px): narrow sidebar ─────── */
 @media (max-width: 1280px) and (min-width: 1025px) {
-  .th2-shell { grid-template-columns: 240px 1fr; }
+  .th2-shell { grid-template-columns: 280px 1fr; }
   .th2-sidebar-head { padding: 14px 12px 10px; }
   .th2-brand-word { font-size: 14px; }
 }
