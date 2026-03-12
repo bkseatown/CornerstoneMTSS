@@ -3345,8 +3345,8 @@ body.th2-page {
 
 .th2-day-brief__title {
   margin: 0;
-  font-size: 28px;
-  line-height: 1;
+  font-size: 30px;
+  line-height: 0.98;
   letter-spacing: -0.04em;
   color: var(--text-primary);
 }
@@ -3354,33 +3354,33 @@ body.th2-page {
 .th2-day-brief__summary,
 .th2-day-brief__prompt {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 12.5px;
+  line-height: 1.4;
   color: var(--text-secondary);
 }
 
 .th2-day-brief__actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .th2-day-brief--command {
-  gap: 14px;
+  gap: 12px;
 }
 
 .th2-command-brief-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .th2-command-brief-card {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
-  padding: 14px 15px;
+  padding: 13px 14px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(45, 109, 240, 0.1);
@@ -3396,7 +3396,7 @@ body.th2-page {
 }
 
 .th2-command-brief-card strong {
-  font-size: 22px;
+  font-size: 21px;
   line-height: 1.06;
   letter-spacing: -0.04em;
   color: var(--text-primary);
@@ -3455,6 +3455,14 @@ body.th2-page {
   transition: background 0.14s, border-color 0.14s, transform 0.1s, box-shadow 0.14s;
 }
 
+.th2-priority-item:first-child {
+  border-color: rgba(197, 139, 66, 0.24);
+  background:
+    radial-gradient(circle at top right, rgba(199, 144, 105, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,244,238,0.98) 100%);
+  box-shadow: 0 16px 30px rgba(74, 58, 39, 0.1);
+}
+
 .th2-priority-item:hover {
   transform: translateY(-1px);
   border-color: rgba(58,111,216,0.28);
@@ -3503,7 +3511,7 @@ body.th2-page {
 }
 
 .th2-priority-item__title {
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--text-primary);
