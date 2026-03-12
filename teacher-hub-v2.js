@@ -317,6 +317,10 @@
     return totals;
   }
 
+  function latestRecommendationHistory(studentId) {
+    return readRecommendationHistory(studentId).slice(0, 1)[0] || null;
+  }
+
   function recommendationQualityLabel(item) {
     return hubPriorityEngine && typeof hubPriorityEngine.recommendationQualityLabel === "function"
       ? hubPriorityEngine.recommendationQualityLabel(item)
@@ -4470,6 +4474,12 @@
     var recTitle  = String((tenMin && tenMin.title) || (plan.recommendedMove) || "Focused intervention");
     var recReason = String((tenMin && tenMin.reason) || (plan.reasoning && plan.reasoning[0]) || "Based on recent skill signals.");
     var launch    = tenMin && tenMin.launch;
+    var recHistory = latestRecommendationHistory(studentId);
+    var recHistoryLine = recHistory && recHistory.outcome === "helped"
+      ? "Last similar move helped recently."
+      : (recHistory && recHistory.outcome === "not-yet"
+        ? "Last similar move still needs another pass."
+        : "");
 
     // Tier signal from plan or TierEngine
     var trendDecision = String(
@@ -4529,6 +4539,7 @@
       '  <p class="th2-rec-kicker">Recommended session</p>',
       '  <p class="th2-rec-title">' + escapeHtml(recTitle) + '</p>',
       '  <p class="th2-rec-reason">' + escapeHtml(recReason) + '</p>',
+      (recHistoryLine ? '  <p class="th2-rec-reason">' + escapeHtml(recHistoryLine) + '</p>' : ''),
       buildEvidenceChips(summary),
       '</div>',
 

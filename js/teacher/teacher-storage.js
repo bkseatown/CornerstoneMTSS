@@ -7,6 +7,10 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function createTeacherStorage() {
   "use strict";
 
+  var storageBridge = typeof globalThis !== "undefined" && globalThis.CSStorageBridge
+    ? globalThis.CSStorageBridge
+    : null;
+
   var KEYS = {
     teacherProfile: "cs.teacher.profile.v1",
     scheduleBlocks: "cs.schedule.blocks.v1",
@@ -38,6 +42,52 @@
   function writeJson(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function get(key) {
+    var name = String(key || "").trim();
+    if (!name) return "";
+    if (storageBridge && typeof storageBridge.get === "function") {
+      try {
+        var bridgeValue = storageBridge.get(name);
+        if (bridgeValue !== null && typeof bridgeValue !== "undefined") return bridgeValue;
+      } catch (_err) {}
+    }
+    try {
+      var raw = localStorage.getItem(name);
+      return raw === null ? "" : raw;
+    } catch (_err) {
+      return "";
+    }
+  }
+
+  function set(key, value) {
+    var name = String(key || "").trim();
+    if (!name) return false;
+    if (storageBridge && typeof storageBridge.set === "function") {
+      try { storageBridge.set(name, value); } catch (_err) {}
+    }
+    try {
+      if (value === null || typeof value === "undefined" || value === "") localStorage.removeItem(name);
+      else localStorage.setItem(name, String(value));
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function remove(key) {
+    var name = String(key || "").trim();
+    if (!name) return false;
+    if (storageBridge && typeof storageBridge.remove === "function") {
+      try { storageBridge.remove(name); } catch (_err) {}
+    }
+    try {
+      localStorage.removeItem(name);
       return true;
     } catch (_err) {
       return false;
@@ -383,6 +433,9 @@
     loadSessionLogs: loadSessionLogs,
     saveSessionLogs: saveSessionLogs,
     migrateLegacyTeacherData: migrateLegacyTeacherData,
+    get: get,
+    set: set,
+    remove: remove,
     readJson: readJson,
     writeJson: writeJson
   };
