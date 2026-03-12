@@ -34,6 +34,19 @@
 
   if (!Evidence || !TeacherRuntimeState) return;
 
+  function bootStorageGet(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw === null ? fallback : raw;
+    } catch (_e) {
+      return fallback;
+    }
+  }
+
+  function bootStorageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (_e) {}
+  }
+
   /* ── URL params ────────────────────────────────────────── */
 
   var urlParams = (function () {
@@ -44,9 +57,9 @@
   var isDemoMode = urlParams.get("demo") === "1" || urlParams.get("audit") === "1";
   // Persist demo flag — dev servers (serve, python) drop query params on redirect
   if (isDemoMode) {
-    try { localStorage.setItem("cs.hub.demo", "1"); } catch (_e) {}
+    bootStorageSet("cs.hub.demo", "1");
   } else {
-    try { isDemoMode = localStorage.getItem("cs.hub.demo") === "1"; } catch (_e) {}
+    isDemoMode = bootStorageGet("cs.hub.demo", "") === "1";
   }
   var initialStudentId = urlParams.get("student") || "";
   var initialClassId = urlParams.get("classId") || "";
@@ -3296,7 +3309,7 @@
 
     /* Sample goals per domain (runs once) */
     var GOALS_SEED_KEY = "cs.hub.demo.goals.v1";
-    if (!localStorage.getItem(GOALS_SEED_KEY)) {
+    if (!hubMemory.getString(GOALS_SEED_KEY, "")) {
       safe(function () {
         // Ava: IESP — Reading / Fluency + Behavior focus
         saveStudentGoals("demo-ava", [
@@ -3325,12 +3338,12 @@
           { domain: "behavior", skill: "Attention & Focus", level: 1 }
         ]);
       });
-      localStorage.setItem(GOALS_SEED_KEY, "1");
+      hubMemory.setString(GOALS_SEED_KEY, "1");
     }
 
     /* Seed realistic session data (runs once per demo session) */
     var SEED_KEY = "cs.hub.demo.sessions.v2";
-    if (!localStorage.getItem(SEED_KEY) && Evidence && typeof Evidence.appendSession === "function") {
+    if (!hubMemory.getString(SEED_KEY, "") && Evidence && typeof Evidence.appendSession === "function") {
       var DAY = 86400000;
       var now  = Date.now();
       /* Ava M. — reading lab sessions, improving fluency */
@@ -3367,11 +3380,11 @@
         Evidence.appendSession("demo-zoe", "wordquest", { misplaceRate: 0.25, absentRate: 0.07, vowelSwapCount: 1 }, now - 5  * DAY);
         Evidence.appendSession("demo-zoe", "wordquest", { misplaceRate: 0.22, absentRate: 0.06, vowelSwapCount: 1 }, now - 2  * DAY);
       });
-      localStorage.setItem(SEED_KEY, "1");
+      hubMemory.setString(SEED_KEY, "1");
     }
 
     var SUPPORT_KEY = "cs.hub.demo.support.v1";
-    if (!localStorage.getItem(SUPPORT_KEY) && TeacherStorage) {
+    if (!hubMemory.getString(SUPPORT_KEY, "") && TeacherStorage) {
       safe(function () {
         var supportMap = typeof TeacherStorage.loadStudentSupportStore === "function"
           ? TeacherStorage.loadStudentSupportStore()
@@ -3435,11 +3448,11 @@
           TeacherStorage.saveStudentSupportStore(supportMap);
         }
       });
-      localStorage.setItem(SUPPORT_KEY, "1");
+      hubMemory.setString(SUPPORT_KEY, "1");
     }
 
     var CONTEXT_KEY = "cs.hub.demo.context.v4";
-    if ((isDemoMode || !localStorage.getItem(CONTEXT_KEY)) && TeacherStorage) {
+    if ((isDemoMode || !hubMemory.getString(CONTEXT_KEY, "")) && TeacherStorage) {
       safe(function () {
         var today = typeof TeacherStorage.todayStamp === "function" ? TeacherStorage.todayStamp() : todayKey();
         var existingBlocks = typeof TeacherStorage.loadScheduleBlocks === "function"
@@ -3851,7 +3864,7 @@
           });
         }
       });
-      localStorage.setItem(CONTEXT_KEY, "1");
+      hubMemory.setString(CONTEXT_KEY, "1");
     }
   }
 
@@ -3869,14 +3882,14 @@
       "demo-lesson-writing": true
     };
     try {
-      localStorage.removeItem("cs.hub.demo");
-      localStorage.removeItem("cs.hub.demo.goals.v1");
-      localStorage.removeItem("cs.hub.demo.sessions.v2");
-      localStorage.removeItem("cs.hub.demo.support.v1");
-      localStorage.removeItem("cs.hub.demo.context.v1");
-      localStorage.removeItem("cs.hub.demo.context.v2");
-      localStorage.removeItem("cs.hub.demo.context.v3");
-      localStorage.removeItem("cs.hub.demo.context.v4");
+      hubMemory.remove("cs.hub.demo");
+      hubMemory.remove("cs.hub.demo.goals.v1");
+      hubMemory.remove("cs.hub.demo.sessions.v2");
+      hubMemory.remove("cs.hub.demo.support.v1");
+      hubMemory.remove("cs.hub.demo.context.v1");
+      hubMemory.remove("cs.hub.demo.context.v2");
+      hubMemory.remove("cs.hub.demo.context.v3");
+      hubMemory.remove("cs.hub.demo.context.v4");
       var evidenceRaw = localStorage.getItem("CS_EVIDENCE_V1");
       var evidenceState = evidenceRaw ? JSON.parse(evidenceRaw) : null;
       if (evidenceState && typeof evidenceState === "object") {
@@ -6521,9 +6534,7 @@
     var seededBlocks = getTodayLessonBlocks();
     if (!seededBlocks.length) {
       isDemoMode = true;
-      try {
-        localStorage.setItem("cs.hub.demo", "1");
-      } catch (err) {}
+      hubMemory.setString("cs.hub.demo", "1");
       ensureDemoCaseload();
       loadCaseload();
       seededBlocks = getTodayLessonBlocks();
