@@ -539,6 +539,8 @@
   }
 
   function blockDisplayTitle(block) {
+    var label = String(block && block.label || "").trim();
+    if (/world language exempt/i.test(label)) return label;
     var subject = String(block && block.subject || "").trim();
     if (/^(math|reading|writing)$/i.test(subject)) return subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
     return block && (block.label || block.classSection || block.subject) || "Class";
@@ -855,12 +857,15 @@
     var classTitle = blockDisplayTitle(block);
     var classMeta = [block.timeLabel, block.teacher].filter(Boolean).join(" · ");
     var communityOwned = isCommunityOwnedBlock(block, contextData);
+    var isFundationsBlock = /fundations/i.test(curriculumLabel);
+    var lessonLabel = lessonHeadline;
+    var mainHeadline = isFundationsBlock ? curriculumLabel : lessonHeadline;
     return [
       '<section class="th2-context-zone th2-context-zone--lesson">',
       '  <div class="th2-context-zone__heading"><div class="th2-class-hero"><h1 class="th2-class-hero__title">' + escapeHtml(classTitle) + '</h1>' + (classMeta ? '<p class="th2-class-hero__meta">' + escapeHtml(classMeta) + '</p>' : '') + '</div><button class="th2-inline-link" data-open-brief="1" data-open-brief-block="' + escapeHtml(block.id || "") + '" type="button">Edit lesson</button></div>',
       '  <div class="th2-mission-card">',
-      (curriculumLabel ? '    <p class="th2-mission-card__title">' + escapeHtml(curriculumLabel) + "</p>" : ""),
-      '    <h2 class="th2-mission-card__headline">' + escapeHtml(lessonHeadline) + "</h2>",
+      (isFundationsBlock ? ('    <p class="th2-mission-card__title">' + escapeHtml(lessonLabel) + "</p>") : (curriculumLabel ? '    <p class="th2-mission-card__title">' + escapeHtml(curriculumLabel) + "</p>" : "")),
+      '    <h2 class="th2-mission-card__headline">' + escapeHtml(mainHeadline) + "</h2>",
       '    <p class="th2-mission-card__sub">' + escapeHtml(lessonSummary) + "</p>",
       '    <p class="th2-mission-card__target">' + escapeHtml(deriveLearningTarget(contextData)) + "</p>",
       "  </div>",
@@ -1044,6 +1049,20 @@
       return subject + " is ready. Open for teacher notes, transitions, and class context.";
     }
     return subject + " is ready. Open for lesson support, class recommendations, and next moves.";
+  }
+
+  function findCurrentOrNextBlock(blocks) {
+    var rows = Array.isArray(blocks) ? blocks : [];
+    var now = new Date();
+    var minutes = now.getHours() * 60 + now.getMinutes();
+    var nextBlock = null;
+    for (var i = 0; i < rows.length; i += 1) {
+      var range = parseTimeLabelRange(rows[i] && rows[i].timeLabel);
+      if (!range) continue;
+      if (minutes >= range.start && minutes < range.end) return rows[i];
+      if (minutes < range.start && !nextBlock) nextBlock = rows[i];
+    }
+    return nextBlock;
   }
 
   function pickLeadSupportBlock(blocks) {
@@ -1402,8 +1421,12 @@
     ].join("");
 
     if (el.sidebarCtx) {
+      var timedBlock = findCurrentOrNextBlock(blocks || []);
+      var sidebarNote = timedBlock
+        ? "Now" + (isCurrentTimeBlock(timedBlock) ? "" : " next") + ": " + (timedBlock.label || timedBlock.subject || "Block")
+        : "After school";
       el.sidebarCtx.classList.add("th2-sidebar-ctx");
-      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + todayDateStr() + '</p>';
+      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + todayDateStr() + '</p><p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>';
     }
   }
 
@@ -1446,8 +1469,12 @@
     ].join("");
 
     if (el.sidebarCtx) {
+      var timedBlock = findCurrentOrNextBlock(blocks || []);
+      var sidebarNote = timedBlock
+        ? "Now" + (isCurrentTimeBlock(timedBlock) ? "" : " next") + ": " + (timedBlock.label || timedBlock.subject || "Block")
+        : "After school";
       el.sidebarCtx.classList.add("th2-sidebar-ctx");
-      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + todayDateStr() + '</p>';
+      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + todayDateStr() + '</p><p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>';
     }
   }
 
@@ -3391,13 +3418,13 @@
           {
             id: "demo-block-intervention",
             timeLabel: "1:10 PM - 1:55 PM",
-            label: "World Language Exempt Support",
+            label: "World Language Exempt",
             classSection: "ES Exempt Support / MS-HS Learning Support",
             teacher: "Ms. Rivera",
             subject: "Reading",
             curriculum: "Fundations",
             curriculumId: "fundations",
-            lesson: "Decoding and encoding support",
+            lesson: "Lesson 56",
             supportType: "pull-out",
             notes: "Students who are exempt from world language receive targeted literacy support during this block.",
             studentIds: ["demo-liam", "demo-zoe"],
@@ -3500,11 +3527,11 @@
           });
           TeacherStorage.saveClassContext("demo-block-intervention", {
             classId: "demo-block-intervention",
-            label: "World Language Exempt Support",
+            label: "World Language Exempt",
             teacher: "Ms. Rivera",
             subject: "Reading",
             curriculum: "Fundations",
-            lesson: "Decoding and encoding support",
+            lesson: "Lesson 56",
             supportType: "pull-out",
             conceptFocus: "Use the exempt/support window for targeted literacy support in ES and learning support time in MS/HS.",
             languageDemands: ["blend", "segment", "explain"],
@@ -3651,8 +3678,8 @@
             subject: "Reading",
             programId: "fundations",
             unit: "Fundations",
-            title: "Decoding and encoding support",
-            conceptFocus: "Use the exempt/support window for targeted Fundations intervention focused on decoding, encoding, and phonemic awareness.",
+            title: "Lesson 56",
+            conceptFocus: "Target decoding, encoding, and phonemic awareness using Fundations routines during the world language exempt block.",
             languageDemands: ["blend", "segment", "read"],
             misconceptions: [
               "Students over-rely on memorized words instead of applying sound-symbol knowledge.",
@@ -3788,6 +3815,7 @@
     if (!el.list) return;
     var blocks = getTodayLessonBlocks();
     var selectedBlockId = hubState.get().context.classId || "";
+    var timedBlock = findCurrentOrNextBlock(blocks);
     if (el.listNone) el.listNone.classList.add("hidden");
     if (el.listEmpty) el.listEmpty.classList.add("hidden");
     if (!blocks.length) {
@@ -3816,11 +3844,27 @@
         (time ? '    <span class="th2-block-card-time">' + time + '</span>' : ""),
         '    <span class="th2-block-card-name">' + label + '</span>',
         (sub ? '    <span class="th2-block-card-meta">' + sub + '</span>' : ""),
-        (studentCount ? '    <span class="th2-block-card-count">' + studentCount + ' support</span>' : ""),
         '  </div>',
         '</button>'
       ].join("\n");
     }).join("");
+    if (el.sidebarCtx) {
+      var sidebarDate = todayDateStr();
+      var sidebarNote = timedBlock
+        ? "Now" + (isCurrentTimeBlock(timedBlock) ? "" : " next") + ": " + (timedBlock.label || timedBlock.subject || "Block")
+        : "After school";
+      el.sidebarCtx.classList.add("th2-sidebar-ctx");
+      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + escapeHtml(sidebarDate) + '</p><p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>';
+    }
+    window.requestAnimationFrame(function () {
+      var focusCard = el.list.querySelector(".th2-block-card.is-active, .th2-block-card.is-current");
+      if (!focusCard && timedBlock) {
+        focusCard = el.list.querySelector('[data-open-block="' + CSS.escape(String(timedBlock.id || "")) + '"]');
+      }
+      if (focusCard && typeof focusCard.scrollIntoView === "function") {
+        focusCard.scrollIntoView({ block: "nearest" });
+      }
+    });
   }
 
   /* ── Student list rendering ────────────────────────────── */
