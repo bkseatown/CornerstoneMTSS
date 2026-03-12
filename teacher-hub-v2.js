@@ -5029,6 +5029,30 @@
     ].join("\n");
   }
 
+  function detectSharedPattern(item) {
+    var students = item && item.contextData && item.contextData.derived && Array.isArray(item.contextData.derived.students)
+      ? item.contextData.derived.students
+      : [];
+    var supports = {};
+    students.forEach(function (student) {
+      var tag = String((student && student.relatedSupport && student.relatedSupport[0]) || student && student.primaryGoal || "").trim();
+      if (!tag) return;
+      supports[tag] = (supports[tag] || 0) + 1;
+    });
+    var bestLabel = "";
+    var bestCount = 0;
+    Object.keys(supports).forEach(function (key) {
+      if (supports[key] > bestCount) {
+        bestLabel = key;
+        bestCount = supports[key];
+      }
+    });
+    if (bestCount >= 2) {
+      return bestCount + " students in this block are showing the same need: " + bestLabel + ".";
+    }
+    return "";
+  }
+
   function priorityConfidenceLabel(item) {
     var score = Number(item && item.score || 0);
     if (score >= 90) return "High confidence";
@@ -5104,6 +5128,7 @@
       '  <p class="th2-day-brief__summary">' + escapeHtml(brief.summary) + '</p>',
       '  <p class="th2-day-brief__prompt">' + escapeHtml(brief.rationale) + '</p>',
       (brief.primaryItem ? '  <div class="th2-day-brief__trust"><span class="th2-day-brief__confidence">' + escapeHtml(priorityConfidenceLabel(brief.primaryItem)) + '</span>' + (priorityWhyLine(brief.primaryItem) ? '<span class="th2-day-brief__why">' + escapeHtml(priorityWhyLine(brief.primaryItem)) + '</span>' : '') + '</div>' : ''),
+      (brief.primaryItem && detectSharedPattern(brief.primaryItem) ? '  <p class="th2-day-brief__pattern">' + escapeHtml(detectSharedPattern(brief.primaryItem)) + '</p>' : ''),
       '  <div class="th2-command-brief-grid">',
       '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.now.label) + '</span><strong>' + escapeHtml(brief.now.value) + '</strong><p>' + escapeHtml(brief.now.meta) + '</p></div>',
       '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.next.label) + '</span><strong>' + escapeHtml(brief.next.value) + '</strong><p>' + escapeHtml(brief.next.meta) + '</p></div>',

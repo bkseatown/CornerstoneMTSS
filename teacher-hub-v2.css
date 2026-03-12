@@ -3384,6 +3384,17 @@ body.th2-page {
   color: #66738c;
 }
 
+.th2-day-brief__pattern {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(45, 109, 240, 0.1);
+  font-size: 12px;
+  line-height: 1.45;
+  color: #41506a;
+}
+
 .th2-day-brief__actions {
   display: flex;
   align-items: center;
