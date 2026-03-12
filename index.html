@@ -8,65 +8,77 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260306h">
   <link rel="stylesheet" href="./style/typography.css?v=20260306h">
-  <link rel="stylesheet" href="./home-v3.css?v=20260312f">
+  <link rel="stylesheet" href="./home-v3.css?v=20260312g">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260310a">
 </head>
 <body class="cs-home-page">
   <main class="landing-shell" aria-label="Cornerstone MTSS welcome dashboard">
     <select id="s-theme" aria-hidden="true" tabindex="-1" style="display:none;"></select>
 
-    <section class="landing-hero" aria-label="Welcome and today focus">
-      <div class="landing-hero__content">
-        <p class="landing-eyebrow">Cornerstone MTSS</p>
-        <h1 class="landing-title">Instructional Support Platform</h1>
-        <p class="landing-subtitle">Support lessons, student progress, and intervention decisions from one calm daily workspace.</p>
-        <div class="landing-hero__actions">
-          <a class="landing-btn landing-btn--primary" href="./teacher-hub-v2.html">Open Specialist Hub</a>
+    <section class="landing-hero-surface" aria-label="Welcome and today focus">
+      <div class="landing-hero">
+        <div class="landing-hero__content">
+          <p class="landing-eyebrow">Cornerstone MTSS</p>
+          <h1 class="landing-title">Instructional Support Platform</h1>
+          <p class="landing-subtitle">For learning support, EAL, and intervention teachers.</p>
+          <p class="landing-capabilities">Plan interventions &bull; Support lessons &bull; Track student progress &bull; Generate family insights</p>
+          <div class="landing-hero__actions">
+            <a class="landing-btn landing-btn--primary" href="./teacher-hub-v2.html">Open Specialist Hub</a>
+            <p class="landing-hero__hint">Start with today&rsquo;s intervention blocks, student priorities, lesson support, and next actions.</p>
+          </div>
         </div>
-      </div>
 
-      <aside class="landing-focus-card" aria-label="Today focus">
-        <p class="landing-focus-card__eyebrow">Today</p>
-        <h2 class="landing-focus-card__student">Maya R.</h2>
-        <p class="landing-focus-card__meta">Grade 2 &middot; 9:35 ELA intervention</p>
-        <div class="landing-focus-card__goal">Blend and read short-a CVC words with 95% accuracy across 3 consecutive probes.</div>
-        <div class="landing-focus-card__tags">
-          <span>T3 decoding</span>
-          <span>IEP goal</span>
-          <span>IESP service</span>
-        </div>
-      </aside>
+        <aside class="landing-focus-card" aria-label="Today focus">
+          <div class="landing-focus-card__head">
+            <p class="landing-focus-card__eyebrow">Today</p>
+            <span class="landing-focus-card__pill">9:35 ELA</span>
+          </div>
+          <h2 class="landing-focus-card__student">Maya R.</h2>
+          <p class="landing-focus-card__meta">Grade 2 intervention block</p>
+          <div class="landing-focus-card__goal">
+            <strong>Current goal</strong>
+            <span>Blend and read short-a CVC words with 95% accuracy across 3 consecutive probes.</span>
+          </div>
+          <div class="landing-focus-card__tags">
+            <span>T3 decoding</span>
+            <span>IEP goal</span>
+            <span>IESP service</span>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <section class="landing-destinations" aria-label="Main destinations">
       <article class="landing-destination landing-destination--games">
-        <div class="landing-destination__preview landing-preview--games" aria-hidden="true">
-          <div class="landing-preview-card">
-            <p class="landing-preview__kicker">Word Quest</p>
-            <div class="landing-preview-board">
-              <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
-              <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
-              <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="landing-destination__scene landing-scene landing-scene--games" aria-hidden="true">
+          <div class="landing-scene__rail">
+            <div class="landing-scene-card landing-scene-card--board">
+              <p class="landing-scene__kicker">Word Quest</p>
+              <div class="landing-preview-board">
+                <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="landing-preview-board__row"><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
             </div>
-          </div>
-          <div class="landing-preview-card">
-            <p class="landing-preview__kicker">Typing Quest</p>
-            <div class="landing-preview-lane"><strong>fj</strong><span></span><em>fjfj</em></div>
-            <div class="landing-preview-keys">
-              <span class="landing-preview-key is-active">F</span>
-              <span class="landing-preview-key is-active">J</span>
-              <span class="landing-preview-key">A</span>
-              <span class="landing-preview-key">S</span>
-              <span class="landing-preview-key">D</span>
+            <div class="landing-scene-card landing-scene-card--typing">
+              <p class="landing-scene__kicker">Typing Quest</p>
+              <div class="landing-preview-lane"><strong>fj</strong><span></span><em>fjfj</em></div>
+              <div class="landing-preview-keys">
+                <span class="landing-preview-key is-active">F</span>
+                <span class="landing-preview-key is-active">J</span>
+                <span class="landing-preview-key">A</span>
+                <span class="landing-preview-key">S</span>
+                <span class="landing-preview-key">D</span>
+              </div>
             </div>
-          </div>
-          <div class="landing-preview-card">
-            <p class="landing-preview__kicker">Word Clue</p>
-            <div class="landing-preview-word">ECOSYSTEM</div>
-            <div class="landing-preview-pills">
-              <span class="landing-preview-pill">plants</span>
-              <span class="landing-preview-pill">animals</span>
-              <span class="landing-preview-pill">nature</span>
+            <div class="landing-scene-card landing-scene-card--clue">
+              <p class="landing-scene__kicker">Word Clue</p>
+              <div class="landing-preview-word">ECOSYSTEM</div>
+              <div class="landing-preview-pills">
+                <span class="landing-preview-pill">plants</span>
+                <span class="landing-preview-pill">animals</span>
+                <span class="landing-preview-pill">nature</span>
+              </div>
             </div>
           </div>
         </div>
@@ -80,13 +92,15 @@
       </article>
 
       <article class="landing-destination landing-destination--workspace">
-        <div class="landing-destination__preview landing-preview--workspace" aria-hidden="true">
-          <div class="landing-preview-workspace-card">
-            <p class="landing-preview__kicker">Workspace</p>
+        <div class="landing-destination__scene landing-scene landing-scene--workspace" aria-hidden="true">
+          <div class="landing-workspace-panel">
+            <p class="landing-scene__kicker">Workspace</p>
             <strong>Weekly planning</strong>
-            <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Progress insights ready</span></div>
-            <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Meeting notes drafted</span></div>
-            <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Family summary prepared</span></div>
+            <div class="landing-workspace-list">
+              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Progress insights ready</span></div>
+              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Meeting notes drafted</span></div>
+              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Family summary prepared</span></div>
+            </div>
           </div>
         </div>
         <div class="landing-destination__content">
@@ -101,7 +115,6 @@
 
     <footer class="landing-utility" aria-label="System utility strip">
       <div class="landing-utility__left">
-        <span class="landing-utility__label">System</span>
         <span class="landing-utility__meta">Local-first backup</span>
         <span class="landing-utility__meta">No cloud dependency</span>
         <span class="landing-utility__meta home-backup-status" data-backup-status="compact">No backup yet</span>
