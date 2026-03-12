@@ -4879,23 +4879,23 @@
       : "Sync your schedule";
     return {
       title: primaryItem
-        ? ((primaryItem.block && (primaryItem.block.label || primaryItem.block.subject)) || "This block") + " needs the first look."
+        ? ((primaryItem.block && (primaryItem.block.label || primaryItem.block.subject)) || "This block") + " deserves the first move."
         : greetingWord() + ", " + currentTeacherFirstName() + ".",
       summary: rows.length
-        ? "You have " + rows.length + " blocks today and " + activeSupportCount + " priority support touchpoints across the schedule."
+        ? rows.length + " blocks are set for today, with " + activeSupportCount + " priority touchpoints to manage."
         : "Your schedule is clear right now. Connect today's classes and this page will become your live command view.",
       now: {
-        label: currentBlock ? "Now" : "Status",
+        label: currentBlock ? "In motion" : "Day status",
         value: nowLabel,
         meta: currentBlock ? (currentBlock.timeLabel || "In progress") : "No active class"
       },
       next: {
-        label: "Up next",
+        label: "On deck",
         value: nextLabel,
         meta: nextBlock ? (nextBlock.timeLabel || "Scheduled") : "Nothing queued"
       },
       action: {
-        label: "Best next action",
+        label: "Move first",
         value: actionLabel,
         meta: primaryItem
           ? ((primaryItem.supportCount || 0) + " priority student" + (primaryItem.supportCount === 1 ? "" : "s"))
