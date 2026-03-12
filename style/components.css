@@ -126,12 +126,12 @@ html[data-home-mode="play"] {
   --main-max-width: 600px;
   --focus-max-width: 600px;
   --quest-max-width: 540px;
-  --tile-size: 74px;
-  --playfield-width: 386px;
-  --key-h: 56px;
-  --key-min-w: 38px;
-  --gap-key: 8px;
-  --gap-tile: 8px;
+  --tile-size: 62px;
+  --playfield-width: 336px;
+  --key-h: 48px;
+  --key-min-w: 32px;
+  --gap-key: 6px;
+  --gap-tile: 6px;
   --play-header-h: 54px;
 }
 
@@ -9265,15 +9265,15 @@ html[data-home-mode="play"] {
   --wq-safe-edge: clamp(12px, 1.4vw, 22px);
   --wq-shell-pad-inline: var(--wq-safe-edge);
   --wq-shell-pad-bottom: max(6px, env(safe-area-inset-bottom));
-  --wq-top-chrome-budget: clamp(42px, 7.2vh, 58px);
-  --wq-bottom-controls-budget: clamp(118px, 18vh, 172px);
-  --wq-stage-gap: clamp(4px, 0.8vh, 9px);
-  --tile-size: clamp(50px, 6vh, 62px);
-  --playfield-width: clamp(278px, 34vw, 336px);
-  --key-h: clamp(38px, 4.8vh, 48px);
-  --gap-key: 4px;
-  --gap-tile: 5px;
-  --key-min-w: clamp(22px, 2.6vw, 32px);
+  --wq-top-chrome-budget: clamp(40px, 6.6vh, 54px);
+  --wq-bottom-controls-budget: clamp(100px, 15.6vh, 138px);
+  --wq-stage-gap: clamp(3px, 0.65vh, 7px);
+  --tile-size: clamp(46px, 5.3vh, 58px);
+  --playfield-width: clamp(256px, 31vw, 318px);
+  --key-h: clamp(34px, 4.1vh, 42px);
+  --gap-key: 3px;
+  --gap-tile: 4px;
+  --key-min-w: clamp(20px, 2.2vw, 28px);
 }
 
 html[data-home-mode="play"],
@@ -9315,21 +9315,21 @@ html[data-home-mode="play"] .board-zone {
 }
 
 html[data-home-mode="play"] .board-plate {
-  width: min(calc(var(--playfield-width) + clamp(14px, 2.2vw, 30px)), calc(100vw - (var(--wq-safe-edge) * 2)), calc(100% - 4px));
-  padding: clamp(6px, 1vh, 11px) clamp(8px, 1.3vw, 12px);
+  width: min(calc(var(--playfield-width) + clamp(10px, 1.6vw, 22px)), calc(100vw - (var(--wq-safe-edge) * 2)), calc(100% - 4px));
+  padding: clamp(5px, 0.8vh, 9px) clamp(6px, 1vw, 10px);
 }
 
 html[data-home-mode="play"] #game-board {
-  max-width: min(404px, calc(100vw - (var(--wq-safe-edge) * 2) - 10px));
+  max-width: min(372px, calc(100vw - (var(--wq-safe-edge) * 2) - 10px));
 }
 
 html[data-home-mode="play"] #keyboard {
-  width: min(var(--keyboard-max-width, 520px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
+  width: min(var(--keyboard-max-width, 488px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
   max-width: calc(100vw - (var(--wq-safe-edge) * 2) - 2px);
   min-height: var(--wq-bottom-controls-budget);
-  max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 172px), 196px);
-  margin-top: clamp(2px, 0.5vh, 6px);
-  margin-bottom: var(--wq-shell-pad-bottom);
+  max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 156px), 176px);
+  margin-top: clamp(1px, 0.35vh, 4px);
+  margin-bottom: max(2px, env(safe-area-inset-bottom));
   gap: clamp(3px, 0.6vh, 6px);
   overflow: hidden;
 }
@@ -9341,47 +9341,60 @@ html[data-home-mode="play"] .key-row-3 {
 }
 
 html[data-home-mode="play"] .key {
-  max-width: 60px;
+  max-width: 54px;
 }
 
 html[data-home-mode="play"] .key.wide {
-  flex: 1.2;
-  min-width: 72px;
-  max-width: 96px;
-  font-size: 0.94rem;
+  flex: 1.08;
+  min-width: 62px;
+  max-width: 82px;
+  font-size: 0.82rem;
 }
 
 html[data-home-mode="play"] .key[data-key="Enter"] {
-  font-size: 1.1rem;
+  font-size: 0.96rem;
 }
 
 html[data-home-mode="play"] .gameplay-audio {
-  margin-top: 3px;
-  margin-bottom: 4px;
+  margin-top: 1px;
+  margin-bottom: 2px;
 }
 
 @media (max-height: 860px) and (min-width: 980px) {
   html[data-home-mode="play"] {
-    --wq-top-chrome-budget: clamp(38px, 6.3vh, 50px);
-    --wq-bottom-controls-budget: clamp(108px, 16.6vh, 154px);
-    --wq-stage-gap: 5px;
-    --tile-size: clamp(48px, 5.8vh, 58px);
-    --playfield-width: clamp(266px, 32vw, 312px);
-    --key-h: clamp(36px, 4.4vh, 44px);
+    --wq-top-chrome-budget: clamp(36px, 5.8vh, 46px);
+    --wq-bottom-controls-budget: clamp(94px, 14.2vh, 126px);
+    --wq-stage-gap: 4px;
+    --tile-size: clamp(44px, 5vh, 54px);
+    --playfield-width: clamp(244px, 29vw, 296px);
+    --key-h: clamp(32px, 3.9vh, 38px);
     --gap-key: 3px;
-    --gap-tile: 4px;
+    --gap-tile: 3px;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 980px) {
+  html[data-home-mode="play"] {
+    --wq-top-chrome-budget: clamp(34px, 5.4vh, 42px);
+    --wq-bottom-controls-budget: clamp(88px, 13.4vh, 116px);
+    --wq-stage-gap: 3px;
+    --tile-size: clamp(42px, 4.7vh, 50px);
+    --playfield-width: clamp(236px, 28vw, 282px);
+    --key-h: clamp(30px, 3.6vh, 36px);
+    --key-min-w: clamp(18px, 2vw, 24px);
   }
 }
 
 @media (max-height: 760px) and (min-width: 980px) {
   html[data-home-mode="play"] {
-    --wq-top-chrome-budget: clamp(34px, 5.4vh, 44px);
-    --wq-bottom-controls-budget: clamp(98px, 15vh, 134px);
-    --wq-stage-gap: 4px;
-    --tile-size: clamp(44px, 5.1vh, 52px);
-    --playfield-width: clamp(248px, 30vw, 292px);
-    --key-h: clamp(34px, 4vh, 40px);
-    --gap-key: 3px;
+    --wq-top-chrome-budget: clamp(32px, 5vh, 40px);
+    --wq-bottom-controls-budget: clamp(82px, 12.4vh, 106px);
+    --wq-stage-gap: 3px;
+    --tile-size: clamp(40px, 4.4vh, 46px);
+    --playfield-width: clamp(222px, 26vw, 262px);
+    --key-h: clamp(28px, 3.3vh, 34px);
+    --key-min-w: clamp(17px, 1.8vw, 22px);
+    --gap-key: 2px;
     --gap-tile: 3px;
   }
 
@@ -9393,12 +9406,13 @@ html[data-home-mode="play"] .gameplay-audio {
 
 @media (max-height: 700px) and (min-width: 980px) {
   html[data-home-mode="play"] {
-    --wq-top-chrome-budget: clamp(30px, 4.8vh, 40px);
-    --wq-bottom-controls-budget: clamp(88px, 13.8vh, 116px);
+    --wq-top-chrome-budget: clamp(28px, 4.4vh, 36px);
+    --wq-bottom-controls-budget: clamp(74px, 11.6vh, 92px);
     --wq-stage-gap: 3px;
-    --tile-size: clamp(40px, 4.5vh, 46px);
-    --playfield-width: clamp(226px, 28vw, 266px);
-    --key-h: clamp(30px, 3.6vh, 36px);
+    --tile-size: clamp(36px, 4vh, 42px);
+    --playfield-width: clamp(206px, 24vw, 242px);
+    --key-h: clamp(26px, 3vh, 30px);
+    --key-min-w: clamp(16px, 1.6vw, 20px);
     --gap-key: 2px;
     --gap-tile: 2px;
   }
