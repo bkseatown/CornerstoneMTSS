@@ -4846,16 +4846,15 @@
         block: block,
         contextData: contextData,
         score: score,
-        confidence: labelConfidence(score),
         status: status,
         supportCount: supportCount,
         reason: buildPriorityReason(block, supportCount, isCurrent, isNext),
         source: buildPrioritySource(block, supportCount, isCurrent, isNext),
-        cue: isCurrent ? "Now" : (isNext ? "Up next" : "Later")
+        cue: isCurrent ? "Now" : (isNext ? "Up next" : "")
       };
     }).sort(function (a, b) {
       return b.score - a.score;
-    }).slice(0, 4);
+    }).slice(0, 3);
   }
 
   function buildNowNextBrief(blocks) {
@@ -4911,17 +4910,20 @@
     if (!rows.length) {
       return [
         '<section class="th2-priority-rail">',
-        '  <div class="th2-priority-rail__head"><p class="th2-section-label">Priority engine</p><p class="th2-today-sub">Connect your schedule and the hub will rank what deserves attention first.</p></div>',
+        '  <div class="th2-priority-rail__head"><p class="th2-section-label">Priority engine</p><p class="th2-today-sub">The clearest next places to focus.</p></div>',
         '  <div class="th2-priority-rail__empty">No priority blocks yet.</div>',
         '</section>'
       ].join("");
     }
     return [
       '<section class="th2-priority-rail">',
-      '  <div class="th2-priority-rail__head"><p class="th2-section-label">Priority engine</p><p class="th2-today-sub">Ranked by timing, attached support students, and readiness.</p></div>',
+      '  <div class="th2-priority-rail__head"><p class="th2-section-label">Priority engine</p><p class="th2-today-sub">Top focus areas for the day.</p></div>',
       '  <div class="th2-priority-rail__list">',
       rows.map(function (item, index) {
         var block = item.block || {};
+        var footerBits = [];
+        if (item.cue) footerBits.push('<span>' + escapeHtml(item.cue) + '</span>');
+        footerBits.push('<span>' + escapeHtml(String(item.supportCount || 0)) + ' priority</span>');
         return [
           '<button class="th2-priority-item" data-open-block="' + escapeHtml(block.id || "") + '" type="button">',
           '  <div class="th2-priority-item__top">',
@@ -4931,7 +4933,7 @@
           '  <strong class="th2-priority-item__title">' + escapeHtml(block.label || block.classSection || block.subject || "Class block") + '</strong>',
           '  <p class="th2-priority-item__meta">' + escapeHtml([block.timeLabel, block.teacher].filter(Boolean).join(" · ") || item.cue || "") + '</p>',
           '  <p class="th2-priority-item__reason">' + escapeHtml(item.reason || "") + '</p>',
-          '  <div class="th2-priority-item__footer"><span>' + escapeHtml(item.cue || "Ready") + '</span><span>' + escapeHtml(String(item.supportCount || 0)) + ' priority</span></div>',
+          '  <div class="th2-priority-item__footer">' + footerBits.join("") + '</div>',
           '</button>'
         ].join("");
       }).join(""),
