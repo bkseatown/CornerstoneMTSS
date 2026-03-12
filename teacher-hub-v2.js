@@ -167,6 +167,65 @@
     ? HubBriefIntelligenceModule.createEngine()
     : null;
 
+  var hubBriefApi = {
+    buildBlockOutputText: function (kind, block, item) {
+      return hubBriefIntelligence && typeof hubBriefIntelligence.buildBlockOutputText === "function"
+        ? hubBriefIntelligence.buildBlockOutputText(kind, block, item)
+        : "";
+    },
+    describeOutcomeMemory: function (item) {
+      return hubBriefIntelligence && typeof hubBriefIntelligence.describeOutcomeMemory === "function"
+        ? hubBriefIntelligence.describeOutcomeMemory(item)
+        : "";
+    },
+    detectSharedPattern: function (item) {
+      return hubBriefIntelligence && typeof hubBriefIntelligence.detectSharedPattern === "function"
+        ? hubBriefIntelligence.detectSharedPattern(item)
+        : "";
+    },
+    buildGroupSuggestion: function (item) {
+      return hubBriefIntelligence && typeof hubBriefIntelligence.buildGroupSuggestion === "function"
+        ? hubBriefIntelligence.buildGroupSuggestion(item)
+        : null;
+    },
+    buildGroupPlanText: function (block, item, suggestion) {
+      return hubBriefIntelligence && typeof hubBriefIntelligence.buildGroupPlanText === "function"
+        ? hubBriefIntelligence.buildGroupPlanText(block, item, suggestion)
+        : "";
+    }
+  };
+
+  var hubPriorityApi = {
+    buildNowNextBrief: function (blocks) {
+      return hubPriorityEngine && typeof hubPriorityEngine.buildNowNextBrief === "function"
+        ? hubPriorityEngine.buildNowNextBrief(blocks)
+        : {
+            title: greetingWord() + ", " + currentTeacherFirstName() + ".",
+            summary: "Your schedule is clear right now. Connect today's classes and this page will become your live command view.",
+            now: { label: "Day status", value: "After school", meta: "No active class" },
+            next: { label: "On deck", value: "No upcoming class", meta: "Nothing queued" },
+            action: { label: "Move first", value: "Sync your schedule", meta: "Connect calendar once" },
+            rationale: "Once classes are connected, the hub will rank the most important next move automatically.",
+            outcomeMemory: "",
+            memoryMode: hubMemoryModeLabel(),
+            currentBlock: null,
+            nextBlock: null,
+            primaryItem: null,
+            priorityItems: []
+          };
+    },
+    priorityConfidenceLabel: function (item) {
+      return hubPriorityEngine && typeof hubPriorityEngine.priorityConfidenceLabel === "function"
+        ? hubPriorityEngine.priorityConfidenceLabel(item)
+        : "Emerging confidence";
+    },
+    priorityWhyLine: function (item) {
+      return hubPriorityEngine && typeof hubPriorityEngine.priorityWhyLine === "function"
+        ? hubPriorityEngine.priorityWhyLine(item)
+        : "";
+    }
+  };
+
   function blockMemoryKey() {
     return "cs.hub.block-memory." + todayIsoKey();
   }
@@ -4903,52 +4962,27 @@
   }
 
   function buildNowNextBrief(blocks) {
-    return hubPriorityEngine && typeof hubPriorityEngine.buildNowNextBrief === "function"
-      ? hubPriorityEngine.buildNowNextBrief(blocks)
-      : {
-          title: greetingWord() + ", " + currentTeacherFirstName() + ".",
-          summary: "Your schedule is clear right now. Connect today's classes and this page will become your live command view.",
-          now: { label: "Day status", value: "After school", meta: "No active class" },
-          next: { label: "On deck", value: "No upcoming class", meta: "Nothing queued" },
-          action: { label: "Move first", value: "Sync your schedule", meta: "Connect calendar once" },
-          rationale: "Once classes are connected, the hub will rank the most important next move automatically.",
-          outcomeMemory: "",
-          memoryMode: hubMemoryModeLabel(),
-          currentBlock: null,
-          nextBlock: null,
-          primaryItem: null,
-          priorityItems: []
-        };
+    return hubPriorityApi.buildNowNextBrief(blocks);
   }
 
   function buildBlockOutputText(kind, block, item) {
-    return hubBriefIntelligence && typeof hubBriefIntelligence.buildBlockOutputText === "function"
-      ? hubBriefIntelligence.buildBlockOutputText(kind, block, item)
-      : "";
+    return hubBriefApi.buildBlockOutputText(kind, block, item);
   }
 
   function describeOutcomeMemory(item) {
-    return hubBriefIntelligence && typeof hubBriefIntelligence.describeOutcomeMemory === "function"
-      ? hubBriefIntelligence.describeOutcomeMemory(item)
-      : "";
+    return hubBriefApi.describeOutcomeMemory(item);
   }
 
   function detectSharedPattern(item) {
-    return hubBriefIntelligence && typeof hubBriefIntelligence.detectSharedPattern === "function"
-      ? hubBriefIntelligence.detectSharedPattern(item)
-      : "";
+    return hubBriefApi.detectSharedPattern(item);
   }
 
   function buildGroupSuggestion(item) {
-    return hubBriefIntelligence && typeof hubBriefIntelligence.buildGroupSuggestion === "function"
-      ? hubBriefIntelligence.buildGroupSuggestion(item)
-      : null;
+    return hubBriefApi.buildGroupSuggestion(item);
   }
 
   function buildGroupPlanText(block, item, suggestion) {
-    return hubBriefIntelligence && typeof hubBriefIntelligence.buildGroupPlanText === "function"
-      ? hubBriefIntelligence.buildGroupPlanText(block, item, suggestion)
-      : "";
+    return hubBriefApi.buildGroupPlanText(block, item, suggestion);
   }
 
   function getBriefIntelligenceSnapshot(item) {
@@ -4961,15 +4995,11 @@
   }
 
   function priorityConfidenceLabel(item) {
-    return hubPriorityEngine && typeof hubPriorityEngine.priorityConfidenceLabel === "function"
-      ? hubPriorityEngine.priorityConfidenceLabel(item)
-      : "Emerging confidence";
+    return hubPriorityApi.priorityConfidenceLabel(item);
   }
 
   function priorityWhyLine(item) {
-    return hubPriorityEngine && typeof hubPriorityEngine.priorityWhyLine === "function"
-      ? hubPriorityEngine.priorityWhyLine(item)
-      : "";
+    return hubPriorityApi.priorityWhyLine(item);
   }
 
   function renderPriorityRail(items) {
