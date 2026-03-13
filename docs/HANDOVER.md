@@ -1,194 +1,210 @@
-# WordQuest Handover
+# Cornerstone MTSS Handover
 
-## 1) Project Intention
-WordQuest is being built as a playful but academically credible literacy platform that blends:
-- structured word-learning progression,
-- strong classroom usability,
-- expressive visual themes,
-- and high-quality audio/text content reuse.
+## 1) Product Intention
+Cornerstone MTSS is a specialist-facing instructional support platform.
+It is not just one word game anymore.
 
-The long-term direction is larger than a single game page: the page should become a stable platform shell that can grow into broader audio/text learning experiences without redesign regressions.
+The platform is being built to support:
+- intervention teachers
+- EAL/support teachers
+- specialists managing student plans, goals, and progress
+- classroom-ready literacy/language practice through premium interactive games
 
-Primary product-vision reference:
+The desired product feel is:
+- premium but calm
+- academically credible
+- visually alive without becoming noisy
+- accessible, readable, EAL-friendly, and adaptable
+- strong enough for K-8 and still respectable for older learners
+
+Primary product vision:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/VISION.md`
 
-## 2) Current Stabilization Status (March 8, 2026)
-Completed:
-- App architecture is now centered around:
-  - `Home`
-  - `Specialist Hub`
-  - `Games`
-  - `Student Profile`
-  - `Reports`
-- `reports.html` is the canonical reports route.
-- `student-profile.html` is the canonical one-student detail route.
-- Local-first backup/export/import exists, including optional Google Drive upload flow.
-- Shared games and Word Quest now use the restored full theme library again.
-- Word Quest play routing now returns to `Game Gallery`, not directly to Hub.
-- GitHub Pages deploy noise was reduced by limiting redundant QA triggers and removing the extra deploy-alert issue behavior.
-- HUD/DOM contract checks pass on the current Word Quest / Seahawks work.
-- Latest pushed Word Quest stabilization commit is `8e17d453`.
-- Latest confirmed live Word Quest build is `8e17d453ea00-356`.
-- Latest validated local screenshot for the current Seahawks state:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/artifacts/wordquest-seahawks-validate-25.png`
+## 2) What Exists Now
+The current platform includes these primary surfaces:
+- `/index.html` as the landing/dashboard shell
+- `/student-profile.html` as the student detail route
+- `/reports.html` as the reports route
+- `/game-platform.html` as the shared game gallery + play shell
+- `/typing-quest.html` as the dedicated Typing Quest route
+- `/word-quest.html` as the standalone flagship game
 
-Current active focus:
-- Word Quest Seahawks theme refinement in play mode.
-- The correct mental model is:
-  - `themes.css` owns bespoke visual identity
-  - `components.css` owns shared structure/layout
+The product direction is now explicitly platform-first:
+- shared game shell with distinct game identities
+- specialist-facing dashboard surfaces
+- local-first behavior and durable build/version visibility
 
-Known active issues:
-- Seahawks theme still needs deeper bespoke object styling for:
-  - board frame
-  - keyboard
-  - theme-specific visual identity beyond color/header
-- Current stable traits that should not regress:
-  - `Back to Game Gallery` on student-facing Word Quest play pages
-  - action-green `Next Word` fill
-  - blue-only banner behind the Word Quest logo
-  - support buttons remain visible in play mode
-  - broad slash-heavy Seahawks board treatment removed
-- Word Quest play header has improved, but still needs continued responsive visual QA at narrower widths.
-- Some live screenshots may appear stale if GitHub Pages is behind the latest push; always verify `build.json` before judging the public URL.
-- Do not share a public link as “updated” unless the live `build.json` matches the commit being referenced.
+## 3) March 13, 2026 Baseline
+Recently completed work:
+- homepage cards are more premium and no longer read like generic placeholder boxes
+- workspace card has a stronger briefing surface instead of a flat empty panel
+- Word Quest standalone was cleaned up substantially:
+  - header hierarchy improved
+  - keyboard/board fit stabilized
+  - noisy translucent overlay boxes removed
+  - coach text shortened
+  - build/version markers aligned again
+- shared game shell has been pushed toward one premium product family instead of several legacy-feeling pages
+- Typing Quest has had the most important structural cleanup:
+  - duplicate welcome-owner UI removed
+  - first screen is now one welcome surface plus a collapsed course plan
+  - first screen fits as a non-scrolling page locally at audited desktop size
+  - page is cleaner, but still not at the final quality bar
 
-## 3) Critical File Ownership
+Latest pushed cleanup commit from this thread:
+- `7d8fe9cf`
 
-### Canonical runtime wiring
+Latest verified local page markers from this thread:
+- Typing Quest shell assets: `20260313u`
+- Word Quest build badge: `20260313u`
+
+## 4) What Still Needs Work
+Highest-priority unresolved quality areas:
+
+### Typing Quest
+- still needs a stronger visual/product identity
+- should feel like a premium typing product, not a cleaned-up dashboard/course document
+- needs more “showing” and less instructional text
+- course map styling is better structurally, but still visually generic
+
+### Homepage top surface
+- left hero and right “Today” card still need to feel like one designed surface
+- contrast hierarchy is better than before, but still not elite
+
+### Shared game family
+- must feel like one product family without becoming one repeated layout
+- each game needs a dominant play artifact and its own personality
+
+## 5) Critical Product Rules
+
+### Global rules
+- Non-scrolling first-screen behavior is the default on normal desktop/laptop viewports.
+- If a page needs scroll at typical laptop height, first assume the page is over-packed.
+- Prefer showing over telling.
+- Remove stale text before adding new text.
+- Strong contrast must exist between:
+  - page shell
+  - card/surface
+  - inset play/work scene
+  - primary vs secondary information
+
+### Word Quest rules
+- Board and keyboard remain the primary objects.
+- Do not reintroduce large translucent stage boxes behind the board or keyboard.
+- Keep student-safe navigation visible.
+- Coach/help copy should stay short and purposeful.
+
+### Typing Quest rules
+- One welcome owner only.
+- Do not allow overlapping hero + starter rail + placement stack combinations.
+- Full course catalog belongs below the fold or behind a collapsed control.
+- Theme/customization chrome must not dominate the course screen.
+
+## 6) Critical File Ownership
+
+### Standalone Word Quest
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js`
-  - owns persisted settings and theme runtime API (`window.WQTheme`).
-
-### Canonical theme data
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-registry.js`
-  - owns theme IDs, labels, family grouping, and normalization behavior.
-
-### Theme navigation + teacher tools behavior
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-nav.js`
-  - consumes `window.WQTheme` and `window.WQThemeRegistry`.
-  - should not become source of truth for theme lists.
-
-### Visual ownership
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/themes.css`
-  - token definitions per theme.
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/components.css`
-  - HUD/components styling and motion effects.
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/modes.css`
-  - mode-level overrides (`projector`, `motion`, feedback palette switches).
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/themes.css`
 
-## 4) Enforced Guardrails
+### Shared game platform
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/typing-quest.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.css`
 
-### Automation
-- Script:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/scripts/check-hud-contract.js`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/scripts/check-change-scope.js`
-- Command:
-  - `npm run hud:check`
-  - `npm run scope:view`
-  - `npm run scope:check`
-  - `npm run scope:strict`
+### Homepage and dashboard shell
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/home-v3.css`
 
-### What it validates
-- required tokens for every theme.
-- registry/theme-block consistency.
-- no hardcoded theme options in HTML select.
-- no hardcoded theme order in `theme-nav.js`.
-- no theme canonical persistence in `sessionStorage`.
-- no inline style injection drift in `theme-nav.js`.
-- canonical ownership blocks in CSS.
-- theme background brightness floors (prevents regression to near-black pages).
-- key/CTA token contrast floors (prevents low-contrast text regressions).
-- file-change safety buckets for non-coder review (green/yellow/red).
-  - `scope:check` fails on red only.
-  - `scope:strict` fails on yellow, red, or unknown.
+### Build/version truth
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/build.json`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/build-stamp.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/build-stamp.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/build-badge.js`
 
-## 5) Fine-Tuning Workflow
-Use small, measurable batches.
+## 7) Regression Hotspots
 
-### Recommended batch size
-- 1 to 3 visual/behavior deltas per pass.
+### Typing Quest
+Known risk pattern:
+- multiple generations of welcome/course CSS and markup coexisting
 
-### Request format
-- `Surface` (example: keyboard key shape)
-- `Intent` (example: toy-like, bubbly)
-- `Must Keep` (example: readable labels, same key sizing constraints)
-- `Must Avoid` (example: mushy/water-balloon wobble)
-- `Acceptance` (example: radius >= X, bounce <= Y ms, disabled in reduced motion)
+Symptoms:
+- overlapping panels
+- giant translucent blocks
+- document-like first screen
+- duplicate call-to-action ownership
 
-### Example for your current goals
-- Surface: keyboard motion + tile lock effect
-- Intent: bouncy and playful
-- Must Keep: readable letterforms, no motion in reduced mode
-- Must Avoid: water-balloon wobble, dark theme creep
-- Acceptance:
-  - key bounce has snappier easing and visible rebound
-  - lock-in effect only in `data-motion="fun"`
-  - effect disabled when `data-motion="reduced"`
-  - all `hud:check` gates pass
+Safe response:
+- delete the older owner instead of layering another fix on top
 
-## 6) Multi-Agent Anti-Drift Rules
-If using Claude/ChatGPT/other tools:
-1. Give them strict file scope first.
-2. Require pass/fail output against `npm run hud:check`.
-3. Reject patches that:
-   - add second theme order lists,
-   - move canonical theme persistence to session storage,
-   - inject inline styles for HUD components,
-   - bypass brightness guardrails.
-4. Work in branches and merge only tested commits.
-5. Keep `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/hud-spec-v1.md` as source of truth.
+### Word Quest
+Known risk pattern:
+- decorative overlays and support wrappers making the page feel broken or busy
 
-## 7) Smoke Test Baseline (Latest Run)
-Passed:
-- app load and render,
-- theme switching and persistence,
-- keyboard input and validation toast,
-- tile/key coloring,
-- modal audio controls,
-- teacher tools activate/clear flows.
+Symptoms:
+- translucent boxes behind main objects
+- keyboard tray chrome that does not help play
+- long coach ribbons that clutter the page
 
-Failed:
-- voice help modal close interaction can be blocked by stacking/pointer interception.
+Safe response:
+- simplify first
+- shorten text
+- keep board and keyboard central
 
-## 8) Next Priority Fixes
-1. Continue Seahawks v2/v3 bespoke pass:
-   - stronger board frame object
-   - stronger keyboard object
-   - cleaner Northwest/totem-inspired detailing
-   - preserve current spacing unless a validated screenshot proves otherwise
-   - do not regress the current blue banner / green Quest / green Next Word relationship
-2. Apply the same theme-ownership model to the next bespoke theme after Seahawks.
-3. Keep validating visual changes with rendered screenshots before presenting public links.
-4. Continue hardening student-safe routing so student-facing game pages never expose teacher-only destinations.
+### Cache/build drift
+Known risk pattern:
+- reviewer is looking at stale assets and thinks the code is unchanged
 
-## 9) Operational Discipline
-- Always edit live source folder:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS`
-- Test locally before commit:
-  - `python3 -m http.server 8787`
-  - `npm run scope:view`
-  - `npm run hud:check`
-- Keep backups, but do not patch from zip snapshots directly.
-- Non-coder quick reference:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/NONCODER_SAFETY_GUIDE.md`
+Safe response:
+- verify cache-busted asset URLs
+- verify visible build badge/build stamp
+- verify `build.json`
 
-## 10) Current Practical Assessment
-Scored from current code + validated local renders, not classroom outcome data.
+## 8) Required Verification Standard
+Before claiming a page is fixed:
+- syntax checks pass for touched JS
+- touched page has no new console errors
+- actual rendered page was inspected, not just code-read
+- build/version marker is fresh enough to trust the review
+- if the issue was visual overlap or layout drift, confirm that with a real rendered snapshot
 
-1. Student engagement and delight: **86**
-2. Learning-loop clarity: **82**
-3. Teacher usability and control surface: **81**
-4. Accessibility/readability safety: **78**
-5. Theme-system maintainability: **88**
-6. Visual balance consistency: **73**
-7. Motion quality/personality fit: **72**
-8. Audio integration reliability: **82**
-9. Platform scalability readiness: **84**
-10. Regression resistance and collaboration safety: **79**
+## 9) Current Quality Bar
+The platform should aim beyond “working.”
 
-Overall current baseline: **80/100**
+Target qualities:
+- premium visual craft
+- strong typography and contrast discipline
+- EAL-friendly scaffolds
+- game-specific identity
+- minimal UI clutter
+- stable layout ownership
+- modern, resilient front-end architecture
 
-Main reasons score is not higher yet:
-- bespoke theme object design is still stronger in the header than in the board/keyboard
-- live-vs-local validation discipline improved late and needs to stay strict
-- visual regressions have been caused by overlapping shared/theme layers, especially in Word Quest play mode
+Useful advanced practices to keep pushing:
+- token-first design systems
+- route-scoped layout owners
+- deterministic UI verification where possible
+- explicit build/version instrumentation
+- compact, high-signal UI copy
+- visual-first onboarding states instead of text-heavy instructions
+
+## 10) Codex Context Limitation
+A new Codex thread in the same worktree should not be assumed to know prior conversation history.
+That includes archived chats.
+
+Treat these files as the durable project memory:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/README.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/REGRESSION_GUARDRAILS.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_DESIGN_SYSTEM.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_LAYOUT_OWNERS.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
+
+## 11) Next Best Moves
+1. Typing Quest premium identity pass
+2. Homepage top-surface unification and contrast pass
+3. Cross-game interaction polish pass
+4. Continue reducing text and duplicate UI where possible

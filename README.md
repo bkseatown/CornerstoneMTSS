@@ -1,6 +1,6 @@
-# WordQuest
+# Cornerstone MTSS
 
-WordQuest is a classroom-friendly word game built for strong literacy practice with rich audio support, theme variety, and scalable data-driven content.
+Cornerstone MTSS is a specialist-facing instructional support platform with premium instructional games, student support workflows, reports, and a shared visual/product system.
 
 ## Source Of Truth
 - Primary working folder: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS`
@@ -8,15 +8,39 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
 - Keep `.zip` files as read-only backups, not as active dev sources.
 - Product direction and requirements baseline:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/VISION.md`
+- Primary continuity docs:
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/REGRESSION_GUARDRAILS.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_DESIGN_SYSTEM.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_LAYOUT_OWNERS.md`
 
 ## Quick Start
 1. Run local server:
    - `cd /Users/robertwilliamknaus/Desktop/Cornerstone MTSS`
-   - `python3 -m http.server 8787`
+   - `python3 -m http.server 4174`
 2. Open:
-   - `http://127.0.0.1:8787/index.html?t=1`
+   - `http://127.0.0.1:4174/index.html`
 3. Hard refresh when needed:
    - `Cmd+Shift+R`
+
+## What This Repo Is Building
+- A full specialist/intervention platform, not only a word game.
+- A shared premium game family with distinct identities:
+  - Word Quest
+  - Typing Quest
+  - Word Clue
+  - sentence/word building games
+- A no-scroll-by-default desktop product surface where pages should fit cleanly unless the viewport is truly small.
+- A visually advanced but readable interface with strong contrast, EAL-friendly support, and adaptive scaffolding.
+
+## Important Note For New Codex Threads
+A new Codex thread in this same worktree should not be assumed to know prior or archived conversation history.
+Use the repo docs as the durable memory layer:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SESSION_LOG.md`
 
 ## HUD Guardrails
 - Run contract checks:
@@ -46,6 +70,11 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
 - Entry/UI wiring:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js`
+- Shared game platform:
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/typing-quest.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.css`
 - Theme system:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-registry.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-nav.js`
@@ -92,9 +121,15 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
 1. Propose a small change batch (1-3 deltas).
 2. Convert request into measurable acceptance rules.
 3. Implement only in scoped files.
-4. Run `npm run hud:check`.
-5. Run smoke test.
+4. Run the route-appropriate checks.
+5. Verify the actual rendered page with a fresh cache-busted URL.
 6. Commit only after pass/fail report is clean.
+
+## Current Regression Themes
+- Typing Quest has historically had duplicate welcome/layout owners.
+- Word Quest has historically regressed through decorative overlays and excessive support chrome.
+- Cache/build drift can make the browser look stale even when code changed.
+- Scroll on normal desktop viewports is usually a design smell first, not a feature.
 
 ## Industry UI/UX Audit Commands
 - Accessibility (serious/critical WCAG A/AA): `npm run audit:a11y`

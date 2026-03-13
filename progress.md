@@ -229,6 +229,17 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `node --check js/app.js` passes
   - final browser relaunch/visual check is the next step after killing the stuck Chrome session that was blocking Playwright
 
+## 2026-03-13 (Repo continuity docs refresh)
+
+- updated `README.md` to describe the repo as Cornerstone MTSS rather than only WordQuest, and to direct fresh Codex threads to the continuity docs instead of assuming access to prior chat history
+- replaced `docs/HANDOVER.md` with a platform-first handover describing the current March 13, 2026 baseline, critical file ownership, active risks, product guardrails, and next priority moves
+- updated `docs/AGENT_CONTINUITY.md`, `docs/REGRESSION_GUARDRAILS.md`, and `docs/CONTINUITY_PLAYBOOK.md` to encode current regression traps:
+  - duplicate layout owners
+  - cache/build drift
+  - no-scroll-by-default requirement
+  - stale decorative overlay risk
+  - need for rendered verification before claiming UI work is complete
+
 - replaced the split top-level Typing Quest hero/card composition in `games/ui/game-shell.js` with one unified welcome surface: the main start card plus a lighter integrated course overview block in the same section
 - updated the final route-scoped Typing Quest CSS in `games/ui/game-shell.css` so the unified welcome surface keeps a two-column desktop layout while staying visually connected and inside the viewport budget
 - bumped the Typing shared shell cache-busters to `20260313s` in `typing-quest.html` and `game-platform.html`
