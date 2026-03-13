@@ -176,3 +176,12 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - local verification:
   - `node --check games/ui/game-shell.js` passes
   - local browser metrics on `http://127.0.0.1:4174/typing-quest.html?cb=20260313n1` now report `scrollHeight === innerHeight` with hero, placement strip, and first-unit teaser all visible in one non-scrolling welcome screen
+
+## 2026-03-13 (Gallery no-scroll shell cleanup)
+
+- carried the same no-scroll rule into the game gallery instead of treating it like a long catalog document
+- compacted the gallery setup strip and theme tray in `games/ui/game-shell.css`, then fixed the remaining root-shell issue by removing the outer `main.cg-shell` padding in gallery mode and locking the gallery root to viewport height
+- bumped the shared gallery/play shell CSS cache-buster to `20260313o` in `game-platform.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser metrics on `http://127.0.0.1:4174/game-platform.html?cb=20260313-gallery5` now report `scrollHeight === innerHeight` with the gallery visible in one non-scrolling screen

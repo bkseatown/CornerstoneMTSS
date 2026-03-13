@@ -580,6 +580,7 @@ html[data-view-mode="classroom"] .cg-host-panel__meta span {
    ===================================================== */
 
 body.game-platform-page {
+  margin: 0;
   color: #1b2435;
   /* ── GLOBAL NEUTRAL MUTED TEXT ─────────────────────────────────
      Override theme-hued muted colors with neutral white-alpha.
@@ -7241,6 +7242,13 @@ body.game-platform-page[data-shell-view="gallery"] .cg-surface {
   gap: clamp(8px, 1vh, 12px) !important;
 }
 
+body.game-platform-page[data-shell-view="gallery"] main.cg-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
 body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
   margin-bottom: 4px !important;
   padding: 6px 4px 0 !important;
@@ -7253,8 +7261,8 @@ body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
   min-height: 84px !important;
-  max-height: var(--dashboard-hero-max) !important;
-  padding: 10px 14px !important;
+  max-height: min(96px, var(--dashboard-hero-max)) !important;
+  padding: 8px 12px !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget,
@@ -7263,12 +7271,12 @@ body.game-platform-page[data-shell-view="gallery"] .cg-pomo-tab {
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
 body.game-platform-page[data-shell-view="gallery"] .games-grid {
-  gap: 10px !important;
+  gap: 8px !important;
   align-items: stretch !important;
 }
 
@@ -7284,6 +7292,30 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
 
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
   transform: translateY(-2px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker {
+  top: 10px !important;
+  right: 14px !important;
+  max-width: 212px !important;
+  padding: 5px 7px !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  border-radius: 18px !important;
+  scrollbar-width: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker::-webkit-scrollbar {
+  display: none;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-theme-swatch {
+  flex: 0 0 auto !important;
+  width: 22px !important;
+  height: 22px !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
