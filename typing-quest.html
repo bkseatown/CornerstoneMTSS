@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./games/ui/game-theme.css?v=20260313b">
   <link rel="stylesheet" href="./games/ui/game-motion.css?v=20260307k">
   <link rel="stylesheet" href="./games/ui/game-feedback.css?v=20260307k">
-  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260313e">
+  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260313k">
   <script src="./js/theme-registry.js?v=20260308b"></script>
 </head>
 <body class="game-platform-page typing-quest-page">
@@ -53,15 +53,15 @@
   <script src="./games/content/game-content-registry.js?v=20260307b"></script>
 
   <script src="./games/ui/game-components.js?v=20260310c"></script>
-  <script src="./games/ui/game-shell.js?v=20260313j"></script>
+  <script src="./games/ui/game-shell.js?v=20260313k"></script>
   <script>
     (function () {
       var url = new URL(window.location.href);
-      if (url.searchParams.get("play") === "1" && url.searchParams.get("game") === "word-typing") return;
+      if (url.searchParams.get("play") === "1" && url.searchParams.get("game") === "word-typing" && !url.searchParams.get("typingPage")) return;
       url.searchParams.set("play", "1");
       url.searchParams.set("game", "word-typing");
-      url.searchParams.set("typingPage", "1");
-      if (!url.searchParams.get("typingCourseMode")) url.searchParams.set("typingCourseMode", "placement");
+      url.searchParams.delete("typingPage");
+      if (!url.searchParams.get("typingCourseMode")) url.searchParams.set("typingCourseMode", "lesson");
       window.history.replaceState({}, "", url.toString());
     })();
     window.CSGameShell && window.CSGameShell.init && window.CSGameShell.init();

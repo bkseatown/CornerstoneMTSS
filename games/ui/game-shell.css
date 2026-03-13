@@ -5024,9 +5024,28 @@ body.game-platform-page[data-shell-view="gallery"] .cg-card-badge {
   background: rgba(255, 255, 255, 0.12);
 }
 
+.cg-typing-course-start__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .cg-typing-course-start__button {
   min-height: 52px;
+  min-width: 196px;
   font-size: 16px;
+}
+
+.cg-typing-course-start__subaction {
+  min-height: 44px;
+  color: #eff5ff;
+  border-color: rgba(209, 225, 243, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cg-typing-course-start__subaction:hover,
+.cg-typing-course-start__subaction:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .cg-typing-unit-section {
@@ -5127,7 +5146,7 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
 /* Typing Quest course-map refinement */
 .cg-typing-course-page {
   gap: 18px;
-  max-width: 1180px;
+  max-width: 1320px;
   margin: 0 auto;
 }
 
@@ -5137,7 +5156,7 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
 }
 
 .cg-typing-course-hero {
-  grid-template-columns: minmax(280px, 0.88fr) minmax(0, 1.12fr);
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
   gap: 14px;
   align-items: stretch;
 }
@@ -5208,6 +5227,42 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
   font-weight: 800;
 }
 
+.cg-typing-course-catalog {
+  border: 1px solid rgba(191, 206, 221, 0.96);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(244, 248, 253, 0.98), rgba(232, 239, 248, 0.96));
+  box-shadow: 0 18px 32px rgba(21, 42, 71, 0.08);
+  overflow: hidden;
+}
+
+.cg-typing-course-catalog summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px 22px;
+  cursor: pointer;
+  color: #28415f;
+  font-weight: 800;
+}
+
+.cg-typing-course-catalog summary::-webkit-details-marker {
+  display: none;
+}
+
+.cg-typing-course-catalog summary small {
+  color: #67809d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cg-typing-course-catalog__body {
+  display: grid;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+
 .cg-typing-unit-card {
   position: relative;
   gap: 10px;
@@ -5261,6 +5316,10 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
 
 .cg-typing-unit-section {
   gap: 14px;
+}
+
+.cg-typing-unit-section--focus {
+  box-shadow: 0 20px 36px rgba(20, 42, 74, 0.1);
 }
 
 .cg-typing-unit-section.is-current {
@@ -5344,6 +5403,24 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
   color: #60758d;
   font-size: 12px;
   font-weight: 700;
+}
+
+.cg-typing-unit-section__handoff {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(187, 203, 220, 0.96);
+  color: #46607d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cg-typing-unit-section__handoff strong {
+  color: #1d3859;
 }
 
 /* Typing Quest polish pass */

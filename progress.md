@@ -132,3 +132,17 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - compacted the shared theme picker for Typing Quest routes into a smaller horizontal tray and added responsive guards so it stops dominating the top-right corner
 - reserved extra right padding in the typing app bar on large screens so the compact theme tray does not collide with the course header
 - bumped the shared shell stylesheet cache-buster to `20260313e` in `typing-quest.html` and `game-platform.html`
+
+## 2026-03-13 (Typing Quest welcome-page restructure, pass 2)
+
+- removed the implicit `typing-quest.html => runtime lesson` routing fallback in `games/ui/game-shell.js`; Typing Quest now enters lesson runtime only when `typingPage=1` is explicitly present
+- rebuilt the Typing Quest course hub above-the-fold structure in `games/ui/game-shell.js` so the first screen is a welcome/start page with clear actions (`Start Placement`, `Jump to Current Unit`, `Browse lessons`) instead of a full curriculum stack
+- moved the full Typing course catalog behind a collapsed details section and promoted only the current unit plus placement lane into primary view, which keeps the first screen inside the viewport
+- expanded the shared course page width and added catalog/action styling in `games/ui/game-shell.css`
+- updated shell cache-busters to `20260313k` in `typing-quest.html` and `game-platform.html`, and updated the homepage stylesheet cache-buster to `20260313c` in `index.html`
+- tightened homepage shell sizing and destination scene heights in `home-v3.css` so the richer workspace destination does not push the landing page into an oversized desktop scroll state
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313k2` now shows the welcome/course-start hub instead of dropping directly into the live lesson runtime
+  - local browser metrics on the Typing Quest welcome page report `scrollHeight === innerHeight` with the full-course catalog collapsed
+  - local browser snapshot on `http://127.0.0.1:4174/index.html?cb=20260313c` shows the tightened homepage shell and improved workspace contrast with the full dashboard visible in a single screen-sized shell
