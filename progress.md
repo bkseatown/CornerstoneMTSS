@@ -97,3 +97,10 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - updated the clue launcher copy to `Need Hint?`, improved the quest picker placeholder/title to show the current quest directly, and clarified active-play navigation labels like `Open all games`
 - bumped the standalone Word Quest app script cache-buster to `20260313f` so the updated runtime copy loads reliably
 - rechecked locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass11`; new copy rendered correctly, on-screen input still worked, and console output stayed clean
+
+## 2026-03-13 (Word Quest support behavior polish)
+
+- restored active-play coach guidance so the first-turn state no longer feels like a disabled mystery button with no explanation
+- updated the early-round coach copy to explain the expected first guess and when help becomes available, and refreshed the post-miss coach copy to point learners toward feedback plus support unlocks
+- piped the existing hint-unlock copy into the help affordance logic and bumped the standalone Word Quest app script cache-buster through `20260313h`
+- rechecked locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass13`; the coach ribbon now renders in active play, keyboard input still works, and console output stayed clean

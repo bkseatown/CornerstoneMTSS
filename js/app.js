@@ -3611,18 +3611,28 @@
     if (focusButton) {
       const missionMode = isMissionLabStandaloneMode();
       const unlocked = areFocusSupportsUnlocked();
+      const state = WQGame.getState?.() || {};
+      const unlockCopy = getHintUnlockCopy(mode, Array.isArray(state.guesses) ? state.guesses.length : 0);
       focusButton.classList.toggle('hidden', missionMode);
       const disabled = helpSuppressed || !unlocked;
       focusButton.disabled = disabled;
       focusButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
       focusButton.classList.toggle('is-locked', disabled);
       focusButton.setAttribute('aria-label', 'Open help options');
+      focusButton.setAttribute(
+        'title',
+        helpSuppressed
+          ? 'Help options are off during team mode.'
+          : !unlocked
+          ? (unlockCopy.message || 'Help options unlock after a miss.')
+          : 'Open clue and starter help options.'
+      );
       setHoverNoteForElement(
         focusButton,
         helpSuppressed
           ? 'Help options are off during team mode.'
           : !unlocked
-          ? 'Help options unlock after a miss.'
+          ? (unlockCopy.message || 'Help options unlock after a miss.')
           : 'Open clue and starter help options.'
       );
     }
@@ -3667,12 +3677,25 @@
     );
     if (focusButton) {
       focusButton.setAttribute('aria-label', 'Open help options');
+      const state = WQGame.getState?.() || {};
+      const unlockCopy = getHintUnlockCopy(
+        normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle),
+        Array.isArray(state.guesses) ? state.guesses.length : 0
+      );
+      focusButton.setAttribute(
+        'title',
+        helpSuppressed
+          ? 'Help options are off during team mode.'
+          : !unlocked
+          ? (unlockCopy.message || 'Help options unlock after a miss.')
+          : 'Open clue and starter help options.'
+      );
       setHoverNoteForElement(
         focusButton,
         helpSuppressed
           ? 'Help options are off during team mode.'
           : !unlocked
-          ? 'Help options unlock after a miss.'
+          ? (unlockCopy.message || 'Help options unlock after a miss.')
           : 'Open clue and starter help options.'
       );
     }
@@ -6882,14 +6905,10 @@
       mount.classList.add('hidden');
       return;
     }
-    if (wordQuestCoachKey === 'before_guess') {
-      mount.classList.add('hidden');
-      return;
-    }
     mount.classList.remove('hidden');
     const map = {
-      before_guess: { key: 'wq.beforeFirstGuess', text: '' },
-      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Use the clue or change one letter.' },
+      before_guess: { key: 'wq.beforeFirstGuess', text: 'Start with any test word. Help unlocks after a couple of tries if you need it.' },
+      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Nice first try. Use color feedback, or open a hint when support unlocks.' },
       after_correct: { key: 'wq.correct', text: 'Nice. Tap Next Word for another round.' }
     };
     const next = map[wordQuestCoachKey] || map.before_guess;
@@ -10393,8 +10412,14 @@
       setHoverNoteForElement(nextBtn, 'Start a fresh word');
     }
     if (focusBtn) {
-      focusBtn.setAttribute('title', 'Open quest supports');
-      setHoverNoteForElement(focusBtn, 'Open quest supports');
+      const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+      const state = WQGame.getState?.() || {};
+      const unlockCopy = getHintUnlockCopy(playStyle, Array.isArray(state.guesses) ? state.guesses.length : 0);
+      const supportTitle = focusBtn.disabled
+        ? (unlockCopy.message || 'Help options unlock after a miss.')
+        : 'Open quest supports';
+      focusBtn.setAttribute('title', supportTitle);
+      setHoverNoteForElement(focusBtn, supportTitle);
     }
     if (focusInput) {
       setHoverNoteForElement(focusInput, 'Open the quest picker');
