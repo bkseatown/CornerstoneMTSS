@@ -3095,6 +3095,7 @@
         var homeKeys = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
         return [
           '<div class="cg-typing-welcome-preview" aria-hidden="true">',
+          '  <div class="cg-typing-welcome-preview__track"><span>eyes up</span><span>home row first</span><span>smooth pace</span></div>',
           '  <div class="cg-typing-welcome-lane"><span class="typed">' + runtimeRoot.CSGameComponents.escapeHtml(previewTyped.toLowerCase()) + '</span><span class="cursor">|</span><span class="remaining">' + runtimeRoot.CSGameComponents.escapeHtml(remaining.toLowerCase()) + '</span></div>',
           '  <div class="cg-typing-welcome-coach"><span>Eyes on the screen</span><strong>Find the home-row bumps first</strong></div>',
           '  <div class="cg-typing-welcome-keyboard">' + homeKeys.map(function (key) {
@@ -3182,6 +3183,7 @@
           renderTypingJumpStrip(currentLesson || round),
           '    </div>',
           '  </section>',
+          '  <section class="cg-typing-welcome-meter"><div class="cg-typing-welcome-meter__lane"><span class="cg-typing-welcome-meter__label">Course rhythm</span><strong>Check -> unlock -> practice -> build fluency</strong></div><div class="cg-typing-welcome-meter__dots"><span class="is-on"></span><span class="is-on"></span><span></span><span></span></div></section>',
           renderTypingWelcomeStarterRail(currentLesson || round),
           '<details class="cg-typing-course-catalog" id="typing-course-catalog"><summary><span>See full course plan</span><small>' + runtimeRoot.CSGameComponents.escapeHtml(courseSummary.totalLessons + " lessons across 5 phases") + '</small></summary><div class="cg-typing-course-catalog__body">' + renderTypingUnitSections(currentLesson || round) + '</div></details>',
           '</div>'

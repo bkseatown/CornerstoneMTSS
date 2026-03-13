@@ -225,3 +225,12 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `node --check games/ui/game-shell.js` passes
   - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313s2-check&play=1&game=word-typing&typingCourseMode=lesson` shows the unified welcome surface with no browser warnings
   - local browser metrics report `scrollHeight === innerHeight`, unified welcome section height ~459px, and total welcome page shell height ~736px inside a ~772px viewport
+
+## 2026-03-13 (Typing Quest visual identity pass)
+
+- kept the stable unified Typing welcome structure and layered in a stronger visual identity in `games/ui/game-shell.js` + `games/ui/game-shell.css`: added a small coaching track over the typing preview, a compact course-rhythm meter, stronger welcome-surface atmosphere, and cleaner card depth on the jump path chips
+- avoided reopening the old fit fight by appending the visual layer at the end of the route-scoped Typing Quest rules instead of restructuring the page again
+- bumped the Typing shared shell cache-busters to `20260313t` in `typing-quest.html` and `game-platform.html`
+- verification:
+  - `node --check games/ui/game-shell.js` passes
+  - Playwright browser re-check was blocked by the existing Chrome persistent-session launch issue immediately after this pass, so final visual verification for this layer is still pending a fresh browser session
