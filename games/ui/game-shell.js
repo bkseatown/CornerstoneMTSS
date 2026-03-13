@@ -3159,8 +3159,8 @@
         }) + "#typing-course-catalog";
         return [
           '<div class="cg-typing-course-page">',
-          '  <section class="cg-typing-course-hero">',
-          '    <div class="cg-typing-course-start">',
+          '  <section class="cg-typing-course-welcome">',
+          '    <div class="cg-typing-course-start cg-typing-course-start--welcome">',
           '      <div class="cg-typing-course-start__head">',
           '        <p class="cg-kicker">Start your course</p>',
           '        <h2>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Find the right lesson start" : ("Continue with " + currentUnitMeta.title)) + '</h2>',
@@ -3174,10 +3174,8 @@
           '        <div class="cg-typing-course-start__actions"><a class="cg-action cg-action-primary cg-typing-course-start__button" href="' + runtimeRoot.CSGameComponents.escapeHtml(continueHref) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Start Placement" : "Open Lesson") + '</a><a class="cg-action cg-action-quiet cg-typing-course-start__subaction" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "lesson", lessonId: currentLesson && currentLesson.id || "", lessonOrder: currentLesson && currentLesson.lessonOrder || 1 })) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Jump to Unit 1" : "Jump to Current Unit") + '</a><a class="cg-action cg-action-quiet cg-typing-course-start__subaction" href="' + runtimeRoot.CSGameComponents.escapeHtml(browseHref) + '">Browse lessons</a></div>',
           '      </div>',
           '    </div>',
-          '    <div class="cg-typing-course-hero__main">',
-          '      <p class="cg-kicker">Course map</p>',
-          '      <h3 class="cg-display">Typing Quest Foundations</h3>',
-          '      <p class="cg-typing-course-hero__subtitle">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement unlocks the first lesson automatically." : ("Current path: " + currentUnitMeta.title + ".")) + '</p>',
+          '    <div class="cg-typing-course-overview">',
+          '      <div class="cg-typing-course-overview__head"><p class="cg-kicker">Course map</p><h3>Typing Quest Foundations</h3><p>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement unlocks the first lesson automatically." : ("Current path: " + currentUnitMeta.title + ".")) + '</p></div>',
           '      <div class="cg-typing-course-ribbon"><span>1. Home row</span><span>2. Home-row words</span><span>3. Top row reach</span><span>4. Bottom row reach</span><span>5. Connected text</span></div>',
           '      <div class="cg-typing-plan-progress"><div class="cg-typing-plan-progress-fill" style="width:' + courseSummary.progressPercent + '%"></div></div>',
           '      <div class="cg-typing-plan-meta"><span>' + courseSummary.completedLessons + ' of ' + courseSummary.totalLessons + ' lessons mastered</span><span>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement ready" : ((currentLesson && currentLesson.lessonLabel) || "Lesson 1")) + '</span></div>',

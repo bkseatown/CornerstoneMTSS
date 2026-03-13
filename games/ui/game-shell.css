@@ -8485,14 +8485,54 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   max-width: 1280px !important;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-hero {
-  grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.08fr) !important;
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome {
+  display: grid !important;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr) !important;
   gap: 12px !important;
+  padding: 12px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(165, 183, 208, 0.42) !important;
+  background: linear-gradient(180deg, rgba(236, 243, 251, 0.98), rgba(227, 236, 247, 0.98)) !important;
+  box-shadow: 0 10px 20px rgba(18, 31, 51, 0.07) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview {
+  display: grid !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  border-radius: 18px !important;
+  border: 0 !important;
+  background: rgba(255, 255, 255, 0.52) !important;
+  box-shadow: none !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview__head {
+  display: grid !important;
+  gap: 4px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview__head h3 {
+  margin: 0 !important;
+  font-size: clamp(1.2rem, 2vw, 1.7rem) !important;
+  line-height: 1.02 !important;
+  color: #23324a !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview__head p:last-child {
+  margin: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.28 !important;
+  color: #5f7289 !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start,
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-hero__main {
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview {
   padding: 14px 16px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start--welcome {
+  border-radius: 18px !important;
+  box-shadow: none !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__head {
@@ -8559,12 +8599,14 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-jump-strip {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 8px !important;
+  gap: 6px !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-jump-chip {
-  min-height: 72px !important;
-  padding: 10px !important;
+  min-height: 58px !important;
+  padding: 8px !important;
+  gap: 4px !important;
+  box-shadow: none !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-starter {
@@ -8615,10 +8657,6 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   display: none !important;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-ribbon {
-  gap: 6px !important;
-}
-
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-plan-meta {
   font-size: 12px !important;
 }
@@ -8632,7 +8670,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 }
 
 @media (max-width: 1120px) {
-  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-hero {
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome {
     grid-template-columns: 1fr !important;
   }
 

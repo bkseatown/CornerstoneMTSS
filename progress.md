@@ -215,3 +215,13 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `node --check games/ui/game-shell.js` passes
   - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313r-check&play=1&game=word-typing&typingCourseMode=lesson` shows a smaller welcome shell with panel-level CTA duplication removed
   - local browser metrics report `scrollHeight === innerHeight` and a Typing welcome shell height of ~465px in a ~772px viewport
+
+## 2026-03-13 (Typing Quest unified welcome surface)
+
+- replaced the split top-level Typing Quest hero/card composition in `games/ui/game-shell.js` with one unified welcome surface: the main start card plus a lighter integrated course overview block in the same section
+- updated the final route-scoped Typing Quest CSS in `games/ui/game-shell.css` so the unified welcome surface keeps a two-column desktop layout while staying visually connected and inside the viewport budget
+- bumped the Typing shared shell cache-busters to `20260313s` in `typing-quest.html` and `game-platform.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313s2-check&play=1&game=word-typing&typingCourseMode=lesson` shows the unified welcome surface with no browser warnings
+  - local browser metrics report `scrollHeight === innerHeight`, unified welcome section height ~459px, and total welcome page shell height ~736px inside a ~772px viewport
