@@ -6506,7 +6506,7 @@
       if (confidenceOn) {
         text = playStyle === 'listening'
           ? 'Listening mode: tap Listen to Word, then Listen to Definition, then spell what you hear. Use Sound Clue only if stuck.'
-          : 'Start with any test word. Then use tile colors to guide the next guess.';
+          : 'Try a word. Use tile colors to adjust.';
       } else {
         text = playStyle === 'listening'
           ? 'Listening mode: hear the word, check meaning if needed, then spell from sound.'
@@ -6907,8 +6907,8 @@
     }
     mount.classList.remove('hidden');
     const map = {
-      before_guess: { key: 'wq.beforeFirstGuess', text: 'Start with any test word. Help unlocks after a couple of tries if you need it.' },
-      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Nice first try. Use color feedback, or open a hint when support unlocks.' },
+      before_guess: { key: 'wq.beforeFirstGuess', text: 'Try a word. Hint opens soon.' },
+      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Use the colors. Hint opens soon.' },
       after_correct: { key: 'wq.correct', text: 'Nice. Tap Next Word for another round.' }
     };
     const next = map[wordQuestCoachKey] || map.before_guess;

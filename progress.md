@@ -218,6 +218,17 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
 ## 2026-03-13 (Typing Quest unified welcome surface)
 
+## 2026-03-13 (Typing Quest duplicate-text removal + Word Quest text trim)
+
+- removed the older Typing Quest starter rail from `games/ui/game-shell.js` so the welcome page now has one owner instead of the newer hero plus a second leftover placement/jump panel underneath it
+- shortened Typing Quest welcome copy and action labels so the page leans more on the typing preview and less on stacked explanation text
+- trimmed Word Quest coach language in `js/app.js` and removed the extra translucent support-row panel treatment in `style/components.css` so the screen carries less narration and less decorative framing
+- bumped cache-busters to `20260313u` in `typing-quest.html`, `game-platform.html`, and `word-quest.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - `node --check js/app.js` passes
+  - final browser relaunch/visual check is the next step after killing the stuck Chrome session that was blocking Playwright
+
 - replaced the split top-level Typing Quest hero/card composition in `games/ui/game-shell.js` with one unified welcome surface: the main start card plus a lighter integrated course overview block in the same section
 - updated the final route-scoped Typing Quest CSS in `games/ui/game-shell.css` so the unified welcome surface keeps a two-column desktop layout while staying visually connected and inside the viewport budget
 - bumped the Typing shared shell cache-busters to `20260313s` in `typing-quest.html` and `game-platform.html`
