@@ -4614,12 +4614,20 @@ html[data-home-mode="play"] .next-action-line {
 
 html[data-home-mode="play"] #wq-coach-ribbon {
   display: grid;
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   background:
     linear-gradient(145deg, rgba(13, 39, 66, 0.92), rgba(27, 63, 96, 0.84));
   border-color: rgba(201, 226, 246, 0.22);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.12),
     0 12px 22px rgba(6, 16, 30, 0.16);
+  width: min(720px, calc(100vw - 28px));
+  max-width: 100%;
+  margin: 0 auto clamp(2px, 0.45vh, 6px);
+  z-index: 1;
 }
 
 html[data-home-mode="play"] #wq-coach-ribbon .cs-coach-text {
@@ -9270,21 +9278,21 @@ html[data-home-mode="play"] .board-zone {
 html[data-home-mode="play"] .board-zone::before {
   content: '';
   position: absolute;
-  top: clamp(6px, 1vh, 14px);
+  top: clamp(34px, 5.2vh, 56px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(100%, 700px);
-  height: calc(100% - min(var(--wq-bottom-controls-budget), 162px) - 18px);
-  min-height: 320px;
+  width: min(100%, 560px);
+  height: min(50vh, 470px);
+  min-height: 250px;
   border-radius: 34px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 100%),
     linear-gradient(135deg, color-mix(in oklab, var(--panel-bg) 54%, transparent) 0%, color-mix(in oklab, var(--brand) 10%, transparent) 100%);
   border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.22),
-    0 22px 46px rgba(7, 17, 31, 0.08);
-  opacity: 0.82;
+    0 18px 36px rgba(7, 17, 31, 0.07);
+  opacity: 0.7;
   pointer-events: none;
   z-index: 0;
 }

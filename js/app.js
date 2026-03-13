@@ -9335,6 +9335,7 @@
       const supportRowEl = document.querySelector('.play-support-row');
       const boardPlateEl = document.querySelector('.board-plate');
       const keyboardEl = _el('keyboard');
+      const coachRibbonEl = _el('wq-coach-ribbon');
       const gameplayAudioEl = document.querySelector('.gameplay-audio');
       const headerEl = document.querySelector('header');
       const focusEl = document.querySelector('.focus-bar');
@@ -9355,6 +9356,9 @@
       const platePadY = parsePx(getComputedStyle(boardPlateEl || document.body).paddingTop, 22) * 2;
       const platePadX = parsePx(getComputedStyle(boardPlateEl || document.body).paddingLeft, 26) * 2;
       const supportH = supportRowEl?.offsetHeight || 0;
+      const coachH = (coachRibbonEl && !coachRibbonEl.classList.contains('hidden'))
+        ? Math.max(0, coachRibbonEl.offsetHeight || 0)
+        : 0;
       const audioH = supportH ? 0 : (gameplayAudioEl?.offsetHeight || 36);
       const headerH = headerEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--header-h'), 50);
       const focusH = focusEl?.offsetHeight || parsePx(rootStyle.getPropertyValue('--focus-h'), 44);
@@ -9424,7 +9428,7 @@
       const extraSafetyH = extraSafetyBase + playModeSafety;
       const listeningReserveH = playStyle === 'listening' ? 12 : 0;
       const teamTimerSafetyReserve = (isTeamModeEnabled() && getTurnTimerSeconds() > 0) ? 8 : 0;
-      const reservedH = headerH + focusH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + (keyboardBottomGap + listeningBottomGapBoost) + boardZoneGap + supportReserveH + extraSafetyH + listeningReserveH + teamTimerSafetyReserve;
+      const reservedH = headerH + focusH + nextActionH + classroomTurnH + themeH + mainPadTop + mainPadBottom + audioH + kbH + coachH + (keyboardBottomGap + listeningBottomGapBoost) + boardZoneGap + supportReserveH + extraSafetyH + listeningReserveH + teamTimerSafetyReserve;
       const availableBoardH = Math.max(140, viewportH - reservedH);
       const guessDensityRelief = maxGuesses > 5 ? Math.min(12, (maxGuesses - 5) * 6) : 0;
       const byHeight = Math.floor((availableBoardH + guessDensityRelief - platePadY - tileGap * (maxGuesses - 1) + 2) / maxGuesses);
@@ -9439,7 +9443,8 @@
         size = Math.min(sizeCap, size + 4);
       }
       if (wordLength === 5 && layoutMode !== 'compact' && viewportW >= 900) {
-        size = Math.max(size, 64);
+        const wideFiveFloor = viewportH <= 760 ? 58 : 64;
+        size = Math.max(size, wideFiveFloor);
       }
       if (shortLaptopMode) {
         size = Math.max(layoutMode === 'tight' ? 54 : sizeFloor, Math.min(size, wordLength === 5 ? 58 : 56));
