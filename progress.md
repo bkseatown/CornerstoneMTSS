@@ -83,3 +83,10 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - softened the floating build badge during active play so it stays available for debugging without competing with the puzzle surface
 - bumped standalone Word Quest stylesheet cache-busters to `20260313d`
 - rechecked locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass8`; support row collapsed correctly, board-to-keyboard spacing tightened, console stayed clean, and on-screen keyboard input still worked
+
+## 2026-03-13 (Word Quest tile and keyboard polish)
+
+- upgraded active-play tile states so filled, correct, present, and absent tiles read with more crafted depth and clearer feedback instead of flatter flat-color blocks
+- wrapped the active-play keyboard in a softer keybed surface with a subtle top sheen so the board and keyboard feel like part of the same premium puzzle object
+- bumped standalone Word Quest stylesheet cache-busters to `20260313e`
+- rechecked locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass9`; no overflow, no new console issues, and on-screen key input still worked after the visual polish
