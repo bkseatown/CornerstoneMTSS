@@ -205,3 +205,13 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `node --check games/ui/game-shell.js` passes
   - local Word Quest browser check on `http://127.0.0.1:4174/word-quest.html?cb=20260313q-final&play=1` shows build badge `20260313q`
   - local Typing Quest browser metrics still report in-viewport fit and the action/button bounding boxes remain inside the viewport
+
+## 2026-03-13 (Typing Quest welcome simplification reset)
+
+- simplified the Typing Quest welcome branch in `games/ui/game-shell.js` by removing duplicate panel-level CTA buttons from the lower starter panels, leaving the main hero as the single action owner for placement/jump choices
+- tightened the final route-scoped Typing Quest overrides in `games/ui/game-shell.css` again so the welcome shell is smaller, denser, and more opaque instead of reading like layered translucent sheets
+- bumped the Typing shared shell cache-busters to `20260313r` in `typing-quest.html` and `game-platform.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313r-check&play=1&game=word-typing&typingCourseMode=lesson` shows a smaller welcome shell with panel-level CTA duplication removed
+  - local browser metrics report `scrollHeight === innerHeight` and a Typing welcome shell height of ~465px in a ~772px viewport

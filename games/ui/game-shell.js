@@ -3075,11 +3075,11 @@
         return [
           '<section class="cg-typing-welcome-starter">',
           '  <article class="cg-typing-welcome-panel">',
-          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Placement</p><h3>Start with a quick check</h3><p>Four short checks place the learner into the right starting point.</p></div><a class="cg-action cg-action-primary" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "placement" })) + '">Begin checks</a></div>',
+          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Placement</p><h3>Start with a quick check</h3><p>Four short checks place the learner into the right starting point.</p></div></div>',
           renderTypingPlacementMiniTiles(),
           '  </article>',
           '  <article class="cg-typing-welcome-panel cg-typing-welcome-panel--path">',
-          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Jump in</p><h3>' + runtimeRoot.CSGameComponents.escapeHtml(meta.title) + '</h3><p>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Preview the first path, or open a lesson directly." : "Open the current path and keep the course moving.") + '</p></div><a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(jumpHref) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Open unit 1" : "Open current unit") + '</a></div>',
+          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Jump in</p><h3>' + runtimeRoot.CSGameComponents.escapeHtml(meta.title) + '</h3><p>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Preview the first path, or open a lesson directly." : "Open the current path and keep the course moving.") + '</p></div></div>',
           renderTypingLessonMiniTiles(rows, currentRound, context.typingPlacementRequired ? 2 : 3),
           '  </article>',
           '</section>'
