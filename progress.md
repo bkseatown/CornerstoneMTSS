@@ -69,3 +69,10 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - reduced the Word Quest title scale, widened the quest/support lane, and aligned the quick actions into a cleaner second-row toolbar
 - bumped standalone Word Quest stylesheet cache-busters to `20260313b` so live Pages picks up the refined header immediately
 - verified locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass5` with screenshot capture and live input check (`e` typed successfully on the on-screen keyboard)
+
+## 2026-03-13 (Word Quest stage polish follow-up)
+
+- added a subtle premium play-stage frame around the centered board/keyboard stack so Word Quest uses its horizontal space with more intention without abandoning the focused puzzle layout
+- gave the standalone play shell a softer atmospheric overlay and tuned the Seahawks base blues slightly darker so the page feels richer while staying light
+- upgraded the support strip under the board into a surfaced control band instead of loose controls floating between the board and keyboard
+- bumped standalone Word Quest stylesheet cache-busters to `20260313c` and re-verified locally on `http://127.0.0.1:4174/word-quest.html?cb=20260313-pass6` with layout metrics plus a live on-screen keypress check
