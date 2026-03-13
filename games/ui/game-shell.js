@@ -2882,11 +2882,18 @@
         return rect && (rect.left < -1 || rect.right > vw + 1 || rect.bottom > vh + 1);
       }
       if (state && state.selectedGameId === "word-typing") {
-        var overlays = document.querySelectorAll(".cg-typing-course-page, .cg-typing-runtime");
+        var overlays = Array.prototype.filter.call(document.querySelectorAll(".cg-typing-course-page, .cg-typing-runtime"), function (node) {
+          if (!node) return false;
+          var rect = node.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0;
+        });
         if (overlays.length > 1) {
           runtimeRoot.console.warn("[LayoutFit][typing] duplicate visible layers", { count: overlays.length });
         }
-        var typingRect = measure(".cg-typing-runtime") || measure(".cg-typing-course-page");
+        var typingRect = measure(".cg-typing-runtime")
+          || measure(".cg-typing-page-shell")
+          || measure(".cg-typing-app-shell.is-hub")
+          || measure(".cg-typing-course-page");
         if (out(typingRect)) runtimeRoot.console.warn("[LayoutFit][typing] overflow", { viewport: { width: vw, height: vh }, rect: typingRect });
       }
       if (state && state.selectedGameId === "word-connections") {

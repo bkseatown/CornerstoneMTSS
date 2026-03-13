@@ -111,3 +111,10 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - rewrote the placement/course hero copy in `games/ui/game-shell.js` so it reads more like a calm instructional start than a promo dashboard
 - bumped local Typing Quest and shared game-platform shell asset versions (`game-shell.js` `20260313i`, shell CSS `20260313c`, theme CSS `20260313b`) in `typing-quest.html` and `game-platform.html`
 - verified locally on `http://127.0.0.1:4174/typing-quest.html?cb=20260313-typing-pass2` and `http://127.0.0.1:4174/game-platform.html?play=1&game=word-typing&cb=20260313-typing-pass3`; the calmer course hub changes rendered correctly, but the existing `[LayoutFit][typing] overflow` warning still remains in the shared typing shell and needs a later fit pass
+
+## 2026-03-13 (Typing Quest fit diagnostics cleanup)
+
+- kept the shared Typing Quest hub inside a fixed-height scroll shell in `games/ui/game-shell.css` so the course map can scroll internally without expanding the whole viewport-owned stage
+- updated the shared layout diagnostics in `games/ui/game-shell.js` to measure the visible typing shell (`.cg-typing-runtime`, `.cg-typing-page-shell`, or `.cg-typing-app-shell.is-hub`) instead of the full internal course-page content height
+- filtered duplicate-layer warnings down to actually visible typing layers only, which removes false positives from hidden/inactive markup
+- bumped the shared shell asset version to `20260313j` in `typing-quest.html` and `game-platform.html`

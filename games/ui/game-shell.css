@@ -8197,6 +8197,16 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   box-sizing: border-box !important;
 }
 
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-app-shell.is-hub {
+  min-height: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-appbar {
   min-height: 0 !important;
   padding: clamp(8px, 1vh, 10px) clamp(14px, 1.6vw, 18px) !important;
@@ -8226,7 +8236,13 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   min-height: 0 !important;
   height: 100% !important;
   max-height: 100% !important;
-  overflow: hidden !important;
+  overflow: auto !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-page {
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-main {
