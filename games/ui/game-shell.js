@@ -3045,6 +3045,47 @@
         ].join("");
       }
 
+      function renderTypingPlacementMiniTiles() {
+        return '<div class="cg-typing-starter-grid" aria-label="Placement checks">' + (typingPlacementRows || []).slice(0, 4).map(function (item, index) {
+          return '<a class="cg-typing-starter-card cg-typing-starter-card--placement' + (index === 0 ? ' is-primary' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "placement" })) + '"><span class="cg-typing-starter-card__step">' + runtimeRoot.CSGameComponents.escapeHtml(String(index + 1)) + '</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(item.stageLabel || item.prompt || "Placement") + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(String(item.target || "").toUpperCase()) + '</small></a>';
+        }).join("") + "</div>";
+      }
+
+      function renderTypingLessonMiniTiles(rows, currentRound, limit) {
+        var list = Array.isArray(rows) ? rows.slice(0, Math.max(1, Number(limit || 2))) : [];
+        return '<div class="cg-typing-starter-grid cg-typing-starter-grid--lessons" aria-label="Lesson jump choices">' + list.map(function (item) {
+          var href = typingQuestHref({ typingCourseMode: "lesson", lessonId: item.id, lessonOrder: item.lessonOrder });
+          var isCurrent = currentRound && String(currentRound.id || "") === String(item.id || "");
+          return '<a class="cg-typing-starter-card cg-typing-starter-card--lesson' + (isCurrent ? ' is-primary' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(href) + '"><span class="cg-typing-starter-card__step">' + runtimeRoot.CSGameComponents.escapeHtml(String(item.lessonOrder || "")) + '</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(item.stageLabel || item.lessonLabel || "Lesson") + '</strong><small>' + runtimeRoot.CSGameComponents.escapeHtml(String(item.target || "").toUpperCase()) + '</small></a>';
+        }).join("") + "</div>";
+      }
+
+      function renderTypingWelcomeStarterRail(currentRound) {
+        var currentUnitKey = String(currentRound && currentRound.unitLabel || "Unit 0");
+        var rows = (typingCourseRows || []).filter(function (item) {
+          return String(item && item.unitLabel || "") === currentUnitKey;
+        });
+        if (!rows.length) rows = typingCourseRows.slice(0, 2);
+        var meta = typingUnitMeta(currentUnitKey, rows);
+        var jumpHref = typingQuestHref({
+          typingCourseMode: "lesson",
+          lessonId: rows[0] && rows[0].id || "",
+          lessonOrder: rows[0] && rows[0].lessonOrder || 1
+        });
+        return [
+          '<section class="cg-typing-welcome-starter">',
+          '  <article class="cg-typing-welcome-panel">',
+          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Placement</p><h3>Start with a quick check</h3><p>Four short checks place the learner into the right starting point.</p></div><a class="cg-action cg-action-primary" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "placement" })) + '">Begin checks</a></div>',
+          renderTypingPlacementMiniTiles(),
+          '  </article>',
+          '  <article class="cg-typing-welcome-panel cg-typing-welcome-panel--path">',
+          '    <div class="cg-typing-welcome-panel__head"><div><p class="cg-kicker">Jump in</p><h3>' + runtimeRoot.CSGameComponents.escapeHtml(meta.title) + '</h3><p>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Preview the first path, or open a lesson directly." : "Open the current path and keep the course moving.") + '</p></div><a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(jumpHref) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Open unit 1" : "Open current unit") + '</a></div>',
+          renderTypingLessonMiniTiles(rows, currentRound, context.typingPlacementRequired ? 2 : 3),
+          '  </article>',
+          '</section>'
+        ].join("");
+      }
+
       function renderTypingWelcomePreview(currentLesson) {
         var lesson = currentLesson || {};
         var target = String(lesson.target || "FJFJ").toUpperCase();
@@ -3143,8 +3184,7 @@
           renderTypingJumpStrip(currentLesson || round),
           '    </div>',
           '  </section>',
-          (context.typingPlacementRequired ? '<section class="cg-typing-unit-section cg-typing-unit-section--placement"><div class="cg-typing-unit-section__head"><div><p class="cg-kicker">Placement</p><h3>Placement checks</h3><p>Choose a quick check to begin.</p></div><span class="cg-typing-unit-section__count">4 checks</span></div>' + renderTypingPlacementTiles() + '</section>' : ""),
-          renderTypingCurrentUnitSection(currentLesson || round),
+          renderTypingWelcomeStarterRail(currentLesson || round),
           '<details class="cg-typing-course-catalog" id="typing-course-catalog"><summary><span>See full course plan</span><small>' + runtimeRoot.CSGameComponents.escapeHtml(courseSummary.totalLessons + " lessons across 5 phases") + '</small></summary><div class="cg-typing-course-catalog__body">' + renderTypingUnitSections(currentLesson || round) + '</div></details>',
           '</div>'
         ].join("");

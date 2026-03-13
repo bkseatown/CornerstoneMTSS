@@ -185,3 +185,13 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - local verification:
   - `node --check games/ui/game-shell.js` passes
   - local browser metrics on `http://127.0.0.1:4174/game-platform.html?cb=20260313-gallery5` now report `scrollHeight === innerHeight` with the gallery visible in one non-scrolling screen
+
+## 2026-03-13 (Typing Quest welcome-page overlap cleanup)
+
+- replaced the stacked placement block and first-unit teaser on the Typing Quest welcome screen with a compact two-panel starter rail in `games/ui/game-shell.js`, so the page now shows placement and jump-in choices without behaving like a clipped long document
+- tightened the active Typing Quest course-hub styles in `games/ui/game-shell.css`: smaller hero typography, smaller preview keyboard, smaller theme tray, and compact starter cards that fit under the hero instead of overlapping it
+- bumped the shared shell CSS/JS cache-busters to `20260313p` in `typing-quest.html` and `game-platform.html` so the updated welcome layout can break stale cached assets
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=layout-audit2` shows hero + starter rail + collapsed course plan with no visible overlap
+  - local browser metrics report the Typing welcome shell at ~509px tall inside a ~772px viewport, with `scrollHeight === innerHeight` and 0 browser warnings
