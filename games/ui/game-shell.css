@@ -5202,6 +5202,96 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
   justify-items: start;
 }
 
+.cg-typing-welcome-preview {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 360px);
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(9, 24, 44, 0.28);
+  border: 1px solid rgba(210, 225, 245, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cg-typing-welcome-lane {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 15px;
+  background: rgba(247, 250, 255, 0.96);
+  color: #27415f;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.cg-typing-welcome-lane .typed {
+  color: #203754;
+}
+
+.cg-typing-welcome-lane .cursor {
+  color: #4f82e5;
+  animation: cgTypingCursorBlink 1s steps(1) infinite;
+}
+
+.cg-typing-welcome-lane .remaining {
+  color: #95a4ba;
+}
+
+.cg-typing-welcome-coach {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cg-typing-welcome-coach span {
+  color: rgba(223, 233, 247, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cg-typing-welcome-coach strong {
+  color: #f4f8fd;
+  font-size: 14px;
+}
+
+.cg-typing-welcome-keyboard {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.cg-typing-welcome-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 12px;
+  background: rgba(247, 250, 255, 0.92);
+  color: #304863;
+  font-size: 15px;
+  font-weight: 900;
+  border: 1px solid rgba(151, 174, 209, 0.22);
+  box-shadow: inset 0 -3px 0 rgba(131, 157, 194, 0.18);
+}
+
+.cg-typing-welcome-key.is-home {
+  background: linear-gradient(180deg, rgba(221, 234, 255, 0.98), rgba(197, 217, 255, 0.98));
+  color: #2552a6;
+}
+
+.cg-typing-welcome-key.is-active {
+  background: linear-gradient(180deg, rgba(193, 230, 174, 0.98), rgba(145, 203, 112, 0.98));
+  color: #204923;
+  border-color: rgba(95, 155, 58, 0.26);
+}
+
 .cg-typing-course-start__target {
   font-size: clamp(30px, 3.6vw, 48px);
   line-height: 0.94;
@@ -5225,6 +5315,49 @@ body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
   border-radius: 14px;
   font-size: 12px;
   font-weight: 800;
+}
+
+.cg-typing-jump-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
+}
+
+.cg-typing-jump-chip {
+  display: grid;
+  gap: 6px;
+  min-height: 86px;
+  padding: 12px;
+  border-radius: 18px;
+  text-decoration: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,245,251,0.96));
+  border: 1px solid rgba(189, 204, 222, 0.96);
+  color: #26415f;
+  box-shadow: 0 10px 18px rgba(20, 41, 71, 0.08);
+}
+
+.cg-typing-jump-chip__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #264d87;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.cg-typing-jump-chip__label {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cg-typing-jump-chip.is-locked {
+  opacity: 0.46;
+  pointer-events: none;
 }
 
 .cg-typing-course-catalog {

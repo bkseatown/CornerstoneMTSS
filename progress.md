@@ -146,3 +146,13 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313k2` now shows the welcome/course-start hub instead of dropping directly into the live lesson runtime
   - local browser metrics on the Typing Quest welcome page report `scrollHeight === innerHeight` with the full-course catalog collapsed
   - local browser snapshot on `http://127.0.0.1:4174/index.html?cb=20260313c` shows the tightened homepage shell and improved workspace contrast with the full dashboard visible in a single screen-sized shell
+
+## 2026-03-13 (Typing Quest welcome-page visual pass, pass 3)
+
+- added a visual typing demo artifact to the Typing Quest welcome hero in `games/ui/game-shell.js` + `games/ui/game-shell.css` so the first screen shows a lane, coach cue, and home-row keyboard instead of relying mostly on explanatory text
+- added a visual unit-jump strip to the course map panel so learners can see the sequence of units and jump directly to unlocked units from the welcome page
+- kept the course catalog collapsed as secondary content and verified the larger curriculum-document problem is still resolved
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local browser snapshot on `http://127.0.0.1:4174/typing-quest.html?cb=20260313k3` shows the new preview lane and unit-jump strip in the welcome screen
+  - browser metrics still show a very small outer-document overflow (`scrollHeight 745` vs `innerHeight 739`) even though the main Typing shell itself remains compact (`mainHeight ~732px`), so there is still a small fit cleanup available later if we want pixel-perfect no-scroll behavior
