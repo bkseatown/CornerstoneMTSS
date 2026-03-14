@@ -1638,13 +1638,15 @@
           '    <div class="th2-class-accommodation-icons">' + accommodationIcons(student.accommodations) + '</div>',
           '  </div>',
           '  <div class="th2-student-strength-gap">',
-          '    <div><span>Strengths</span><p>' + escapeHtml(studentStrengthText(student)) + '</p></div>',
-          '    <div><span>Area to strengthen</span><p>' + escapeHtml(studentGapText(student)) + '</p></div>',
+          '    <div class="th2-student-glance-card"><span>Ready with</span><p>' + escapeHtml(studentStrengthText(student)) + '</p></div>',
+          '    <div class="th2-student-glance-card th2-student-glance-card--watch"><span>Watch for</span><p>' + escapeHtml(studentGapText(student)) + '</p></div>',
           '  </div>',
-          '  <p class="th2-class-goal"><strong>Current unit goal:</strong> ' + escapeHtml(currentUnitGoalText(student, block)) + '</p>',
-          '  <p class="th2-class-goal"><strong>' + escapeHtml(annualGoalLabel) + ':</strong> ' + escapeHtml(annualGoalText(student, block)) + '</p>',
-          '  <p class="th2-class-accommodations"><strong>Best support now:</strong> ' + escapeHtml(recommendation) + '</p>',
-          '  <div class="th2-student-link-row"><a class="th2-inline-link" data-context-student="' + escapeHtml(student.studentId || "") + '" href="' + escapeHtml(profileHref) + '">Open student profile</a></div>',
+          '  <div class="th2-class-today-move"><span>Today\'s move</span><strong>' + escapeHtml(recommendation) + '</strong></div>',
+          '  <div class="th2-class-goal-strip">',
+          '    <div class="th2-class-goal-card"><span>Lesson goal</span><p>' + escapeHtml(currentUnitGoalText(student, block)) + '</p></div>',
+          '    <div class="th2-class-goal-card"><span>' + escapeHtml(annualGoalLabel) + '</span><p>' + escapeHtml(annualGoalText(student, block)) + '</p></div>',
+          '  </div>',
+          '  <div class="th2-student-link-row"><a class="th2-inline-link" data-context-student="' + escapeHtml(student.studentId || "") + '" href="' + escapeHtml(profileHref) + '">View profile</a></div>',
           '</div>'
         ].join("");
       }).join("") : (isCommunityOwnedBlock(block, contextData) ? '' : '<p class="th2-today-sub">Support student details will appear here after the block roster is set.</p>')) +
