@@ -5113,43 +5113,104 @@
     ].join("");
   }
 
+  function isNotableCalendarBlock(block) {
+    var text = [block && block.label, block && block.subject, block && block.curriculum, block && block.notes].join(" ").toLowerCase();
+    return /(library|assembly|stem|specials|world language exempt|recess|snack|meeting|advisory|field trip|testing)/.test(text);
+  }
+
+  function buildCalendarHighlights(blocks) {
+    var rows = (Array.isArray(blocks) ? blocks : []).filter(isNotableCalendarBlock).slice(0, 4);
+    return rows.map(function (block) {
+      var detail = "";
+      if (/library/i.test(block.label || "")) detail = "Library visit is on the schedule.";
+      else if (/assembly/i.test(block.label || "")) detail = "Assembly timing may change the lesson rhythm.";
+      else if (/stem/i.test(block.label || "") || /stem/i.test(block.notes || "")) detail = "STEM timing is part of the day flow.";
+      else if (/world language exempt/i.test(block.label || "")) detail = "Check coverage and pull-out timing before this block starts.";
+      else if (/specials/i.test(block.label || "")) detail = "Specials may affect support coverage and transitions.";
+      else if (/recess|snack/i.test(block.label || "")) detail = "Use the transition to reset before the next academic block.";
+      else if (/meeting|advisory/i.test(block.label || "") || /meeting|advisory/i.test(block.subject || "")) detail = "Morning meeting sets the tone for the day.";
+      else detail = block.notes || "Calendar note for today.";
+      return {
+        timeLabel: block.timeLabel || "",
+        label: block.label || block.classSection || "Calendar note",
+        detail: detail
+      };
+    });
+  }
+
+  function shouldShowLessonMapBlock(block) {
+    var text = [block && block.label, block && block.subject].join(" ").toLowerCase();
+    return !/(recess|snack|meeting|advisory)/.test(text);
+  }
+
+  function buildLessonMapRows(blocks) {
+    return (Array.isArray(blocks) ? blocks : []).filter(shouldShowLessonMapBlock).slice(0, 6).map(function (block) {
+      var contextData = buildTeacherContextForBlock(block) || {};
+      var classContext = contextData.classContext || {};
+      var summary = classContext.conceptFocus || classConceptFocus(block);
+      var lessonLabel = [simplifyCurriculumLabel(block.curriculum || programLabel(block.programId)), block.lesson].filter(Boolean).join(" · ");
+      return {
+        teacher: block.teacher || "Teacher",
+        timeLabel: block.timeLabel || "",
+        label: block.label || block.classSection || block.subject || "Class block",
+        lessonLabel: lessonLabel || "Lesson context pending",
+        summary: summary
+      };
+    });
+  }
+
+  function renderDayOverviewPanel(blocks) {
+    var highlights = buildCalendarHighlights(blocks);
+    return [
+      '<section class="th2-day-brief th2-day-brief--overview">',
+      '  <p class="th2-section-label">Day overview</p>',
+      '  <h2 class="th2-day-brief__title">Sync the day, then move class by class.</h2>',
+      '  <p class="th2-day-brief__summary">Start by confirming today&rsquo;s Google Calendar so schedule changes, assemblies, specials, and pull-out shifts are current.</p>',
+      '  <div class="th2-day-brief__actions"><button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Google Calendar</button><a class="th2-inline-link" href="reports.html">Go to reports</a></div>',
+      '  <div class="th2-day-overview__events">',
+      '    <div class="th2-day-overview__events-head"><span class="th2-day-overview__label">Calendar highlights</span><strong>What changes the day</strong></div>',
+      (highlights.length
+        ? highlights.map(function (item) {
+            return '<article class="th2-day-overview__event"><span class="th2-day-overview__event-time">' + escapeHtml(item.timeLabel || "Today") + '</span><strong>' + escapeHtml(item.label) + '</strong><p>' + escapeHtml(item.detail) + '</p></article>';
+          }).join("")
+        : '<p class="th2-day-overview__empty">No major calendar shifts are showing yet. Sync once to confirm assemblies, library, specials, and pull-out changes.</p>'),
+      "  </div>",
+      "</section>"
+    ].join("");
+  }
+
+  function renderLessonMapRail(blocks) {
+    var rows = buildLessonMapRows(blocks);
+    return [
+      '<section class="th2-priority-rail th2-priority-rail--lesson-map">',
+      '  <div class="th2-priority-rail__head"><p class="th2-section-label">Class lesson map</p><p class="th2-today-sub">What each classroom is teaching today.</p></div>',
+      (rows.length
+        ? '<div class="th2-priority-rail__list">' + rows.map(function (item) {
+            return [
+              '<article class="th2-priority-item th2-priority-item--lesson">',
+              '  <div class="th2-priority-item__top">',
+              '    <span class="th2-priority-item__rank">' + escapeHtml(item.teacher) + '</span>',
+              '    <span class="th2-priority-item__status" data-status="ready">' + escapeHtml(item.timeLabel) + '</span>',
+              '  </div>',
+              '  <strong class="th2-priority-item__title">' + escapeHtml(item.label) + '</strong>',
+              '  <p class="th2-priority-item__meta">' + escapeHtml(item.lessonLabel) + '</p>',
+              '  <p class="th2-priority-item__reason">' + escapeHtml(item.summary) + '</p>',
+              '</article>'
+            ].join("");
+          }).join("") + '</div>'
+        : '<div class="th2-priority-rail__empty">Lesson context will appear once today&rsquo;s classes are connected.</div>'),
+      '</section>'
+    ].join("");
+  }
+
   function renderDailyScheduleMain(blocks) {
     if (!el.emptyState) return;
-
-    var today = new Date();
-    var dayStr = today.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-    var brief = buildNowNextBrief(blocks);
-    var briefSignals = getBriefIntelligenceSnapshot(brief.primaryItem);
-    var leadBlock = (brief.primaryItem && brief.primaryItem.block) || brief.nextBlock || blocks[0] || null;
 
     el.emptyState.innerHTML = [
       '<div class="th2-day-schedule-view">',
       '<section class="th2-day-sched-hero">',
-      '<section class="th2-day-brief th2-day-brief--command">',
-      '  <p class="th2-section-label">Command brief</p>',
-      '  <p class="th2-day-brief__date">' + escapeHtml(dayStr) + '</p>',
-      '  <h2 class="th2-day-brief__title">' + escapeHtml(brief.title) + '</h2>',
-      '  <p class="th2-day-brief__summary">' + escapeHtml(brief.summary) + '</p>',
-      '  <p class="th2-day-brief__prompt">' + escapeHtml(brief.rationale) + '</p>',
-      (brief.primaryItem ? '  <div class="th2-day-brief__trust"><span class="th2-day-brief__confidence">' + escapeHtml(briefSignals.confidence) + '</span>' + (briefSignals.why ? '<span class="th2-day-brief__why">' + escapeHtml(briefSignals.why) + '</span>' : '') + '</div>' : ''),
-      (briefSignals.quality ? '  <p class="th2-day-brief__memory">' + escapeHtml(briefSignals.quality) + '</p>' : ''),
-      (brief.outcomeMemory ? '  <p class="th2-day-brief__memory">' + escapeHtml(brief.outcomeMemory) + '</p>' : ''),
-      (brief.memoryMode ? '  <p class="th2-day-brief__memory-mode">' + escapeHtml(brief.memoryMode) + '</p>' : ''),
-      (briefSignals.pattern ? '  <p class="th2-day-brief__pattern">' + escapeHtml(briefSignals.pattern) + '</p>' : ''),
-      (brief.primaryItem && briefSignals.suggestion
-        ? '  <div class="th2-day-brief__group"><div><span class="th2-day-brief__group-label">Suggested group</span><strong>' + escapeHtml(briefSignals.suggestion.count + ' students for ' + briefSignals.suggestion.label) + '</strong><p>' + escapeHtml(briefSignals.suggestion.names.join(", ")) + '</p></div><button class="th2-note-btn" data-copy-group-plan="' + escapeHtml(brief.primaryItem.block && brief.primaryItem.block.id || "") + '" type="button">&#x1F465; Copy group plan</button></div>'
-        : ''),
-      '  <div class="th2-command-brief-grid">',
-      '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.now.label) + '</span><strong>' + escapeHtml(brief.now.value) + '</strong><p>' + escapeHtml(brief.now.meta) + '</p></div>',
-      '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.next.label) + '</span><strong>' + escapeHtml(brief.next.value) + '</strong><p>' + escapeHtml(brief.next.meta) + '</p></div>',
-      '    <div class="th2-command-brief-card"><span>' + escapeHtml(brief.action.label) + '</span><strong>' + escapeHtml(brief.action.value) + '</strong><p>' + escapeHtml(brief.action.meta) + '</p></div>',
-      '  </div>',
-      (brief.primaryItem
-        ? '  <div class="th2-note-actions"><span class="th2-note-actions-label">Quick outputs</span><button class="th2-note-btn" data-copy-brief="team" data-copy-brief-block="' + escapeHtml(brief.primaryItem.block && brief.primaryItem.block.id || "") + '" type="button">&#x1F4CB; Team</button><button class="th2-note-btn" data-copy-brief="family" data-copy-brief-block="' + escapeHtml(brief.primaryItem.block && brief.primaryItem.block.id || "") + '" type="button">&#x2709; Family</button><button class="th2-note-btn" data-copy-brief="snapshot" data-copy-brief-block="' + escapeHtml(brief.primaryItem.block && brief.primaryItem.block.id || "") + '" type="button">&#x1F4CA; Snapshot</button></div>'
-        : ''),
-      '  <div class="th2-day-brief__actions"><button class="th2-day-sched-preview__open" data-open-block="' + escapeHtml(leadBlock && leadBlock.id || "") + '" type="button"' + (leadBlock ? "" : " disabled") + '>Open current class</button><a class="th2-inline-link" href="reports.html">Go to reports</a><button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Calendar</button></div>',
-      '</section>',
-      renderPriorityRail(brief.priorityItems),
+      renderDayOverviewPanel(blocks),
+      renderLessonMapRail(blocks),
       "</section>",
       "</div>"
     ].join("");
