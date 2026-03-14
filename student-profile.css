@@ -19,7 +19,7 @@ body.sp-page {
 .sp-shell {
   width: min(1440px, calc(100vw - 28px));
   margin: 0 auto;
-  padding: 20px 0 28px;
+  padding: 10px 0 18px;
 }
 
 .sp-header,
@@ -34,9 +34,9 @@ body.sp-page {
 .sp-header {
   display: grid;
   grid-template-columns: minmax(220px, auto) minmax(280px, 1fr) auto;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
-  padding: 18px 20px;
+  padding: 12px 14px;
 }
 
 .sp-brand {
@@ -47,15 +47,15 @@ body.sp-page {
 .sp-brand strong {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
   line-height: 1;
 }
 
 .sp-brand span {
   display: block;
-  margin-top: 6px;
+  margin-top: 4px;
   color: color-mix(in oklab, var(--text-primary) 74%, var(--muted) 26%);
-  font-size: 0.98rem;
+  font-size: 0.9rem;
 }
 
 .sp-search input,
@@ -72,8 +72,8 @@ body.sp-page {
 }
 
 .sp-search input {
-  min-height: 62px;
-  font-size: 1.05rem;
+  min-height: 52px;
+  font-size: 0.98rem;
 }
 
 .sp-search input::placeholder,
@@ -93,8 +93,8 @@ body.sp-page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 46px;
-  padding: 0 18px;
+  min-height: 42px;
+  padding: 0 16px;
   border-radius: 999px;
   text-decoration: none;
   border: 1px solid color-mix(in oklab, var(--border) 84%, white 16%);
@@ -110,23 +110,23 @@ body.sp-page {
 
 .sp-layout {
   display: grid;
-  grid-template-columns: 232px minmax(0, 1fr);
-  gap: 18px;
-  margin-top: 18px;
+  grid-template-columns: 216px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .sp-sidebar {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   align-self: start;
   position: sticky;
-  top: 18px;
+  top: 14px;
 }
 
 .sp-panel,
 .sp-hero,
 .sp-empty-state {
-  padding: 18px;
+  padding: 12px;
 }
 
 .sp-panel-ghost {
@@ -158,8 +158,8 @@ body.sp-page {
 
 .sp-student-list {
   display: grid;
-  gap: 10px;
-  max-height: calc(100vh - 220px);
+  gap: 8px;
+  max-height: calc(100vh - 200px);
   overflow: auto;
   padding-right: 4px;
 }
@@ -167,8 +167,8 @@ body.sp-page {
 .sp-student-link {
   display: grid;
   gap: 6px;
-  padding: 16px 18px;
-  border-radius: 22px;
+  padding: 13px 14px;
+  border-radius: 18px;
   text-decoration: none;
   color: inherit;
   background: rgba(255, 255, 255, 0.56);
@@ -187,12 +187,12 @@ body.sp-page {
 }
 
 .sp-student-link strong {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .sp-student-link span {
-  font-size: 0.95rem;
-  line-height: 1.45;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .sp-empty-state {
@@ -219,13 +219,13 @@ body.sp-page {
 
 .sp-content {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
 .sp-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.8fr);
+  gap: 12px;
   overflow: hidden;
   position: relative;
 }
@@ -242,16 +242,17 @@ body.sp-page {
 }
 
 .sp-hero h1 {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 5vw, 4.2rem);
-  line-height: 0.92;
+  font-size: clamp(2rem, 3.2vw, 2.85rem);
+  line-height: 0.96;
 }
 
 .sp-body-copy {
-  font-size: 1.05rem;
-  line-height: 1.5;
-  max-width: 44ch;
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.34;
+  max-width: 34ch;
 }
 
 .sp-chip-row,
@@ -279,8 +280,8 @@ body.sp-page {
 
 .sp-chip,
 .sp-reminder {
-  padding: 9px 12px;
-  font-size: 0.92rem;
+  padding: 8px 11px;
+  font-size: 0.86rem;
   font-weight: 650;
 }
 
@@ -290,20 +291,20 @@ body.sp-page {
 
 .sp-hero-side {
   display: grid;
-  gap: 12px;
+  gap: 8px;
   align-content: start;
 }
 
 .sp-meta-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
 }
 
 .sp-meta-card {
-  padding: 16px 18px;
+  padding: 11px 12px;
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .sp-meta-card span {
@@ -314,14 +315,14 @@ body.sp-page {
 }
 
 .sp-meta-card strong {
-  font-size: clamp(1.2rem, 2vw, 1.7rem);
-  line-height: 1.1;
+  font-size: clamp(0.98rem, 1.2vw, 1.2rem);
+  line-height: 1.08;
 }
 
 .sp-storyboard,
 .sp-workbench {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
 .sp-section-head {
@@ -329,13 +330,13 @@ body.sp-page {
   justify-content: space-between;
   gap: 14px;
   align-items: end;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
 .sp-section-title {
   margin: 0;
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  line-height: 1.04;
+  font-size: clamp(1.18rem, 1.7vw, 1.65rem);
+  line-height: 1.06;
   font-family: var(--font-display);
 }
 
@@ -350,10 +351,10 @@ body.sp-page {
 }
 
 .sp-visual-card {
-  padding: 16px;
-  min-height: 236px;
+  padding: 14px;
+  min-height: 210px;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   align-content: start;
   background:
     radial-gradient(circle at top right, rgba(136, 175, 224, 0.16), transparent 28%),
@@ -366,8 +367,8 @@ body.sp-page {
 
 .sp-card-title {
   margin: -2px 0 2px;
-  font-size: 1.2rem;
-  line-height: 1.05;
+  font-size: 1.08rem;
+  line-height: 1.08;
   font-family: var(--font-display);
 }
 

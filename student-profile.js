@@ -288,14 +288,14 @@
       : []).length || 0;
     return [
       '<div class="sp-hero-main">',
-      '  <p class="sp-kicker">Dedicated support record</p>',
+      '  <p class="sp-kicker">Support record</p>',
       '  <h1>' + esc(student.name || "Student") + '</h1>',
       '  <p class="sp-subline">' + esc([
         student.gradeBand || student.grade || "Grade not set",
         summary && summary.focus ? summary.focus : "Support focus forming",
         summary && summary.risk ? summary.risk : "steady"
       ].join(" · ")) + '</p>',
-      '  <p class="sp-body-copy">' + esc((summary && summary.nextMove && summary.nextMove.line) || "Review support, evidence, behavior planning, communication, and next steps for this student in one place.") + '</p>',
+      '  <p class="sp-body-copy">' + esc((summary && summary.nextMove && summary.nextMove.line) || "Review support, evidence, communication, and the next move in one place.") + '</p>',
       '  <div class="sp-chip-row">' +
       [
         goals[0] && ("Goal: " + (goals[0].skill || goals[0].domain || "Goal")),
@@ -310,7 +310,7 @@
       '  <div class="sp-meta-grid">',
       '    <div class="sp-meta-card"><span>Last session</span><strong>' + esc(summary && summary.lastSession ? relativeDate(summary.lastSession.timestamp) : "No sessions yet") + '</strong></div>',
       '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String(evidenceCount)) + '</strong></div>',
-      '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect current literacy baseline") : "Collect current literacy baseline") + '</strong></div>',
+      '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect baseline") : "Collect baseline") + '</strong></div>',
       '  </div>',
       '  <div class="sp-evidence-story">',
       '    <p class="sp-kicker">Momentum</p>',
