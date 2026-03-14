@@ -25,14 +25,14 @@
      Gradient flows diagonally (155deg) creating visual interest without harsh transitions.
      Applied globally to html/body — all pages inherit this unified aesthetic. */
   --page-bg-primary: #e8edf4;
-  --page-bg-secondary: #dce4ee;
-  --page-bg-tertiary: #d1dae8;
-  --page-bg-gradient: linear-gradient(155deg, #e8edf4 0%, #dce4ee 48%, #d1dae8 100%);
+  --page-bg-secondary: #dbe4ef;
+  --page-bg-tertiary: #ccd7e7;
+  --page-bg-gradient: linear-gradient(152deg, #e9eef5 0%, #dce4ee 44%, #cfd8e6 100%);
 
-  --surface-elev-1: #fefcfa;
-  --surface-elev-2: #e9e6df;
-  --surface-elev-3: #e1ddd6;
-  --surface-focus: #e9e6df;
+  --surface-elev-1: #fcfaf6;
+  --surface-elev-2: #efebe3;
+  --surface-elev-3: #e2ddd5;
+  --surface-focus: #ece7df;
   --bg-900: #efede8;
   --bg-850: #e9e6df;
   --surface-0: #fefcfa;
@@ -45,19 +45,19 @@
   --border-soft: rgba(48, 38, 20, 0.09);
 
   /* ===== Typography ===== */
-  --text-primary: #1c2733;
-  --text-secondary: #4a5a6a;
-  --text-muted: #6c7a88;
-  --text-strong: #1c2733;
-  --text: #2b3a48;
-  --muted: #6c7a88;
+  --text-primary: #1a2430;
+  --text-secondary: #425466;
+  --text-muted: #6f7c89;
+  --text-strong: #16202b;
+  --text: #2a3948;
+  --muted: #6f7c89;
 
   /* ===== Primary Action ===== */
-  --accent: #2b5da8;
-  --accent-2: #4c84d6;
-  --action-primary: #2b5da8;
-  --action-primary-hover: #244f8e;
-  --action-primary-soft: rgba(76, 132, 214, 0.18);
+  --accent: #295fa4;
+  --accent-2: #4f85d1;
+  --action-primary: #295fa4;
+  --action-primary-hover: #204d87;
+  --action-primary-soft: rgba(79, 133, 209, 0.18);
 
   /* ===== Semantic Status ===== */
   --status-secure: #4e8d6a;
@@ -118,26 +118,28 @@
   --border-accent-line: 1px solid color-mix(in oklab, var(--accent) 32%, transparent);
 
   /* ===== Surface Styles ===== */
-  --surface-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 252, 0.94));
-  --surface-panel-bg: linear-gradient(180deg, rgba(248, 250, 253, 0.94), rgba(237, 242, 248, 0.92));
-  --surface-stage-bg: linear-gradient(180deg, rgba(34, 56, 96, 0.98), rgba(22, 40, 73, 0.98));
+  --surface-card-bg: linear-gradient(180deg, rgba(252, 250, 246, 0.98), rgba(243, 246, 251, 0.95));
+  --surface-panel-bg: linear-gradient(180deg, rgba(248, 245, 239, 0.96), rgba(235, 241, 248, 0.93));
+  --surface-stage-bg: linear-gradient(180deg, rgba(36, 50, 71, 0.99), rgba(24, 36, 56, 0.99));
   --surface-tint-blue: linear-gradient(180deg, rgba(74, 124, 255, 0.12), rgba(74, 124, 255, 0.03));
   --surface-tint-violet: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.03));
   --surface-tint-mint: linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.03));
+  --surface-tint-gold: linear-gradient(180deg, rgba(239, 180, 76, 0.16), rgba(239, 180, 76, 0.03));
+  --surface-tint-coral: linear-gradient(180deg, rgba(225, 123, 106, 0.14), rgba(225, 123, 106, 0.03));
 
   /* ===== Typography Scale ===== */
-  --font-ui: Inter, system-ui, sans-serif;
+  --font-ui: Inter, "Segoe UI", system-ui, sans-serif;
   --font-sans: var(--font-ui);
-  --font-display: Inter, system-ui, sans-serif;
-  --font-body: Inter, system-ui, sans-serif;
+  --font-display: Sora, "Plus Jakarta Sans", Inter, "Segoe UI", system-ui, sans-serif;
+  --font-body: Inter, "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --font-family: var(--font-ui);
   --font: var(--font-ui);
   --font-logo: var(--font-ui);
 
   --fs-hero: clamp(2.2rem, 3.2vw, 3.4rem);
-  --fs-h1: 34px;
-  --fs-h2: 24px;
+  --fs-h1: clamp(2rem, 3vw, 3rem);
+  --fs-h2: clamp(1.35rem, 2vw, 1.9rem);
   --fs-body: 15px;
   --fs-small: 13px;
   --fs-xxl: var(--fs-h1);
@@ -153,10 +155,10 @@
   --fs-3: 15px;
   --fs-4: 18px;
   --fs-5: 22px;
-  --fs-6: 28px;
-  --fs-7: 40px;
-  --fs-8: 52px;
-  --fs-9: clamp(3.4rem, 7vw, 5.2rem);
+  --fs-6: 30px;
+  --fs-7: 42px;
+  --fs-8: 56px;
+  --fs-9: clamp(3rem, 6vw, 5.25rem);
   --h1: var(--fs-xxl);
   --h2: var(--fs-xl);
   --h3: var(--fs-lg);

@@ -4613,7 +4613,7 @@ html[data-home-mode="play"] .next-action-line {
 }
 
 html[data-home-mode="play"] #wq-coach-ribbon {
-  display: grid;
+  display: none !important;
   position: relative;
   top: auto;
   left: auto;
@@ -4628,12 +4628,33 @@ html[data-home-mode="play"] #wq-coach-ribbon {
   max-width: 100%;
   margin: 0 auto clamp(2px, 0.45vh, 6px);
   z-index: 1;
+  border-radius: 22px;
+  padding: 12px 14px;
+  gap: 10px;
 }
 
 html[data-home-mode="play"] #wq-coach-ribbon .cs-coach-text {
-  font-size: 0.82rem;
-  line-height: 1.35;
+  font-size: 0.9rem;
+  line-height: 1.45;
   color: rgba(240, 247, 255, 0.96);
+  font-weight: 600;
+}
+
+html[data-home-mode="play"] #wq-coach-ribbon::before {
+  content: "Solve plan";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(217, 234, 255, 0.9);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 html[data-home-mode="play"] .focus-search-label span,
@@ -4876,6 +4897,8 @@ html[data-home-mode="play"] .board-plate {
   background: var(--wq-play-board-bg);
   border-color: var(--wq-play-board-border);
   box-shadow: var(--wq-play-board-shadow);
+  width: min(calc(var(--playfield-width) + clamp(26px, calc(var(--tile-size) * 0.46), 42px)), calc(100vw - 20px), calc(100% - 4px));
+  padding: clamp(12px, calc(var(--tile-size) * 0.22), 18px) clamp(10px, calc(var(--tile-size) * 0.18), 14px);
 }
 
 html[data-home-mode="play"] .board-plate::before {
@@ -7180,6 +7203,65 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
 }
 #end-modal.loss #modal-word span { background: var(--absent); box-shadow: 0 4px 0 var(--absent-dk); }
 
+.modal-evidence-strip {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.modal-evidence-card {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  padding: 14px 15px;
+  border-radius: 14px;
+  border: 1px solid rgba(233, 242, 252, 0.52);
+  background:
+    linear-gradient(
+      160deg,
+      #b9c8da 0%,
+      #8ea4bc 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.34),
+    0 10px 22px rgba(9, 18, 34, 0.16);
+}
+
+.modal-evidence-card-next {
+  background:
+    linear-gradient(
+      160deg,
+      #9ab0c8 0%,
+      #768faa 100%
+    );
+}
+
+.modal-evidence-label {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(52, 70, 92, 0.9);
+}
+
+#modal-evidence-headline,
+#modal-next-step-title {
+  font-size: 0.98rem;
+  font-weight: 860;
+  line-height: 1.2;
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(12, 22, 38, 0.22);
+}
+
+#modal-evidence-detail,
+#modal-next-step-copy {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(244, 249, 255, 0.94);
+}
+
 .modal-meaning-highlight {
   width: 100%;
   display: grid;
@@ -8337,6 +8419,12 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   padding: 4px 9px;
 }
 
+@media (max-width: 560px) {
+  .modal-evidence-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
 html[data-reveal-focus="on"] .modal-meaning-highlight {
   border-color: color-mix(in oklab, var(--panel-border) 62%, #7f95ae 38%);
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--panel-border) 34%, transparent);
@@ -9313,12 +9401,12 @@ html[data-home-mode="play"] .header-focus-inline-wrap {
 }
 
 html[data-home-mode="play"] #game-board {
-  max-width: min(372px, calc(100vw - (var(--wq-safe-edge) * 2) - 10px));
+  max-width: min(336px, calc(100vw - (var(--wq-safe-edge) * 2) - 10px));
 }
 
 html[data-home-mode="play"] #keyboard {
-  width: min(var(--keyboard-max-width, 472px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
-  max-width: calc(100vw - (var(--wq-safe-edge) * 2) - 2px);
+  width: min(var(--keyboard-max-width, 540px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
+  max-width: min(540px, calc(100vw - (var(--wq-safe-edge) * 2) - 2px));
   min-height: min(var(--wq-bottom-controls-budget), 162px);
   max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 168px), 162px);
   margin-top: 0;
@@ -9339,6 +9427,10 @@ html[data-home-mode="play"] #keyboard::before {
   display: none;
 }
 
+html[data-home-mode="play"][data-play-style="listening"] .play-support-row {
+  display: none !important;
+}
+
 html[data-home-mode="play"] .play-support-row {
   width: min(560px, calc(100vw - (var(--wq-safe-edge) * 2) - 8px));
   padding: 4px 0 0;
@@ -9352,10 +9444,6 @@ html[data-home-mode="play"] .play-support-row {
 
 html[data-home-mode="play"] .play-support-row:not(:has(.gameplay-audio:not(.hidden), #play-style-banner:not(.hidden))) {
   display: none;
-}
-
-html[data-home-mode="play"] .gameplay-audio {
-  padding: 0;
 }
 
 html[data-home-mode="play"] #cs-build-badge {
@@ -9384,7 +9472,7 @@ html[data-home-mode="play"] .key-row-3 {
 
 html[data-home-mode="play"] .key {
   max-width: 50px;
-  font-size: clamp(1.38rem, 2.3vh, 1.56rem);
+  font-size: clamp(1.48rem, 2.45vh, 1.68rem);
 }
 
 html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
@@ -9395,13 +9483,13 @@ html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
 
 html[data-home-mode="play"] .key.wide {
   flex: 1.08;
-  min-width: 56px;
-  max-width: 74px;
-  font-size: 0.78rem;
+  min-width: 60px;
+  max-width: 80px;
+  font-size: 0.84rem;
 }
 
 html[data-home-mode="play"] .key[data-key="Enter"] {
-  font-size: 0.9rem;
+  font-size: 0.96rem;
 }
 
 html[data-home-mode="play"] .gameplay-audio {
@@ -9477,6 +9565,7 @@ html[data-home-mode="play"] .key-backspace-glyph {
     justify-self: end;
     justify-content: flex-end;
   }
+
 }
 
 @media (max-height: 700px) and (min-width: 980px) {

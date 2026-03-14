@@ -3752,7 +3752,6 @@
       syncHintToggleUI(getHintMode());
       return;
     }
-    gameplayAudio.classList.toggle('is-single-action', false);
     gameplayAudio.classList.toggle('hidden', !listeningMode);
     gameplayAudio.setAttribute('aria-hidden', listeningMode ? 'false' : 'true');
     syncHintToggleUI(getHintMode());
@@ -6506,11 +6505,11 @@
       if (confidenceOn) {
         text = playStyle === 'listening'
           ? 'Listening mode: tap Listen to Word, then Listen to Definition, then spell what you hear. Use Sound Clue only if stuck.'
-          : 'Try a word. Use tile colors to adjust.';
+          : 'Try one strong word first, then use the tile colors like clues instead of guessing randomly.';
       } else {
         text = playStyle === 'listening'
           ? 'Listening mode: hear the word, check meaning if needed, then spell from sound.'
-          : 'Try a first guess, then use tile colors to refine.';
+          : 'Try a first guess, then use tile colors to refine the pattern one letter at a time.';
       }
     } else if (hasActiveRound && guessCount === 0 && activeGuessLength > 0) {
       text = `Build your first test word (${Math.min(activeGuessLength, wordLength)}/${wordLength}), then press Enter.`;
@@ -6907,9 +6906,9 @@
     }
     mount.classList.remove('hidden');
     const map = {
-      before_guess: { key: 'wq.beforeFirstGuess', text: 'Try a word. Hint opens soon.' },
-      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Use the colors. Hint opens soon.' },
-      after_correct: { key: 'wq.correct', text: 'Nice. Tap Next Word for another round.' }
+      before_guess: { key: 'wq.beforeFirstGuess', text: 'Start with one strong test word. The tile colors will show what to keep, move, or drop.' },
+      after_first_miss: { key: 'wq.afterFirstMiss', text: 'Read the color pattern carefully, then make the next guess more precise instead of wider.' },
+      after_correct: { key: 'wq.correct', text: 'Solved. Tap Next Word to keep the momentum going or replay the pattern for fluency.' }
     };
     const next = map[wordQuestCoachKey] || map.before_guess;
     wordQuestCoachRibbon.set(next);
@@ -9443,11 +9442,11 @@
         size = Math.min(sizeCap, size + 4);
       }
       if (wordLength === 5 && layoutMode !== 'compact' && viewportW >= 900) {
-        const wideFiveFloor = viewportH <= 760 ? 58 : 64;
+        const wideFiveFloor = viewportH <= 760 ? 52 : 58;
         size = Math.max(size, wideFiveFloor);
       }
       if (shortLaptopMode) {
-        size = Math.max(layoutMode === 'tight' ? 54 : sizeFloor, Math.min(size, wordLength === 5 ? 58 : 56));
+        size = Math.max(layoutMode === 'tight' ? 52 : sizeFloor, Math.min(size, wordLength === 5 ? 56 : 54));
       }
       const tileRadius = Math.max(10, Math.min(19, Math.round(size * 0.24)));
       const boardWidth = wordLength * size + (wordLength - 1) * tileGap;
@@ -9459,18 +9458,18 @@
       const preferredKeyMinW = parseFloat(rootStyle.getPropertyValue('--key-min-w')) || 38;
       const adaptiveKeyFloor = Math.max(
         playModeActive
-          ? (layoutMode === 'compact' ? 30 : shortLaptopMode ? 30 : layoutMode === 'tight' ? 34 : layoutMode === 'wide' ? 38 : 40)
+          ? (layoutMode === 'compact' ? 31 : shortLaptopMode ? 32 : layoutMode === 'tight' ? 35 : layoutMode === 'wide' ? 40 : 41)
           : (layoutMode === 'compact' ? 36 : layoutMode === 'tight' ? 42 : 48),
         Math.round(preferredKeyH * (playModeActive ? 0.78 : 0.88))
       );
       const adaptiveKeyCeil = Math.min(
         playModeActive
-          ? (layoutMode === 'compact' ? 40 : shortLaptopMode ? 40 : layoutMode === 'tight' ? 44 : layoutMode === 'wide' ? 48 : 50)
+          ? (layoutMode === 'compact' ? 41 : shortLaptopMode ? 42 : layoutMode === 'tight' ? 45 : layoutMode === 'wide' ? 50 : 52)
           : Math.max(layoutMode === 'wide' ? 62 : 60, Math.round(preferredKeyH)),
         Math.max(playModeActive ? 32 : 36, size - (playModeActive ? 8 : 4))
       );
       const keyScale = playModeActive
-        ? (layoutMode === 'compact' ? 0.68 : shortLaptopMode ? 0.66 : layoutMode === 'tight' ? 0.71 : layoutMode === 'wide' ? 0.73 : 0.76)
+        ? (layoutMode === 'compact' ? 0.7 : shortLaptopMode ? 0.7 : layoutMode === 'tight' ? 0.74 : layoutMode === 'wide' ? 0.76 : 0.79)
         : (layoutMode === 'compact' ? 0.84 : layoutMode === 'tight' ? 0.85 : 0.86);
       const adaptiveKeyH = Math.max(adaptiveKeyFloor, Math.min(adaptiveKeyCeil, Math.round(size * keyScale)));
       let adaptiveKeyMinW = Math.max(

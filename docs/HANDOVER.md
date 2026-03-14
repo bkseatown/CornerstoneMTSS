@@ -34,7 +34,7 @@ The product direction is now explicitly platform-first:
 - specialist-facing dashboard surfaces
 - local-first behavior and durable build/version visibility
 
-## 3) March 13, 2026 Baseline
+## 3) March 13-14, 2026 Baseline
 Recently completed work:
 - homepage cards are more premium and no longer read like generic placeholder boxes
 - workspace card has a stronger briefing surface instead of a flat empty panel
@@ -50,6 +50,15 @@ Recently completed work:
   - first screen is now one welcome surface plus a collapsed course plan
   - first screen fits as a non-scrolling page locally at audited desktop size
   - page is cleaner, but still not at the final quality bar
+- Word Clue was rebuilt into a real two-step flow:
+  - landing page acts as a clean format chooser
+  - play page is a separate focused clue stage
+  - shared teacher controls were simplified, but the runtime still needs one stronger flagship composition pass
+- Word Quest was re-stabilized after an overreaching runtime experiment:
+  - live `Solve plan` / `Ava` ribbon is now hidden again
+  - spelling/listening support row is hidden again on the play surface
+  - keyboard fits fully in the viewport again on the validated desktop route
+  - current state is a safe baseline, not a finished flagship redesign
 
 Latest pushed cleanup commit from this thread:
 - `7d8fe9cf`
@@ -57,6 +66,9 @@ Latest pushed cleanup commit from this thread:
 Latest verified local page markers from this thread:
 - Typing Quest shell assets: `20260313u`
 - Word Quest build badge: `20260313u`
+- Word Quest stabilized asset refs:
+  - `style/components.css?v=20260314c`
+  - `js/app.js?v=20260314c`
 
 ## 4) What Still Needs Work
 Highest-priority unresolved quality areas:
@@ -93,6 +105,8 @@ Highest-priority unresolved quality areas:
 - Do not reintroduce large translucent stage boxes behind the board or keyboard.
 - Keep student-safe navigation visible.
 - Coach/help copy should stay short and purposeful.
+- Do not add runtime support chrome until the core fit is stable and visually validated.
+- If a new Word Quest idea is exploratory, isolate it first; do not mix it into shared live sizing rules mid-pass.
 
 ### Typing Quest rules
 - One welcome owner only.
@@ -152,6 +166,7 @@ Safe response:
 - simplify first
 - shorten text
 - keep board and keyboard central
+- if runtime fit breaks, restore the last stable baseline before trying new interaction ideas
 
 ### Cache/build drift
 Known risk pattern:
@@ -200,12 +215,35 @@ Treat these files as the durable project memory:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/REGRESSION_GUARDRAILS.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_DESIGN_SYSTEM.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_MASTER_REDESIGN_BRIEF.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_VISUAL_SPEC_V1.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_LAYOUT_OWNERS.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_EXCELLENCE_PLAYBOOK.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
 
 ## 11) Next Best Moves
-1. Typing Quest premium identity pass
-2. Homepage top-surface unification and contrast pass
-3. Cross-game interaction polish pass
-4. Continue reducing text and duplicate UI where possible
+1. Word Quest controlled polish pass from the new stable baseline:
+   - slightly smaller board
+   - slightly larger keys/letters
+   - verify at MacBook size after each single change
+2. Word Clue flagship runtime composition pass:
+   - one dominant clue stage
+   - less repeated framing
+   - cleaner footer/control hierarchy
+3. Typing Quest premium identity pass
+4. Homepage top-surface unification and contrast pass
+5. Cross-game interaction polish pass
+
+## 12) Product Recommendation
+What to do next:
+- finish one flagship game runtime at a time from a stable baseline, starting with Word Quest or Word Clue
+- prefer screenshot-validated micro-passes over broad restyles
+
+What to do ultimately:
+- unify the platform around one premium shell language
+- then make each flagship game feel intentionally different inside that system
+- the platform will shine most when:
+  - homepage/hub/reports feel leadership-ready
+  - Word Quest feels like the polished fluency flagship
+  - Word Clue feels like the polished speaking/small-group flagship
+  - Typing Quest feels like the polished skills-course flagship

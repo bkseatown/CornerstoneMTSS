@@ -5,36 +5,38 @@
   'use strict';
 
   var THEME_REGISTRY = Object.freeze([
-    Object.freeze({ id: 'default', label: '🌿 Sage Classic', family: 'core' }),
-    Object.freeze({ id: 'sunset', label: '🌅 Sunset', family: 'core' }),
-    Object.freeze({ id: 'ocean', label: '🌊 Ocean', family: 'core' }),
-    Object.freeze({ id: 'coffee', label: '☕ Coffeehouse', family: 'core' }),
-    Object.freeze({ id: 'seahawks', label: '🦅 Seahawks', family: 'sports' }),
-    Object.freeze({ id: 'huskies', label: '🐾 Huskies', family: 'sports' }),
-    Object.freeze({ id: 'superman', label: '🦸 Superman', family: 'inspired' }),
-    Object.freeze({ id: 'mario', label: '🍄 Mushroom Sprint', family: 'inspired' }),
-    Object.freeze({ id: 'zelda', label: '🗡️ Hero of Hyrule', family: 'inspired' }),
-    Object.freeze({ id: 'amongus', label: '🚀 Cosmic Crew', family: 'inspired' }),
-    Object.freeze({ id: 'rainbowfriends', label: '🌈 Neon Squad', family: 'inspired' }),
-    Object.freeze({ id: 'minecraft', label: '⛏️ Minecraft', family: 'inspired' }),
-    Object.freeze({ id: 'marvel', label: '💥 Marvel', family: 'inspired' }),
-    Object.freeze({ id: 'ironman', label: '🔴 Iron Man', family: 'inspired' }),
-    Object.freeze({ id: 'harleyquinn', label: '🎨 Pop Duo', family: 'inspired' }),
-    Object.freeze({ id: 'kuromi', label: '🖤 Kuromi', family: 'inspired' }),
-    Object.freeze({ id: 'poppink', label: '💖 Pop Pink', family: 'inspired' }),
-    Object.freeze({ id: 'harrypotter', label: '🪄 Hogwarts House', family: 'inspired' }),
-    Object.freeze({ id: 'demonhunter', label: '🌸 Demon Hunter', family: 'inspired' }),
-    Object.freeze({ id: 'dark', label: '🌙 Dark', family: 'dark' }),
-    Object.freeze({ id: 'matrix', label: '💻 Matrix', family: 'dark' })
+    Object.freeze({ id: 'default', label: 'Scholar Light', family: 'studio' }),
+    Object.freeze({ id: 'ocean', label: 'Sky Lab', family: 'studio' }),
+    Object.freeze({ id: 'forest', label: 'Forest Studio', family: 'studio' }),
+    Object.freeze({ id: 'classic', label: 'Storybook Classic', family: 'studio' }),
+    Object.freeze({ id: 'sunset', label: 'Sunset Workshop', family: 'studio' }),
+    Object.freeze({ id: 'coffee', label: 'Reading Nook', family: 'studio' }),
+    Object.freeze({ id: 'seahawks', label: 'Northwest Field', family: 'spirited' }),
+    Object.freeze({ id: 'huskies', label: 'Victory Hall', family: 'spirited' }),
+    Object.freeze({ id: 'superman', label: 'Hero Signal', family: 'inspired' }),
+    Object.freeze({ id: 'mario', label: 'Mushroom Sprint', family: 'inspired' }),
+    Object.freeze({ id: 'zelda', label: 'Adventure Map', family: 'inspired' }),
+    Object.freeze({ id: 'amongus', label: 'Cosmic Crew', family: 'inspired' }),
+    Object.freeze({ id: 'rainbowfriends', label: 'Neon Parade', family: 'inspired' }),
+    Object.freeze({ id: 'minecraft', label: 'Block Build', family: 'inspired' }),
+    Object.freeze({ id: 'marvel', label: 'Action Panel', family: 'inspired' }),
+    Object.freeze({ id: 'ironman', label: 'Forge Red', family: 'inspired' }),
+    Object.freeze({ id: 'harleyquinn', label: 'Pop Mix', family: 'inspired' }),
+    Object.freeze({ id: 'kuromi', label: 'Midnight Pop', family: 'inspired' }),
+    Object.freeze({ id: 'poppink', label: 'Candy Studio', family: 'inspired' }),
+    Object.freeze({ id: 'harrypotter', label: 'House Library', family: 'inspired' }),
+    Object.freeze({ id: 'demonhunter', label: 'Blossom Edge', family: 'inspired' }),
+    Object.freeze({ id: 'dark', label: 'Story Night', family: 'night' }),
+    Object.freeze({ id: 'matrix', label: 'Signal Grid', family: 'night' })
   ]);
 
-  var FAMILY_ORDER = Object.freeze(['core', 'sports', 'inspired', 'dark']);
+  var FAMILY_ORDER = Object.freeze(['studio', 'spirited', 'inspired', 'night']);
 
   var FAMILY_LABELS = Object.freeze({
-    core: 'Core Themes',
-    sports: 'Sports-Inspired',
+    studio: 'Studio Themes',
+    spirited: 'Spirited Themes',
     inspired: 'Inspired Themes',
-    dark: 'Dark Themes'
+    night: 'Night Themes'
   });
 
   var DEFAULT_BY_MODE = Object.freeze({

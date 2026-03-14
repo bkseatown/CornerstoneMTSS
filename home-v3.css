@@ -7,34 +7,35 @@
   --landing-radius-xl: clamp(24px, 2.4vw, 32px);
   --landing-radius-lg: clamp(18px, 2vw, 24px);
   --landing-radius-md: 16px;
-  --landing-border: rgba(72, 98, 146, 0.24);
-  --landing-border-strong: rgba(44, 68, 108, 0.22);
-  --landing-text: #162744;
-  --landing-text-soft: #516684;
-  --landing-text-muted: rgba(32, 49, 78, 0.62);
+  --landing-border: rgba(69, 88, 118, 0.18);
+  --landing-border-strong: rgba(37, 53, 78, 0.18);
+  --landing-text: #172432;
+  --landing-text-soft: #495c6d;
+  --landing-text-muted: rgba(49, 64, 83, 0.58);
   --landing-shell:
-    linear-gradient(180deg, rgba(232, 240, 250, 0.98), rgba(219, 229, 242, 0.96));
+    linear-gradient(180deg, rgba(247, 243, 236, 0.94), rgba(235, 241, 248, 0.95));
   --landing-panel:
-    linear-gradient(180deg, rgba(249, 252, 255, 0.99), rgba(238, 244, 251, 0.97));
+    linear-gradient(180deg, rgba(252, 250, 246, 0.99), rgba(239, 244, 250, 0.97));
   --landing-panel-soft:
-    linear-gradient(180deg, rgba(247, 242, 250, 0.98), rgba(235, 228, 246, 0.97));
+    linear-gradient(180deg, rgba(247, 241, 236, 0.98), rgba(236, 231, 245, 0.97));
   --landing-workspace:
-    linear-gradient(180deg, rgba(241, 247, 253, 0.99), rgba(228, 237, 247, 0.97));
+    linear-gradient(180deg, rgba(243, 247, 251, 0.99), rgba(228, 236, 246, 0.97));
   --landing-hero:
-    radial-gradient(circle at top left, rgba(109, 154, 255, 0.16), transparent 34%),
-    radial-gradient(circle at bottom right, rgba(48, 196, 180, 0.12), transparent 36%),
-    linear-gradient(180deg, rgba(247, 251, 255, 0.98), rgba(236, 243, 252, 0.97));
+    radial-gradient(circle at top left, rgba(92, 133, 214, 0.18), transparent 34%),
+    radial-gradient(circle at 72% 24%, rgba(239, 180, 76, 0.16), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(81, 171, 161, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(250, 247, 241, 0.98), rgba(235, 242, 250, 0.97));
   --landing-focus:
-    linear-gradient(180deg, #173d75 0%, #204a85 52%, #295695 100%);
+    linear-gradient(180deg, #243247 0%, #1f3655 46%, #29547e 100%);
   --landing-shadow-lg:
-    0 20px 46px rgba(8, 18, 36, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    0 24px 56px rgba(11, 19, 30, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
   --landing-shadow-md:
-    0 14px 28px rgba(18, 31, 56, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 16px 34px rgba(18, 28, 42, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.64);
   --landing-shadow-sm:
-    0 10px 20px rgba(18, 31, 56, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    0 10px 24px rgba(18, 28, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
   --landing-scene-height: clamp(248px, 31vh, 312px);
 }
 
@@ -48,12 +49,12 @@ body.cs-home-page {
   min-height: 100dvh;
   overflow: auto;
   background:
-    radial-gradient(circle at top left, rgba(32, 175, 160, 0.18), transparent 22%),
-    radial-gradient(circle at top right, rgba(245, 175, 67, 0.18), transparent 18%),
-    radial-gradient(circle at bottom right, rgba(80, 128, 220, 0.14), transparent 22%),
-    linear-gradient(140deg, #08182e 0%, #132745 42%, #223653 74%, #324361 100%);
+    radial-gradient(circle at top left, rgba(103, 145, 224, 0.18), transparent 22%),
+    radial-gradient(circle at top right, rgba(239, 180, 76, 0.16), transparent 18%),
+    radial-gradient(circle at bottom right, rgba(79, 168, 154, 0.12), transparent 22%),
+    linear-gradient(145deg, #1b2b3d 0%, #24384c 38%, #31475c 74%, #44566d 100%);
   color: var(--landing-text);
-  font-family: var(--font-ui, var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif));
+  font-family: var(--font-body, var(--font-ui, var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif)));
 }
 
 .landing-shell {
@@ -66,10 +67,10 @@ body.cs-home-page {
   gap: var(--landing-gap);
   border-radius: calc(var(--landing-radius-xl) + 8px);
   background: var(--landing-shell);
-  border: 1px solid rgba(197, 211, 231, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   box-shadow:
-    0 24px 60px rgba(1, 10, 23, 0.3),
-    inset 0 1px 0 rgba(255,255,255,0.55);
+    0 28px 72px rgba(5, 12, 22, 0.24),
+    inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
 .landing-hero-surface,
@@ -92,8 +93,8 @@ body.cs-home-page {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(255,255,255,0.12), transparent 18%, transparent 82%, rgba(255,255,255,0.08)),
-    radial-gradient(circle at 84% 16%, rgba(27, 75, 146, 0.08), transparent 32%);
+    linear-gradient(90deg, rgba(255,255,255,0.14), transparent 18%, transparent 82%, rgba(255,255,255,0.08)),
+    radial-gradient(circle at 84% 16%, rgba(39, 95, 164, 0.1), transparent 32%);
   pointer-events: none;
 }
 
@@ -119,7 +120,7 @@ body.cs-home-page {
 .landing-hero__content {
   display: grid;
   align-content: center;
-  gap: 11px;
+  gap: 13px;
   min-width: 0;
 }
 
@@ -137,26 +138,67 @@ body.cs-home-page {
   color: var(--landing-text-muted);
 }
 
+.landing-eyebrow,
+.landing-title,
+.landing-storyboard__head h2,
+.landing-destination__content h2 {
+  font-family: var(--font-display, var(--font-body));
+}
+
+@media (max-width: 1100px), (max-height: 820px) {
+  .landing-shell {
+    width: min(var(--landing-max), calc(100vw - 20px));
+    min-height: auto;
+    margin: 10px auto;
+    padding: clamp(12px, 1.5vw, 18px);
+  }
+
+  .landing-hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .landing-hero::after {
+    display: none;
+  }
+}
+
+@media (max-width: 780px), (max-height: 700px) {
+  body.cs-home-page {
+    overflow: auto;
+  }
+
+  .landing-shell {
+    min-height: auto;
+    max-height: none;
+    margin: 8px auto 16px;
+    border-radius: clamp(18px, 4vw, 24px);
+  }
+}
+
 .landing-title {
   margin: 0;
-  font-size: clamp(2.12rem, 4vw, 3.45rem);
-  line-height: 0.94;
-  letter-spacing: -0.03em;
+  max-width: 11ch;
+  font-size: clamp(2.4rem, 4.2vw, 4.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   color: var(--landing-text);
 }
 
 .landing-subtitle {
   margin: 0;
-  font-size: clamp(1rem, 1.35vw, 1.15rem);
-  line-height: 1.4;
+  max-width: 36ch;
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  line-height: 1.45;
   color: var(--landing-text-soft);
 }
 
 .landing-capabilities {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: rgba(33, 52, 86, 0.74);
+  max-width: 52ch;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  color: rgba(41, 59, 80, 0.74);
 }
 
 .landing-hero__actions {
@@ -169,8 +211,8 @@ body.cs-home-page {
 .landing-hero__hint {
   margin: 0;
   max-width: 40ch;
-  color: var(--landing-text-soft);
-  line-height: 1.38;
+  color: rgba(56, 72, 91, 0.9);
+  line-height: 1.45;
 }
 
 .landing-focus-card {
@@ -183,7 +225,7 @@ body.cs-home-page {
   color: #fff;
   border: 1px solid rgba(202, 221, 248, 0.2);
   box-shadow:
-    0 16px 30px rgba(15, 24, 50, 0.2),
+    0 20px 38px rgba(15, 24, 50, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
@@ -214,6 +256,7 @@ body.cs-home-page {
 
 .landing-focus-card__student {
   margin: 0;
+  font-family: var(--font-display, var(--font-body));
   font-size: clamp(1.42rem, 2vw, 1.96rem);
   line-height: 1;
 }
@@ -262,6 +305,72 @@ body.cs-home-page {
   font-weight: 700;
 }
 
+.landing-storyboard {
+  display: grid;
+  gap: 14px;
+  padding: clamp(16px, 1.8vw, 22px);
+  border-radius: var(--landing-radius-xl);
+  border: 1px solid rgba(138, 160, 198, 0.3);
+  background:
+    radial-gradient(circle at top left, rgba(90, 129, 214, 0.1), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(239, 180, 76, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(248, 245, 240, 0.98), rgba(231, 239, 248, 0.97));
+  box-shadow: var(--landing-shadow-sm);
+}
+
+.landing-storyboard__head {
+  display: grid;
+  gap: 8px;
+}
+
+.landing-storyboard__head h2 {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--landing-text);
+}
+
+.landing-storyboard__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.landing-story-step {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(246, 248, 252, 0.92));
+  border: 1px solid rgba(142, 164, 197, 0.18);
+}
+
+.landing-story-step__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #214d8f, #2f67b9);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.landing-story-step strong {
+  font-size: 1rem;
+  color: #1d3356;
+}
+
+.landing-story-step p {
+  margin: 0;
+  color: var(--landing-text-soft);
+  line-height: 1.4;
+}
+
 .landing-destinations {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
@@ -281,12 +390,14 @@ body.cs-home-page {
 
 .landing-destination--games {
   background:
-    linear-gradient(180deg, rgba(242, 236, 247, 0.98), rgba(228, 220, 241, 0.98));
+    radial-gradient(circle at top right, rgba(212, 107, 42, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(244, 239, 235, 0.99), rgba(231, 226, 240, 0.98));
 }
 
 .landing-destination--workspace {
   background:
-    linear-gradient(180deg, rgba(231, 240, 251, 0.99), rgba(214, 226, 243, 0.98));
+    radial-gradient(circle at top left, rgba(79, 133, 209, 0.12), transparent 22%),
+    linear-gradient(180deg, rgba(236, 242, 248, 0.99), rgba(220, 230, 242, 0.98));
 }
 
 .landing-destination__scene {
@@ -297,7 +408,7 @@ body.cs-home-page {
   border: 1px solid rgba(92, 117, 164, 0.24);
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.88), transparent 34%),
-    linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(227, 235, 247, 0.96));
+    linear-gradient(180deg, rgba(251, 249, 244, 0.98), rgba(230, 237, 246, 0.96));
   box-shadow: var(--landing-shadow-sm);
 }
 
@@ -340,10 +451,10 @@ body.cs-home-page {
   border-radius: 18px;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(116, 136, 175, 0.18);
+  border: 1px solid rgba(98, 118, 149, 0.16);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 12px 20px rgba(22, 34, 58, 0.08);
+    0 14px 24px rgba(22, 34, 58, 0.08);
 }
 
 .landing-scene-card::before {
@@ -365,8 +476,9 @@ body.cs-home-page {
 
 .landing-scene-card--board {
   background:
-    radial-gradient(circle at top right, rgba(147, 214, 95, 0.26), transparent 34%),
-    linear-gradient(180deg, #f4f9ff 0%, #e4edf9 100%);
+    radial-gradient(circle at top right, rgba(239, 180, 76, 0.2), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(133, 215, 197, 0.16), transparent 30%),
+    linear-gradient(180deg, #f7f5ef 0%, #e4ebf7 100%);
 }
 
 .landing-scene-card--typing {
@@ -377,8 +489,8 @@ body.cs-home-page {
 
 .landing-scene-card--clue {
   background:
-    radial-gradient(circle at top right, rgba(255, 190, 132, 0.24), transparent 34%),
-    linear-gradient(180deg, #fff8f1 0%, #f5efe8 100%);
+    radial-gradient(circle at top right, rgba(225, 123, 106, 0.18), transparent 34%),
+    linear-gradient(180deg, #fff7ef 0%, #f4efe8 100%);
 }
 
 .landing-scene__kicker {
@@ -393,7 +505,7 @@ body.cs-home-page {
   padding: 16px;
   border-radius: 20px;
   background:
-    linear-gradient(180deg, rgba(251, 253, 255, 0.98), rgba(231, 239, 249, 0.96));
+    linear-gradient(180deg, rgba(252, 250, 246, 0.98), rgba(231, 239, 249, 0.96));
   border: 1px solid rgba(99, 126, 170, 0.24);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
@@ -498,8 +610,8 @@ body.cs-home-page {
 .landing-destination__content h2 {
   margin: 0;
   font-size: clamp(1.26rem, 1.7vw, 1.62rem);
-  line-height: 1.04;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   color: var(--landing-text);
 }
 
@@ -524,7 +636,7 @@ body.cs-home-page {
   font-weight: 800;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  transition: transform 180ms var(--motion-ease), box-shadow 220ms var(--motion-ease), filter 180ms var(--motion-ease), background-color 220ms var(--motion-ease);
 }
 
 .landing-btn:hover,
@@ -539,13 +651,13 @@ body.cs-home-page {
 }
 
 .landing-btn--primary {
-  background: linear-gradient(180deg, #234b88 0%, #1b3868 100%);
+  background: linear-gradient(180deg, #2b5a95 0%, #213e66 100%);
   color: #fff;
-  box-shadow: 0 14px 28px rgba(27, 56, 104, 0.22);
+  box-shadow: 0 16px 30px rgba(33, 62, 102, 0.22);
 }
 
 .landing-btn--secondary {
-  background: linear-gradient(180deg, #5f7fb9 0%, #405d8f 100%);
+  background: linear-gradient(180deg, #446898 0%, #314f77 100%);
   color: #fff;
   box-shadow: 0 12px 24px rgba(46, 67, 103, 0.16);
 }
@@ -807,7 +919,7 @@ body.cs-home-page {
   justify-content: space-between;
   gap: 12px;
   border-radius: 999px;
-  background: rgba(245, 248, 253, 0.78);
+  background: linear-gradient(180deg, rgba(246, 248, 252, 0.78), rgba(239, 243, 248, 0.88));
 }
 
 .landing-utility__left,
@@ -859,7 +971,8 @@ body.cs-home-page {
   }
 
   .landing-hero,
-  .landing-destinations {
+  .landing-destinations,
+  .landing-storyboard__grid {
     grid-template-columns: 1fr;
   }
 
@@ -869,6 +982,10 @@ body.cs-home-page {
 
   .landing-scene__rail {
     grid-template-columns: repeat(3, minmax(140px, 1fr));
+  }
+
+  .landing-storyboard__head h2 {
+    max-width: none;
   }
 }
 

@@ -1,5 +1,66 @@
 Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
+- 2026-03-14: Began controlled Word Quest polish pass from the recovered stable baseline. Kept the change tightly scoped to `WQUI.calcLayout` in `js/app.js` so the board tiles can shrink slightly while the on-screen keyboard gains a little more presence, without changing runtime structure or reintroducing hidden support chrome.
+- 2026-03-14: Verified the first Word Quest polish pass live on `word-quest.html?cb=20260314-polish1&play=1` at `1440x900`.
+  - syntax check: `node --check js/app.js` passes
+  - live metrics after the change: `tileSize: 72px`, `keyH: 50px`, `keyMinW: 32px`
+  - `coachDisplay: none`
+  - `supportDisplay: none`
+  - keyboard still fits above the viewport bottom (`keyboard.bottom ~760` in a `900px` viewport)
+  - browser console showed no warnings or errors beyond the expected word-data info logs
+  - screenshot artifact saved to `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/playwright/word-quest-polish-pass-1.png`
+  - attempted to run the `$WEB_GAME_CLIENT` skill script as required, but the local environment blocked it twice: first because the skill file is distributed as ESM with a `.js` path, then because the temporary `.mjs` copy could not resolve the `playwright` package from `/tmp`; fell back to built-in browser verification for this pass
+- 2026-03-14: Applied one final micro-refinement in `style/components.css` for play mode only: reduced `.board-plate` width/padding so the board stack feels tighter and the keyboard reads as part of one intentional stage instead of sitting under a wider translucent plate.
+- 2026-03-14: Verified the second Word Quest polish pass live on `word-quest.html?cb=20260314-polish2&play=1` at `1440x900`.
+  - syntax check: `node --check js/app.js` passes
+  - `coachDisplay: none`
+  - `supportDisplay: none`
+  - `keyboardFits: true`
+  - `docScrollHeight: 900` in a `900px` viewport
+  - live geometry after the refinement:
+    - board width `443px`
+    - keyboard width `536px`
+    - keyboard bottom `~790` in a `900px` viewport
+  - browser console showed no warnings or errors beyond the expected word-data info logs
+  - screenshot artifact saved to `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/playwright/word-quest-polish-pass-2.png`
+- 2026-03-14: Applied a scoped Word Clue flagship runtime polish pass in `games/ui/game-shell.css` only.
+  - reduced visual dominance of the top utility controls by making the play-page action pills smaller and quieter
+  - strengthened the main clue stage card with richer surface lighting and a more premium guide strip
+  - upgraded the concealed speaker-card state with a clearer identity pill and stronger centered presentation
+  - tightened the live target-card presentation and blocked-word panel hierarchy so the clue artifact feels more theatrical and intentional
+- 2026-03-14: Verified Word Clue live on `game-platform.html?cb=20260314-wordclue-polish2&play=1&game=word-connections` at `1440x900`.
+  - syntax check: `node --check games/ui/game-shell.js` passes
+  - no new console errors; the existing unmatched starter-target warning remains unchanged
+  - runtime still fits in-viewport with `docScrollHeight: 900` in a `900px` viewport
+  - hidden-card screenshot artifact saved to `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/playwright/word-clue-polish-pass-1-hidden.png`
+  - live-card screenshot artifact saved to `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/playwright/word-clue-polish-pass-1-live.png`
+- 2026-03-14: Corrected the bad Word Clue desktop runtime header in `games/ui/game-shell.css` after screenshot review showed the play page still looked wrong.
+  - fixed the earlier full-width action-bar regression by removing the `width: 100%` behavior from the Word Clue top action pills
+  - fixed the oversized empty top area by giving `.cg-word-clue-v2` explicit grid rows (`auto / 1fr / auto`) and `align-content: start`, so the header hugs its content and the stage gets the remaining space
+  - tightened only the topbar action pills (`min-width`, padding, font size) so `All Games`, `Teacher Controls`, `Hint`, `Restart`, `Formats`, and `Round Setup` now fit on one row at `1440x900`
+  - live verification on `game-platform.html?cb=20260314-wordclue-gridfix3&play=1&game=word-connections`:
+    - no new console errors; the existing unmatched starter-target warning remains unchanged
+    - `scrollHeight: 900` in a `900px` viewport
+    - topbar height dropped from about `194px` on the broken screenshot baseline to about `95px` after the grid-row fix
+    - the top utility actions now render on one row in the live runtime screenshot instead of wrapping awkwardly into a tall stacked cluster
+- 2026-03-14: Applied the next narrow Word Clue polish pass in `games/ui/game-shell.css` after re-checking the corrected runtime screenshot.
+  - increased the portrait speaker-card stage width slightly and raised its visual height ceiling so the main artifact carries more of the screen instead of leaving as much dead air between the card and the bottom controls
+  - converted the bottom action area into a quiet translucent tray so the timer and action pills read as one intentional control surface instead of floating loose on the page background
+  - live verification on `game-platform.html?cb=20260314-wordclue-controls1&play=1&game=word-connections` at `1440x900`:
+    - no new console errors; the existing unmatched starter-target warning remains unchanged
+    - `scrollHeight: 900` in a `900px` viewport
+    - `.cg-word-clue-v2-controls` remains fully in-bounds with bottom aligned to the viewport (`bottom ~889.7` in a `900px` viewport)
+
+- 2026-03-14: Rebuilt Word Clue into a real two-step flow in `games/ui/game-shell.js` + `games/ui/game-shell.css`: landing page now acts as a format chooser (`Classic`, `Picture`, `Draw`, `Mixed`) with blocked-word selectors for the describable formats, and the play page now loads as a separate focused runtime for the chosen format.
+- 2026-03-14: Renamed the old `challenge` path into `mixed` in the Word Clue shell logic and styling, removed the `On deck` rail from the runtime, switched hidden-speaker flow to `Get Ready -> Show Card`, and replaced the broken remote picture support with local visual glyph fallback.
+- 2026-03-14: Simplified the shared Teacher Controls model in `games/ui/game-shell.js` so it now focuses on `Age / Grade Band`, `Word Source`, `Teacher Word List`, `Team play`, `Timer enabled`, `Hints enabled`, and `Shuffle teacher-selected words`; removed generic `Mode`, `Support Level`, `Subject`, `Skill Focus`, and sound from that panel and renamed `Hide Controls` to `Close Panel`.
+- 2026-03-14: Tightened Word Clue runtime composition for flagship treatment: wider stage card, cleaner top action row, removed duplicate in-card `Setup` chip, compacted footer controls, and added responsive staging for desktop/tablet/phone in `games/ui/game-shell.css`.
+- 2026-03-14: Live validation summary for Word Clue:
+  - at `1440x900`, play page now fits cleanly with `hasScroll: false`
+  - at `1280x800`, there is still a stubborn ~10px vertical overflow causing tiny page scroll
+  - at `1024x768`, the route is intentionally in the condensed/tablet behavior and uses page scroll
+- 2026-03-14: Best next implementation pass is no longer broad cleanup; it is a true flagship runtime redesign pass for `Word Clue` and `Word Quest`, then a platform-wide consistency/art-direction sweep so the game side catches up with the homepage/hub quality bar.
+
 - 2026-03-10: Located shared runtime in `games/ui/game-shell.js` and `games/ui/game-shell.css`; confirmed game platform uses a shared shell with game-specific surfaces.
 - 2026-03-10: Plan for this pass is shell-first: increase gameplay surface, compress whitespace, add shared motion/feedback, then patch Say It Another Way, Typing Quest, Word Quest, Word Forge, and Category Rush inside existing render branches.
 - 2026-03-10: Implemented shell-first gameplay UI pass in `games/ui/game-shell.js` and `games/ui/game-shell.css`: larger play surface, shared timer, Taboo card, typing lane, larger Word Quest board, forge equation, quick-entry Category Rush.
@@ -218,6 +279,77 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
 ## 2026-03-13 (Typing Quest unified welcome surface)
 
+- rebuilt the Typing Quest welcome hero in `games/ui/game-shell.js` and `games/ui/game-shell.css` against the new playbook: stronger single focal artifact, less dashboard-like split, and a clearer course-journey rail that keeps the start action visually dominant
+- tightened the welcome copy so the screen explains less and shows more: the hero now carries the learning promise, live typing artifact, and a compact `Course rhythm` scaffold instead of relying on duplicate CTA surfaces
+- refreshed shared shell cache-busters to `20260313v` in `typing-quest.html` and `game-platform.html` so the new Typing Quest welcome pass can be verified against fresh assets
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - local Playwright render on `http://127.0.0.1:4174/typing-quest.html?cb=20260313v-check&play=1&game=word-typing&typingCourseMode=lesson` shows the new welcome hierarchy with no console warnings/errors
+  - viewport metrics at `1440x900` report `scrollHeight === innerHeight` and the welcome shell remains fully inside the viewport (`cardBottom 781` in a `900px` viewport)
+  - screenshot artifact saved to `/tmp/typing-quest-redesign-v.png`
+- follow-up note:
+  - direct `typingPage=1` URLs on `typing-quest.html` still resolve back to the welcome screen because the page bootstrap rewrites the query string; that behavior predates this pass and is a separate navigation cleanup if we want direct deep-link runtime entry later
+
+## 2026-03-13 (Platform minimized-window contract)
+
+- added a cross-platform layout rule to the main page owners so minimized windows now follow `compress -> stack -> scroll` instead of clipping under hard `100dvh` + `overflow: hidden` shells
+- updated owners:
+  - `games/ui/game-shell.css` for gallery + shared game routes
+  - `home-v3.css` for the landing page
+  - `style/components.css` for Word Quest play mode
+  - `teacher-dashboard.css` for the reports/workspace dashboard shell
+- refreshed stylesheet cache-busters in `index.html`, `reports.html`, `word-quest.html`, `cornerstone-mtss.html`, `typing-quest.html`, and `game-platform.html` to `20260313w`
+- local verification at `1000x760`:
+  - Typing Quest now reports `bodyOverflow: auto`, `mainOverflow: visible`, and `scrollHeight 1121 > innerHeight 760`, so the page scrolls instead of covering content
+  - homepage now reports `bodyOverflow: auto` with page scroll enabled instead of preserving an oversized fixed shell
+  - Word Quest play mode now reports `bodyOverflow: auto` / `htmlOverflow: auto` with page scroll enabled instead of a clipped fixed-height play shell
+- screenshot artifacts:
+  - `/tmp/typing-quest-min-contract.png`
+  - `/tmp/index-min-contract.png`
+  - `/tmp/word-quest-min-contract.png`
+
+## 2026-03-13 (Principal demo showcase pass)
+
+- aligned the platform around a stronger leadership story instead of isolated page polish:
+  - homepage now includes an explicit four-step showcase flow (`signal -> practice -> evidence -> next steps`) in `index.html` + `home-v3.css`
+  - reports/workspace now opens with a more principal/coordinator-ready framing plus a new leadership snapshot strip in `reports.html` + `teacher-dashboard.css`
+  - shared game summaries in `games/ui/game-shell.js` now explain why a session result matters and what to do next with more premium, leadership-readable language
+- Typing Quest summary copy now frames placement and lesson mastery as support decisions, not just raw score outcomes
+- generic shared round-summary copy now better explains whether a session is ready for extension or needs reteaching, which should help flagship games feel more showcase-ready at the end of play
+- refreshed active cache-busters to `20260313x` for the updated showcase surfaces in `index.html`, `reports.html`, `typing-quest.html`, and `game-platform.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - homepage render on `http://127.0.0.1:4174/index.html?cb=20260313x-demo` shows the new showcase-flow section and stronger leadership framing
+  - reports render on `http://127.0.0.1:4174/reports.html?cb=20260313x-demo` shows the new leadership snapshot strip with 0 console warnings/errors
+  - Typing Quest render on `http://127.0.0.1:4174/typing-quest.html?cb=20260313x-demo2&play=1&game=word-typing&typingCourseMode=lesson` shows the updated flagship welcome route with 0 console warnings/errors
+- screenshot artifacts:
+  - `/tmp/home-demo-pass.png`
+  - `/tmp/reports-demo-pass.png`
+  - `/tmp/typing-quest-demo-pass.png`
+
+## 2026-03-13 (Flagship gameplay runtime pass)
+
+- upgraded the live flagship runtime states instead of only polishing surrounding shell pages:
+  - Typing Quest lesson launch + active lesson now show stronger coaching structure in `games/ui/game-shell.js` and `games/ui/game-shell.css`
+  - Word Quest play mode now uses more intentional solve-plan coaching text and a stronger premium ribbon in `js/app.js` and `style/components.css`
+- Typing Quest improvements:
+  - added a dedicated `Coach note` card on lesson launch so the start state teaches the learner what matters before typing starts
+  - added compact runtime cue chips in the active lesson header (`Eyes on the target`, `Return to home row`, `Finish with control`) so the lesson feels designed while live, not only at summary
+- Word Quest improvements:
+  - replaced flatter coaching copy with stronger clue/pattern language that teaches how to use feedback instead of just telling the learner to guess
+  - upgraded the in-play coach ribbon to read as a real solve-plan surface during play
+- refreshed active cache-busters to `20260313y` in `typing-quest.html`, `game-platform.html`, `word-quest.html`, and `cornerstone-mtss.html`
+- local verification:
+  - `node --check games/ui/game-shell.js` passes
+  - `node --check js/app.js` passes
+  - local Typing Quest lesson launch on `http://127.0.0.1:4174/game-platform.html?cb=20260313y-typing-launch&play=1&game=word-typing&typingPage=1&typingCourseMode=lesson&lessonId=typing-u0-l1&lessonOrder=1` shows the new coach note
+  - local Typing Quest live lesson after `Start Lesson` shows the new runtime cue chips and no console warnings/errors
+  - local Word Quest play route on `http://127.0.0.1:4174/word-quest.html?cb=20260313y-wordquest-play&play=1` shows the new `Solve plan` ribbon and no browser warnings/errors
+- screenshot artifacts:
+  - `/tmp/typing-runtime-flagship-pass.png`
+  - `/tmp/typing-runtime-playing-flagship-pass.png`
+  - `/tmp/wordquest-flagship-ribbon-pass.png`
+
 ## 2026-03-13 (Typing Quest duplicate-text removal + Word Quest text trim)
 
 - removed the older Typing Quest starter rail from `games/ui/game-shell.js` so the welcome page now has one owner instead of the newer hero plus a second leftover placement/jump panel underneath it
@@ -269,3 +401,48 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - verification:
   - `node --check games/ui/game-shell.js` passes
   - Playwright browser re-check was blocked by the existing Chrome persistent-session launch issue immediately after this pass, so final visual verification for this layer is still pending a fresh browser session
+
+## 2026-03-13 (Word Quest result evidence pass)
+
+- upgraded the Word Quest end-of-round reveal in `word-quest.html`, `js/ui.js`, and `style/components.css` so the finish state now carries a compact evidence readout plus a clear next-step coaching card instead of only a celebratory/reveal headline
+- tuned the result copy to distinguish between fast accurate solves, persistent successful solves, and misses that still produce actionable pattern evidence for teachers and support leads
+- kept the new modal layer responsive by collapsing the two-card evidence strip to one column on small widths so the result state still reads cleanly on minimized windows
+- bumped Word Quest shell asset references to `style/components.css?v=20260313z` and `js/ui.js?v=20260313d` in `word-quest.html` and `cornerstone-mtss.html`
+- verification:
+  - `node --check js/ui.js` passes
+
+## 2026-03-14 (Game gallery + Word Clue art-direction pass)
+
+- upgraded `game-platform.html`, `games/ui/game-shell.js`, and `games/ui/game-shell.css` to push the games side of the platform closer to the homepage/hub quality bar
+- turned the floating theme swatches into a quieter utility tray with a compact `Style` toggle so the theme picker no longer steals hero attention from gallery and runtime screens
+- added a new gallery launch-intent hero with a clearer intervention-story frame (`launch with purpose`, `recommended flow`) so the game gallery reads like a leadership-ready routine menu rather than a simple card index
+- elevated gallery cards with stronger light surfaces, better badge hierarchy, and more deliberate card depth so they feel closer to premium product tiles than utility panels
+- strengthened Word Clue shell styling with a more stage-led presentation and slightly more intentional runtime controls while preserving the existing mechanics and setup model
+- verification:
+  - `node --check games/ui/game-shell.js` passes
+  - live Playwright snapshot on `http://127.0.0.1:4174/game-platform.html?cb=20260314-gallery-art` confirmed the new gallery hero and the collapsed `Style` utility control are rendering
+  - live Playwright snapshot on `http://127.0.0.1:4174/game-platform.html?cb=20260314-wordclue-art&play=1&game=word-connections` confirmed the updated Word Clue structure is rendering with no new console errors; the existing unmatched starter-target warning remains and is unchanged by this pass
+
+## 2026-03-14 (Word Quest modal contrast correction)
+
+- used the user-provided screenshot as the truth source and tightened the `modal-evidence-card` styling in `style/components.css` again because the first evidence-card pass still rendered too pale against the modal background
+- darkened both evidence cards, increased edge contrast, and pushed the body copy closer to near-white so the `Round readout` and `Next move` blocks should now read as intentional summary panels instead of washed-out glass
+- verification:
+  - `node --check js/ui.js` passes
+
+## 2026-03-14 (Word Quest stabilization checkpoint)
+
+- rolled back the unstable mid-pass Word Quest runtime experiment in `word-quest.html`, `js/app.js`, and `style/components.css`
+- restored the older gameplay audio structure and removed the half-finished single-listen-menu experiment
+- then applied a narrower, safer runtime cleanup:
+  - hid the live `Solve plan` / `Ava` coach ribbon in play mode
+  - hid the spelling/listening support strip on the play surface
+  - removed keyboard overflow warnings by reducing the 5-letter runtime board floor and slightly widening key sizing budget
+  - kept the gallery untouched during the recovery so the platform was not destabilized further
+- refreshed Word Quest asset refs to `style/components.css?v=20260314c` and `js/app.js?v=20260314c`
+- local verification on `http://127.0.0.1:4174/word-quest.html?cb=20260314-wq-trim2&play=1`:
+  - `coachDisplay: none`
+  - `supportDisplay: none`
+  - `kbBottom: 678 < vh 800`
+  - `hasScroll: false`
+  - console warnings/errors: none

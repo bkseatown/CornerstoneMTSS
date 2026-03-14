@@ -43,7 +43,7 @@
   <link rel="stylesheet" href="style/typography.css?v=20260303c">
   <link rel="stylesheet" href="style/modes.css?v=20260303c">
   <link rel="stylesheet" href="style/themes.css?v=20260313e">
-  <link rel="stylesheet" href="style/components.css?v=20260313u">
+  <link rel="stylesheet" href="style/components.css?v=20260314c">
   <link rel="stylesheet" href="style/components.deep-dive-plus.css?v=20260303c">
   <link rel="stylesheet" href="style/world-themes.css?v=20260303c">
   <link rel="stylesheet" href="style/wordquest-isolation.css?v=20260308c">
@@ -902,7 +902,6 @@
 
       <div class="play-support-row">
         <div id="play-style-banner" class="play-style-banner hidden" role="status" aria-live="polite"></div>
-        <!-- Hear Word remains visible during gameplay -->
         <div class="gameplay-audio">
           <button id="focus-hint-toggle" class="audio-ghost-btn focus-hint-toggle" type="button" aria-pressed="false" title="Reveal a mystery clue">
             Clue
@@ -1001,6 +1000,18 @@
       <div class="modal-syllables-wrap">
         <div id="modal-syllables"></div>
         <div id="modal-sor" class="hidden"></div>
+      </div>
+      <div id="modal-evidence-strip" class="modal-evidence-strip" aria-live="polite">
+        <div class="modal-evidence-card">
+          <span class="modal-evidence-label">Round readout</span>
+          <strong id="modal-evidence-headline"></strong>
+          <p id="modal-evidence-detail"></p>
+        </div>
+        <div class="modal-evidence-card modal-evidence-card-next">
+          <span class="modal-evidence-label">Next move</span>
+          <strong id="modal-next-step-title"></strong>
+          <p id="modal-next-step-copy"></p>
+        </div>
       </div>
       <div class="audio-row audio-row-core">
         <button class="audio-btn modal-audio-btn" id="hear-word-btn"><span class="modal-audio-icon" aria-hidden="true">🔊</span><span>Word</span></button>
@@ -1330,7 +1341,7 @@
   <script src="js/data.js?v=20260303c"></script>
   <script src="js/audio.js?v=20260308bq"></script>
   <script src="js/game.js?v=20260303c"></script>
-  <script src="js/ui.js?v=20260303c"></script>
+  <script src="js/ui.js?v=20260313d"></script>
   <script src="js/theme-registry.js?v=20260308b"></script>
   <script src="js/feature-flags.js?v=20260303c"></script>
   <script src="data/curriculum-taxonomy.js?v=20260303c"></script>
@@ -1354,7 +1365,7 @@
   <script src="js/coach-ribbon.js?v=20260303c"></script>
   <script src="word-quest-preview.js?v=20260303c"></script>
   <script src="hero-v2.js?v=20260303c"></script>
-  <script src="js/app.js?v=20260313u"></script>
+  <script src="js/app.js?v=20260314c"></script>
   <script src="js/deep-dive-plus.js?v=20260303c"></script>
   <script src="js/theme-nav.js?v=20260308b"></script>
   <script>
