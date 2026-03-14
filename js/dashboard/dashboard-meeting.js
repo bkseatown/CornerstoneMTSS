@@ -185,6 +185,26 @@
           report = ReportingGenerator.translateReport(report, lang);
         }
         if (report) {
+          var topNeeds = state.reportContext && state.reportContext.summary && Array.isArray(state.reportContext.summary.topNeeds)
+            ? state.reportContext.summary.topNeeds.filter(Boolean)
+            : [];
+          var readinessCards = [
+            {
+              label: "Packet",
+              value: "Ready",
+              detail: "Executive, tier, family, and weekly draft in one view."
+            },
+            {
+              label: "Focus",
+              value: topNeeds.slice(0, 2).join(" + ") || "Instruction",
+              detail: topNeeds.length ? (topNeeds.length + " aligned skill signals pulled in.") : "Aligned need signal available."
+            },
+            {
+              label: "Family",
+              value: lang === "en" ? "English" : lang.toUpperCase(),
+              detail: lang === "en" ? "Family summary ready to review." : "Translation assist enabled for review."
+            }
+          ];
           var weeklyInsight = buildWeeklyInsight({
             summary: state.reportContext && state.reportContext.summary,
             studentProfile: state.reportContext && state.reportContext.studentProfile,
@@ -192,6 +212,10 @@
             reportDraft: report
           });
           el.workspaceSummaryPanel.innerHTML = [
+            "<section class=\"td-workspace-summary-head\"><div><p class=\"td-workspace-summary-kicker\">Meeting packet</p><h3>Ready to review before you export.</h3></div><p class=\"td-workspace-summary-line\">Use Summary to scan the story, Notes to capture the meeting, and Export only after cleanup.</p></section>",
+            "<section class=\"td-workspace-summary-cards\">" + readinessCards.map(function (card) {
+              return "<article class=\"td-workspace-summary-card\"><span>" + escHtml(card.label) + "</span><strong>" + escHtml(card.value) + "</strong><p>" + escHtml(card.detail) + "</p></article>";
+            }).join("") + "</section>",
             "<section><h3>Executive Summary</h3><p>" + escHtml(report.executiveSummary || "") + "</p></section>",
             "<section><h3>Tier Statement</h3><p>" + escHtml(report.tierStatement || "") + "</p></section>",
             "<section><h3>Executive Function &amp; Organizational Support</h3><p>" + escHtml(report.executiveFunctionSupport || "") + "</p></section>",
@@ -200,8 +224,10 @@
               ? "<section><h3>Weekly Insight Draft</h3><p><strong>Teacher:</strong></p><p>" + escHtml(weeklyInsight.teacher) + "</p><p><strong>Family:</strong></p><p>" + escHtml(weeklyInsight.family) + "</p><p><strong>Student:</strong></p><p>" + escHtml(weeklyInsight.student) + "</p></section>"
               : "")
           ].join("");
+          el.workspaceSummaryPanel.scrollTop = 0;
         } else {
           el.workspaceSummaryPanel.innerHTML = "<section><p>Generate report context by selecting a student.</p></section>";
+          el.workspaceSummaryPanel.scrollTop = 0;
         }
       }
 
@@ -270,7 +296,9 @@
       if (el.workspaceDeckPanel) el.workspaceDeckPanel.classList.toggle("hidden", next !== "deck");
       if (el.meetingNotes) el.meetingNotes.classList.toggle("hidden", next !== "notes");
       if (el.meetingActions) el.meetingActions.classList.toggle("hidden", next !== "notes");
-      if (el.meetingPreview) el.meetingPreview.classList.toggle("hidden", next === "deck");
+      if (el.meetingPreview) el.meetingPreview.classList.toggle("hidden", next !== "export");
+      if (el.meetingTranslationPreview) el.meetingTranslationPreview.classList.toggle("hidden", next !== "export");
+      if (el.meetingTranslationBadge) el.meetingTranslationBadge.classList.toggle("hidden", next !== "export" || getMeetingLanguage() === "en");
     }
 
     function buildExportHtml(mode, englishText, translatedText, language) {
@@ -442,7 +470,7 @@
           });
           renderSupportHub(state.selectedId);
           close();
-          setCoachLine("Meeting notes saved (local-first).");
+      setCoachLine("Meeting notes saved (local-first).");
         });
       }
       if (el.meetingSttStart) {

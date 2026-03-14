@@ -678,11 +678,11 @@
       <div class="td-modal-head">
         <div class="td-modal-title-block">
           <p class="td-modal-kicker">Reports &amp; Meetings</p>
-          <h2 id="td-meeting-title" class="td-section-title">Meeting Notes Mode</h2>
+          <h2 id="td-meeting-title" class="td-section-title">Meeting Prep Workroom</h2>
         </div>
         <button id="td-meeting-close" class="td-top-btn" type="button">Close</button>
       </div>
-      <p class="td-modal-intro">Capture the conversation, keep the summary organized, and export only after review.</p>
+      <p class="td-modal-intro">Scan the packet, capture notes, and export only when the meeting story is clean.</p>
       <p class="td-reco-line td-meeting-privacy">Local-only. No recordings uploaded. Confirm meeting consent before device transcription.</p>
       <div class="td-plan-tabs">
         <button id="td-workspace-tab-summary" class="td-top-btn is-active" type="button">Summary</button>
@@ -690,35 +690,56 @@
         <button id="td-workspace-tab-notes" class="td-top-btn" type="button">Notes</button>
         <button id="td-workspace-tab-export" class="td-top-btn" type="button">Export</button>
       </div>
-      <div class="td-plan-tabs">
-        <select id="td-meeting-type" class="td-top-btn">
-          <option value="SSM">SSM</option>
-          <option value="MDT">MDT</option>
-          <option value="Parent">Parent</option>
-        </select>
-        <button id="td-meeting-format-sas" class="td-top-btn is-active" type="button" data-meeting-format="sas">SAS-Compliant</button>
-        <button id="td-meeting-format-optimized" class="td-top-btn" type="button" data-meeting-format="optimized">Optimized Narrative</button>
-        <button id="td-meeting-format-family" class="td-top-btn" type="button" data-meeting-format="family">Family Summary</button>
-        <label class="td-meeting-label" for="td-meeting-language">Language</label>
-        <select id="td-meeting-language" class="td-top-btn">
-          <option value="en">English</option>
-          <option value="zh">Mandarin</option>
-          <option value="ms">Bahasa Melayu</option>
-          <option value="ta">Tamil</option>
-          <option value="tl">Tagalog</option>
-          <option value="other">Other</option>
-        </select>
-        <label class="td-meeting-live-toggle">
-          <input id="td-meeting-live-translate" type="checkbox">
-          Live Translate Mode
-        </label>
-        <button id="td-meeting-stt-start" class="td-top-btn" type="button">Start STT</button>
-        <button id="td-meeting-stt-stop" class="td-top-btn" type="button" disabled>Stop STT</button>
-        <button id="td-meeting-stamp" class="td-top-btn" type="button">Insert timestamp</button>
-        <button id="td-meeting-tag-student" class="td-top-btn" type="button">Tag student</button>
-        <button id="td-meeting-tag-tier" class="td-top-btn" type="button">Tag tier</button>
-        <button id="td-meeting-copy-summary" class="td-top-btn" type="button">Copy summary</button>
-        <button id="td-meeting-export-mdt" class="td-top-btn" type="button">Export for MDT</button>
+      <div class="td-plan-tabs td-meeting-controls">
+        <div class="td-meeting-controls__group td-meeting-controls__group--setup">
+          <label class="td-meeting-field">
+            <span class="td-meeting-field__label">Meeting</span>
+            <select id="td-meeting-type" class="td-top-btn">
+              <option value="SSM">SSM</option>
+              <option value="MDT">MDT</option>
+              <option value="Parent">Parent</option>
+            </select>
+          </label>
+          <div class="td-meeting-segment">
+            <span class="td-meeting-field__label">Format</span>
+            <div class="td-meeting-segment__buttons">
+              <button id="td-meeting-format-sas" class="td-top-btn is-active" type="button" data-meeting-format="sas">SAS-Compliant</button>
+              <button id="td-meeting-format-optimized" class="td-top-btn" type="button" data-meeting-format="optimized">Optimized Narrative</button>
+              <button id="td-meeting-format-family" class="td-top-btn" type="button" data-meeting-format="family">Family Summary</button>
+            </div>
+          </div>
+          <label class="td-meeting-field">
+            <span class="td-meeting-field__label">Language</span>
+            <select id="td-meeting-language" class="td-top-btn">
+              <option value="en">English</option>
+              <option value="zh">Mandarin</option>
+              <option value="ms">Bahasa Melayu</option>
+              <option value="ta">Tamil</option>
+              <option value="tl">Tagalog</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+        </div>
+        <div class="td-meeting-controls__group td-meeting-controls__group--capture">
+          <label class="td-meeting-live-toggle">
+            <input id="td-meeting-live-translate" type="checkbox">
+            Live Translate Mode
+          </label>
+          <div class="td-meeting-transport">
+            <button id="td-meeting-stt-start" class="td-top-btn" type="button">Start STT</button>
+            <button id="td-meeting-stt-stop" class="td-top-btn" type="button" disabled>Stop STT</button>
+          </div>
+        </div>
+        <div class="td-meeting-controls__group td-meeting-controls__group--actions">
+          <span class="td-meeting-field__label">Quick actions</span>
+          <div class="td-meeting-actions-row">
+            <button id="td-meeting-stamp" class="td-top-btn" type="button">Insert timestamp</button>
+            <button id="td-meeting-tag-student" class="td-top-btn" type="button">Tag student</button>
+            <button id="td-meeting-tag-tier" class="td-top-btn" type="button">Tag tier</button>
+            <button id="td-meeting-copy-summary" class="td-top-btn" type="button">Copy summary</button>
+            <button id="td-meeting-export-mdt" class="td-top-btn" type="button">Export for MDT</button>
+          </div>
+        </div>
       </div>
       <p id="td-meeting-stt-status" class="td-reco-line">Transcription ready (manual mode fallback if unsupported).</p>
       <textarea id="td-meeting-notes" class="td-share-preview" placeholder="Agenda, concerns, strengths, data reviewed..."></textarea>
@@ -840,7 +861,7 @@
   <script src="./js/dashboard/dashboard-institutional.js?v=20260306h" defer></script>
   <script src="./js/dashboard/dashboard-drawer.js?v=20260306h" defer></script>
   <script src="./js/dashboard/dashboard-bindings.js?v=20260306h" defer></script>
-  <script src="./js/dashboard/dashboard-meeting.js?v=20260306h" defer></script>
+  <script src="./js/dashboard/dashboard-meeting.js?v=20260315b" defer></script>
   <script src="./js/dashboard/dashboard-modals.js?v=20260306h" defer></script>
   <script src="./js/dashboard/workspace-caseload.js?v=20260306p" defer></script>
   <script src="./js/dashboard/workspace-focus-shell.js?v=20260306q" defer></script>
