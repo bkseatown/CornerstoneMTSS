@@ -153,8 +153,11 @@ body.th2-page {
   gap: 10px;
   padding: 14px;
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(245,248,253,0.95));
-  border: 1px solid rgba(171, 185, 206, 0.24);
+  background:
+    radial-gradient(circle at top right, rgba(118, 174, 228, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(240,246,255,0.96));
+  border: 1px solid rgba(152, 177, 214, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.74);
 }
 
 .th2-day-overview__events-head {
@@ -184,6 +187,47 @@ body.th2-page {
     radial-gradient(circle at top right, rgba(214, 165, 92, 0.10), transparent 28%),
     linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,245,240,0.96));
   border: 1px solid rgba(194, 169, 131, 0.24);
+  border-left-width: 5px;
+}
+
+.th2-day-overview__event[data-tone="warm"] {
+  background:
+    radial-gradient(circle at top right, rgba(243, 193, 112, 0.18), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(252, 246, 236, 0.96));
+  border-color: rgba(222, 185, 120, 0.34);
+  border-left-color: #d28d45;
+}
+
+.th2-day-overview__event[data-tone="pause"] {
+  background:
+    radial-gradient(circle at top right, rgba(136, 181, 140, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(242, 249, 241, 0.96));
+  border-color: rgba(145, 184, 149, 0.34);
+  border-left-color: #6c986e;
+}
+
+.th2-day-overview__event[data-tone="support"] {
+  background:
+    radial-gradient(circle at top right, rgba(118, 174, 228, 0.18), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240, 246, 255, 0.96));
+  border-color: rgba(146, 176, 221, 0.34);
+  border-left-color: #4d7fca;
+}
+
+.th2-day-overview__event[data-tone="focus"] {
+  background:
+    radial-gradient(circle at top right, rgba(170, 123, 221, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247, 242, 255, 0.96));
+  border-color: rgba(180, 149, 219, 0.34);
+  border-left-color: #8660ba;
+}
+
+.th2-day-overview__event[data-tone="notice"] {
+  background:
+    radial-gradient(circle at top right, rgba(230, 137, 109, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255, 243, 239, 0.96));
+  border-color: rgba(228, 154, 133, 0.34);
+  border-left-color: #d76f4c;
 }
 
 .th2-day-overview__event-time {
@@ -209,6 +253,10 @@ body.th2-page {
 
 .th2-priority-rail--lesson-map .th2-priority-item {
   cursor: default;
+  position: relative;
+  overflow: hidden;
+  gap: 8px;
+  padding-top: 18px;
 }
 
 .th2-priority-rail--lesson-map .th2-priority-item:hover {
@@ -231,6 +279,56 @@ body.th2-page {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.th2-priority-item__tone {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  border-radius: 18px 0 0 18px;
+  background: #7a8ea8;
+}
+
+.th2-priority-item__tone[data-tone="literacy"] { background: linear-gradient(180deg, #4f7fd3 0%, #6aa7f5 100%); }
+.th2-priority-item__tone[data-tone="math"] { background: linear-gradient(180deg, #e39a3c 0%, #f0c25f 100%); }
+.th2-priority-item__tone[data-tone="writing"] { background: linear-gradient(180deg, #3fbe8a 0%, #62d3aa 100%); }
+.th2-priority-item__tone[data-tone="content"] { background: linear-gradient(180deg, #8a6ad3 0%, #b290ec 100%); }
+.th2-priority-item__tone[data-tone="general"] { background: linear-gradient(180deg, #7f93ad 0%, #9db1ca 100%); }
+
+.th2-priority-item__lesson-bar {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(111, 136, 171, 0.14);
+  border: 1px solid rgba(159, 179, 209, 0.18);
+}
+
+.th2-priority-item__lesson-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(59, 125, 215, 0.88), rgba(85, 194, 198, 0.82));
+}
+
+.th2-priority-item__cue {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #5f7190;
+}
+
+.th2-day-brief--overview {
+  background:
+    radial-gradient(circle at top right, rgba(142, 188, 231, 0.15), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.9), rgba(244,248,255,0.92));
+  border: 1px solid rgba(171, 192, 220, 0.3);
+}
+
+.th2-priority-rail--lesson-map {
+  background:
+    radial-gradient(circle at top right, rgba(244, 195, 132, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,247,241,0.92));
+  border: 1px solid rgba(217, 190, 150, 0.28);
 }
 
 html, body {

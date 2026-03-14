@@ -5124,18 +5124,20 @@
     var rows = (Array.isArray(blocks) ? blocks : []).filter(isNotableCalendarBlock).slice(0, 4);
     return rows.map(function (block) {
       var detail = "";
+      var tone = "schedule";
       if (/library/i.test(block.label || "")) detail = "Library visit is on the schedule.";
-      else if (/assembly/i.test(block.label || "")) detail = "Assembly timing may change the lesson rhythm.";
-      else if (/stem/i.test(block.label || "") || /stem/i.test(block.notes || "")) detail = "STEM timing is part of the day flow.";
-      else if (/world language exempt/i.test(block.label || "")) detail = "Check coverage and pull-out timing before this block starts.";
-      else if (/specials/i.test(block.label || "")) detail = "Specials may affect support coverage and transitions.";
-      else if (/recess|snack/i.test(block.label || "")) detail = "Use the transition to reset before the next academic block.";
-      else if (/meeting|advisory/i.test(block.label || "") || /meeting|advisory/i.test(block.subject || "")) detail = "Morning meeting sets the tone for the day.";
+      else if (/assembly/i.test(block.label || "")) { detail = "Assembly timing may change the lesson rhythm."; tone = "notice"; }
+      else if (/stem/i.test(block.label || "") || /stem/i.test(block.notes || "")) { detail = "STEM timing is part of the day flow."; tone = "focus"; }
+      else if (/world language exempt/i.test(block.label || "")) { detail = "Check coverage and pull-out timing before this block starts."; tone = "support"; }
+      else if (/specials/i.test(block.label || "")) { detail = "Specials may affect support coverage and transitions."; tone = "support"; }
+      else if (/recess|snack/i.test(block.label || "")) { detail = "Use the transition to reset before the next academic block."; tone = "pause"; }
+      else if (/meeting|advisory/i.test(block.label || "") || /meeting|advisory/i.test(block.subject || "")) { detail = "Morning meeting sets the tone for the day."; tone = "warm"; }
       else detail = block.notes || "Calendar note for today.";
       return {
         timeLabel: block.timeLabel || "",
         label: block.label || block.classSection || "Calendar note",
-        detail: detail
+        detail: detail,
+        tone: tone
       };
     });
   }
@@ -5151,12 +5153,17 @@
       var classContext = contextData.classContext || {};
       var summary = classContext.conceptFocus || classConceptFocus(block);
       var lessonLabel = [simplifyCurriculumLabel(block.curriculum || programLabel(block.programId)), block.lesson].filter(Boolean).join(" · ");
+      var supportCount = countSupportStudentsForContext(contextData);
+      var subject = String(block.subject || "").toLowerCase();
+      var tone = /math|numeracy/.test(subject) ? "math" : /writing/.test(subject) ? "writing" : /science|social/.test(subject) ? "content" : /language|reading|ela/.test(subject) ? "literacy" : "general";
       return {
         teacher: block.teacher || "Teacher",
         timeLabel: block.timeLabel || "",
         label: block.label || block.classSection || block.subject || "Class block",
         lessonLabel: lessonLabel || "Lesson context pending",
-        summary: summary
+        summary: summary,
+        supportCount: supportCount,
+        tone: tone
       };
     });
   }
@@ -5173,7 +5180,7 @@
       '    <div class="th2-day-overview__events-head"><span class="th2-day-overview__label">Calendar highlights</span><strong>What changes the day</strong></div>',
       (highlights.length
         ? highlights.map(function (item) {
-            return '<article class="th2-day-overview__event"><span class="th2-day-overview__event-time">' + escapeHtml(item.timeLabel || "Today") + '</span><strong>' + escapeHtml(item.label) + '</strong><p>' + escapeHtml(item.detail) + '</p></article>';
+            return '<article class="th2-day-overview__event" data-tone="' + escapeHtml(item.tone || "schedule") + '"><span class="th2-day-overview__event-time">' + escapeHtml(item.timeLabel || "Today") + '</span><strong>' + escapeHtml(item.label) + '</strong><p>' + escapeHtml(item.detail) + '</p></article>';
           }).join("")
         : '<p class="th2-day-overview__empty">No major calendar shifts are showing yet. Sync once to confirm assemblies, library, specials, and pull-out changes.</p>'),
       "  </div>",
@@ -5189,17 +5196,20 @@
       (rows.length
         ? '<div class="th2-priority-rail__list">' + rows.map(function (item) {
             return [
-              '<article class="th2-priority-item th2-priority-item--lesson">',
-              '  <div class="th2-priority-item__top">',
-              '    <span class="th2-priority-item__rank">' + escapeHtml(item.teacher) + '</span>',
-              '    <span class="th2-priority-item__status" data-status="ready">' + escapeHtml(item.timeLabel) + '</span>',
-              '  </div>',
-              '  <strong class="th2-priority-item__title">' + escapeHtml(item.label) + '</strong>',
-              '  <p class="th2-priority-item__meta">' + escapeHtml(item.lessonLabel) + '</p>',
-              '  <p class="th2-priority-item__reason">' + escapeHtml(item.summary) + '</p>',
-              '</article>'
-            ].join("");
-          }).join("") + '</div>'
+          '<article class="th2-priority-item th2-priority-item--lesson">',
+          '  <div class="th2-priority-item__tone" data-tone="' + escapeHtml(item.tone || "general") + '"></div>',
+          '  <div class="th2-priority-item__top">',
+          '    <span class="th2-priority-item__rank">' + escapeHtml(item.teacher) + '</span>',
+          '    <span class="th2-priority-item__status" data-status="ready">' + escapeHtml(item.timeLabel) + '</span>',
+          '  </div>',
+          '  <strong class="th2-priority-item__title">' + escapeHtml(item.label) + '</strong>',
+          '  <p class="th2-priority-item__meta">' + escapeHtml(item.lessonLabel) + '</p>',
+          '  <p class="th2-priority-item__reason">' + escapeHtml(item.summary) + '</p>',
+          '  <div class="th2-priority-item__lesson-bar"><span style="width:' + escapeHtml(String(Math.max(18, Math.min(100, (item.supportCount || 0) * 18)))) + '%"></span></div>',
+          '  <p class="th2-priority-item__cue">' + escapeHtml(String(item.supportCount || 0)) + ' support students in this block</p>',
+          '</article>'
+        ].join("");
+      }).join("") + '</div>'
         : '<div class="th2-priority-rail__empty">Lesson context will appear once today&rsquo;s classes are connected.</div>'),
       '</section>'
     ].join("");
