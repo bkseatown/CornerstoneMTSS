@@ -15,6 +15,135 @@ html {
   background: #bec5d2; /* fallback for body scroll overshoot — visible slate */
 }
 
+/* 2026-03-15 Figma audit pass: class-command contrast and surface separation */
+body.th2-page {
+  background:
+    radial-gradient(circle at top left, rgba(82, 125, 198, 0.12), transparent 24%),
+    radial-gradient(circle at top right, rgba(214, 165, 92, 0.10), transparent 22%),
+    linear-gradient(155deg, #cfd6df 0%, #c7ced8 48%, #c0c8d1 100%);
+}
+
+.th2-shell {
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: linear-gradient(180deg, rgba(244, 247, 251, 0.58), rgba(232, 237, 244, 0.48));
+  box-shadow:
+    0 28px 60px rgba(37, 44, 58, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+.th2-sidebar {
+  background: linear-gradient(180deg, rgba(247, 249, 252, 0.99), rgba(236, 241, 247, 0.98));
+  box-shadow: inset -1px 0 0 rgba(141, 156, 180, 0.34);
+}
+
+.th2-sidebar-context {
+  margin: 0 8px 6px;
+  padding: 10px 12px 8px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(243,247,252,0.92));
+  border: 1px solid rgba(171, 185, 206, 0.26);
+}
+
+.th2-list {
+  padding: 6px;
+  gap: 6px;
+}
+
+.th2-block-card {
+  border-radius: 14px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(244,247,252,0.94));
+  border: 1px solid rgba(164, 179, 200, 0.18);
+  box-shadow: 0 6px 14px rgba(37, 50, 72, 0.04);
+}
+
+.th2-block-card:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(242,247,255,0.98));
+  border-color: rgba(58, 111, 216, 0.28);
+  box-shadow: 0 10px 20px rgba(43, 93, 168, 0.08);
+}
+
+.th2-main {
+  background:
+    radial-gradient(circle at top right, rgba(222, 182, 120, 0.10), transparent 24%),
+    linear-gradient(180deg, rgba(242, 246, 252, 0.72), rgba(229, 236, 246, 0.46));
+}
+
+.th2-day-schedule-view {
+  gap: 12px;
+}
+
+.th2-day-sched-hero {
+  gap: 16px;
+}
+
+.th2-day-brief,
+.th2-priority-rail {
+  border-color: rgba(174, 188, 208, 0.34);
+  box-shadow:
+    0 18px 36px rgba(39, 51, 72, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.62);
+}
+
+.th2-day-brief {
+  padding: 18px 20px;
+}
+
+.th2-day-brief__title {
+  font-size: 28px;
+}
+
+.th2-day-brief__pattern,
+.th2-day-brief__group,
+.th2-command-brief-card,
+.th2-note-actions {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.74);
+}
+
+.th2-day-brief__pattern {
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(245,248,253,0.92));
+  border-color: rgba(171, 185, 206, 0.28);
+}
+
+.th2-day-brief__group {
+  background:
+    radial-gradient(circle at top right, rgba(214, 165, 92, 0.10), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,245,240,0.94));
+  border-color: rgba(194, 169, 131, 0.24);
+}
+
+.th2-command-brief-grid {
+  gap: 10px;
+}
+
+.th2-command-brief-card {
+  padding: 14px 15px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244,248,253,0.98));
+  border: 1px solid rgba(169, 184, 204, 0.22);
+}
+
+.th2-note-actions {
+  padding: 11px 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(250, 247, 241, 0.96), rgba(244, 246, 250, 0.96));
+  border: 1px solid rgba(181, 170, 150, 0.22);
+}
+
+.th2-note-btn {
+  box-shadow: 0 3px 10px rgba(31, 47, 70, 0.05);
+}
+
+.th2-priority-item {
+  border: 1px solid rgba(170, 184, 204, 0.22);
+  box-shadow:
+    0 10px 20px rgba(36, 46, 68, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.72);
+}
+
+.th2-priority-item__status {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
 html, body {
   margin: 0;
   height: 100%;
