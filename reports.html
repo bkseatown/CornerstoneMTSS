@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./style/tokens.css?v=20260301y">
   <link rel="stylesheet" href="./style/typography.css?v=20260301y">
   <link rel="stylesheet" href="./style/nav-shell.css?v=20260312a">
-  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260312b">
+  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260313x">
   <link rel="stylesheet" href="./css/lesson-brief-panel.css?v=20260306m">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260308a">
   <style>
@@ -146,26 +146,43 @@
           <div class="td-reports-overview__head">
             <div>
               <p class="dashboard-kicker">Reports &amp; Prep</p>
-              <h1 class="td-title">Keep this page for patterns, packets, and meeting-ready outputs.</h1>
-              <p class="dashboard-section-meta">Hub stays primary for who needs support now and what to launch next. This page stays focused on aggregated signals, meeting prep, weekly insight drafts, and share/export work.</p>
+              <h1 class="td-title">Show school leaders the pattern, the plan, and the proof.</h1>
+              <p class="dashboard-section-meta">Use this page when a principal, coordinator, or case-team lead needs the clearest cross-student story: where support demand is rising, what is ready for meetings, and what evidence is ready to share.</p>
             </div>
             <div class="td-reports-overview__actions">
               <a class="td-top-btn td-hub-cta" href="./teacher-hub-v2.html">Back to Hub</a>
               <a class="td-top-btn" href="./student-profile.html">Open Student Profile</a>
             </div>
           </div>
+          <div class="td-leadership-strip" aria-label="Leadership snapshot">
+            <article class="td-leadership-card td-leadership-card--signal">
+              <span class="td-overview-eyebrow">Priority watch</span>
+              <strong>8 students need review before the next support meeting</strong>
+              <p>Caseload patterns, missing evidence, and fidelity shifts are visible in one place instead of scattered across separate tools.</p>
+            </article>
+            <article class="td-leadership-card td-leadership-card--action">
+              <span class="td-overview-eyebrow">Coordinator lens</span>
+              <strong>3 meeting packets are nearly ready to send</strong>
+              <p>Weekly insight drafts, meeting prep, and follow-up outputs now read like finished artifacts rather than raw notes.</p>
+            </article>
+            <article class="td-leadership-card td-leadership-card--proof">
+              <span class="td-overview-eyebrow">Evidence lane</span>
+              <strong>Game practice, lesson context, and support summaries point to the same next move</strong>
+              <p>The goal is not just nicer reports. It is faster alignment between classroom action and leadership decisions.</p>
+            </article>
+          </div>
           <div class="td-reports-overview__grid" id="td-overview-grid">
             <article>
               <strong>Caseload patterns</strong>
-              <p>Review cross-student risk, missing evidence, and follow-up load before a meeting or weekly check-in.</p>
+              <p>Review cross-student risk, missing evidence, and follow-up load before a principal walk-through, SST meeting, or weekly review.</p>
             </article>
             <article>
               <strong>Meeting-ready outputs</strong>
-              <p>Generate weekly drafts, exports, packets, and follow-up notes from real data.</p>
+              <p>Generate weekly drafts, exports, packets, and follow-up notes from live evidence instead of rebuilding the story manually.</p>
             </article>
             <article>
-              <strong>Secondary workspace</strong>
-              <p>Launch recommendations and daily intervention moves belong back in the Hub, not here.</p>
+              <strong>Leadership-safe framing</strong>
+              <p>Keep the Hub for daily action. Keep this page for the higher-level narrative leaders need when they ask, “What is happening across the caseload?”</p>
             </article>
           </div>
         </section>
@@ -174,11 +191,11 @@
             <div class="td-reports-panel__head">
               <div>
                 <p class="dashboard-kicker">Aggregated Caseload Patterns</p>
-                <h2 id="td-patterns-title" class="dashboard-section-title">Use this view to scan evidence health, not choose the next lesson.</h2>
+                <h2 id="td-patterns-title" class="dashboard-section-title">Use this view to scan evidence health, service pressure, and follow-up risk.</h2>
               </div>
               <a class="td-top-btn" href="./teacher-hub-v2.html">Open Hub</a>
             </div>
-            <p class="dashboard-section-meta">Look for caseload-level risk distribution, missing evidence, and students who need review before meetings, packets, or family communication.</p>
+            <p class="dashboard-section-meta">Look for caseload-level risk distribution, missing evidence, and students who need review before meetings, packets, coordinator updates, or family communication.</p>
             <div class="td-reports-pattern-list" aria-label="Reports prep checklist">
               <article>
                 <strong>Before meetings</strong>
@@ -198,10 +215,10 @@
             <div class="td-reports-panel__head">
               <div>
                 <p class="dashboard-kicker">Meeting Prep</p>
-                <h2 id="td-prep-title" class="dashboard-section-title">Prepare narratives, packets, and follow-up without acting like the Hub.</h2>
+                <h2 id="td-prep-title" class="dashboard-section-title">Prepare narratives, packets, and leadership-ready follow-up without acting like the Hub.</h2>
               </div>
             </div>
-            <p class="dashboard-section-meta">This workspace is for meeting notes, weekly summary generation, SAS-aligned packets, and import/export tasks.</p>
+            <p class="dashboard-section-meta">This workspace is for meeting notes, weekly summary generation, SAS-aligned packets, and import/export tasks that need to look polished when shared upward or outward.</p>
             <div class="td-reports-action-grid">
               <button id="td-reports-open-meeting" class="td-top-btn btn-primary" type="button">Open Meeting Prep</button>
               <button id="td-reports-open-weekly" class="td-top-btn" type="button">Generate Weekly Draft</button>
