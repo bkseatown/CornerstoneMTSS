@@ -217,6 +217,26 @@ body.cs-has-nav-shell .td-shell {
   color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
 }
 
+.td-leadership-card__cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
+  background: rgba(255,255,255,0.78);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.34);
+}
+
 .td-reports-overview__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
