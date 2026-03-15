@@ -351,6 +351,53 @@ body.cs-has-nav-shell .td-shell {
   gap: 12px;
 }
 
+.td-reports-pattern-strips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.td-reports-pattern-strip {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(244, 241, 235, 0.76));
+}
+
+.td-reports-pattern-strip span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+}
+
+.td-reports-pattern-strip strong {
+  font-size: 1rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.td-reports-pattern-strip--warn {
+  background:
+    radial-gradient(circle at top right, rgba(219, 157, 84, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248, 242, 235, 0.82));
+}
+
+.td-reports-pattern-strip--focus {
+  background:
+    radial-gradient(circle at top right, rgba(84, 137, 219, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(238, 244, 251, 0.8));
+}
+
+.td-reports-pattern-strip--ready {
+  background:
+    radial-gradient(circle at top right, rgba(79, 181, 132, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(238, 247, 242, 0.8));
+}
+
 .td-reports-pattern-list article {
   padding: 14px;
   border-radius: 18px;
@@ -374,6 +421,44 @@ body.cs-has-nav-shell .td-shell {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.td-reports-prep-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.td-reports-prep-steps article {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  background: rgba(255,255,255,0.6);
+}
+
+.td-reports-prep-steps span {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--accent) 82%, white 18%);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.td-reports-prep-steps strong {
+  font-size: 1rem;
+  line-height: 1.14;
+  color: var(--text-primary);
+}
+
+.td-reports-prep-steps p {
+  margin: 0;
+  color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
 }
 
 .td-wordmark strong {
