@@ -286,6 +286,14 @@
     var evidenceCount = (SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
       ? SupportStore.getRecentEvidencePoints(student.id, 30, 40)
       : []).length || 0;
+    var supportChips = [
+      student.gradeBand || student.grade || "Grade band not set",
+      summary && summary.focus ? summary.focus : "Support focus forming",
+      summary && summary.risk ? summary.risk : "steady",
+      goals[0] && (goals[0].skill || goals[0].domain || goals[0].target),
+      accommodations[0] && (accommodations[0].title || accommodations[0].whenToUse || "Accommodation"),
+      record.bipPlan && record.bipPlan.reviewDate && ("BIP " + record.bipPlan.reviewDate)
+    ].filter(Boolean).slice(0, 5);
     return [
       '<div class="sp-hero-main">',
       '  <p class="sp-kicker">Support record</p>',
@@ -297,21 +305,17 @@
       ].join(" · ")) + '</p>',
       '  <p class="sp-body-copy">' + esc((summary && summary.nextMove && summary.nextMove.line) || "Review support, evidence, communication, and the next move in one place.") + '</p>',
       '  <div class="sp-chip-row">' +
-      [
-        goals[0] && ("Goal: " + (goals[0].skill || goals[0].domain || "Goal")),
-        accommodations[0] && ("Accommodation: " + (accommodations[0].title || "Support")),
-        record.bipPlan && record.bipPlan.reviewDate && ("BIP review " + record.bipPlan.reviewDate)
-      ].filter(Boolean).map(function (item) {
+      supportChips.map(function (item) {
         return '<span class="sp-chip">' + esc(item) + '</span>';
       }).join("") +
       '</div>',
-      '</div>',
-      '<div class="sp-hero-side">',
-      '  <div class="sp-meta-grid">',
+      '  <div class="sp-hero-summary">',
       '    <div class="sp-meta-card"><span>Last session</span><strong>' + esc(summary && summary.lastSession ? relativeDate(summary.lastSession.timestamp) : "No sessions yet") + '</strong></div>',
       '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String(evidenceCount)) + '</strong></div>',
       '    <div class="sp-meta-card"><span>Top need</span><strong>' + esc(snapshot && snapshot.needs && snapshot.needs[0] ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect baseline") : "Collect baseline") + '</strong></div>',
       '  </div>',
+      '</div>',
+      '<div class="sp-hero-side">',
       '  <div class="sp-evidence-story">',
       '    <p class="sp-kicker">Momentum</p>',
       '    <div id="sp-hero-evidence-visual"></div>',
