@@ -144,29 +144,13 @@
       'Affixes Review 2'
     ]);
     const targets = [];
-    lessonNames.forEach((name, index) => {
+    lessonNames.forEach((_name, index) => {
       const lesson = index + 1;
       targets.push(freezeTarget({
         id: `ufli-lesson-${lesson}`,
-        label: `UFLI Foundations Lesson ${lesson} · ${name}`,
-        focus: lesson <= 41
-          ? 'cvc'
-          : lesson <= 53
-            ? 'digraph'
-            : lesson <= 62
-              ? 'cvce'
-              : lesson <= 68
-                ? 'multisyllable'
-                : lesson <= 76
-                  ? 'welded'
-                  : lesson <= 83
-                    ? 'r_controlled'
-                    : lesson <= 94
-                      ? 'vowel_team'
-                      : lesson <= 98
-                        ? 'diphthong'
-                        : 'suffix',
-        gradeBand: lesson <= 98 ? 'K-2' : 'G3-5',
+        label: `UFLI Foundations Lesson ${lesson}`,
+        focus: 'structured_literacy',
+        gradeBand: 'K-2',
         length: lesson <= 41 ? '3' : lesson <= 83 ? '4' : '5',
         pacing: `Lesson ${lesson}`
       }));
@@ -241,14 +225,6 @@
     levels.forEach((level) => {
       level.units.forEach((unitMeta) => {
         const unitValue = String(unitMeta.id || '');
-        const unitNumber = Number(unitValue);
-        const isNumericUnit = Number.isFinite(unitNumber);
-        const focus = level.key === 'k' || level.key === '1'
-          ? (isNumericUnit && unitNumber <= 4 ? 'cvc' : isNumericUnit && unitNumber <= 9 ? 'digraph' : 'welded')
-          : level.key === '2'
-            ? (isNumericUnit && unitNumber <= 9 ? 'r_controlled' : isNumericUnit && unitNumber <= 14 ? 'vowel_team' : 'suffix')
-            : (isNumericUnit && unitNumber <= 6 ? 'multisyllable' : isNumericUnit && unitNumber <= 10 ? 'prefix' : 'suffix');
-
         const unitLabel = unitValue === 'bonus'
           ? `Fundations Level ${level.label} Bonus Unit`
           : `Fundations Level ${level.label} Unit ${unitValue}`;
@@ -259,7 +235,7 @@
         targets.push(freezeTarget({
           id: targetId,
           label: unitLabel,
-          focus,
+          focus: 'structured_literacy',
           gradeBand: level.gradeBand,
           length: level.key === 'k' || level.key === '1' ? '4' : '6',
           pacing: unitValue === 'bonus'
@@ -363,17 +339,14 @@
     ]);
     const targets = [];
     stepTargets.forEach((stepRow) => {
-      stepRow.lessons.forEach((lessonLabel, idx) => {
-        const lessonNumber = idx + 1;
-        targets.push(freezeTarget({
-          id: `wilson-step-${stepRow.step}-lesson-${lessonNumber}`,
-          label: `Wilson Reading System ${lessonLabel}`,
-          focus: stepRow.focus,
-          gradeBand: stepRow.gradeBand,
-          length: stepRow.length,
-          pacing: `Step ${stepRow.step}.${lessonNumber}`
-        }));
-      });
+      targets.push(freezeTarget({
+        id: `wilson-step-${stepRow.step}`,
+        label: `Wilson Reading System Step ${stepRow.step}`,
+        focus: 'structured_literacy',
+        gradeBand: stepRow.gradeBand,
+        length: stepRow.length,
+        pacing: `Step ${stepRow.step}`
+      }));
     });
     return Object.freeze(targets);
   }

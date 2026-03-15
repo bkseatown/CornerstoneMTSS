@@ -34,8 +34,15 @@
   var HubPriorityEngineModule = window.CSHubPriorityEngine;
   var HubBriefIntelligenceModule = window.CSHubBriefIntelligence;
   var TeacherStorage       = window.CSTeacherStorage;
+  var CurriculumTruth      = window.CSCurriculumTruth || null;
 
   if (!Evidence || !TeacherRuntimeState) return;
+
+  function truth(id) {
+    return CurriculumTruth && typeof CurriculumTruth.cloneEntry === "function"
+      ? CurriculumTruth.cloneEntry(id)
+      : null;
+  }
 
   function bootStorageGet(key, fallback) {
     try {
@@ -3787,9 +3794,15 @@
       hubMemory.setString(SUPPORT_KEY, "1");
     }
 
-    var CONTEXT_KEY = "cs.hub.demo.context.v4";
+    var CONTEXT_KEY = "cs.hub.demo.context.v5";
     if ((isDemoMode || !hubMemory.getString(CONTEXT_KEY, "")) && TeacherStorage) {
       safe(function () {
+        var mathTruth = truth("im-g4-u2-l7");
+        var mathLessonLabel = mathTruth ? [mathTruth.unit, mathTruth.lesson].join(" · ") : "Unit 2 · Lesson 7";
+        var mathFocus = mathTruth && mathTruth.officialFocus ? mathTruth.officialFocus : "Find and explain equivalent fractions.";
+        var mathSupportMove = mathTruth && mathTruth.supportMove
+          ? mathTruth.supportMove
+          : "Use fraction strips, area models, or number lines to show why two fractions are equal.";
         var today = typeof TeacherStorage.todayStamp === "function" ? TeacherStorage.todayStamp() : todayKey();
         var existingBlocks = typeof TeacherStorage.loadScheduleBlocks === "function"
           ? TeacherStorage.loadScheduleBlocks(today)
@@ -3837,9 +3850,9 @@
             schedulePattern: "White Day 1",
             curriculum: "Illustrative Math",
             curriculumId: "illustrative-math",
-            lesson: "Unit 2 · Lesson 7",
+            lesson: mathLessonLabel,
             supportType: "small-group",
-            notes: "Push on fraction comparison language before independent work.",
+            notes: mathSupportMove,
             studentIds: ["demo-noah", "demo-ava", "demo-maya"],
             lessonContextId: "demo-lesson-math"
           },
@@ -3917,7 +3930,7 @@
             schedulePattern: "White Day 1",
             curriculum: "Fundations",
             curriculumId: "fundations",
-            lesson: "Lesson 56",
+            lesson: "Current unit",
             supportType: "pull-out",
             notes: "Students who are exempt from world language receive targeted literacy support during this block.",
             studentIds: ["demo-liam", "demo-zoe"],
@@ -3965,10 +3978,10 @@
             teacher: "Ms. Smith",
             subject: "Math",
             curriculum: "Illustrative Math",
-            lesson: "Unit 2 · Lesson 7",
+            lesson: mathLessonLabel,
             supportType: "small-group",
-            conceptFocus: "Compare fractions with unlike denominators using benchmark reasoning.",
-            languageDemands: ["compare", "justify", "explain"],
+            conceptFocus: mathFocus,
+            languageDemands: ["equivalent", "explain", "show"],
             lessonContextId: "demo-lesson-math"
           });
           TeacherStorage.saveClassContext("demo-block-recess", {
@@ -4025,7 +4038,7 @@
             teacher: "Ms. Rivera",
             subject: "Reading",
             curriculum: "Fundations",
-            lesson: "Lesson 56",
+            lesson: "Current unit",
             supportType: "pull-out",
             conceptFocus: "Use the exempt/support window for targeted literacy support in ES and learning support time in MS/HS.",
             languageDemands: ["blend", "segment", "explain"],
@@ -4071,20 +4084,20 @@
             blockId: "demo-block-math",
             subject: "Math",
             programId: "illustrative-math",
-            unit: "Unit 2",
-            title: "Lesson 7",
-            conceptFocus: "Comparing fractions with unlike denominators",
-            languageDemands: ["compare", "justify", "explain"],
+            unit: mathTruth && mathTruth.unit ? mathTruth.unit : "Unit 2",
+            title: mathTruth && mathTruth.lesson ? mathTruth.lesson : "Lesson 7",
+            conceptFocus: mathFocus,
+            languageDemands: ["equivalent", "show", "explain"],
             misconceptions: [
-              "Students compare denominators instead of the size of the fraction.",
-              "Students skip benchmark reasoning and jump to a guess."
+              "Students name fractions as different because the numerators and denominators do not match exactly.",
+              "Students can see a model but struggle to explain why the two fractions are equal."
             ],
             supportMoves: [
-              "Use a number line or area model before asking for a verbal answer.",
-              "Press for the sentence frame: ___ is greater because ___."
+              mathSupportMove,
+              "Ask the student to point to the equal amount before naming the fractions."
             ],
-            targetSkills: ["fraction comparison", "comparison language", "visual model reasoning"],
-            vocabulary: ["fraction", "benchmark", "greater than", "justify"]
+            targetSkills: ["equivalent fractions", "visual model reasoning", "math explanation"],
+            vocabulary: ["fraction", "equivalent", "equal", "model"]
           });
           TeacherStorage.saveLessonContext("demo-lesson-recess", {
             lessonContextId: "demo-lesson-recess",
@@ -4172,19 +4185,19 @@
             subject: "Reading",
             programId: "fundations",
             unit: "Fundations",
-            title: "Lesson 56",
-            conceptFocus: "Practice glued sounds and closed-syllable reading so students can decode, encode, and apply the pattern in connected text.",
+            title: "Current unit",
+            conceptFocus: "Use the current Fundations unit for explicit word reading, spelling, and short sentence dictation.",
             languageDemands: ["blend", "tap", "read"],
             misconceptions: [
-              "Students guess from the first sound instead of tapping through the full word.",
-              "Students can read the pattern in isolation but lose accuracy in connected text."
+              "Students guess from the first sound instead of using the full routine.",
+              "Students can read the pattern in isolation but lose accuracy when spelling or reading a sentence."
             ],
             supportMoves: [
-              "Tap and map two example words before students read independently.",
-              "Move quickly from word work into a short decodable sentence read."
+              "Tap and map two current-unit words before students read independently.",
+              "Move quickly from word work into one dictated phrase or short sentence."
             ],
-            targetSkills: ["glued sounds", "decoding", "encoding"],
-            vocabulary: ["tap", "blend", "glued sound", "dictation"]
+            targetSkills: ["decoding", "encoding", "dictation transfer"],
+            vocabulary: ["tap", "blend", "dictation", "sentence"]
           });
           TeacherStorage.saveLessonContext("demo-lesson-specials", {
             lessonContextId: "demo-lesson-specials",
@@ -4234,6 +4247,7 @@
       hubMemory.remove("cs.hub.demo.context.v2");
       hubMemory.remove("cs.hub.demo.context.v3");
       hubMemory.remove("cs.hub.demo.context.v4");
+      hubMemory.remove("cs.hub.demo.context.v5");
       var evidenceRaw = localStorage.getItem("CS_EVIDENCE_V1");
       var evidenceState = evidenceRaw ? JSON.parse(evidenceRaw) : null;
       if (evidenceState && typeof evidenceState === "object") {

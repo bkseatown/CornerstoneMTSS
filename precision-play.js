@@ -338,11 +338,11 @@
     requiredOkEl.checked = false;
 
     if (instructionalFocusEl) {
-      instructionalFocusEl.textContent = "Instructional focus: " + String(round.instructionalFocus || "Vocabulary and language connections");
+      instructionalFocusEl.textContent = String(round.instructionalFocus || "Vocabulary and language connections");
     }
 
     if (alignmentBadgeEl) {
-      alignmentBadgeEl.textContent = "Aligned to Literacy Focus: " + mapSkillName(teacherSkillNodeEl && teacherSkillNodeEl.value || card && card.skillTag || "LIT.VOC.ACAD");
+      alignmentBadgeEl.textContent = mapSkillName(teacherSkillNodeEl && teacherSkillNodeEl.value || card && card.skillTag || "LIT.VOC.ACAD");
     }
 
     var expression = expressionForRound(expressionModeEl.value, !!(lockExpressionEl && lockExpressionEl.checked));
@@ -356,7 +356,7 @@
     var timerSeconds = timerEnabledEl && timerEnabledEl.checked ? Number(round.timerSeconds || 0) : 0;
     startTimer(timerSeconds);
     state.canAdvance = true;
-    setStatus("Round live. Keep explanations aligned to literacy focus.");
+    setStatus("Round live.");
   }
 
   function finishRound(success) {
@@ -391,10 +391,10 @@
       " | Time this round: " + elapsedSec + "s" +
       " | Mode used: " + modeForEngine();
     summarySuggestedEl.textContent = modeForEngine() === "FUN"
-      ? "Suggested next round: TARGETED mode for academic language transfer."
+      ? "Next: Targeted"
       : (modeForEngine() === "TARGETED"
-        ? "Suggested next round: INTERVENTION mode with locked skill node."
-        : "Suggested next round: TARGETED mode to generalize the skill.");
+        ? "Next: Intervention"
+        : "Next: Targeted");
     summaryEl.classList.remove("pp-hidden");
   }
 
@@ -421,7 +421,7 @@
     setupEl.classList.remove("pp-hidden");
     summaryEl.classList.remove("pp-hidden");
     summaryTextEl.textContent = "Session complete. Attempts: " + state.attempts + " | Successful rounds: " + state.successfulRounds + " | Mode used: " + modeForEngine();
-    summarySuggestedEl.textContent = "Suggested next round: Continue in " + modeForEngine() + " or return to the literacy dashboard.";
+    summarySuggestedEl.textContent = "Next: " + modeForEngine();
     setStatus("Session ended.");
   }
 
@@ -590,7 +590,7 @@
     }
 
     if (alignmentBadgeEl) {
-      alignmentBadgeEl.textContent = "Aligned to Literacy Focus: " + mapSkillName(skill);
+      alignmentBadgeEl.textContent = mapSkillName(skill);
     }
   }
 
@@ -600,7 +600,7 @@
     ensureAdvancedVisibility();
     loadCards()
       .then(function () {
-        setStatus("Ready. Select mode and start Word Connections.");
+        setStatus("Ready.");
       })
       .catch(function (error) {
         setStatus("Unable to load cards: " + (error && error.message ? error.message : "Unknown error"));

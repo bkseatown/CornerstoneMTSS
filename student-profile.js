@@ -4,6 +4,7 @@
   var CaseloadStore = window.CSCaseloadStore || null;
   var SupportStore = window.CSSupportStore || null;
   var StudentProfileStore = window.CSStudentProfileStore || null;
+  var CurriculumTruth = window.CSCurriculumTruth || null;
 
   var state = {
     studentId: "",
@@ -20,6 +21,30 @@
     team: document.getElementById("sp-team-panel")
   };
 
+  function truth(id) {
+    return CurriculumTruth && typeof CurriculumTruth.cloneEntry === "function"
+      ? CurriculumTruth.cloneEntry(id)
+      : null;
+  }
+
+  function truthProgram(label, id, fallbackTitle, fallbackDetail) {
+    var entry = truth(id);
+    return {
+      label: label,
+      title: entry && entry.label ? entry.label : fallbackTitle,
+      detail: entry && entry.officialFocus ? entry.officialFocus : fallbackDetail
+    };
+  }
+
+  function truthAssessment(label, id, fallbackTitle, fallbackDetail) {
+    var entry = truth(id);
+    return {
+      label: label,
+      title: entry && entry.assessmentPoint ? entry.assessmentPoint : fallbackTitle,
+      detail: entry && entry.assessmentDetail ? entry.assessmentDetail : fallbackDetail
+    };
+  }
+
   var DEMO_STUDENTS = {
     "demo-ava": {
       identity: {
@@ -32,28 +57,16 @@
       summary: "Current class work stays aligned to Grade 3 literacy and math while intervention targets phoneme-grapheme mapping, short-vowel accuracy, and written response stamina.",
       team: ["Specialist", "Classroom teacher", "School psychologist", "Case manager"],
       core: [
-        {
-          label: "ELA Core",
-          title: "Fishtank ELA Grade 3",
-          detail: "Unit text work and writing response in class. Support focuses on access to the same text and writing task with reduced decoding burden."
-        },
+        truthProgram("ELA Core", "fishtank-g3-current", "Fishtank ELA Grade 3", "Unit text work and writing response in class. Support focuses on access to the same text and writing task with reduced decoding burden."),
         {
           label: "Math Core",
-          title: "Illustrative Math Grade 3 Unit 6 Lesson 12",
-          detail: "Upcoming end-of-unit assessment. Daily collection point is the lesson cool-down. Planning lens: conceptual math, strategy comparison, and student explanation."
+          title: truth("im-g3-u6-l12") && truth("im-g3-u6-l12").label || "Illustrative Math Grade 3 Unit 6 Lesson 12",
+          detail: truth("im-g3-u6-l12") && truth("im-g3-u6-l12").officialFocus || "Students solve and represent weight and liquid-volume situations."
         }
       ],
       intervention: [
-        {
-          label: "Reading Intervention",
-          title: "Fundations Level 2 Unit 8",
-          detail: "Lesson focus: glued sounds, closed syllables, dictated sentence accuracy."
-        },
-        {
-          label: "Math Intervention",
-          title: "Bridges Intervention T3 Module 2 Unit 1 Session 4",
-          detail: "Goal: use place-value reasoning to solve two-step addition and subtraction within 1,000."
-        }
+        truthProgram("Reading Intervention", "fundations-l2-u8", "Fundations Level 2 Unit 8", "Current unit work centers on r-controlled syllable types, ar/or words, and connected dictation."),
+        truthProgram("Math Intervention", "bridges-place-value-cycle", "Bridges Intervention current cycle", "Current intervention targets place-value reasoning in two-step addition and subtraction within 1,000.")
       ],
       assessments: [
         {
@@ -61,15 +74,11 @@
           title: "MOY",
           detail: "ORF 68 wcpm, accuracy 93%, composite: strategic support. Progress monitoring every 2 weeks."
         },
-        {
-          label: "Illustrative Math",
-          title: "Lesson cool-down",
-          detail: "3/5. Missed comparison language on the final two items."
-        },
+        truthAssessment("Illustrative Math", "im-g3-u6-l12", "Lesson cool-down", "3/5. Needed one prompt to match the situation to the correct diagram."),
         {
           label: "Fundations",
           title: "Weekly check",
-          detail: "Encoding: 8/10. Unit test planned after Lesson 5."
+          detail: "Encoding: 8/10 on ar/or words and connected sentence dictation."
         }
       ],
       goals: {
@@ -115,15 +124,15 @@
       summary: "Intervention is tighter than core right now. The main record needs to show daily phonics instruction, benchmark status, and the current instructional entry point.",
       team: ["Specialist", "Classroom teacher", "Case manager"],
       core: [
-        { label: "ELA Core", title: "EL Education Grade 2", detail: "Core literacy stays grade-aligned with reduced text load and direct vocabulary pre-teach." },
+        truthProgram("ELA Core", "fishtank-g2-current", "Fishtank ELA Grade 2 current unit", "Core literacy stays grade-aligned with reduced text load and direct vocabulary pre-teach."),
         { label: "Math Core", title: "Bridges Grade 2 Unit 5", detail: "Classroom math remains on-grade-level with concrete models and visual supports." }
       ],
       intervention: [
-        { label: "Reading Intervention", title: "UFLI Foundations Lesson 52", detail: "Focus: digraph review, blending practice, encoding with immediate corrective feedback." }
+        truthProgram("Reading Intervention", "ufli-current", "UFLI Foundations current lesson", "Daily routine includes review, blending, encoding, and immediate corrective feedback.")
       ],
       assessments: [
         { label: "DIBELS mCLASS", title: "Progress monitoring", detail: "NWF CLS 41. Weekly monitoring in place." },
-        { label: "UFLI", title: "Weekly encoding", detail: "7/10 on dictated words; short vowels remain inconsistent." }
+        { label: "UFLI", title: "Weekly encoding", detail: "7/10 on dictated words; vowel-pattern accuracy is still inconsistent." }
       ],
       goals: {
         quarter: ["Blend and read CVCC and CCVC words with automaticity.", "Write dictated short-vowel words with no more than one error in a set of 10."],
@@ -149,7 +158,7 @@
       summary: "The main need is written output and organization, not decoding. Demo data should show writing structure and accommodation planning rather than reading-intervention language.",
       team: ["Specialist", "Classroom teacher", "School psychologist"],
       core: [
-        { label: "ELA Core", title: "Fishtank ELA Grade 3", detail: "Writing task is grounded in text evidence and structured response." },
+        truthProgram("ELA Core", "fishtank-g3-current", "Fishtank ELA Grade 3", "Writing task is grounded in text evidence and structured response."),
         { label: "Math Core", title: "Illustrative Math Grade 3 Unit 5", detail: "Math reasoning response needs sentence frame support." }
       ],
       intervention: [
@@ -183,14 +192,14 @@
       summary: "This profile demonstrates conceptual math support without turning philosophy into marketing language.",
       team: ["Specialist", "Classroom teacher", "Case manager"],
       core: [
-        { label: "Math Core", title: "Illustrative Math Grade 4 Unit 4 Lesson 9", detail: "Current collection points: daily cool-down and end-of-unit assessment." },
+        { label: "Math Core", title: truth("im-g4-u4-l9") && truth("im-g4-u4-l9").label || "Illustrative Math Grade 4 Unit 4 Lesson 9", detail: truth("im-g4-u4-l9") && truth("im-g4-u4-l9").officialFocus || "Students read, write, and compare numbers in different forms." },
         { label: "Planning Lens", title: "Pam Harris and Jo Boaler", detail: "Used here as planning lenses: relational thinking, multiple strategies, low-floor access, and mathematical discussion." }
       ],
       intervention: [
-        { label: "Math Intervention", title: "Bridges Intervention T3 Module 3 Unit 2 Session 3", detail: "Goal: represent multi-step problems with equations and clear operation choice." }
+        truthProgram("Math Intervention", "bridges-multistep-cycle", "Bridges Intervention current cycle", "Current intervention targets representing multi-step problems with equations and clear operation choice.")
       ],
       assessments: [
-        { label: "Illustrative Math", title: "Cool-down", detail: "Solved 4/5 with equation written after prompting." },
+        truthAssessment("Illustrative Math", "im-g4-u4-l9", "Cool-down", "Solved 4/5. Needed one prompt to explain a digit's value in a larger number."),
         { label: "Bridges Intervention", title: "Progress monitoring", detail: "Correctly represented 3 of 4 problems with bar model support." }
       ],
       goals: {
@@ -217,10 +226,10 @@
       summary: "The profile needs to hold both foundational reading and behavior plans without turning into a long form stack.",
       team: ["Specialist", "Classroom teacher", "School psychologist", "Behavior team"],
       core: [
-        { label: "ELA Core", title: "EL Education Grade 1", detail: "Core lesson access depends on short directions and immediate start support." }
+        truthProgram("ELA Core", "fishtank-g1-current", "Fishtank ELA Grade 1 current unit", "Core lesson access depends on short directions and immediate start support.")
       ],
       intervention: [
-        { label: "Reading Intervention", title: "Fundations Level K Unit 5", detail: "Focus: letter-sound fluency and dictated CVC work." },
+        truthProgram("Reading Intervention", "fundations-k-current", "Fundations Level K current unit", "Current work targets letter-sound fluency, CVC reading, and dictated word practice."),
         { label: "Behavior Plan", title: "BIP active", detail: "Replacement behavior: ask for help and return to task after one prompt." }
       ],
       assessments: [
@@ -255,11 +264,11 @@
       summary: "This is the middle-school example. It shows what older-student intervention records look like without changing the page structure.",
       team: ["Specialist", "ELA teacher", "School psychologist"],
       core: [
-        { label: "ELA Core", title: "EL Education Grade 7", detail: "Classroom work remains text-based and discussion-heavy; intervention targets access to multisyllabic words." },
+        truthProgram("ELA Core", "el-g7-current", "EL Education Grade 7", "Classroom work remains text-based and discussion-heavy; intervention targets access to multisyllabic words."),
         { label: "Math Core", title: "Illustrative Math Grade 7 Unit 3", detail: "Assessment remains module and lesson based." }
       ],
       intervention: [
-        { label: "Reading Intervention", title: "Just Words Unit 4", detail: "Focus: suffixing rules, multisyllabic decoding, and dictation." }
+        truthProgram("Reading Intervention", "justwords-current", "Just Words current unit", "Current work targets multisyllabic decoding, spelling, and transfer into connected text.")
       ],
       assessments: [
         { label: "Just Words", title: "Progress check", detail: "Read 15/20 multisyllabic target words accurately." },
@@ -292,7 +301,7 @@
         { label: "Course Access", title: "Grade 10 humanities and algebra support", detail: "Primary work is access to text-heavy content and written response." }
       ],
       intervention: [
-        { label: "Reading Intervention", title: "Wilson Reading System Step 7", detail: "Wordlist charting and dictation drive lesson mastery decisions." },
+        truthProgram("Reading Intervention", "wilson-current-step", "Wilson Reading System current step", "Wordlist charting and dictation drive mastery decisions in the current Wilson step."),
         { label: "Supplemental", title: "Corrective Reading placement level", detail: "Placement data used to identify instructional entry point for comprehension support." }
       ],
       assessments: [

@@ -16,9 +16,10 @@
     <select id="s-theme" aria-hidden="true" tabindex="-1" style="display:none;"></select>
 
     <header class="landing-header" aria-label="Cornerstone MTSS header">
-      <div>
+      <div class="landing-header__intro">
         <p class="landing-eyebrow">Cornerstone MTSS</p>
         <h1 class="landing-title">Specialist platform</h1>
+        <p class="landing-header__summary">One place to open the day, check the current class, record support, and keep reports and student records together.</p>
       </div>
       <div class="landing-header__meta">
         <span>Hub</span>
@@ -39,11 +40,11 @@
             <div class="landing-hub-panel__grid landing-hub-panel__grid--crop">
               <div class="landing-hub-note landing-hub-note--major">
                 <span>SWBAT</span>
-                <strong>Compare fractions with unlike denominators using benchmark reasoning.</strong>
+                <strong>Find and explain equivalent fractions.</strong>
               </div>
               <div class="landing-hub-note landing-hub-note--major">
                 <span>Support move</span>
-                <strong>Use visual fraction models before abstract comparison.</strong>
+                <strong>Use fraction strips, area models, or number lines to show why two fractions are equal.</strong>
               </div>
             </div>
             <div class="landing-hub-students landing-hub-students--stack">
@@ -58,6 +59,20 @@
             </div>
             <div class="landing-hub-panel__lane landing-hub-panel__lane--strong">
               <i></i><span>After block: log the cool-down and Noah's model explanation.</span>
+            </div>
+            <div class="landing-hub-roster">
+              <div class="landing-hub-roster__item">
+                <strong>Noah K.</strong>
+                <span>T2 Math</span>
+              </div>
+              <div class="landing-hub-roster__item">
+                <strong>Ava M.</strong>
+                <span>Prompt before start</span>
+              </div>
+              <div class="landing-hub-roster__item">
+                <strong>Maya R.</strong>
+                <span>Check cool-down language</span>
+              </div>
             </div>
             <div class="landing-hub-sequence">
               <span class="landing-hub-sequence__chip">Lesson 7</span>
@@ -74,35 +89,54 @@
       <article class="landing-destination landing-destination--games">
         <div class="landing-destination__scene landing-scene landing-scene--games" aria-hidden="true">
           <div class="landing-games-panel">
+            <p class="landing-scene__kicker">Games</p>
             <div class="landing-games-panel__board">
-              <p class="landing-scene__kicker">Word Quest</p>
+              <p class="landing-scene__label">Word Quest</p>
               <div class="landing-preview-board landing-preview-board--quest">
                 <div class="landing-preview-board__row"><i class="is-miss">C</i><i class="is-miss">H</i><i class="is-miss">A</i><i class="is-miss">I</i><i class="is-miss">R</i></div>
                 <div class="landing-preview-board__row"><i class="is-miss">R</i><i class="is-present">O</i><i class="is-miss">U</i><i class="is-miss">N</i><i class="is-miss">D</i></div>
                 <div class="landing-preview-board__row"><i class="is-hit">B</i><i class="is-hit">L</i><i class="is-hit">O</i><i class="is-hit">O</i><i class="is-hit">M</i></div>
               </div>
-              <div class="landing-preview-keyboard">
-                <span class="landing-preview-key">q</span>
-                <span class="landing-preview-key">w</span>
-                <span class="landing-preview-key is-active">o</span>
-                <span class="landing-preview-key">p</span>
-                <span class="landing-preview-key">l</span>
-                <span class="landing-preview-key is-active">b</span>
-                <span class="landing-preview-key is-active">m</span>
+              <div class="landing-preview-keyboard landing-preview-keyboard--full">
+                <div class="landing-preview-keyboard__row">
+                  <span class="landing-preview-key">q</span>
+                  <span class="landing-preview-key">w</span>
+                  <span class="landing-preview-key is-active">e</span>
+                  <span class="landing-preview-key">r</span>
+                  <span class="landing-preview-key">t</span>
+                  <span class="landing-preview-key">y</span>
+                  <span class="landing-preview-key">u</span>
+                  <span class="landing-preview-key">i</span>
+                  <span class="landing-preview-key is-active">o</span>
+                  <span class="landing-preview-key">p</span>
+                </div>
+                <div class="landing-preview-keyboard__row">
+                  <span class="landing-preview-key is-active">a</span>
+                  <span class="landing-preview-key">s</span>
+                  <span class="landing-preview-key">d</span>
+                  <span class="landing-preview-key">f</span>
+                  <span class="landing-preview-key">g</span>
+                  <span class="landing-preview-key">h</span>
+                  <span class="landing-preview-key">j</span>
+                  <span class="landing-preview-key">k</span>
+                  <span class="landing-preview-key is-active">l</span>
+                </div>
+                <div class="landing-preview-keyboard__row">
+                  <span class="landing-preview-key">⌫</span>
+                  <span class="landing-preview-key">z</span>
+                  <span class="landing-preview-key">x</span>
+                  <span class="landing-preview-key">c</span>
+                  <span class="landing-preview-key">v</span>
+                  <span class="landing-preview-key is-active">b</span>
+                  <span class="landing-preview-key">n</span>
+                  <span class="landing-preview-key is-active">m</span>
+                  <span class="landing-preview-key landing-preview-key--enter">Enter</span>
+                </div>
               </div>
               <div class="landing-games-panel__status">
                 <span class="landing-preview-key is-active">Guess</span>
                 <span class="landing-preview-key">Type</span>
                 <span class="landing-preview-key">Clue</span>
-              </div>
-            </div>
-            <div class="landing-games-panel__next">
-              <span class="landing-preview-clue-card__eyebrow">Next game</span>
-              <strong class="landing-preview-word">Off Limits</strong>
-              <div class="landing-preview-pills landing-preview-pills--clue">
-                <span class="landing-preview-pill">Forest</span>
-                <span class="landing-preview-pill">tree</span>
-                <span class="landing-preview-pill">woods</span>
               </div>
             </div>
           </div>
@@ -138,14 +172,24 @@
                   <span>Noah K.</span>
                   <strong>Math progress note drafted</strong>
                 </div>
+                <div class="landing-workspace-list__row">
+                  <span>Case review</span>
+                  <strong>Zoe W. accommodations updated</strong>
+                </div>
+                <div class="landing-workspace-list__row">
+                  <span>Export</span>
+                  <strong>Family packet ready to save</strong>
+                </div>
               </div>
               <div class="landing-workspace-metrics landing-workspace-metrics--stack">
                 <div class="landing-workspace-metric"><span>Reports</span><strong>2 drafts</strong></div>
                 <div class="landing-workspace-metric"><span>Meetings</span><strong>3 upcoming</strong></div>
                 <div class="landing-workspace-metric"><span>Plans</span><strong>IESP · IAP · BIP</strong></div>
+                <div class="landing-workspace-metric"><span>Recent</span><strong>4 notes this week</strong></div>
               </div>
             </div>
           </div>
+        </div>
         <div class="landing-destination__content">
           <a class="landing-btn landing-btn--secondary" href="./reports.html">Open Workspace</a>
         </div>

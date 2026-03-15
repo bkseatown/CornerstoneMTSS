@@ -2558,22 +2558,6 @@
     return Object.freeze(targets);
   }
 
-  function resolveFundationsUnitMeta(level, unitNumber) {
-    if (level === 1) {
-      if (unitNumber <= 4) return { focus: 'cvc', gradeBand: 'K-2', length: '3' };
-      if (unitNumber <= 8) return { focus: 'digraph', gradeBand: 'K-2', length: '4' };
-      return { focus: 'welded', gradeBand: 'K-2', length: '5' };
-    }
-    if (level === 2) {
-      if (unitNumber <= 6) return { focus: 'r_controlled', gradeBand: 'G3-5', length: '5' };
-      if (unitNumber <= 11) return { focus: 'vowel_team', gradeBand: 'G3-5', length: '6' };
-      return { focus: 'suffix', gradeBand: 'G3-5', length: '6' };
-    }
-    if (unitNumber <= 6) return { focus: 'multisyllable', gradeBand: 'G6-8', length: '7' };
-    if (unitNumber <= 11) return { focus: 'prefix', gradeBand: 'G6-8', length: '7' };
-    return { focus: 'suffix', gradeBand: 'G6-8', length: '7' };
-  }
-
   function buildFundationsLessonTargets() {
     const mapped = getMappedCurriculumTargets('fundations');
     if (mapped.length) return Object.freeze(mapped);
@@ -2585,13 +2569,12 @@
     const targets = [];
     byLevel.forEach((row) => {
       for (let unit = 1; unit <= row.units; unit += 1) {
-        const meta = resolveFundationsUnitMeta(row.level, unit);
         targets.push(Object.freeze({
           id: `fundations-l${row.level}-u${unit}`,
           label: `Fundations Level ${row.level} Unit ${unit}`,
-          focus: meta.focus,
-          gradeBand: meta.gradeBand,
-          length: meta.length,
+          focus: 'structured_literacy',
+          gradeBand: row.level <= 1 ? 'K-2' : 'G3-5',
+          length: row.level <= 1 ? '4' : '6',
           pacing: `Level ${row.level} · Unit ${unit}`
         }));
       }
@@ -2599,35 +2582,21 @@
     return Object.freeze(targets);
   }
 
-  function resolveWilsonStepFocus(step) {
-    if (step === 1) return 'cvc';
-    if (step === 2) return 'welded';
-    if (step === 3) return 'cvce';
-    if (step === 4) return 'r_controlled';
-    if (step === 5) return 'vowel_team';
-    if (step <= 7) return 'multisyllable';
-    if (step === 8) return 'prefix';
-    if (step === 9) return 'suffix';
-    return 'multisyllable';
-  }
-
   function buildWilsonLessonTargets() {
     const mapped = getMappedCurriculumTargets('wilson');
     if (mapped.length) return Object.freeze(mapped);
     const targets = [];
     for (let step = 1; step <= 12; step += 1) {
-      for (let lesson = 1; lesson <= 5; lesson += 1) {
-        const gradeBand = step <= 5 ? 'G3-5' : 'G6-8';
-        const length = step <= 5 ? '6' : '7';
-        targets.push(Object.freeze({
-          id: `wilson-step-${step}-lesson-${lesson}`,
-          label: `Wilson Step ${step} Lesson ${lesson}`,
-          focus: resolveWilsonStepFocus(step),
-          gradeBand,
-          length,
-          pacing: `Step ${step} · Lesson ${lesson}`
-        }));
-      }
+      const gradeBand = step <= 9 ? 'G3-5' : 'G6-8';
+      const length = step <= 9 ? '6' : '7';
+      targets.push(Object.freeze({
+        id: `wilson-step-${step}`,
+        label: `Wilson Reading System Step ${step}`,
+        focus: 'structured_literacy',
+        gradeBand,
+        length,
+        pacing: `Step ${step}`
+      }));
     }
     return Object.freeze(targets);
   }
@@ -2676,11 +2645,11 @@
     justwords: Object.freeze({
       label: 'Just Words',
       targets: Object.freeze([
-        Object.freeze({ id: 'jw-unit-1', label: 'Just Words Unit 1 · Syllable and vowel patterns', focus: 'multisyllable', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 1-7 (Sep-Oct)' }),
-        Object.freeze({ id: 'jw-unit-2', label: 'Just Words Unit 2 · Prefix study', focus: 'prefix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 8-14 (Nov-Dec)' }),
-        Object.freeze({ id: 'jw-unit-3', label: 'Just Words Unit 3 · Suffix study', focus: 'suffix', gradeBand: 'G6-8', length: '7', pacing: 'Weeks 15-22 (Jan-Feb)' }),
-        Object.freeze({ id: 'jw-unit-4', label: 'Just Words Unit 4 · Roots and meaning', focus: 'vocab-ela-68', gradeBand: 'G6-8', length: 'any', pacing: 'Weeks 23-30 (Mar-Apr)' }),
-        Object.freeze({ id: 'jw-unit-5', label: 'Just Words Unit 5 · Reading-writing transfer', focus: 'vocab-ela-68', gradeBand: 'G6-8', length: 'any', pacing: 'Weeks 31-36 (May-Jun)' })
+        Object.freeze({ id: 'jw-unit-1', label: 'Just Words Unit 1', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 1' }),
+        Object.freeze({ id: 'jw-unit-2', label: 'Just Words Unit 2', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 2' }),
+        Object.freeze({ id: 'jw-unit-3', label: 'Just Words Unit 3', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 3' }),
+        Object.freeze({ id: 'jw-unit-4', label: 'Just Words Unit 4', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 4' }),
+        Object.freeze({ id: 'jw-unit-5', label: 'Just Words Unit 5', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 5' })
       ])
     })
   });

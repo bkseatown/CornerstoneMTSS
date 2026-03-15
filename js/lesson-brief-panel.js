@@ -9,6 +9,7 @@
   var DAILY_KEY = "cs.lessonBrief.daily.v2";
   var NOTES_KEY = "cs.lessonBrief.notes.v2";
   var TeacherStorage = root.CSTeacherStorage || null;
+  var CurriculumTruth = root.CSCurriculumTruth || null;
 
   var Evidence = root.CSEvidence || null;
   var _data = null;
@@ -30,6 +31,20 @@
     youtubeResults: [],
     lastCreated: null
   };
+
+  function truth(id) {
+    return CurriculumTruth && typeof CurriculumTruth.cloneEntry === "function"
+      ? CurriculumTruth.cloneEntry(id)
+      : null;
+  }
+
+  function truthLines(entry, fallback) {
+    var lines = [];
+    if (entry && entry.officialFocus) lines.push(entry.officialFocus);
+    if (entry && entry.assessmentDetail) lines.push(entry.assessmentDetail);
+    if (lines.length) return lines.join(" ");
+    return String(fallback || "");
+  }
 
   var SUPPORT_TYPES = [
     { id: "push-in", label: "Push-in class support" },
@@ -64,11 +79,11 @@
   ];
 
   var JUST_WORDS_UNITS = [
-    { id: "jw-1", label: "Unit 1 - Syllable and vowel patterns", focus: "multisyllabic decoding and syllable control" },
-    { id: "jw-2", label: "Unit 2 - Prefix study", focus: "prefix meaning and word attack" },
-    { id: "jw-3", label: "Unit 3 - Suffix study", focus: "suffix patterns and spelling changes" },
-    { id: "jw-4", label: "Unit 4 - Roots and meaning", focus: "roots, morphology, and vocabulary transfer" },
-    { id: "jw-5", label: "Unit 5 - Reading-writing transfer", focus: "applying decoding and morphology in connected text" }
+    { id: "jw-1", label: "Unit 1", focus: "multisyllabic reading, spelling, and discussion" },
+    { id: "jw-2", label: "Unit 2", focus: "multisyllabic reading, spelling, and discussion" },
+    { id: "jw-3", label: "Unit 3", focus: "multisyllabic reading, spelling, and discussion" },
+    { id: "jw-4", label: "Unit 4", focus: "multisyllabic reading, spelling, and discussion" },
+    { id: "jw-5", label: "Unit 5", focus: "multisyllabic reading, spelling, and discussion" }
   ];
 
   var HEGGERTY_ROUTINES = [
@@ -1347,56 +1362,45 @@
 
   function buildElBrief(unit, module, grade) {
     if (!unit) return null;
+    var entry = truth(grade === "6" ? "el-g6-current" : grade === "7" ? "el-g7-current" : grade === "8" ? "el-g8-current" : "");
     return {
       key: ["el", grade, module && module.id, unit.id].join(":"),
       curriculumLabel: "EL Education ELA",
       title: formatGradeLabel(grade) + " - " + (unit.title || "EL unit"),
       contextLine: contextLine(),
       phaseLabel: "Unit briefing",
-      summary: String(unit.summary || ""),
-      mainConcept: String(unit.mainConcept || ""),
+      summary: entry && entry.officialFocus ? entry.officialFocus : String(unit.summary || ""),
+      mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : String(unit.mainConcept || ""),
       workedExample: String(unit.workedExample || ""),
       likelyConfusions: Array.isArray(unit.likelyConfusions) ? unit.likelyConfusions.slice() : [],
-      supportMoves: unit.supportMoves ? unit.supportMoves.slice() : [],
+      supportMoves: dedupeList((entry && entry.supportMove ? [entry.supportMove] : []).concat(unit.supportMoves ? unit.supportMoves.slice() : [])),
       lookFors: unit.lookFors ? unit.lookFors.slice() : [],
       prompts: unit.prompts ? unit.prompts.slice() : [],
       recentLabel: ((_selection.studentName || "Planning") + " - " + (unit.title || "EL unit"))
     };
   }
 
-  function resolveUfliMeta(lesson) {
-    lesson = Number(lesson || 1);
-    if (lesson <= 8) return { phase: "Foundation routine", focus: "short vowels and continuous blending" };
-    if (lesson <= 20) return { phase: "Pattern build", focus: "digraphs, blends, and cumulative review" };
-    if (lesson <= 36) return { phase: "Pattern build", focus: "vowel-consonant-e patterns and transfer" };
-    if (lesson <= 52) return { phase: "Pattern build", focus: "vowel teams and spelling choices" };
-    if (lesson <= 64) return { phase: "Pattern build", focus: "r-controlled vowels and accuracy in connected text" };
-    if (lesson <= 80) return { phase: "Transfer", focus: "welded sounds and advanced pattern review" };
-    if (lesson <= 104) return { phase: "Transfer", focus: "multisyllabic decoding and syllable reading" };
-    return { phase: "Transfer", focus: "suffixes, morphology, and word analysis" };
-  }
-
   function buildUfliBrief() {
-    var meta = resolveUfliMeta(_selection.lesson);
+    var entry = truth("ufli-current");
     return {
       key: ["ufli", _selection.lesson].join(":"),
       curriculumLabel: "UFLI Foundations",
       title: "UFLI Lesson " + _selection.lesson,
       contextLine: contextLine(),
-      phaseLabel: meta.phase,
-      summary: "This lesson is targeting " + meta.focus + ". UFLI support works best when the routine stays tight: review, model, blend, spell, read, and transfer.",
-      mainConcept: "The lesson is cumulative. Students need accuracy at the sound-pattern level before speed or independence.",
+      phaseLabel: "Current lesson",
+      summary: entry && entry.officialFocus ? entry.officialFocus : "Keep the UFLI routine tight and cumulative: review, model, blend, spell, read, and transfer.",
+      mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : "Students need accuracy at the sound-pattern level before speed or independence.",
       workedExample: "Pick one target word, say each sound, blend it, spell it, then reread it in a short phrase or sentence.",
       likelyConfusions: [
         "Guessing from the whole word shape instead of mapping sounds.",
         "Dropping the new pattern when reading connected text.",
         "Moving too fast and skipping cumulative review."
       ],
-      supportMoves: renderWithTips([
+      supportMoves: renderWithTips((entry && entry.supportMove ? [entry.supportMove] : []).concat([
         "Keep the UFLI routine in the same order every time.",
         "Correct at the sound or pattern level, then have the student reread immediately.",
         "Use one short transfer sentence before moving on."
-      ], "ufli"),
+      ]), "ufli"),
       lookFors: [
         "Student reads with sound-by-sound accuracy first.",
         "Student can spell the target pattern, not just read it.",
@@ -1411,43 +1415,29 @@
     };
   }
 
-  function fundationsFocus(level, unitNumber) {
-    if (level === "1") {
-      if (unitNumber <= 4) return "CVC words, short vowels, and core routines";
-      if (unitNumber <= 8) return "digraphs, blends, and automaticity";
-      return "welded sounds, trick words, and transfer";
-    }
-    if (level === "2") {
-      if (unitNumber <= 6) return "vowel-consonant-e and r-controlled review";
-      if (unitNumber <= 11) return "vowel teams and advanced vowel patterns";
-      return "suffixes, word study, and dictation transfer";
-    }
-    if (unitNumber <= 6) return "multisyllable work and syllable division";
-    if (unitNumber <= 11) return "prefixes, roots, and meaning cues";
-    return "suffixes, morphology, and transfer to writing";
-  }
-
   function buildFundationsBrief() {
-    var focus = fundationsFocus(_selection.level, Number(_selection.lesson || 1));
+    var entry = _selection.level === "2" && String(_selection.lesson || "") === "8"
+      ? truth("fundations-l2-u8")
+      : truth("fundations-k-current");
     return {
       key: ["fundations", _selection.level, _selection.lesson].join(":"),
       curriculumLabel: "Fundations",
       title: "Fundations " + labelFor(FUNDATIONS_LEVELS, _selection.level) + " - Unit " + _selection.lesson,
       contextLine: contextLine(),
       phaseLabel: "Structured literacy",
-      summary: "Today's Fundations work is centered on " + focus + ". Support should stay multisensory and explicit rather than conversational and loose.",
-      mainConcept: "Students need to connect sounds, letters, marking, and spelling in the same routine so the pattern becomes stable.",
+      summary: truthLines(entry, "Use the current Fundations unit for explicit decoding, encoding, and connected-text transfer."),
+      mainConcept: entry && entry.progressMonitoring ? entry.progressMonitoring : "Students need to connect sounds, letters, marking, and spelling in the same routine so the pattern becomes stable.",
       workedExample: "Tap the sounds in one word, mark the pattern, read it, spell it, and use it in a short dictated sentence.",
       likelyConfusions: [
         "Skipping the sound routine and jumping to the whole word.",
         "Remembering the pattern in isolation but losing it in dictation.",
         "Mixing known and new trick words."
       ],
-      supportMoves: renderWithTips([
+      supportMoves: renderWithTips((entry && entry.supportMove ? [entry.supportMove] : []).concat([
         "Use the same oral routine the classroom teacher uses.",
         "Keep modeling brief, then get the student producing the response.",
         "Return to one previously taught pattern before introducing the new part."
-      ], "fundations"),
+      ]), "fundations"),
       lookFors: [
         "Student can tap, read, and spell the target pattern.",
         "Student marks or explains the pattern accurately enough to show understanding.",
@@ -1464,25 +1454,26 @@
 
   function buildJustWordsBrief() {
     var unit = JUST_WORDS_UNITS.filter(function (row) { return row.id === _selection.jwUnitId; })[0] || JUST_WORDS_UNITS[0];
+    var entry = truth("justwords-current");
     return {
       key: ["just-words", unit.id].join(":"),
       curriculumLabel: "Just Words",
       title: unit.label,
       contextLine: contextLine(),
       phaseLabel: "Word study intervention",
-      summary: "This block is working on " + unit.focus + ". Just Words support should stay fast, explicit, and closely tied to reading and spelling transfer.",
-      mainConcept: "Older students need direct word analysis plus immediate application in connected text, not isolated drills only.",
+      summary: entry && entry.officialFocus ? entry.officialFocus : "Keep Just Words fast, explicit, and closely tied to reading and spelling transfer.",
+      mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : "Older students need direct word analysis plus immediate application in connected text, not isolated drills only.",
       workedExample: "Take one multisyllabic word or morpheme pattern, mark the chunks, read it, spell it, then use it in a phrase or short sentence.",
       likelyConfusions: [
         "Reading the word once without analyzing the meaningful chunks.",
         "Knowing the pattern in word study but not applying it while reading text.",
         "Confusing a prefix or suffix label with its function in the word."
       ],
-      supportMoves: renderWithTips([
+      supportMoves: renderWithTips((entry && entry.supportMove ? [entry.supportMove] : []).concat([
         "Keep the target set small and cumulative.",
         "Ask the student to explain which chunk helped unlock the word.",
         "Finish with a quick transfer read or write."
-      ], "just-words"),
+      ]), "just-words"),
       lookFors: [
         "Student identifies the relevant chunk or morpheme.",
         "Student can read and spell the word family more accurately.",

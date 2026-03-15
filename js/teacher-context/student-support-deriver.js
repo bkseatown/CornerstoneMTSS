@@ -94,8 +94,8 @@
   function deriveKeyMoves(subject, lessonContext, accommodations, goals) {
     var moves = [];
     if (subject === "Math" && lessonContext.rawFocusText.toLowerCase().indexOf("fraction") >= 0) {
-      moves.push("Prompt comparison language before independent work.");
-      moves.push("Use a quick visual model check before answers.");
+      moves.push("Ask the student to match the fractions to one visual model before answering.");
+      moves.push("Use fraction strips or a number line to confirm the equal amount.");
     } else if (subject === "Intervention") {
       moves.push("Keep manipulatives or sound boxes visible during practice.");
       moves.push("Model one example before release.");

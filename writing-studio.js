@@ -545,9 +545,6 @@
   var body = document.body;
   var subtitleEl = document.getElementById("ws-subtitle");
   var welcomeEl = document.getElementById("ws-welcome");
-  var valueLineEl = document.getElementById("ws-value-line");
-  var threeSecEl = document.getElementById("ws-three-sec");
-  var startTitleEl = document.getElementById("ws-start-title");
   var startCtaBtn = document.getElementById("ws-start-cta");
   var runtimeStatusEl = document.getElementById("ws-runtime-status");
   var launchSearchInput = document.getElementById("ws-launch-search");
@@ -2116,8 +2113,8 @@
     var totalStudents = caseloadItems.length;
     var active = caseloadItems.filter(function (item) { return item.status === "active"; }).length;
     var trend = getCaseloadTrendSummary();
-    impactSubEl.textContent = "Artifacts: " + roiState.artifacts + " | Est. minutes saved: " + Math.round(roiState.totalMinutes) + " | Quality streak: " + qualityStreak;
-    impactLineEl.textContent = "Caseload " + totalStudents + " (" + active + " active). " + trend + " Top artifact: " + getTopArtifactLabel() + ".";
+    impactSubEl.textContent = "Saved items: " + roiState.artifacts + " | Active students: " + active + " of " + totalStudents + " | Current streak: " + qualityStreak;
+    impactLineEl.textContent = trend + " Latest copied item: " + getTopArtifactLabel() + ".";
     if (mtssReviewEl) {
       var review = buildMTSSWeeklyReview();
       mtssReviewEl.textContent = review;
@@ -2136,7 +2133,7 @@
     impactOverlayEl.setAttribute("aria-hidden", impactOpen ? "false" : "true");
     impactToggleBtn.classList.toggle("is-active", impactOpen);
     impactToggleBtn.setAttribute("aria-pressed", impactOpen ? "true" : "false");
-    impactToggleBtn.textContent = impactOpen ? "Impact: On" : "Impact Mode";
+    impactToggleBtn.textContent = impactOpen ? "Snapshot: On" : "Review Snapshot";
   }
 
   function toggleImpact() {
@@ -3895,12 +3892,6 @@
       else welcomeEl.textContent = "Sentence and paragraph setup.";
     }
 
-    if (startTitleEl) {
-      if (normalized === "teacher") startTitleEl.textContent = "Open a class writing routine.";
-      else if (normalized === "support") startTitleEl.textContent = "Open a support writing routine.";
-      else if (normalized === "family") startTitleEl.textContent = "Open a home writing routine.";
-      else startTitleEl.textContent = "Open a writing routine.";
-    }
     if (startCtaBtn) {
       startCtaBtn.textContent = "Open";
     }
@@ -4082,7 +4073,7 @@
       { id: "profile-one", label: "Profile: 1:1", keywords: "profile one to one", run: function () { setProfile("one"); } },
       { id: "stepup-toggle", label: "Toggle Step Up Mode", keywords: "step up mode", run: function () { toggleStepUpMode(); } },
       { id: "teacher-model", label: "Toggle Teacher Model", keywords: "teacher model", run: function () { toggleTeacherModel(); } },
-      { id: "impact-toggle", label: "Toggle Impact Mode", keywords: "impact mode", run: function () { toggleImpact(); } },
+      { id: "impact-toggle", label: "Toggle Review Snapshot", keywords: "review snapshot", run: function () { toggleImpact(); } },
       { id: "theme-next", label: "Change Theme", keywords: "theme color", run: function () { cycleTheme(); } },
       { id: "showcase-open", label: "Open Spotlight", keywords: "spotlight showcase display", run: function () { openShowcase(); } },
       { id: "showcase-close", label: "Close Spotlight", keywords: "spotlight showcase hide", run: function () { closeShowcase(); showToast("Showcase off"); } },
@@ -5141,6 +5132,7 @@
   applyTaskHandoffFromHash();
   applyWordQuestContext();
   maybeStartGreeting();
+  if (!greetingOpen) startStudioSession();
   setTourOpen(false, { silent: true });
   setSetupPanelOpen(false);
   setControlsAdvancedOpen(false);

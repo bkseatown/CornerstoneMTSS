@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style/typography.css?v=20260301y">
   <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
   <link rel="stylesheet" href="./style/themes.css?v=20260301y">
-  <link rel="stylesheet" href="./writing-studio.css?v=20260315a">
+  <link rel="stylesheet" href="./writing-studio.css?v=20260315b">
 </head>
 <body class="cs-page-writing cs-hv2-theme-default">
   <button id="ws-back-home" class="ws-back-home" type="button" aria-label="Back to WordQuest">Back to WordQuest</button>
@@ -70,7 +70,7 @@
             </select>
             <button class="ws-chip is-active" id="ws-stepup-toggle" type="button" aria-pressed="true">Step Up Mode</button>
             <button class="ws-chip" id="ws-model" type="button" aria-pressed="false">Teacher Model: Off</button>
-            <button class="ws-chip" id="ws-impact-toggle" type="button" aria-pressed="false">Impact Mode</button>
+          <button class="ws-chip" id="ws-impact-toggle" type="button" aria-pressed="false">Review Snapshot</button>
             <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
           </div>
           </div>
@@ -450,7 +450,7 @@
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
   <script src="./js/theme-registry.js?v=20260301y"></script>
   <script src="./js/feature-flags.js?v=20260301y"></script>
-  <script src="./writing-studio.js?v=20260315a" defer></script>
+  <script src="./writing-studio.js?v=20260315b" defer></script>
 
   <div id="ws-showcase" class="ws-showcase" aria-hidden="true">
     <button class="ws-ghost ws-showcase-close" id="ws-showcase-close" type="button">Close Showcase</button>
@@ -460,13 +460,13 @@
   </div>
 
   <div id="ws-impact" class="ws-showcase" aria-hidden="true">
-    <button class="ws-ghost ws-showcase-close" id="ws-impact-close" type="button">Close Impact</button>
-    <div class="ws-showcase-title">Impact Snapshot</div>
-    <div class="ws-showcase-sub" id="ws-impact-sub">Operational and student-growth evidence from your current studio data.</div>
-    <div class="ws-showcase-line" id="ws-impact-line">No impact data yet.</div>
-    <div class="ws-showcase-line ws-impact-review" id="ws-impact-trend">Trend chart will appear as student history grows.</div>
-    <div class="ws-showcase-line ws-impact-review" id="ws-mtss-review">MTSS weekly review will appear after at least two samples per student.</div>
-    <button class="ws-secondary" id="ws-mtss-copy" type="button">Copy MTSS Weekly Review</button>
+    <button class="ws-ghost ws-showcase-close" id="ws-impact-close" type="button">Close Snapshot</button>
+    <div class="ws-showcase-title">Review Snapshot</div>
+    <div class="ws-showcase-sub" id="ws-impact-sub">Current writing records and copied notes.</div>
+    <div class="ws-showcase-line" id="ws-impact-line">No records yet.</div>
+    <div class="ws-showcase-line ws-impact-review" id="ws-impact-trend">Saved notes will appear here as records build.</div>
+    <div class="ws-showcase-line ws-impact-review" id="ws-mtss-review">Weekly review note will appear after more than one saved sample.</div>
+    <button class="ws-secondary" id="ws-mtss-copy" type="button">Copy Weekly Review</button>
   </div>
 
   <div id="ws-tour" class="ws-showcase" aria-hidden="true">
@@ -540,16 +540,16 @@
 
         <div class="ws-impact">
           <div class="ws-impact-item">
-            <div class="ws-impact-label">Teacher lift</div>
-            <div class="ws-impact-value">Auto scaffolds + instant grouping</div>
+            <div class="ws-impact-label">Setup</div>
+            <div class="ws-impact-value">Whole class, small group, or 1:1</div>
           </div>
           <div class="ws-impact-item">
-            <div class="ws-impact-label">Student success</div>
-            <div class="ws-impact-value">Frames -> fade -> independence</div>
+            <div class="ws-impact-label">Writing focus</div>
+            <div class="ws-impact-value">Plan, draft, revise, publish</div>
           </div>
           <div class="ws-impact-item">
-            <div class="ws-impact-label">Progress</div>
-            <div class="ws-impact-value">Metrics captured, no extra grading</div>
+            <div class="ws-impact-label">Saved records</div>
+            <div class="ws-impact-value">Notes and copied drafts stay local</div>
           </div>
         </div>
       </div>

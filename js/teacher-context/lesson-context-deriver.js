@@ -124,9 +124,9 @@
     var text = toText(focusText).toLowerCase();
     if (subject === "Math" && text.indexOf("fraction") >= 0) {
       return [
-        "Use visual fraction models before abstract comparison.",
-        "Ask which fraction is closer to 1 before solving.",
-        "Use a sentence frame for comparison language."
+        "Use fraction strips, area models, or number lines before a verbal explanation.",
+        "Ask the student to point to the equal amount before naming the fractions.",
+        "Have the student explain why the two fractions name the same quantity."
       ];
     }
     if (subject === "Intervention" && (text.indexOf("morph") >= 0 || text.indexOf("prefix") >= 0 || text.indexOf("suffix") >= 0)) {
@@ -153,7 +153,7 @@
   function inferTargetSkills(subject, focusText) {
     var text = toText(focusText).toLowerCase();
     if (subject === "Math" && text.indexOf("fraction") >= 0) {
-      return ["fraction comparison", "comparison language", "reasoning"];
+      return ["equivalent fractions", "visual model reasoning", "math explanation"];
     }
     if (subject === "Intervention" && (text.indexOf("morph") >= 0 || text.indexOf("prefix") >= 0 || text.indexOf("suffix") >= 0)) {
       return ["morphology", "word meaning", "word analysis"];
