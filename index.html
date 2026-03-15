@@ -8,87 +8,66 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260314d">
   <link rel="stylesheet" href="./style/typography.css?v=20260314d">
-  <link rel="stylesheet" href="./home-v3.css?v=20260315f">
+  <link rel="stylesheet" href="./home-v3.css?v=20260315g">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260310a">
 </head>
 <body class="cs-home-page">
   <main class="landing-shell" aria-label="Cornerstone MTSS welcome dashboard">
     <select id="s-theme" aria-hidden="true" tabindex="-1" style="display:none;"></select>
 
-    <section class="landing-hero-surface" aria-label="Welcome and today focus">
-      <div class="landing-hero">
-        <div class="landing-hero__content">
-          <p class="landing-eyebrow">Cornerstone MTSS</p>
-          <h1 class="landing-title">Specialist support dashboard.</h1>
-          <p class="landing-subtitle">Schedule, classes, student support, and practice in one place.</p>
-          <div class="landing-hero__actions">
-            <a class="landing-btn landing-btn--primary" href="./teacher-hub-v2.html">Open Specialist Hub</a>
-            <p class="landing-hero__hint">Start with today&rsquo;s schedule and active classroom support.</p>
-          </div>
-        </div>
-
-        <aside class="landing-focus-card" aria-label="Today focus">
-          <div class="landing-focus-card__head">
-            <p class="landing-focus-card__eyebrow">Today</p>
-            <span class="landing-focus-card__pill">9:35 Writing</span>
-          </div>
-          <h2 class="landing-focus-card__student">Maya R.</h2>
-          <p class="landing-focus-card__meta">Individual support with separate curriculum</p>
-          <div class="landing-focus-card__goal">
-            <strong>End-of-quarter goal</strong>
-            <span>Write a clear paragraph with a topic sentence, supporting details, and end punctuation in 4 of 5 scored samples.</span>
-          </div>
-          <div class="landing-focus-card__tags">
-            <span>T3 writing</span>
-            <span>IESP</span>
-            <span>1:1 support</span>
-          </div>
-        </aside>
+    <header class="landing-header" aria-label="Cornerstone MTSS header">
+      <div>
+        <p class="landing-eyebrow">Cornerstone MTSS</p>
+        <h1 class="landing-title">Specialist platform</h1>
       </div>
-    </section>
+      <div class="landing-header__meta">
+        <span>Hub</span>
+        <span>Games</span>
+        <span>Workspace</span>
+      </div>
+    </header>
 
     <section class="landing-destinations" aria-label="Main destinations">
-      <article class="landing-destination landing-destination--games">
-        <div class="landing-destination__scene landing-scene landing-scene--games" aria-hidden="true">
-          <div class="landing-scene__rail">
-            <div class="landing-scene-card landing-scene-card--board">
-              <div class="landing-scene-card__top">
-                <p class="landing-scene__kicker">Word Quest</p>
+      <article class="landing-destination landing-destination--hub">
+        <div class="landing-destination__scene landing-scene landing-scene--hub" aria-hidden="true">
+          <div class="landing-hub-panel">
+            <p class="landing-scene__kicker">Specialist Hub</p>
+            <div class="landing-hub-panel__strip landing-hub-panel__strip--focus">
+              <strong>8:20 Math · Ms. Smith</strong>
+              <span>Illustrative Math · Grade 4 · Unit 2 · Lesson 7</span>
+            </div>
+            <div class="landing-hub-panel__grid">
+              <div class="landing-hub-note">
+                <span>SWBAT</span>
+                <strong>Compare fractions with unlike denominators using benchmark reasoning.</strong>
               </div>
-              <div class="landing-preview-board landing-preview-board--quest">
-                <div class="landing-preview-board__row"><i class="is-miss">S</i><i class="is-miss">T</i><i class="is-present">O</i><i class="is-miss">R</i><i class="is-miss">M</i></div>
-                <div class="landing-preview-board__row"><i class="is-hit">B</i><i class="is-hit">L</i><i class="is-hit">O</i><i class="is-hit">O</i><i class="is-hit">M</i></div>
-              </div>
-              <div class="landing-preview-quest-strip">
-                <span class="landing-preview-quest-chip">2 tries</span>
-                <span class="landing-preview-quest-chip">5 letters</span>
-                <span class="landing-preview-quest-chip">Solved</span>
+              <div class="landing-hub-note">
+                <span>Support move</span>
+                <strong>Use visual fraction models before abstract comparison.</strong>
               </div>
             </div>
-            <div class="landing-scene-card landing-scene-card--clue">
-              <div class="landing-scene-card__top">
-                <p class="landing-scene__kicker">Off Limits</p>
-              </div>
-              <div class="landing-preview-clue-card landing-preview-clue-card--image">
-                <div class="landing-preview-clue-card__media" role="img" aria-label="Forest illustration">🌲</div>
-                <div class="landing-preview-clue-card__body">
-                  <span class="landing-preview-clue-card__eyebrow">Target word</span>
-                  <div class="landing-preview-word">FOREST</div>
-                </div>
-              </div>
-              <div class="landing-preview-pills landing-preview-pills--clue">
-                <span class="landing-preview-pill">tree</span>
-                <span class="landing-preview-pill">woods</span>
-                <span class="landing-preview-pill">camp</span>
-              </div>
+            <div class="landing-hub-panel__lane">
+              <i></i><span>Reading 9:35 · Fish Tank Unit 2 shared text · cool-down to log after block</span>
             </div>
           </div>
         </div>
         <div class="landing-destination__content">
-          <div>
-            <h2>Instructional Practice Games</h2>
-            <p>Word and clue games for partner, small-group, and support blocks.</p>
+          <a class="landing-btn landing-btn--secondary" href="./teacher-hub-v2.html">Open Hub</a>
+        </div>
+      </article>
+
+      <article class="landing-destination landing-destination--games">
+        <div class="landing-destination__scene landing-scene landing-scene--games" aria-hidden="true">
+          <div class="landing-scene-card landing-scene-card--board landing-scene-card--single">
+            <p class="landing-scene__kicker">Word Quest</p>
+            <div class="landing-preview-board landing-preview-board--quest">
+              <div class="landing-preview-board__row"><i class="is-miss">C</i><i class="is-miss">H</i><i class="is-miss">A</i><i class="is-miss">I</i><i class="is-miss">R</i></div>
+              <div class="landing-preview-board__row"><i class="is-present">B</i><i class="is-miss">R</i><i class="is-miss">I</i><i class="is-miss">N</i><i class="is-miss">G</i></div>
+              <div class="landing-preview-board__row"><i class="is-hit">B</i><i class="is-hit">L</i><i class="is-hit">O</i><i class="is-hit">O</i><i class="is-hit">M</i></div>
+            </div>
           </div>
+        </div>
+        <div class="landing-destination__content">
           <a class="landing-btn landing-btn--secondary" href="./game-platform.html">Open Games</a>
         </div>
       </article>
@@ -96,32 +75,20 @@
       <article class="landing-destination landing-destination--workspace">
         <div class="landing-destination__scene landing-scene landing-scene--workspace" aria-hidden="true">
           <div class="landing-workspace-panel">
-            <div class="landing-workspace-panel__top">
-              <p class="landing-scene__kicker">Workspace</p>
-              <span class="landing-workspace-chip">Briefing ready</span>
-            </div>
+            <p class="landing-scene__kicker">Teacher Workspace</p>
             <div class="landing-workspace-brief">
-              <strong>Weekly planning</strong>
-              <p>Progress, meeting prep, and family updates all in one review lane.</p>
+              <strong>Reports · Meetings · Case records</strong>
+              <p>Family report drafts, pre-SSM notes, and case links in one place.</p>
             </div>
             <div class="landing-workspace-metrics">
-              <div class="landing-workspace-metric"><span>Signals</span><strong>8 fresh</strong></div>
-              <div class="landing-workspace-metric"><span>Meetings</span><strong>3 ready</strong></div>
-              <div class="landing-workspace-metric"><span>Family notes</span><strong>2 drafted</strong></div>
-            </div>
-            <div class="landing-workspace-list">
-              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Progress insights ready</span></div>
-              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Meeting notes drafted</span></div>
-              <div class="landing-preview-note"><i class="landing-preview-note-dot"></i><span>Family summary prepared</span></div>
+              <div class="landing-workspace-metric"><span>Reports</span><strong>2 drafts</strong></div>
+              <div class="landing-workspace-metric"><span>Meetings</span><strong>3 upcoming</strong></div>
+              <div class="landing-workspace-metric"><span>Plans</span><strong>IESP · IAP · BIP</strong></div>
             </div>
           </div>
         </div>
         <div class="landing-destination__content">
-          <div>
-            <h2>Teacher Workspace</h2>
-            <p>Meeting prep, summaries, exports, and support records in one work area.</p>
-          </div>
-          <a class="landing-btn landing-btn--secondary" href="./teacher-dashboard.html">Open Workspace</a>
+          <a class="landing-btn landing-btn--secondary" href="./reports.html">Open Workspace</a>
         </div>
       </article>
     </section>

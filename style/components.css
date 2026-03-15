@@ -4890,20 +4890,22 @@ html[data-home-mode="play"] #new-game-btn.is-demo-stop:hover {
 }
 
 html[data-home-mode="play"] .board-zone {
-  gap: 8px;
+  gap: 10px;
+  justify-content: center;
 }
 
 html[data-home-mode="play"] .board-plate {
   background: var(--wq-play-board-bg);
   border-color: var(--wq-play-board-border);
   box-shadow: var(--wq-play-board-shadow);
-  width: min(calc(var(--playfield-width) + clamp(26px, calc(var(--tile-size) * 0.46), 42px)), calc(100vw - 20px), calc(100% - 4px));
-  padding: clamp(12px, calc(var(--tile-size) * 0.22), 18px) clamp(10px, calc(var(--tile-size) * 0.18), 14px);
+  width: min(calc(var(--playfield-width) + clamp(52px, calc(var(--tile-size) * 0.82), 92px)), calc(100vw - 20px), calc(100% - 4px));
+  padding: clamp(14px, calc(var(--tile-size) * 0.24), 20px) clamp(14px, calc(var(--tile-size) * 0.22), 18px);
 }
 
 html[data-home-mode="play"] .board-plate::before {
   opacity: var(--wq-play-board-before-opacity);
   background: var(--wq-play-board-before-bg);
+  transform: translateX(var(--wq-play-board-clipboard-shift, 0px));
 }
 
 html[data-home-mode="play"] .board-plate::after {
@@ -9311,27 +9313,7 @@ html[data-home-mode="play"] main {
 
 html[data-home-mode="play"] main::before,
 html[data-home-mode="play"] main::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-html[data-home-mode="play"] main::before {
-  background:
-    radial-gradient(34% 42% at 18% 28%, color-mix(in oklab, var(--brand) 18%, transparent) 0%, transparent 72%),
-    radial-gradient(32% 38% at 82% 26%, color-mix(in oklab, var(--accent) 14%, transparent) 0%, transparent 72%),
-    radial-gradient(30% 20% at 50% 92%, color-mix(in oklab, #ffffff 18%, transparent) 0%, transparent 74%);
-  opacity: 0.9;
-}
-
-html[data-home-mode="play"] main::after {
-  inset: auto 0 0 0;
-  height: min(34vh, 280px);
-  background:
-    linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.05) 48%, rgba(255,255,255,0.12) 100%);
-  opacity: 0.7;
+  display: none;
 }
 
 html[data-home-mode="play"] header {
@@ -9416,7 +9398,7 @@ html[data-home-mode="play"] #keyboard {
   align-self: start;
   position: relative;
   z-index: 1;
-  padding: 4px 0 2px;
+  padding: 2px 0 2px;
   border-radius: 0;
   background: transparent;
   border: 0;
@@ -9433,7 +9415,7 @@ html[data-home-mode="play"][data-play-style="listening"] .play-support-row {
 
 html[data-home-mode="play"] .play-support-row {
   width: min(560px, calc(100vw - (var(--wq-safe-edge) * 2) - 8px));
-  padding: 4px 0 0;
+  padding: 2px 0 0;
   border-radius: 0;
   background: transparent;
   border: 0;

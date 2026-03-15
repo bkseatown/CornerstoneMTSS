@@ -317,6 +317,7 @@
     radial-gradient(18px 11px at 91.8% 77%, rgba(255,255,255,0.2) 0 22%, rgba(105,190,40,0.12) 23% 35%, transparent 36%),
     linear-gradient(180deg, rgba(255,255,255,0.12) 0 2%, transparent 2% 18%, rgba(255,255,255,0.08) 18% 19%, transparent 19% 50%, rgba(255,255,255,0.06) 50% 51%, transparent 51% 82%, rgba(255,255,255,0.05) 82% 83%, transparent 83% 100%);
   --wq-play-board-before-opacity: 0.64;
+  --wq-play-board-clipboard-shift: 0px;
   --wq-play-board-after-bg:
     radial-gradient(220px 170px at 50% 0%, rgba(255,255,255,0.10) 0 18%, transparent 48%),
     linear-gradient(180deg, rgba(0,34,68,0.06) 0 3%, transparent 3% 97%, rgba(0,34,68,0.06) 97% 100%);
@@ -365,6 +366,11 @@
     inset 0 1px 0 rgba(255,255,255,0.42),
     0 6px 14px rgba(8, 22, 38, 0.16);
   --wq-play-next-btn-hover-bg: linear-gradient(180deg, #9ae754 0%, #74c92f 100%);
+}
+
+html[data-home-mode="play"][data-theme="seahawks"] {
+  --wq-play-board-before-opacity: 0;
+  --wq-play-board-clipboard-shift: 0px;
 }
 
 /* ── HUSKIES ── Purple #4B2E83 + Gold #B7A57A/#85754D

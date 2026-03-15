@@ -129,6 +129,174 @@
     } catch (_e) {}
   }
 
+  var GAME_MUSIC_ENABLED_KEY = "cs.game.music.enabled";
+  var GAME_MUSIC_INDEX_KEY = "cs.game.music.index";
+  var GAME_MUSIC_VOLUME_KEY = "cs.game.music.volume";
+  var GAME_MUSIC_CATALOG_URL = "data/music-catalog.json";
+  var sharedMusicState = {
+    enabled: storageGet(GAME_MUSIC_ENABLED_KEY, "off") === "on",
+    index: Math.max(0, Number(storageGet(GAME_MUSIC_INDEX_KEY, "0")) || 0),
+    volume: Math.max(0.15, Math.min(0.6, Number(storageGet(GAME_MUSIC_VOLUME_KEY, "0.34")) || 0.34)),
+    loading: false,
+    ready: false,
+    tracks: [],
+    audio: null
+  };
+
+  function musicButtonLabel() {
+    return sharedMusicState.enabled ? "Pause Music" : "Play Music";
+  }
+
+  function musicStatusLabel() {
+    if (!sharedMusicState.ready || !sharedMusicState.tracks.length) {
+      return sharedMusicState.enabled ? "Loading music" : "Music off";
+    }
+    var track = sharedMusicState.tracks[sharedMusicState.index] || sharedMusicState.tracks[0] || null;
+    return sharedMusicState.enabled && track
+      ? String(track.title || track.name || "Focus Flow")
+      : "Music off";
+  }
+
+  function ensureMusicAudio() {
+    if (sharedMusicState.audio) return sharedMusicState.audio;
+    if (typeof runtimeRoot.Audio !== "function") return null;
+    var audio = new runtimeRoot.Audio();
+    audio.preload = "auto";
+    audio.volume = sharedMusicState.volume;
+    audio.addEventListener("ended", function () {
+      stepSharedMusic(1, { preservePlayback: true });
+    });
+    sharedMusicState.audio = audio;
+    return audio;
+  }
+
+  function normalizeMusicTrackList(raw) {
+    return (Array.isArray(raw) ? raw : []).map(function (track, index) {
+      var title = String(track && (track.title || track.name) || "").trim();
+      var src = String(track && track.src || "").trim();
+      if (!src) return null;
+      return {
+        id: String(track && track.id || ("track-" + String(index + 1))),
+        title: title || ("Track " + String(index + 1)),
+        src: src
+      };
+    }).filter(Boolean);
+  }
+
+  function loadSharedMusicCatalog() {
+    if (sharedMusicState.ready) return Promise.resolve(sharedMusicState.tracks);
+    if (sharedMusicState.loading) {
+      return new Promise(function (resolve) {
+        var wait = function () {
+          if (!sharedMusicState.loading) {
+            resolve(sharedMusicState.tracks);
+            return;
+          }
+          runtimeRoot.setTimeout(wait, 60);
+        };
+        wait();
+      });
+    }
+    sharedMusicState.loading = true;
+    return runtimeRoot.fetch(GAME_MUSIC_CATALOG_URL, { cache: "no-store" })
+      .then(function (response) { return response && response.ok ? response.json() : { tracks: [] }; })
+      .then(function (catalog) {
+        sharedMusicState.tracks = normalizeMusicTrackList(catalog && catalog.tracks);
+        sharedMusicState.ready = true;
+        if (sharedMusicState.tracks.length) {
+          sharedMusicState.index = Math.max(0, Math.min(sharedMusicState.index, sharedMusicState.tracks.length - 1));
+        } else {
+          sharedMusicState.index = 0;
+        }
+        return sharedMusicState.tracks;
+      })
+      .catch(function () {
+        sharedMusicState.tracks = [];
+        sharedMusicState.ready = true;
+        return sharedMusicState.tracks;
+      })
+      .finally(function () {
+        sharedMusicState.loading = false;
+      });
+  }
+
+  function syncSharedMusicUi() {
+    Array.prototype.forEach.call(runtimeRoot.document.querySelectorAll("[data-music-label]"), function (node) {
+      node.textContent = musicStatusLabel();
+      node.setAttribute("title", musicStatusLabel());
+    });
+    Array.prototype.forEach.call(runtimeRoot.document.querySelectorAll("[data-action='toggle-music']"), function (button) {
+      button.setAttribute("aria-pressed", sharedMusicState.enabled ? "true" : "false");
+      if (button.classList.contains("cg-action")) {
+        button.innerHTML = "♫ " + musicButtonLabel();
+      } else {
+        button.textContent = musicButtonLabel();
+      }
+    });
+  }
+
+  function playSharedMusicCurrentTrack() {
+    var audio = ensureMusicAudio();
+    if (!audio || !sharedMusicState.tracks.length) return Promise.resolve(false);
+    var track = sharedMusicState.tracks[sharedMusicState.index] || sharedMusicState.tracks[0];
+    if (!track) return Promise.resolve(false);
+    audio.volume = sharedMusicState.volume;
+    if (audio.getAttribute("data-track-src") !== track.src) {
+      audio.src = track.src;
+      audio.setAttribute("data-track-src", track.src);
+    }
+    return audio.play().then(function () {
+      syncSharedMusicUi();
+      return true;
+    }).catch(function () {
+      sharedMusicState.enabled = false;
+      storageSet(GAME_MUSIC_ENABLED_KEY, "off");
+      syncSharedMusicUi();
+      return false;
+    });
+  }
+
+  function stopSharedMusic() {
+    if (sharedMusicState.audio) {
+      try { sharedMusicState.audio.pause(); } catch (_error) {}
+    }
+    sharedMusicState.enabled = false;
+    storageSet(GAME_MUSIC_ENABLED_KEY, "off");
+    syncSharedMusicUi();
+  }
+
+  function startSharedMusic() {
+    sharedMusicState.enabled = true;
+    storageSet(GAME_MUSIC_ENABLED_KEY, "on");
+    return loadSharedMusicCatalog().then(function () {
+      return playSharedMusicCurrentTrack();
+    });
+  }
+
+  function toggleSharedMusic() {
+    if (sharedMusicState.enabled) {
+      stopSharedMusic();
+      return;
+    }
+    void startSharedMusic();
+  }
+
+  function stepSharedMusic(direction, options) {
+    var settings = Object.assign({ preservePlayback: false }, options || {});
+    return loadSharedMusicCatalog().then(function () {
+      if (!sharedMusicState.tracks.length) return false;
+      sharedMusicState.index = (sharedMusicState.index + sharedMusicState.tracks.length + (direction || 1)) % sharedMusicState.tracks.length;
+      storageSet(GAME_MUSIC_INDEX_KEY, String(sharedMusicState.index));
+      syncSharedMusicUi();
+      if (sharedMusicState.enabled || settings.preservePlayback) {
+        sharedMusicState.enabled = true;
+        storageSet(GAME_MUSIC_ENABLED_KEY, "on");
+        return playSharedMusicCurrentTrack();
+      }
+      return true;
+    });
+  }
+
   function guessState(guess, word) {
     var result = Array(word.length).fill("absent");
     var letters = word.split("");
@@ -489,8 +657,8 @@
       if (runtimeRoot.console && typeof runtimeRoot.console.info === "function") {
         runtimeRoot.console.info("[WordClue] Starter cards loaded:", trustedWordClueDeckState.starterCount);
         runtimeRoot.console.info("[WordClue] Matched to word bank:", trustedWordClueDeckState.matchedCount);
-        if (trustedWordClueDeckState.unmatchedTargets.length && typeof runtimeRoot.console.warn === "function") {
-          runtimeRoot.console.warn("[WordClue] Unmatched starter targets:", trustedWordClueDeckState.unmatchedTargets);
+        if (trustedWordClueDeckState.unmatchedTargets.length) {
+          runtimeRoot.console.info("[WordClue] Starter-only targets kept outside the live word bank:", trustedWordClueDeckState.unmatchedTargets);
         }
       }
       notifyTrustedWordClueDeckUpdate();
@@ -2239,6 +2407,11 @@
     };
 
     if (!shell) return;
+    if (sharedMusicState.enabled) {
+      void startSharedMusic();
+    } else {
+      void loadSharedMusicCatalog().then(syncSharedMusicUi);
+    }
 
     function persistGalleryPlan() {
       storageSet(GALLERY_PLAN_KEY, JSON.stringify(galleryPlan));
@@ -2710,6 +2883,7 @@
           '        <option value="Science"' + (context.subject === "Science" ? " selected" : "") + '>Science</option>',
           '      </select></label>',
           '    </div>',
+          '    <div class="cg-audio-cluster cg-audio-cluster--gallery" aria-label="Music controls"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-music" aria-pressed="' + (sharedMusicState.enabled ? "true" : "false") + '">♫ ' + musicButtonLabel() + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-music">Next Vibe</button><span class="cg-audio-label" data-music-label>' + runtimeRoot.CSGameComponents.escapeHtml(musicStatusLabel()) + '</span></div>',
           '    <p class="cg-gallery-setup__hint">Filter once, then launch.</p>',
           '  </div>',
           renderPomodoroLauncher(),
@@ -2760,7 +2934,8 @@
         : withAppBase("game-platform.html");
       var toolbarParts = [
         '<a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(toolbarHomeHref) + '">' + runtimeRoot.CSGameComponents.iconFor("context") + (typingRuntimeMode ? 'Course Hub' : 'All Games') + '</a>',
-        '<button class="cg-action cg-action-quiet" type="button" data-action="toggle-teacher">' + runtimeRoot.CSGameComponents.iconFor("teacher") + (uiState.teacherPanelOpen ? "Close Panel" : "Teacher Controls") + "</button>"
+        '<button class="cg-action cg-action-quiet" type="button" data-action="toggle-teacher">' + runtimeRoot.CSGameComponents.iconFor("teacher") + (uiState.teacherPanelOpen ? "Close Panel" : "Teacher Controls") + "</button>",
+        '<div class="cg-audio-cluster" aria-label="Music controls"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-music" aria-pressed="' + (sharedMusicState.enabled ? "true" : "false") + '">♫ ' + musicButtonLabel() + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-music">Next Vibe</button><span class="cg-audio-label" data-music-label>' + runtimeRoot.CSGameComponents.escapeHtml(musicStatusLabel()) + '</span></div>'
       ];
       if (!typingHubMode) {
         toolbarParts.push('<button class="cg-action cg-action-quiet" type="button" data-action="hint">' + runtimeRoot.CSGameComponents.iconFor("hint") + "Hint</button>");
@@ -2780,6 +2955,8 @@
           '  <a class="cg-typing-appbar__link' + (typingHubMode ? ' is-active' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Course</a>',
           (typingRuntimeMode ? '  <a class="cg-typing-appbar__link is-active" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: state.round && state.round.courseMode || "lesson", lessonId: state.round && state.round.id || "", lessonOrder: state.round && state.round.lessonOrder || 1 })) + '">Lesson</a>' : ""),
           (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="toggle-teacher">' + (uiState.teacherPanelOpen ? "Close Panel" : "Teacher Controls") + '</button>' : ""),
+          '  <button class="cg-typing-appbar__link" type="button" data-action="toggle-music" aria-pressed="' + (sharedMusicState.enabled ? "true" : "false") + '">' + musicButtonLabel() + '</button>',
+          '  <button class="cg-typing-appbar__link" type="button" data-action="next-music">Next Vibe</button>',
           (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="hint">Hint</button>' : ""),
           (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="restart">Restart</button>' : ""),
           "</nav>"
@@ -2792,6 +2969,7 @@
           '      ' + (typingHubMode
             ? '<span class="cg-typing-appbar__chip">Placement first</span>'
             : '<a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Course Hub</a>') +
+          '      <span class="cg-audio-label" data-music-label>' + runtimeRoot.CSGameComponents.escapeHtml(musicStatusLabel()) + '</span>',
           '      <a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html")) + '">All Games</a>',
           '    </div>',
           "  </header>",
@@ -3952,6 +4130,14 @@
             engine.restartGame();
             return;
           }
+          if (action === "toggle-music") {
+            toggleSharedMusic();
+            return;
+          }
+          if (action === "next-music") {
+            void stepSharedMusic(1);
+            return;
+          }
           if (action === "start-typing-round") {
             if (inTypingHub) {
               runtimeRoot.location.href = typingQuestHref({
@@ -4218,6 +4404,7 @@
           card.click();
         });
       });
+      syncSharedMusicUi();
 
       Array.prototype.forEach.call(shell.querySelectorAll("[data-submit]"), function (button) {
         button.addEventListener("click", function () {

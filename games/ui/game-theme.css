@@ -443,21 +443,21 @@ body.game-platform-page[data-game-theme="dark"],
 body.game-platform-page[data-game-theme="matrix"] {
   --cg-bg: #18222d;
   --cg-bg-deep: #101720;
-  --cg-panel: rgba(28, 40, 52, 0.96);
-  --cg-panel-strong: rgba(37, 51, 66, 0.98);
-  --cg-ink: #eef4f8;
-  --cg-muted: #9cb1bf;
-  --cg-muted-strong: #c9d7e0;
+  --cg-panel: rgba(59, 75, 92, 0.94);
+  --cg-panel-strong: rgba(86, 103, 121, 0.96);
+  --cg-ink: #f7fbff;
+  --cg-muted: #d7e4ee;
+  --cg-muted-strong: #edf4fa;
   --cg-border: rgba(108, 196, 122, 0.18);
-  --cg-border-strong: rgba(108, 196, 122, 0.32);
+  --cg-border-strong: rgba(180, 217, 255, 0.28);
   --cg-primary: #54b46b;
   --cg-primary-2: #7fda90;
   --cg-accent: #5eb6d8;
   --cg-accent-2: #8fd7f0;
   --cg-page-gradient:
-    radial-gradient(ellipse at 18% 10%, rgba(84,180,107,0.16) 0%, transparent 34%),
-    radial-gradient(ellipse at 84% 10%, rgba(94,182,216,0.16) 0%, transparent 28%),
-    linear-gradient(180deg, #223140 0%, #18222d 42%, #101720 100%);
+    radial-gradient(ellipse at 18% 10%, rgba(84,180,107,0.18) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 10%, rgba(94,182,216,0.18) 0%, transparent 28%),
+    linear-gradient(180deg, #56687b 0%, #39495b 42%, #202c37 100%);
 }
 
 body.game-platform-page[data-game-theme="amongus"] {
@@ -477,9 +477,9 @@ body.game-platform-page[data-game-theme="matrix"] {
   --cg-accent: #7fe0c8;
   --cg-accent-2: #b9f4e4;
   --cg-page-gradient:
-    radial-gradient(ellipse at 18% 10%, rgba(99,218,115,0.18) 0%, transparent 34%),
-    radial-gradient(ellipse at 84% 10%, rgba(127,224,200,0.12) 0%, transparent 28%),
-    linear-gradient(180deg, #162218 0%, #101720 42%, #090f0c 100%);
+    radial-gradient(ellipse at 18% 10%, rgba(99,218,115,0.22) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 10%, rgba(127,224,200,0.16) 0%, transparent 28%),
+    linear-gradient(180deg, #384d3e 0%, #24342a 42%, #151f18 100%);
 }
 
 body.game-platform-page[data-game-theme="harleyquinn"],
@@ -582,6 +582,18 @@ body.game-platform-page[data-game-theme="rainbowfriends"] {
   --cg-reading-ink: #311d2f;
   --cg-reading-muted: rgba(49, 29, 47, 0.72);
   --cg-reading-muted-strong: rgba(49, 29, 47, 0.84);
+}
+
+body.game-platform-page[data-game-theme="dark"],
+body.game-platform-page[data-game-theme="matrix"],
+body.game-platform-page[data-game-theme="amongus"],
+body.game-platform-page[data-game-theme="forest"] {
+  --cg-reading-ink: #f8fbff;
+  --cg-reading-muted: rgba(241, 247, 252, 0.82);
+  --cg-reading-muted-strong: rgba(248, 251, 255, 0.92);
+  --cg-surface-soft: color-mix(in oklab, var(--cg-panel-strong) 88%, rgba(255,255,255,0.12) 12%);
+  --cg-surface: color-mix(in oklab, var(--cg-panel-strong) 92%, rgba(255,255,255,0.18) 8%);
+  --cg-surface-strong: color-mix(in oklab, var(--cg-panel-strong) 94%, rgba(255,255,255,0.24) 6%);
 }
 
 body.game-platform-page::before {

@@ -224,6 +224,71 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
   justify-content: flex-end;
 }
 
+.cg-audio-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--cg-border);
+  background: color-mix(in oklab, var(--cg-surface-strong) 90%, transparent);
+  box-shadow: var(--cg-shadow-soft);
+}
+
+.cg-audio-cluster--compact {
+  gap: 6px;
+  padding: 5px 6px;
+}
+
+.cg-audio-label {
+  min-width: 0;
+  max-width: 160px;
+  color: var(--cg-reading-muted-strong);
+  font-size: 0.79rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cg-audio-cluster--compact .cg-audio-label {
+  max-width: 84px;
+  font-size: 0.72rem;
+}
+
+.cg-audio-cluster--gallery {
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border-color: color-mix(in oklab, var(--cg-primary) 26%, var(--cg-border-strong) 74%);
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--cg-primary) 12%, rgba(255, 255, 255, 0.86)), color-mix(in oklab, var(--cg-surface-strong) 88%, rgba(255, 255, 255, 0.96))),
+    color-mix(in oklab, var(--cg-surface-strong) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 10px 24px color-mix(in oklab, var(--cg-primary) 12%, transparent);
+}
+
+.cg-audio-cluster--gallery .cg-action {
+  min-height: 44px;
+  padding: 10px 14px;
+  border-color: color-mix(in oklab, var(--cg-primary) 22%, var(--cg-border) 78%);
+  background: color-mix(in oklab, var(--cg-surface-strong) 90%, white 10%);
+}
+
+.cg-audio-cluster--gallery .cg-audio-label {
+  margin-left: auto;
+  max-width: 220px;
+  color: color-mix(in oklab, var(--cg-reading-ink) 88%, var(--cg-primary) 12%);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
 .cg-action,
 .cg-select,
 .cg-input,
@@ -246,6 +311,13 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
   cursor: pointer;
   text-decoration: none;
   box-sizing: border-box;
+}
+
+.cg-action[data-action="toggle-music"],
+.cg-action[data-action="next-music"],
+.cg-typing-appbar__link[data-action="toggle-music"],
+.cg-typing-appbar__link[data-action="next-music"] {
+  white-space: nowrap;
 }
 
 .cg-action-primary {
@@ -7653,9 +7725,46 @@ body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  min-height: 72px !important;
-  max-height: min(82px, var(--dashboard-hero-max)) !important;
-  padding: 6px 10px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "filters music"
+    "hint music" !important;
+  align-items: end !important;
+  gap: 10px 14px !important;
+  min-height: 118px !important;
+  max-height: min(132px, var(--dashboard-hero-max)) !important;
+  padding: 8px 10px !important;
+  margin-bottom: 14px !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup .cg-setup-row {
+  grid-area: filters !important;
+  align-items: end !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup__hint {
+  grid-area: hint !important;
+  margin-top: 0 !important;
+  align-self: start !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery {
+  grid-area: music !important;
+  width: auto !important;
+  max-width: 100% !important;
+  justify-content: flex-start !important;
+  align-self: center !important;
+  margin-top: 0 !important;
+  position: relative !important;
+  z-index: 4 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery .cg-audio-label {
+  margin-left: 0 !important;
+  max-width: 120px !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget,
@@ -7831,6 +7940,15 @@ body.game-platform-page[data-shell-view="play"] .cg-typing-course-hero {
 
   body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
     margin-bottom: 2px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "filters"
+      "music"
+      "hint" !important;
+    max-height: none !important;
   }
 
   body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
