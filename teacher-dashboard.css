@@ -737,6 +737,11 @@ body.td-reports-mode .td-cockpit-sidebar {
   gap: 4px;
 }
 
+.td-timeline-head .dashboard-section-meta {
+  margin: 0;
+  max-width: 28ch;
+}
+
 .td-block-stack {
   display: grid;
   gap: 10px;
@@ -811,12 +816,26 @@ body.td-reports-mode .td-cockpit-sidebar {
   background: color-mix(in oklab, white 78%, #f6e7d0 22%);
 }
 
-.td-timeline {
-  min-height: 0;
-  overflow: auto;
+.td-timeline-summary {
   display: grid;
-  gap: 0;
-  padding-right: 4px;
+  gap: 12px;
+  padding: 14px 12px 0;
+  border-top: 1px solid color-mix(in oklab, var(--surface-border) 52%, transparent);
+}
+
+.td-timeline-summary__line {
+  display: grid;
+  gap: 4px;
+}
+
+.td-timeline-summary__line strong {
+  font-size: 0.96rem;
+  color: #223752;
+}
+
+.td-timeline-summary__line span {
+  color: #6d7f95;
+  font-size: 0.9rem;
 }
 
 .td-timeline-item {
