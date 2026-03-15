@@ -18,7 +18,7 @@
     <header class="rl-head">
       <div>
         <p class="rl-meta-title kicker">Reading Lab</p>
-        <p class="muted">Cornerstone Precision Literacy Lab: ORF, accuracy, prosody, and sentence reasoning.</p>
+        <p class="muted">ORF, accuracy, phrasing, and sentence reasoning.</p>
       </div>
       <div class="rl-head-actions">
         <button id="rl-replay-demo" class="rl-btn hidden" type="button">Replay Demo</button>
@@ -30,7 +30,7 @@
       <article class="rl-surface cs-stage rl-passage-surface" aria-label="Passage panel">
         <div class="rl-surface-head">
           <h1 class="h1">Reading Lab</h1>
-          <div id="rl-status" class="rl-status">Start reading. We’ll track accuracy + phrasing.</div>
+          <div id="rl-status" class="rl-status">Start reading. Accuracy and phrasing update here.</div>
         </div>
         <div id="rl-coach-ribbon" class="cs-coach-ribbon" role="status" aria-live="polite">
           <span class="cs-coach-chip hidden"></span>
@@ -61,12 +61,12 @@
               <option value="3">Tier 3</option>
             </select>
           </label>
-          <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> Show Prosody Coach</label>
+          <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> Show phrasing prompts</label>
         </div>
 
         <details id="rl-what-track" class="rl-help-toggle">
-          <summary>What we track</summary>
-          <div>Accuracy, punctuation respect, ORF estimate, and reasoning response quality.</div>
+          <summary>Measures</summary>
+          <div>Accuracy, punctuation, ORF estimate, and reasoning response quality.</div>
         </details>
 
         <div id="rl-live-chip" class="rl-live-chip hidden">Accuracy: --</div>
@@ -100,8 +100,8 @@
           </details>
         </div>
 
-        <div id="rl-hard-word-panel" class="rl-panel hidden" aria-label="Hard word support">
-          <h3>Hard Word Support</h3>
+        <div id="rl-hard-word-panel" class="rl-panel hidden" aria-label="Word work">
+          <h3>Word Work</h3>
           <div id="rl-hard-word-target">Select a word.</div>
           <div id="rl-hard-word-breakdown"></div>
           <div id="rl-hard-word-pattern"></div>
@@ -118,7 +118,7 @@
           </div>
         </div>
 
-        <div id="rl-teacher-summary" class="rl-panel hidden" aria-label="Teacher summary"></div>
+        <div id="rl-teacher-summary" class="rl-panel hidden" aria-label="Session summary"></div>
         <div id="rl-privacy-note" class="rl-privacy-note">Student text is analyzed locally for instruction. School analytics store aggregates only; raw passage text and audio are not stored.</div>
       </aside>
     </section>

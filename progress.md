@@ -1,5 +1,41 @@
 Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
+- 2026-03-15: Corrected the landing page after screenshot-led regression review on `index.html` + `home-v3.css`.
+  - removed the oversized hero so the page now starts with a true compact header instead of a second pseudo-destination surface
+  - removed duplicate destination headings and fake shorthand metrics from the three main cards so `Specialist Hub`, `Word Quest`, and `Teacher Workspace` each tell the story once
+  - rebuilt the Specialist Hub preview to show block time, teacher, curriculum, lesson context, `SWBAT`, and one lesson support move instead of obvious class-count filler
+  - replaced the invalid Word Quest example with a three-row progression that does not contradict word logic and removed the extra explanatory text under the board
+  - changed the Teacher Workspace preview from fake `signals` shorthand to direct records/report language
+  - removed the shell-level overflow source on landing so the corrected route now fits honestly at `1440x900` with `scrollHeight: 900`
+  - verified on:
+    - `index.html?cb=20260315-landing-fix4`
+  - current checkpoint files:
+    - `index.html`
+    - `home-v3.css`
+
+- 2026-03-15: Finished a practice-surface seriousness cleanup pass before the fresh full-platform audit.
+  - `reading-lab.html`: reduced leftover support/coaching phrasing in visible labels (`Word Work`, `Session summary`, cleaner status line)
+  - `writing-studio.html` + `writing-studio.js`: kept the no-modal opening and simplified visible routine/setup language from the earlier pass
+  - `numeracy.html`: tightened top copy to simpler domain language
+  - `precision-play.html`: simplified setup phrasing and next-round copy
+  - `paragraph-builder.html` + `paragraph-builder.js`: kept the simpler paragraph summary labels and tightened the subtitle
+  - fresh screenshots captured to:
+    - `output/audit-20260315/landing.png`
+    - `output/audit-20260315/hub-overview.png`
+    - `output/audit-20260315/hub-class-detail.png`
+    - `output/audit-20260315/case-management.png`
+    - `output/audit-20260315/student-profile.png`
+    - `output/audit-20260315/reports.png`
+    - `output/audit-20260315/game-gallery.png`
+    - `output/audit-20260315/typing-quest.png`
+    - `output/audit-20260315/word-quest.png`
+    - `output/audit-20260315/off-limits.png`
+    - `output/audit-20260315/reading-lab.png`
+    - `output/audit-20260315/writing-studio.png`
+    - `output/audit-20260315/numeracy.png`
+    - `output/audit-20260315/paragraph-builder.png`
+    - `output/audit-20260315/precision-play.png`
+
 - 2026-03-15: Completed a verified Specialist Hub trust/game-plan checkpoint focused only on `teacher-hub-v2.html`, `teacher-hub-v2.js`, and `teacher-hub-v2.css`.
   - added a compact class-detail command bar that makes lesson alignment status, support load, primary lane, first support move, and pacing reset visible before the deeper lesson block
   - tightened the daily lesson-map cards so they now lead with the likely first move plus a clearer lesson-alignment state instead of repeating long objective-heavy copy
@@ -493,3 +529,92 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
 - honest current product truth:
   - hub is much stronger than before, but the class-detail view still needs to move closer to an immediate differentiation / small-group game plan
   - lesson-alignment trust is improved structurally but still not ready to be overclaimed for schoolwide teacher reliance
+2026-03-15: One-pass platform systems repair in progress for screenshot-audited issues. Current slice is limited to `games/ui/game-theme.css`, `games/ui/game-shell.css`, `games/ui/game-shell.js`, `style/themes.css`, `style/components.css`, `game-platform.html`, and `typing-quest.html`. Goals: raise dark-theme contrast floors, add shared music controls to the game shell so gallery/Off Limits/Typing Quest stop diverging from Word Quest, and repair Word Quest play composition by reducing the clipped clipboard treatment and re-centering the board stage.
+2026-03-15: Follow-up verification slice completed in `games/ui/game-shell.css`, `games/ui/game-shell.js`, and `progress.md`.
+- gallery music controls now use a dedicated gallery treatment and sit above the card stack instead of being visually buried under it; verified by screenshot on `game-platform.html?cb=20260315-pass4`
+- Off Limits still keeps starter-only cards, but the intentional word-bank mismatch is now logged as info instead of a warning; verified on `game-platform.html?cb=20260315-pass4&play=1&game=word-connections`
+- current truth after screenshots:
+  - gallery music access is now visible enough to count as real
+  - the gallery music strip is still more utilitarian than premium and may want a future design pass once higher-priority teacher-flow issues are done
+2026-03-15: Word Quest composition cleanup completed in `style/components.css`, `word-quest.html`, and `progress.md`.
+- removed the play-mode full-height decorative `main::before/::after` layer that was making the board + keyboard sit inside a washed-out central slab
+- kept the board plate itself intact so the board still owns the stage without reviving the clipped clipboard effect
+- bumped `word-quest.html` stylesheet ref to `style/components.css?v=20260315e`
+- verified by screenshot on `word-quest.html?cb=20260315-wq-pass2&play=1`
+- fit check after change:
+  - board bottom `598.39`
+  - keyboard bottom `766.23`
+  - viewport height `900`
+  - scroll `false`
+2026-03-15: Student profile workbench quick-read pass completed in `student-profile.html`, `student-profile.css`, `student-profile.js`, and `progress.md`.
+- added always-visible peek content to the closed FBA, BIP, and stakeholder check-in disclosures so the lower workbench reads like a game plan instead of empty accordions
+- kept the forms behind disclosure open states; this was a burden-reduction pass, not a workflow expansion
+- bumped student profile asset refs to `student-profile.css?v=20260315c` and `student-profile.js?v=20260315c`
+- verified by screenshot on `student-profile.html?cb=20260315-sp-pass3`
+- current truth after screenshot:
+  - the lower workbench is materially easier to scan
+  - there is still some vertical dead air in the left workbench column when cards are closed, but the cards now carry enough visible signal to feel intentional
+2026-03-15: Case-management / student-profile architecture split completed in `case-management.html`, `case-management.js`, `student-profile.html`, `student-profile.css`, `student-profile.js`, and `progress.md`.
+- created `case-management.html` as a simple caseload landing page with direct student links plus IESP / IP / IAP / BIP entry cards
+- converted `student-profile.html` into a single-student workspace that no longer owns the caseload list or the full form stack
+- student profile now links back out to case management for plan/form ownership instead of acting like a second landing page
+- verified structure and route behavior by live DOM/snapshot inspection on:
+  - `case-management.html?cb=20260315-cm-verify`
+  - `student-profile.html?cb=20260315-sp-arch5&student=demo-student`
+- honest current truth:
+  - the route architecture is materially closer to the target platform model now
+  - the student profile visual footprint is much tighter than before, but the final `1440x900` screenshot verification was blocked by a Playwright viewport/zoom failure, so the one-page requirement still needs one more clean screenshot pass before it should be called fully solved
+2026-03-15: Teacher workflow spine rebuild in progress across case management, student profile, and reports.
+- `case-management.html`, `case-management.css`, and `case-management.js`
+  - replaced the old prototype-style landing with a real control-center layout: due-work strip, plan filters, caseload cards, due queue, and document lane
+  - added a raw-store fallback so the page still shows demo caseload content even when selector-derived rows are unavailable
+  - verified by screenshot on `case-management.html?demo=1&cb=20260315-cm-pass4`
+  - screenshot-backed truth:
+    - page now fits `1440x900` without clipping
+    - the surface reads like a usable caseload control center rather than a wireframe
+- `student-profile.css` and `student-profile.js`
+  - reduced the first-screen record to the essential specialist-facing information: student context, current programs, latest measures, goals, accommodations, and plan links
+  - cut visible program and assessment cards, shortened the hero, and reduced equal-weight card density
+  - verified by screenshot on `student-profile.html?demo=1&student=demo-ava&cb=20260315-sp-pass10`
+  - screenshot-backed truth:
+    - the page now reads like a professional student record instead of a dashboard
+    - the composition is materially better and no bottom clipping is visible in the viewport screenshot
+    - browser metrics still reported extra document height, so this route should be treated as much closer, not final-perfect
+- `reports.html`
+  - retargeted the reports overview away from generic workspace language and toward real specialist outputs: family updates, pre-SSM briefs, SSM packets, and progress reporting
+  - kept the stronger existing structure intact to avoid destabilizing the best teacher-facing page
+  - verified by screenshot on `reports.html?cb=20260315-reports-pass1`
+  - screenshot-backed truth:
+    - the page still fits cleanly at `1440x900`
+    - the first screen now reads more clearly as a reporting engine and less like a generic launcher
+2026-03-15: Hub / landing / practice cleanup checkpoint completed in `teacher-hub-v2.css`, `teacher-hub-v2.js`, `index.html`, `home-v3.css`, `game-platform.html`, `games/ui/game-shell.css`, `writing-studio.html`, `writing-studio.js`, and `progress.md`.
+- `teacher-hub-v2.css` + `teacher-hub-v2.js`
+  - reduced overview copy and converted the lesson-map rail into a contained viewport so the right-side class map no longer spills below the main shell
+  - moved class-detail support rows into a right-side visible support lane with internal scrolling, compressed the command bar, and kept the first student/game-plan card visible on first screen
+  - verified at `1440x900` on:
+    - `teacher-hub-v2.html?demo=1&cb=hubfit2`
+    - `teacher-hub-v2.html?demo=1&classId=demo-block-math&cb=hubfit2`
+  - screenshot-backed truth:
+    - hub overview now reads like a real daily command surface instead of a clipped long page
+    - class detail now surfaces lesson focus and support students in the same viewport
+    - internal scroll still exists inside the lesson map / support lane, but it is now honest contained overflow rather than hidden page clipping
+- `index.html` + `home-v3.css`
+  - rebuilt the landing page around the three true doors: Specialist Hub, Game Gallery, and Teacher Workspace
+  - shortened the hero framing and made all three destinations visible in one desktop screen
+  - retargeted Teacher Workspace to `reports.html`
+  - verified at `1440x900` on `index.html?cb=landingpass6`
+  - screenshot-backed truth:
+    - the top-level navigation model is now much closer to the intended platform architecture
+    - the page feels more like a product entry and less like a two-card demo
+- `game-platform.html` + `games/ui/game-shell.css`
+  - bumped the gallery stylesheet version and moved the music controls into the setup/filter lane so they stop sitting directly on top of the game cards
+  - verified at `1440x900` on `game-platform.html?cb=gallerypass3`
+  - screenshot-backed truth:
+    - the music controls no longer block card interactions
+    - the gallery still carries too much inert dark banding in the setup strip, so this is a structural improvement, not the final premium pass
+- `writing-studio.html` + `writing-studio.js`
+  - removed the forced startup greeting modal, replaced the highest-friction coaching/product phrasing, and let the page open directly into the tool shell
+  - verified at `1440x900` on `writing-studio.html?cb=ws3`
+  - screenshot-backed truth:
+    - the biggest onboarding friction is gone
+    - the route still needs a later layout pass because the opened state shows too much empty stage before the working canvas takes over

@@ -10,175 +10,41 @@
   <link rel="stylesheet" href="./style/tokens.css?v=20260307d">
   <link rel="stylesheet" href="./style/typography.css?v=20260307d">
   <link rel="stylesheet" href="./style/nav-shell.css?v=20260312a">
-  <link rel="stylesheet" href="./student-profile.css?v=20260315b">
+  <link rel="stylesheet" href="./student-profile.css?v=20260315d">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260308a">
 </head>
 <body class="sp-page">
-  <main class="sp-shell">
+  <main class="sp-shell sp-shell--single">
     <header class="sp-header">
-      <a class="sp-brand" href="./index.html" aria-label="Home">
-        <strong>Cornerstone MTSS</strong>
-        <span>Student Profile</span>
-      </a>
-      <label class="sp-search" for="sp-search-input">
-        <input id="sp-search-input" type="search" placeholder="Search student, support area, or goal..." autocomplete="off">
-      </label>
+      <div class="sp-header-meta" aria-label="Student record context">
+        <span class="sp-header-label">Case management</span>
+        <strong>Student record</strong>
+      </div>
       <div class="sp-header-actions">
-        <a class="sp-btn sp-btn-quiet" href="./teacher-hub-v2.html">Back to Hub</a>
+        <a class="sp-btn sp-btn-quiet" href="./case-management.html">Case Management</a>
+        <a class="sp-btn sp-btn-quiet" href="./teacher-hub-v2.html">Specialist Hub</a>
         <a id="sp-reports-link" class="sp-btn sp-btn-quiet" href="./reports.html">View Reports</a>
-        <button class="sp-btn sp-btn-quiet" type="button" data-backup-open="1">Backup</button>
         <a id="sp-games-link" class="sp-btn sp-btn-primary" href="./game-platform.html">Open Games</a>
       </div>
     </header>
 
-    <section class="sp-layout">
-      <aside class="sp-sidebar">
-        <div class="sp-panel">
-          <p class="sp-kicker">Caseload</p>
-          <div id="sp-student-list" class="sp-student-list"></div>
-        </div>
-        <div class="sp-panel sp-panel-ghost sp-search-guide">
-          <p class="sp-kicker">Search Guide</p>
-          <p id="sp-search-ghost" class="sp-ghost-line" aria-live="polite">Try: Maya R.</p>
-        </div>
-      </aside>
+    <section class="sp-main sp-main--single">
+      <div id="sp-empty-state" class="sp-empty-state">
+        <p class="sp-kicker">Student Profile</p>
+        <h1>Select a student from case management.</h1>
+        <p>This page is reserved for one student at a time so the support picture stays fast and calm.</p>
+        <p><a class="sp-btn sp-btn-primary" href="./case-management.html">Open Case Management</a></p>
+      </div>
 
-      <section class="sp-main">
-        <div id="sp-empty-state" class="sp-empty-state">
-          <p class="sp-kicker">Student Profile</p>
-          <h1>Select a student to open one complete support record.</h1>
-          <p>Use the caseload list or search. Ghost guidance disappears as soon as you start typing.</p>
-        </div>
-
-        <div id="sp-content" class="sp-content hidden">
-          <section id="sp-hero" class="sp-hero"></section>
-          <section class="sp-storyboard">
-            <article class="sp-panel sp-visual-panel">
-              <div class="sp-section-head">
-                <div>
-                  <p class="sp-kicker">At A Glance</p>
-                  <h2 class="sp-section-title">See the support picture fast.</h2>
-                </div>
-              </div>
-              <div class="sp-visual-grid">
-                <div id="sp-support-snapshot" class="sp-visual-card"></div>
-                <div id="sp-goals-panel" class="sp-visual-card"></div>
-                <div id="sp-evidence-panel" class="sp-visual-card"></div>
-              </div>
-            </article>
-          </section>
-
-          <section class="sp-workbench">
-            <div class="sp-workbench-main">
-              <details class="sp-panel sp-disclosure">
-                <summary>
-                  <span class="sp-kicker">Behavior Support</span>
-                  <strong>FBA Quick Log</strong>
-                  <small>Capture one clear incident, not a long report.</small>
-                </summary>
-                <form id="sp-fba-form" class="sp-form">
-                <div class="sp-form-grid">
-                  <label><span>Routine / time</span><input name="when" type="text" placeholder="Transition to writing"></label>
-                  <label><span>Setting</span><input name="setting" type="text" placeholder="Small group table"></label>
-                  <label><span>Frequency</span>
-                    <select name="frequency">
-                      <option value="">Select</option>
-                      <option>Rare</option>
-                      <option>Sometimes</option>
-                      <option>Often</option>
-                      <option>Very often</option>
-                    </select>
-                  </label>
-                  <label><span>Duration</span><input name="duration" type="text" placeholder="2 minutes"></label>
-                  <label><span>Intensity</span>
-                    <select name="intensity">
-                      <option value="">Select</option>
-                      <option>Low</option>
-                      <option>Moderate</option>
-                      <option>High</option>
-                    </select>
-                  </label>
-                  <label><span>Data source</span>
-                    <select name="dataSource">
-                      <option value="">Select</option>
-                      <option>Direct observation</option>
-                      <option>Teacher report</option>
-                      <option>Family report</option>
-                      <option>Student report</option>
-                    </select>
-                  </label>
-                  <label class="sp-span-2"><span>Antecedent</span><input name="antecedent" type="text" placeholder="Asked to begin independent writing"></label>
-                  <label class="sp-span-2"><span>Observable behavior</span><input name="behavior" type="text" placeholder="Called out and left seat"></label>
-                  <label class="sp-span-2"><span>Consequence</span><input name="consequence" type="text" placeholder="Task paused and peers looked over"></label>
-                  <label class="sp-span-2"><span>Teacher response</span><input name="teacherResponse" type="text" placeholder="Redirected and offered choice"></label>
-                  <label class="sp-span-2"><span>Other student response</span><input name="peerResponse" type="text" placeholder="Peers laughed / peers ignored"></label>
-                  <label><span>Hypothesized function</span><input name="probableFunction" type="text" placeholder="Escape / attention / access / sensory"></label>
-                  <label class="sp-span-3"><span>Notes</span><textarea name="notes" rows="3" placeholder="Brief context only."></textarea></label>
-                </div>
-                <button class="sp-btn sp-btn-primary" type="submit">Save FBA Entry</button>
-              </form>
-              <div id="sp-fba-list" class="sp-stack"></div>
-              </details>
-              <details class="sp-panel sp-disclosure">
-                <summary>
-                  <span class="sp-kicker">Plan</span>
-                  <strong>BIP Quick Plan</strong>
-                  <small>Prevent, teach, respond, reinforce, review.</small>
-                </summary>
-                <form id="sp-bip-form" class="sp-form">
-                <div class="sp-form-grid">
-                  <label class="sp-span-2"><span>Target behavior</span><input name="targetBehavior" type="text" placeholder="Leaves seat during writing"></label>
-                  <label class="sp-span-2"><span>Hypothesized function</span><input name="hypothesizedFunction" type="text" placeholder="Escape difficult writing task"></label>
-                  <label class="sp-span-2"><span>Replacement behavior</span><input name="replacementBehavior" type="text" placeholder="Uses break card and returns to task"></label>
-                  <label class="sp-span-2"><span>Prevention supports</span><textarea name="preventionSupports" rows="2" placeholder="Visual model, choice, pre-correction"></textarea></label>
-                  <label class="sp-span-2"><span>Teaching moves</span><textarea name="teachingMoves" rows="2" placeholder="Model the replacement behavior and practice it"></textarea></label>
-                  <label class="sp-span-2"><span>Response plan</span><textarea name="responsePlan" rows="2" placeholder="Prompt replacement behavior, redirect, and return to task"></textarea></label>
-                  <label class="sp-span-2"><span>Reinforcement plan</span><textarea name="reinforcementPlan" rows="2" placeholder="Specific praise, earned break, check-in"></textarea></label>
-                  <label class="sp-span-2"><span>Progress monitoring</span><textarea name="progressMonitoring" rows="2" placeholder="Track frequency during writing block 3 times per week"></textarea></label>
-                  <label><span>Review date</span><input name="reviewDate" type="date"></label>
-                </div>
-                <button class="sp-btn sp-btn-primary" type="submit">Save BIP Plan</button>
-              </form>
-              <div id="sp-bip-view"></div>
-              </details>
-            </div>
-            <aside class="sp-workbench-side">
-              <article class="sp-panel">
-                <p class="sp-kicker">Weekly Insight</p>
-                <div id="sp-weekly-panel"></div>
-              </article>
-              <details class="sp-panel sp-disclosure">
-                <summary>
-                  <span class="sp-kicker">Communication</span>
-                  <strong>Stakeholder Check-ins</strong>
-                  <small>Teacher, family, student, specialist.</small>
-                </summary>
-                <form id="sp-checkin-form" class="sp-form">
-                <div class="sp-form-grid">
-                  <label><span>Role</span>
-                    <select name="role">
-                      <option>Teacher</option>
-                      <option>Specialist</option>
-                      <option>Coach</option>
-                      <option>Family</option>
-                      <option>Student</option>
-                    </select>
-                  </label>
-                  <label class="sp-span-2"><span>Summary</span><input name="summary" type="text" placeholder="What matters right now"></label>
-                  <label class="sp-span-3"><span>Next step</span><input name="nextStep" type="text" placeholder="What should happen next"></label>
-                </div>
-                <button class="sp-btn sp-btn-primary" type="submit">Save Check-in</button>
-              </form>
-              <div id="sp-checkin-list" class="sp-stack"></div>
-              </details>
-              <article class="sp-panel">
-                <p class="sp-kicker">Calendar & Files</p>
-                <div id="sp-google-panel"></div>
-              </article>
-            </aside>
-          </section>
-        </div>
-      </section>
+      <div id="sp-content" class="sp-content hidden">
+        <section id="sp-hero" class="sp-hero"></section>
+        <section class="sp-profile-grid">
+          <article id="sp-programs-panel" class="sp-panel"></article>
+          <article id="sp-assessment-panel" class="sp-panel"></article>
+          <article id="sp-plans-panel" class="sp-panel"></article>
+          <article id="sp-team-panel" class="sp-panel"></article>
+        </section>
+      </div>
     </section>
   </main>
 
@@ -189,13 +55,8 @@
   <script src="./js/caseload-store.js?v=20260309a"></script>
   <script src="./js/evidence-store.js?v=20260307d"></script>
   <script src="./js/support-store.js?v=20260307d"></script>
-  <script src="./js/teacher/teacher-selectors.js?v=20260307d"></script>
-  <script src="./js/teacher/teacher-intelligence.js?v=20260307d"></script>
-  <script src="./js/weekly-insight-generator.js?v=20260307d"></script>
   <script src="./js/student-profile-store.js?v=20260307g"></script>
-  <script src="./js/backup-manager.js?v=20260308a"></script>
   <script src="./js/nav-shell.js?v=20260312a"></script>
-  <script src="./student-profile.js?v=20260315b"></script>
-  <script>window.CSBackupManager&&window.CSBackupManager.init&&window.CSBackupManager.init();</script>
+  <script src="./student-profile.js?v=20260315e"></script>
 </body>
 </html>

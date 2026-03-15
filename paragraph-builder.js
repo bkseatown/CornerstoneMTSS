@@ -221,9 +221,9 @@
       return;
     }
 
-    if (!state.values.topic) return showCoach('Make your topic clear and specific.');
+    if (!state.values.topic) return showCoach('Add a clear topic sentence.');
     if (!state.values.body1 || !state.values.body2) return showCoach('Add support in both body sentences.');
-    if (!state.values.conclusion) return showCoach('Wrap up by linking back to your topic.');
+    if (!state.values.conclusion) return showCoach('Add a closing sentence that links back to the topic.');
     hideCoach();
   }
 
@@ -349,7 +349,7 @@
     var reasoning = Math.round((parseFloat((document.getElementById('metric-reasoning') || {}).style.width || '0') || 0));
     var detail = Math.round((parseFloat((document.getElementById('metric-detail') || {}).style.width || '0') || 0));
     var control = Math.round((parseFloat((document.getElementById('metric-control') || {}).style.width || '0') || 0));
-    return 'Metrics: Cohesion ' + cohesion + '%, Reasoning ' + reasoning + '%, Detail ' + detail + '%, Control ' + control + '%';
+    return 'Measures: Connections ' + cohesion + '%, Explanation ' + reasoning + '%, Detail ' + detail + '%, Control ' + control + '%';
   }
 
   function showDoneOverlay() {

@@ -289,11 +289,13 @@
     if (!shouldSeedDemo()) return loadCaseload();
     var seeded = normalizeCaseload({
       students: [
-        { id: "demo-ava", name: "Ava M.", tier: "tier2", grade: "G3", gradeBand: "G3", focusSkill: "decoding", focus: "Reading", tags: ["iesp"] },
-        { id: "demo-liam", name: "Liam T.", tier: "tier3", grade: "G2", gradeBand: "G2", focusSkill: "phonics", focus: "Phonics", tags: ["ip"] },
-        { id: "demo-maya", name: "Maya R.", tier: "monitor", grade: "G3", gradeBand: "G3", focusSkill: "reading", focus: "Reading", tags: [] },
-        { id: "demo-noah", name: "Noah K.", tier: "tier2", grade: "G4", gradeBand: "G4", focusSkill: "numeracy", focus: "Numeracy", tags: [] },
-        { id: "demo-zoe", name: "Zoe W.", tier: "tier3", grade: "G1", gradeBand: "G1", focusSkill: "phonics", focus: "Phonics", tags: ["bip"] }
+        { id: "demo-ava", name: "Ava M.", tier: "tier2", grade: "G3", gradeBand: "G3", focusSkill: "decoding", focus: "Reading", tags: ["iesp", "iap"] },
+        { id: "demo-liam", name: "Liam T.", tier: "tier3", grade: "G2", gradeBand: "G2", focusSkill: "phonics", focus: "Reading", tags: ["ip"] },
+        { id: "demo-maya", name: "Maya R.", tier: "monitor", grade: "G3", gradeBand: "G3", focusSkill: "writing", focus: "Writing", tags: ["iap"] },
+        { id: "demo-noah", name: "Noah K.", tier: "tier2", grade: "G4", gradeBand: "G4", focusSkill: "numeracy", focus: "Math", tags: ["iesp"] },
+        { id: "demo-zoe", name: "Zoe W.", tier: "tier3", grade: "G1", gradeBand: "G1", focusSkill: "phonics", focus: "Reading", tags: ["bip"] },
+        { id: "demo-jasmin", name: "Jasmin P.", tier: "tier2", grade: "G7", gradeBand: "G7", focusSkill: "morphology", focus: "Literacy", tags: ["iap"] },
+        { id: "demo-mateo", name: "Mateo C.", tier: "tier3", grade: "G10", gradeBand: "G10", focusSkill: "comprehension", focus: "Literacy", tags: ["iesp", "ip"] }
       ]
     });
     saveCaseload(seeded);

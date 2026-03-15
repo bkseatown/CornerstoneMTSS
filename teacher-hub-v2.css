@@ -86,11 +86,38 @@ body.th2-page {
 }
 
 .th2-day-brief {
-  padding: 18px 20px;
+  padding: 16px 18px;
 }
 
 .th2-day-brief__title {
-  font-size: 28px;
+  font-size: 26px;
+}
+
+.th2-day-brief__summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.th2-day-brief__microchips {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.th2-day-brief__microchips span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(171, 185, 206, 0.26);
+  font-size: 12px;
+  font-weight: 700;
+  color: #4d5c74;
 }
 
 .th2-day-brief__pattern,
@@ -168,8 +195,8 @@ body.th2-page {
 
 .th2-day-overview__events {
   display: grid;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 12px;
   border-radius: 18px;
   background:
     radial-gradient(circle at top right, rgba(118, 174, 228, 0.16), transparent 32%),
@@ -199,7 +226,7 @@ body.th2-page {
 .th2-day-overview__event {
   display: grid;
   gap: 4px;
-  padding: 12px 13px;
+  padding: 10px 12px;
   border-radius: 14px;
   background:
     radial-gradient(circle at top right, rgba(214, 165, 92, 0.10), transparent 28%),
@@ -3324,7 +3351,7 @@ body.th2-page.cs-has-nav-shell {
 
 .th2-today-sub {
   margin: 5px 0 0;
-  font: 400 13px/1 var(--font-ui, system-ui);
+  font: 400 12px/1.1 var(--font-ui, system-ui);
   color: var(--text-muted);
 }
 
@@ -7966,7 +7993,7 @@ body.th2-page {
 }
 
 .th2-command-center--class-detail .th2-active-context__grid {
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.92fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
   align-items: start;
 }
 
@@ -7992,9 +8019,17 @@ body.th2-page {
   color: var(--text-secondary);
 }
 
-.th2-command-center--class-detail .th2-priority-panel,
-.th2-command-center--class-detail .th2-context-zone--support {
+.th2-command-center--class-detail .th2-priority-panel {
   grid-column: 1 / -1;
+}
+
+.th2-command-center--class-detail .th2-context-zone--support {
+  grid-column: 2;
+  min-height: 0;
+}
+
+.th2-command-center--class-detail .th2-context-zone--lesson {
+  grid-column: 1;
 }
 
 .th2-command-center--class-detail .th2-context-command-zone {
@@ -8003,6 +8038,149 @@ body.th2-page {
 
 .th2-command-center--class-detail .th2-context-zone--companion {
   grid-column: 2;
+}
+
+.th2-command-center--class-detail .th2-block-command-bar {
+  gap: 12px;
+  padding: 15px 17px;
+}
+
+.th2-command-center--class-detail .th2-block-command-bar__title {
+  font-size: 27px;
+}
+
+.th2-command-center--class-detail .th2-block-command-bar__meta {
+  font-size: 12px;
+}
+
+.th2-command-center--class-detail .th2-block-command-grid {
+  gap: 8px;
+}
+
+.th2-command-center--class-detail .th2-block-command-card {
+  padding: 11px 12px;
+}
+
+.th2-command-center--class-detail .th2-block-command-card strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.th2-command-center--class-detail .th2-command-chip {
+  padding: 9px 11px;
+}
+
+.th2-command-center--class-detail .th2-class-detail-card {
+  gap: 10px;
+  padding: 14px;
+}
+
+.th2-command-center--class-detail .th2-context-zone__heading {
+  margin-bottom: 2px;
+}
+
+.th2-command-center--class-detail .th2-mission-card,
+.th2-command-center--class-detail .th2-secondary-card {
+  border-radius: 16px;
+}
+
+.th2-command-center--class-detail .th2-mission-card {
+  padding: 14px 16px;
+}
+
+.th2-command-center--class-detail .th2-mission-card__headline {
+  font-size: 28px;
+  line-height: 1.02;
+}
+
+.th2-command-center--class-detail .th2-mission-card__sub,
+.th2-command-center--class-detail .th2-mission-card__target {
+  font-size: 12px;
+  line-height: 1.38;
+}
+
+.th2-command-center--class-detail .th2-secondary-card {
+  padding: 14px;
+}
+
+.th2-command-center--class-detail .th2-student-priority-list {
+  max-height: 430px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.th2-command-center--class-detail .th2-class-student-row {
+  gap: 9px;
+  padding: 12px 13px 11px;
+  border-radius: 16px;
+}
+
+.th2-command-center--class-detail .th2-class-student-head strong {
+  font-size: 14px;
+}
+
+.th2-command-center--class-detail .th2-student-strength-gap {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.th2-command-center--class-detail .th2-student-glance-card,
+.th2-command-center--class-detail .th2-class-goal-card {
+  padding: 10px 11px;
+}
+
+.th2-command-center--class-detail .th2-student-strength-gap p,
+.th2-command-center--class-detail .th2-class-goal-card p {
+  font-size: 11px;
+  line-height: 1.32;
+}
+
+.th2-command-center--class-detail .th2-class-today-move {
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.th2-command-center--class-detail .th2-class-today-move strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.th2-command-center--class-detail .th2-class-goal-strip {
+  gap: 8px;
+}
+
+.th2-day-sched-hero {
+  align-items: start;
+}
+
+.th2-day-brief--overview {
+  gap: 12px;
+}
+
+.th2-day-brief--overview .th2-day-overview__events {
+  padding: 10px;
+}
+
+.th2-priority-rail--lesson-map {
+  gap: 10px;
+  padding: 16px;
+}
+
+.th2-priority-rail--lesson-map .th2-priority-rail__list {
+  max-height: 640px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.th2-priority-rail--lesson-map .th2-priority-item {
+  gap: 7px;
+  padding: 14px 14px 12px;
+}
+
+.th2-priority-rail--lesson-map .th2-priority-item p,
+.th2-priority-rail--lesson-map .th2-priority-item em {
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 @media (max-width: 720px) {

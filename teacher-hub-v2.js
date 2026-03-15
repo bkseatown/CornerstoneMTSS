@@ -1234,13 +1234,13 @@
       '  </div>',
       '  <div class="th2-block-command-bar__chips">',
       '    <span class="th2-command-chip th2-command-chip--' + escapeHtml(alignment.tone) + '"><strong>' + escapeHtml(alignment.label) + '</strong><em>' + escapeHtml(alignment.detail) + '</em></span>',
-      '    <span class="th2-command-chip"><strong>Support load</strong><em>' + escapeHtml(String(supportCount || 0)) + ' students pre-tagged for support</em></span>',
+      '    <span class="th2-command-chip"><strong>Support load</strong><em>' + escapeHtml(String(supportCount || 0)) + ' students</em></span>',
       '    <span class="th2-command-chip"><strong>Primary lane</strong><em>' + escapeHtml(deriveBlockSupportSummary(contextData)) + '</em></span>',
       '  </div>',
       '  <div class="th2-block-command-grid">',
       '    <article class="th2-block-command-card th2-block-command-card--focus"><span>Teach first</span><strong>' + escapeHtml(derived.mainConcept || classConceptFocus(block)) + '</strong></article>',
       '    <article class="th2-block-command-card"><span>First support move</span><strong>' + escapeHtml(blockNextMove(contextData)) + '</strong></article>',
-      '    <article class="th2-block-command-card"><span>If the class moved</span><strong>' + escapeHtml(blockPacingNote(contextData)) + '</strong></article>',
+      '    <article class="th2-block-command-card"><span>If pacing changed</span><strong>' + escapeHtml(blockPacingNote(contextData)) + '</strong></article>',
       '  </div>',
       '</section>'
     ].join("");
@@ -5417,11 +5417,15 @@
   function renderDayOverviewPanel(blocks) {
     var highlights = buildCalendarHighlights(blocks);
     var schedulePattern = deriveSchedulePattern(blocks);
+    var totalBlocks = Array.isArray(blocks) ? blocks.length : 0;
+    var supportTouches = (Array.isArray(blocks) ? blocks : []).reduce(function (sum, block) {
+      return sum + countSupportStudentsForContext(buildTeacherContextForBlock(block));
+    }, 0);
     return [
       '<section class="th2-day-brief th2-day-brief--overview">',
       '  <p class="th2-section-label">Day overview</p>',
       '  <h2 class="th2-day-brief__title">What changes today</h2>',
-      '  <p class="th2-day-brief__summary">Announcements, rotating-day notes, and schedule shifts that affect coverage or lesson pacing.</p>',
+      '  <div class="th2-day-brief__summary-row"><p class="th2-day-brief__summary">See schedule shifts first, then open the clearest class move.</p><div class="th2-day-brief__microchips"><span>' + escapeHtml(String(totalBlocks)) + ' blocks</span><span>' + escapeHtml(String(supportTouches)) + ' support touches</span></div></div>',
       (schedulePattern ? '<div class="th2-day-brief__pattern"><span class="th2-day-brief__pattern-label">Cycle</span><strong>' + escapeHtml(schedulePattern) + '</strong></div>' : ''),
       '  <div class="th2-day-brief__actions"><button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Google Calendar</button><a class="th2-inline-link" href="reports.html">Go to reports</a></div>',
       '  <div class="th2-day-overview__events">',
@@ -5440,7 +5444,7 @@
     var rows = buildLessonMapRows(blocks);
     return [
       '<section class="th2-priority-rail th2-priority-rail--lesson-map">',
-      '  <div class="th2-priority-rail__head"><p class="th2-section-label">Class lesson map</p><p class="th2-today-sub">Open the class that already has the clearest lesson fit and support move.</p></div>',
+      '  <div class="th2-priority-rail__head"><p class="th2-section-label">Class lesson map</p><p class="th2-today-sub">Open the block with the clearest fit and first move.</p></div>',
       (rows.length
         ? '<div class="th2-priority-rail__list">' + rows.map(function (item) {
             return [

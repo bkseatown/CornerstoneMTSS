@@ -2284,7 +2284,7 @@
       greetingGradeSelect.value = (defaults.gradeBand === "68" || defaults.gradeBand === "912") ? defaults.gradeBand : "35";
     }
     if (greetingLengthSelect) greetingLengthSelect.value = String(defaults.lessonLength);
-    setGreetingOpen(true);
+    setGreetingOpen(false);
   }
 
   function dismissGreeting() {
@@ -3889,20 +3889,20 @@
     }
 
     if (welcomeEl) {
-      if (normalized === "teacher") welcomeEl.textContent = "How it works: Launch -> Model -> Coach.";
-      else if (normalized === "support") welcomeEl.textContent = "How it works: Assign -> Write -> Track.";
-      else if (normalized === "family") welcomeEl.textContent = "How it works: Read -> Praise -> Add one line.";
-      else welcomeEl.textContent = "How it works: Launch -> Write -> Feedback.";
+      if (normalized === "teacher") welcomeEl.textContent = "Whole-class and small-group writing setup.";
+      else if (normalized === "support") welcomeEl.textContent = "Targeted support writing setup.";
+      else if (normalized === "family") welcomeEl.textContent = "Home writing setup.";
+      else welcomeEl.textContent = "Sentence and paragraph setup.";
     }
 
     if (startTitleEl) {
-      if (normalized === "teacher") startTitleEl.textContent = "Choose your class starting routine.";
-      else if (normalized === "support") startTitleEl.textContent = "Choose your support starting routine.";
-      else if (normalized === "family") startTitleEl.textContent = "Choose your home starting routine.";
-      else startTitleEl.textContent = "Choose your writing starting routine.";
+      if (normalized === "teacher") startTitleEl.textContent = "Open a class writing routine.";
+      else if (normalized === "support") startTitleEl.textContent = "Open a support writing routine.";
+      else if (normalized === "family") startTitleEl.textContent = "Open a home writing routine.";
+      else startTitleEl.textContent = "Open a writing routine.";
     }
     if (startCtaBtn) {
-      startCtaBtn.textContent = "Begin";
+      startCtaBtn.textContent = "Open";
     }
 
     if (normalized === "teacher") {
@@ -3946,23 +3946,23 @@
     if (!launchpadCopyEl) return;
     if (currentAudience === "teacher") {
       if (currentProfile === "whole") {
-        launchpadCopyEl.textContent = "Whole class: model one claim, then students build two details.";
+        launchpadCopyEl.textContent = "Whole class: model one claim, then students add two details.";
       } else if (currentProfile === "small") {
-        launchpadCopyEl.textContent = "Small group: rehearse aloud, write one line, quick feedback.";
+        launchpadCopyEl.textContent = "Small group: rehearse aloud, write one line, check it together.";
       } else {
-        launchpadCopyEl.textContent = "1:1: one tiny step, one line, quick win.";
+        launchpadCopyEl.textContent = "1:1: one step, one line, then check the next support move.";
       }
       return;
     }
     if (currentAudience === "family") {
-      launchpadCopyEl.textContent = "At home: read one line, praise one win, add one sentence.";
+      launchpadCopyEl.textContent = "At home: read one line, note one strength, add one sentence.";
       return;
     }
     if (currentAudience === "support") {
-      launchpadCopyEl.textContent = "LS/EAL: assign one micro-task, write one line, log progress.";
+      launchpadCopyEl.textContent = "LS/EAL: assign one task, write one line, log the response.";
       return;
     }
-    launchpadCopyEl.textContent = "Students: choose a start, write one line, then press Next Move.";
+    launchpadCopyEl.textContent = "Students: choose a start, write one line, then continue to the next step.";
   }
 
   function runQuickLaunch(kind) {
@@ -3993,10 +3993,10 @@
     }
     renderLaunchpadCopy();
     showToast(target === "whole"
-      ? "Launch ready: whole class routine"
+      ? "Whole class routine ready"
       : target === "small"
-        ? "Launch ready: small group routine"
-        : "Launch ready: 1:1 intensive routine");
+        ? "Small group routine ready"
+        : "1:1 routine ready");
   }
 
   function runCoreLessonQuickstart() {
@@ -4008,7 +4008,7 @@
       setStep("plan");
     });
     goToRailPanelById("ws-block-masters");
-    setScaffoldCue("Teach one master move, then have every student write one line.");
+      setScaffoldCue("Teach one model move, then have every student write one line.");
     if (planTopicInput) planTopicInput.focus();
     showToast("Core lesson quickstart ready");
   }
@@ -4034,7 +4034,7 @@
       goToRailPanelById("ws-block-scaffold");
       setScaffoldCue("Pick one scaffold, write one line, then track progress.");
       if (planTopicInput) planTopicInput.focus();
-      showToast("Support block ready");
+      showToast("Support routine ready");
       return;
     }
     if (currentAudience === "family") {
@@ -4057,18 +4057,18 @@
     goToRailPanelById("ws-block-warmup");
     setScaffoldCue("Complete one warm-up, then write one strong line.");
     if (warmupInput) warmupInput.focus();
-    showToast("Writing start ready");
+    showToast("Writing routine ready");
   }
 
   function buildLauncherOptions() {
     launcherOptions = [
-      { id: "quick-whole", label: "Whole Class Start", keywords: "whole class launch teacher", run: function () { runQuickLaunch("whole"); } },
-      { id: "quick-small", label: "Small Group Start", keywords: "small group support", run: function () { runQuickLaunch("small"); } },
-      { id: "quick-one", label: "1:1 Boost Start", keywords: "one to one intervention", run: function () { runQuickLaunch("one"); } },
-      { id: "mission-warmup", label: "Mission: Fix-It Sprint", keywords: "warmup fix it sentence", run: function () { runMission("warmup"); } },
-      { id: "mission-plan", label: "Mission: Plan It", keywords: "plan idea builder", run: function () { runMission("plan"); } },
-      { id: "mission-power", label: "Mission: Power Paragraph", keywords: "paragraph claim evidence", run: function () { runMission("power"); } },
-      { id: "mission-masters", label: "Mission: Masters Move", keywords: "masters storytelling persuasion", run: function () { runMission("masters"); } },
+      { id: "quick-whole", label: "Whole Class Routine", keywords: "whole class launch teacher", run: function () { runQuickLaunch("whole"); } },
+      { id: "quick-small", label: "Small Group Routine", keywords: "small group support", run: function () { runQuickLaunch("small"); } },
+      { id: "quick-one", label: "1:1 Routine", keywords: "one to one intervention", run: function () { runQuickLaunch("one"); } },
+      { id: "mission-warmup", label: "Sentence Repair", keywords: "warmup fix it sentence", run: function () { runMission("warmup"); } },
+      { id: "mission-plan", label: "Idea Plan", keywords: "plan idea builder", run: function () { runMission("plan"); } },
+      { id: "mission-power", label: "Paragraph Build", keywords: "paragraph claim evidence", run: function () { runMission("power"); } },
+      { id: "mission-masters", label: "Model Study", keywords: "masters storytelling persuasion", run: function () { runMission("masters"); } },
       { id: "aud-teacher", label: "Switch to Teacher View", keywords: "teacher role", run: function () { setAudience("teacher"); } },
       { id: "aud-student", label: "Switch to Student View", keywords: "student role", run: function () { setAudience("student"); } },
       { id: "aud-support", label: "Switch to LS/EAL View", keywords: "support eal ls", run: function () { setAudience("support"); } },
@@ -4284,7 +4284,7 @@
       currentStep = "plan";
     }
     if (modelBtn) modelBtn.disabled = next === "whole";
-    if (nextStepBtn) nextStepBtn.textContent = next === "whole" ? "Advance Step" : "Do This Next";
+    if (nextStepBtn) nextStepBtn.textContent = next === "whole" ? "Advance Step" : "Next Step";
     updateMetricsAndCoach();
     renderLaunchpadCopy();
     showToast("Profile: " + (next === "whole" ? "Whole Class" : next === "small" ? "Small Group" : "1:1"));

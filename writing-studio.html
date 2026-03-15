@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style/typography.css?v=20260301y">
   <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
   <link rel="stylesheet" href="./style/themes.css?v=20260301y">
-  <link rel="stylesheet" href="./writing-studio.css?v=20260301y">
+  <link rel="stylesheet" href="./writing-studio.css?v=20260315a">
 </head>
 <body class="cs-page-writing cs-hv2-theme-default">
   <button id="ws-back-home" class="ws-back-home" type="button" aria-label="Back to WordQuest">Back to WordQuest</button>
@@ -24,11 +24,11 @@
           <div>
             <div class="ws-title h2">Writing Studio</div>
             <div class="ws-subtitle" id="ws-subtitle"></div>
-            <div class="ws-welcome muted" id="ws-welcome">How it works: Launch -> Write -> Feedback.</div>
+            <div class="ws-welcome muted" id="ws-welcome">Sentence and paragraph setup.</div>
             <div class="ws-runtime-status" id="ws-runtime-status" aria-live="polite">Online</div>
             <div class="ws-start-here" id="ws-start-here">
               <div class="ws-start-kicker">Today</div>
-              <div class="ws-start-title" id="ws-start-title">Choose a starting routine.</div>
+              <div class="ws-start-title" id="ws-start-title">Open a writing routine.</div>
               <button class="ws-primary" id="ws-start-cta" type="button">Begin</button>
             </div>
             <div class="ws-launch-search-wrap">
@@ -96,38 +96,38 @@
           <button class="ws-step" type="button" data-step="publish">4. Publish</button>
         </div>
         <div id="ws-guidance" class="ws-guidance" aria-live="polite">
-          <div class="ws-meta">Current move</div>
+          <div class="ws-meta">Current task</div>
           <div id="ws-goal" class="ws-goal">Plan your first idea.</div>
-          <button class="ws-secondary" id="ws-next-step" type="button">Do This Next</button>
+          <button class="ws-secondary" id="ws-next-step" type="button">Next Step</button>
         </div>
-        <div class="ws-missions" aria-label="Quick missions">
-          <button class="ws-secondary" id="ws-mission-warmup" type="button">Mission 1: Fix-It Sprint</button>
-          <button class="ws-secondary" id="ws-mission-plan" type="button">Mission 2: Plan It</button>
-          <button class="ws-secondary" id="ws-mission-power" type="button">Mission 3: Power Paragraph</button>
-          <button class="ws-secondary" id="ws-mission-masters" type="button">Mission 4: Masters Move</button>
+        <div class="ws-missions" aria-label="Quick routines">
+          <button class="ws-secondary" id="ws-mission-warmup" type="button">Sentence Repair</button>
+          <button class="ws-secondary" id="ws-mission-plan" type="button">Idea Plan</button>
+          <button class="ws-secondary" id="ws-mission-power" type="button">Paragraph Build</button>
+          <button class="ws-secondary" id="ws-mission-masters" type="button">Model Study</button>
         </div>
         <div class="ws-launchpad" id="ws-launchpad" aria-label="60 second class launch">
           <div class="ws-launchpad-head">
-            <div class="ws-h2">Quick Start (60 sec)</div>
-            <div class="ws-meta" id="ws-launchpad-copy">Pick a path, then run your first move.</div>
+            <div class="ws-h2">Quick Launch</div>
+            <div class="ws-meta" id="ws-launchpad-copy">Choose a setup, then open the first task.</div>
           </div>
           <div class="ws-launchpad-actions">
             <button class="ws-secondary" id="ws-quick-whole" type="button">Whole Class</button>
             <button class="ws-secondary" id="ws-quick-small" type="button">Small Group</button>
-            <button class="ws-secondary" id="ws-quick-one" type="button">1:1 Boost</button>
+            <button class="ws-secondary" id="ws-quick-one" type="button">1:1</button>
           </div>
           <div class="ws-launchpad-actions">
-            <button class="ws-secondary" id="ws-quick-core" type="button">Start Lesson</button>
-            <button class="ws-secondary" id="ws-quick-full" type="button">Show All Tools</button>
+            <button class="ws-secondary" id="ws-quick-core" type="button">Open Lesson</button>
+            <button class="ws-secondary" id="ws-quick-full" type="button">All Tools</button>
           </div>
-          <div class="ws-meta" id="ws-quickstart-note">Pick one mission, model one line, celebrate one win.</div>
+          <div class="ws-meta" id="ws-quickstart-note">Choose one routine and start in the plan step.</div>
         </div>
         <details class="ws-advanced-canvas" id="ws-advanced-canvas">
           <summary>Advanced Tools</summary>
         <div class="ws-fishtank" id="ws-fishtank" aria-label="Curriculum lesson launcher">
           <div class="ws-fishtank-head">
-            <div class="ws-h2">Curriculum Launcher (ES/MS/HS)</div>
-            <div class="ws-meta">Align to today’s course pace, then run a gap-rescue if needed.</div>
+            <div class="ws-h2">Curriculum</div>
+            <div class="ws-meta">Set division, course, unit, and lesson.</div>
           </div>
           <div class="ws-fishtank-row">
             <select id="ws-ft-division" class="ws-plan-input" aria-label="Division">
@@ -141,7 +141,7 @@
           </div>
           <div class="ws-fishtank-actions">
             <button class="ws-secondary" id="ws-ft-load" type="button">Load Today</button>
-            <button class="ws-secondary" id="ws-ft-gap" type="button">Run Gap Rescue</button>
+            <button class="ws-secondary" id="ws-ft-gap" type="button">Gap Support</button>
             <button class="ws-secondary" id="ws-ft-ssm" type="button">Copy SSM Agenda</button>
             <button class="ws-secondary" id="ws-ft-iesp" type="button">Copy IESP Goal</button>
           </div>
@@ -465,7 +465,7 @@
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
   <script src="./js/theme-registry.js?v=20260301y"></script>
   <script src="./js/feature-flags.js?v=20260301y"></script>
-  <script src="./writing-studio.js?v=20260301y" defer></script>
+  <script src="./writing-studio.js?v=20260315a" defer></script>
 
   <div id="ws-showcase" class="ws-showcase" aria-hidden="true">
     <button class="ws-ghost ws-showcase-close" id="ws-showcase-close" type="button">Close Showcase</button>
@@ -512,12 +512,12 @@
     <div class="ws-hero">
       <div class="ws-hero-left">
         <div class="ws-kicker">QUICK SETUP • ~90 seconds</div>
-        <h1>Launch -> Model -> Coach</h1>
+        <h1>Choose a writing setup</h1>
         <p class="ws-hero-copy">
-          One prompt. Built-in scaffolds. Automatic data. Teachers see the lift immediately.
+          Set the role, grade band, and lesson length, then open the writing space.
         </p>
 
-        <div class="ws-demo" aria-label="Live demo: writing becomes coached writing">
+        <div class="ws-demo" aria-label="Example revision">
           <div class="ws-demo-row">
             <div class="ws-demo-label">Student types</div>
             <div class="ws-demo-bubble">
@@ -591,8 +591,8 @@
             <option value="40">40 min</option>
           </select>
 
-          <button class="ws-primary" id="wsStartStudio" type="button">Start Studio</button>
-          <button class="ws-ghost" id="wsStartIntervention" type="button">Start in Intervention Mode</button>
+          <button class="ws-primary" id="wsStartStudio" type="button">Open Studio</button>
+          <button class="ws-ghost" id="wsStartIntervention" type="button">Support Setup</button>
         </div>
       </div>
     </div>

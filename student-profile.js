@@ -1,55 +1,317 @@
 (function studentProfilePage() {
   "use strict";
 
-  var Evidence = window.CSEvidence || null;
-  var SupportStore = window.CSSupportStore || null;
   var CaseloadStore = window.CSCaseloadStore || null;
-  var TeacherSelectors = window.CSTeacherSelectors || null;
-  var TeacherIntelligence = window.CSTeacherIntelligence || null;
-  var WeeklyInsightGenerator = window.CSWeeklyInsightGenerator || null;
-  var GoogleWorkspace = window.CSGoogleWorkspace || null;
-  var GoogleAuth = window.CSGoogleAuth || null;
+  var SupportStore = window.CSSupportStore || null;
   var StudentProfileStore = window.CSStudentProfileStore || null;
-
-  if (GoogleAuth && typeof GoogleAuth.init === "function") {
-    try { GoogleAuth.init(); } catch (_err) {}
-  }
 
   var state = {
     studentId: "",
-    query: "",
     caseload: []
   };
 
-  var ghostExamples = [
-    "Try: Maya R.",
-    "Try: Tier 2 writing",
-    "Try: fraction support",
-    "Try: BIP review"
-  ];
-  var ghostIndex = 0;
-  var ghostTimer = null;
-
   var el = {
-    search: document.getElementById("sp-search-input"),
-    searchGhost: document.getElementById("sp-search-ghost"),
-    studentList: document.getElementById("sp-student-list"),
     empty: document.getElementById("sp-empty-state"),
     content: document.getElementById("sp-content"),
     hero: document.getElementById("sp-hero"),
-    supportSnapshot: document.getElementById("sp-support-snapshot"),
-    goalsPanel: document.getElementById("sp-goals-panel"),
-    evidencePanel: document.getElementById("sp-evidence-panel"),
-    weeklyPanel: document.getElementById("sp-weekly-panel"),
-    fbaForm: document.getElementById("sp-fba-form"),
-    fbaList: document.getElementById("sp-fba-list"),
-    bipForm: document.getElementById("sp-bip-form"),
-    bipView: document.getElementById("sp-bip-view"),
-    checkinForm: document.getElementById("sp-checkin-form"),
-    checkinList: document.getElementById("sp-checkin-list"),
-    googlePanel: document.getElementById("sp-google-panel"),
-    reportsLink: document.getElementById("sp-reports-link"),
-    gamesLink: document.getElementById("sp-games-link")
+    programs: document.getElementById("sp-programs-panel"),
+    assessments: document.getElementById("sp-assessment-panel"),
+    plans: document.getElementById("sp-plans-panel"),
+    team: document.getElementById("sp-team-panel")
+  };
+
+  var DEMO_STUDENTS = {
+    "demo-ava": {
+      identity: {
+        display: "Ava M.",
+        grade: "Grade 3",
+        support: "Reading support",
+        service: "Push-in literacy and small-group decoding",
+        tags: ["IESP", "IAP", "DIBELS mCLASS", "Science of Reading"]
+      },
+      summary: "Current class work stays aligned to Grade 3 literacy and math while intervention targets phoneme-grapheme mapping, short-vowel accuracy, and written response stamina.",
+      team: ["Specialist", "Classroom teacher", "School psychologist", "Case manager"],
+      core: [
+        {
+          label: "ELA Core",
+          title: "Fishtank ELA Grade 3",
+          detail: "Unit text work and writing response in class. Support focuses on access to the same text and writing task with reduced decoding burden."
+        },
+        {
+          label: "Math Core",
+          title: "Illustrative Math Grade 3 Unit 6 Lesson 12",
+          detail: "Upcoming end-of-unit assessment. Daily collection point is the lesson cool-down. Planning lens: conceptual math, strategy comparison, and student explanation."
+        }
+      ],
+      intervention: [
+        {
+          label: "Reading Intervention",
+          title: "Fundations Level 2 Unit 8",
+          detail: "Lesson focus: glued sounds, closed syllables, dictated sentence accuracy."
+        },
+        {
+          label: "Math Intervention",
+          title: "Bridges Intervention T3 Module 2 Unit 1 Session 4",
+          detail: "Goal: use place-value reasoning to solve two-step addition and subtraction within 1,000."
+        }
+      ],
+      assessments: [
+        {
+          label: "DIBELS mCLASS",
+          title: "MOY",
+          detail: "ORF 68 wcpm, accuracy 93%, composite: strategic support. Progress monitoring every 2 weeks."
+        },
+        {
+          label: "Illustrative Math",
+          title: "Lesson cool-down",
+          detail: "3/5. Missed comparison language on the final two items."
+        },
+        {
+          label: "Fundations",
+          title: "Weekly check",
+          detail: "Encoding: 8/10. Unit test planned after Lesson 5."
+        }
+      ],
+      goals: {
+        quarter: [
+          "Read closed-syllable and glued-sound words with 95% accuracy in connected text.",
+          "Complete Grade 3 lesson cool-downs with one teacher prompt or less.",
+          "Write a three-sentence response using a provided organizer."
+        ],
+        annual: [
+          "IESP: improve decoding accuracy and oral reading fluency across grade-level text with explicit phonics support.",
+          "IAP: sustain access to classroom assessment with read-aloud directions, repeated directions, and extended processing time."
+        ],
+        accommodations: [
+          "Directions chunked and repeated before independent work",
+          "Small-group testing when available",
+          "Teacher check-in before written response block"
+        ]
+      },
+      executiveFunction: [
+        "Preview the independent task before transition to table work.",
+        "Check materials and first-step completion before teacher leaves the group.",
+        "Use a one-line visual checklist during cool-down and writing response."
+      ],
+      behavior: [],
+      files: [
+        { label: "IESP details", href: "./case-management.html#iesp" },
+        { label: "IAP details", href: "./case-management.html#iap" },
+        { label: "IP details", href: "./case-management.html#ip" }
+      ],
+      notes: [
+        "Latest classroom evidence: cool-down and dictated sentence collected this week.",
+        "Psychologist and case manager are looped into accommodation review this quarter."
+      ]
+    },
+    "demo-liam": {
+      identity: {
+        display: "Liam T.",
+        grade: "Grade 2",
+        support: "Tier 3 reading intervention",
+        service: "Daily pull-out phonics block",
+        tags: ["IP", "Fundations", "DIBELS mCLASS"]
+      },
+      summary: "Intervention is tighter than core right now. The main record needs to show daily phonics instruction, benchmark status, and the current instructional entry point.",
+      team: ["Specialist", "Classroom teacher", "Case manager"],
+      core: [
+        { label: "ELA Core", title: "EL Education Grade 2", detail: "Core literacy stays grade-aligned with reduced text load and direct vocabulary pre-teach." },
+        { label: "Math Core", title: "Bridges Grade 2 Unit 5", detail: "Classroom math remains on-grade-level with concrete models and visual supports." }
+      ],
+      intervention: [
+        { label: "Reading Intervention", title: "UFLI Foundations Lesson 52", detail: "Focus: digraph review, blending practice, encoding with immediate corrective feedback." }
+      ],
+      assessments: [
+        { label: "DIBELS mCLASS", title: "Progress monitoring", detail: "NWF CLS 41. Weekly monitoring in place." },
+        { label: "UFLI", title: "Weekly encoding", detail: "7/10 on dictated words; short vowels remain inconsistent." }
+      ],
+      goals: {
+        quarter: ["Blend and read CVCC and CCVC words with automaticity.", "Write dictated short-vowel words with no more than one error in a set of 10."],
+        annual: ["IP: strengthen foundational decoding and encoding for grade-level classroom access."],
+        accommodations: ["Preview independent reading directions", "Visual articulation cueing during dictation"]
+      },
+      executiveFunction: [
+        "Use a first-then strip for intervention entry.",
+        "Keep only the active sound cards visible during decoding work."
+      ],
+      behavior: [],
+      files: [{ label: "IP details", href: "./case-management.html#ip" }],
+      notes: ["This student is the clearest K-2 science of reading example in the demo set."]
+    },
+    "demo-maya": {
+      identity: {
+        display: "Maya R.",
+        grade: "Grade 3",
+        support: "Writing support",
+        service: "Push-in writing and organization support",
+        tags: ["IAP", "Step Up to Writing"]
+      },
+      summary: "The main need is written output and organization, not decoding. Demo data should show writing structure and accommodation planning rather than reading-intervention language.",
+      team: ["Specialist", "Classroom teacher", "School psychologist"],
+      core: [
+        { label: "ELA Core", title: "Fishtank ELA Grade 3", detail: "Writing task is grounded in text evidence and structured response." },
+        { label: "Math Core", title: "Illustrative Math Grade 3 Unit 5", detail: "Math reasoning response needs sentence frame support." }
+      ],
+      intervention: [
+        { label: "Writing Intervention", title: "Step Up to Writing", detail: "Focus: paragraph frame, color-coded organization, sentence expansion." }
+      ],
+      assessments: [
+        { label: "Writing", title: "On-demand baseline", detail: "Topic sentence present; supporting details inconsistent." },
+        { label: "Classroom writing", title: "Progress-monitoring note", detail: "Organizer used independently in 2 of 3 writing blocks." }
+      ],
+      goals: {
+        quarter: ["Use a clear topic sentence and two supporting details in paragraph writing.", "Use the organizer before beginning a written response."],
+        annual: ["IAP: produce classroom writing with reduced initiation barriers and structured organizer access."],
+        accommodations: ["Color-coded organizer", "Sentence starter bank", "Teacher check before draft submission"]
+      },
+      executiveFunction: [
+        "Start from a visible writing frame rather than a blank page.",
+        "Mark off completion of topic sentence, detail 1, detail 2, and closing."
+      ],
+      behavior: [],
+      files: [{ label: "IAP details", href: "./case-management.html#iap" }],
+      notes: ["Writing data should stay concrete: rubric notes, organizer use, and classroom samples."]
+    },
+    "demo-noah": {
+      identity: {
+        display: "Noah K.",
+        grade: "Grade 4",
+        support: "Math intervention",
+        service: "Push-in math support and supplemental small group",
+        tags: ["IESP", "Illustrative Math", "Bridges Intervention"]
+      },
+      summary: "This profile demonstrates conceptual math support without turning philosophy into marketing language.",
+      team: ["Specialist", "Classroom teacher", "Case manager"],
+      core: [
+        { label: "Math Core", title: "Illustrative Math Grade 4 Unit 4 Lesson 9", detail: "Current collection points: daily cool-down and end-of-unit assessment." },
+        { label: "Planning Lens", title: "Pam Harris and Jo Boaler", detail: "Used here as planning lenses: relational thinking, multiple strategies, low-floor access, and mathematical discussion." }
+      ],
+      intervention: [
+        { label: "Math Intervention", title: "Bridges Intervention T3 Module 3 Unit 2 Session 3", detail: "Goal: represent multi-step problems with equations and clear operation choice." }
+      ],
+      assessments: [
+        { label: "Illustrative Math", title: "Cool-down", detail: "Solved 4/5 with equation written after prompting." },
+        { label: "Bridges Intervention", title: "Progress monitoring", detail: "Correctly represented 3 of 4 problems with bar model support." }
+      ],
+      goals: {
+        quarter: ["Explain operation choice using words, numbers, or a model.", "Complete end-of-lesson cool-downs independently with one self-check."],
+        annual: ["IESP: improve access to grade-level problem solving through conceptual model use and strategy explanation."],
+        accommodations: ["Model template", "Think time before explanation", "Reduced item set on intervention probes"]
+      },
+      executiveFunction: [
+        "Highlight the operation decision before solving.",
+        "Use a brief self-check after equation set-up."
+      ],
+      behavior: [],
+      files: [{ label: "IESP details", href: "./case-management.html#iesp" }],
+      notes: ["This is the cleanest place to show conceptual math philosophy as a planning lens, not as a fake product."]
+    },
+    "demo-zoe": {
+      identity: {
+        display: "Zoe W.",
+        grade: "Grade 1",
+        support: "Behavior and foundational reading support",
+        service: "Push-in plus brief daily intervention",
+        tags: ["BIP", "Fundations", "DIBELS mCLASS"]
+      },
+      summary: "The profile needs to hold both foundational reading and behavior plans without turning into a long form stack.",
+      team: ["Specialist", "Classroom teacher", "School psychologist", "Behavior team"],
+      core: [
+        { label: "ELA Core", title: "EL Education Grade 1", detail: "Core lesson access depends on short directions and immediate start support." }
+      ],
+      intervention: [
+        { label: "Reading Intervention", title: "Fundations Level K Unit 5", detail: "Focus: letter-sound fluency and dictated CVC work." },
+        { label: "Behavior Plan", title: "BIP active", detail: "Replacement behavior: ask for help and return to task after one prompt." }
+      ],
+      assessments: [
+        { label: "DIBELS mCLASS", title: "PSF progress monitor", detail: "24 correct. Weekly monitoring." },
+        { label: "Behavior", title: "Daily note", detail: "2 successful transitions with visual cue." }
+      ],
+      goals: {
+        quarter: ["Increase phoneme segmentation fluency.", "Use help-request routine during independent work."],
+        annual: ["BIP: reduce task-avoidance behaviors during literacy block."],
+        accommodations: ["Visual first-then", "Short work intervals", "Immediate feedback"]
+      },
+      executiveFunction: [
+        "Visual first-then card before independent work.",
+        "Timer for short work interval and return-to-task cue."
+      ],
+      behavior: [
+        "FBA: task avoidance is most likely during independent literacy after whole-group transition.",
+        "BIP: replacement behavior is help request plus return to task after one adult prompt.",
+        "Review date set with psychologist and behavior team."
+      ],
+      files: [{ label: "BIP details", href: "./case-management.html#bip" }],
+      notes: ["Keep behavior notes factual and brief: incident, response, next review date."]
+    },
+    "demo-jasmin": {
+      identity: {
+        display: "Jasmin P.",
+        grade: "Grade 7",
+        support: "Middle school literacy intervention",
+        service: "Small-group decoding and morphology",
+        tags: ["IAP", "Just Words", "DIBELS mCLASS"]
+      },
+      summary: "This is the middle-school example. It shows what older-student intervention records look like without changing the page structure.",
+      team: ["Specialist", "ELA teacher", "School psychologist"],
+      core: [
+        { label: "ELA Core", title: "EL Education Grade 7", detail: "Classroom work remains text-based and discussion-heavy; intervention targets access to multisyllabic words." },
+        { label: "Math Core", title: "Illustrative Math Grade 7 Unit 3", detail: "Assessment remains module and lesson based." }
+      ],
+      intervention: [
+        { label: "Reading Intervention", title: "Just Words Unit 4", detail: "Focus: suffixing rules, multisyllabic decoding, and dictation." }
+      ],
+      assessments: [
+        { label: "Just Words", title: "Progress check", detail: "Read 15/20 multisyllabic target words accurately." },
+        { label: "DIBELS mCLASS", title: "ORF snapshot", detail: "Used as supplementary progress data; rate remains below benchmark." }
+      ],
+      goals: {
+        quarter: ["Decode multisyllabic academic words accurately in connected text.", "Apply taught suffixing rules in dictation and writing."],
+        annual: ["IAP: maintain access to grade-level content through explicit morphology and accommodation support."],
+        accommodations: ["Preview vocabulary", "Teacher-provided notes", "Extended time on text-heavy tasks"]
+      },
+      executiveFunction: [
+        "Preview assignment load and due date before beginning text work.",
+        "Use a note-catcher with required sections already labeled."
+      ],
+      behavior: [],
+      files: [{ label: "IAP details", href: "./case-management.html#iap" }],
+      notes: ["Older-student demo data should feel leaner and more document-based than elementary."]
+    },
+    "demo-mateo": {
+      identity: {
+        display: "Mateo C.",
+        grade: "Grade 10",
+        support: "High school literacy support",
+        service: "Intensive reading intervention plus class accommodations",
+        tags: ["IESP", "IP", "Wilson / Corrective Reading"]
+      },
+      summary: "This is the high-school example. It should feel accommodation-heavy and document-heavy, not cute or elementary.",
+      team: ["Specialist", "Case manager", "School psychologist", "Content-area teachers"],
+      core: [
+        { label: "Course Access", title: "Grade 10 humanities and algebra support", detail: "Primary work is access to text-heavy content and written response." }
+      ],
+      intervention: [
+        { label: "Reading Intervention", title: "Wilson Reading System Step 7", detail: "Wordlist charting and dictation drive lesson mastery decisions." },
+        { label: "Supplemental", title: "Corrective Reading placement level", detail: "Placement data used to identify instructional entry point for comprehension support." }
+      ],
+      assessments: [
+        { label: "Wilson", title: "Wordlist charting", detail: "Step 7 wordlist 17/20; dictation errors on vowel teams." },
+        { label: "Course assessment", title: "Accommodated writing task", detail: "Completed with scaffolded outline and extended time." }
+      ],
+      goals: {
+        quarter: ["Increase accuracy on Wilson wordlist and dictation tasks.", "Complete content-area written responses using provided outline supports."],
+        annual: ["IESP: improve access to secondary text and written tasks through structured literacy intervention and accommodations.", "IP: maintain targeted intensive reading intervention."],
+        accommodations: ["Extended time", "Chunked text", "Teacher outline", "Read-aloud directions when allowed"]
+      },
+      executiveFunction: [
+        "Break multi-step assignments into checkpoint deadlines.",
+        "Use teacher outline before written response begins."
+      ],
+      behavior: [],
+      files: [{ label: "IESP details", href: "./case-management.html#iesp" }, { label: "IP details", href: "./case-management.html#ip" }],
+      notes: ["Case manager remains looped in on accommodations even while the specialist maintains active service delivery."]
+    }
   };
 
   function esc(value) {
@@ -74,50 +336,16 @@
 
   function readStudentId() {
     var p = params();
-    return text(p.get("student") || p.get("sid"));
-  }
-
-  function setStudentId(studentId, push) {
-    state.studentId = text(studentId);
-    if (!state.studentId) return;
-    if (push !== false) {
-      var url = new URL(window.location.href);
-      url.searchParams.set("student", state.studentId);
-      window.history.replaceState({}, "", url.toString());
-    }
-    render();
-  }
-
-  function relativeDate(value) {
-    var ts = typeof value === "number" ? value : Date.parse(String(value || ""));
-    if (!Number.isFinite(ts)) return "No recent entry";
-    var diffHours = Math.round((Date.now() - ts) / 3600000);
-    if (diffHours < 24) return diffHours <= 1 ? "Within the last hour" : diffHours + " hours ago";
-    var diffDays = Math.round(diffHours / 24);
-    return diffDays + " day" + (diffDays === 1 ? "" : "s") + " ago";
+    return text(p.get("student") || p.get("sid") || "demo-ava");
   }
 
   function loadCaseload() {
-    var rows = TeacherSelectors && typeof TeacherSelectors.loadCaseload === "function"
-      ? TeacherSelectors.loadCaseload({ CaseloadStore: CaseloadStore, Evidence: Evidence })
-      : [];
-    if ((!rows || !rows.length) && CaseloadStore && typeof CaseloadStore.loadCaseload === "function") {
-      var seeded = CaseloadStore.loadCaseload();
-      rows = seeded && Array.isArray(seeded.students) ? seeded.students.map(function (student) {
-        var src = student && typeof student === "object" ? student : {};
-        return {
-          id: String(src.id || ""),
-          name: String(src.name || src.id || "Student"),
-          grade: String(src.grade || src.gradeBand || ""),
-          gradeBand: String(src.gradeBand || src.grade || ""),
-          tier: String(src.tier || ""),
-          risk: "steady",
-          focus: String(src.focus || src.focusSkill || ""),
-          tags: Array.isArray(src.tags) ? src.tags.slice() : []
-        };
-      }) : [];
+    if (!CaseloadStore || typeof CaseloadStore.loadCaseload !== "function") {
+      state.caseload = [];
+      return;
     }
-    state.caseload = Array.isArray(rows) ? rows : [];
+    var rows = CaseloadStore.loadCaseload();
+    state.caseload = rows && Array.isArray(rows.students) ? rows.students : [];
   }
 
   function ensureDemoCaseload() {
@@ -127,502 +355,165 @@
     loadCaseload();
   }
 
-  function filteredCaseload() {
-    var q = state.query.toLowerCase();
-    if (!q) return state.caseload.slice();
-    return state.caseload.filter(function (student) {
-      return [
-        student.name,
-        student.grade,
-        student.gradeBand,
-        student.focus,
-        student.tier
-      ].join(" ").toLowerCase().indexOf(q) >= 0;
-    });
-  }
-
-  function getStudent(studentId) {
-    return filteredCaseload().find(function (row) { return row.id === studentId; })
-      || state.caseload.find(function (row) { return row.id === studentId; })
-      || null;
-  }
-
-  function getSupport(studentId) {
-    return SupportStore && typeof SupportStore.getStudent === "function"
-      ? (SupportStore.getStudent(studentId) || {})
-      : {};
-  }
-
-  function getSummary(studentId, student) {
-    return TeacherIntelligence && typeof TeacherIntelligence.getStudentSummary === "function"
-      ? TeacherIntelligence.getStudentSummary(studentId, student, { Evidence: Evidence, TeacherSelectors: TeacherSelectors })
-      : (Evidence && typeof Evidence.getStudentSummary === "function" ? Evidence.getStudentSummary(studentId) : null);
-  }
-
-  function getSnapshot(studentId) {
-    return TeacherIntelligence && typeof TeacherIntelligence.getStudentSnapshot === "function"
-      ? TeacherIntelligence.getStudentSnapshot(studentId, { Evidence: Evidence, TeacherSelectors: TeacherSelectors })
-      : (TeacherSelectors && typeof TeacherSelectors.getStudentEvidence === "function" ? TeacherSelectors.getStudentEvidence(studentId, { Evidence: Evidence }) : null);
-  }
-
-  function getWeekly(studentId, student, support, summary, snapshot) {
-    if (!WeeklyInsightGenerator || typeof WeeklyInsightGenerator.generateWeeklyInsights !== "function") return null;
-    return WeeklyInsightGenerator.generateWeeklyInsights({
-      studentProfile: student,
-      supportProfile: support,
-      summary: summary,
-      model: snapshot
-    });
-  }
-
-  function getProfileRecord(studentId) {
-    return StudentProfileStore && typeof StudentProfileStore.getStudentRecord === "function"
-      ? StudentProfileStore.getStudentRecord(studentId)
-      : { fbaIncidents: [], bipPlan: {}, stakeholderCheckins: [] };
-  }
-
-  function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  function toneForRisk(risk) {
-    var value = String(risk || "").toLowerCase();
-    if (value.indexOf("high") >= 0 || value.indexOf("risk") >= 0) return "alert";
-    if (value.indexOf("watch") >= 0 || value.indexOf("mod") >= 0) return "watch";
-    return "steady";
-  }
-
-  function getRecentEvidence(studentId, limit) {
-    return SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
-      ? SupportStore.getRecentEvidencePoints(studentId, 30, limit || 8)
-      : [];
-  }
-
-  function estimateGoalProgress(goal, index) {
-    var row = goal && typeof goal === "object" ? goal : {};
-    var explicit = Number(row.progress || row.mastery || row.percent || row.completion);
-    if (Number.isFinite(explicit) && explicit > 0) return clamp(Math.round(explicit), 8, 100);
-    return [36, 58, 74, 49][index % 4];
-  }
-
-  function buildMeter(label, value, tone, detail) {
-    var pct = clamp(Math.round(Number(value) || 0), 0, 100);
-    return [
-      '<div class="sp-meter sp-meter--' + esc(tone || "steady") + '">',
-      '  <div class="sp-meter-top"><span>' + esc(label) + '</span><strong>' + esc(String(pct)) + '%</strong></div>',
-      '  <div class="sp-meter-track"><span style="width:' + esc(String(pct)) + '%"></span></div>',
-      detail ? '  <p>' + esc(detail) + '</p>' : "",
-      '</div>'
-    ].join("");
-  }
-
-  function buildSignalPills(items, fallback) {
-    var rows = (Array.isArray(items) ? items : []).filter(Boolean);
-    if (!rows.length) rows = [fallback];
-    return '<div class="sp-pill-row">' + rows.map(function (item) {
-      return '<span class="sp-pill">' + esc(item) + '</span>';
-    }).join("") + '</div>';
-  }
-
-  function buildInterventionLane(interventions) {
-    var rows = Array.isArray(interventions) ? interventions.slice(0, 3) : [];
-    if (!rows.length) {
-      return '<div class="sp-lane-empty">No intervention cycle recorded yet. Start with one short move and track the response here.</div>';
+  function ensureSupportSeed(studentId, demo) {
+    if (!SupportStore || typeof SupportStore.getStudent !== "function") return;
+    var student = SupportStore.getStudent(studentId);
+    if (!student || !Array.isArray(student.goals) || !student.goals.length) {
+      demo.goals.quarter.forEach(function (goal) {
+        SupportStore.addGoal(studentId, {
+          skill: "current",
+          target: goal,
+          timeframe: "quarter"
+        });
+      });
+      demo.goals.accommodations.forEach(function (item) {
+        SupportStore.addAccommodation(studentId, {
+          title: item,
+          whenToUse: "classroom and assessment"
+        });
+      });
+      demo.intervention.forEach(function (item) {
+        SupportStore.addIntervention(studentId, {
+          title: item.title,
+          detail: item.detail,
+          type: item.label
+        });
+      });
     }
-    return '<div class="sp-lane">' + rows.map(function (row, index) {
-      var label = row.domain || row.tier || "Support cycle";
-      var focus = row.strategy || row.focus || "Targeted move recorded";
-      var metric = row.progressMetric || row.metric || row.schedule || "Monitoring cue not set yet";
+  }
+
+  function studentRow(studentId) {
+    for (var i = 0; i < state.caseload.length; i += 1) {
+      if (String(state.caseload[i].id) === String(studentId)) return state.caseload[i];
+    }
+    return null;
+  }
+
+  function demoFor(studentId) {
+    return DEMO_STUDENTS[studentId] || DEMO_STUDENTS["demo-ava"];
+  }
+
+  function buildList(items) {
+    return '<div class="sp-list">' + items.map(function (item) {
       return [
-        '<article class="sp-lane-card">',
-        '  <div class="sp-lane-step">0' + esc(String(index + 1)) + '</div>',
-        '  <div class="sp-lane-copy">',
-        '    <strong>' + esc(label) + '</strong>',
-        '    <p>' + esc(focus) + '</p>',
-        '    <span>' + esc(metric) + '</span>',
-        '  </div>',
+        '<article class="sp-list-item">',
+        '  <p class="sp-tile-label">' + esc(item.label || "") + '</p>',
+        '  <strong>' + esc(item.title || "") + '</strong>',
+        '  <p>' + esc(item.detail || "") + '</p>',
         '</article>'
       ].join("");
     }).join("") + '</div>';
   }
 
-  function buildEvidenceMoments(evidenceRows, chips) {
-    var rows = Array.isArray(evidenceRows) ? evidenceRows.slice(0, 3) : [];
-    if (rows.length) {
-      return '<div class="sp-moment-list">' + rows.map(function (row) {
-        return [
-          '<article class="sp-moment">',
-          '  <strong>' + esc(row.module || row.type || "Support signal") + '</strong>',
-          '  <p>' + esc(relativeDate(row.createdAt)) + '</p>',
-          '</article>'
-        ].join("");
-      }).join("") + '</div>';
-    }
-    return buildSignalPills((chips || []).map(function (chip) {
-      return chip.label + ": " + chip.value;
-    }), "First progress signal still needed");
+  function compactLines(items) {
+    return '<div class="sp-compact-lines">' + items.map(function (item) {
+      return '<p class="sp-note-line">' + esc(item) + '</p>';
+    }).join("") + '</div>';
   }
 
-  function renderStudentList() {
-    var rows = filteredCaseload();
-    el.studentList.innerHTML = rows.length ? rows.map(function (student) {
-      var summary = getSummary(student.id, student) || {};
-      return [
-        '<a class="sp-student-link' + (student.id === state.studentId ? ' is-active' : '') + '" href="student-profile.html?student=' + encodeURIComponent(student.id) + '">',
-        '  <strong>' + esc(student.name || "Student") + '</strong>',
-        '  <span>' + esc([student.gradeBand || student.grade || "", summary.focus || student.focus || "Support profile"].filter(Boolean).join(" · ")) + '</span>',
-        '  <span>' + esc(summary && summary.risk ? ("Status: " + summary.risk) : "Open profile") + '</span>',
-        '</a>'
-      ].join("");
-    }).join("") : '<p class="sp-muted">No students match this search yet.</p>';
-  }
-
-  function buildHero(student, support, summary, snapshot, record) {
-    var goals = Array.isArray(support.goals) ? support.goals : [];
-    var accommodations = Array.isArray(support.accommodations) ? support.accommodations : [];
-    var reminders = StudentProfileStore && typeof StudentProfileStore.listReminders === "function"
-      ? StudentProfileStore.listReminders(student.id)
-      : [];
-    var evidenceCount = (SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
-      ? SupportStore.getRecentEvidencePoints(student.id, 30, 40)
-      : []).length || 0;
-    var supportChips = [
-      student.gradeBand || student.grade || "Grade band not set",
-      summary && summary.focus ? summary.focus : "Support focus forming",
-      summary && summary.risk ? summary.risk : "steady",
-      goals[0] && (goals[0].skill || goals[0].domain || goals[0].target),
-      accommodations[0] && (accommodations[0].title || accommodations[0].whenToUse || "Accommodation"),
-      record.bipPlan && record.bipPlan.reviewDate && ("BIP " + record.bipPlan.reviewDate)
-    ].filter(Boolean).slice(0, 5);
-    var topNeed = snapshot && snapshot.needs && snapshot.needs[0]
-      ? (snapshot.needs[0].label || snapshot.needs[0].skillId || "Collect baseline")
-      : "Collect baseline";
-    var readinessLabel = evidenceCount >= 6 ? "Ready to act" : (evidenceCount >= 3 ? "Usable signal" : "Build trust");
-    var readinessDetail = evidenceCount >= 6
-      ? "Enough evidence is visible to act without reopening every record."
-      : (evidenceCount >= 3
-        ? "Use what is here, but confirm with one quick check."
-        : "Start with one fresh signal before making a larger support call.");
-    var planLine = (summary && summary.nextMove && summary.nextMove.line) || "Review support, evidence, communication, and the next move in one place.";
+  function buildHero(student, demo) {
+    var tags = Array.isArray(demo.identity.tags) ? demo.identity.tags : [];
     return [
       '<div class="sp-hero-main">',
-      '  <p class="sp-kicker">Support brief</p>',
-      '  <h1>' + esc(student.name || "Student") + '</h1>',
-      '  <p class="sp-subline">' + esc([
-        student.gradeBand || student.grade || "Grade not set",
-        summary && summary.focus ? summary.focus : "Support focus forming",
-        summary && summary.risk ? summary.risk : "steady"
-      ].join(" · ")) + '</p>',
-      '  <p class="sp-body-copy">' + esc(planLine) + '</p>',
-      '  <div class="sp-chip-row">' +
-      supportChips.map(function (item) {
-        return '<span class="sp-chip">' + esc(item) + '</span>';
-      }).join("") +
-      '</div>',
-      '  <div class="sp-hero-command-grid">',
-      '    <article class="sp-hero-command sp-hero-command--focus"><span>Do now</span><strong>' + esc(planLine) + '</strong></article>',
-      '    <article class="sp-hero-command"><span>Top need</span><strong>' + esc(topNeed) + '</strong></article>',
-      '    <article class="sp-hero-command sp-hero-command--trust"><span>' + esc(readinessLabel) + '</span><strong>' + esc(readinessDetail) + '</strong></article>',
-      '  </div>',
-      '  <div class="sp-hero-summary">',
-      '    <div class="sp-meta-card"><span>Last session</span><strong>' + esc(summary && summary.lastSession ? relativeDate(summary.lastSession.timestamp) : "No sessions yet") + '</strong></div>',
-      '    <div class="sp-meta-card"><span>Evidence points</span><strong>' + esc(String(evidenceCount)) + '</strong></div>',
-      '    <div class="sp-meta-card"><span>Profile trust</span><strong>' + esc(readinessLabel) + '</strong></div>',
-      '  </div>',
+      '  <p class="sp-kicker">Student</p>',
+      '  <h1>' + esc(demo.identity.display || (student && student.name) || "Student") + '</h1>',
+      '  <p class="sp-subline">' + esc([demo.identity.grade, demo.identity.support, demo.identity.service].filter(Boolean).join(" · ")) + '</p>',
+      '  <p class="sp-hero-copy">' + esc(demo.summary) + '</p>',
+      '  <div class="sp-chip-row">' + tags.map(function (tag) {
+        return '<span class="sp-chip">' + esc(tag) + '</span>';
+      }).join("") + '</div>',
       '</div>',
       '<div class="sp-hero-side">',
-      '  <div class="sp-evidence-story">',
-      '    <p class="sp-kicker">Signal trend</p>',
-      '    <div id="sp-hero-evidence-visual"></div>',
+      '  <div class="sp-hero-summary">',
+      '    <div class="sp-meta-card"><span>Reading</span><strong>' + esc((demo.assessments[0] && demo.assessments[0].title) || "Current record") + '</strong></div>',
+      '    <div class="sp-meta-card"><span>Math</span><strong>' + esc((demo.core[1] && demo.core[1].title) || "Current class record") + '</strong></div>',
+      '    <div class="sp-meta-card"><span>Plans</span><strong>' + esc(demo.files.map(function (item) { return item.label.replace(" details", ""); }).join(" · ")) + '</strong></div>',
       '  </div>',
-      '  <div class="sp-reminder-list">' + (reminders.length ? reminders.map(function (row) {
-        return '<span class="sp-reminder" data-tone="' + esc(row.tone || "info") + '">' + esc(row.label) + '</span>';
-      }).join("") : '<span class="sp-reminder" data-tone="info">No profile reminders waiting.</span>') + '</div>',
+      '  <p class="sp-note-line"><strong>Looped in:</strong> ' + esc(demo.team.join(" · ")) + '</p>',
       '</div>'
     ].join("");
   }
 
-  function renderSnapshot(student, support, summary, snapshot) {
-    var needs = snapshot && Array.isArray(snapshot.needs) ? snapshot.needs : [];
-    var interventions = Array.isArray(support.interventions) ? support.interventions : [];
-    var evidenceCount = getRecentEvidence(student.id, 24).length;
-    var readiness = clamp(28 + (interventions.length * 16) + Math.min(evidenceCount, 6) * 6, 18, 96);
-    var continuity = clamp(22 + (interventions.length * 20), 16, 92);
-    var freshness = clamp(evidenceCount * 11, 10, 94);
-    el.supportSnapshot.innerHTML = [
-      '<p class="sp-kicker">Support Snapshot</p>',
-      '<h3 class="sp-card-title">Intervention posture</h3>',
-      '<p class="sp-panel-intro">' + esc((summary && summary.nextMove && summary.nextMove.line) || "Priority still forming from available support data.") + '</p>',
-      '<div class="sp-meter-grid">',
-      buildMeter("Readiness", readiness, toneForRisk(summary && summary.risk), "How ready this profile is for a confident next move."),
-      buildMeter("Fresh signal", freshness, "steady", evidenceCount ? "Recent evidence is visible across the last 30 days." : "Collect one quick check to strengthen the picture."),
-      buildMeter("Continuity", continuity, "watch", interventions.length ? "Interventions are starting to form a usable story." : "No consistent intervention rhythm recorded yet."),
+  function renderPrograms(demo) {
+    var rows = [].concat(demo.core, demo.intervention).slice(0, 3);
+    el.programs.innerHTML = [
+      '<p class="sp-kicker">Current Program Record</p>',
+      '<h2 class="sp-section-title">Curriculum and intervention</h2>',
+      buildList(rows)
+    ].join("");
+  }
+
+  function renderAssessments(demo) {
+    var rows = demo.assessments.slice(0, 2);
+    el.assessments.innerHTML = [
+      '<p class="sp-kicker">Recent Assessments</p>',
+      '<h2 class="sp-section-title">Collected measures</h2>',
+      buildList(rows)
+    ].join("");
+  }
+
+  function renderPlans(demo) {
+    el.plans.innerHTML = [
+      '<p class="sp-kicker">Goals and Plans</p>',
+      '<h2 class="sp-section-title">Quarter and annual priorities</h2>',
+      '<div class="sp-compact-card"><p class="sp-tile-label">Current quarter goals</p><div class="sp-stack">' + demo.goals.quarter.slice(0, 3).map(function (item) {
+        return '<span class="sp-chip">' + esc(item) + '</span>';
+      }).join("") + '</div></div>',
+      '<div class="sp-compact-grid">' +
+        '<div class="sp-compact-card"><p class="sp-tile-label">End-of-year goals</p>' + compactLines(demo.goals.annual.slice(0, 2)) + '</div>' +
+        '<div class="sp-compact-card"><p class="sp-tile-label">Executive functioning</p>' + compactLines(demo.executiveFunction.slice(0, 2)) + '</div>' +
       '</div>',
-      '<div class="sp-card-band">',
-      '  <strong>Shared needs</strong>',
-      buildSignalPills(needs.slice(0, 4).map(function (row) { return row.label || row.key || row.skillId || "Need"; }), "Need profile still taking shape"),
-      '</div>',
-      '<div class="sp-card-band">',
-      '  <strong>Intervention lane</strong>',
-      buildInterventionLane(interventions),
-      '</div>'
+      '<div class="sp-compact-card"><p class="sp-tile-label">Accommodations</p><div class="sp-stack">' + demo.goals.accommodations.slice(0, 3).map(function (item) {
+        return '<span class="sp-chip">' + esc(item) + '</span>';
+      }).join("") + '</div></div>',
+      '<div class="sp-plan-links">' + demo.files.map(function (item) {
+        return '<a class="sp-plan-link" href="' + esc(item.href) + '"><strong>' + esc(item.label) + '</strong></a>';
+      }).join("") + '</div>'
     ].join("");
   }
 
-  function renderGoals(support) {
-    var goals = Array.isArray(support.goals) ? support.goals : [];
-    var accs = Array.isArray(support.accommodations) ? support.accommodations : [];
-    var goalRows = goals.slice(0, 3).map(function (row, index) {
-      var label = row.skill || row.domain || row.target || "Goal in progress";
-      var progress = estimateGoalProgress(row, index);
-      return [
-        '<article class="sp-goal-track">',
-        '  <div class="sp-goal-track-top"><strong>' + esc(label) + '</strong><span>' + esc(String(progress)) + '%</span></div>',
-        '  <div class="sp-goal-track-bar"><span style="width:' + esc(String(progress)) + '%"></span></div>',
-        '  <p>' + esc(row.metric || row.measure || row.target || "Goal language still needs a sharper success measure.") + '</p>',
-        '</article>'
-      ].join("");
-    });
-    el.goalsPanel.innerHTML = [
-      '<p class="sp-kicker">Goals & Accommodations</p>',
-      '<h3 class="sp-card-title">Progress map</h3>',
-      '<p class="sp-panel-intro">See where support is already moving and where scaffolds still need to be anchored.</p>',
-      (goalRows.length ? '<div class="sp-goal-track-list">' + goalRows.join("") + '</div>' : '<div class="sp-lane-empty">No goals recorded yet. Add one target and this area will start showing momentum.</div>'),
-      '<div class="sp-card-band">',
-      '  <strong>Supports on deck</strong>',
-      buildSignalPills(accs.slice(0, 6).map(function (row) { return row.title || row.whenToUse || "Accommodation"; }), "No accommodations logged yet"),
-      '</div>'
-    ].join("");
-  }
-
-  function renderEvidence(studentId, summary) {
-    var evidenceRows = getRecentEvidence(studentId, 8);
-    var chips = summary && Array.isArray(summary.evidenceChips) ? summary.evidenceChips : [];
-    var series = evidenceRows.length ? evidenceRows.map(function (row, index) {
-      return 30 + Math.round((((index + 1) / evidenceRows.length) * 48));
-    }) : [22, 28, 18, 34, 26, 40, 22, 30];
-    var cadence = evidenceRows.length >= 6 ? "Healthy cadence" : (evidenceRows.length >= 3 ? "Building cadence" : "Thin cadence");
-    el.evidencePanel.innerHTML = [
-      '<p class="sp-kicker">Evidence Pulse</p>',
-      '<h3 class="sp-card-title">Progress monitoring</h3>',
-      '<p class="sp-panel-intro">Quick read on data flow, recency, and what the team can trust today.</p>',
-      '<div class="sp-evidence-story">',
-      '  <div class="sp-signal-bar">' + series.map(function (value) {
-        return '<span style="height:' + value + 'px"></span>';
-      }).join("") + '</div>',
-      '  <div class="sp-signal-caption"><span>' + esc(cadence) + '</span><span>' + esc(evidenceRows.length ? (evidenceRows.length + " points") : "0 points") + '</span></div>',
-      '</div>',
-      '<div class="sp-card-band">',
-      '  <strong>Recent signal moments</strong>',
-      buildEvidenceMoments(evidenceRows, chips),
-      '</div>'
-    ].join("");
-  }
-
-  function renderWeekly(weekly) {
-    if (!weekly) {
-      el.weeklyPanel.innerHTML = '<div class="sp-weekly-card"><strong>Weekly summary</strong><p>No weekly insight generated yet.</p></div>';
+  function renderTeam(demo) {
+    if (!demo.behavior || !demo.behavior.length) {
+      el.team.classList.add("hidden");
+      el.team.innerHTML = "";
       return;
     }
-    var strengths = (weekly.strengths || []).slice(0, 2);
-    var growth = (weekly.growthFocus || []).slice(0, 2);
-    var activities = (weekly.recentActivities || []).slice(0, 3);
-    el.weeklyPanel.innerHTML = [
-      '<div class="sp-weekly-feature">',
-      '  <span class="sp-weekly-eyebrow">This week</span>',
-      '  <strong>' + esc(growth[0] || strengths[0] || "Weekly story is forming.") + '</strong>',
-      '  <p>' + esc(strengths[0] ? ("Keep leaning on " + strengths[0].toLowerCase() + " while tightening the next support move.") : "Run one more support cycle to strengthen the weekly readout.") + '</p>',
-      '</div>',
-      '<div class="sp-list">',
-      '<div class="sp-weekly-card"><strong>Strengths</strong><p>' + esc(strengths.join(" • ") || "No strength pattern surfaced yet.") + '</p></div>',
-      '<div class="sp-weekly-card"><strong>Growth focus</strong><p>' + esc(growth.join(" • ") || "No growth focus surfaced yet.") + '</p></div>',
-      '<div class="sp-weekly-card"><strong>Recent activities</strong><p>' + esc(activities.join(" • ") || "No recent activities recorded yet.") + '</p></div>',
-      '</div>'
-    ].join("");
-  }
-
-  function renderFBA(record) {
-    el.fbaList.innerHTML = record.fbaIncidents && record.fbaIncidents.length ? record.fbaIncidents.slice(0, 6).map(function (row) {
-      return '<div class="sp-record"><strong>' + esc(row.behavior || "Behavior incident") + '</strong><p>' + esc([row.when, row.setting, row.frequency, row.duration, row.probableFunction].filter(Boolean).join(" • ")) + '</p><p>' + esc([row.antecedent, row.consequence].filter(Boolean).join(" → ") || "ABC data not complete yet.") + '</p><p>' + esc((row.teacherResponse || "No teacher response logged") + (row.notes ? " · " + row.notes : "")) + '</p></div>';
-    }).join("") : '<div class="sp-google-empty">Ghost example only: log when, what preceded the behavior, what happened, and what adults or peers did. This disappears once real entries are saved.</div>';
-  }
-
-  function renderBIP(record) {
-    var plan = record.bipPlan || {};
-    el.bipView.innerHTML = plan.targetBehavior || plan.replacementBehavior || plan.reviewDate ? [
-      '<div class="sp-list">',
-      '<div class="sp-list-item"><strong>Target behavior</strong><p>' + esc(plan.targetBehavior || "Not set") + '</p></div>',
-      '<div class="sp-list-item"><strong>Function + replacement behavior</strong><p>' + esc([plan.hypothesizedFunction, plan.replacementBehavior].filter(Boolean).join(" • ") || "Not set") + '</p></div>',
-      '<div class="sp-list-item"><strong>Prevent + teach</strong><p>' + esc([plan.preventionSupports, plan.teachingMoves].filter(Boolean).join(" • ") || "Not set") + '</p></div>',
-      '<div class="sp-list-item"><strong>Respond + reinforce</strong><p>' + esc([plan.responsePlan, plan.reinforcementPlan].filter(Boolean).join(" • ") || "Not set") + '</p></div>',
-      '<div class="sp-list-item"><strong>Progress monitoring</strong><p>' + esc(plan.progressMonitoring || "Not set") + '</p></div>',
-      '<div class="sp-list-item"><strong>Review date</strong><p>' + esc(plan.reviewDate || "Not set") + '</p></div>',
-      '</div>'
-    ].join("") : '<div class="sp-google-empty">Set a replacement behavior, adult response, and review date here so the plan can drive reminders and reports later.</div>';
-  }
-
-  function renderCheckins(record) {
-    el.checkinList.innerHTML = record.stakeholderCheckins && record.stakeholderCheckins.length ? record.stakeholderCheckins.slice(0, 6).map(function (row) {
-      return '<div class="sp-record"><strong>' + esc(row.role || "Check-in") + '</strong><p>' + esc(row.summary || "No summary") + '</p><p>' + esc(row.nextStep || "No next step") + '</p></div>';
-    }).join("") : '<div class="sp-google-empty">Start with one teacher, family, or student reflection. The example guidance goes away on first save.</div>';
-  }
-
-  function renderGoogle(student) {
-    var configured = GoogleWorkspace && typeof GoogleWorkspace.isConfigured === "function" && GoogleWorkspace.isConfigured();
-    if (!configured) {
-      el.googlePanel.innerHTML = '<div class="sp-google-empty"><strong>Google remains optional.</strong><p class="sp-muted">Once configured, this student page can create Docs, Sheets, or Slides tied to this profile. Until then, local-first tracking stays active.</p></div>';
-      return;
-    }
-    var signedIn = GoogleWorkspace.isSignedIn && GoogleWorkspace.isSignedIn();
-    var studentName = student && student.name ? student.name : "Student";
-    el.googlePanel.innerHTML = [
-      '<div class="sp-list">',
-      '<div class="sp-list-item"><strong>Google status</strong><p>' + esc(signedIn ? "Connected" : "Configured but not connected") + '</p></div>',
-      '<div class="sp-list-item"><strong>Suggested actions</strong><p>Create a meeting doc, progress sheet, or family update deck for ' + esc(studentName) + ' from here.</p></div>',
-      '</div>'
-    ].join("");
-  }
-
-  function renderHeroEvidence(studentId) {
-    var target = document.getElementById("sp-hero-evidence-visual");
-    if (!target) return;
-    var evidenceRows = SupportStore && typeof SupportStore.getRecentEvidencePoints === "function"
-      ? SupportStore.getRecentEvidencePoints(studentId, 30, 8)
-      : [];
-    var bars = evidenceRows.length ? evidenceRows.map(function (_row, index) {
-      return 24 + (index * 8);
-    }) : [18, 26, 20, 34, 28, 42, 36, 46];
-    target.innerHTML = [
-      '<div class="sp-signal-bar">' + bars.map(function (value) {
-        return '<span style="height:' + value + 'px"></span>';
-      }).join("") + '</div>',
-      '<div class="sp-signal-caption"><span>' + esc(evidenceRows.length ? "More signal than noise" : "Collect first signal") + '</span><span>' + esc(evidenceRows.length ? "last 30 days" : "start with one check") + '</span></div>'
+    el.team.classList.remove("hidden");
+    el.team.innerHTML = [
+      '<p class="sp-kicker">FBA / BIP</p>',
+      '<h2 class="sp-section-title">Behavior support</h2>',
+      '<div class="sp-compact-card"><p class="sp-tile-label">Team</p><p>' + esc(demo.team.join(" · ")) + '</p></div>',
+      '<div class="sp-compact-card"><p class="sp-tile-label">Current record</p>' + compactLines(demo.behavior) + '</div>'
     ].join("");
   }
 
   function render() {
-    renderStudentList();
-    var student = state.studentId ? getStudent(state.studentId) : null;
-    if (!student) {
-      el.empty.classList.remove("hidden");
-      el.content.classList.add("hidden");
-      return;
+    state.studentId = readStudentId();
+    var student = studentRow(state.studentId);
+    var demo = demoFor(state.studentId);
+    ensureSupportSeed(state.studentId, demo);
+    if (StudentProfileStore && typeof StudentProfileStore.ensureStudentRecord === "function") {
+      StudentProfileStore.ensureStudentRecord(state.studentId);
     }
-    var support = getSupport(student.id);
-    var summary = getSummary(student.id, student);
-    var snapshot = getSnapshot(student.id) || {};
-    var weekly = getWeekly(student.id, student, support, summary, snapshot);
-    var record = getProfileRecord(student.id);
 
     el.empty.classList.add("hidden");
     el.content.classList.remove("hidden");
-    el.hero.innerHTML = buildHero(student, support, summary, snapshot, record);
-    renderHeroEvidence(student.id);
-    renderSnapshot(student, support, summary, snapshot);
-    renderGoals(support);
-    renderEvidence(student.id, summary);
-    renderWeekly(weekly);
-    renderFBA(record);
-    renderBIP(record);
-    renderCheckins(record);
-    renderGoogle(student);
-
-    el.reportsLink.href = "./reports.html?student=" + encodeURIComponent(student.id);
-    el.gamesLink.href = "./game-platform.html?student=" + encodeURIComponent(student.id);
-  }
-
-  function rotateGhost() {
-    if (!el.searchGhost) return;
-    if (state.query) {
-      el.searchGhost.textContent = "";
-      return;
-    }
-    ghostIndex = (ghostIndex + 1) % ghostExamples.length;
-    el.searchGhost.textContent = ghostExamples[ghostIndex];
-  }
-
-  function bindForms() {
-    if (el.fbaForm) {
-      el.fbaForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.studentId || !StudentProfileStore || typeof StudentProfileStore.addFBAIncident !== "function") return;
-        var form = new FormData(el.fbaForm);
-        StudentProfileStore.addFBAIncident(state.studentId, {
-          when: form.get("when"),
-          setting: form.get("setting"),
-          frequency: form.get("frequency"),
-          duration: form.get("duration"),
-          intensity: form.get("intensity"),
-          dataSource: form.get("dataSource"),
-          antecedent: form.get("antecedent"),
-          behavior: form.get("behavior"),
-          consequence: form.get("consequence"),
-          teacherResponse: form.get("teacherResponse"),
-          peerResponse: form.get("peerResponse"),
-          probableFunction: form.get("probableFunction"),
-          notes: form.get("notes")
-        });
-        el.fbaForm.reset();
-        render();
-      });
-    }
-    if (el.bipForm) {
-      el.bipForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.studentId || !StudentProfileStore || typeof StudentProfileStore.saveBIPPlan !== "function") return;
-        var form = new FormData(el.bipForm);
-        StudentProfileStore.saveBIPPlan(state.studentId, {
-          targetBehavior: form.get("targetBehavior"),
-          hypothesizedFunction: form.get("hypothesizedFunction"),
-          replacementBehavior: form.get("replacementBehavior"),
-          preventionSupports: form.get("preventionSupports"),
-          teachingMoves: form.get("teachingMoves"),
-          responsePlan: form.get("responsePlan"),
-          reinforcementPlan: form.get("reinforcementPlan"),
-          progressMonitoring: form.get("progressMonitoring"),
-          reviewDate: form.get("reviewDate")
-        });
-        render();
-      });
-    }
-    if (el.checkinForm) {
-      el.checkinForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.studentId || !StudentProfileStore || typeof StudentProfileStore.addStakeholderCheckin !== "function") return;
-        var form = new FormData(el.checkinForm);
-        StudentProfileStore.addStakeholderCheckin(state.studentId, {
-          role: form.get("role"),
-          summary: form.get("summary"),
-          nextStep: form.get("nextStep")
-        });
-        el.checkinForm.reset();
-        render();
-      });
-    }
-  }
-
-  function bindSearch() {
-    if (!el.search) return;
-    el.search.addEventListener("input", function () {
-      state.query = text(el.search.value);
-      if (state.query && ghostTimer) {
-        clearInterval(ghostTimer);
-        ghostTimer = null;
-      }
-      renderStudentList();
-    });
+    el.hero.innerHTML = buildHero(student, demo);
+    renderPrograms(demo);
+    renderAssessments(demo);
+    renderPlans(demo);
+    renderTeam(demo);
   }
 
   function init() {
     loadCaseload();
     ensureDemoCaseload();
-    bindSearch();
-    bindForms();
-    state.studentId = readStudentId() || (state.caseload[0] && state.caseload[0].id) || "";
-    render();
-    if (el.searchGhost) {
-      ghostTimer = window.setInterval(rotateGhost, 3600);
+    if (!state.caseload.length) {
+      el.empty.classList.remove("hidden");
+      el.content.classList.add("hidden");
+      return;
     }
+    render();
   }
 
   init();
