@@ -452,3 +452,22 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `kbBottom: 678 < vh 800`
   - `hasScroll: false`
   - console warnings/errors: none
+
+## 2026-03-15 (Homepage, student profile, and Specialist Hub workflow pass)
+
+- simplified the homepage games panel in `index.html` and `home-v3.css` so it now focuses on Word Quest and Off Limits instead of trying to preview too many games at once
+- tightened the homepage hero so the left content no longer floats inside a large dead gap and the first screen reads more like one balanced product surface
+- tightened the student profile first screen in `student-profile.js` and `student-profile.css` so key support cues appear earlier and the top section wastes less space
+- materially refocused the Specialist Hub in `teacher-hub-v2.js` and `teacher-hub-v2.css`:
+  - center column now behaves more like a true day-change / announcements surface
+  - cycle-day information is visible
+  - right class lesson map now carries objective + SWBAT + support load
+  - both left-schedule and right-lesson-map clicks open the same class-detail flow
+  - class detail now includes a real lesson-sequence control with previous / next movement and set-position for supported curricula
+- critical verification standard reinforced in docs:
+  - screenshot is the source of truth
+  - screenshots must be scrutinized critically, not defended
+  - regressions should be rejected even when the code looked directionally promising
+- honest current product truth:
+  - hub is much stronger than before, but the class-detail view still needs to move closer to an immediate differentiation / small-group game plan
+  - lesson-alignment trust is improved structurally but still not ready to be overclaimed for schoolwide teacher reliance

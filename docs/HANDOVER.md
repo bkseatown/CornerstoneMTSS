@@ -34,10 +34,17 @@ The product direction is now explicitly platform-first:
 - specialist-facing dashboard surfaces
 - local-first behavior and durable build/version visibility
 
-## 3) March 13-14, 2026 Baseline
+## 3) March 13-15, 2026 Baseline
 Recently completed work:
 - homepage cards are more premium and no longer read like generic placeholder boxes
 - workspace card has a stronger briefing surface instead of a flat empty panel
+- homepage games panel was simplified:
+  - Typing Quest was removed from the homepage showcase
+  - homepage now highlights Word Quest and Off Limits instead of trying to preview too many products at once
+  - game-panel copy is shorter and less confusing
+- homepage hero was tightened:
+  - left hero content no longer floats inside a large empty box
+  - hero reads more like one balanced surface
 - Word Quest standalone was cleaned up substantially:
   - header hierarchy improved
   - keyboard/board fit stabilized
@@ -61,9 +68,26 @@ Recently completed work:
   - spelling/listening support row is hidden again on the play surface
   - keyboard fits fully in the viewport again on the validated desktop route
   - current state is a safe baseline, not a finished flagship redesign
+- Specialist Hub was materially refocused:
+  - left rail remains the day schedule
+  - center column no longer repeats routine schedule blocks in a coaching tone
+  - center column now behaves more like a day-change / announcements / rotating-schedule surface
+  - right rail remains the class lesson map and now includes objective + SWBAT + support load
+  - clicking the left schedule or the right class lesson map opens the same class detail flow
+  - class detail now includes a real lesson-sequence control with previous / next lesson movement and a set-position control for supported curricula
+- Reports & Prep was made lighter:
+  - reports landing is more clearly a launch surface
+  - Meeting Prep now opens as a calmer summary-first surface instead of a settings slab
+- Student profile first screen was tightened:
+  - key support cues appear earlier
+  - hero wastes less space
+  - still not at flagship quality
 
-Latest pushed cleanup commit from this thread:
-- `7d8fe9cf`
+Latest pushed commits from this thread:
+- `42fbc93e` `Simplify homepage games showcase`
+- `59e78f7d` `Tighten homepage hero balance`
+- `f82f9c91` `Pull student profile support cues higher`
+- `3dbf61f4` `Refine hub day overview and lesson sequence`
 
 Latest verified local page markers from this thread:
 - Typing Quest shell assets: `20260313u`
@@ -80,14 +104,44 @@ Highest-priority unresolved quality areas:
 - should feel like a premium typing product, not a cleaned-up dashboard/course document
 - needs more “showing” and less instructional text
 - course map styling is better structurally, but still visually generic
+- homepage no longer needs to preview Typing Quest until the product itself is stronger
 
 ### Homepage top surface
-- left hero and right “Today” card still need to feel like one designed surface
-- contrast hierarchy is better than before, but still not elite
+- hero is meaningfully better than before, but still not a flagship surface
+- keep reducing empty-feeling space and generic white-box energy
+- avoid slogan copy and “sales page” tone
 
 ### Shared game family
 - must feel like one product family without becoming one repeated layout
 - each game needs a dominant play artifact and its own personality
+
+### Specialist Hub
+- major progress, but still not finished
+- center column should stay focused on:
+  - announcements
+  - rotating schedule / cycle-day information
+  - notable events that affect coverage, pacing, pull-out, or access
+- avoid repeating the left rail schedule in the center
+- class detail still needs to move closer to “walk in with a game plan”
+- differentiation, flexible grouping, and support planning need to become clearer and faster to scan
+
+### Lesson alignment trust
+- one of the highest-risk product areas for teacher adoption
+- there is now real curriculum and lesson-navigation structure for:
+  - Illustrative Math
+  - Fishtank
+  - UFLI / Fundations-adjacent support
+  - IS Word Study
+- but do not overclaim trust yet
+- some objective / SWBAT / lesson mapping still depends on local lesson-context data and heuristics
+- before broad teacher rollout, strengthen the underlying lesson-alignment pipeline so:
+  - grade
+  - curriculum
+  - unit
+  - lesson
+  - objective
+  - SWBAT
+  are reliably aligned and easy to correct when a class is ahead or behind
 
 ## 5) Critical Product Rules
 
@@ -96,6 +150,15 @@ Highest-priority unresolved quality areas:
 - If a page needs scroll at typical laptop height, first assume the page is over-packed.
 - Prefer showing over telling.
 - Remove stale text before adding new text.
+- Avoid sales language, slogans, and pitch-deck style sections.
+- Pages should feel cognitively and visually light.
+- The first screen should help the user know where to go within 2 to 5 seconds.
+- Deeper detail should appear after clicking into a class, student, report, or tool.
+- Every page should feel like it reduces teacher burden, not increases reading work.
+- Add color and section contrast intentionally:
+  - avoid giant white slabs
+  - avoid mono-color zones with weak separation
+  - use visual ownership so the eye knows what matters first
 - Strong contrast must exist between:
   - page shell
   - card/surface
@@ -127,6 +190,20 @@ Highest-priority unresolved quality areas:
 - The card must be the visual owner after format selection.
 - Avoid reintroducing bulky framing above the card or heavy footer bars below it.
 - If a Word Clue pass makes the runtime feel wider, flatter, or more crowded, revert to the previous validated baseline before trying again.
+- The product-facing name is now `Off Limits`.
+- Keep the chooser focused on real card examples, minimal text, whole-card click behavior, and premium card anatomy.
+
+### Specialist Hub rules
+- Left rail = schedule.
+- Center = only what changes the day, not a second schedule.
+- Right rail = class lesson map with objective + SWBAT + support load.
+- Clicking either side should open the same class-detail workflow.
+- Class detail should answer:
+  - what is being taught
+  - which caseload students are in the room
+  - what quick differentiation / small-group move to make
+  - what to do if the class is on a different lesson today
+- Rotating schedule patterns like Red / Blue / White Day 1/2 must be treated as first-class schedule information when present.
 
 ## 6) Critical File Ownership
 
@@ -145,6 +222,22 @@ Highest-priority unresolved quality areas:
 ### Homepage and dashboard shell
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/home-v3.css`
+
+### Specialist Hub
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.css`
+
+### Reports / Workroom
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.css`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/dashboard/dashboard-meeting.js`
+
+### Student profile
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.js`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.css`
 
 ### Build/version truth
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/build.json`
@@ -191,6 +284,20 @@ Safe response:
 - verify visible build badge/build stamp
 - verify `build.json`
 
+### Hub workflow trust
+Known risk pattern:
+- URL / state changes without the visible class-detail surface repainting
+- center column drifting back into repeated schedule language
+- lesson alignment looking authoritative when it is still heuristic
+
+Safe response:
+- verify real click flows:
+  - left schedule block -> class detail
+  - right lesson card -> class detail
+  - switching from one class detail to another repaints immediately
+- verify lesson navigator appears for supported curriculum blocks
+- describe lesson-alignment trust honestly; do not overstate it
+
 ## 8) Required Verification Standard
 Before claiming a page is fixed:
 - syntax checks pass for touched JS
@@ -198,6 +305,10 @@ Before claiming a page is fixed:
 - actual rendered page was inspected, not just code-read
 - build/version marker is fresh enough to trust the review
 - if the issue was visual overlap or layout drift, confirm that with a real rendered snapshot
+- screenshot must be scrutinized critically, not defensively
+- reject regressions even if the code change seemed directionally good
+- when a screenshot still looks wrong, say so plainly
+- do not claim “fixed” or “materially better” unless the screenshot truly supports that claim
 
 ## 9) Current Quality Bar
 The platform should aim beyond “working.”
@@ -210,6 +321,11 @@ Target qualities:
 - minimal UI clutter
 - stable layout ownership
 - modern, resilient front-end architecture
+- joyful, confidence-building interaction design for teachers and students
+- support surfaces that feel like they do heavy lifting for overloaded specialists
+- premium, cutting-edge but academically credible game design and CSS craft
+- interfaces that feel Figma-level intentional, not assembled from leftovers
+- visuals and motion that make the platform feel alive without becoming noisy
 
 Useful advanced practices to keep pushing:
 - token-first design systems
@@ -237,18 +353,24 @@ Treat these files as the durable project memory:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
 
 ## 11) Next Best Moves
-1. Word Quest controlled polish pass from the new stable baseline:
-   - slightly smaller board
-   - slightly larger keys/letters
-   - verify at MacBook size after each single change
-2. Word Clue flagship runtime composition pass:
-   - preserve the current chooser landing page exactly
-   - after format selection, move toward a portrait-style single-card Taboo runtime
-   - reduce runtime chrome above and below the card
-   - keep one dominant clue artifact, not a wide board-like stage
-3. Typing Quest premium identity pass
-4. Homepage top-surface unification and contrast pass
-5. Cross-game interaction polish pass
+1. Strengthen lesson-alignment trust:
+   - improve mapping for grade, curriculum, unit, lesson, objective, and SWBAT
+   - prioritize IM, Fishtank, Fundations / Just Words / UFLI-adjacent support
+   - make the class-detail lesson navigator reliable enough for real teacher correction
+2. Specialist Hub class-detail “game plan” pass:
+   - surface differentiation, small-group moves, and flexible grouping more clearly
+   - keep the class-detail usable in seconds
+3. Student profile first-screen pass:
+   - reduce leftover chrome and text weight
+   - bring the support story and next actions even higher
+4. Reports / teacher workroom refinement:
+   - keep landing surfaces light
+   - let deeper complexity appear only after intent is clear
+5. Word Quest flagship polish pass from the stable baseline
+6. Off Limits flagship runtime pass:
+   - preserve chooser
+   - continue improving the post-selection card experience
+7. Cross-platform consistency / contrast audit after the above are stronger
 
 ## 11.5) Figma Audit Rule
 Visual work must now use the scorecard in:
@@ -260,10 +382,23 @@ Required process:
 - screenshot is the source of truth
 - no claiming a pass is fixed unless the screenshot supports it
 - include category scores and a blunt list of what is still wrong
+- use a Figma eye:
+  - stronger composition
+  - clearer visual ownership
+  - better section contrast
+  - fewer repeated words
+  - fewer placeholder-feeling boxes
+  - more showing through cards, artifacts, illustrations, progress surfaces, and useful visual summaries
+- if the screenshot reads as visually heavy, cognitively noisy, generic, or redundant, it is not ready
 
 ## 12) Product Recommendation
 What to do next:
-- finish one flagship game runtime at a time from a stable baseline, starting with Word Quest or Word Clue
+- strengthen the core support-teacher workflow surfaces first:
+  - hub
+  - class detail
+  - student profile
+  - reports / workroom
+- then keep polishing flagship games from stable baselines
 - prefer screenshot-validated micro-passes over broad restyles
 
 What to do ultimately:
@@ -272,5 +407,5 @@ What to do ultimately:
 - the platform will shine most when:
   - homepage/hub/reports feel leadership-ready
   - Word Quest feels like the polished fluency flagship
-  - Word Clue feels like the polished speaking/small-group flagship
-  - Typing Quest feels like the polished skills-course flagship
+  - Off Limits feels like the polished speaking/small-group flagship
+  - the support-teacher workflow feels like it reduces workload, clarifies next moves, and creates calm confidence instead of extra admin burden
