@@ -154,9 +154,19 @@ Professional landing page hero section positioning Cornerstone MTSS for portfoli
 
 ---
 
-## 📚 Science of Reading Integration
+## 📚 Curriculum Alignment & Integration
 
-Every tool aligns with the 5 Pillars of Reading:
+### Literacy Intervention Curricula Support
+
+**Evidence-Based Frameworks:**
+- **Fishtank ELA:** Structured writing lessons with organizers (Story Map, Concept Map, Opinion Map align to narrative/informative/opinion units)
+- **Wilson Reading System (WRS):** Phonics games (Word Quest), speaking activities (Speaking Studio), explicit instruction support for struggling readers
+- **Fundations (Wilson K-3):** Foundational phonics and phonemic awareness aligned with game activities
+- **UFLI (Structured Literacy):** Systematic phonics, fluency development through games
+- **Just Words:** Phonics intervention for struggling readers (phoneme awareness + phonics games)
+- **LLI (Leveled Literacy Intervention):** Small-group intervention positioning, differentiated scaffolding (3 complexity levels in Writers Studio)
+
+### Science of Reading Integration (5 Pillars)
 
 | Tool | PA | Phonics | Fluency | Vocabulary | Comprehension |
 |------|----|---------|---------|-----------  |-------------|
@@ -165,6 +175,21 @@ Every tool aligns with the 5 Pillars of Reading:
 | Speaking Studio | | ✓ | ✓ | | ✓ |
 | Writers Studio | | | | ✓ | ✓ |
 | Learning Hub | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+### Mathematics Intervention Support
+
+**Illustrative Math K-12 & Bridges:**
+- Platform architecture supports Math intervention game development
+- Specialist Hub enables MTSS tracking for math interventions
+- Speaking Studio can be used for mathematical explanation/communication
+- Writers Studio can be adapted for mathematical reasoning (writing to explain/justify)
+- Learning Hub can showcase math intervention activities by domain
+
+---
+
+## 📊 MTSS Tier Differentiation for Reading & Math
+
+All tools support Tier 1/2/3 differentiation:
 
 ---
 
@@ -287,7 +312,7 @@ This portfolio demonstrates:
 
 **Ideal Pitch:**
 
-> "Cornerstone MTSS is an evidence-based, privacy-first literacy intervention platform designed for specialist teachers and reading interventionists. Built on Wilson Brainframes and the Science of Reading, it provides assessment tools, interactive games, and structured writing and speaking activities—all within a local-first architecture. The platform demonstrates deep understanding of MTSS tiering, curriculum alignment (Fishtank ELA, Fundations, UFLI), and modern educational technology design principles."
+> "Cornerstone MTSS is an evidence-based, privacy-first intervention platform for literacy and mathematics specialists. Built on Wilson Brainframes and the Science of Reading, it provides assessment tools, interactive games, and structured writing and speaking activities—all aligned with leading intervention curricula (Fishtank ELA, Wilson Reading System, Fundations, UFLI, Just Words, LLI, Illustrative Math K-12, Bridges). The platform operates within a local-first architecture and demonstrates deep understanding of MTSS tiering, curriculum integration, differentiation, and modern educational technology design principles."
 
 **Target Audiences:**
 - School districts evaluating MTSS solutions
