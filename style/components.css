@@ -2337,7 +2337,17 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .theme-preview-strip {
-  width: min(286px, calc(100vw - 12px));
+  width: min(320px, calc(100vw - 16px));
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  flex-direction: column;
+  align-items: stretch;
+  top: auto !important;
+  right: auto !important;
+  left: 50% !important;
+  bottom: auto;
+  transform: translateX(-50%);
+  top: max(80px, calc(env(safe-area-inset-top) + 72px)) !important;
 }
 
 .quick-music-popover {
@@ -9277,7 +9287,7 @@ html[data-home-mode="play"] {
   --wq-shell-pad-bottom: max(6px, env(safe-area-inset-bottom));
   --wq-top-chrome-budget: clamp(40px, 6.6vh, 54px);
   --wq-bottom-controls-budget: clamp(100px, 15.6vh, 138px);
-  --wq-stage-gap: clamp(3px, 0.65vh, 7px);
+  --wq-stage-gap: clamp(12px, 1.4vh, 18px);
   --tile-size: clamp(46px, 5.3vh, 58px);
   --playfield-width: clamp(256px, 31vw, 318px);
   --key-h: clamp(34px, 4.1vh, 42px);
@@ -9342,6 +9352,8 @@ html[data-home-mode="play"] .board-zone {
   width: min(100%, 980px);
   max-width: 980px;
   padding-inline: clamp(10px, 2.8vw, 28px);
+  margin-top: clamp(6px, 0.8vh, 12px);
+  margin-bottom: clamp(8px, 1.2vh, 16px);
   z-index: 1;
 }
 
@@ -9391,7 +9403,7 @@ html[data-home-mode="play"] #keyboard {
   max-width: min(540px, calc(100vw - (var(--wq-safe-edge) * 2) - 2px));
   min-height: min(var(--wq-bottom-controls-budget), 162px);
   max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 168px), 162px);
-  margin-top: 0;
+  margin-top: clamp(6px, 0.9vh, 14px);
   margin-bottom: max(2px, env(safe-area-inset-bottom));
   gap: clamp(3px, 0.6vh, 6px);
   overflow: visible;
