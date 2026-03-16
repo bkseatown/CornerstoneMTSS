@@ -31,6 +31,23 @@
   pointer-events: none;
 }
 
+/* ── Desktop play: breathing room around the game board ──────────────────
+ * At wide desktop viewports the viewport-budget clamps tile/key sizes down
+ * for compact viewports but leaves row-gap at 3px and no top padding —
+ * the header and keyboard butt directly against the board plate.
+ * Override: add 12px top padding on main (header→board gap) and raise
+ * --wq-stage-gap to 12px (board→keyboard gap). Only fires at ≥980px wide
+ * and ≥680px tall; tighter breakpoints keep the 3px compact gaps.
+ * ─────────────────────────────────────────────────────────────────────── */
+@media (min-width: 980px) and (min-height: 680px) {
+  html[data-home-mode="play"] {
+    --wq-stage-gap: 12px;
+  }
+  html[data-home-mode="play"] main {
+    padding-top: 12px;
+  }
+}
+
 /* ── Seahawks play backdrop: dark stadium atmosphere ─────────────────────
  * Body carries both .wordquest-root and .theme-seahawks.
  * Overrides the flat wolf-gray --theme-backdrop with a deep navy base
