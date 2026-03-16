@@ -63,6 +63,7 @@
   animation: cgAssemble 180ms ease-in-out;
 }
 
+/* Enhanced focus indicators for game shell (use new focus tokens) */
 .cg-action:focus-visible,
 .cg-choice:focus-visible,
 .cg-tile:focus-visible,
@@ -70,8 +71,9 @@
 .cg-input:focus-visible,
 .cg-textarea:focus-visible,
 .cg-select:focus-visible {
-  outline: 2px solid rgba(13, 94, 102, 0.42);
-  outline-offset: 2px;
+  outline: var(--focus-ring, 2px solid #0066cc);
+  outline-offset: var(--focus-offset, 2px);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
 @keyframes cgStageEnter {
@@ -172,6 +174,146 @@
     transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
+}
+
+/* ==========================================
+   ADDITIONAL ENGAGEMENT ANIMATIONS
+   ========================================== */
+
+/* Action button spring effect */
+@keyframes cgActionSpring {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cg-action:active,
+.cg-choice:active {
+  animation: cgActionSpring 150ms ease-in-out;
+}
+
+/* Entrance animation for game stages */
+.cg-stage-shell {
+  animation: cgStageEnter 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Loading/processing state animation */
+@keyframes cgLoadingPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.cg-loading,
+[data-loading="true"],
+.cg-processing {
+  animation: cgLoadingPulse 1.4s ease-in-out infinite;
+}
+
+/* Success celebration animation */
+@keyframes cgSuccessChime {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.cg-success-banner,
+[data-state="success"] {
+  animation: cgSuccessChime 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Progress indicator animation */
+@keyframes cgProgressFill {
+  from {
+    width: 0%;
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cg-progress-bar > * {
+  animation: cgProgressFill 600ms ease-out forwards;
+}
+
+/* Smooth entrance for individual game cards */
+.cg-game-card,
+.cg-rail-card,
+.cg-main-card {
+  animation: cgAssemble 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Stagger animation for multiple items */
+.cg-game-card:nth-child(1) { animation-delay: 0ms; }
+.cg-game-card:nth-child(2) { animation-delay: 60ms; }
+.cg-game-card:nth-child(3) { animation-delay: 120ms; }
+.cg-game-card:nth-child(4) { animation-delay: 180ms; }
+.cg-game-card:nth-child(5) { animation-delay: 240ms; }
+.cg-game-card:nth-child(6) { animation-delay: 300ms; }
+
+.cg-rail-card:nth-child(1) { animation-delay: 0ms; }
+.cg-rail-card:nth-child(2) { animation-delay: 60ms; }
+.cg-rail-card:nth-child(3) { animation-delay: 120ms; }
+.cg-rail-card:nth-child(4) { animation-delay: 180ms; }
+
+/* Hover elevation for cards - enhanced depth */
+.cg-game-card:hover,
+.cg-rail-card:hover,
+.cg-main-card:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon spin animation for loading states */
+@keyframes cgSpinSoft {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cg-spinner,
+[class*="spinner"],
+[class*="loading-icon"] {
+  animation: cgSpinSoft 1.2s linear infinite;
+}
+
+/* Subtle float animation for floating elements */
+@keyframes cgFloatAway {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0);
+  }
+}
+
+.cg-notification-pop,
+.cg-toast {
+  animation: cgFloatAway 3s ease-out forwards;
+  animation-delay: 2s;
 }
 
 @media (prefers-reduced-motion: reduce) {
