@@ -15,7 +15,7 @@ The desired product feel is:
 - academically credible
 - visually alive without becoming noisy
 - accessible, readable, EAL-friendly, and adaptable
-- strong enough for K-8 and still respectable for older learners
+- strong enough for K-12 (ages 5-18) without feeling juvenile for middle and high schoolers
 
 Primary product vision:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/VISION.md`
