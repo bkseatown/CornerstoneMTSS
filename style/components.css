@@ -774,7 +774,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   height:        30px;
   padding:       0;
   border:        1px solid color-mix(in oklab, var(--brand) 30%, var(--header-border) 70%);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background:    color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
   color:         color-mix(in oklab, var(--text) 84%, var(--brand) 16%);
   font-size:     0.9rem;

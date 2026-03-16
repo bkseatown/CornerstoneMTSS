@@ -312,8 +312,8 @@ body.cs-page-reading-lab.cs-has-nav-shell {
 }
 
 .rl-btn:focus-visible {
-  outline: 2px solid color-mix(in oklab, var(--cs-accent) 62%, #ffffff 38%);
-  outline-offset: 1px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
 }
 
 .rl-control-grid {

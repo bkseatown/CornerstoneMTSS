@@ -222,6 +222,20 @@
   --text-shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.1);
   --heading-weight: 700;
   --heading-letter-space: -0.02em;
+
+  /* ===== Button System (Standardized) ===== */
+  --btn-height-sm: 30px;
+  --btn-height: 40px;
+  --btn-height-lg: 44px;
+  --btn-padding-sm: 4px 10px;
+  --btn-padding: 0 12px;
+  --btn-padding-lg: 8px 14px;
+
+  /* ===== Border Radius System (Standardized) ===== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
 }
 
 :where(button, [role="button"], input, select, textarea, a):focus-visible {
