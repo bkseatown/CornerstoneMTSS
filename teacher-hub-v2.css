@@ -1969,6 +1969,212 @@ body.th2-page.cs-has-nav-shell {
 
 .hidden { display: none !important; }
 
+/* ==========================================
+   TEACHER WORKSPACE ENGAGEMENT ANIMATIONS
+   ========================================== */
+
+/* Block card entrance and hover animations */
+@keyframes th2-card-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.th2-block-card {
+  animation: th2-card-bounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, background-color;
+}
+
+/* Stagger animation for card entrance */
+.th2-block-card:nth-child(1) { animation-delay: 0ms; }
+.th2-block-card:nth-child(2) { animation-delay: 60ms; }
+.th2-block-card:nth-child(3) { animation-delay: 120ms; }
+.th2-block-card:nth-child(4) { animation-delay: 180ms; }
+.th2-block-card:nth-child(5) { animation-delay: 240ms; }
+.th2-block-card:nth-child(6) { animation-delay: 300ms; }
+
+/* Enhanced card hover with lift */
+@keyframes th2-card-lift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px); }
+}
+
+.th2-block-card:hover {
+  animation: th2-card-lift 0.3s ease-out forwards;
+  box-shadow: 0 14px 28px rgba(43, 93, 168, 0.12) !important;
+}
+
+/* Day brief entrance */
+@keyframes th2-day-brief-reveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.th2-day-brief {
+  animation: th2-day-brief-reveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.2s ease;
+}
+
+/* Priority rail entrance */
+@keyframes th2-priority-reveal {
+  0% {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.th2-priority-rail {
+  animation: th2-priority-reveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.2s ease;
+}
+
+/* Priority item hover animation */
+@keyframes th2-priority-hover {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(2px); }
+}
+
+.th2-priority-item {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.th2-priority-item:hover {
+  animation: th2-priority-hover 0.2s ease forwards;
+  box-shadow: inset 4px 0 0 0 rgba(43, 93, 168, 0.16);
+}
+
+/* Button lift animations */
+@keyframes th2-button-lift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+button, [role="button"], .th2-action-btn {
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+button:not(:disabled):hover,
+[role="button"]:hover,
+.th2-action-btn:hover {
+  animation: th2-button-lift 0.25s ease-out forwards;
+  box-shadow: 0 6px 12px rgba(43, 93, 168, 0.15);
+}
+
+/* Tier badge pulse animation */
+@keyframes th2-tier-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.th2-focus-tier {
+  animation: th2-tier-pulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.18s ease;
+}
+
+/* Focus head reveal */
+@keyframes th2-focus-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.th2-focus-head {
+  animation: th2-focus-reveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Progress bar smooth fill */
+@keyframes th2-progress-smooth {
+  from {
+    transform: scaleX(0);
+    opacity: 0.5;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.th2-progress-bar {
+  animation: th2-progress-smooth 0.6s ease-out forwards;
+  transform-origin: left;
+  transition: all 0.2s ease;
+}
+
+/* Loading pulse for async states */
+@keyframes th2-loading-pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.th2-loading,
+[data-loading="true"] {
+  animation: th2-loading-pulse 1.4s ease-in-out infinite;
+}
+
+/* Focus indicators */
+.th2-block-card:focus-within,
+button:focus-visible,
+[role="button"]:focus-visible,
+.th2-action-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
+}
+
+/* Smooth transitions for all interactive elements */
+.th2-block-card,
+.th2-priority-item,
+.th2-action-btn,
+button,
+[role="button"] {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, background-color;
+}
+
+/* Reduced motion compliance */
+@media (prefers-reduced-motion: reduce) {
+  .th2-block-card,
+  .th2-day-brief,
+  .th2-priority-rail,
+  .th2-focus-head,
+  .th2-progress-bar,
+  .th2-tier-pulse,
+  button,
+  [role="button"],
+  .th2-action-btn {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 768px) {
