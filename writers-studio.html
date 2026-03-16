@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-view-mode="individual">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
+  <title>Cornerstone MTSS - Writers Studio</title>
+  <script src="./config.js?v=20260316a"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260316a">
+  <link rel="stylesheet" href="./style/typography.css?v=20260316a">
+  <link rel="stylesheet" href="./style/writers-studio.css?v=20260316a">
+</head>
+<body class="writers-studio-page">
+  <main class="ws-container">
+    <div class="ws-header">
+      <div class="ws-header-content">
+        <h1 class="ws-title">Writers Studio</h1>
+        <p class="ws-subtitle">Organize your thinking. Write with confidence.</p>
+      </div>
+      <div class="ws-header-actions">
+        <button id="ws-mode-toggle" class="ws-btn ws-btn-secondary" title="Toggle between group and individual mode">
+          <span class="ws-mode-label">Individual Mode</span>
+        </button>
+        <button id="ws-save-btn" class="ws-btn ws-btn-primary" title="Save your organizer">
+          <span>Save</span>
+        </button>
+        <button id="ws-export-btn" class="ws-btn ws-btn-secondary" title="Export organizer">
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="ws-controls">
+      <div class="ws-organizer-selector">
+        <label for="ws-organizer-type">Choose Organizer Type:</label>
+        <select id="ws-organizer-type" class="ws-select">
+          <option value="story-map" selected>Story Map (Narrative Writing)</option>
+          <option value="concept-map">Concept Map (Expository Writing)</option>
+          <option value="opinion-map">Opinion Map (Persuasive Writing)</option>
+          <option value="circle-map">Circle Map (Brainstorming)</option>
+        </select>
+      </div>
+
+      <div class="ws-level-selector">
+        <label for="ws-complexity-level">Support Level:</label>
+        <select id="ws-complexity-level" class="ws-select">
+          <option value="1">Level 1 - Heavy Scaffolding (Tier 3)</option>
+          <option value="2" selected>Level 2 - Moderate Support (Tier 2)</option>
+          <option value="3">Level 3 - Minimal Support (Tier 1)</option>
+        </select>
+      </div>
+
+      <button id="ws-new-organizer" class="ws-btn ws-btn-secondary">New Organizer</button>
+    </div>
+
+    <!-- Story Map Organizer -->
+    <div id="ws-story-map-container" class="ws-organizer-container story-map active">
+      <div class="story-map-canvas">
+        <!-- Story elements are rendered here -->
+        <div class="story-map-grid">
+          <div class="story-element setting-box">
+            <div class="element-header">📍 Setting</div>
+            <div class="element-prompt">Where and when does it happen?</div>
+            <div class="element-input-area">
+              <textarea
+                id="story-setting"
+                class="story-input"
+                placeholder="Describe the setting..."></textarea>
+            </div>
+          </div>
+
+          <div class="story-arrow">→</div>
+
+          <div class="story-element character-box">
+            <div class="element-header">👥 Character</div>
+            <div class="element-prompt">Who is in the story?</div>
+            <div class="element-input-area">
+              <textarea
+                id="story-character"
+                class="story-input"
+                placeholder="Describe the main character..."></textarea>
+            </div>
+          </div>
+
+          <div class="story-arrow">→</div>
+
+          <div class="story-element problem-box">
+            <div class="element-header">⚠️ Problem</div>
+            <div class="element-prompt">What goes wrong?</div>
+            <div class="element-input-area">
+              <textarea
+                id="story-problem"
+                class="story-input"
+                placeholder="What is the problem?..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-arrow story-arrow-down">↓</div>
+
+        <div class="story-map-grid">
+          <div class="story-element climax-box">
+            <div class="element-header">🔥 Climax</div>
+            <div class="element-prompt">What's the turning point?</div>
+            <div class="element-input-area">
+              <textarea
+                id="story-climax"
+                class="story-input"
+                placeholder="The most exciting moment..."></textarea>
+            </div>
+          </div>
+
+          <div class="story-arrow">→</div>
+
+          <div class="story-element resolution-box">
+            <div class="element-header">✨ Resolution</div>
+            <div class="element-prompt">How does it end?</div>
+            <div class="element-input-area">
+              <textarea
+                id="story-resolution"
+                class="story-input"
+                placeholder="How the story concludes..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws-footer">
+        <div class="ws-progress">
+          <div class="progress-bar">
+            <div id="ws-progress-fill" class="progress-fill"></div>
+          </div>
+          <p id="ws-progress-text" class="progress-text">0% complete</p>
+        </div>
+        <div id="ws-completion-message" class="completion-message hidden">
+          ✨ Your organizer is ready! Time to write?
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept Map Organizer (Future) -->
+    <div id="ws-concept-map-container" class="ws-organizer-container concept-map">
+      <p class="coming-soon">Concept Map coming soon...</p>
+    </div>
+
+    <!-- Opinion Map Organizer (Future) -->
+    <div id="ws-opinion-map-container" class="ws-organizer-container opinion-map">
+      <p class="coming-soon">Opinion Map coming soon...</p>
+    </div>
+
+    <!-- Circle Map Organizer (Future) -->
+    <div id="ws-circle-map-container" class="ws-organizer-container circle-map">
+      <p class="coming-soon">Circle Map coming soon...</p>
+    </div>
+  </main>
+
+  <script src="./js/writers-studio.js?v=20260316a"></script>
+</body>
+</html>
