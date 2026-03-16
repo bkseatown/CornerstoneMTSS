@@ -159,12 +159,70 @@ DailyDashboardUI: Visual cards
 Teacher sees: "Do this with these 3 students today"
 ```
 
-### Next: Phase C (May 5–June 1)
-- Validation loop: Track teacher actions + student outcomes
-- Intervention impact report: Show which recommendations worked
-- Feedback signal: Recommender learns from outcomes
-- Teacher confirmation UI: "Was intervention delivered?"
-- Success metric: 80%+ teacher action logging; measurable improvement correlation
+### Phase C: Specialist Collaboration & Advanced Features
+See `docs/ROADMAP_PHASE2-6.md` for detailed technical architecture of:
+1. **Real-Time Specialist Collaboration** (Weeks 1-2): Live co-teaching annotations, decision logging
+2. **Voice Analysis** (Weeks 2-3): Pitch/tempo/clarity feedback for speaking practice
+3. **3D Game Environments** (Weeks 3-4): Babylon.js immersive Word Quest
+4. **Accessibility Variants** (Week 4): Dyslexia fonts, high contrast, color blind modes
+5. **Advanced Features** (Ongoing): Student 3D gallery, adaptive AI paths, parent dashboard
+
+Each phase has complete code architecture, integration points, and data flows.
+
+---
+
+## 3) March 17, 2026 — Phase 1: Cutting-Edge Platform Features ✅ COMPLETE
+**STRATEGIC IMPLEMENTATION: 3 High-ROI Features to Differentiate Platform**
+
+### 1. Systematic OKLCH Color Token Generation
+**Problem:** Constant struggle to get colors right; light/dark themes require manual redesign
+**Solution:** Algorithmic color generation from base values
+
+**Architecture** (`scripts/generate-color-tokens.js`):
+- Generates 70 OKLCH color scale entries from 6 base color families (neutrals, blue, green, amber, red, purple, cyan)
+- Auto-derives light/dark theme variants (inverted lightness)
+- Produces 21 semantic color mappings (status colors, text, surfaces, accents)
+- Integrated into `style/tokens.css` via `@import generated-color-tokens.css`
+
+**Result:** One color change cascades across entire platform. No more manual redefining per theme.
+**Regenerate:** `node scripts/generate-color-tokens.js`
+**Commit:** `571fb654`
+
+### 2. Interactive Progress Dashboard (D3.js)
+**Problem:** Specialists can't see at a glance which students need focus on which standards
+**Solution:** Color-coded heatmap showing competency across standards
+
+**Architecture** (`js/dashboard/competency-heatmap.js`):
+- SVG-based heatmap: rows = students, columns = standards, color = competency level
+- Color-coded: Secure (green) | Developing (amber) | Emerging/Unassessed (red)
+- Click-to-detail interaction for focused support targeting
+- Supports filtering by grade, unit, focus area
+
+**High ROI:** Replaces "where do I start?" uncertainty with visual clarity
+**Integration:** Ready for `/reports.html` and specialist hub detail pages
+**Commit:** `571fb654`
+
+### 3. Animated Ava Character (SVG + GSAP)
+**Problem:** Ava is brand voice but only exists as text-to-speech; no visual presence
+**Solution:** Full-featured SVG character with emotion, gestures, and reaction system
+
+**Architecture** (`js/ava-character.js`):
+- Emotions: neutral, happy, encouraging, confused, celebrating
+- Gestures: wave (encouragement), point (highlighting), tilt (thinking), celebrate (dance)
+- Reactions: auto-responds to student answer correctness with celebration/encouragement
+- Speaking animation: subtle head bounce during narration
+- GSAP-driven smooth animations with easing
+
+**Features:**
+- `setEmotion(emotion, duration)` — switch emotion with smooth transition
+- `wave()` / `point()` / `tilt()` — gesture system
+- `react(isCorrect)` — automatic reaction to student answer
+- `celebrate()` — full celebration dance + wave
+- All animations use CSS variables for theme awareness
+
+**High ROI:** Brings brand voice to life; builds emotional connection with students
+**Integration:** Ready for game shells, learning moments, feedback sequences
+**Commit:** `571fb654`
 
 ---
 
