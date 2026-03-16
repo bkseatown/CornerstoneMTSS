@@ -462,30 +462,87 @@
       id: "wilson-reading-system",
       label: "Wilson Reading System",
       grades: freeze(["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]),
-      assessmentModel: "Wordlist charting / dictation / passage reading",
-      supportRule: "Keep sounds, word cards, controlled text, and dictation in the planned Wilson sequence so mastery decisions stay evidence-based.",
-      progressDataNote: "Progress data should name the Wilson check and capture wordlist charting, dictation, and controlled-text reading accuracy.",
+      assessmentModel: "Wordlist charting / dictation / passage reading / fluency checks",
+      supportRule: "Keep sounds, word cards, controlled text, and dictation in the planned Wilson sequence so mastery decisions stay evidence-based. Use 10-part integrated lesson structure with constant teacher-student interaction.",
+      progressDataNote: "Progress data should name the Wilson step/step-substep and capture wordlist charting accuracy, dictation performance, controlled-text reading accuracy, and transfer to fluency.",
       sourceUrl: "https://www.wilsonlanguage.com/programs/wilson-reading-system/",
+      stepMap: freeze({
+        "1": freeze({ focus: "Closed syllables (3 sounds): CVC words with short vowels", swbat: "Identify/produce phoneme sounds for initial consonants and short vowels; blend phonemes into 3-sound CVC words; segment CVC words; read/spell phonetically regular 3-sound CVC words", substeps: "1.1-1.6", examples: "cat, wish, bill, bugs", sourceType: "verified" }),
+        "2": freeze({ focus: "Closed syllables (4-6 sounds): Blends and digraphs", swbat: "Identify/produce phoneme sounds for consonant digraphs and additional consonants; blend/read 4-6 sound words; segment/spell words with final digraphs/blends; read -ang/-ing/-ong patterns", substeps: "2.1-2.5", examples: "bang, blend, pink, sprint", sourceType: "verified" }),
+        "3": freeze({ focus: "Multisyllabic closed syllables: Two-syllable words", swbat: "Read two-syllable words with two closed syllables; identify syllable boundaries; segment by syllable; spell two-syllable closed syllable words accurately", substeps: "3.1-3.4", examples: "rabbit, napkin, submit", sourceType: "verified" }),
+        "4": freeze({ focus: "Open syllables: Long vowel sound at syllable end", swbat: "Identify open syllables in written words; read/spell words with open syllables making long vowel sounds; blend open syllables in multisyllabic words", substeps: "4.1-4.3", examples: "preach, theme, ego", sourceType: "verified" }),
+        "5": freeze({ focus: "Final silent e: VCe syllables producing long vowels", swbat: "Identify VCe syllables in written words; read/spell words with silent final e making long vowels; apply VCe pattern to words with suffixes (-ing, -ed)", substeps: "5.1-5.4", examples: "made, fine, hope, making", sourceType: "verified" }),
+        "6": freeze({ focus: "Open syllables with y: y as long vowel sound", swbat: "Identify y as a vowel at end of words; produce long i and long e sounds for y; read/spell words with y as vowel", substeps: "6.1-6.2", examples: "happy, shy, family", sourceType: "verified" }),
+        "7": freeze({ focus: "Vowel teams: Digraphs and vowel combinations", swbat: "Identify/read vowel digraph patterns (ai, ay, ea, ee, oa, oo, ou, au, aw); spell words using vowel digraphs; recognize multiple spellings for same sound (ai/ay, oi/oy)", substeps: "7.1-7.3", examples: "rain, beat, feet, boat", sourceType: "verified" }),
+        "8": freeze({ focus: "Syllable division patterns: Multisyllabic word decoding", swbat: "Divide multisyllabic words by syllable type; read 3-4 syllable words using syllable division patterns; spell multisyllabic words by syllable", substeps: "8.1-8.3", examples: "napkin, pencil, fantastic", sourceType: "verified" }),
+        "9": freeze({ focus: "Contractions & r-controlled vowels", swbat: "Read/spell contractions; identify/produce r-controlled vowel sounds (ar, or, er, ir, ur); read/spell multisyllabic words with r-controlled vowels", substeps: "9.1-9.3", examples: "it's, carpenter, forest", sourceType: "verified" }),
+        "10": freeze({ focus: "Tricky vowel patterns: Double vowel exceptions", swbat: "Read/spell words with 'tricky' double vowel patterns; understand exceptions to digraph rules; distinguish regular digraphs from exception patterns", substeps: "10.1-10.2", examples: "flood, blood, tough", sourceType: "verified" }),
+        "11": freeze({ focus: "Morphology: Suffix instruction with base word changes", swbat: "Apply suffixes to base words with rule changes (doubling, dropping e, changing y); read/spell words with inflectional endings (-ing, -ed, -er, -est, -ly); understand spelling changes", substeps: "11.1-11.3", examples: "running, making, happier", sourceType: "verified" }),
+        "12": freeze({ focus: "Prefixes & morphology: Greek combining forms", swbat: "Identify/read prefixes in words; identify Greek combining forms and roots; read/spell complex words with multiple morphemes; determine word meaning using morpheme analysis", substeps: "12.1-12.4", examples: "unhappy, prefix, telephone, geography", sourceType: "verified" })
+      }),
       sourceType: "verified"
     }),
     "just-words": freeze({
       id: "just-words",
       label: "Just Words",
       grades: freeze(["4", "5", "6", "7", "8", "9", "10", "11", "12"]),
-      assessmentModel: "Progress check / word reading / spelling dictation",
-      supportRule: "Keep the target pattern set small, practice it in connected reading and spelling, and move quickly into sentence-level transfer.",
-      progressDataNote: "Progress data should name the Just Words check and capture word reading, spelling dictation, and connected-text transfer.",
+      assessmentModel: "Progress check / Unit test (dictation & decoding) / Midterm & Final exams",
+      supportRule: "Keep the target pattern set small, practice it in connected reading and spelling, and move quickly into sentence-level transfer. Use kinesthetic-tactile marking system for syllable type identification. Progress through units based on mastery, not grade level (~2 weeks per unit).",
+      progressDataNote: "Progress data should name the Just Words unit/unit number and capture word reading accuracy, spelling dictation performance, syllable marking accuracy, and connected-text transfer with comprehension.",
       sourceUrl: "https://www.wilsonlanguage.com/programs/just-words/",
+      unitMap: freeze({
+        "1": freeze({ focus: "Closed syllables (review/reinforcement)", swbat: "Identify/mark closed syllables in single and multisyllabic words; read/spell single closed syllable words; apply kinesthetic marking system", patterns: "CVC, CVC with final digraphs, CVC with initial blends", examples: "cat, stop, bless", sourceType: "verified" }),
+        "2": freeze({ focus: "Two-syllable words: Closed + Open syllables", swbat: "Identify syllable division between closed/open syllables; read two-syllable words with CVC|CV and VC|CV patterns; spell using syllable understanding", patterns: "VC|CV, V|CV division", examples: "napkin, robot, cabin", sourceType: "verified" }),
+        "3": freeze({ focus: "Two-syllable words: Closed + VCe", swbat: "Identify VCe syllables in multisyllabic words; read words combining closed and VCe syllables; spell/apply inflectional endings (-ing) correctly", patterns: "CVC|VCe, base word + suffix", examples: "sunshine, making", sourceType: "verified" }),
+        "4": freeze({ focus: "Double vowel patterns: 'A' & 'E' + open syllables", swbat: "Identify/read vowel digraph patterns (ea, ee) in multisyllabic words; understand vowel digraphs make single sounds; spell with vowel digraphs", patterns: "ea/ee + open, vowel teams", examples: "season, teacher, eagle", sourceType: "verified" }),
+        "5": freeze({ focus: "Syllable patterns: Open + Closed (reversal)", swbat: "Identify/read multisyllabic words with open-closed syllable patterns; use syllable division to decode unfamiliar words; spell using open-closed patterns", patterns: "V|CVC, syllable type combination", examples: "paper, baby, tiger", sourceType: "verified" }),
+        "6": freeze({ focus: "r-Controlled vowels + open syllables", swbat: "Identify r-controlled vowel patterns in multisyllabic words; read/spell words with r-controlled vowels; apply r-controlled understanding to complex words", patterns: "ar/or/er/ir/ur + open, r-controlled vowels", examples: "carpenter, forest, perfect", sourceType: "verified" }),
+        "7": freeze({ focus: "Final syllable -le: Special syllable pattern", swbat: "Identify -le as a syllable type (not just suffix); correctly divide words ending in -le; read/spell words with final -le syllables", patterns: "_le syllable type, consonant + le", examples: "table, little, simple", sourceType: "verified" }),
+        "8": freeze({ focus: "Morphology: Base words + unchanging suffixes", swbat: "Add common suffixes to base words without changing base; understand how suffixes change word meaning/function; read/spell multisyllabic words with base + suffix", patterns: "base + (-ing, -ed, -er, -est, -ly, -ful, -less, -ness)", examples: "helping, builder, helpful", sourceType: "verified" }),
+        "9": freeze({ focus: "Morphology: Prefixes introduction", swbat: "Add variety of suffixes to base words; identify/read words with prefixes (un-, re-, pre-, dis-, mis-); understand how prefixes change word meaning", patterns: "prefix + base, expanded suffixes", examples: "redo, unfold, preview", sourceType: "verified" }),
+        "10": freeze({ focus: "Latin roots: Foundation set", swbat: "Identify Latin roots within words; use Latin roots to determine word meaning; read/spell words containing roots (aqua, audi, bio, cred, duc, fact, form, fract)", patterns: "root + morpheme, Latin origin", examples: "aquatic, audition, biology", sourceType: "verified" }),
+        "11": freeze({ focus: "Latin roots: Advanced set + complex prefixes", swbat: "Identify/use additional Latin roots (ject, luc, manu, path, port, scrib, spec, struct); recognize/apply advanced prefixes (over-, under-, out-, sub-, super-, inter-); analyze complex words", patterns: "complex morpheme combinations, advanced roots", examples: "inject, manuscript, submarine", sourceType: "verified" }),
+        "12": freeze({ focus: "Greek combining forms + syllable review", swbat: "Identify Greek combining forms within words; use Greek forms to understand word meaning; read/spell words with Greek combining forms (phon, graph, tele, geo, meter, photo)", patterns: "Greek combining forms, syllable type consolidation", examples: "telephone, geography, thermometer", sourceType: "verified" }),
+        "13": freeze({ focus: "Complex words: Three and four syllables", swbat: "Read 3-4 syllable words using all syllable type and morpheme knowledge; apply syllable division, root analysis, and morpheme understanding; spell longer complex words", patterns: "various syllable combinations, morpheme analysis", examples: "celebration, photography, combination", sourceType: "verified" }),
+        "14": freeze({ focus: "Mastery & application review", swbat: "Demonstrate mastery of all Units 1-13 concepts; apply syllable type knowledge, morpheme analysis, and root understanding to unfamiliar words; read/spell grade-level words with automaticity", patterns: "cumulative, all previous patterns", examples: "cumulative selection from all units", sourceType: "verified" })
+      }),
       sourceType: "verified"
     }),
     "ufli-foundations": freeze({
       id: "ufli-foundations",
       label: "UFLI Foundations",
       grades: freeze(["K", "1", "2", "3", "4", "5"]),
-      assessmentModel: "Daily concept checks / encoding / connected text",
-      supportRule: "Run the cumulative routine in order and correct at the pattern level before asking for another independent response.",
-      progressDataNote: "Progress data should name the UFLI concept check and capture decoding, encoding, and connected-text transfer.",
+      assessmentModel: "Concept checks / Fluency checks / Spelling assessments / Placement test",
+      supportRule: "Run the 8-step cumulative daily routine in order: Phonemic Awareness Drill → Visual Drill → Auditory Drill → Blending Drill → New Concept → Word Work → Irregular Words → Connected Text. Correct at the pattern level before asking for another independent response. Concept checks embedded throughout guide pacing decisions.",
+      progressDataNote: "Progress data should name the UFLI lesson/concept check and capture phoneme-grapheme automaticity, concept understanding, decoding accuracy, spelling performance, fluency (words per minute), and transfer to connected text.",
       sourceUrl: "https://ufli.education.ufl.edu/foundations/",
+      gradeMap: freeze({
+        "K": freeze([
+          freeze({ unit: "Alphabet Unit", lessons: "1-34", swbat: "Identify individual phoneme sounds and corresponding letters (a-z); blend individual sounds into CVC words; segment CVC words into sounds; read/spell simple CVC words; recognize high-frequency irregular words (the, and, a)", conceptFocus: "alphabetic principle, sound-letter relationships, one-to-one correspondence", sourceType: "verified" }),
+          freeze({ unit: "Digraphs & Blends Unit", lessons: "35-53", swbat: "Read/spell consonant digraphs (ch, sh, th, wh) and initial blends; read decodable text with increasing complexity; recognize irregular words automatically", conceptFocus: "consonant combinations, phonetic patterns, beginning fluency", sourceType: "verified" }),
+          freeze({ unit: "VCe Unit", lessons: "54-62", swbat: "Read/spell VCe (silent e) words with long vowel sounds; understand how silent e changes vowel sound; demonstrate understanding through decodable text reading", conceptFocus: "vowel patterns, silent e rule, long vowel sounds", sourceType: "verified" })
+        ]),
+        "1": freeze([
+          freeze({ unit: "Alphabet Unit (Review)", lessons: "1-34", swbat: "Automatically produce phoneme-grapheme correspondences with high accuracy; maintain automaticity goal; build fluency foundation", conceptFocus: "phoneme-grapheme automaticity, foundational consolidation", sourceType: "verified" }),
+          freeze({ unit: "Digraphs & Blends Unit", lessons: "35-53", swbat: "Read/spell consonant digraphs and initial blends automatically; read/spell final blends/digraphs; read/spell CVC words with accuracy and automaticity; demonstrate fluent reading of decodable passages", conceptFocus: "consonant combinations, ending blends, fluency development", sourceType: "verified" }),
+          freeze({ unit: "VCe Unit", lessons: "54-62", swbat: "Read/spell VCe words; identify syllable boundaries in two-syllable words; read grade-level decodable text with accuracy/comprehension; recognize irregular words automatically", conceptFocus: "long vowel patterns, early multisyllabic words, fluency (80+ WPM)", sourceType: "verified" }),
+          freeze({ unit: "Advanced Concepts", lessons: "63-75", swbat: "Apply all foundational concepts to more complex text; demonstrate oral reading fluency; transfer phonics knowledge to new contexts", conceptFocus: "advanced pattern application, comprehension, fluency development", sourceType: "verified" })
+        ]),
+        "2": freeze([
+          freeze({ unit: "Alphabet Unit (Quick Review)", lessons: "1-15", swbat: "Demonstrate quick automaticity with letter-sound correspondences; move rapidly through review to allocate time for new learning", conceptFocus: "phoneme-grapheme automaticity consolidation", sourceType: "verified" }),
+          freeze({ unit: "Vowel Teams & Digraphs Unit", lessons: "16-45", swbat: "Read words with vowel digraphs (ea, ee, ai, oa, etc.) with automaticity; read two-syllable words using VC|CV and V|CV patterns; spell multisyllabic CVC|CVC words correctly; demonstrate fluent reading (80+ WPM)", conceptFocus: "vowel team patterns, multisyllabic structure, fluency", sourceType: "verified" }),
+          freeze({ unit: "Syllable Division & Morphology Unit", lessons: "46-70", swbat: "Identify syllable boundaries in two-syllable words; use syllable division to decode unfamiliar multisyllabic words; recognize irregular words automatically; read/comprehend grade-level text with fluency (80+ WPM)", conceptFocus: "syllable types, morpheme awareness, complex text navigation", sourceType: "verified" }),
+          freeze({ unit: "Advanced Patterns & Concepts", lessons: "71-80", swbat: "Read/spell words with r-controlled vowels; demonstrate all syllable type knowledge; transfer skills to subject-specific text (science, social studies); maintain fluency (80+ WPM)", conceptFocus: "advanced syllable patterns, domain transfer, fluency automaticity", sourceType: "verified" })
+        ]),
+        "3": freeze([
+          freeze({ unit: "Complex syllables & morphology", swbat: "Read/spell words with r-controlled vowels (ar, or, er, ir, ur); read 2-3 syllable words with varied syllable types; identify syllable type within multisyllabic words; use syllable division to decode unfamiliar words; identify/use prefixes and suffixes; read grade-level text (100+ WPM)", conceptFocus: "r-controlled vowels, complex syllables, morpheme use, fluency (100+ WPM)", sourceType: "verified" }),
+          freeze({ unit: "Advanced morphology & fluency", swbat: "Identify/use prefixes and suffixes to understand word meaning; read grade-level text with fluency and comprehension; spell grade-level words correctly; recognize how word parts change word meaning; apply decoding to all subject areas", conceptFocus: "prefix/suffix use, comprehension, fluency, domain transfer", sourceType: "verified" })
+        ]),
+        "4-5": freeze([
+          freeze({ unit: "Advanced word analysis & fluency", swbat: "Analyze multisyllabic words using syllable types and morphemes; identify word roots and affixes and use for word meaning; read grade-level complex text with fluency (115+ WPM) and comprehension; spell grade-level words using morpheme understanding", conceptFocus: "morphological analysis, complex text, fluency (115+ WPM), comprehension depth", sourceType: "verified" }),
+          freeze({ unit: "Subject-specific text & mastery", swbat: "Apply decoding strategies to subject-specific text (science, social studies, math); demonstrate automaticity with all previous concepts; read at appropriate grade-level fluency with expression; show independent use of all strategies", conceptFocus: "domain-specific vocabulary, independent reading, fluency automaticity, expression", sourceType: "verified" })
+        ])
+      }),
       sourceType: "verified"
     }),
     "bridges-intervention": freeze({
@@ -496,6 +553,17 @@
       supportRule: "Anchor the work in one representation before moving to the equation. Use the current monitoring task to decide whether the student can explain the quantity and operation choice.",
       progressDataNote: "Progress data should name the Bridges monitoring task and capture representation choice, equation accuracy, and explanation strength.",
       sourceUrl: "https://www.mathlearningcenter.org/curriculum/bridges-intervention",
+      volumeMap: freeze({
+        "1": freeze({ gradeLevel: "Kindergarten", domain: "Counting & Cardinality", focus: "Counting sequences, cardinality, comparing quantities", sessions: "40-65", swbat: "Count forward from a given number; recognize sets without counting (subitizing); compare quantities and identify which is greater/less", sourceType: "verified" }),
+        "2": freeze({ gradeLevel: "K-1", domain: "Operations & Algebraic Thinking", focus: "Early addition/subtraction within 5-10", sessions: "40-65", swbat: "Solve addition problems within 5-10 using objects/drawings; understand addition as putting groups together; build number bonds within 10", sourceType: "verified" }),
+        "3": freeze({ gradeLevel: "1-2", domain: "Operations & Base Ten", focus: "Addition/subtraction within 20 and 100", sessions: "40-65", swbat: "Solve addition/subtraction problems within 20 using strategies (counting on, making 10); understand inverse relationship; build automaticity with facts to 20", sourceType: "verified" }),
+        "4": freeze({ gradeLevel: "2-3", domain: "Place Value & Operations", focus: "Multidigit addition/subtraction; place value", sessions: "40-65", swbat: "Add/subtract two-digit numbers using place value strategies; understand tens/ones place; apply multiple strategies (regrouping, decomposition, number lines)", sourceType: "verified" }),
+        "5": freeze({ gradeLevel: "3-4", domain: "Multiplication/Division", focus: "Multiplication/division meaning; multidigit operations", sessions: "40-65", swbat: "Represent multiplication as equal groups/arrays; develop meaning for division; solve problems within 100 using strategies (arrays, area models, repeated addition)", sourceType: "verified" }),
+        "6": freeze({ gradeLevel: "4-5", domain: "Multiplication/Division Fluency", focus: "Fluency with operations within 100", sessions: "40-65", swbat: "Multiply two-digit and multi-digit numbers; divide multi-digit by single-digit; develop fluency strategies; explain strategies using models", sourceType: "verified" }),
+        "7": freeze({ gradeLevel: "4-5", domain: "Multiplication/Division Application", focus: "Fluency and real-world applications", sessions: "40-65", swbat: "Fluently multiply/divide within 100; apply to real-world situations; develop algebraic thinking; analyze strategy efficiency", sourceType: "verified" }),
+        "8": freeze({ gradeLevel: "3-5", domain: "Fractions", focus: "Fraction concepts and comparison", sessions: "40-65", swbat: "Identify fractions as equal parts; read/write fractions; model using area models, number lines, manipulatives; compare/order fractions", sourceType: "verified" }),
+        "9": freeze({ gradeLevel: "4-5", domain: "Fraction Operations", focus: "Fraction operations and mixed numbers", sessions: "40-65", swbat: "Add/subtract fractions with like denominators; solve word problems with fractions; apply to measurement; understand mixed numbers and improper fractions", sourceType: "verified" })
+      }),
       cycleMap: freeze({
         "K-2": freeze([
           freeze({ cycle: "Quantity and counting", swbat: "Represent the quantity with one model and explain how the count matches the set.", focus: "counting, quantity, and one-to-one correspondence", sourceType: "broad" }),
@@ -508,7 +576,80 @@
           freeze({ cycle: "Fraction and measurement support", swbat: "Use a visual model to explain the quantity or comparison before computing.", focus: "fraction/measurement reasoning and explanation", sourceType: "broad" })
         ])
       }),
-      sourceType: "broad"
+      sourceType: "verified"
+    }),
+    "pam-harris-numeracy": freeze({
+      id: "pam-harris-numeracy",
+      label: "Pam Harris Numeracy & Number Sense",
+      grades: freeze(["K", "1", "2", "3", "4", "5"]),
+      assessmentModel: "Formative observation of student reasoning / problem strings / concept checks",
+      supportRule: "Listen closely to understand student thinking and build instruction from what students already know. Use problem strings to nudge students toward efficient strategies. Focus on mathematical reasoning, not just answer-getting.",
+      progressDataNote: "Progress data should capture student's reasoning strategies observed during problem-solving, development of flexible thinking, growth in subitizing/decomposition accuracy, and shift toward more efficient mental strategies.",
+      sourceUrl: "https://www.mathisfigureoutable.com/",
+      gradeMap: freeze({
+        "K": freeze([
+          freeze({ unit: "Subitizing", swbat: "Subitize sets of 1-4 objects without counting; recognize that numbers can be made by combining smaller numbers (composition)", focus: "foundational number sense, subitizing, composition", sourceType: "verified" }),
+          freeze({ unit: "Decomposition", swbat: "Decompose small numbers (≤5) in multiple ways using objects and drawings; understand part-part-whole relationships", focus: "flexible thinking, decomposition strategies, visual representation", sourceType: "verified" }),
+          freeze({ unit: "Counting", swbat: "Count with one-to-one correspondence for sets to 20; understand that counting tells 'how many'", focus: "cardinality principle, counting sequences, quantification", sourceType: "verified" })
+        ]),
+        "1": freeze([
+          freeze({ unit: "Quick recognition", swbat: "Quickly recognize (subitize) sets of 1-10 objects; develop instant recognition of quantities", focus: "automaticity, number sense, visual perception", sourceType: "verified" }),
+          freeze({ unit: "Decomposition to 10", swbat: "Decompose numbers to 10 in two or more ways; record with drawings and equations; understand relationships between decompositions", focus: "flexible decomposition, part-whole understanding, symbolic notation", sourceType: "verified" }),
+          freeze({ unit: "Making tens", swbat: "Make tens and use tens to solve addition/subtraction problems; develop number bonds and complementary pairs", focus: "ten as anchor, efficient mental strategies, composition of 10", sourceType: "verified" }),
+          freeze({ unit: "Problem solving", swbat: "Represent and solve word problems using objects, drawings, and equations; explain thinking about quantities", focus: "mathematical reasoning, flexible representation, problem-solving strategies", sourceType: "verified" })
+        ]),
+        "2": freeze([
+          freeze({ unit: "Flexible addition/subtraction", swbat: "Fluently add and subtract within 20 using mental strategies based on number relationships; understand inverse relationship", focus: "mental math strategies, relational thinking, automaticity to 20", sourceType: "verified" }),
+          freeze({ unit: "Place value", swbat: "Understand place value for 2-digit numbers (tens and ones); decompose numbers flexibly to solve problems", focus: "tens/ones conceptualization, flexible decomposition, multidigit reasoning", sourceType: "verified" }),
+          freeze({ unit: "Part-whole thinking", swbat: "Solve word problems involving addition and subtraction using part-part-whole thinking and visual models", focus: "conceptual understanding, flexible strategies, mathematical explanation", sourceType: "verified" })
+        ]),
+        "3": freeze([
+          freeze({ unit: "Multiplicative relationships", swbat: "Build relationships between addition and multiplication (equal groups); develop flexible multiplication strategies", focus: "multiplicative thinking, equal groups, flexible reasoning", sourceType: "verified" }),
+          freeze({ unit: "Multi-step problem solving", swbat: "Use number sense and relationships to solve multi-step word problems; explain reasoning using mathematical models", focus: "complex problem-solving, relational thinking, mathematical explanation", sourceType: "verified" }),
+          freeze({ unit: "Division reasoning", swbat: "Develop and apply flexible strategies for division; explain why a strategy works and when it is most efficient", focus: "division concepts, strategic thinking, mathematical justification", sourceType: "verified" })
+        ]),
+        "4-5": freeze([
+          freeze({ unit: "Fluent multiplication/division", swbat: "Multiply and divide fluently using flexible strategies and number relationships; choose efficient strategies based on problem context", focus: "computational fluency, strategic flexibility, number relationships", sourceType: "verified" }),
+          freeze({ unit: "Multi-step reasoning", swbat: "Solve complex multi-step problems in multiple ways; justify reasoning using multiple representations", focus: "complex reasoning, multiple solution paths, mathematical justification", sourceType: "verified" }),
+          freeze({ unit: "Rational number sense", swbat: "Build understanding of decimals and fractions through part-whole relationships; connect concrete to abstract thinking", focus: "fraction/decimal reasoning, part-whole understanding, conceptual foundations", sourceType: "verified" })
+        ])
+      }),
+      sourceType: "verified"
+    }),
+    "jo-boaler-mindset": freeze({
+      id: "jo-boaler-mindset",
+      label: "Jo Boaler Mathematical Mindset",
+      grades: freeze(["K", "1", "2", "3", "4", "5", "6", "7", "8"]),
+      assessmentModel: "Formative assessment for learning / open-ended task analysis / student self-reflection",
+      supportRule: "Use low-floor, high-ceiling tasks that are accessible to all students. Provide feedback focused on growth and learning, not grades. Emphasize that mathematical ability grows with effort and struggle.",
+      progressDataNote: "Progress data should capture student engagement with challenging problems, quality of mathematical reasoning, growth in strategy flexibility, and development of growth mindset beliefs about mathematical ability.",
+      sourceUrl: "https://www.youcubed.org/",
+      gradeMap: freeze({
+        "K-1": freeze([
+          freeze({ unit: "Number decomposition", swbat: "Decompose numbers in multiple ways and explain thinking visually; use multiple strategies to solve addition problems and discuss why different strategies work", focus: "multiple representations, flexible thinking, growth mindset", sourceType: "verified" }),
+          freeze({ unit: "Visual thinking", swbat: "Recognize that different ways of showing a number are equivalent; explain thinking about quantity, subitizing, and counting", focus: "multidimensional thinking, visual representation, mathematical communication", sourceType: "verified" })
+        ]),
+        "2": freeze([
+          freeze({ unit: "Multiple strategies", swbat: "Solve addition and subtraction problems in multiple ways; explain why different strategies work and when each is useful", focus: "strategy flexibility, relational thinking, mathematical justification", sourceType: "verified" }),
+          freeze({ unit: "Visual investigation", swbat: "Visualize and represent numbers using arrays, groups, and other models; investigate patterns and make conjectures about number relationships", focus: "visual/multidimensional thinking, pattern recognition, mathematical reasoning", sourceType: "verified" }),
+          freeze({ unit: "Collaborative reasoning", swbat: "Discuss and justify mathematical reasoning in small groups; listen to and evaluate peer strategies", focus: "mathematical communication, collaborative learning, growth mindset", sourceType: "verified" })
+        ]),
+        "3": freeze([
+          freeze({ unit: "Multiplication strategies", swbat: "Develop and communicate multiple strategies for multiplication and division; investigate and explain patterns in multiplication arrays and area models", focus: "strategy development, pattern exploration, mathematical explanation", sourceType: "verified" }),
+          freeze({ unit: "Open-ended problem solving", swbat: "Solve open-ended problems using multiple representations (drawings, equations, models); explain why a strategy works and when it is most efficient", focus: "flexible problem-solving, multiple representations, strategic thinking", sourceType: "verified" })
+        ]),
+        "4-5": freeze([
+          freeze({ unit: "Complex problem solving", swbat: "Solve complex multi-step problems in multiple ways; justify reasoning using mathematical models and visual representations", focus: "complex reasoning, multiple solution paths, deep understanding", sourceType: "verified" }),
+          freeze({ unit: "Fraction visualization", swbat: "Visualize fraction and decimal concepts using area models, number lines, and other representations; investigate relationships between fractions/decimals", focus: "visual reasoning, multiple representations, conceptual understanding", sourceType: "verified" }),
+          freeze({ unit: "Mathematical elegance", swbat: "Analyze different solution methods and discuss mathematical efficiency and elegance; develop appreciation for mathematical thinking", focus: "strategy analysis, mathematical aesthetics, deeper engagement", sourceType: "verified" })
+        ]),
+        "6-8": freeze([
+          freeze({ unit: "Algebraic reasoning", swbat: "Solve real-world problems using algebraic and geometric reasoning with multiple solution paths; justify mathematical claims using mathematical language", focus: "algebraic thinking, real-world connections, mathematical justification", sourceType: "verified" }),
+          freeze({ unit: "Visual exploration", swbat: "Create visual representations and algebraic models to explore mathematical relationships; investigate patterns and test conjectures", focus: "visual/algebraic integration, exploratory learning, mathematical reasoning", sourceType: "verified" }),
+          freeze({ unit: "Mathematical communication", swbat: "Communicate mathematical reasoning with clarity and precision; engage in mathematical discourse about different solution strategies and their merits", focus: "mathematical communication, collaborative reasoning, intellectual growth", sourceType: "verified" })
+        ])
+      }),
+      sourceType: "verified"
     })
   });
 
