@@ -2591,7 +2591,7 @@ html[data-home-mode="play"] .focus-inline-results {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: clamp(65px, 10vw, 120px);
+  max-width: clamp(70px, 12vw, 160px);  /* Increased to accommodate longer theme names like "Northwest Field" */
   border: 1px solid rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2608,6 +2608,7 @@ html[data-home-mode="play"] .theme-name-indicator {
   font-size: 0.56rem;
   padding: 3px 5px;
   margin: 0 1px;
+  max-width: clamp(70px, 12vw, 160px);
 }
 
 /* ── Settings panel ─────────────────────────────────── */
@@ -4940,6 +4941,7 @@ html[data-home-mode="play"] .board-plate {
   background: var(--wq-play-board-bg);
   border-color: var(--wq-play-board-border);
   box-shadow: var(--wq-play-board-shadow);
+  overflow: hidden;  /* Ensures no tile overflow creates visual artifacts */
   width: min(calc(var(--playfield-width) + clamp(52px, calc(var(--tile-size) * 0.82), 92px)), calc(100vw - 20px), calc(100% - 4px));
   padding: clamp(14px, calc(var(--tile-size) * 0.24), 20px) clamp(14px, calc(var(--tile-size) * 0.22), 18px);
 }
@@ -6163,6 +6165,10 @@ html[data-motion="reduced"] .midgame-boost-ticker-track {
   box-shadow:     0 12px 28px rgba(8, 18, 34, 0.36);
 }
 #toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+html[data-home-mode="play"] #toast:not(.visible) {
+  display: none !important;  /* Hide empty toast in play mode to prevent dark shadow artifact and pulsing animation */
+}
 
 #toast.toast-informant {
   max-width: min(92vw, 660px);
@@ -9462,6 +9468,7 @@ html[data-home-mode="play"] .theme-name-indicator:focus {
   html[data-home-mode="play"] .theme-name-indicator {
     font-size: 0.52rem;
     padding: 2px 4px;
+    max-width: clamp(70px, 10vw, 160px);
   }
 }
 
