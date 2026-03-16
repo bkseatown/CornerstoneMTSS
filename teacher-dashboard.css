@@ -39,14 +39,14 @@ body.teacher-dashboard {
 
 /* Prevent page scroll entirely on dashboard */
 body.td-page {
-  overflow: hidden !important;
-  padding-top: 0 !important;
+  overflow: hidden;
+  padding-top: 0;
 }
 
 body.td-meeting-mode .dashboard-queue,
 body.td-meeting-mode .dashboard-launch,
 body.td-meeting-mode #td-coach-ribbon {
-  display: none !important;
+  display: none;
 }
 
 body.td-meeting-mode .dashboard-focus {
@@ -59,7 +59,7 @@ body.td-meeting-mode .focus-card {
 
 /* Nav shell offset must live on dashboard shell, not document padding. */
 body.td-page.cs-has-nav-shell {
-  padding-top: 0 !important;
+  padding-top: 0;
 }
 
 /* Root dashboard shell */
@@ -86,7 +86,7 @@ body.cs-has-nav-shell .td-shell {
 @media (max-width: 1180px), (max-height: 820px) {
   body.teacher-dashboard,
   body.td-page {
-    overflow: auto !important;
+    overflow: auto;
   }
 
   .td-shell,
@@ -1746,7 +1746,7 @@ body.td-classroom-mode .td-explainability,
 body.td-classroom-mode .framework-badge-row,
 body.td-classroom-mode .focus-view-details-btn,
 body.td-classroom-mode .dashboard-eval {
-  display: none !important;
+  display: none;
 }
 
 body.td-classroom-mode .focus-actions .focus-start {
@@ -1762,7 +1762,7 @@ body.td-classroom-mode #td-top-overflow-toggle {
 
 body.td-daily-mode,
 body.td-classroom-mode {
-  overflow: auto !important;
+  overflow: auto;
 }
 
 body.td-daily-mode .td-shell,
@@ -2102,7 +2102,9 @@ body.td-wow-eval-active .td-shell {
   background: color-mix(in oklab, var(--surface-elev-1) 90%, #e7f0fd 10%);
 }
 
-#td-coach-ribbon { display: none !important; }
+body:not(.dashboard-mode) #td-coach-ribbon {
+  display: none;
+}
 
 .dashboard-mode-strip #td-mode-daily {
   font-weight: var(--fw-semibold);
@@ -2138,8 +2140,8 @@ body.td-page .td-modal-card {
   .focus-confidence-progress,
   .focus-delta,
   .focus-card {
-    transition: none !important;
-    animation: none !important;
+    transition: none;
+    animation: none;
   }
 }
 
@@ -2222,7 +2224,7 @@ body.td-page .td-modal-card {
 @media (max-width: 900px) {
   body.td-reports-mode.teacher-dashboard,
   body.td-reports-mode.td-page {
-    overflow: hidden !important;
+    overflow: hidden;
   }
 
   body.td-reports-mode .td-shell {
@@ -3193,7 +3195,10 @@ body.td-page .td-modal-card {
   margin: 0;
 }
 
-.hidden { display: none !important; }
+/* Global hidden utility - increased specificity via descendant selector */
+body .hidden {
+  display: none;
+}
 
 .td-modal {
   position: fixed;
@@ -4201,7 +4206,7 @@ body.td-page .td-modal-card {
   .td-shell { width: calc(100vw - 10px); }
   body.teacher-dashboard,
   body.td-page {
-    overflow: auto !important;
+    overflow: auto;
   }
   body.cs-has-nav-shell .td-shell {
     height: auto;
@@ -4244,8 +4249,8 @@ body.td-page .td-modal-card {
 }
 
 html[data-motion="reduced"] * {
-  animation: none !important;
-  transition: none !important;
+  animation: none;
+  transition: none;
 }
 
 /* ── Reports overview stats ───────────────────── */

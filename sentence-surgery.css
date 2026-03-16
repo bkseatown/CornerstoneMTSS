@@ -167,8 +167,9 @@ body.cs-page-surgery.cs-has-nav-shell {
   color: #eef6ff;
 }
 
+.cs-coach-ribbon.is-hidden,
 .cs-coach-ribbon .hidden {
-  display: none !important;
+  display: none;
 }
 
 .cs-coach-ribbon .cs-coach-text,
@@ -566,8 +567,14 @@ body.teacher-mode .ss-breakdown {
   font-weight: 600;
 }
 
+/* Global hidden utility - increased specificity via element selector */
+:is(body, html, div, section, article, main, aside, nav, header, footer, p, span, button, input, form) .hidden {
+  display: none;
+}
+
+/* Fallback for direct .hidden class usage */
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 @keyframes ssComparePulse {
@@ -742,7 +749,7 @@ body.teacher-mode .ss-breakdown {
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
+    animation: none;
+    transition: none;
   }
 }
