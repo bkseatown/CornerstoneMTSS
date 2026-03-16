@@ -1,0 +1,46 @@
+#!/bin/sh
+# .husky/pre-commit
+# Runs guardrail checks before each commit
+# Reference: docs/CODE_HEALTH_GUARDRAILS.md
+
+# Export HUSKY flag for lint scripts
+export HUSKY=1
+
+echo "🛡️  Running CODE_HEALTH_GUARDRAILS checks..."
+echo ""
+
+# File size enforcement
+echo "Checking file sizes (limit: CSS 4K, JS 8K, HTML 500 lines)..."
+npm run lint:sizes
+if [ $? -ne 0 ]; then
+  echo "❌ File size check failed"
+  exit 1
+fi
+
+# !important limit enforcement
+echo "Checking !important usage (limit: 10 per file)..."
+npm run lint:important
+if [ $? -ne 0 ]; then
+  echo "❌ !important check failed"
+  exit 1
+fi
+
+# Token compliance
+echo "Checking design token compliance..."
+npm run lint:tokens
+if [ $? -ne 0 ]; then
+  echo "❌ Token compliance check failed"
+  exit 1
+fi
+
+# Selector deduplication
+echo "Checking for duplicate selectors..."
+npm run lint:duplicates
+if [ $? -ne 0 ]; then
+  echo "❌ Duplicate selector check failed"
+  exit 1
+fi
+
+echo ""
+echo "✅ All guardrail checks passed!"
+echo ""

@@ -30,6 +30,11 @@
     "dom:hooks:check": "node scripts/check-dead-dom-hooks.js",
     "hub:arch:check": "node scripts/check-hub-architecture-guardrails.js",
     "visual:check": "node scripts/check-visual-baseline.js",
+    "lint:sizes": "node scripts/lint-file-size.js",
+    "lint:important": "node scripts/lint-important.js",
+    "lint:tokens": "node scripts/lint-tokens.js",
+    "lint:duplicates": "node scripts/lint-duplicates.js",
+    "lint:guardrails": "npm run lint:sizes && npm run lint:important && npm run lint:tokens && npm run lint:duplicates",
     "audit:ui": "BASE_URL=http://127.0.0.1:4173 playwright test tests/audit-pages.spec.js --project=chromium --reporter=line",
     "audit:ui:html": "BASE_URL=http://127.0.0.1:4173 playwright test tests/audit-pages.spec.js --project=chromium --reporter=html",
     "audit:ui:live": "BASE_URL=https://bkseatown.github.io/WordQuest playwright test tests/audit-pages.spec.js --project=chromium --reporter=line",
@@ -77,12 +82,14 @@
     "taxonomy:audit": "node scripts/check-taxonomy-alignment.js",
     "stamp:version": "node scripts/stamp-build-version.js",
     "sas:build": "node scripts/sas/build-sas-alignment-pack.js",
-    "sas:verify": "node scripts/sas/verify-sas-alignment-pack.js"
+    "sas:verify": "node scripts/sas/verify-sas-alignment-pack.js",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.58.2",
     "axe-core": "^4.11.1",
+    "husky": "^9.1.7",
     "playwright": "^1.58.2"
   }
 }
