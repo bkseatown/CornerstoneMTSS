@@ -1360,3 +1360,443 @@ html[data-home-mode="play"][data-theme="seahawks"] {
     repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0 10px, transparent 10px 24px),
     linear-gradient(180deg, #f6e8f2, #eed7ea);
 }
+
+/* ===== Theme-Aware Tile Colors ===== */
+/* These overrides apply theme-specific colors to game tiles based on game state */
+
+/* Default theme tile colors */
+[data-theme="default"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="default"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="default"] .tile.absent {
+  background: linear-gradient(180deg, #aeb6c2 0%, #909aa7 58%, #74808e 100%);
+  color: #f3f8ff;
+  border-color: #475569;
+}
+
+/* Dark theme */
+[data-theme="dark"] .tile.correct {
+  background: linear-gradient(180deg, #66bb6a 0%, #43a047 58%, #2e7d32 100%);
+  color: #f0f7ee;
+  border-color: #1b5e20;
+}
+
+[data-theme="dark"] .tile.present {
+  background: linear-gradient(180deg, #ffc947 0%, #ffb300 60%, #c68400 100%);
+  color: #fffae8;
+  border-color: #7d5f00;
+}
+
+[data-theme="dark"] .tile.absent {
+  background: linear-gradient(180deg, #9fa8b4 0%, #6d7681 58%, #4f5a68 100%);
+  color: #eff4f9;
+  border-color: #263238;
+}
+
+/* Seahawks theme */
+[data-theme="seahawks"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="seahawks"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="seahawks"] .tile.absent {
+  background: linear-gradient(180deg, #aeb6c2 0%, #909aa7 58%, #74808e 100%);
+  color: #f3f8ff;
+  border-color: #475569;
+}
+
+/* Huskies theme */
+[data-theme="huskies"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="huskies"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="huskies"] .tile.absent {
+  background: linear-gradient(180deg, #aeb6c2 0%, #909aa7 58%, #74808e 100%);
+  color: #f3f8ff;
+  border-color: #475569;
+}
+
+/* Coffee theme */
+[data-theme="coffee"] .tile.correct {
+  background: linear-gradient(180deg, #8fdb49 0%, #69be28 58%, #4a8f1b 100%);
+  color: #f8fff7;
+  border-color: #254c0d;
+}
+
+[data-theme="coffee"] .tile.present {
+  background: linear-gradient(180deg, #ffe6a8 0%, #ffd580 60%, #cc9a3a 100%);
+  color: #fff9e8;
+  border-color: #9a7a2d;
+}
+
+[data-theme="coffee"] .tile.absent {
+  background: linear-gradient(180deg, #c9b8a6 0%, #9d8973 58%, #7a6b5a 100%);
+  color: #f3f8ff;
+  border-color: #4a423a;
+}
+
+/* Matrix theme */
+[data-theme="matrix"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="matrix"] .tile.present {
+  background: linear-gradient(180deg, #c9d400 0%, #9fb100 60%, #7a8500 100%);
+  color: #fff9e8;
+  border-color: #5a6400;
+}
+
+[data-theme="matrix"] .tile.absent {
+  background: linear-gradient(180deg, #6b7280 0%, #4f5663 58%, #3a4252 100%);
+  color: #f3f8ff;
+  border-color: #1f272f;
+}
+
+/* Ocean theme */
+[data-theme="ocean"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="ocean"] .tile.present {
+  background: linear-gradient(180deg, #ffa500 0%, #ff8c00 60%, #d97300 100%);
+  color: #fff9e8;
+  border-color: #8f5a1d;
+}
+
+[data-theme="ocean"] .tile.absent {
+  background: linear-gradient(180deg, #4db8e8 0%, #0ea5e9 58%, #0369a1 100%);
+  color: #f3f8ff;
+  border-color: #0c4a6e;
+}
+
+/* Sunset theme */
+[data-theme="sunset"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="sunset"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="sunset"] .tile.absent {
+  background: linear-gradient(180deg, #e8956f 0%, #d97b52 58%, #c45a35 100%);
+  color: #f3f8ff;
+  border-color: #7a3f24;
+}
+
+/* Superman theme */
+[data-theme="superman"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="superman"] .tile.present {
+  background: linear-gradient(180deg, #ffc107 0%, #ffb300 60%, #cc9000 100%);
+  color: #fff9e8;
+  border-color: #8f7a1a;
+}
+
+[data-theme="superman"] .tile.absent {
+  background: linear-gradient(180deg, #1976d2 0%, #1565c0 58%, #0d47a1 100%);
+  color: #f3f8ff;
+  border-color: #001a3a;
+}
+
+/* Iron Man theme */
+[data-theme="ironman"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="ironman"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="ironman"] .tile.absent {
+  background: linear-gradient(180deg, #ce3e35 0%, #ae2f27 58%, #8e1f19 100%);
+  color: #f3f8ff;
+  border-color: #3a0a08;
+}
+
+/* Marvel theme */
+[data-theme="marvel"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="marvel"] .tile.present {
+  background: linear-gradient(180deg, #ffc107 0%, #ffb300 60%, #cc9000 100%);
+  color: #fff9e8;
+  border-color: #8f7a1a;
+}
+
+[data-theme="marvel"] .tile.absent {
+  background: linear-gradient(180deg, #c41e3a 0%, #a01830 58%, #7a1127 100%);
+  color: #f3f8ff;
+  border-color: #2a0308;
+}
+
+/* Demon Hunter theme */
+[data-theme="demonhunter"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="demonhunter"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="demonhunter"] .tile.absent {
+  background: linear-gradient(180deg, #9933cc 0%, #7722aa 58%, #552288 100%);
+  color: #f3f8ff;
+  border-color: #330055;
+}
+
+/* Harley Quinn theme */
+[data-theme="harleyquinn"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="harleyquinn"] .tile.present {
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 60%, #c60fa6 100%);
+  color: #fff9e8;
+  border-color: #8f1a5f;
+}
+
+[data-theme="harleyquinn"] .tile.absent {
+  background: linear-gradient(180deg, #3d5afe 0%, #1e40af 58%, #0c2563 100%);
+  color: #f3f8ff;
+  border-color: #020826;
+}
+
+/* Kuromi theme */
+[data-theme="kuromi"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="kuromi"] .tile.present {
+  background: linear-gradient(180deg, #ffa0c0 0%, #ff6ba6 60%, #d44680 100%);
+  color: #fff9e8;
+  border-color: #8f3d5f;
+}
+
+[data-theme="kuromi"] .tile.absent {
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 58%, #0a0a0a 100%);
+  color: #f3f8ff;
+  border-color: #000000;
+}
+
+/* Harry Potter theme */
+[data-theme="harrypotter"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="harrypotter"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="harrypotter"] .tile.absent {
+  background: linear-gradient(180deg, #9f3d3d 0%, #7a3030 58%, #552424 100%);
+  color: #f3f8ff;
+  border-color: #2a1818;
+}
+
+/* Minecraft theme */
+[data-theme="minecraft"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="minecraft"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="minecraft"] .tile.absent {
+  background: linear-gradient(180deg, #8b8b8b 0%, #6b6b6b 58%, #4b4b4b 100%);
+  color: #f3f8ff;
+  border-color: #1a1a1a;
+}
+
+/* Mario theme */
+[data-theme="mario"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="mario"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="mario"] .tile.absent {
+  background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 58%, #880e4f 100%);
+  color: #f3f8ff;
+  border-color: #330000;
+}
+
+/* Zelda theme */
+[data-theme="zelda"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="zelda"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="zelda"] .tile.absent {
+  background: linear-gradient(180deg, #3d5c3d 0%, #2d4c2d 58%, #1d3c1d 100%);
+  color: #f3f8ff;
+  border-color: #0a1a0a;
+}
+
+/* Among Us theme */
+[data-theme="amongus"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="amongus"] .tile.present {
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 60%, #c60fa6 100%);
+  color: #fff9e8;
+  border-color: #8f1a5f;
+}
+
+[data-theme="amongus"] .tile.absent {
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 58%, #050508 100%);
+  color: #f3f8ff;
+  border-color: #000000;
+}
+
+/* Forest theme */
+[data-theme="forest"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="forest"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="forest"] .tile.absent {
+  background: linear-gradient(180deg, #4a6741 0%, #365a2f 58%, #22401d 100%);
+  color: #f3f8ff;
+  border-color: #0d1a0a;
+}
+
+/* Pop Pink theme */
+[data-theme="poppink"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="poppink"] .tile.present {
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 60%, #c60fa6 100%);
+  color: #fff9e8;
+  border-color: #8f1a5f;
+}
+
+[data-theme="poppink"] .tile.absent {
+  background: linear-gradient(180deg, #b47cff 0%, #a855f7 58%, #9333ea 100%);
+  color: #f3f8ff;
+  border-color: #5b21b6;
+}
+
+/* Rainbow Friends theme */
+[data-theme="rainbowfriends"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="rainbowfriends"] .tile.present {
+  background: linear-gradient(180deg, #ffa500 0%, #ff8c00 60%, #d97300 100%);
+  color: #fff9e8;
+  border-color: #8f5a1d;
+}
+
+[data-theme="rainbowfriends"] .tile.absent {
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 58%, #c60fa6 100%);
+  color: #f3f8ff;
+  border-color: #8f1a5f;
+}
+
+/* Classic theme */
+[data-theme="classic"] .tile.correct {
+  background: linear-gradient(180deg, #7be25f 0%, #4caf50 58%, #2f8f38 100%);
+  color: #f8fff7;
+  border-color: #14532d;
+}
+
+[data-theme="classic"] .tile.present {
+  background: linear-gradient(180deg, #ffd95e 0%, #ffc107 60%, #d59b05 100%);
+  color: #fff9e8;
+  border-color: #8f7f35;
+}
+
+[data-theme="classic"] .tile.absent {
+  background: linear-gradient(180deg, #aeb6c2 0%, #909aa7 58%, #74808e 100%);
+  color: #f3f8ff;
+  border-color: #475569;
+}

@@ -10199,3 +10199,55 @@ html[data-home-mode="play"] .key-backspace-glyph {
     --gap-tile: 2px;
   }
 }
+
+/* ===== Z-Index Management System ===== */
+/* Structured z-index scale for consistent layering throughout the application */
+:root {
+  --z-base:           1;
+  --z-interactive:    10;
+  --z-button:         20;
+  --z-popover:        34;
+  --z-modal:          100;
+  --z-settings:       260;
+  --z-challenge:      430;
+  --z-confetti:       300;
+  --z-celebration:    999;
+}
+
+/* Ensure return/back button is always accessible above modals */
+#teacher-dashboard-btn,
+#home-logo-btn {
+  position: relative;
+  z-index: calc(var(--z-settings) + 10);
+}
+
+/* Ensure settings panel doesn't block header buttons */
+#settings-panel {
+  z-index: var(--z-settings);
+}
+
+/* Quick docks should be below settings panel but above default content */
+.quick-popover,
+.quick-media-dock {
+  z-index: var(--z-popover);
+}
+
+/* Modals and overlays should be above most content */
+.modal,
+#modal-overlay {
+  z-index: var(--z-modal);
+}
+
+/* Challenge modal should be above regular modals */
+#challenge-modal {
+  z-index: var(--z-challenge);
+}
+
+/* Confetti and celebration effects */
+#confetti-canvas {
+  z-index: var(--z-confetti);
+}
+
+.celebrate-layer {
+  z-index: var(--z-celebration);
+}
