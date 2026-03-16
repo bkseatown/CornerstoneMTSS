@@ -1,0 +1,471 @@
+/**
+ * parent-dashboard.css
+ * Parent communication dashboard styling
+ */
+
+.parent-dashboard {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--surface-1, #ffffff);
+  color: var(--text-primary, #000000);
+}
+
+/* Header */
+.dashboard-header {
+  background: linear-gradient(135deg, var(--accent, #0173b2) 0%, #005a96 100%);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.grade-class {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Grid layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Cards */
+.dashboard-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border, #e0e0e0);
+  transition: box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: var(--text-primary, #000000);
+  font-weight: 600;
+}
+
+/* Progress metrics */
+.progress-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metric .label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--surface-2, #f0f0f0);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00a651 0%, #00d966 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.metric .value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent, #0173b2);
+}
+
+/* Achievements */
+.achievements-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.achievement-item {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
+  border-left: 4px solid #ffd700;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.achievement-title {
+  font-weight: 600;
+  color: var(--text-primary, #000000);
+  margin-bottom: 4px;
+}
+
+.achievement-desc {
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  margin-bottom: 4px;
+}
+
+.achievement-date {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+}
+
+.placeholder {
+  color: var(--text-secondary, #999);
+  font-style: italic;
+}
+
+/* Practice tips */
+.practice-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.practice-tip h3 {
+  margin: 0 0 12px 0;
+  color: var(--text-primary, #000000);
+  font-size: 15px;
+}
+
+.practice-tip ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary, #000000);
+}
+
+.practice-tip li {
+  margin-bottom: 8px;
+}
+
+/* Messages */
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.message-item {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+}
+
+.teacher-message {
+  background: linear-gradient(135deg, rgba(1, 115, 178, 0.05) 0%, rgba(1, 115, 178, 0.02) 100%);
+  border-left: 4px solid var(--accent, #0173b2);
+}
+
+.parent-message {
+  background: linear-gradient(135deg, rgba(0, 166, 81, 0.05) 0%, rgba(0, 166, 81, 0.02) 100%);
+  border-left: 4px solid #00a651;
+  margin-left: 20px;
+}
+
+.message-sender {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.message-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary, #000000);
+  margin-bottom: 4px;
+}
+
+.message-date {
+  font-size: 11px;
+  color: var(--text-secondary, #999);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+.btn-primary {
+  background: var(--accent, #0173b2);
+  color: white;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid var(--accent, #0173b2);
+  outline-offset: 2px;
+}
+
+.btn-secondary {
+  background: var(--surface-2, #f0f0f0);
+  color: var(--text-primary, #000000);
+  border: 1px solid var(--border, #e0e0e0);
+}
+
+.btn-secondary:hover {
+  background: var(--border, #e0e0e0);
+}
+
+/* Attendance stats */
+.attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat {
+  text-align: center;
+  padding: 12px;
+  background: var(--surface-2, #f0f0f0);
+  border-radius: 6px;
+}
+
+.stat .label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.stat .value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent, #0173b2);
+}
+
+/* Resources */
+.resources-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.resources-list li {
+  margin-bottom: 12px;
+}
+
+.resources-list a {
+  color: var(--accent, #0173b2);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 0;
+  display: block;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.resources-list a:hover {
+  background: var(--surface-2, #f0f0f0);
+  padding-left: 8px;
+}
+
+.resources-list a:focus-visible {
+  outline: 2px solid var(--accent, #0173b2);
+  outline-offset: 2px;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin: 0 0 16px 0;
+  color: var(--text-primary, #000000);
+}
+
+.modal-content textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 16px;
+}
+
+.modal-content textarea:focus {
+  outline: none;
+  border-color: var(--accent, #0173b2);
+  box-shadow: 0 0 0 3px rgba(1, 115, 178, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  flex: 1;
+  max-width: 150px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .dashboard-card {
+    padding: 16px;
+  }
+
+  .dashboard-header {
+    padding: 24px 16px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .attendance-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .parent-message {
+    margin-left: 0;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .parent-dashboard {
+    background: var(--surface-1, #1a1a1a);
+  }
+
+  .dashboard-card {
+    background: var(--surface-1, #1a1a1a);
+    border-color: var(--border, #333);
+  }
+
+  .dashboard-header {
+    background: linear-gradient(135deg, #004a8a 0%, #003060 100%);
+  }
+
+  .stat {
+    background: var(--surface-2, #2a2a2a);
+  }
+
+  .teacher-message {
+    background: rgba(1, 115, 178, 0.15);
+  }
+
+  .parent-message {
+    background: rgba(0, 166, 81, 0.15);
+  }
+}
+
+/* Accessibility: High contrast */
+[data-a11y="high-contrast"] .dashboard-card {
+  border: 3px solid #000000;
+  background: #ffffff;
+}
+
+[data-a11y="high-contrast"] .btn-primary {
+  border: 3px solid #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
+[data-a11y="high-contrast"] .progress-fill {
+  background: #000000;
+}
+
+/* Low vision mode */
+[data-a11y="low-vision"] .dashboard-card {
+  padding: 32px;
+}
+
+[data-a11y="low-vision"] .dashboard-card h2 {
+  font-size: 22px;
+}
+
+[data-a11y="low-vision"] .metric .label {
+  font-size: 14px;
+}
+
+[data-a11y="low-vision"] .btn-primary,
+[data-a11y="low-vision"] .btn-secondary {
+  min-height: 56px;
+  font-size: 16px;
+  padding: 14px 20px;
+}
+
+[data-a11y="low-vision"] .progress-bar {
+  height: 12px;
+}
