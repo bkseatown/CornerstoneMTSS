@@ -327,6 +327,7 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
   padding: 16px 18px;
   border: 1px solid var(--cg-border);
   border-radius: var(--cg-radius-xl);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   background: var(--cg-surface-soft);
   cursor: pointer;
   text-align: left;
@@ -7744,14 +7745,18 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
 }
 
 body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
   top: 10px !important;
   right: 14px !important;
+  width: auto !important;
   max-width: 212px !important;
   padding: 5px 7px !important;
   gap: 4px !important;
-  flex-wrap: nowrap !important;
   justify-content: flex-start !important;
-  overflow-x: auto !important;
+  overflow-x: visible !important;
   overflow-y: hidden !important;
   border-radius: 18px !important;
   scrollbar-width: none !important;
