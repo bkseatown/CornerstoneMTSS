@@ -265,7 +265,7 @@ html[data-ui-skin="premium"] .key-row {
 }
 
 html[data-ui-skin="premium"] .key {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--wq-border-soft) 76%, #ffffff 24%);
   background: linear-gradient(180deg, #f7fbff, #d6e6fa);
   color: var(--wq-text-default);
@@ -344,7 +344,7 @@ html[data-ui-skin="premium"] .settings-build-badge {
 }
 
 html[data-ui-skin="premium"] .close-btn {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--wq-border-soft);
   background: rgba(255, 255, 255, 0.88);
   color: var(--wq-text-default);
@@ -356,7 +356,7 @@ html[data-ui-skin="premium"] .close-btn:hover {
 }
 
 html[data-ui-skin="premium"] .settings-tab {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--wq-border-soft);
   background: rgba(255, 255, 255, 0.86);
   color: var(--wq-text-default);
@@ -412,7 +412,7 @@ html[data-ui-skin="premium"] .setting-row input[type="search"],
 html[data-ui-skin="premium"] .setting-row input[type="number"],
 html[data-ui-skin="premium"] .setting-row input[type="file"],
 html[data-ui-skin="premium"] .setting-row textarea {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--wq-border-soft) 82%, white 18%);
   background: #ffffff;
   color: var(--wq-text-strong);
@@ -522,7 +522,7 @@ html[data-ui-skin="premium"] .hover-note-toast {
 
 html[data-ui-skin="premium"] .next-action-line,
 html[data-ui-skin="premium"] .classroom-turn-line {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in srgb, #0b8ccf 28%, var(--wq-border-soft) 72%);
   background: linear-gradient(140deg, rgba(255, 255, 255, 0.95), rgba(226, 241, 255, 0.92));
   color: var(--wq-text-default);
@@ -617,7 +617,7 @@ html[data-ui-skin="premium"] #modal-meaning-highlight-line {
 }
 
 html[data-ui-skin="premium"] .audio-row-core .audio-btn {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(180deg, #ffffff, #e7f1ff);
 }
 
@@ -647,7 +647,7 @@ html[data-ui-skin="premium"] .audio-btn,
 html[data-ui-skin="premium"] .hint-clue-btn,
 html[data-ui-skin="premium"] .starter-word-btn,
 html[data-ui-skin="premium"] .modal-open-challenge-btn {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, #0b8ccf 20%, var(--wq-border-soft) 80%);
   background: linear-gradient(180deg, #ffffff, #e7f2ff);
   color: var(--wq-text-default);
@@ -668,7 +668,7 @@ html[data-ui-skin="premium"] .modal-auto-next-cancel {
 }
 
 html[data-ui-skin="premium"] .starter-word-chip {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in srgb, #0b8ccf 18%, var(--wq-border-soft) 82%);
   background: linear-gradient(180deg, #ffffff, #ebf5ff);
   color: #0a5f8f;
@@ -690,7 +690,7 @@ html[data-ui-skin="premium"] #modal-overlay {
 
 html[data-ui-skin="premium"] #modal-badge,
 html[data-ui-skin="premium"] .modal-practice-status {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 html[data-ui-skin="premium"] input[type="range"] {

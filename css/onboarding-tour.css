@@ -146,7 +146,7 @@
   top: 7px;
   width: 7px;
   height: 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(135deg, #4b84d8, #90b4f2);
 }
 
@@ -176,7 +176,7 @@
 
 .cs-tour-dot.active {
   width: 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #1a56db;
 }
 
@@ -190,7 +190,7 @@
 
 .cs-tour-btn {
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 8px 14px;
   font-size: 13px;
   font-weight: 700;

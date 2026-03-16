@@ -60,7 +60,7 @@
   border: none;
   width: 52px;
   height: 52px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(19, 33, 58, 0.06);
   color: #44506b;
   font-size: 32px;
@@ -108,7 +108,7 @@
   justify-content: center;
   min-height: 32px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255,255,255,0.12);
   color: rgba(245, 249, 255, 0.88);
   font-size: 12px;
@@ -151,7 +151,7 @@
 .cs-backup-btn {
   min-height: 48px;
   padding: 10px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(35, 63, 126, 0.16);
   background: #eef3fb;
   color: #20325a;
@@ -185,7 +185,7 @@
   justify-content: center;
   min-height: 42px;
   padding: 8px 10px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255,255,255,0.09);
   border: 1px solid rgba(210, 225, 255, 0.12);
   font-size: 12px;
@@ -246,7 +246,7 @@
   min-width: 120px;
   min-height: 42px;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-weight: 800;
   background: rgba(230, 238, 250, 0.9);
 }

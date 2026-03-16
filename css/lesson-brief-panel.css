@@ -64,7 +64,7 @@
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   width: 34px;
   height: 34px;
   cursor: pointer;
@@ -126,7 +126,7 @@
   gap: 6px;
   align-self: flex-start;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #e8f0fc;
   color: #1f4f93;
   font-size: 11px;
@@ -193,7 +193,7 @@
   border: 1px solid #bfd0e7;
   background: #f3f7fd;
   color: #214e91;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 10px;
   font-size: 12px;
   font-weight: 600;
@@ -299,7 +299,7 @@
   gap: 6px;
   margin-top: 10px;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(159, 177, 210, 0.55);
   background:
     radial-gradient(circle at top right, rgba(114, 161, 231, 0.14), transparent 34%),

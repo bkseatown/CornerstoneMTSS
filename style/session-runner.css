@@ -142,7 +142,7 @@ body.session-runner {
 .sr-progress {
   margin-top: 6px;
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.15);
   overflow: hidden;
 }
@@ -169,7 +169,7 @@ body.session-runner {
 
 .sr-metrics input {
   width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(16, 24, 34, 0.74);
   color: var(--sr-text);
@@ -185,7 +185,7 @@ body.session-runner {
 #sr-student-select {
   margin-top: 8px;
   width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(16, 24, 34, 0.74);
   color: var(--sr-text);
@@ -213,7 +213,7 @@ body.session-runner {
   margin-top: 5px;
   width: 100%;
   min-height: 84px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(16, 24, 34, 0.74);
   color: var(--sr-text);

@@ -290,7 +290,7 @@
   min-height: 34px;
   min-width: 30px;
   padding: 0 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.86rem;
   font-weight: 700;
   color: #162a43;
@@ -337,14 +337,14 @@
   gap: 8px;
   min-height: 250px;
   padding: 8px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 74%, transparent);
   background: color-mix(in oklab, var(--surface-elev-2) 80%, transparent);
 }
 
 .hero-writing-line {
   min-height: 38px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 74%, transparent);
   background: var(--surface-elev-1);
   padding: 10px 12px;
@@ -364,7 +364,7 @@
 
 .hero-writing-bar {
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--surface-elev-3) 86%, transparent);
   overflow: hidden;
 }

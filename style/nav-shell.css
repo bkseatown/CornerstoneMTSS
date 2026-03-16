@@ -38,7 +38,7 @@
   inset: auto -10% -65% auto;
   width: 240px;
   height: 160px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: radial-gradient(circle, rgba(70, 133, 222, 0.18), rgba(70, 133, 222, 0));
   pointer-events: none;
 }
@@ -108,7 +108,7 @@
   align-items: center;
   gap: 8px;
   padding: 11px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   color: var(--nav-shell-subtle);
   text-decoration: none;
   white-space: nowrap;
@@ -128,7 +128,7 @@
   justify-content: center;
   width: 22px;
   height: 22px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255,255,255,0.7);
   color: #7f6d56;
   font-size: 12px;
