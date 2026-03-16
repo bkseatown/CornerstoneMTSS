@@ -168,7 +168,63 @@ Teacher sees: "Do this with these 3 students today"
 
 ---
 
-## 3b) March 13-15, 2026 Baseline
+## 3b) March 16, 2026 — Word Quest Visual Regression Fixes ✅ COMPLETE
+**CRITICAL REGRESSIONS FIXED IN THIS SESSION**
+
+### Issue: User reported three visual regressions in Word Quest gameplay
+User feedback on March 16 evening:
+- "You've changed the keyboard on word quest for the worse. It now has round keys instead of fun rounded square tiles that were more visible."
+- "The game board boxes are small now too."
+- "The help tab is still too large."
+
+### Root Cause Analysis
+During token standardization (commit c7e72d56), the keyboard key border-radius was changed from implicit rounded-square to `var(--radius-md)` (12px), making 48px keys appear nearly circular instead of squared. The help button was oversized in Seahawks theme. Game board tiles were at minimum size (62px).
+
+### Fixes Applied
+
+**1. Keyboard Keys - Restored Rounded Square Appearance**
+- Changed `html[data-home-mode="play"] .key` border-radius: 12px → 5px
+- Result: Keys now have proper "rounded square" appearance, not circular
+- File: `style/components.css` line 5725
+
+**2. Key Spacing & Letter Padding**
+- Increased gap between keys: `--gap-key: 6px → 9px`
+- Increased letter padding: 3px 5px → 6px 8px (vertical × horizontal)
+- Added flex centering to prevent descenders (q, y, p, g, j) from touching edges
+- Result: Letters have comfortable breathing room within each key
+
+**3. Game Board Tiles - Increased Size**
+- Increased `--tile-size: 62px → 72px` for play mode
+- Result: Much better visibility and touch targets
+
+**4. Help Button - Reduced Size**
+- Base play mode: 41px → 37px
+- Seahawks theme override: 41px → 37px
+- SVG icon: 24px → 20px
+- Result: Properly proportioned to game interface
+
+### Commits from This Session
+- `258c69c6` - Fix: Restore rounded square key styling and help button sizing
+- `a2cae02a` - Fix: Add padding and centering to keyboard keys for better letter spacing
+- `7cb686b5` - Fix: Increase game board tiles, adjust key styling and spacing per user feedback
+- `bdbe0f65` - Fix: Reduce help button size for all themes including Seahawks
+
+### CSS Version Updates
+- `word-quest.html`: `style/components.css?v=20260315e → v=20260316c` (force cache bust)
+
+### Visual Result
+Word Quest is now fully restored to intended design:
+- Keyboard keys are proper rounded squares (not circles)
+- Game board tiles are larger and more visible (72px)
+- Letters have proper spacing with no edge-touching
+- Help button is properly proportioned
+- All changes screenshot-verified before committing
+
+**Status: COMPLETE AND VERIFIED** ✅
+
+---
+
+## 3c) March 13-15, 2026 Baseline
 Earlier completed work:
 - homepage cards are more premium and no longer read like generic placeholder boxes
 - workspace card has a stronger briefing surface instead of a flat empty panel
@@ -229,17 +285,25 @@ Earlier completed work:
   - Fishtank ELA should be treated as `K-5`
   - Fundations should be treated as Levels `K, 1, 2, 3`
 
-Latest pushed commits from this thread:
+Latest pushed commits from March 16 evening (this thread):
+- `258c69c6` `Fix: Restore rounded square key styling and help button sizing`
+- `a2cae02a` `Fix: Add padding and centering to keyboard keys for better letter spacing`
+- `7cb686b5` `Fix: Increase game board tiles, adjust key styling and spacing per user feedback`
+- `bdbe0f65` `Fix: Reduce help button size for all themes including Seahawks`
+
+Earlier pushed commits (March 13-15):
 - `42fbc93e` `Simplify homepage games showcase`
 - `59e78f7d` `Tighten homepage hero balance`
 - `f82f9c91` `Pull student profile support cues higher`
 - `3dbf61f4` `Refine hub day overview and lesson sequence`
 
-Latest verified local page markers from this thread:
+Latest verified local page markers:
 - Typing Quest shell assets: `20260313u`
 - Word Quest build badge: `20260313u`
-- Word Quest stabilized asset refs:
-  - `style/components.css?v=20260314c`
+- **Word Quest CSS (after March 16 fixes):**
+  - `style/components.css?v=20260316c` (includes key styling, tile size, help button fixes)
+  - `word-quest.html` CSS ref: `v=20260316c`
+- **Other asset refs:**
   - `js/app.js?v=20260314c`
 
 Latest verified screenshot pack from the current local state:
@@ -254,7 +318,18 @@ Latest verified screenshot pack from the current local state:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/buildword-fix11.png`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/output/buildword-fix11-forest.png`
 
-## 4) What Still Needs Work
+## 4) Current Quality Status
+
+### Word Quest - NOW SOLID ✅
+- **March 16 Status:** All visual regressions fixed and verified
+- Keyboard keys: Proper rounded squares (5px border-radius), not circular
+- Game board tiles: Larger (72px), better visibility
+- Key spacing: Proper gaps (9px between keys)
+- Letter padding: Comfortable spacing (6px vertical × 8px horizontal)
+- Help button: Properly sized (37px) across all themes
+- **Recommendation:** Word Quest is now ready for feature work and polish phases
+
+## 4b) What Still Needs Work
 Highest-priority unresolved quality areas:
 
 ### Typing Quest
