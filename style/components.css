@@ -9394,7 +9394,7 @@ html[data-home-mode="play"] #keyboard {
   margin-top: 0;
   margin-bottom: max(2px, env(safe-area-inset-bottom));
   gap: clamp(3px, 0.6vh, 6px);
-  overflow: hidden;
+  overflow: visible;
   align-self: start;
   position: relative;
   z-index: 1;
