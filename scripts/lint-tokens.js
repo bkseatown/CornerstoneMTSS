@@ -57,6 +57,7 @@ const FILE_EXEMPTIONS = new Set([
   'a11y-color-blind.css',   // Accessibility: color-blind palettes (Deuteranopia/Protanopia/Tritanopia specific)
   'a11y-low-vision.css',    // Accessibility: low vision typography (font scaling, touch targets)
   'a11y-controls.css',      // Accessibility: control panel UI (responsive spacing, button dimensions)
+  'voice-feedback.css',     // Voice feedback UI: metric layout and score visualization require specific spacing/colors
 ]);
 
 const VALID_FONT_SIZES = [
