@@ -2072,6 +2072,20 @@
             renderLastSessionSummary(state.selectedId);
             updateAuditMarkers();
             setCoachLine(summary.nextMove && summary.nextMove.line || (focusView && focusView.tierLabel ? focusView.tierLabel : ""));
+            if (el.focusStartBtn) {
+              (function (capturedPlan) {
+                el.focusStartBtn.onclick = function () {
+                  el.focusStartBtn.classList.add("is-launching");
+                  setTimeout(function () {
+                    if (el.focusStartBtn) el.focusStartBtn.classList.remove("is-launching");
+                  }, 1200);
+                  var launch = capturedPlan && capturedPlan.plans && capturedPlan.plans.thirtyMin
+                    && capturedPlan.plans.thirtyMin[0] && capturedPlan.plans.thirtyMin[0].launch;
+                  var href = launch && launch.url ? launch.url : "word-quest.html?quick=1";
+                  window.location.href = appendStudentParam("./" + href.replace(/^\.\//, ""));
+                };
+              })(state.plan);
+            }
           }
         }
       });

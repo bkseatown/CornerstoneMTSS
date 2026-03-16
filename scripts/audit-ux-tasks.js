@@ -134,12 +134,26 @@ async function openActivitiesMenu(page) {
 }
 
 async function ensureStudentSelected(page) {
-  const alreadySelected = await page.evaluate(() => {
+  // #td-student-label is set by WorkspaceFocusShell.renderSelectedState when a student
+  // is selected from the caseload. It is the correct signal for "a student is selected".
+  // #td-focus-student-name is the surgical-priority engine card updated only by
+  // renderSurgicalDashboard (requires evidence data) — NOT by manual caseload selection.
+  const studentLabelCheck = () => {
+    const label = document.getElementById('td-student-label');
+    if (label instanceof HTMLElement) {
+      const text = String(label.textContent || '').trim();
+      if (text.length > 3) return true;
+    }
+    // Fallback: surgical dashboard focus card (populated when today-plan has priority rows)
     const nameEl = document.getElementById('td-focus-student-name');
-    if (!(nameEl instanceof HTMLElement)) return false;
-    const text = String(nameEl.textContent || '').trim().toLowerCase();
-    return text.length > 0 && text !== 'select a student';
-  });
+    if (nameEl instanceof HTMLElement) {
+      const text = String(nameEl.textContent || '').trim().toLowerCase();
+      if (text.length > 0 && text !== 'select a student') return true;
+    }
+    return false;
+  };
+
+  const alreadySelected = await page.evaluate(studentLabelCheck);
   if (alreadySelected) return;
 
   await waitForAttached(page, '#td-caseload-list [data-student-id]', 15000);
@@ -150,12 +164,7 @@ async function ensureStudentSelected(page) {
     return true;
   });
   if (!clicked) throw new Error('Unable to select student from caseload list.');
-  await page.waitForFunction(() => {
-    const nameEl = document.getElementById('td-focus-student-name');
-    if (!(nameEl instanceof HTMLElement)) return false;
-    const text = String(nameEl.textContent || '').trim().toLowerCase();
-    return text.length > 0 && text !== 'select a student';
-  }, { timeout: 10000 });
+  await page.waitForFunction(studentLabelCheck, { timeout: 10000 });
 }
 
 async function openMeetingWorkspace(page) {
@@ -304,14 +313,22 @@ async function run() {
     await runTask(results, 'startRecommendedSession', 'Launch Start Recommended Session', async () => {
       await gotoReportsSurface(page, baseUrl);
       await ensureStudentSelected(page);
-      const before = page.url();
-      await Promise.all([
-        page.waitForURL((url) => String(url) !== before, { timeout: 12000 }),
-        page.click('#td-focus-start-btn')
-      ]);
+      // Use page.evaluate to fire the onclick directly — page.click() with pointer
+      // events can lose the navigation event when onclick sets window.location.href
+      // synchronously before Playwright's waitForURL listener is fully registered.
+      const clicked = await page.evaluate(() => {
+        const btn = document.getElementById('td-focus-start-btn');
+        if (!(btn instanceof HTMLElement) || !btn.onclick) return false;
+        btn.click();
+        return true;
+      });
+      if (!clicked) throw new Error('td-focus-start-btn not found or has no onclick handler');
+      await page.waitForFunction(() => {
+        return !String(window.location.href).includes('reports.html');
+      }, { timeout: 12000 });
       const after = page.url();
-      if (/teacher-dashboard\.html(?:\?|$)/i.test(after)) {
-        throw new Error(`Expected navigation to intervention surface, stayed on ${after}`);
+      if (/reports\.html(?:\?|$)/i.test(after)) {
+        throw new Error(`Expected navigation away from reports surface, URL is still ${after}`);
       }
     });
 
