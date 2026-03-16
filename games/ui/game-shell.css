@@ -1944,7 +1944,7 @@ html[data-view-mode="classroom"] body.game-platform-page .cg-stage-head {
 }
 
 html[data-view-mode="projector"] body.game-platform-page .cg-stage-head h2 {
-  font-size: clamp(40px, 4vw, 52px);
+  font-size: clamp(24px, 2.4vw, 34px);
   line-height: 1.04;
   max-width: 16ch;
 }
