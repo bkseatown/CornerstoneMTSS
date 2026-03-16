@@ -58,6 +58,7 @@ const FILE_EXEMPTIONS = new Set([
   'a11y-low-vision.css',    // Accessibility: low vision typography (font scaling, touch targets)
   'a11y-controls.css',      // Accessibility: control panel UI (responsive spacing, button dimensions)
   'voice-feedback.css',     // Voice feedback UI: metric layout and score visualization require specific spacing/colors
+  'collab-overlay.css',     // Collaboration overlay: SVG annotation styling with specific positioned spacing
 ]);
 
 const VALID_FONT_SIZES = [
