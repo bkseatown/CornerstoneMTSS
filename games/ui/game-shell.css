@@ -1501,7 +1501,7 @@ body.game-platform-page[data-game-theme="seahawks"] .cg-brandbar::after {
   inset: 10px 14px auto auto;
   width: 180px;
   height: var(--btn-height);
-  border-radius: 999px 0 999px 999px;
+  border-radius: var(--radius-full) 0 var(--radius-full) var(--radius-full);
   background:
     linear-gradient(115deg, transparent 0 46%, rgba(165, 172, 175, 0.16) 46% 53%, transparent 53%),
     linear-gradient(115deg, transparent 0 66%, rgba(105, 190, 40, 0.16) 66% 70%, transparent 70%);
@@ -7219,7 +7219,7 @@ body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
   max-height: 52px !important;
   margin: 0 !important;
   padding: 4px !important;
-  border-radius: 12px !important;
+  border-radius: var(--radius-md) !important;
   overflow: hidden !important;
 }
 
@@ -7628,7 +7628,7 @@ body.game-platform-page[data-shell-view="gallery"] .cg-brand {
 body.game-platform-page[data-shell-view="gallery"] .cg-brand-mark {
   width: 40px !important;
   height: 40px !important;
-  border-radius: 12px !important;
+  border-radius: var(--radius-md) !important;
   box-shadow: 0 8px 18px color-mix(in oklab, var(--cg-primary) 18%, transparent) !important;
 }
 
@@ -10281,7 +10281,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-unit-section__count {
   padding: 8px 12px !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-full) !important;
   background: rgba(255, 255, 255, 0.88) !important;
   border: 1px solid rgba(154, 177, 212, 0.34) !important;
 }
@@ -10479,7 +10479,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   align-items: center !important;
   min-height: 22px !important;
   padding: 0 8px !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-full) !important;
   background: rgba(233, 242, 255, 0.12) !important;
   color: rgba(235, 243, 255, 0.74) !important;
   font-size: 10px !important;
@@ -10522,7 +10522,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-ribbon span {
-  border-radius: 999px !important;
+  border-radius: var(--radius-full) !important;
 }
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-jump-chip {
@@ -10536,7 +10536,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   justify-content: space-between !important;
   gap: 10px !important;
   padding: 8px 12px !important;
-  border-radius: 16px !important;
+  border-radius: var(--radius-lg) !important;
   background: linear-gradient(180deg, rgba(242, 247, 252, 0.96), rgba(232, 240, 249, 0.96)) !important;
   border: 1px solid rgba(172, 190, 214, 0.34) !important;
 }
@@ -10567,7 +10567,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__dots span {
   width: 12px !important;
   height: 12px !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-full) !important;
   background: rgba(149, 170, 197, 0.36) !important;
 }
 
@@ -10645,7 +10645,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 
 body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-lane {
   min-height: 48px !important;
-  border-radius: 16px !important;
+  border-radius: var(--radius-lg) !important;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(240, 246, 255, 0.02)) !important;
 }
 

@@ -62,7 +62,7 @@ body {
 
 .pp-teacher-btn {
   min-height: 34px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--pp-border);
   background: var(--pp-surface);
   color: var(--pp-text);
@@ -178,7 +178,7 @@ body {
 .pp-start {
   min-height: 46px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--pp-accent);
   color: #fff;
   font-size: var(--fs-base);
@@ -216,7 +216,7 @@ body {
 .pp-expression,
 .pp-stat {
   border: 1px solid var(--pp-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--pp-surface);
   padding: 10px;
   box-shadow: var(--shadow-soft);
@@ -293,7 +293,7 @@ body {
 
 .pp-btn {
   min-height: 40px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--pp-border);
   background: #fff;
   color: var(--pp-text);

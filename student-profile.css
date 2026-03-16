@@ -204,7 +204,7 @@ body.sp-page {
 .sp-compact-card,
 .sp-plan-link {
   padding: 8px 9px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
   background: rgba(255, 255, 255, 0.64);
 }

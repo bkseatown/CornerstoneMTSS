@@ -165,7 +165,7 @@ body.cs-page-paragraph {
 
 .pb-overlay-card {
   width: min(760px, calc(100vw - 24px));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,0.2);
   background: rgba(14, 24, 35, 0.95);
   padding: 16px;

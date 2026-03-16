@@ -302,7 +302,7 @@ body.cs-has-nav-shell .td-shell {
 .td-overview-mini-bars span {
   display: block;
   min-height: 18px;
-  border-radius: 999px 999px 12px 12px;
+  border-radius: var(--radius-full) var(--radius-full) var(--radius-md) var(--radius-md);
   background: linear-gradient(180deg, rgba(209, 141, 49, 0.88), rgba(209, 141, 49, 0.22));
 }
 
@@ -396,7 +396,7 @@ body.cs-has-nav-shell .td-shell {
   display: grid;
   gap: 4px;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
   background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244, 241, 235, 0.9));
   box-shadow: 0 6px 16px rgba(45, 58, 76, 0.06);
@@ -696,7 +696,7 @@ body.cs-has-nav-shell .td-shell {
   z-index: 20;
   min-width: 220px;
   padding: 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: var(--surface-elev-1);
   box-shadow: var(--shadow-strong);
@@ -1888,7 +1888,7 @@ body.td-classroom-mode .td-cockpit-timeline {
 
 .dashboard-eval-report {
   border: 1px solid var(--surface-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--surface-elev-2);
   padding: 14px;
   color: var(--text-secondary);
@@ -2065,7 +2065,7 @@ body.td-wow-eval-active .td-shell {
 .launch-card-icon {
   width: 24px;
   height: 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: inline-grid;
   place-items: center;
   background: color-mix(in oklab, var(--surface-elev-2) 84%, #deebfa 16%);
@@ -2403,7 +2403,7 @@ body.td-page .td-modal-card {
 
 .td-todayCard,
 .student-card {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--border-soft) 68%, transparent);
   background: var(--surface-elev-1);
   padding: 16px;
@@ -2697,7 +2697,7 @@ body.td-page .td-modal-card {
 .td-btn {
   font: inherit;
   font-weight: var(--fw-semibold);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   min-height: 42px;
   padding: 10px 12px;
@@ -2725,7 +2725,7 @@ body.td-page .td-modal-card {
   background: #fff4e6;
   border: 1px solid #ffe8cc;
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2779,7 +2779,7 @@ body.td-page .td-modal-card {
 .td-skill-tile {
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 72%, transparent);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 8px;
   display: grid;
   gap: 6px;
@@ -2986,7 +2986,7 @@ body.td-page .td-modal-card {
 }
 .td-anchor-input {
   min-height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: var(--surface-elev-1);
   color: var(--text-strong);
@@ -3113,7 +3113,7 @@ body.td-page .td-modal-card {
 }
 .td-impl-form select {
   min-height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 66%, transparent);
   color: var(--text-strong);
@@ -3170,7 +3170,7 @@ body.td-page .td-modal-card {
 .td-plan-card {
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 72%, transparent);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px;
   display: grid;
   gap: 6px;
@@ -3261,7 +3261,7 @@ body.td-page .td-modal-card {
   min-height: 200px;
   max-height: 48dvh;
   resize: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--surface-border) 62%, transparent);
   background: color-mix(in oklab, var(--surface-elev-2) 86%, #f6f3ef 14%);
   color: var(--text-strong);
@@ -3388,7 +3388,7 @@ body.td-page .td-modal-card {
   gap: 8px;
   flex-wrap: wrap;
   padding: 6px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--surface-border) 66%, transparent);
   background: color-mix(in oklab, var(--surface-elev-2) 84%, #f2ede7 16%);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.32);
@@ -3511,7 +3511,7 @@ body.td-page .td-modal-card {
   justify-content: space-between;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--surface-border) 62%, transparent);
   background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(244, 239, 232, 0.72));
 }
@@ -4046,7 +4046,7 @@ body.td-page .td-modal-card {
   display: grid;
   gap: 8px;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--surface-border) 70%, white 30%);
   background: rgba(255,255,255,0.84);
   box-shadow: 0 6px 14px rgba(45, 58, 76, 0.05);

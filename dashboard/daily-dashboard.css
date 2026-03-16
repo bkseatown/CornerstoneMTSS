@@ -166,7 +166,7 @@
 .daily-student-card {
   background-color: var(--surface-default);
   border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: var(--space-2);
   transition: all 200ms ease;
   display: flex;
@@ -196,7 +196,7 @@
 .daily-urgency-badge {
   display: inline-block;
   padding: var(--space-1) var(--space-2);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-size: var(--fs-caption);
   font-weight: 600;
   text-transform: uppercase;

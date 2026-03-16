@@ -665,7 +665,7 @@ body.cs-home-page {
   display: grid;
   gap: 4px;
   padding: 10px 12px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(29, 58, 108, 0.94), rgba(43, 80, 140, 0.88));
   color: #eef5ff;
 }
@@ -715,7 +715,7 @@ body.cs-home-page {
   align-items: center;
   gap: 10px;
   padding: 9px 11px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(111, 133, 173, 0.18);
   color: #445976;
@@ -840,7 +840,7 @@ body.cs-home-page {
   justify-content: space-between;
   gap: 10px;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
@@ -1123,7 +1123,7 @@ body.cs-home-page {
   display: grid;
   gap: 3px;
   padding: 6px 8px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
@@ -1178,7 +1178,7 @@ body.cs-home-page {
   justify-content: space-between;
   gap: 10px;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
@@ -1422,7 +1422,7 @@ body.cs-home-page {
   .landing-preview-board__row i,
   .landing-preview-key,
   .landing-preview-pill {
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
   }
 
   .landing-workspace-panel {

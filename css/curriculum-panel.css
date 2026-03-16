@@ -292,7 +292,7 @@
   gap: 10px;
   padding: 10px 12px;
   border: 1px solid #e0e9f8;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: #fafbfe;
   cursor: pointer;
   transition: all 0.14s;
@@ -388,7 +388,7 @@
   color: #0d1117;
   background: #fafbfe;
   border: 1px solid #e0e9f8;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 14px 16px;
   position: relative;
 }
@@ -421,7 +421,7 @@
   background: linear-gradient(135deg, #2b5da8 0%, #1e4a8a 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -520,7 +520,7 @@
   text-align: center;
   padding: 16px;
   background: #f7f9fc;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 2px dashed #bbf7d0;
   letter-spacing: 0.04em;
 }
@@ -654,7 +654,7 @@
   width: 80px;
   padding: 8px 12px;
   border: 2px solid #8fa3bd;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 18px;
   font-weight: 700;
   text-align: center;
@@ -750,7 +750,7 @@
   padding: 10px 20px;
   background: #fff;
   border: 2px solid #e0e9f8;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
   color: #0d1117;
@@ -794,7 +794,7 @@
   width: 100%;
   padding: 8px 12px;
   border: 1.5px solid #8fa3bd;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   color: #0d1117;
   background: #fff;
@@ -811,7 +811,7 @@
   background: linear-gradient(135deg, #2b5da8 0%, #1e4a8a 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -827,7 +827,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: rgba(255,255,255,.12);
   border: 1px solid rgba(255,255,255,.2);
   cursor: pointer;
@@ -894,7 +894,7 @@
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1.5px solid rgba(255,255,255,.3);
   background: rgba(255,255,255,.12);
   color: #fff;
