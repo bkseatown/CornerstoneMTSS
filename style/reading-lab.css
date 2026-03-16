@@ -475,6 +475,141 @@ body.cs-page-reading-lab.cs-has-nav-shell {
 
 .hidden { display: none !important; }
 
+/* ==========================================
+   READING LAB PLAYFUL ANIMATIONS
+   ========================================== */
+
+/* Passage reveal animation */
+@keyframes rlPassageReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rl-passage {
+  animation: rlPassageReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Control button bounce on hover */
+@keyframes rlButtonBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.rl-control-btn,
+.rl-next-move-btn {
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rl-control-btn:hover,
+.rl-next-move-btn:hover {
+  animation: rlButtonBounce 0.3s ease-out;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.rl-control-btn:active,
+.rl-next-move-btn:active {
+  transform: translateY(0);
+}
+
+/* Word highlight animation */
+@keyframes rlWordHighlight {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: rgba(79, 133, 209, 0.2);
+  }
+}
+
+.rl-word,
+[data-word] {
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.rl-word:hover {
+  animation: rlWordHighlight 0.2s ease forwards;
+}
+
+/* Result/feedback animation */
+@keyframes rlResultPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(-5deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.rl-result,
+[data-result] {
+  animation: rlResultPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Control grid card stagger entrance */
+.rl-control-btn {
+  animation: rlCardSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes rlCardSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.rl-control-btn:nth-child(1) { animation-delay: 0ms; }
+.rl-control-btn:nth-child(2) { animation-delay: 60ms; }
+.rl-control-btn:nth-child(3) { animation-delay: 120ms; }
+.rl-control-btn:nth-child(4) { animation-delay: 180ms; }
+
+/* Smooth transitions for interactive elements */
+.rl-control-btn,
+.rl-next-move-btn,
+.rl-word {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, background-color;
+}
+
+/* Focus state enhancement */
+.rl-control-btn:focus-visible,
+.rl-next-move-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+/* Loading state pulse */
+@keyframes rlLoadingPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.rl-loading {
+  animation: rlLoadingPulse 1.4s ease-in-out infinite;
+}
+
 @media (max-width: 900px) {
   .rl-layout { grid-template-columns: 1fr; }
   .rl-passage { font-size: 1rem; min-height: 220px; }

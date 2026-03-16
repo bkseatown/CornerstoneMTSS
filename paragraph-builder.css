@@ -190,6 +190,167 @@ body.cs-page-paragraph {
 
 .hidden { display:none; }
 
+/* ==========================================
+   PARAGRAPH BUILDER PLAYFUL ANIMATIONS
+   ========================================== */
+
+/* Card entrance bounce animation */
+@keyframes pbCardBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pb-card {
+  animation: pbCardBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Stagger animation for card entrance */
+.pb-card:nth-child(1) { animation-delay: 0ms; }
+.pb-card:nth-child(2) { animation-delay: 80ms; }
+.pb-card:nth-child(3) { animation-delay: 160ms; }
+.pb-card:nth-child(4) { animation-delay: 240ms; }
+.pb-card:nth-child(5) { animation-delay: 320ms; }
+
+/* Overlay entrance - fade and scale */
+@keyframes pbOverlayFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pbOverlayCardScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.pb-overlay {
+  animation: pbOverlayFade 0.3s ease-out;
+}
+
+.pb-overlay-card {
+  animation: pbOverlayCardScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Slot highlight animation on hover */
+@keyframes pbSlotHighlight {
+  0% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+  100% {
+    background-color: rgba(79, 133, 209, 0.15);
+    transform: scale(1.01);
+  }
+}
+
+.pb-slot {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pb-slot:hover {
+  animation: pbSlotHighlight 0.2s ease forwards;
+}
+
+/* Button animations */
+@keyframes pbButtonBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.pb-action-btn,
+.ss-action-btn {
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
+}
+
+.pb-action-btn:hover,
+.ss-action-btn:hover {
+  animation: pbButtonBounce 0.3s ease-out;
+  box-shadow: 0 6px 12px rgba(79, 133, 209, 0.2);
+  transform: translateY(-2px);
+}
+
+.pb-action-btn:active,
+.ss-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Success animation for submission */
+@keyframes pbSuccessGlow {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pb-success {
+  animation: pbSuccessGlow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Coach assistant pop-in animation */
+@keyframes pbCoachPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-10deg);
+  }
+  70% {
+    transform: scale(1.08) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.pb-coach {
+  animation: pbCoachPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Smooth transitions for interactive elements */
+.pb-card,
+.pb-slot,
+.pb-action-btn {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Focus state enhancement */
+.pb-action-btn:focus-visible,
+.ss-action-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+/* Card hover lift */
+.pb-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 700px) {
   #pb-root { padding: 18px 10px 26px; }
   .pb-card { padding: 14px; }
