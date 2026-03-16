@@ -1,0 +1,479 @@
+/* Learning Hub: Professional Portfolio Showcase */
+
+:root {
+  --lh-primary: var(--accent, #0066cc);
+  --lh-success: #10b981;
+  --lh-warning: #f59e0b;
+  --lh-bg-light: #f9fafb;
+  --lh-bg-lighter: #f3f4f6;
+  --lh-border: #e5e7eb;
+  --lh-text-primary: #1f2937;
+  --lh-text-secondary: #6b7280;
+  --lh-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --lh-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== Page Setup ==================== */
+
+.learning-hub-page {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: var(--lh-text-primary);
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+/* ==================== Header ==================== */
+
+.hub-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: white;
+  padding: var(--space-6, 36px) var(--space-4, 20px);
+  text-align: center;
+}
+
+.hub-header h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  margin: 0 0 var(--space-2, 12px) 0;
+  font-weight: 800;
+}
+
+.hub-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  margin: 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ==================== Main Layout ==================== */
+
+.hub-main {
+  padding: var(--space-5, 24px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.hub-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 24px);
+}
+
+/* ==================== Navigation ==================== */
+
+.hub-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 12px);
+  padding: var(--space-3, 16px);
+  background: white;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--lh-shadow);
+  sticky: top 20px;
+  z-index: 10;
+}
+
+.hub-nav-btn {
+  padding: var(--space-2, 12px) var(--space-3, 16px);
+  border: 2px solid var(--lh-border);
+  background: white;
+  color: var(--lh-text-secondary);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.hub-nav-btn:hover {
+  border-color: var(--lh-primary);
+  color: var(--lh-primary);
+}
+
+.hub-nav-btn.active {
+  background: var(--lh-primary);
+  color: white;
+  border-color: var(--lh-primary);
+}
+
+/* ==================== Activity Domains ==================== */
+
+.hub-activities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6, 36px);
+}
+
+.activity-domain {
+  display: none;
+}
+
+.activity-domain.visible {
+  display: block;
+  animation: fadeIn 300ms ease;
+}
+
+.domain-header {
+  margin-bottom: var(--space-4, 20px);
+}
+
+.domain-header h2 {
+  font-size: 1.75rem;
+  margin: 0 0 var(--space-1, 6px) 0;
+  color: var(--lh-text-primary);
+}
+
+.domain-header p {
+  margin: 0;
+  color: var(--lh-text-secondary);
+  font-size: 1.05rem;
+}
+
+/* ==================== Activities Grid ==================== */
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-4, 20px);
+}
+
+/* ==================== Activity Card ==================== */
+
+.activity-card {
+  background: white;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--lh-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 300ms ease;
+  border: 2px solid transparent;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--lh-shadow-lg);
+  border-color: var(--lh-primary);
+}
+
+.activity-card.coming-soon {
+  opacity: 0.8;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+/* ==================== Card Header ==================== */
+
+.activity-header {
+  padding: var(--space-3, 16px);
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-bottom: 2px solid var(--lh-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2, 12px);
+}
+
+.activity-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.tier-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tier-1-3 {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.tier-1-2 {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.tier-2-3 {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #fecaca;
+  color: #7f1d1d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== Card Info ==================== */
+
+.activity-info {
+  padding: var(--space-4, 20px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 16px);
+}
+
+.activity-purpose {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--lh-text-primary);
+}
+
+.sor-domain {
+  padding: var(--space-2, 12px);
+  background: #eff6ff;
+  border-left: 4px solid var(--lh-primary);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.95rem;
+  color: #1e3a8a;
+}
+
+.activity-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 12px);
+  padding: var(--space-2, 12px);
+  background: var(--lh-bg-lighter);
+  border-radius: var(--radius-sm, 8px);
+}
+
+.detail-row {
+  display: flex;
+  gap: var(--space-2, 12px);
+  flex-wrap: wrap;
+}
+
+.detail-row .label {
+  font-weight: 600;
+  color: var(--lh-primary);
+  min-width: 120px;
+}
+
+.detail-row .value {
+  color: var(--lh-text-secondary);
+  flex: 1;
+}
+
+.activity-description {
+  margin: 0;
+  color: var(--lh-text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.activity-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 6px);
+}
+
+.feature-tag {
+  padding: 4px 10px;
+  background: white;
+  border: 1px solid var(--lh-border);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.8rem;
+  color: var(--lh-text-secondary);
+  white-space: nowrap;
+}
+
+/* ==================== Card Button ==================== */
+
+.activity-button {
+  align-self: flex-start;
+  padding: var(--space-2, 12px) var(--space-3, 16px);
+  background: var(--lh-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-sm, 8px);
+  font-weight: 600;
+  transition: all 200ms ease;
+  border: 2px solid transparent;
+  margin-top: auto;
+}
+
+.activity-button:hover {
+  background: #0052a3;
+  transform: translateX(4px);
+}
+
+.activity-button:active {
+  transform: translateX(0);
+}
+
+.activity-card.coming-soon .activity-button {
+  display: none;
+}
+
+/* ==================== Assessment Tools ==================== */
+
+.assessment-tools {
+  margin-top: var(--space-6, 36px);
+  padding-top: var(--space-5, 24px);
+  border-top: 2px solid var(--lh-border);
+}
+
+.assessment-tools h2 {
+  font-size: 1.5rem;
+  margin: 0 0 var(--space-4, 20px) 0;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4, 20px);
+}
+
+.tool-card {
+  background: white;
+  padding: var(--space-4, 20px);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--lh-shadow);
+  border-left: 4px solid var(--lh-primary);
+  transition: all 200ms ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lh-shadow-lg);
+}
+
+.tool-card h3 {
+  margin: 0 0 var(--space-2, 12px) 0;
+  font-size: 1.1rem;
+}
+
+.tool-card p {
+  margin: 0 0 var(--space-3, 16px) 0;
+  color: var(--lh-text-secondary);
+  font-size: 0.95rem;
+}
+
+.tool-card a {
+  color: var(--lh-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 200ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 6px);
+}
+
+.tool-card a:hover {
+  color: #0052a3;
+  transform: translateX(2px);
+}
+
+/* ==================== Footer ==================== */
+
+.hub-footer {
+  background: var(--lh-text-primary);
+  color: white;
+  padding: var(--space-6, 36px) var(--space-4, 20px);
+  text-align: center;
+  margin-top: var(--space-6, 36px);
+}
+
+.footer-content p {
+  margin: 0 0 var(--space-2, 12px) 0;
+}
+
+.footer-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==================== Animations ==================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== Responsive Design ==================== */
+
+@media (max-width: 768px) {
+  .hub-header {
+    padding: var(--space-4, 20px) var(--space-2, 12px);
+  }
+
+  .hub-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .hub-subtitle {
+    font-size: 1rem;
+  }
+
+  .hub-nav {
+    flex-direction: column;
+  }
+
+  .hub-nav-btn {
+    width: 100%;
+    text-align: left;
+  }
+
+  .activities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .activity-header h3 {
+    width: 100%;
+  }
+
+  .detail-row {
+    flex-direction: column;
+  }
+
+  .detail-row .label {
+    min-width: auto;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Print styles */
+@media print {
+  .hub-nav,
+  .hub-footer,
+  .activity-button {
+    display: none;
+  }
+
+  .activity-card {
+    page-break-inside: avoid;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
