@@ -7571,12 +7571,6 @@ body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing .cursor {
 }
 
 /* 2026-03-11 global viewport-fit system (dashboard/stage/course) */
-html.game-platform-page,
-body.game-platform-page {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
 body.game-platform-page {
   --page-top-gap: clamp(6px, 1.2vh, 14px);
   --page-side-gap: clamp(8px, 1.2vw, 16px);
