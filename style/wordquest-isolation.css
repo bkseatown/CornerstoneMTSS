@@ -30,3 +30,32 @@
 .wordquest-root #keyboard .key[disabled] {
   pointer-events: none;
 }
+
+/* ── Seahawks play backdrop: dark stadium atmosphere ─────────────────────
+ * Body carries both .wordquest-root and .theme-seahawks.
+ * Overrides the flat wolf-gray --theme-backdrop with a deep navy base
+ * that puts the game board in a spotlight — flanks read as intentional
+ * stage atmosphere rather than dead empty space.
+ *   - Dark navy base  (stadium night, below --page-bg midtone)
+ *   - Oval spotlight  (brightens ~560px behind the game column)
+ *   - Green ambient   (action-green floodlights from bottom corners)
+ *   - Navy vignette   (anchors header into the dark top)
+ * All tile/key colours stay correct — they were designed for light surfaces
+ * and pop naturally against a dark backdrop.
+ * ─────────────────────────────────────────────────────────────────────── */
+body.theme-seahawks.wordquest-root {
+  background:
+    radial-gradient(ellipse 560px 720px at 50% 54%,
+      rgba(127, 153, 175, 0.22) 0%,
+      transparent 70%),
+    radial-gradient(circle at 18% 96%,
+      rgba(105, 190, 40, 0.09) 0%,
+      transparent 32%),
+    radial-gradient(circle at 82% 96%,
+      rgba(105, 190, 40, 0.07) 0%,
+      transparent 26%),
+    radial-gradient(circle at 14% 4%,
+      rgba(0, 34, 68, 0.50) 0%,
+      transparent 24%),
+    linear-gradient(175deg, #08192d 0%, #0d2844 50%, #071626 100%);
+}
