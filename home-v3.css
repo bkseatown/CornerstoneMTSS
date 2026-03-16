@@ -10,38 +10,38 @@
   --landing-radius-md: 16px;
   --landing-border: rgba(69, 88, 118, 0.18);
   --landing-border-strong: rgba(37, 53, 78, 0.18);
-  --landing-text: #172432;
-  --landing-text-soft: #495c6d;
-  --landing-text-muted: rgba(49, 64, 83, 0.58);
+  --landing-text: var(--landing-text);
+  --landing-text-soft: var(--landing-text-soft);
+  --landing-text-muted: var(--text-label-mute-sm);
   --landing-shell:
-    linear-gradient(180deg, rgba(247, 243, 236, 0.94), rgba(235, 241, 248, 0.95));
+    linear-gradient(180deg, var(--panel-bg-lighter), var(--panel-bg-lighter));
   --landing-panel:
-    linear-gradient(180deg, rgba(252, 250, 246, 0.99), rgba(239, 244, 250, 0.97));
+    linear-gradient(180deg, var(--panel-bg-premium), var(--panel-bg-soft));
   --landing-panel-soft:
-    linear-gradient(180deg, rgba(247, 241, 236, 0.98), rgba(236, 231, 245, 0.97));
+    linear-gradient(180deg, var(--panel-bg-light), rgba(236, 231, 245, 0.97));
   --landing-workspace:
-    linear-gradient(180deg, rgba(243, 247, 251, 0.99), rgba(228, 236, 246, 0.97));
+    linear-gradient(180deg, var(--panel-workspace), var(--panel-workspace-alt));
   --landing-hero:
     radial-gradient(circle at top left, rgba(92, 133, 214, 0.18), transparent 34%),
     radial-gradient(circle at 72% 24%, rgba(239, 180, 76, 0.16), transparent 24%),
     radial-gradient(circle at bottom right, rgba(81, 171, 161, 0.12), transparent 34%),
     linear-gradient(180deg, rgba(250, 247, 241, 0.98), rgba(235, 242, 250, 0.97));
   --landing-focus:
-    linear-gradient(180deg, #243247 0%, #1f3655 46%, #29547e 100%);
+    linear-gradient(180deg, var(--landing-blue-dark) 0%, var(--landing-blue-medium) 46%, var(--landing-blue-rich) 100%);
   --landing-shadow-lg:
-    0 24px 56px rgba(11, 19, 30, 0.18),
+    0 24px 56px var(--shadow-dark-24),
     inset 0 1px 0 rgba(255, 255, 255, 0.52);
   --landing-shadow-md:
-    0 16px 34px rgba(18, 28, 42, 0.11),
+    0 16px 34px var(--shadow-dark-18),
     inset 0 1px 0 rgba(255, 255, 255, 0.64);
   --landing-shadow-sm:
-    0 10px 24px rgba(18, 28, 42, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    0 10px 24px var(--shadow-dark-7),
+    inset 0 1px 0 var(--overlay-white-74);
   --landing-scene-height: clamp(274px, 34vh, 336px);
-  --landing-accent-blue: #2a5ea8;
-  --landing-accent-gold: #d49435;
-  --landing-accent-green: #2f7e70;
-  --landing-ink-strong: #162233;
+  --landing-accent-blue: var(--landing-accent-blue);
+  --landing-accent-gold: var(--landing-accent-gold);
+  --landing-accent-green: var(--landing-accent-green);
+  --landing-ink-strong: var(--landing-ink-strong);
 }
 
 html,
@@ -54,10 +54,10 @@ body.cs-home-page {
   min-height: auto;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(103, 145, 224, 0.18), transparent 22%),
-    radial-gradient(circle at top right, rgba(239, 180, 76, 0.16), transparent 18%),
-    radial-gradient(circle at bottom right, rgba(79, 168, 154, 0.12), transparent 22%),
-    linear-gradient(145deg, #1b2b3d 0%, #24384c 38%, #31475c 74%, #44566d 100%);
+    radial-gradient(circle at top left, var(--overlay-blue-18), transparent 22%),
+    radial-gradient(circle at top right, var(--overlay-gold-16), transparent 18%),
+    radial-gradient(circle at bottom right, var(--overlay-green-12), transparent 22%),
+    linear-gradient(145deg, var(--landing-dark-1) 0%, var(--landing-dark-2) 38%, var(--landing-dark-3) 74%, var(--landing-dark-4) 100%);
   color: var(--landing-text);
   font-family: var(--font-body, var(--font-ui, var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif)));
 }
@@ -74,9 +74,9 @@ body.cs-home-page {
   gap: var(--landing-gap);
   border-radius: calc(var(--landing-radius-xl) + 8px);
   background: var(--landing-shell);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid var(--overlay-white-24);
   box-shadow:
-    0 28px 72px rgba(5, 12, 22, 0.24),
+    0 28px 72px var(--shadow-dark-24-lg),
     inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
@@ -95,9 +95,9 @@ body.cs-home-page {
   padding: 12px 18px;
   border-radius: var(--landing-radius-xl);
   background:
-    radial-gradient(circle at 12% 0%, rgba(97, 143, 223, 0.24), transparent 30%),
-    radial-gradient(circle at 78% 12%, rgba(239, 180, 76, 0.2), transparent 22%),
-    radial-gradient(circle at 100% 100%, rgba(69, 159, 142, 0.14), transparent 28%),
+    radial-gradient(circle at 12% 0%, var(--radial-blue-24), transparent 30%),
+    radial-gradient(circle at 78% 12%, var(--overlay-gold-20), transparent 22%),
+    radial-gradient(circle at 100% 100%, var(--radial-green-14), transparent 28%),
     linear-gradient(135deg, rgba(247, 243, 236, 0.98), rgba(233, 241, 251, 0.98));
 }
 
@@ -138,9 +138,9 @@ body.cs-home-page {
   min-height: 28px;
   padding: 0 10px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(92, 116, 152, 0.14);
-  color: #314a68;
+  background: var(--overlay-white-74);
+  border: 1px solid var(--landing-border-light);
+  color: var(--landing-blue-slate);
   font-size: 0.72rem;
   font-weight: 800;
 }
@@ -189,7 +189,7 @@ body.cs-home-page {
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(73, 93, 125, 0.72);
+  color: var(--text-label-muted);
 }
 
 .landing-header__aside {
@@ -554,24 +554,24 @@ body.cs-home-page {
   grid-area: games;
   grid-template-rows: auto auto;
   background:
-    radial-gradient(circle at top right, rgba(223, 145, 52, 0.18), transparent 26%),
+    radial-gradient(circle at top right, var(--radial-gold-18), transparent 26%),
     linear-gradient(180deg, rgba(246, 241, 232, 0.99), rgba(231, 229, 241, 0.98));
 }
 
 .landing-destination--hub {
   grid-area: hub;
   background:
-    radial-gradient(circle at top left, rgba(79, 133, 209, 0.18), transparent 26%),
-    radial-gradient(circle at 82% 18%, rgba(255, 220, 145, 0.16), transparent 20%),
-    linear-gradient(180deg, rgba(235, 241, 250, 0.99), rgba(222, 232, 246, 0.98));
+    radial-gradient(circle at top left, var(--radial-blue-gold-18), transparent 26%),
+    radial-gradient(circle at 82% 18%, var(--radial-gold-gold-16), transparent 20%),
+    linear-gradient(180deg, var(--surface-premium-light), var(--surface-premium-lighter));
 }
 
 .landing-destination--workspace {
   grid-area: workspace;
   grid-template-rows: auto auto;
   background:
-    radial-gradient(circle at top left, rgba(79, 133, 209, 0.14), transparent 22%),
-    linear-gradient(180deg, rgba(236, 242, 248, 0.99), rgba(220, 230, 242, 0.98));
+    radial-gradient(circle at top left, var(--radial-blue-blue-14), transparent 22%),
+    linear-gradient(180deg, var(--surface-workspace-light), var(--surface-workspace-lighter));
 }
 
 .landing-destination__scene {
@@ -582,7 +582,7 @@ body.cs-home-page {
   border: 1px solid rgba(92, 117, 164, 0.28);
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.96), transparent 30%),
-    linear-gradient(180deg, rgba(247, 244, 238, 0.98), rgba(223, 232, 245, 0.98));
+    linear-gradient(180deg, var(--scene-light), var(--scene-light-alt));
   box-shadow: var(--landing-shadow-sm);
 }
 
@@ -602,8 +602,8 @@ body.cs-home-page {
 
 .landing-scene--workspace {
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.74), transparent 30%),
-    linear-gradient(180deg, rgba(228, 237, 249, 0.98), rgba(215, 226, 240, 0.96));
+    radial-gradient(circle at top left, var(--overlay-white-74), transparent 30%),
+    linear-gradient(180deg, var(--scene-workspace), var(--scene-workspace-alt));
 }
 
 .landing-scene--hub {
@@ -701,7 +701,7 @@ body.cs-home-page {
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(79, 101, 140, 0.68);
+  color: var(--text-label-subtle);
 }
 
 .landing-hub-note strong {
@@ -716,7 +716,7 @@ body.cs-home-page {
   gap: 10px;
   padding: 9px 11px;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--overlay-white-88);
   border: 1px solid rgba(111, 133, 173, 0.18);
   color: #445976;
   font-size: 0.76rem;
@@ -780,7 +780,7 @@ body.cs-home-page {
   gap: 4px;
   padding: 9px 10px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--overlay-white-82);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
 
@@ -797,7 +797,7 @@ body.cs-home-page {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(79, 101, 140, 0.68);
+  color: var(--text-label-subtle);
 }
 
 .landing-hub-students--stack {
@@ -850,7 +850,7 @@ body.cs-home-page {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(79, 101, 140, 0.68);
+  color: var(--text-label-subtle);
 }
 
 .landing-workspace-list__row strong {
@@ -1124,7 +1124,7 @@ body.cs-home-page {
   gap: 3px;
   padding: 6px 8px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--overlay-white-82);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
 
@@ -1133,7 +1133,7 @@ body.cs-home-page {
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(79, 101, 140, 0.68);
+  color: var(--text-label-subtle);
 }
 
 .landing-games-panel__support strong {
@@ -1179,7 +1179,7 @@ body.cs-home-page {
   gap: 10px;
   padding: 8px 10px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--overlay-white-88);
   border: 1px solid rgba(111, 133, 173, 0.14);
 }
 
@@ -1193,7 +1193,7 @@ body.cs-home-page {
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(79, 101, 140, 0.68);
+  color: var(--text-label-subtle);
   text-align: right;
 }
 

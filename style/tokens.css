@@ -236,6 +236,126 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-full: 999px;
+
+  /* ===== Landing Page Hero Colors (New) ===== */
+  --landing-dark-1: #1b2b3d;
+  --landing-dark-2: #24384c;
+  --landing-dark-3: #31475c;
+  --landing-dark-4: #44566d;
+  --landing-accent-blue: #2a5ea8;
+  --landing-accent-gold: #d49435;
+  --landing-accent-green: #2f7e70;
+  --landing-ink-strong: #162233;
+  --landing-text: #172432;
+  --landing-text-soft: #495c6d;
+
+  /* ===== Overlay Opacity Tokens (New) ===== */
+  --overlay-white-74: rgba(255, 255, 255, 0.74);
+  --overlay-white-80: rgba(255, 255, 255, 0.80);
+  --overlay-white-82: rgba(255, 255, 255, 0.82);
+  --overlay-white-88: rgba(255, 255, 255, 0.88);
+  --overlay-white-92: rgba(255, 255, 255, 0.92);
+  --overlay-white-90: rgba(255, 255, 255, 0.90);
+  --overlay-white-24: rgba(255, 255, 255, 0.24);
+  --overlay-dark-dim: rgba(0, 0, 0, 0.16);
+  --overlay-blue-18: rgba(92, 133, 214, 0.18);
+  --overlay-gold-20: rgba(239, 180, 76, 0.20);
+  --overlay-gold-16: rgba(239, 180, 76, 0.16);
+  --overlay-green-12: rgba(81, 171, 161, 0.12);
+
+  /* ===== Landing Border Colors (New) ===== */
+  --landing-border: rgba(69, 88, 118, 0.18);
+  --landing-border-strong: rgba(37, 53, 78, 0.18);
+  --landing-border-light: rgba(92, 116, 152, 0.14);
+  --landing-border-lighter: rgba(92, 116, 152, 0.2);
+
+  /* ===== Button Gradients (New) ===== */
+  --btn-gradient-primary: linear-gradient(180deg, #2e66b3 0%, #1d406c 100%);
+  --btn-gradient-secondary: linear-gradient(180deg, #4d6f99 0%, #314f77 100%);
+
+  /* ===== Premium Theme Color Overrides (New) ===== */
+  --premium-bg: radial-gradient(circle at 14% 12%, #cfe1ff 0%, #d7e4fb 38%, #c4d6f3 100%);
+  --premium-surface-1: rgba(233, 241, 255, 0.96);
+  --premium-surface-2: rgba(218, 230, 248, 0.94);
+  --premium-surface-3: rgba(206, 223, 245, 0.94);
+  --premium-text-strong: #10233f;
+  --premium-text-default: #1b3555;
+  --premium-text-muted: #3f5672;
+  --premium-accent: #0077b8;
+  --premium-accent-strong: #005d90;
+  --premium-border-soft: rgba(16, 35, 63, 0.12);
+  --premium-blue-glow: rgba(11, 140, 207, 0.2);
+  --premium-blue-strong: #0b8ccf;
+  --premium-blue-dk: #006aa9;
+  --premium-blue-light: #0c88cb;
+  --premium-white-96: rgba(255, 255, 255, 0.96);
+  --premium-white-95: rgba(255, 255, 255, 0.95);
+
+  /* ===== Game Tile State Colors (New) ===== */
+  --tile-correct-bg: linear-gradient(160deg, #34d399, #059669);
+  --tile-correct-border: #047857;
+  --tile-correct-text: #ffffff;
+  --tile-correct-shadow: 0 4px 0 #047857, 0 8px 16px rgba(4, 120, 87, 0.28);
+
+  --tile-present-bg: linear-gradient(160deg, #facc15, #eab308);
+  --tile-present-border: #a16207;
+  --tile-present-text: #202020;
+  --tile-present-shadow: 0 4px 0 #a16207, 0 8px 16px rgba(161, 98, 7, 0.22);
+
+  --tile-absent-bg: linear-gradient(160deg, #94a3b8, #64748b);
+  --tile-absent-border: #475569;
+  --tile-absent-text: #f8fafc;
+  --tile-absent-shadow: 0 3px 0 #475569, 0 8px 16px rgba(71, 85, 105, 0.2);
+
+  /* ===== Commonly Used Colors (New) ===== */
+  --white: #ffffff;
+  --black: #000000;
+
+  /* ===== Additional Landing Page Shades (New) ===== */
+  --landing-blue-dark: #243247;
+  --landing-blue-medium: #1f3655;
+  --landing-blue-rich: #29547e;
+  --landing-blue-slate: #314a68;
+  --landing-slate-muted: #73935d;
+  --landing-slate-light: #495c6d;
+  --landing-slate-neutral: #2f4a63;
+
+  /* ===== Panel & Card Background Overlays (New) ===== */
+  --panel-bg-light: rgba(247, 243, 236, 0.98);
+  --panel-bg-lighter: rgba(235, 241, 248, 0.95);
+  --panel-bg-premium: rgba(252, 250, 246, 0.99);
+  --panel-bg-soft: rgba(239, 244, 250, 0.97);
+  --panel-workspace: rgba(243, 247, 251, 0.99);
+  --panel-workspace-alt: rgba(228, 236, 246, 0.97);
+  --scene-light: rgba(247, 244, 238, 0.98);
+  --scene-light-alt: rgba(223, 232, 245, 0.98);
+  --scene-workspace: rgba(228, 237, 249, 0.98);
+  --scene-workspace-alt: rgba(215, 226, 240, 0.96);
+
+  /* ===== Text Color Variations (New) ===== */
+  --text-label-muted: rgba(73, 93, 125, 0.72);
+  --text-label-subtle: rgba(79, 101, 140, 0.68);
+  --text-label-mute-sm: rgba(49, 64, 83, 0.58);
+
+  /* ===== Shadow Overlay Colors (New) ===== */
+  --shadow-dark-24: rgba(11, 19, 30, 0.18);
+  --shadow-dark-18: rgba(18, 28, 42, 0.11);
+  --shadow-dark-7: rgba(18, 28, 42, 0.07);
+  --shadow-dark-24-lg: rgba(5, 12, 22, 0.24);
+
+  /* ===== Radial Gradient Overlays (New) ===== */
+  --radial-blue-24: rgba(97, 143, 223, 0.24);
+  --radial-green-14: rgba(69, 159, 142, 0.14);
+  --radial-gold-18: rgba(223, 145, 52, 0.18);
+  --radial-blue-gold-18: rgba(79, 133, 209, 0.18);
+  --radial-gold-gold-16: rgba(255, 220, 145, 0.16);
+  --radial-blue-blue-14: rgba(79, 133, 209, 0.14);
+
+  /* ===== Additional Surface Overlays (New) ===== */
+  --surface-premium-light: rgba(235, 241, 250, 0.99);
+  --surface-premium-lighter: rgba(222, 232, 246, 0.98);
+  --surface-workspace-light: rgba(236, 242, 248, 0.99);
+  --surface-workspace-lighter: rgba(220, 230, 242, 0.98);
 }
 
 :where(button, [role="button"], input, select, textarea, a):focus-visible {
