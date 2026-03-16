@@ -139,14 +139,163 @@
       </div>
     </div>
 
-    <!-- Concept Map Organizer (Future) -->
+    <!-- Concept Map Organizer -->
     <div id="ws-concept-map-container" class="ws-organizer-container concept-map">
-      <p class="coming-soon">Concept Map coming soon...</p>
+      <div class="concept-map-canvas">
+        <div class="concept-map-layout">
+          <div class="concept-center">
+            <textarea
+              id="concept-main-idea"
+              class="concept-input concept-main"
+              placeholder="What is your main idea or topic?"></textarea>
+          </div>
+
+          <div class="concept-details">
+            <div class="detail-slot">
+              <label>Supporting Detail 1:</label>
+              <textarea
+                id="concept-detail-1"
+                class="concept-input"
+                placeholder="First key detail..."></textarea>
+              <textarea
+                id="concept-evidence-1"
+                class="concept-input concept-evidence"
+                placeholder="Evidence or example..."></textarea>
+            </div>
+
+            <div class="detail-slot">
+              <label>Supporting Detail 2:</label>
+              <textarea
+                id="concept-detail-2"
+                class="concept-input"
+                placeholder="Second key detail..."></textarea>
+              <textarea
+                id="concept-evidence-2"
+                class="concept-input concept-evidence"
+                placeholder="Evidence or example..."></textarea>
+            </div>
+
+            <div class="detail-slot">
+              <label>Supporting Detail 3:</label>
+              <textarea
+                id="concept-detail-3"
+                class="concept-input"
+                placeholder="Third key detail..."></textarea>
+              <textarea
+                id="concept-evidence-3"
+                class="concept-input concept-evidence"
+                placeholder="Evidence or example..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws-footer">
+        <div class="ws-progress">
+          <div class="progress-bar">
+            <div id="ws-concept-progress-fill" class="progress-fill"></div>
+          </div>
+          <p id="ws-concept-progress-text" class="progress-text">0% complete</p>
+        </div>
+        <div id="ws-concept-completion-message" class="completion-message hidden">
+          ✨ Your explanation is complete! Ready to write?
+        </div>
+      </div>
     </div>
 
-    <!-- Opinion Map Organizer (Future) -->
+    <!-- Opinion Map Organizer -->
     <div id="ws-opinion-map-container" class="ws-organizer-container opinion-map">
-      <p class="coming-soon">Opinion Map coming soon...</p>
+      <div class="opinion-map-canvas">
+        <div class="opinion-map-layout">
+          <div class="opinion-statement">
+            <label>My Opinion:</label>
+            <textarea
+              id="opinion-statement"
+              class="opinion-input opinion-main"
+              placeholder="What is your opinion or claim?"></textarea>
+          </div>
+
+          <div class="opinion-columns">
+            <div class="opinion-column support">
+              <h3>Supporting Reasons</h3>
+              <div class="reason-slot">
+                <label>Reason 1:</label>
+                <textarea
+                  id="opinion-reason-1"
+                  class="opinion-input"
+                  placeholder="First reason..."></textarea>
+                <textarea
+                  id="opinion-evidence-1"
+                  class="opinion-input opinion-evidence"
+                  placeholder="Evidence..."></textarea>
+              </div>
+
+              <div class="reason-slot">
+                <label>Reason 2:</label>
+                <textarea
+                  id="opinion-reason-2"
+                  class="opinion-input"
+                  placeholder="Second reason..."></textarea>
+                <textarea
+                  id="opinion-evidence-2"
+                  class="opinion-input opinion-evidence"
+                  placeholder="Evidence..."></textarea>
+              </div>
+
+              <div class="reason-slot">
+                <label>Reason 3:</label>
+                <textarea
+                  id="opinion-reason-3"
+                  class="opinion-input"
+                  placeholder="Third reason..."></textarea>
+                <textarea
+                  id="opinion-evidence-3"
+                  class="opinion-input opinion-evidence"
+                  placeholder="Evidence..."></textarea>
+              </div>
+            </div>
+
+            <div class="opinion-column counter">
+              <h3>Counterargument & Rebuttal</h3>
+              <div class="counter-slot">
+                <label>Some say:</label>
+                <textarea
+                  id="opinion-counter"
+                  class="opinion-input"
+                  placeholder="What might someone disagree with?"></textarea>
+              </div>
+
+              <div class="counter-slot">
+                <label>My response:</label>
+                <textarea
+                  id="opinion-rebuttal"
+                  class="opinion-input"
+                  placeholder="How would you respond or refute this?"></textarea>
+              </div>
+
+              <div class="counter-slot">
+                <label>Conclusion:</label>
+                <textarea
+                  id="opinion-conclusion"
+                  class="opinion-input"
+                  placeholder="Concluding statement..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws-footer">
+        <div class="ws-progress">
+          <div class="progress-bar">
+            <div id="ws-opinion-progress-fill" class="progress-fill"></div>
+          </div>
+          <p id="ws-opinion-progress-text" class="progress-text">0% complete</p>
+        </div>
+        <div id="ws-opinion-completion-message" class="completion-message hidden">
+          ✨ Your argument is complete! Ready to write?
+        </div>
+      </div>
     </div>
 
     <!-- Circle Map Organizer (Future) -->

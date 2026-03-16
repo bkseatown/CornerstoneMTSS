@@ -19,6 +19,27 @@
       climax: '',
       resolution: ''
     },
+    conceptMapData: {
+      mainIdea: '',
+      detail1: '',
+      evidence1: '',
+      detail2: '',
+      evidence2: '',
+      detail3: '',
+      evidence3: ''
+    },
+    opinionMapData: {
+      statement: '',
+      reason1: '',
+      evidence1: '',
+      reason2: '',
+      evidence2: '',
+      reason3: '',
+      evidence3: '',
+      counter: '',
+      rebuttal: '',
+      conclusion: ''
+    },
     savedOrganizers: []
   };
 
@@ -66,8 +87,42 @@
       });
     });
 
+    // Concept Map text inputs
+    const conceptInputs = document.querySelectorAll('.concept-input');
+    conceptInputs.forEach(input => {
+      input.addEventListener('input', function() {
+        const fieldName = this.id.replace('concept-', '');
+        if (this.classList.contains('concept-main')) {
+          state.conceptMapData.mainIdea = this.value.trim();
+        } else {
+          state.conceptMapData[fieldName] = this.value.trim();
+        }
+        updateConceptProgress();
+      });
+    });
+
+    // Opinion Map text inputs
+    const opinionInputs = document.querySelectorAll('.opinion-input');
+    opinionInputs.forEach(input => {
+      input.addEventListener('input', function() {
+        const fieldName = this.id.replace('opinion-', '');
+        if (this.classList.contains('opinion-main')) {
+          state.opinionMapData.statement = this.value.trim();
+        } else {
+          state.opinionMapData[fieldName] = this.value.trim();
+        }
+        updateOpinionProgress();
+      });
+    });
+
     // Auto-save on input
     storyInputs.forEach(input => {
+      input.addEventListener('change', autoSave);
+    });
+    conceptInputs.forEach(input => {
+      input.addEventListener('change', autoSave);
+    });
+    opinionInputs.forEach(input => {
       input.addEventListener('change', autoSave);
     });
   }
@@ -189,6 +244,50 @@
       completionMsg.classList.remove('hidden');
     } else {
       completionMsg.classList.add('hidden');
+    }
+  }
+
+  function updateConceptProgress() {
+    const fields = Object.values(state.conceptMapData);
+    const completedFields = fields.filter(field => field && field.length > 0).length;
+    const totalFields = fields.length;
+    const percentage = Math.round((completedFields / totalFields) * 100);
+
+    const progressFill = document.getElementById('ws-concept-progress-fill');
+    const progressText = document.getElementById('ws-concept-progress-text');
+
+    if (progressFill && progressText) {
+      progressFill.style.width = percentage + '%';
+      progressText.textContent = percentage + '% complete';
+
+      const completionMsg = document.getElementById('ws-concept-completion-message');
+      if (percentage === 100) {
+        completionMsg.classList.remove('hidden');
+      } else {
+        completionMsg.classList.add('hidden');
+      }
+    }
+  }
+
+  function updateOpinionProgress() {
+    const fields = Object.values(state.opinionMapData);
+    const completedFields = fields.filter(field => field && field.length > 0).length;
+    const totalFields = fields.length;
+    const percentage = Math.round((completedFields / totalFields) * 100);
+
+    const progressFill = document.getElementById('ws-opinion-progress-fill');
+    const progressText = document.getElementById('ws-opinion-progress-text');
+
+    if (progressFill && progressText) {
+      progressFill.style.width = percentage + '%';
+      progressText.textContent = percentage + '% complete';
+
+      const completionMsg = document.getElementById('ws-opinion-completion-message');
+      if (percentage === 100) {
+        completionMsg.classList.remove('hidden');
+      } else {
+        completionMsg.classList.add('hidden');
+      }
     }
   }
 

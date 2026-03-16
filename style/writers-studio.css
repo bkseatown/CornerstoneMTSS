@@ -201,9 +201,11 @@
   font-size: 1.1rem;
 }
 
-/* ==================== Story Map Canvas ==================== */
+/* ==================== Organizer Canvases ==================== */
 
-.story-map-canvas {
+.story-map-canvas,
+.concept-map-canvas,
+.opinion-map-canvas {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -301,6 +303,178 @@
 
 .story-input::placeholder {
   color: #d1d5db;
+}
+
+/* ==================== Concept Map Styles ==================== */
+
+.concept-map-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 20px);
+}
+
+.concept-center {
+  padding: var(--space-3, 16px);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 3px solid #fbbf24;
+  border-radius: var(--radius-md, 12px);
+  text-align: center;
+}
+
+.concept-main {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #78350f;
+  background: transparent;
+  border: none;
+  resize: vertical;
+  min-height: 60px;
+  text-align: center;
+}
+
+.concept-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-3, 16px);
+}
+
+.detail-slot {
+  background: white;
+  border: 2px solid var(--ws-border);
+  border-radius: var(--radius-md, 12px);
+  padding: var(--space-3, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 12px);
+  transition: all 200ms ease;
+}
+
+.detail-slot:hover {
+  border-color: var(--ws-primary);
+  box-shadow: 0 8px 12px rgba(0, 102, 204, 0.1);
+}
+
+.detail-slot label {
+  font-weight: 600;
+  color: var(--ws-primary);
+  font-size: 0.95rem;
+}
+
+.concept-input {
+  padding: var(--space-2, 12px);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--radius-sm, 8px);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.concept-evidence {
+  min-height: 50px;
+  font-size: 0.85rem;
+  background: #f9fafb;
+}
+
+/* ==================== Opinion Map Styles ==================== */
+
+.opinion-map-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 20px);
+}
+
+.opinion-statement {
+  padding: var(--space-3, 16px);
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border: 3px solid #3b82f6;
+  border-radius: var(--radius-md, 12px);
+}
+
+.opinion-statement label {
+  display: block;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: var(--space-1, 6px);
+}
+
+.opinion-main {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e40af;
+  background: transparent;
+  border: none;
+  resize: vertical;
+  min-height: 50px;
+}
+
+.opinion-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4, 20px);
+}
+
+.opinion-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 16px);
+}
+
+.opinion-column h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  padding: var(--space-2, 12px);
+  border-radius: var(--radius-sm, 8px);
+  text-align: center;
+}
+
+.opinion-column.support h3 {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.opinion-column.counter h3 {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.reason-slot,
+.counter-slot {
+  background: white;
+  border: 2px solid var(--ws-border);
+  border-radius: var(--radius-md, 12px);
+  padding: var(--space-3, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 12px);
+}
+
+.reason-slot:hover,
+.counter-slot:hover {
+  border-color: var(--ws-primary);
+  box-shadow: 0 8px 12px rgba(0, 102, 204, 0.1);
+}
+
+.reason-slot label,
+.counter-slot label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.opinion-input {
+  padding: var(--space-2, 12px);
+  border: 1px solid var(--ws-border);
+  border-radius: var(--radius-sm, 8px);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.opinion-evidence {
+  min-height: 50px;
+  font-size: 0.85rem;
+  background: #f9fafb;
 }
 
 /* ==================== Footer & Progress ==================== */
