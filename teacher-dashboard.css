@@ -132,7 +132,7 @@ body.cs-has-nav-shell .td-shell {
   justify-content: center;
   min-height: 32px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.62);
   color: #445a78;
   font-size: 12px;
@@ -227,7 +227,7 @@ body.cs-has-nav-shell .td-shell {
   min-height: 36px;
   padding: 0 12px;
   width: fit-content;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
   background: rgba(255,255,255,0.78);
   color: var(--text-primary);
@@ -274,7 +274,7 @@ body.cs-has-nav-shell .td-shell {
 
 .td-overview-meter {
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
   background: rgba(74, 92, 123, 0.12);
 }
@@ -482,7 +482,7 @@ body.cs-has-nav-shell .td-shell {
   place-items: center;
   width: 28px;
   height: 28px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--accent) 82%, white 18%);
   color: #fff;
   font-size: 0.82rem;
@@ -635,7 +635,7 @@ body.cs-has-nav-shell .td-shell {
   gap: 8px;
   min-height: 36px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--surface-border) 54%, transparent);
   background: color-mix(in oklab, var(--surface-1) 88%, #f0ede7 12%);
   color: color-mix(in oklab, var(--text-primary) 72%, var(--muted) 28%);
@@ -716,7 +716,7 @@ body.cs-has-nav-shell .td-shell {
 .td-local-dot {
   width: 18px;
   height: 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--border-subtle);
   background: #2f9e44;
   box-shadow: none;
@@ -944,7 +944,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   align-items: center;
   min-height: 26px;
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -1001,7 +1001,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   width: 10px;
   height: 10px;
   margin-top: 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #8697aa;
 }
 
@@ -1116,7 +1116,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   align-items: center;
   width: fit-content;
   min-height: 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, #8ea4bf 48%, var(--surface-border));
   background: color-mix(in oklab, #e8eef5 78%, var(--surface-elev-2));
   color: color-mix(in oklab, #4f647a 84%, var(--text-secondary));
@@ -1371,7 +1371,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   align-items: center;
   min-height: 22px;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: var(--fs-0);
   line-height: 1.2;
   font-weight: var(--fw-semibold);
@@ -1554,7 +1554,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   align-items: center;
   min-height: 22px;
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 0;
   background: color-mix(in oklab, var(--surface-elev-2) 82%, transparent);
   color: var(--text-secondary);
@@ -2090,7 +2090,7 @@ body.td-wow-eval-active .td-shell {
   display: inline-flex;
   align-items: center;
   min-height: 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 1px 8px;
   font-size: var(--fs-0);
   line-height: 1.2;
@@ -2351,7 +2351,7 @@ body.td-page .td-modal-card {
 }
 
 .td-risk-chip {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 2px 8px;
   font-size: var(--fs-0, 12px);
   font-weight: var(--fw-semibold, 600);
@@ -2375,7 +2375,7 @@ body.td-page .td-modal-card {
 }
 
 .td-track-chip {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 2px 8px;
   font-size: var(--fs-0, 12px);
   font-weight: var(--fw-semibold, 600);
@@ -2605,7 +2605,7 @@ body.td-page .td-modal-card {
 .td-student-chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
 .td-student-chip.is-active { border-color: color-mix(in oklab, var(--accent) 65%, transparent); }
 .td-chip-top { display: flex; justify-content: space-between; gap: 8px; font-size: var(--fs-sm); }
-.td-risk { font-size: 0.72rem; border-radius: 999px; padding: 2px 7px; border: 1px solid transparent; }
+.td-risk { font-size: 0.72rem; border-radius: var(--radius-full); padding: 2px 7px; border: 1px solid transparent; }
 .td-risk.risk { background: rgba(232, 92, 92, 0.2); border-color: rgba(232, 92, 92, 0.45); }
 .td-risk.steady { background: rgba(244, 201, 120, 0.2); border-color: rgba(244, 201, 120, 0.45); }
 .td-risk.growing { background: rgba(110, 231, 183, 0.2); border-color: rgba(110, 231, 183, 0.45); }
@@ -2629,7 +2629,7 @@ body.td-page .td-modal-card {
 
 .td-demo-chips, .td-empty-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
 .td-demo-chips span {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 70%, transparent);
   background: color-mix(in oklab, var(--surface-1) 78%, transparent);
   padding: 4px 8px;
@@ -2640,7 +2640,7 @@ body.td-page .td-modal-card {
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 74%, transparent);
   background: color-mix(in oklab, var(--surface-2) 74%, transparent);
   font-size: 12px;
@@ -2796,7 +2796,7 @@ body.td-page .td-modal-card {
 }
 .td-skill-meter {
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
   background: var(--surface-elev-3);
 }
@@ -2827,7 +2827,7 @@ body.td-page .td-modal-card {
   stroke-linejoin: round;
 }
 .td-chip {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 68%, transparent);
   padding: 4px 8px;
@@ -2863,7 +2863,7 @@ body.td-page .td-modal-card {
 
 .td-band-chip {
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 0.75rem;
 }
@@ -3046,7 +3046,7 @@ body.td-page .td-modal-card {
   justify-content: center;
   width: 22px;
   height: 22px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: var(--fw-semibold);
   color: var(--text-secondary);
@@ -3096,7 +3096,7 @@ body.td-page .td-modal-card {
   gap: 6px;
   min-height: 28px;
   padding: 3px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
   background: color-mix(in oklab, var(--surface-2) 72%, transparent);
   font-size: var(--fs-0, 12px);
@@ -3304,7 +3304,7 @@ body.td-page .td-modal-card {
   align-items: center;
   min-height: 24px;
   padding: 3px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--surface-elev-2) 88%, #ece7de 12%);
   color: var(--text-secondary);
   font-size: var(--fs-0);
@@ -3475,7 +3475,7 @@ body.td-page .td-modal-card {
   align-items: center;
   min-height: 32px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(228, 236, 247, 0.24);
   background: rgba(255, 255, 255, 0.12);
   color: #f8fbff;
@@ -3576,7 +3576,7 @@ body.td-page .td-modal-card {
   align-items: center;
   width: fit-content;
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--accent) 44%, transparent);
   background: color-mix(in oklab, var(--accent-soft) 42%, transparent);
   color: var(--text-secondary);
@@ -4108,7 +4108,7 @@ body.td-page .td-modal-card {
   gap: 8px;
   max-width: min(560px, calc(100vw - 22px));
   padding: 7px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 76%, transparent);
   background: color-mix(in oklab, var(--surface-1) 92%, rgba(12, 24, 36, 0.9));
   box-shadow: var(--shadow-medium);

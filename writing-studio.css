@@ -92,7 +92,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   content: "";
   position: absolute;
   z-index: -1;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   filter: blur(4px);
   pointer-events: none;
 }
@@ -124,7 +124,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-dot {
   width: var(--ws-gap-2);
   height: var(--ws-gap-2);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--hv2-accent, #7aa7ff);
   box-shadow: 0 0 18px rgba(122, 167, 255, 0.45);
   margin-top: var(--ws-gap-1);
@@ -173,7 +173,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 10px;
   font-size: 11px;
   letter-spacing: 0.04em;
@@ -194,7 +194,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   display: inline-flex;
   align-items: center;
   gap: var(--ws-gap-1);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 10px;
   font-size: 12px;
   color: var(--ws-neutral-ink);
@@ -303,7 +303,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 #ws-mode-toggle {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--ws-neutral-border);
   padding: 7px 12px;
   background: var(--ws-neutral-surface);
@@ -389,7 +389,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 
 .ws-chip,
 .ws-ghost {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: var(--ws-gap-2) 16px;
   border: 1px solid rgba(216, 233, 255, 0.24);
   background: rgba(38, 56, 77, 0.62);
@@ -497,7 +497,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-step {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.86);
@@ -684,7 +684,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-plan-meter-track {
   width: 100%;
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
@@ -692,7 +692,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-plan-meter-fill {
   width: 0%;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(90deg, rgba(122, 167, 255, 0.75), rgba(87, 210, 153, 0.85));
 }
 
@@ -711,7 +711,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-plan-input {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(223, 236, 255, 0.36);
   background: rgba(255, 255, 255, 0.1);
   color: var(--ws-ink-light);
@@ -743,7 +743,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-plan-item {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: var(--ws-gap-1) var(--ws-gap-2);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -805,7 +805,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 
 .ws-primary,
 .ws-secondary {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: var(--ws-gap-2) var(--ws-gap-3);
   border: 1px solid rgba(223, 236, 255, 0.26);
   cursor: pointer;
@@ -886,7 +886,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-rail-link {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 12px;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.94);
@@ -896,7 +896,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-rail-title {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 12px;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.96);
@@ -1010,7 +1010,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-pill {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: var(--ws-gap-1) var(--ws-gap-2);
   background: rgba(38, 56, 77, 0.52);
   border: 1px solid rgba(214, 232, 255, 0.22);
@@ -1159,7 +1159,7 @@ button.ws-pill {
 
 #ws-canvas::-webkit-scrollbar-thumb,
 #ws-rail::-webkit-scrollbar-thumb {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(166, 205, 243, 0.35);
 }
 
@@ -1167,7 +1167,7 @@ button.ws-pill {
   position: fixed;
   right: var(--ws-gap-5);
   bottom: var(--ws-gap-5);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: var(--ws-gap-2) var(--ws-gap-3);
   background: rgba(12, 18, 28, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -1466,7 +1466,7 @@ body.cs-writing-greeting-open .app-shell {
 .ws-greeting .ws-dot {
   width: 12px;
   height: 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--hv2-accent, #7aa7ff);
   margin-top: 8px;
   box-shadow: 0 0 18px rgba(122, 167, 255, 0.45);
@@ -1484,7 +1484,7 @@ body.cs-writing-greeting-open .app-shell {
 }
 
 .ws-skip {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 10px 14px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.06);
@@ -1572,7 +1572,7 @@ body.cs-writing-greeting-open .app-shell {
   align-items: center;
   gap: 8px;
   padding: 9px 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
   font-size: 12px;
@@ -1610,7 +1610,7 @@ body.cs-writing-greeting-open .app-shell {
 }
 
 .ws-badge {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
@@ -1664,7 +1664,7 @@ body.cs-writing-greeting-open .app-shell {
 
 .ws-form .ws-primary {
   margin-top: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 12px 14px;
   background: var(--hv2-accent, #7aa7ff);
   border: 1px solid rgba(122, 167, 255, 0.55);
@@ -1674,7 +1674,7 @@ body.cs-writing-greeting-open .app-shell {
 }
 
 .ws-form .ws-ghost {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 11px 14px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -1743,7 +1743,7 @@ body.cs-writing-greeting-open .app-shell {
   right: 10px;
   top: 8px;
   z-index: 1002;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(201, 225, 247, 0.34);
   background: rgba(14, 24, 36, 0.56);
   color: rgba(240, 249, 255, 0.94);

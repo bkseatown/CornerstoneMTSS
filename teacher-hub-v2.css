@@ -113,7 +113,7 @@ body.th2-page {
   align-items: center;
   min-height: 28px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255,255,255,0.72);
   border: 1px solid rgba(171, 185, 206, 0.26);
   font-size: 12px;
@@ -320,7 +320,7 @@ body.th2-page {
 .th2-priority-item--lesson .th2-priority-item__status {
   background: rgba(43, 93, 168, 0.08);
   color: #2b5da8;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 10px;
   font-size: 10px;
   font-weight: 800;
@@ -344,7 +344,7 @@ body.th2-page {
 
 .th2-priority-item__lesson-bar {
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
   background: rgba(111, 136, 171, 0.14);
   border: 1px solid rgba(159, 179, 209, 0.18);
@@ -537,7 +537,7 @@ body.th2-page.cs-has-nav-shell {
   right: 28%;
   bottom: 0;
   height: 2px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(90deg, rgba(45, 109, 240, 0.95), rgba(45, 109, 240, 0));
 }
 
@@ -779,7 +779,7 @@ body.th2-page.cs-has-nav-shell {
   display: inline-flex;
   align-items: center;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 40%, transparent);
   background: var(--accent, #2b5da8);
   color: #fff;
@@ -800,7 +800,7 @@ body.th2-page.cs-has-nav-shell {
   align-items: center;
   height: 20px;
   padding: 0 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1255,7 +1255,7 @@ body.th2-page.cs-has-nav-shell {
   align-items: center;
   min-height: 28px;
   padding: 0 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(146, 111, 62, 0.10);
   color: color-mix(in oklab, #7e5630 80%, var(--text-primary) 20%);
   font-size: 11px;
@@ -1271,7 +1271,7 @@ body.th2-page.cs-has-nav-shell {
 
 .th2-companion-panel__grid article {
   padding: 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: #f8fbff;
   border: 1px solid rgba(197, 207, 224, 0.66);
 }
@@ -1337,7 +1337,7 @@ body.th2-page.cs-has-nav-shell {
   gap: 12px;
   padding: 14px;
   border: 1px solid rgba(197, 207, 224, 0.72);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   text-align: left;
   cursor: pointer;
@@ -1393,7 +1393,7 @@ body.th2-page.cs-has-nav-shell {
   min-width: 34px;
   height: 26px;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #eff4fa;
   border: 1px solid rgba(197, 207, 224, 0.84);
   color: var(--text-secondary);
@@ -1569,7 +1569,7 @@ body.th2-page.cs-has-nav-shell {
   align-items: center;
   height: 24px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1628,7 +1628,7 @@ body.th2-page.cs-has-nav-shell {
   font-size: 11px;
   font-weight: 700;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 .th2-delta-up     { color: #1b5c35; background: var(--bg-secure, #d8f4e3); }
@@ -1640,7 +1640,7 @@ body.th2-page.cs-has-nav-shell {
 .th2-rec {
   background: var(--surface-elev-1, #ffffff);
   border: 1px solid var(--border-subtle, #c8d4e8);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -1698,7 +1698,7 @@ body.th2-page.cs-has-nav-shell {
   align-items: center;
   height: 24px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 11.5px;
   font-weight: 600;
   background: var(--surface-elev-2);
@@ -1765,7 +1765,7 @@ body.th2-page.cs-has-nav-shell {
   top: 10px;
   right: 12px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--warn, #f59e0b) 18%, transparent);
   border: 1px solid color-mix(in oklab, var(--warn, #f59e0b) 50%, transparent);
   color: var(--warn, #f59e0b);
@@ -2553,7 +2553,7 @@ button,
 .th2-curriculum {
   background: #ffffff;
   border: 1px solid #c8d4e8;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 14px 16px;
 }
 
@@ -3082,7 +3082,7 @@ button,
   width: 100%;
   height: 32px;
   border: 1px dashed color-mix(in oklab, var(--accent, #2b5da8) 40%, var(--border-subtle, #e0ddd8));
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--accent, #2b5da8);
   font: 500 12px/1 var(--font-ui, system-ui);
@@ -3131,7 +3131,7 @@ button,
   padding: 0 12px;
   background: var(--surface-2, #f5f4f1);
   border: 1.5px solid var(--border, #d5d2cc);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font: 400 14px/1 var(--font-ui, system-ui);
   outline: none;
@@ -3214,7 +3214,7 @@ button,
 }
 
 /* Add-student drawer: context-specific button tweaks only */
-.th2-add-drawer .th2-btn { height: 38px; border-radius: 8px; font-size: 13px; }
+.th2-add-drawer .th2-btn { height: 38px; border-radius: var(--radius-sm); font-size: 13px; }
 .th2-add-drawer .th2-btn-primary { flex: 1; }
 .th2-add-drawer .th2-btn-quiet {
   background: var(--surface-2, #f5f4f1);
@@ -3287,7 +3287,7 @@ button,
   margin-bottom: 16px;
   padding: 12px;
   background: #f9fafb;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .th2-dg-domain-label {
@@ -3470,7 +3470,7 @@ button,
   margin-bottom: 16px;
   padding: 12px;
   background: color-mix(in oklab, #dc2626 2%, transparent);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .th2-plan-toggle {
@@ -3623,7 +3623,7 @@ button,
 .th2-day-sched-add-btn {
   flex-shrink: 0;
   padding: 11px 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid #1c5fe3;
   background: linear-gradient(135deg, #2d6df0 0%, #1d59d4 100%);
   color: #fff;
@@ -3642,7 +3642,7 @@ button,
 .th2-day-sched-sync-btn {
   flex-shrink: 0;
   padding: 11px 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(26, 39, 66, 0.12);
   background: rgba(255, 255, 255, 0.7);
   color: var(--text-primary);
@@ -3750,7 +3750,7 @@ button,
   top: 14px;
   right: 14px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(28, 95, 227, 0.1);
   color: #2758b6;
   font: 700 10px/1 var(--font-ui, system-ui);
@@ -3796,7 +3796,7 @@ button,
   font: 500 11px/1 var(--font-ui, system-ui);
   color: #44526a;
   background: #e9eef8;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 5px 9px;
   white-space: nowrap;
   align-self: center;
@@ -3824,7 +3824,7 @@ button,
   gap: 8px;
   min-height: 34px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(180deg, #ffffff 0%, #f5f8fe 100%);
   border: 1px solid rgba(45, 109, 240, 0.12);
   box-shadow: 0 6px 14px rgba(18, 28, 45, 0.05);
@@ -4028,7 +4028,7 @@ button,
   display: inline-flex;
   align-items: center;
   padding: 6px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(36, 109, 88, 0.12);
   color: #276b58;
   font: 800 10px/1 var(--font-ui, system-ui);
@@ -4059,7 +4059,7 @@ button,
   justify-content: space-between;
   gap: 12px;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255,255,255,0.76);
   border: 1px solid rgba(199, 144, 105, 0.16);
 }
@@ -4220,7 +4220,7 @@ button,
   display: inline-flex;
   align-items: center;
   padding: 6px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font: 800 10px/1 var(--font-ui, system-ui);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -4285,7 +4285,7 @@ button,
   flex: 0 0 auto;
   min-height: 40px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(45, 109, 240, 0.18);
   background: linear-gradient(180deg, #ffffff 0%, #f5f8fd 100%);
   font: 700 13px/1 var(--font-ui, system-ui);
@@ -4423,7 +4423,7 @@ button,
   display: grid;
   gap: 5px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(26, 39, 66, 0.08);
   box-shadow: 0 10px 24px rgba(39, 51, 72, 0.05);
@@ -4470,7 +4470,7 @@ button,
 .th2-priority-panel__progress-track {
   width: 100%;
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(43, 93, 168, 0.1);
   overflow: hidden;
 }
@@ -4499,7 +4499,7 @@ button,
 .th2-priority-panel__start,
 .th2-priority-panel__activity {
   width: 100%;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   padding: 14px 15px;
   text-decoration: none;
   transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
@@ -4588,7 +4588,7 @@ button,
   display: grid;
   gap: 5px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
   border: 1px solid rgba(197, 207, 224, 0.72);
 }
@@ -4614,7 +4614,7 @@ button,
   gap: 8px;
   min-height: 38px;
   padding: 9px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(180deg, #ffffff 0%, #f4f8fe 100%);
   border: 1px solid rgba(45, 109, 240, 0.12);
   box-shadow: 0 8px 18px rgba(18, 28, 45, 0.05);
@@ -4790,7 +4790,7 @@ button,
   gap: 8px;
   padding: 12px 14px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(135deg, #21314b 0%, #172235 100%);
   color: #f4f7fb;
   box-shadow: 0 18px 36px rgba(23, 34, 53, 0.28);
@@ -4884,7 +4884,7 @@ button,
   width: 30px;
   height: 30px;
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255,255,255,0.08);
   color: #f4f7fb;
   cursor: pointer;
@@ -4940,7 +4940,7 @@ button,
   border: 1px solid rgba(45,109,240,0.12);
   background: #f5f8ff;
   color: #36537e;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 10px;
   font: 700 11px/1 var(--font-ui, system-ui);
   cursor: pointer;
@@ -4992,7 +4992,7 @@ button,
 
 .th2-tools-primary,
 .th2-tools-quiet {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px 12px;
   font: 700 12px/1 var(--font-ui, system-ui);
   cursor: pointer;
@@ -5051,7 +5051,7 @@ button,
   flex-direction: column;
   gap: 5px;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   text-decoration: none;
   border: 1px solid rgba(22,29,41,0.06);
   background: linear-gradient(180deg, #ffffff 0%, #f4f7fc 100%);
@@ -5284,7 +5284,7 @@ button,
   padding: 12px 14px;
   background: var(--surface-elev-1, #fff);
   border: 1px solid var(--border-subtle, #e8e5e0);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -5372,7 +5372,7 @@ button,
 .th2-firstrun-banner__btn {
   flex-shrink: 0;
   padding: 7px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--accent, #2b5da8) 40%, transparent);
   background: var(--accent, #2b5da8);
   color: #fff;
@@ -5393,7 +5393,7 @@ button,
   border: 1px solid var(--border-subtle, #d6dfeb);
   background: #f5f8fe;
   color: #214e91;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 8px 11px;
   font: 600 12px/1.25 var(--font-ui, system-ui);
   cursor: pointer;
@@ -5499,7 +5499,7 @@ button,
   gap: 4px;
   min-width: 0;
   padding: 11px 13px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.84);
   border: 1px solid rgba(170, 184, 204, 0.24);
 }
@@ -5651,7 +5651,7 @@ button,
 .th2-class-chip {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 8px;
   background: #edf2fb;
   color: #45607f;
@@ -5762,7 +5762,7 @@ button,
   gap: 6px;
   padding: 8px 12px;
   border: 1px solid rgba(112, 151, 208, 0.3);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.9);
   color: var(--accent);
   font: 700 13px/1.3 var(--font-ui, system-ui);
@@ -5780,7 +5780,7 @@ button,
   display: grid;
   gap: 6px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(26, 39, 66, 0.08);
 }
@@ -5804,7 +5804,7 @@ button,
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid #d5dfeb;
   background: #f7fbff;
   font-size: 12px;
@@ -5866,7 +5866,7 @@ button,
   padding: 18px 20px;
   background: var(--surface-elev-1, #fff);
   border: 1px solid var(--border-subtle, #e8e5e0);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -6171,7 +6171,7 @@ button,
   /* Card container so the bar reads as a data summary, not an error state */
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 11px 14px 12px;
   margin: 8px 0 10px;
   animation: th2-brief-in .35s ease both;
@@ -6267,7 +6267,7 @@ button,
   color: var(--text-primary, #1c1a18);
   background: var(--surface-2, #f5f4f1);
   border: 1px solid var(--border-subtle, #e8e5e0);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
   margin: 0 0 10px;
   max-height: 160px;
@@ -6299,7 +6299,7 @@ button,
   font-weight: 700;
   text-align: center;
   border: 1.5px solid var(--border-subtle, #e8e5e0);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--surface-1, #fff);
   color: var(--text-primary, #1c1a18);
   appearance: textfield;
@@ -6361,7 +6361,7 @@ button,
   display: inline-flex;
   align-items: center;
   padding: 7px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(187, 173, 156, 0.3);
   color: #7a4c2b;
@@ -6377,7 +6377,7 @@ button,
   height: 46px;
   font-size: 26px;
   line-height: 1;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(243, 233, 223, 0.92));
   border: 1px solid rgba(187, 173, 156, 0.32);
   box-shadow: 0 10px 22px rgba(74, 56, 40, 0.1);
@@ -6412,7 +6412,7 @@ button,
   align-items: center;
   justify-content: center;
   padding: 7px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(129, 94, 63, 0.08);
   border: 1px solid rgba(129, 94, 63, 0.16);
   color: #5f4632;
@@ -6435,7 +6435,7 @@ button,
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(187, 173, 156, 0.24);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
   animation: th2-onboard-in .4s both;
 }
@@ -6638,7 +6638,7 @@ button,
   background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.08) 100%);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,.18);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 12px 16px;
   margin-top: 8px;
   animation: th2-fade-in-up 0.4s ease-out;
@@ -6655,7 +6655,7 @@ button,
   display: flex;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: rgba(43,93,168,.04);
   border-left: 3px solid #2b5da8;
   animation: th2-fade-in-up 0.3s ease-out;
@@ -6698,7 +6698,7 @@ button,
   gap: 16px;
   padding: 20px;
   background: linear-gradient(135deg, rgba(43,93,168,.02) 0%, rgba(43,93,168,.01) 100%);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(43,93,168,.12);
 }
 
@@ -6713,7 +6713,7 @@ button,
 .th2-log-input {
   padding: 10px 14px;
   border: 1.5px solid #8fa3bd;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
   background: #ffffff;
@@ -6742,7 +6742,7 @@ button,
   background: linear-gradient(135deg, #2b5da8 0%, #1e4a8a 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.18s cubic-bezier(.34,1.2,.64,1);
   box-shadow: 0 4px 12px rgba(43,93,168,.2);
@@ -6869,7 +6869,7 @@ textarea::placeholder {
   width: 280px;
   background: #ffffff;
   border: 1px solid #8fa3bd;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 16px;
   box-shadow: 0 4px 16px rgba(0,0,0,.08);
   font-size: 13px;
@@ -7040,7 +7040,7 @@ textarea::placeholder {
   background: #1a56db;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
@@ -7077,7 +7077,7 @@ textarea::placeholder {
   background: #fff;
   color: #3c4043;
   border: 1px solid #dadce0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 500;
@@ -7129,7 +7129,7 @@ textarea::placeholder {
   flex: 1;
   background: rgba(255,255,255,0.68);
   border: 1px solid rgba(0,0,0,0.09);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 7px 8px;
   font-size: 11px;
   font-weight: 600;
@@ -7160,7 +7160,7 @@ textarea::placeholder {
 
 .th2-classroom-modal-inner {
   background: #fff;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   width: min(420px, calc(100vw - 32px));
   max-height: 80vh;
   display: flex;
@@ -7223,7 +7223,7 @@ textarea::placeholder {
   background: #1a56db;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 600;
@@ -7367,7 +7367,7 @@ textarea::placeholder {
 .cs-analytics-close {
   background: #f0f2f9;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   width: 32px;
   height: 32px;
   display: flex;
@@ -7484,7 +7484,7 @@ textarea::placeholder {
 .cs-analytics-btn {
   flex: 1;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 9px 12px;
   font-size: 12px;
   font-weight: 600;
@@ -7526,7 +7526,7 @@ textarea::placeholder {
   white-space: nowrap; font-weight: 600; letter-spacing: 0.02em;
 }
 .th2-rec-btn {
-  padding: 4px 12px; border-radius: 999px;
+  padding: 4px 12px; border-radius: var(--radius-full);
   border: 1px solid rgba(255,255,255,0.15);
   background: transparent; color: rgba(255,255,255,0.45);
   font-size: 11.5px; font-weight: 600; cursor: pointer;
@@ -7542,7 +7542,7 @@ textarea::placeholder {
 }
 .th2-rec-outcome-btn {
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.03);
   color: rgba(255,255,255,0.45);
@@ -7635,7 +7635,7 @@ body.th2-page {
 
 .th2-student,
 .th2-block-card {
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 9px 10px;
 }
 
@@ -7668,7 +7668,7 @@ body.th2-page {
 
 .th2-empty-inner {
   padding: 20px 24px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.58);
   border: 1px solid rgba(174, 189, 212, 0.36);
 }
@@ -7741,7 +7741,7 @@ body.th2-page {
 }
 
 .th2-quick-action {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   min-height: 100px;
 }
 
@@ -7794,7 +7794,7 @@ body.th2-page {
 }
 
 .th2-tools-card {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(165, 180, 206, 0.34);
   background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(241,246,252,0.96));
   box-shadow: 0 10px 22px rgba(22, 34, 52, 0.08);
@@ -7807,7 +7807,7 @@ body.th2-page {
 }
 
 .th2-tools-fab {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid rgba(112, 132, 165, 0.44);
   background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(234,241,250,0.94));
   color: #234165;
@@ -7907,7 +7907,7 @@ body.th2-page {
   .th2-active-context,
   .th2-quick-rail {
     padding: 11px 13px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 }
 
@@ -8044,7 +8044,7 @@ body.th2-page {
   gap: 6px;
   margin-bottom: 12px;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #eef5ff 0%, #f8fbff 100%);
   border: 1px solid rgba(43, 93, 168, 0.12);
 }
@@ -8094,7 +8094,7 @@ body.th2-page {
   width: 100%;
   height: 10px;
   margin-top: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(43, 93, 168, 0.12);
   overflow: hidden;
 }
@@ -8116,7 +8116,7 @@ body.th2-page {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
   border: 1px solid rgba(45, 109, 240, 0.1);
 }
@@ -8142,7 +8142,7 @@ body.th2-page {
   min-width: 44px;
   min-height: 28px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #edf2fb;
   font: 800 11px/1 var(--font-ui, system-ui);
   letter-spacing: 0.08em;
@@ -8289,7 +8289,7 @@ body.th2-page {
 
 .th2-command-center--class-detail .th2-mission-card,
 .th2-command-center--class-detail .th2-secondary-card {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 }
 
 .th2-command-center--class-detail .th2-mission-card {
@@ -8327,7 +8327,7 @@ body.th2-page {
 .th2-command-center--class-detail .th2-class-student-row {
   gap: 8px;
   padding: 10px 11px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 }
 
 .th2-command-center--class-detail .th2-class-student-head strong {

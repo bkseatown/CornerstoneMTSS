@@ -124,7 +124,7 @@ body.cs-page-paragraph {
   background: linear-gradient(135deg, #3c5568, #2c3f50);
   border: 1px solid rgba(255,255,255,0.16);
   color: #f1f5f9;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 800;

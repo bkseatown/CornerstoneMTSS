@@ -78,7 +78,7 @@ body.sp-page {
   justify-content: center;
   min-height: 34px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   text-decoration: none;
   border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
   background: rgba(255, 255, 255, 0.76);
@@ -181,7 +181,7 @@ body.sp-page {
   align-items: center;
   min-height: 22px;
   padding: 0 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
   background: rgba(255, 255, 255, 0.76);
   font-size: 0.68rem;

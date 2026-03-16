@@ -192,7 +192,7 @@ html[data-home-mode="play"] {
   gap: var(--cs-space-2);
   min-height: 42px;
   padding: 9px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(12, 21, 31, 0.3));
   border: 1px solid color-mix(in oklab, var(--panel-border) 16%, transparent);
@@ -214,7 +214,7 @@ html[data-home-mode="play"] {
 
 .cs-coach-action {
   justify-self: end;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--cs-accent) 46%, transparent);
   background: color-mix(in oklab, var(--cs-accent) 20%, rgba(17, 30, 44, 0.8) 80%);
   color: var(--cs-text-0);
@@ -242,7 +242,7 @@ html[data-home-mode="play"] {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 36%, transparent);
   background: color-mix(in oklab, var(--cs-surface-1) 86%, transparent);
   color: var(--cs-text-1);
@@ -294,7 +294,7 @@ html[data-home-mode="play"] {
 }
 
 .cs-tile {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--panel-border) 14%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 72%, #e9eef5 28%);
   color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
@@ -408,7 +408,7 @@ details[open] > :not(summary) {
   display: grid;
   gap: 9px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--panel-border) 74%, #9ba9b9 26%);
   background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
   box-shadow: 0 10px 22px rgba(12, 20, 32, 0.14);
@@ -433,7 +433,7 @@ details[open] > :not(summary) {
 .loading-recovery-btn {
   min-height: 34px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 76%, #8d9daf 24%);
   background: color-mix(in oklab, var(--panel-bg) 88%, #e1e6ed 12%);
   color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
@@ -548,7 +548,7 @@ header {
 .logo-btn:focus-visible {
   outline: 2px solid color-mix(in oklab, var(--brand) 64%, #ffffff 36%);
   outline-offset: 4px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 .logo span {
   color: var(--logo-quest, color-mix(in oklab, #f3fff8 86%, var(--vowel-accent) 14%));
@@ -615,9 +615,9 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 86%, #97a2b2 14%);
   background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
   color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
@@ -769,9 +769,9 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   min-width:     30px;
   max-width:     30px;
   width:         30px;
-  min-height:    30px;
-  max-height:    30px;
-  height:        30px;
+  min-height: var(--btn-height-sm);
+  max-height: var(--btn-height-sm);
+  height: var(--btn-height-sm);
   padding:       0;
   border:        1px solid color-mix(in oklab, var(--brand) 30%, var(--header-border) 70%);
   border-radius: var(--radius-sm);
@@ -807,7 +807,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   transform: translate(-50%, 0);
   max-width: min(270px, calc(100vw - 28px));
   padding: 7px 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--accent) 46%, rgba(255,255,255,0.54) 54%);
   background: linear-gradient(
     145deg,
@@ -912,7 +912,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   background:    linear-gradient(145deg, color-mix(in oklab, var(--accent) 44%, var(--brand) 56%), color-mix(in oklab, var(--brand-dk) 68%, #000000 32%));
   color:         #f7fbff;
   border:        1px solid color-mix(in oklab, var(--accent) 56%, var(--panel-border) 44%);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   min-height:    31px;
   padding:       4px 12px;
   font-family:   var(--font);
@@ -951,9 +951,9 @@ html[data-theme="seahawks"][data-home-mode="play"] #new-game-btn:hover {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, #ffffff 18%);
   color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
@@ -994,7 +994,7 @@ html[data-theme="seahawks"][data-home-mode="play"] #new-game-btn:hover {
 .institutional-alignment-block {
   margin-top: 12px;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--panel-border) 24%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 78%, #ffffff 22%);
   color: color-mix(in oklab, var(--text) 88%, #ffffff 12%);
@@ -1554,7 +1554,7 @@ html[data-home-mode="play"] .focus-bar {
   gap: 4px;
   min-height: 24px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
   font-size: 0.61rem;
@@ -1599,7 +1599,7 @@ html[data-home-mode="play"] .focus-bar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 66%, #8aa0b7 34%);
   background: var(--wq-play-key-bg, color-mix(in oklab, var(--panel-bg) 92%, #edf3f8 8%));
   color: var(--wq-play-key-color, #294259);
@@ -1680,7 +1680,7 @@ html[data-home-mode="play"] .focus-bar {
   text-align: right;
   min-height: 24px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 66%, #ffffff 34%);
 }
@@ -1706,7 +1706,7 @@ html[data-home-mode="play"] .focus-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--wq-play-help-border);
   background: var(--wq-play-help-bg);
   box-shadow:
@@ -1734,7 +1734,7 @@ html[data-home-mode="play"] .focus-inline-search {
   height: 34px;
   flex: 1 1 250px;
   max-width: 340px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 2px solid var(--wq-play-focus-surface-strong-border);
   background: var(--wq-play-focus-surface-bg);
   box-shadow:
@@ -1752,11 +1752,11 @@ html[data-theme="seahawks"][data-home-mode="play"] .focus-inline-search {
 
 html[data-theme="seahawks"][data-home-mode="play"] .focus-action-btn {
   width: 44px;
-  height: 44px;
+  height: var(--btn-height-lg);
 }
 
 html[data-home-mode="play"] .grade-target-inline {
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   min-width: 132px;
   padding: 0 10px;
   border-color: var(--wq-play-focus-chip-border);
@@ -2118,7 +2118,7 @@ html[data-home-mode="play"] .key.is-blocked:not(.correct):not(.present):not(.abs
   width: 100%;
   height: 38px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--panel-bg) 76%, #c9ced6 24%);
   color: color-mix(in oklab, var(--text) 12%, #ffffff 88%);
   font-family: var(--font);
@@ -2145,7 +2145,7 @@ html[data-page-mode="mission-lab"] .top-control-hub {
 }
 
 html[data-page-mode="mission-lab"] .focus-inline-search {
-  height: 40px;
+  height: var(--btn-height);
   font-size: 1.02rem;
   font-weight: 760;
   background: color-mix(in oklab, var(--panel-bg) 72%, #c3cad4 28%);
@@ -2259,8 +2259,8 @@ html[data-home-mode="play"] .focus-inline-results {
 
 .focus-search-back-mini {
   width: 30px;
-  height: 30px;
-  border-radius: 999px;
+  height: var(--btn-height-sm);
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 60%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 76%, #c8d0da 24%);
   color: color-mix(in oklab, var(--text) 90%, #ffffff 10%);
@@ -2288,7 +2288,7 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .focus-inline-results::-webkit-scrollbar-thumb {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--panel-border) 78%, transparent);
 }
 
@@ -2416,7 +2416,7 @@ html[data-home-mode="play"] .focus-inline-results {
   justify-content: flex-start;
   min-height: 24px;
   padding: 1px 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 60%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 90%, transparent);
   box-shadow: none;
@@ -2429,7 +2429,7 @@ html[data-home-mode="play"] .focus-inline-results {
   gap: 3px;
   min-height: 24px;
   padding: 1px 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 60%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 90%, transparent);
   box-shadow: none;
@@ -2484,7 +2484,7 @@ html[data-home-mode="play"] .focus-inline-results {
   gap: 3px;
   min-height: 19px;
   padding: 0 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 94%, transparent);
 }
@@ -2514,7 +2514,7 @@ html[data-home-mode="play"] .focus-inline-results {
   flex: 0 0 auto;
   min-height: 22px;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 94%, transparent);
   color: color-mix(in oklab, var(--text) 82%, var(--text-muted) 18%);
@@ -2544,7 +2544,7 @@ html[data-home-mode="play"] .focus-inline-results {
 .quick-media-dock .wq-theme-label-btn {
   height: 19px;
   min-height: 19px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 .quick-media-dock .wq-theme-nav-btn {
@@ -2667,7 +2667,7 @@ html[data-home-mode="play"] .theme-name-indicator {
   body .settings-panel {
     width: calc(100vw - 6px);
     margin: 4px auto 7px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
   }
 }
 
@@ -2701,7 +2701,7 @@ html[data-home-mode="play"] .theme-name-indicator {
   justify-content: center;
   min-height: 18px;
   padding: 1px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1.5px solid color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
   background: color-mix(in oklab, var(--brand) 22%, var(--panel-bg) 78%);
   color: color-mix(in oklab, var(--text) 84%, var(--text-muted) 16%);
@@ -2831,7 +2831,7 @@ html[data-home-mode="play"] .focus-search-item small {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, transparent);
   padding: 5px 10px;
@@ -2968,7 +2968,7 @@ html[data-home-mode="play"] .focus-search-empty b {
 .settings-jump-chip {
   min-height: 28px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px dashed color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 72%, transparent);
   color: color-mix(in oklab, var(--text-muted) 88%, var(--text) 12%);
@@ -3233,7 +3233,7 @@ html[data-home-mode="play"] .focus-search-empty b {
   font-size: 0.68rem;
   font-weight: 760;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--brand);
   color: var(--brand-text);
 }
@@ -3251,7 +3251,7 @@ html[data-home-mode="play"] .focus-search-empty b {
   resize: vertical;
   padding: 8px;
   border: 1.5px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background:
     linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(240,246,252,0.88) 100%),
     color-mix(in oklab, var(--modal-bg) 90%, #ffffff 10%);
@@ -3273,7 +3273,7 @@ html[data-home-mode="play"] .focus-search-empty b {
   display: grid;
   gap: 3px;
   padding: 8px 10px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--wq-play-vowel-fill, #d4f0ff) 20%, #ffffff 80%) 0%, color-mix(in oklab, var(--panel-bg) 66%, #f6fbff 34%) 100%);
@@ -3297,7 +3297,7 @@ html[data-home-mode="play"] .focus-search-empty b {
   display: grid;
   gap: 8px;
   padding: 11px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--brand) 7%, #ffffff 93%) 0%, color-mix(in oklab, var(--panel-bg) 74%, #f8fbff 26%) 100%);
@@ -3347,7 +3347,7 @@ html[data-home-mode="play"] .focus-search-empty b {
 .teacher-audit-dot {
   width: 10px;
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #7b8ea3;
   box-shadow: 0 0 0 3px rgba(123, 142, 163, 0.16);
 }
@@ -3381,7 +3381,7 @@ html[data-home-mode="play"] .focus-search-empty b {
 
 .teacher-audit-action {
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 8px;
   font-size: 0.68rem;
   font-weight: 820;
@@ -3570,7 +3570,7 @@ html[data-home-mode="play"] .focus-search-empty b {
   gap: 8px;
   min-height: 64px;
   padding: 7px 9px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
   background: linear-gradient(180deg, color-mix(in oklab, var(--panel-bg) 72%, #f5f8fb 28%) 0%, color-mix(in oklab, var(--modal-bg) 84%, #ffffff 16%) 100%);
   color: var(--text);
@@ -3629,7 +3629,7 @@ html[data-home-mode="play"] .focus-search-empty b {
 
 .settings-mode-preview-wave {
   width: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(180deg, #2d5b8b 0%, #173a63 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
 }
@@ -3783,7 +3783,7 @@ html[data-home-mode="play"] .teacher-panel-note,
 html[data-home-mode="play"] .setting-checkbox-label {
   background: linear-gradient(180deg, #d6dde2 0%, #c3cdd4 100%);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 10px 12px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.54);
 }
@@ -3837,7 +3837,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
   align-items: center;
   width: fit-content;
   max-width: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
   background: color-mix(in oklab, var(--brand) 20%, var(--panel-bg) 80%);
   color: var(--text);
@@ -4011,7 +4011,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
 .teacher-session-panel {
   gap: 6px;
   border: 1px solid var(--panel-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 7px 8px;
   background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
 }
@@ -4250,7 +4250,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 64%, var(--brand) 36%);
   background: color-mix(in oklab, var(--panel-bg) 92%, transparent);
   color: var(--text-muted);
@@ -4309,7 +4309,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
 }
 
 .teacher-session-btn {
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   font-size: 0.72rem;
   font-weight: 800;
 }
@@ -4368,7 +4368,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
   width: 25px;
   height: 25px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--brand);
   color: var(--brand-text);
   font-size: 0.68rem;
@@ -4385,7 +4385,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
   max-width: 210px;
   min-height: 25px;
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 86%, #ffffff 14%);
   color: var(--text);
@@ -4440,7 +4440,7 @@ html[data-home-mode="play"] .setting-checkbox-label {
 .theme-preview-strip.quick-media-dock .wq-theme-label-btn {
   height: 24px;
   min-height: 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 .theme-preview-strip.quick-media-dock .wq-theme-label-btn {
@@ -4523,7 +4523,7 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
   display: grid;
   gap: 6px;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--panel-border) 78%, transparent);
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%), color-mix(in oklab, var(--panel-bg) 94%, #000000 6%));
@@ -4541,7 +4541,7 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--brand) 60%, var(--panel-border) 40%);
   background: color-mix(in oklab, var(--brand) 22%, var(--panel-bg) 78%);
   color: var(--text);
@@ -4560,7 +4560,7 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
 .quest-progress {
   position: relative;
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 80%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 70%, #000000 30%);
   overflow: hidden;
@@ -4585,7 +4585,7 @@ html[data-page-mode="mission-lab"] .mission-lab-hub {
   align-items: center;
   justify-content: center;
   padding: 2px 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 82%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, #ffffff 18%);
   color: color-mix(in oklab, var(--text-muted) 90%, #ffffff 10%);
@@ -4691,7 +4691,7 @@ html[data-home-mode="play"] #wq-coach-ribbon::before {
   width: fit-content;
   min-height: 26px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.12);
   color: rgba(217, 234, 255, 0.9);
   font-size: 11px;
@@ -5386,7 +5386,7 @@ html[data-board-style="soundcard"] .tile.flip {
   position: relative;
   width: 100%;
   border: 1px solid color-mix(in oklab, var(--brand) 36%, var(--panel-border) 64%);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background:
     radial-gradient(circle at 12% 18%, color-mix(in oklab, var(--accent) 24%, transparent), transparent 58%),
     linear-gradient(
@@ -5421,7 +5421,7 @@ html[data-board-style="soundcard"] .tile.flip {
   align-items: center;
   justify-content: center;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--brand) 45%, var(--panel-border) 55%);
   color: var(--brand);
   font-size: 0.7rem;
@@ -5444,7 +5444,7 @@ html[data-board-style="soundcard"] .tile.flip {
   background: color-mix(in oklab, var(--panel-bg) 82%, var(--brand) 18%);
   color: var(--text);
   font-weight: 800;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 10px;
   cursor: pointer;
   font-family: var(--font);
@@ -5478,7 +5478,7 @@ html[data-board-style="soundcard"] .tile.flip {
 }
 
 .midgame-boost-action {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 66%, var(--brand) 34%);
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--brand) 14%);
   color: var(--text);
@@ -5543,7 +5543,7 @@ html[data-play-style="listening"] .gameplay-audio {
 }
 
 html[data-play-style="listening"] .gameplay-audio .audio-ghost-btn {
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   padding: 5px 10px;
   font-size: 0.73rem;
   font-weight: 820;
@@ -5701,13 +5701,13 @@ html[data-keyboard-layout="alphabet-arc"] .key-row-3 {
   max-width: none;
   height: calc(var(--key-h) * 0.5);
   padding: 0 7px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.66rem;
   letter-spacing: 0.01em;
 }
 
 html[data-key-style="bubble"] .key {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border-color: color-mix(in oklab, #1f2c3d 74%, #9fb0c4 26%);
   background:
     radial-gradient(120% 120% at 28% 14%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.05) 42%, rgba(0,0,0,0.1) 100%),
@@ -5721,7 +5721,7 @@ html[data-key-style="bubble"] .key {
 }
 
 html[data-home-mode="play"] .key {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border-color: var(--wq-play-key-border);
   background: var(--wq-play-key-bg);
   color: var(--wq-play-key-color);
@@ -5830,7 +5830,7 @@ html[data-home-mode="play"] .key.is-vowel:not(.correct):not(.present):not(.absen
 }
 
 html[data-key-style="classic"] .key {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   box-shadow: 0 2px 0 color-mix(in oklab, var(--key-bg) 58%, #000000 28%), inset 0 1px 0 rgba(255,255,255,0.44);
 }
 
@@ -5899,7 +5899,7 @@ html[data-key-style="typewriter"] .key::after {
 
 html[data-key-style="pebble"] .key {
   border-width: 1.4px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border-color: color-mix(in oklab, var(--key-bg) 56%, #1f2f47 44%);
   background: linear-gradient(
     180deg,
@@ -6199,7 +6199,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   max-height: min(35vh, 220px);
   overflow: auto;
   padding: 9px 10px 9px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background:
     radial-gradient(circle at 92% -8%, rgba(226, 228, 232, 0.3), transparent 50%),
     radial-gradient(circle at 6% 0%, rgba(214, 220, 227, 0.24), transparent 46%),
@@ -6295,7 +6295,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--accent) 48%, #ffffff 52%);
   background: linear-gradient(
     145deg,
@@ -6311,7 +6311,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .refresh-latest-banner button {
   min-height: 24px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--accent) 62%, #ffffff 38%);
   background: color-mix(in oklab, var(--accent) 24%, #f8fcff 76%);
   color: #0f2438;
@@ -6334,7 +6334,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .hint-example {
   position: relative;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 2px solid color-mix(in oklab, #cde8f0 72%, #8ccfd0 28%);
   background:
     linear-gradient(
@@ -6354,7 +6354,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   counter-increment: hintExample;
   content: 'Example ' counter(hintExample);
   width: fit-content;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, #91d9cf 62%, #d5eef2 38%);
   background: color-mix(in oklab, #e7fbf7 82%, #e9f4ff 18%);
   color: #2f556f;
@@ -6416,9 +6416,9 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .hint-clue-btn {
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   padding: 0 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, #55cab8 48%, var(--panel-border) 52%);
   background: linear-gradient(145deg, #d8faf3 0%, #d7f0ff 100%);
   color: #1e4a65;
@@ -6518,7 +6518,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .starter-word-chip {
   min-height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in oklab, var(--panel-border) 80%, #95a5b6 20%);
   background: linear-gradient(155deg, #ffffff 0%, #eef2f6 100%);
   color: #314659;
@@ -6548,7 +6548,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .starter-word-btn {
   min-height: 34px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, #60ba8d 54%, var(--panel-border) 46%);
   background: linear-gradient(145deg, #d8f9e9 0%, #d6f4ef 100%);
   color: #1f4d38;
@@ -6592,7 +6592,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .support-choice-close {
   width: 30px;
-  height: 30px;
+  height: var(--btn-height-sm);
   border-radius: 10px;
   border: 1px solid color-mix(in oklab, #8fd7b2 58%, var(--panel-border) 42%);
   background: color-mix(in oklab, #ffffff 86%, #d8f8e9 14%);
@@ -6656,7 +6656,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .listening-mode-card {
   width: min(540px, calc(100vw - 24px));
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in oklab, var(--accent) 52%, var(--panel-border) 48%);
   background: linear-gradient(
     165deg,
@@ -6780,7 +6780,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 @media (max-width: 460px) {
   .hint-clue-close-icon {
     width: 30px;
-    height: 30px;
+    height: var(--btn-height-sm);
     border-radius: 9px;
   }
 
@@ -6791,7 +6791,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
   .starter-word-close-icon {
     width: 30px;
-    height: 30px;
+    height: var(--btn-height-sm);
     border-radius: 9px;
   }
 
@@ -7032,8 +7032,8 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .first-run-start-btn {
   width: 100%;
-  min-height: 44px;
-  border-radius: 12px;
+  min-height: var(--btn-height-lg);
+  border-radius: var(--radius-md);
   font-size: 0.98rem;
   font-weight: 880;
   border: 1px solid color-mix(in oklab, var(--brand) 58%, var(--panel-border) 42%);
@@ -7223,7 +7223,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 #modal-word span {
   width: 56px; height: 56px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background:  var(--correct);
   color:       white;
   font-size:   1.7rem;
@@ -7305,7 +7305,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   display: grid;
   gap: 5px;
   padding: 12px 13px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--panel-border) 78%, #93a5b8 22%);
   background:
     linear-gradient(
@@ -7326,7 +7326,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   justify-content: space-between;
   gap: 10px;
   padding: 10px 11px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid color-mix(in oklab, var(--brand) 56%, var(--panel-border) 44%);
   background: linear-gradient(
     140deg,
@@ -7400,7 +7400,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--brand) 60%, var(--panel-border) 40%);
   padding: 3px 10px;
   font-size: 0.72rem;
@@ -7422,7 +7422,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .challenge-meta-chip {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, var(--page-bg) 18%);
   padding: 4px 10px;
@@ -7463,7 +7463,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .challenge-station-pill {
   border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--panel-bg) 88%, var(--page-bg) 12%);
   color: var(--text-muted);
   font: inherit;
@@ -7545,7 +7545,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .challenge-choice-btn {
   width: 100%;
-  min-height: 40px;
+  min-height: var(--btn-height);
   border-radius: 10px;
   border: 1px solid color-mix(in oklab, var(--panel-border) 74%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 90%, #ffffff 10%);
@@ -7604,7 +7604,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .challenge-starter-btn {
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
   color: var(--text-muted);
   font: inherit;
@@ -7624,7 +7624,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .challenge-task-status {
   width: fit-content;
   border: 1px solid color-mix(in oklab, var(--panel-border) 72%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, var(--panel-bg) 86%, var(--page-bg) 14%);
   color: var(--text-muted);
   padding: 3px 9px;
@@ -7659,7 +7659,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .challenge-progress-track {
   width: 100%;
   height: 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 80%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 74%, var(--page-bg) 26%);
   overflow: hidden;
@@ -7932,7 +7932,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   gap: 4px;
   padding: 7px 10px;
   border: 1px solid var(--panel-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--panel-bg) 78%, var(--page-bg) 22%);
 }
 
@@ -7953,7 +7953,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   font-weight: 800;
   color: color-mix(in oklab, var(--brand) 72%, var(--text) 28%);
   letter-spacing: 0.01em;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--brand) 42%, var(--panel-border) 58%);
   background: color-mix(in oklab, var(--brand) 12%, var(--panel-bg) 88%);
   padding: 5px 10px;
@@ -7966,7 +7966,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .modal-practice-details {
   width: 100%;
   border: 1px solid var(--panel-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--panel-bg) 90%, var(--page-bg) 10%);
   overflow: hidden;
 }
@@ -8004,7 +8004,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--panel-border);
   padding: 2px 8px;
   font-size: 0.69rem;
@@ -8101,7 +8101,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--panel-border);
   background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
   color: var(--text);
@@ -8195,7 +8195,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--panel-border);
   padding: 2px 7px;
   font-size: 0.64rem;
@@ -8230,7 +8230,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   gap: 5px;
   max-width: 100%;
   border: 1px solid var(--panel-border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 3px 8px;
   font-size: 0.66rem;
   font-weight: 700;
@@ -8287,7 +8287,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 #modal-more-details {
   width: 100%;
   border: 1px solid var(--panel-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--panel-bg) 90%, var(--page-bg) 10%);
   overflow: hidden;
 }
@@ -8323,7 +8323,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   justify-content: center;
   padding: 3px 10px;
   border: 1px solid var(--panel-border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.76rem;
   font-weight: 700;
   color: var(--text-muted);
@@ -8334,7 +8334,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   justify-content: center;
   padding: 3px 10px;
   border: 1px solid var(--panel-border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.76rem;
   font-weight: 700;
   color: var(--text-muted);
@@ -8346,7 +8346,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 #modal-fun-wrap {
   width: 100%;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--fun-border);
   background: var(--fun-bg);
 }
@@ -8379,7 +8379,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   place-items: center;
   width: 20px;
   height: 20px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: #2e5f95;
   color: #f6fbff;
   font-size: 0.8rem;
@@ -8573,7 +8573,7 @@ html[data-layout-mode="compact"] .audio-ghost-btn {
 }
 
 html[data-layout-mode="compact"][data-play-style="listening"] .gameplay-audio .audio-ghost-btn {
-  min-height: 30px;
+  min-height: var(--btn-height-sm);
   padding: 5px 10px;
   font-size: 0.72rem;
 }
@@ -8947,7 +8947,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
 .cs-demo-toast__badge {
   min-width: 44px;
   padding: 4px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
   background: color-mix(in oklab, var(--brand) 28%, #f5fbff 72%);
   color: color-mix(in oklab, var(--text) 88%, #102030 12%);
@@ -8978,7 +8978,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
 .cs-btn {
   min-height: 26px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
   padding: 3px 8px;
   font-size: 0.66rem;
@@ -9008,7 +9008,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
 
 .cs-demo-toast__bar {
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.22);
   overflow: hidden;
 }
@@ -9016,7 +9016,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
 .cs-demo-toast__barFill {
   width: 0%;
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: linear-gradient(90deg, #7bc4ff 0%, #42e0ff 100%);
   transition: width 120ms linear;
 }
@@ -9026,8 +9026,8 @@ html[data-layout-mode="compact"] .key.key-chunk {
   top: 12px;
   right: 12px;
   z-index: 233;
-  min-height: 30px;
-  border-radius: 999px;
+  min-height: var(--btn-height-sm);
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 56%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 82%, #172637 18%);
   color: #e5f0fb;
@@ -9047,7 +9047,7 @@ html[data-layout-mode="compact"] .key.key-chunk {
   position: fixed;
   z-index: 228;
   min-height: 34px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 58%, transparent);
   background: color-mix(in oklab, var(--brand) 24%, #f8fbff 76%);
   color: color-mix(in oklab, var(--text) 82%, #1f2c38 18%);
@@ -9136,7 +9136,7 @@ body.wq-demo .quest-overlay {
   left: 8px;
   bottom: 8px;
   z-index: 245;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.24);
   background: rgba(8, 14, 24, 0.78);
   color: rgba(240, 246, 255, 0.88);
@@ -9220,7 +9220,7 @@ html[data-motion="fun"] .tile.wq-reveal {
   gap: 6px;
   min-height: 32px;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: color-mix(in oklab, #fff4d6 74%, rgba(255,255,255,0.84) 26%);
   color: #8f4e00;
   font-size: 0.82rem;
@@ -9275,7 +9275,7 @@ html[data-motion="fun"] .tile.wq-reveal {
   align-items: center;
   justify-content: center;
   min-height: 24px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 70%, #9eb0c4 30%);
   background: color-mix(in oklab, var(--panel-bg) 88%, #ffffff 12%);
   font-size: 0.66rem;
