@@ -69,6 +69,18 @@ body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
   align-content: start;
 }
 
+/* Hub head entrance animation */
+@keyframes hubHeadReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .cs-hub-head {
   position: relative;
   overflow: hidden;
@@ -82,6 +94,7 @@ body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
   justify-content: space-between;
   gap: 16px;
   box-shadow: 0 12px 26px rgba(22, 39, 63, 0.12);
+  animation: hubHeadReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .cs-hub-head::before {
@@ -202,9 +215,25 @@ body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
   box-shadow: 0 7px 16px color-mix(in oklab, var(--hub-accent) 22%, transparent);
 }
 
+/* Button animations */
+@keyframes buttonHoverLift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+.cs-btn {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, background-color;
+}
+
 .cs-btn-primary:hover {
+  animation: buttonHoverLift 0.3s ease-out forwards;
   background: var(--action-primary-hover);
-  box-shadow: 0 8px 16px color-mix(in oklab, var(--hub-accent) 24%, transparent);
+  box-shadow: 0 10px 20px color-mix(in oklab, var(--hub-accent) 28%, transparent);
+}
+
+.cs-btn-primary:active {
+  transform: translateY(0);
 }
 
 .cs-btn-quiet {
@@ -258,10 +287,38 @@ body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
   pointer-events: none;
 }
 
+/* ==========================================
+   HUB PAGE ANIMATIONS & VISUAL ENHANCEMENTS
+   ========================================== */
+
+/* Hub section entrance animation */
+@keyframes hubSectionReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cs-hub-section {
+  animation: hubSectionReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Stagger animation for sections */
+.cs-hub-section:nth-child(1) { animation-delay: 0ms; }
+.cs-hub-section:nth-child(2) { animation-delay: 80ms; }
+.cs-hub-section:nth-child(3) { animation-delay: 160ms; }
+.cs-hub-section:nth-child(4) { animation-delay: 240ms; }
+.cs-hub-section:nth-child(5) { animation-delay: 320ms; }
+.cs-hub-section:nth-child(6) { animation-delay: 400ms; }
+
 .cs-hub-section:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 11px 20px rgba(24, 42, 68, 0.12);
-  background: color-mix(in oklab, var(--surface-elev-1) 80%, var(--hub-surface-tint) 20%);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(24, 42, 68, 0.16);
+  background: color-mix(in oklab, var(--surface-elev-1) 77%, var(--hub-surface-tint) 23%);
 }
 
 .cs-hub-section--priority {
@@ -330,6 +387,135 @@ body.cs-hub-page .cs-nav-shell .cs-nav-link.is-active {
 
 .cs-hub-section .cs-btn-quiet:hover {
   background: color-mix(in oklab, var(--surface-elev-2) 75%, #f7fbff 25%);
+}
+
+/* ==========================================
+   ADDITIONAL HUB VISUAL ENHANCEMENTS
+   ========================================== */
+
+/* Engine status indicator animation */
+@keyframes hubEngineActivate {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--hub-accent) 100%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--hub-accent) 0%, transparent);
+  }
+}
+
+.cs-hub-engine {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cs-hub-engine::before {
+  animation: hubEngineActivate 2s ease-in-out infinite;
+}
+
+/* Focus state for interactive elements */
+.cs-btn:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+.cs-hub-section:focus-within {
+  box-shadow: 0 14px 28px rgba(24, 42, 68, 0.18);
+  background: color-mix(in oklab, var(--surface-elev-1) 75%, var(--hub-surface-tint) 25%);
+}
+
+/* Quiet button enhancements */
+.cs-btn-quiet {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cs-btn-quiet:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cs-btn-quiet:active {
+  transform: translateY(0);
+}
+
+/* Hub row and list smoothing */
+.cs-hub-row,
+.cs-hub-list {
+  transition: gap 0.2s ease;
+}
+
+/* Data element animation on reveal */
+@keyframes hubDataReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.cs-hub-section h2,
+.cs-hub-section p {
+  animation: hubDataReveal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Improved readability with better spacing */
+.cs-hub-section h2 {
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.cs-hub-section p {
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--text-primary) 92%, #567490 8%);
+}
+
+/* Loading and state indicators */
+@keyframes hubLoadingPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cs-hub-section[data-loading="true"] {
+  animation: hubLoadingPulse 1.4s ease-in-out infinite;
+}
+
+/* Priority section emphasis */
+.cs-hub-section--priority {
+  animation: hubSectionReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  box-shadow: 0 14px 32px rgba(26, 44, 68, 0.18);
+}
+
+.cs-hub-section--priority h2 {
+  color: color-mix(in oklab, var(--hub-accent) 74%, var(--text-strong) 26%);
+}
+
+/* Smooth transitions for all hub elements */
+.cs-hub-head h1 {
+  transition: color 0.2s ease;
+}
+
+.cs-hub-section,
+.cs-btn,
+.cs-hub-engine {
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, background-color;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .cs-hub-section,
+  .cs-hub-head,
+  .cs-btn,
+  .cs-hub-engine {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 980px) {
