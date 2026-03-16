@@ -8,6 +8,7 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260314d">
   <link rel="stylesheet" href="./style/typography.css?v=20260314d">
+  <link rel="stylesheet" href="./style/platform-hero.css?v=20260316a">
   <link rel="stylesheet" href="./home-v3.css?v=20260316f">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260310a">
 </head>
@@ -15,7 +16,63 @@
   <main class="landing-shell" aria-label="Cornerstone MTSS welcome dashboard">
     <select id="s-theme" aria-hidden="true" tabindex="-1" style="display:none;"></select>
 
-    <header class="landing-header" aria-label="Cornerstone MTSS header">
+    <!-- Platform Hero Section -->
+    <section class="platform-hero" aria-label="Cornerstone MTSS platform narrative">
+      <div class="hero-content">
+        <div class="hero-narrative">
+          <p class="hero-eyebrow">Evidence-Based MTSS Platform</p>
+          <h1 class="hero-title">Cornerstone MTSS</h1>
+          <p class="hero-subtitle">Professional literacy intervention tools grounded in the Science of Reading</p>
+          <p class="hero-description">
+            Cornerstone MTSS is a comprehensive Multi-Tiered System of Supports platform designed for literacy specialists and intervention teachers. Built on research-backed frameworks (Wilson Brainframes, Science of Reading) and aligned with leading curricula (Fishtank ELA, Fundations, UFLI), it provides essential tools for assessment, instruction, and student communication.
+          </p>
+
+          <!-- Platform Features Grid -->
+          <div class="platform-features">
+            <div class="feature-card">
+              <div class="feature-icon">🎮</div>
+              <h3>Interactive Games</h3>
+              <p>Word Quest, Typing Quest, and fluency-building games aligned to Science of Reading pillars</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">✍️</div>
+              <h3>Writers Studio</h3>
+              <p>Scaffolded writing organizers (Story Map, Concept Map, Opinion Map) with group projection mode for co-teaching</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🎤</div>
+              <h3>Speaking Studio</h3>
+              <p>Local-only audio recording with waveform visualization for pronunciation, fluency, and self-assessment</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">📚</div>
+              <h3>Learning Hub</h3>
+              <p>Professional activity showcase organized by Science of Reading domain with clear pedagogical purpose</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">📊</div>
+              <h3>Specialist Hub</h3>
+              <p>Teacher workspace for lesson planning, student notes, and MTSS tier differentiation tracking</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🔒</div>
+              <h3>Privacy First</h3>
+              <p>Local-first architecture with no cloud dependency, automatic backups, and offline functionality</p>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="hero-ctas">
+            <a href="#dashboard" class="hero-btn hero-btn--primary">Go to Dashboard</a>
+            <a href="./learning-hub.html" class="hero-btn hero-btn--secondary">Explore Activities</a>
+            <a href="./speaking-studio.html" class="hero-btn hero-btn--tertiary">Try Speaking Studio</a>
+            <a href="./writers-studio.html" class="hero-btn hero-btn--tertiary">Try Writers Studio</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <header class="landing-header" id="dashboard" aria-label="Cornerstone MTSS header">
       <div class="landing-header__intro">
         <p class="landing-eyebrow">Cornerstone MTSS</p>
         <h1 class="landing-title">Today</h1>
