@@ -9640,6 +9640,395 @@ html[data-home-mode="play"] #game-board {
   max-width: min(336px, calc(100vw - (var(--wq-safe-edge) * 2) - 10px));
 }
 
+/* ==========================================
+   ARTISTIC TYPOGRAPHY EFFECTS
+   ========================================== */
+
+/* Heading animations - pop in with slight rotation */
+@keyframes headingReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  animation: headingReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  letter-spacing: var(--heading-letter-space);
+  font-weight: var(--heading-weight);
+}
+
+/* Gradient text effect for major headings */
+h1 {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--text-strong) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+}
+
+h2 {
+  color: var(--text-strong);
+  font-size: clamp(1.3rem, 3vw, 2.2rem);
+}
+
+/* Subtle text lift shadow on readable elements */
+p, span, li {
+  text-shadow: var(--text-shadow-lift);
+}
+
+/* ==========================================
+   ENGAGING MICRO-INTERACTIONS
+   ========================================== */
+
+/* Hover scale for interactive cards and containers */
+@keyframes cardHoverLift {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-soft);
+  }
+  100% {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+  }
+}
+
+/* Smooth hover effect for all interactive elements */
+button:not(:disabled),
+a,
+[role="button"],
+.card,
+.tile,
+.choice {
+  transition: all 0.18s var(--ease-spring);
+}
+
+button:not(:disabled):hover,
+a:hover,
+[role="button"]:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* ==========================================
+   RESPONSIVE HEADER OPTIMIZATION (Sprint 1)
+   ========================================== */
+
+/* Desktop (1440px+) - Current state preserved */
+@media (max-width: 1200px) {
+  header {
+    padding: var(--header-shell-pad, 7px 10px 6px);
+  }
+
+  .header-main-row {
+    column-gap: 6px;
+    row-gap: 5px;
+  }
+
+  .header-icon-controls {
+    gap: 3px;
+  }
+
+  .header-quick-btn {
+    min-height: 28px;
+    padding: 3px 8px;
+    font-size: 0.63rem;
+  }
+}
+
+/* Tablet (768px-1200px) - Optimized layout */
+@media (max-width: 768px) {
+  header {
+    padding: 6px 8px 5px;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .header-main-row {
+    width: 100%;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'logo icons'
+      'quick quick';
+    column-gap: 4px;
+    row-gap: 4px;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .header-icon-controls {
+    gap: 2px;
+    min-width: auto;
+  }
+
+  .header-quick-controls {
+    gap: 4px;
+    justify-content: flex-start;
+  }
+
+  .header-quick-btn {
+    min-height: 26px;
+    padding: 2px 6px;
+    font-size: 0.6rem;
+  }
+
+  #play-style-toggle {
+    min-width: 180px;
+    padding: 6px 10px;
+  }
+}
+
+/* Mobile (480px-768px) - Compact layout */
+@media (max-width: 480px) {
+  header {
+    padding: 5px 6px 4px;
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .header-main-row {
+    width: 100%;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'logo quick icons';
+    column-gap: 3px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .header-quick-controls {
+    gap: 3px;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .header-quick-btn {
+    min-height: 24px;
+    padding: 2px 5px;
+    font-size: 0.55rem;
+    white-space: nowrap;
+  }
+
+  .header-icon-controls {
+    gap: 1px;
+    flex-shrink: 0;
+  }
+
+  #play-style-toggle {
+    display: none;
+  }
+}
+
+/* ==========================================
+   FOCUS INDICATORS (Keyboard Navigation)
+   ========================================== */
+
+/* Standardized focus ring across all interactive elements */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.icon-btn:focus-visible,
+.header-quick-btn:focus-visible,
+.tile:focus-visible,
+.theme-name-indicator:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+  border-radius: 4px;
+}
+
+/* Enhanced focus for buttons - add subtle glow */
+@keyframes focusGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  }
+}
+
+button:focus-visible:not(:disabled),
+[role="button"]:focus-visible {
+  animation: focusGlow 0.4s ease-out;
+}
+
+/* Game board and tile focus states */
+.tile:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15);
+}
+
+/* Keyboard key focus */
+.key:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 1px;
+  box-shadow: inset 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+/* ==========================================
+   ENHANCED GAME BOARD VISUAL POLISH
+   ========================================== */
+
+/* Pronounced shadows and depth for game board */
+.board-plate,
+html[data-home-mode="play"] .board-plate {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.board-plate:hover,
+html[data-home-mode="play"] .board-plate:hover {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 12px 24px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Tile padding and visual enhancement */
+.tile {
+  padding: clamp(4px, 1vw, 8px);
+  transition: all 0.15s ease;
+}
+
+/* ==========================================
+   MOTION THROUGHOUT PLATFORM
+   ========================================== */
+
+/* Section reveal animation - smooth entrance */
+@keyframes sectionSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section,
+[role="region"] {
+  animation: sectionSlideDown 0.35s ease-out;
+}
+
+/* Card pop-in animation - emphasizes importance */
+@keyframes cardPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) rotate(-5deg);
+  }
+  70% {
+    transform: scale(1.02) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.card,
+.hero-proof-item {
+  animation: cardPopIn 0.4s var(--ease-spring) forwards;
+}
+
+/* Badge/badge elements - quick pulse */
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+[class*="badge"],
+[class*="status"],
+.status-indicator {
+  animation: badgePulse 0.6s ease-in-out;
+}
+
+/* Loading/waiting states - gentle pulse */
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.is-loading,
+[aria-busy="true"] {
+  animation: gentlePulse 1.4s ease-in-out infinite;
+}
+
+/* Transition for form inputs - subtle highlight */
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: color-mix(in oklab, var(--surface-elev-1) 95%, var(--accent) 5%);
+  transition: background-color 0.2s ease;
+}
+
+/* Success state animation - celebrate action */
+@keyframes successGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(78, 141, 106, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 6px rgba(78, 141, 106, 0);
+  }
+}
+
+.is-success,
+[data-state="success"] {
+  animation: successGlow 0.6s ease-out;
+}
+
+/* Error state animation - draw attention */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.is-error,
+[data-state="error"] {
+  animation: errorShake 0.4s ease-in-out;
+}
+
+/* ==========================================
+   REDUCED MOTION COMPLIANCE
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 html[data-home-mode="play"] #keyboard {
   width: min(var(--keyboard-max-width, 540px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
   max-width: min(540px, calc(100vw - (var(--wq-safe-edge) * 2) - 2px));
