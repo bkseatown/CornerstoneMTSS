@@ -89,10 +89,10 @@ body.cs-home-page {
 
 .landing-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: end;
   gap: 12px;
-  padding: 14px 20px;
+  padding: 12px 18px;
   border-radius: var(--landing-radius-xl);
   background:
     radial-gradient(circle at 12% 0%, rgba(97, 143, 223, 0.24), transparent 30%),
@@ -1338,7 +1338,7 @@ body.cs-home-page {
 @media (min-width: 981px) and (max-height: 820px) {
   .landing-shell {
     width: min(var(--landing-max), calc(100vw - 22px));
-    margin: 8px auto;
+    margin: 4px auto;
     padding: 14px;
     gap: 12px;
   }
