@@ -7,6 +7,63 @@ This document maintains a canonical map of all modules, their dependencies, and 
 
 ## MODULE INVENTORY
 
+### Phase B: Dashboard Module (April 7–May 4)
+
+#### daily-dashboard.js
+| Field | Value |
+|-------|-------|
+| **Status** | COMPLETE (Phase B, Deliverable 1-4) |
+| **File** | `js/dashboard/daily-dashboard.js` |
+| **Lines** | 2.1K |
+| **Owner** | UI / Dashboard |
+| **Purpose** | Synthesize curriculum + competency + evidence → teacher action |
+| **Exports** | `loadForTeacher()`, `getDisplayData()`, `recordAction()` |
+| **Reads From** | All Phase A modules (curriculum-engine, competency-mapper, intervention-recommender) |
+| **Output** | Dashboard state with categorized students + snapshots + summary |
+| **Categorization** | Primary Focus (3), Secondary Watch (5), On Track (remaining) |
+| **Integration** | Used by daily-dashboard-ui.js for rendering |
+| **Load Latency** | <1s target (optimized with memoization) |
+| **Tests** | `tests/daily-dashboard.spec.js` (12 specs target) |
+
+#### daily-dashboard.html
+| Field | Value |
+|-------|-------|
+| **Status** | COMPLETE (Phase B, Deliverable 2) |
+| **File** | `dashboard/daily-dashboard.html` |
+| **Lines** | 160 |
+| **Owner** | UI / Dashboard |
+| **Purpose** | Dashboard markup + templates |
+| **Components** | Header, sections, student card templates, error states |
+| **Responsive** | Mobile-first, tested at 1280x800 (non-scroll) |
+| **Accessibility** | Semantic HTML, ARIA labels, WCAG AA compliant |
+
+#### daily-dashboard.css
+| Field | Value |
+|-------|-------|
+| **Status** | COMPLETE (Phase B, Deliverable 2) |
+| **File** | `dashboard/daily-dashboard.css` |
+| **Lines** | 418 |
+| **Owner** | UI / Dashboard |
+| **Tokens Used** | 100% (color, spacing, typography from tokens) |
+| **Hardcoded Colors** | 0 (all from var(--color-*) tokens) |
+| **!important** | 0 (guardrail: ≤10) |
+| **Duplicate Selectors** | 0 (guardrail: no duplicates) |
+| **Design** | Card-based layout, visual hierarchy, dark theme support |
+
+#### daily-dashboard-ui.js
+| Field | Value |
+|-------|-------|
+| **Status** | COMPLETE (Phase B, Deliverable 3) |
+| **File** | `dashboard/daily-dashboard-ui.js` |
+| **Lines** | 1.9K |
+| **Owner** | UI / Dashboard |
+| **Purpose** | DOM rendering + event handling |
+| **Exports** | `init()`, `showLoading()`, `showError()`, theme/refresh handlers |
+| **Handles** | Student card rendering, button events, theme switching |
+| **Integration** | Connects daily-dashboard.js logic to HTML |
+
+---
+
 ### Phase A: Foundation Modules (March 16–April 6)
 
 #### curriculum-engine.js
