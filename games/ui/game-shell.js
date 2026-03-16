@@ -2893,7 +2893,6 @@
           '        <option value="Science"' + (context.subject === "Science" ? " selected" : "") + '>Science</option>',
           '      </select></label>',
           '    </div>',
-          '    <div class="cg-audio-cluster cg-audio-cluster--gallery" aria-label="Music controls"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-music" aria-pressed="' + (sharedMusicState.enabled ? "true" : "false") + '">♫ ' + musicButtonLabel() + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-music">Next Vibe</button><span class="cg-audio-label" data-music-label>' + runtimeRoot.CSGameComponents.escapeHtml(musicStatusLabel()) + '</span></div>',
           '    <p class="cg-gallery-setup__hint">Filter once, then launch.</p>',
           '  </div>',
           renderPomodoroLauncher(),

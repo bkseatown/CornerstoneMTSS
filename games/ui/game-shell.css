@@ -258,36 +258,6 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
   font-size: 0.72rem;
 }
 
-.cg-audio-cluster--gallery {
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  border-color: color-mix(in oklab, var(--cg-primary) 26%, var(--cg-border-strong) 74%);
-  background:
-    linear-gradient(135deg, color-mix(in oklab, var(--cg-primary) 12%, rgba(255, 255, 255, 0.86)), color-mix(in oklab, var(--cg-surface-strong) 88%, rgba(255, 255, 255, 0.96))),
-    color-mix(in oklab, var(--cg-surface-strong) 92%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.36),
-    0 10px 24px color-mix(in oklab, var(--cg-primary) 12%, transparent);
-}
-
-.cg-audio-cluster--gallery .cg-action {
-  min-height: 44px;
-  padding: 10px 14px;
-  border-color: color-mix(in oklab, var(--cg-primary) 22%, var(--cg-border) 78%);
-  background: color-mix(in oklab, var(--cg-surface-strong) 90%, white 10%);
-}
-
-.cg-audio-cluster--gallery .cg-audio-label {
-  margin-left: auto;
-  max-width: 220px;
-  color: color-mix(in oklab, var(--cg-reading-ink) 88%, var(--cg-primary) 12%);
-  font-size: 0.82rem;
-  letter-spacing: 0.03em;
-}
 
 .cg-action,
 .cg-select,
@@ -7172,203 +7142,16 @@ body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
   }
 }
 
-/* 2026-03-11 viewport fit + Word Quest preview color/state polish */
-body.game-platform-page[data-shell-view="gallery"] .cg-shell,
-body.game-platform-page[data-shell-view="gallery"] #cg-shell {
-  height: 100dvh;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-surface {
-  height: 100dvh;
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 8px;
-  padding: 8px 12px 10px;
-  overflow: hidden;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
-  margin-bottom: 4px;
-  padding: 4px 6px 0;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
-  font-size: 1.32rem;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
-  display: none;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-filter-row {
-  margin: 0;
-  min-height: 48px;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
-  min-height: 0;
-  height: 100%;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  padding: 8px 12px !important;
-  border-radius: 16px !important;
-  margin-bottom: 2px !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
-body.game-platform-page[data-shell-view="gallery"] .games-grid {
-  height: 100%;
-  min-height: 0;
-  gap: 8px !important;
-  grid-template-columns: repeat(4, minmax(220px, 1fr)) !important;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: minmax(0, 1fr);
-  align-content: stretch;
-  align-items: stretch;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card,
-body.game-platform-page[data-shell-view="gallery"] .game-card {
-  padding: 10px !important;
-  border-radius: 16px;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-  display: grid !important;
-  grid-template-rows: auto auto auto auto auto 42px;
-  row-gap: 6px;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3,
-body.game-platform-page[data-shell-view="gallery"] .game-title {
-  font-size: 1rem;
-  line-height: 1.05;
-  margin: 0 !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
-  margin-bottom: 0 !important;
-  min-height: 62px;
-  max-height: 62px;
-  padding: 6px;
-  overflow: hidden;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
-  font-size: 0.8rem;
-  line-height: 1.2;
-  margin: 0 !important;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card p.cg-card-caption,
-body.game-platform-page[data-shell-view="gallery"] .game-tags {
-  font-size: 0.72rem;
-  line-height: 1.2;
-  margin: 0 !important;
-  -webkit-line-clamp: 1;
-  opacity: 0.88;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
-  min-height: 36px;
-  height: 36px;
-  align-self: end;
-  margin-top: 0 !important;
-  font-size: 0.96rem;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-preview-board,
-body.game-platform-page[data-shell-view="gallery"] .preview-board {
-  transform: none;
-  gap: 6px;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-preview-row,
-body.game-platform-page[data-shell-view="gallery"] .tile-row {
-  gap: 6px;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-preview-tile,
-body.game-platform-page[data-shell-view="gallery"] .tile {
-  width: 22px !important;
-  height: 22px !important;
-  margin: 0 !important;
-  border-radius: 4px;
-  display: inline-block;
-  background: #d9dee5;
-  border: 1px solid #c8cfda;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head {
-  margin: 0 !important;
-}
-
-/* Word Quest preview should show real game states (correct/present/absent). */
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1) {
-  background: #4CAF50;
-  border-color: #3d9143;
-}
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
-  background: #FFC107;
-  border-color: #d6a106;
-}
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(3) {
-  background: #9CA3AF;
-  border-color: #858c98;
-}
-
-@media (max-width: 1480px) {
-  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
-  body.game-platform-page[data-shell-view="gallery"] .games-grid {
-    grid-template-columns: repeat(4, minmax(200px, 1fr)) !important;
-    gap: 12px !important;
-  }
-}
-
-/* 2026-03-11 FINAL HARD-LOCK: prevent smashed gallery layout */
+/* 2026-03-11 surface grid: brandbar | gallery-shell */
 body.game-platform-page[data-shell-view="gallery"] .cg-surface {
   height: 100dvh !important;
   display: grid !important;
-  grid-template-rows: auto auto 1fr !important;
+  grid-template-rows: auto 1fr !important;
   gap: 6px !important;
   padding: 8px 10px !important;
   overflow: hidden !important;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
-  margin: 0 !important;
-  padding: 0 2px !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
-  font-size: 1.2rem !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
-  display: none !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  padding: 8px 10px !important;
-  border-radius: 14px !important;
-  margin: 0 !important;
-  min-height: 44px !important;
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  align-items: center !important;
-  gap: 6px !important;
-}
 
 body.game-platform-page[data-shell-view="gallery"] .cg-filter-row {
   min-height: 34px !important;
@@ -7378,13 +7161,6 @@ body.game-platform-page[data-shell-view="gallery"] .cg-filter-row {
   gap: 8px !important;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-pomo-tab {
-  display: none !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget {
-  display: none !important;
-}
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
   height: 100% !important;
@@ -7497,30 +7273,6 @@ body.game-platform-page[data-shell-view="gallery"] .cg-select {
 body.game-platform-page[data-shell-view="gallery"] .cg-select option {
   color: #0f1f36 !important;
   background: #f2f6fd !important;
-}
-
-/* 2026-03-11 final container correction:
-   ensure setup row is content-height only and cards get remaining space */
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
-  display: grid !important;
-  grid-template-rows: auto minmax(0, 1fr) !important;
-  gap: 6px !important;
-  height: calc(100dvh - 42px) !important;
-  min-height: 0 !important;
-  align-content: stretch !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: 72px !important;
-  overflow: hidden !important;
-  align-self: start !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
-  min-height: 0 !important;
-  align-self: stretch !important;
 }
 
 /* 2026-03-11 hover gameplay preview animations (CSS-only, preview layer only) */
@@ -7892,49 +7644,6 @@ body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
 
 body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
   display: none !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) auto !important;
-  grid-template-areas:
-    "filters music"
-    "hint music" !important;
-  align-items: end !important;
-  gap: 10px 14px !important;
-  min-height: 118px !important;
-  max-height: min(132px, var(--dashboard-hero-max)) !important;
-  padding: 8px 10px !important;
-  margin-bottom: 14px !important;
-  position: relative !important;
-  z-index: 3 !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup .cg-setup-row {
-  grid-area: filters !important;
-  align-items: end !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup__hint {
-  grid-area: hint !important;
-  margin-top: 0 !important;
-  align-self: start !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery {
-  grid-area: music !important;
-  width: auto !important;
-  max-width: 100% !important;
-  justify-content: flex-start !important;
-  align-self: center !important;
-  margin-top: 0 !important;
-  position: relative !important;
-  z-index: 4 !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery .cg-audio-label {
-  margin-left: 0 !important;
-  max-width: 120px !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget,
@@ -11130,18 +10839,6 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"]
 
 /* 2026-03-15 stabilization pass:
    keep gallery controls in one compact band and raise readability on dark shells */
-body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 10px 14px !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  height: auto !important;
-  overflow: visible !important;
-  padding: 10px 14px !important;
-}
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup .cg-setup-row {
   display: flex !important;
@@ -11158,29 +10855,6 @@ body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup__hint {
   margin-top: 0 !important;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery {
-  order: 2 !important;
-  width: auto !important;
-  max-width: min(100%, 540px) !important;
-  flex: 0 1 auto !important;
-  justify-content: flex-start !important;
-  align-self: center !important;
-  padding: 6px 8px !important;
-  border-radius: 999px !important;
-  background: color-mix(in oklab, var(--cg-surface-strong) 94%, rgba(255,255,255,0.08)) !important;
-  border: 1px solid color-mix(in oklab, var(--cg-border-strong) 88%, rgba(255,255,255,0.12)) !important;
-  box-shadow: var(--cg-shadow-soft) !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery .cg-action {
-  min-height: 38px !important;
-  padding: 8px 14px !important;
-}
-
-body.game-platform-page[data-shell-view="gallery"] .cg-audio-cluster--gallery .cg-audio-label {
-  max-width: 132px !important;
-  color: var(--cg-reading-muted-strong) !important;
-}
 
 body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__panel-grid {
   gap: 10px !important;
@@ -11418,3 +11092,36 @@ body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder
   width: 100% !important;
   justify-content: initial !important;
 }
+
+/* ── Gallery layout: canonical three-row grid ────────────────────────────────
+ * hero (auto) | setup (auto) | card-grid (1fr)
+ * This block is the single source of truth for gallery layout.
+ * All earlier patch layers above are superseded by these rules.
+ * ─────────────────────────────────────────────────────────────────────────── */
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  display: grid !important;
+  grid-template-rows: auto auto 1fr !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  gap: 8px !important;
+  padding: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero {
+  min-height: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+  min-height: 0 !important;
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+

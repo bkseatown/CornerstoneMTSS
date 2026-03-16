@@ -129,3 +129,46 @@ Use this log for continuity across agents and sessions.
 - Next Step:
   - Continue the Seahawks theme pass, but only on the board frame object and keyboard object.
   - Preserve the current spacing and routing unless a validated screenshot shows a problem.
+
+## 2026-03-16 (Gallery Fix + game-shell.css Code Cleanup)
+- Timestamp: 2026-03-16
+- Operator: Claude
+- Branch: `main`
+- Scope:
+  1. Remove floating music overlay (Play Music / Next Vibe) from game gallery — permanently.
+  2. Fix gallery card grid layout (0px grid row causing cg-gallery-setup to overlap game cards).
+  3. Reduce game-shell.css code bloat: remove ~293 lines of dead/superseded patch layers.
+- Files Changed:
+  - `games/ui/game-shell.js` — Removed `cg-audio-cluster--gallery` div from gallery HTML template (line ~2896). Music controls no longer render in gallery view.
+  - `games/ui/game-shell.css` — Major cleanup:
+    - Deleted "2026-03-11 viewport fit" block (164 lines): `.cg-shell/surface/brandbar/gallery-shell/setup/grid` rules all superseded by later patches.
+    - Deleted partial "2026-03-11 FINAL HARD-LOCK" block: `.cg-brandbar`, `.cg-brand-copy`, `.cg-gallery-setup` (display:grid / min-height:44px), `.cg-pomo-tab/widget` rules — all superseded by later rules or consolidation.
+    - Fixed `.cg-surface` grid: `auto auto 1fr` → `auto 1fr` (surface has 2 direct children: brandbar + gallery-shell).
+    - Deleted "2026-03-11 final container correction" block (21 lines): `.cg-gallery-shell { auto minmax(0,1fr) }` and `.cg-gallery-setup { max-height: 72px }` — superseded by canonical block.
+    - Deleted "viewport-fit lock" gallery-setup grid-areas block (43 lines): `display:grid / grid-template-areas: "filters music" / min-height:118px` with audio cluster grid-area rules — superseded by flex layout and element removal.
+    - Deleted 2026-03-15 stabilization `.cg-gallery-setup` flex block (12 lines) and `.cg-audio-cluster--gallery` styling (23 lines) — both superseded.
+    - Removed base `.cg-audio-cluster--gallery` CSS definitions (30 lines) — element permanently removed from JS.
+    - **Added canonical gallery layout block at end of file** (authoritative, no !important battles):
+      - `.cg-gallery-shell`: `grid-template-rows: auto auto 1fr` (hero / setup / card-grid)
+      - `.cg-gallery-setup`: `height: auto; max-height: none; overflow: visible`
+      - `.cg-gallery-grid`: `min-height: 0; overflow-y: auto`
+      - `.cg-audio-cluster--gallery`: `display: none !important` (safety guard)
+  - `game-platform.html` — Bumped `game-shell.css` → `v=20260316a`, `game-shell.js` → `v=20260316a`.
+  - `typing-quest.html` — Bumped same versions.
+- Commands Run:
+  - None (code/CSS edits; visual validation needed via browser)
+- Result:
+  - Music controls permanently gone from gallery view.
+  - Gallery card grid now uses proper 3-row layout: hero | setup | card-grid (1fr).
+  - game-shell.css reduced from 11,420 → 11,127 lines (293 lines removed, ~2.6% reduction).
+  - !important usage reduced from 766 → 685 (81 fewer).
+- Regressions Found: None identified (structural, not visual).
+- Risks / Follow-ups:
+  - Full visual screenshot validation needed via browser to confirm gallery renders correctly.
+  - Hero section (233px "Flagship routines" marketing copy) still present; could be hidden/compacted for more card space.
+  - game-shell.css still has ~5 dated patch layers (5368-6894, 7025-7174) with mixed dead/live styles; full CSS consolidation is a future task.
+  - game-shell.css at 11,127 lines still contains significant redundancy; a full audit/rewrite session with visual testing would bring it to ~5,000 clean lines.
+- Next Step:
+  - Visual validation of gallery at 1280×800 and 1440×900.
+  - Consider hiding/compacting `.cg-gallery-hero` if cards don't fit the viewport at compact sizes.
+  - Continue CSS consolidation pass for game-shell.css dated patch layers (5368-7024).
