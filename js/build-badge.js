@@ -1,8 +1,7 @@
 (function csBuildBadgeModule() {
   "use strict";
 
-  var BASE = window.location.pathname.indexOf("/WordQuest/") !== -1 ? "/WordQuest" : "";
-  var BUILD_JSON_URL = BASE + "/build.json";
+  var BUILD_JSON_URL = resolveBuildJsonUrl();
   var BADGE_ID = "cs-build-badge";
   var POPOVER_ID = "cs-build-popover";
   var TOAST_ID = "cs-build-toast";
@@ -261,3 +260,14 @@
     togglePopover: togglePopover
   });
 })();
+  function resolveBuildJsonUrl() {
+    try {
+      return new URL("./build.json", document.baseURI || window.location.href).toString();
+    } catch (_e) {
+      try {
+        return new URL("build.json", window.location.href).toString();
+      } catch (_e2) {
+        return "./build.json";
+      }
+    }
+  }
