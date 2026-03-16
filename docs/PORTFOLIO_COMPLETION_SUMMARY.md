@@ -166,6 +166,20 @@ Professional landing page hero section positioning Cornerstone MTSS for portfoli
 - **Just Words:** Phonics intervention for struggling readers (phoneme awareness + phonics games)
 - **LLI (Leveled Literacy Intervention):** Small-group intervention positioning, differentiated scaffolding (3 complexity levels in Writers Studio)
 
+### MTSS & UDL Framework Integration
+
+**MTSS (Multi-Tiered System of Support):**
+- **Tier 1 (Universal):** Whole-class accessible games (Word Quest, Typing Quest), group projection modes, public Learning Hub activities
+- **Tier 2 (Targeted):** Small-group Speaking Studio sessions, scaffolded Writers Studio with Complexity Level 2, focused intervention activities
+- **Tier 3 (Intensive):** Individual intensive speaking/writing interventions, personalized complexity levels, diagnostic-based skill focus
+
+**UDL (Universal Design for Learning):**
+- **Multiple Means of Representation:** Visual (waveforms, organizers), auditory (audio playback, spoken prompts), kinesthetic (interactive writing, button interactions)
+- **Multiple Means of Action & Expression:** Games (recreational engagement), organizers (structured writing), audio recording (verbal expression), reflection notes (metacognitive thinking)
+- **Multiple Means of Engagement:** Game mechanics, personalization (activity choice), relevance (curriculum-aligned), authentic choice (four Speaking Studio activity types)
+
+---
+
 ### Science of Reading Integration (5 Pillars)
 
 | Tool | PA | Phonics | Fluency | Vocabulary | Comprehension |
@@ -178,12 +192,18 @@ Professional landing page hero section positioning Cornerstone MTSS for portfoli
 
 ### Mathematics Intervention Support
 
-**Illustrative Math K-12 & Bridges:**
-- Platform architecture supports Math intervention game development
-- Specialist Hub enables MTSS tracking for math interventions
-- Speaking Studio can be used for mathematical explanation/communication
-- Writers Studio can be adapted for mathematical reasoning (writing to explain/justify)
-- Learning Hub can showcase math intervention activities by domain
+**Evidence-Based Math Frameworks:**
+- **Illustrative Math K-12:** Coherence-focused curriculum with visual mathematical modeling
+- **Bridges Math:** Multi-sensory intervention approach building number sense and procedural fluency
+- **Pam Harris Numeracy:** Number sense development, building on student thinking, subitizing and decomposition strategies
+- **Jo Boaler Mathematical Mindset:** Conceptual understanding over procedural fluency, growth mindset approach, mathematical reasoning development
+
+**Platform Integration:**
+- Speaking Studio can be used for mathematical explanation/communication and verbalization of problem-solving strategies
+- Writers Studio can be adapted for mathematical reasoning (writing to explain/justify solutions, showing mathematical thinking)
+- Learning Hub can showcase math intervention activities organized by domain (Number Sense, Operations, Fractions, Algebraic Thinking)
+- Specialist Hub enables MTSS tracking for math interventions with alignment to evidence-based frameworks
+- Three complexity levels in Writers Studio support math concept development (concrete → representational → abstract)
 
 ### English Learner (EL) Support - Grades 6-8
 
@@ -337,7 +357,15 @@ This portfolio demonstrates:
 
 **Ideal Pitch:**
 
-> "Cornerstone MTSS is an evidence-based, privacy-first intervention platform for literacy, mathematics, and English learner specialists. Built on Wilson Brainframes and the Science of Reading, it provides assessment tools, interactive games, and structured writing and speaking activities—all aligned with leading intervention curricula (Fishtank ELA, Wilson Reading System, Fundations, UFLI, Just Words, LLI, Illustrative Math K-12, Bridges). The platform includes specialized EL support for grades 6-8 transitions and operates within a local-first architecture, demonstrating deep understanding of MTSS tiering, curriculum integration, differentiation, EL needs, and modern educational technology design principles."
+> "Cornerstone MTSS is an evidence-based, privacy-first MTSS and UDL intervention platform for literacy, mathematics, and English learner specialists. Built on the Science of Reading and structured thinking frameworks (Wilson Brainframes), it provides assessment tools, interactive games, and structured writing and speaking activities—all aligned with leading evidence-based curricula:
+>
+> **Literacy:** Fishtank ELA, Wilson Reading System, Fundations, UFLI, Just Words, Leveled Literacy Intervention (LLI)
+>
+> **Mathematics:** Illustrative Math K-12, Bridges Math, Pam Harris Numeracy (number sense development), Jo Boaler Mathematical Mindset (conceptual understanding + growth mindset)
+>
+> **Language Support:** Specialized EL support for grades 6-8 transitions with scaffolding from heavy support (Complexity Level 1) through minimal support (Level 3)
+>
+> The platform operates within a local-first, privacy-first architecture and demonstrates deep understanding of MTSS tiering (Tier 1 universal access, Tier 2 targeted support, Tier 3 intensive intervention), UDL principles (multiple means of action, representation, and engagement), curriculum integration, evidence-based differentiation, EL needs, and modern educational technology design principles."
 
 **Target Audiences:**
 - School districts evaluating MTSS solutions
