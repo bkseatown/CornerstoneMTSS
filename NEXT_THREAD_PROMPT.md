@@ -2,26 +2,36 @@
 
 ## What is Cornerstone MTSS?
 
-**Cornerstone MTSS** is a comprehensive specialist-facing instructional support platform designed for intervention teachers, EAL/support teachers, and literacy specialists managing student literacy development across K-12 (ages 5-18).
+**Cornerstone MTSS** is a structured literacy operating system for K-12 classrooms (ages 5-18). It's not just a game suite—it's a platform combining:
+- **Structured literacy foundation** (Science of Reading principles, explicit phoneme mapping, multi-sensory engagement)
+- **Premium, polished UX** that teachers trust and students enjoy
+- **Evidence-to-action pipeline** (game performance → competency diagnosis → intervention recommendations)
+- **Teacher-grade reliability** with no gimmicks or educational fluff
 
 ### The Problem It Solves
-- Intervention teachers and specialists need a way to **diagnose literacy gaps quickly** (phonics, fluency, comprehension, etc.)
-- They need **game-based practice** that students actually enjoy, not boring worksheets
-- They need **data-driven insights** showing which interventions work for which students
-- They need to **coordinate** across multiple intervention types and curricula
-- Teachers are **overwhelmed** by too many disconnected tools and tons of data they can't act on
+- Intervention teachers need **diagnostic clarity** (Is this a phoneme gap? A fluency issue? Comprehension?)
+- Students need **structured, joyful practice** that feels premium—not a worksheet
+- Teachers need **evidence-based recommendations** for which intervention to use with which student
+- Specialists need to **coordinate** across multiple games and intervention types using one coherent system
+- Administrators need to **track intervention impact** and know what actually works
 
-### The Solution: Three-Layer Platform
+### The Solution: A Literacy Operating System
 
-**Layer 1: Premium Game Family**
-A suite of engaging, research-backed games that don't feel like "intervention":
-- **Word Quest** (flagship) — Wordle-style word puzzle game with adaptive difficulty
-- **Typing Quest** — Touch-type practice with real typing patterns
-- **Off Limits** — Category-based word fluency game
-- **Build the Word** — Morphology and word-building with visual feedback
-- Plus 6+ more activity types (precision-play, reading-lab, sentence-surgery, etc.)
+**Layer 1: Structured Literacy Games (Pedagogically Grounded)**
+A suite of premium, intentional games built on Science of Reading principles:
+- **Word·Quest** (flagship) — Structured phonics + morphology engine wrapped in interactive game. NOT a Wordle clone.
+- **Read Quest** (coming) — Decodable readers + comprehension
+- **Write Quest** (coming) — Encoding + composition
+- **Speak Quest** (coming) — Oral language development
+- **Math Quest** (coming) — Number sense + fact fluency
+- Plus current activities: Typing Quest, Off Limits, Build the Word, Precision Play, Reading Lab, Sentence Surgery, etc.
 
-Each game targets specific literacy skills (phonics, fluency, decoding, comprehension, morphology, writing) and adapts difficulty based on student performance.
+Each game:
+- Targets specific literacy skills (explicit phoneme mapping, syllable awareness, morphological clarity)
+- Uses multi-sensory engagement (see, hear, say, type)
+- Provides immediate corrective feedback
+- Scales for K-12 without feeling juvenile
+- Maintains clean, structured UX (not chaotic or gimmicky)
 
 **Layer 2: Specialist Workflow Hub**
 A calm, organized workspace where teachers see:
@@ -45,12 +55,28 @@ Behind the scenes:
 - **Special education teachers** (dyslexia, processing disorders)
 - **Classroom teachers** (differentiation during small-group rotations)
 
-### The Product Feel
-- **Premium but calm** — Beautiful design that doesn't feel chaotic
-- **Academically credible** — Built on Science of Reading principles (phonics-first, systematic instruction)
-- **Visually alive without noisy** — Color and motion used intentionally, not overwhelmingly
-- **Accessible & EAL-friendly** — Clear language, high contrast, keyboard-navigable
-- **K-12 respectable** — Works for kindergarteners and high schoolers without feeling juvenile or patronizing
+### The Product Feel (Per Vision Constitution)
+
+**Must Be:**
+- Structured. Intentional. Evidence-based. Alive. Premium. Expandable.
+- **Not**: Chaotic. Not gimmicky. Not theme-driven chaos.
+
+**Balance Structure + Joy:**
+- Clarity always wins over decoration
+- Fun enhances learning but never replaces it
+- Micro-animations and celebration moments, but no fluff
+
+**Visual Discipline:**
+- Consonants: deep navy
+- Vowels: teal accent (never red)
+- 60-30-10 rule: 60% neutral base, 30% secondary surface, 10% accent pop
+- No cartoon styling, no worksheet beige
+- Token-based (CSS variables only, no hardcoded colors)
+
+**K-12 Respectability:**
+- Works for 5-year-olds and 18-year-olds
+- Structured literacy signaling without being preachy
+- Professional enough for specialized instruction
 
 ---
 
