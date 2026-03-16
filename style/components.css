@@ -5733,6 +5733,10 @@ html[data-home-mode="play"] .key {
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
+  padding: 3px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
