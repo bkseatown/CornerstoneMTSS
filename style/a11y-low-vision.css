@@ -1,0 +1,198 @@
+/**
+ * a11y-low-vision.css
+ * Low vision mode for students with visual impairments
+ * Larger fonts, increased spacing, larger touch targets, high contrast
+ */
+
+[data-a11y="low-vision"] {
+  --fs-sm: calc(14px * var(--a11y-font-scale, 1));
+  --fs-base: calc(16px * var(--a11y-font-scale, 1));
+  --fs-lg: calc(20px * var(--a11y-font-scale, 1));
+  --fs-xl: calc(24px * var(--a11y-font-scale, 1));
+  --fs-2xl: calc(32px * var(--a11y-font-scale, 1));
+
+  --touch-min: 44px;
+  --space-touch: max(var(--space-2), 10px);
+
+  --line-height-relaxed: 1.8;
+}
+
+/* Root font sizing respects scale */
+[data-a11y="low-vision"] {
+  font-size: var(--fs-base);
+}
+
+/* All text elements scale with user preference */
+[data-a11y="low-vision"] body {
+  font-size: var(--fs-base);
+  line-height: var(--line-height-relaxed);
+}
+
+[data-a11y="low-vision"] h1 {
+  font-size: var(--fs-2xl);
+  line-height: 1.2;
+}
+
+[data-a11y="low-vision"] h2 {
+  font-size: var(--fs-xl);
+  line-height: 1.3;
+}
+
+[data-a11y="low-vision"] h3 {
+  font-size: var(--fs-lg);
+  line-height: 1.4;
+}
+
+[data-a11y="low-vision"] p,
+[data-a11y="low-vision"] span,
+[data-a11y="low-vision"] label,
+[data-a11y="low-vision"] .text {
+  font-size: var(--fs-base);
+}
+
+[data-a11y="low-vision"] small {
+  font-size: var(--fs-sm);
+}
+
+/* Increase line height for readability */
+[data-a11y="low-vision"] p,
+[data-a11y="low-vision"] li,
+[data-a11y="low-vision"] label,
+[data-a11y="low-vision"] .instruction {
+  line-height: var(--line-height-relaxed);
+  letter-spacing: 0.02em;
+}
+
+/* Minimum touch target sizes */
+[data-a11y="low-vision"] button,
+[data-a11y="low-vision"] [role="button"],
+[data-a11y="low-vision"] input[type="button"],
+[data-a11y="low-vision"] input[type="submit"],
+[data-a11y="low-vision"] input[type="checkbox"],
+[data-a11y="low-vision"] input[type="radio"],
+[data-a11y="low-vision"] a[role="button"] {
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  padding: var(--space-touch);
+  font-size: var(--fs-base);
+}
+
+/* Game board elements must be larger */
+[data-a11y="low-vision"] .word-tile,
+[data-a11y="low-vision"] .key {
+  min-width: 60px;
+  min-height: 60px;
+  font-size: var(--fs-lg);
+  padding: var(--space-2);
+}
+
+/* Key buttons on keyboard */
+[data-a11y="low-vision"] .keyboard .key {
+  min-width: 50px;
+  min-height: 50px;
+  font-size: var(--fs-base);
+  padding: 8px;
+  margin: 4px;
+}
+
+/* Increase spacing throughout */
+[data-a11y="low-vision"] * {
+  margin: var(--space-touch);
+  padding: var(--space-touch);
+}
+
+/* Cards and panels */
+[data-a11y="low-vision"] .card,
+[data-a11y="low-vision"] .panel,
+[data-a11y="low-vision"] [role="dialog"] {
+  padding: var(--space-3);
+  margin: var(--space-2);
+  border: 2px solid var(--border);
+}
+
+/* Focus indicators must be very large */
+[data-a11y="low-vision"] *:focus,
+[data-a11y="low-vision"] *:focus-visible {
+  outline: 4px solid var(--accent);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px color-mix(in oklch, var(--accent) 30%, transparent);
+}
+
+/* Links should be very obvious */
+[data-a11y="low-vision"] a,
+[data-a11y="low-vision"] [role="link"] {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  font-weight: 600;
+  font-size: var(--fs-base);
+}
+
+/* Increase icon sizes */
+[data-a11y="low-vision"] .icon,
+[data-a11y="low-vision"] svg {
+  min-width: 32px;
+  min-height: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+[data-a11y="low-vision"] .icon-lg,
+[data-a11y="low-vision"] .icon-large {
+  min-width: 48px;
+  min-height: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+/* Status messages should be prominent */
+[data-a11y="low-vision"] .status,
+[data-a11y="low-vision"] .message,
+[data-a11y="low-vision"] .feedback {
+  font-size: var(--fs-lg);
+  padding: var(--space-3);
+  margin: var(--space-2) 0;
+  border: 2px solid currentColor;
+  border-left: 6px solid currentColor;
+}
+
+/* Success/error/warning must be very clear */
+[data-a11y="low-vision"] .success {
+  background: color-mix(in oklch, var(--status-secure) 20%, transparent);
+  color: var(--status-secure);
+  font-weight: 600;
+}
+
+[data-a11y="low-vision"] .error,
+[data-a11y="low-vision"] .danger {
+  background: color-mix(in oklch, var(--status-intensify) 20%, transparent);
+  color: var(--status-intensify);
+  font-weight: 600;
+}
+
+[data-a11y="low-vision"] .warning {
+  background: color-mix(in oklch, var(--status-developing) 20%, transparent);
+  color: var(--status-developing);
+  font-weight: 600;
+}
+
+/* Reduce motion which can be disorienting for low vision users */
+@media (prefers-reduced-motion: reduce) {
+  [data-a11y="low-vision"] * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Optional: Invert colors for night mode comfort */
+[data-a11y="low-vision"][data-low-vision-dark-mode] {
+  background: #1a1a1a;
+  color: #ffffff;
+  filter: invert(1) hue-rotate(180deg);
+}
+
+[data-a11y="low-vision"][data-low-vision-dark-mode] img,
+[data-a11y="low-vision"][data-low-vision-dark-mode] video {
+  filter: invert(1) hue-rotate(180deg);
+}

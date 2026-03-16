@@ -1,0 +1,202 @@
+/**
+ * a11y-color-blind.css
+ * Color blind friendly modes (deuteranopia, protanopia, tritanopia)
+ * Replaces color-only status indicators with symbols
+ * Uses accessible color palettes for each type of color blindness
+ */
+
+/* ─── Deuteranopia (Red-Green, most common, ~1% of men) ───
+   Missing/defective green cones
+   Can't distinguish red from green
+   Can see: blue, yellow, shades of gray
+   Use: Blue, orange, purple, yellow instead of red/green
+*/
+
+[data-color-blind="deuteranopia"] {
+  --status-secure: #0173b2;     /* Blue (secure/success) */
+  --status-developing: #de8f05; /* Orange (developing/warning) */
+  --status-intensify: #cc78bc;  /* Purple (intensify/alert) */
+  --accent-primary: #0173b2;
+  --accent-secondary: #de8f05;
+}
+
+/* Color blind accessible palette for deuteranopia */
+[data-color-blind="deuteranopia"] .status-secure,
+[data-color-blind="deuteranopia"] [aria-label*="secure"],
+[data-color-blind="deuteranopia"] [aria-label*="success"] {
+  color: var(--status-secure);
+  font-weight: 600;
+}
+
+[data-color-blind="deuteranopia"] .status-secure::before {
+  content: '✓ ';
+  font-weight: bold;
+}
+
+[data-color-blind="deuteranopia"] .status-developing,
+[data-color-blind="deuteranopia"] [aria-label*="developing"] {
+  color: var(--status-developing);
+  font-weight: 600;
+}
+
+[data-color-blind="deuteranopia"] .status-developing::before {
+  content: '◐ ';
+}
+
+[data-color-blind="deuteranopia"] .status-intensify,
+[data-color-blind="deuteranopia"] [aria-label*="intensify"],
+[data-color-blind="deuteranopia"] [aria-label*="error"] {
+  color: var(--status-intensify);
+  font-weight: 600;
+}
+
+[data-color-blind="deuteranopia"] .status-intensify::before {
+  content: '✗ ';
+  font-weight: bold;
+}
+
+/* Word tiles in deuteranopia mode */
+[data-color-blind="deuteranopia"] .word-tile.correct,
+[data-color-blind="deuteranopia"] .word-tile.secure {
+  background: color-mix(in oklch, var(--status-secure) 15%, transparent);
+  border-color: var(--status-secure);
+}
+
+[data-color-blind="deuteranopia"] .word-tile.developing {
+  background: color-mix(in oklch, var(--status-developing) 15%, transparent);
+  border-color: var(--status-developing);
+}
+
+[data-color-blind="deuteranopia"] .word-tile.error,
+[data-color-blind="deuteranopia"] .word-tile.intensify {
+  background: color-mix(in oklch, var(--status-intensify) 15%, transparent);
+  border-color: var(--status-intensify);
+}
+
+/* ─── Protanopia (Red-Green, ~0.5% of men) ───
+   Missing/defective red cones
+   Can't distinguish red from green (similar to deuteranopia but different hue shift)
+   Can see: blue, yellow, grays
+   Use: Similar to deuteranopia but with different blue/orange balance
+*/
+
+[data-color-blind="protanopia"] {
+  --status-secure: #005f8e;     /* Darker blue */
+  --status-developing: #e67f0d; /* Warm orange */
+  --status-intensify: #9467bd;  /* Purple */
+}
+
+[data-color-blind="protanopia"] .status-secure,
+[data-color-blind="protanopia"] [aria-label*="secure"],
+[data-color-blind="protanopia"] [aria-label*="success"] {
+  color: var(--status-secure);
+  font-weight: 600;
+}
+
+[data-color-blind="protanopia"] .status-secure::before {
+  content: '✓ ';
+}
+
+[data-color-blind="protanopia"] .status-developing,
+[data-color-blind="protanopia"] [aria-label*="developing"] {
+  color: var(--status-developing);
+  font-weight: 600;
+}
+
+[data-color-blind="protanopia"] .status-developing::before {
+  content: '◐ ';
+}
+
+[data-color-blind="protanopia"] .status-intensify,
+[data-color-blind="protanopia"] [aria-label*="intensify"],
+[data-color-blind="protanopia"] [aria-label*="error"] {
+  color: var(--status-intensify);
+  font-weight: 600;
+}
+
+[data-color-blind="protanopia"] .status-intensify::before {
+  content: '✗ ';
+}
+
+/* ─── Tritanopia (Blue-Yellow, ~0.001% of population) ───
+   Missing/defective blue cones
+   Can't distinguish blue from yellow
+   Can see: Reds, pinks, greens
+   Use: Red, green, pink (avoid blue/yellow combinations)
+*/
+
+[data-color-blind="tritanopia"] {
+  --status-secure: #00a651;     /* Green (secure) */
+  --status-developing: #d62828; /* Red (developing/warning) */
+  --status-intensify: #f77f00;  /* Orange (intensify) */
+}
+
+[data-color-blind="tritanopia"] .status-secure,
+[data-color-blind="tritanopia"] [aria-label*="secure"],
+[data-color-blind="tritanopia"] [aria-label*="success"] {
+  color: var(--status-secure);
+  font-weight: 600;
+}
+
+[data-color-blind="tritanopia"] .status-secure::before {
+  content: '✓ ';
+}
+
+[data-color-blind="tritanopia"] .status-developing,
+[data-color-blind="tritanopia"] [aria-label*="developing"] {
+  color: var(--status-developing);
+  font-weight: 600;
+}
+
+[data-color-blind="tritanopia"] .status-developing::before {
+  content: '◐ ';
+}
+
+[data-color-blind="tritanopia"] .status-intensify,
+[data-color-blind="tritanopia"] [aria-label*="intensify"],
+[data-color-blind="tritanopia"] [aria-label*="error"] {
+  color: var(--status-intensify);
+  font-weight: 600;
+}
+
+[data-color-blind="tritanopia"] .status-intensify::before {
+  content: '✗ ';
+}
+
+/* ─── Common Styles for All Color Blind Modes ───
+   Use symbols + text + color (redundant coding) for clarity
+*/
+
+[data-color-blind] .word-tile.correct {
+  border: 2px solid var(--status-secure);
+  background: color-mix(in oklch, var(--status-secure) 15%, transparent);
+}
+
+[data-color-blind] .word-tile.developing {
+  border: 2px solid var(--status-developing);
+  background: color-mix(in oklch, var(--status-developing) 15%, transparent);
+}
+
+[data-color-blind] .word-tile.error {
+  border: 2px solid var(--status-intensify);
+  background: color-mix(in oklch, var(--status-intensify) 15%, transparent);
+}
+
+/* Add ARIA labels showing status as text */
+[data-color-blind] .word-tile[data-status]::after {
+  content: attr(data-status);
+  font-size: 0.75em;
+  opacity: 0.7;
+  margin-left: 0.5em;
+}
+
+/* Dashboard heatmap should show patterns instead of colors */
+[data-color-blind] .competency-heatmap {
+  /* Can add pattern fills here if using SVG */
+}
+
+/* Ensure high contrast is maintained in color blind mode */
+[data-color-blind] * {
+  border-width: 2px;
+  border-style: solid;
+}

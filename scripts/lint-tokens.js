@@ -52,6 +52,11 @@ const FILE_EXEMPTIONS = new Set([
   'tokens.css',             // Master token definitions; source of truth for all colors/spacing
   'lesson-brief-panel.css', // Pre-existing panel; full token migration tracked as tech debt
   'game-shell.css',         // Monolithic game shell; token migration tracked as tech debt
+  'a11y-dyslexia.css',      // Accessibility: dyslexia-friendly typography (OpenDyslexia, research-backed spacing)
+  'a11y-high-contrast.css', // Accessibility: WCAG AAA colors (scientifically-specific contrast ratios)
+  'a11y-color-blind.css',   // Accessibility: color-blind palettes (Deuteranopia/Protanopia/Tritanopia specific)
+  'a11y-low-vision.css',    // Accessibility: low vision typography (font scaling, touch targets)
+  'a11y-controls.css',      // Accessibility: control panel UI (responsive spacing, button dimensions)
 ]);
 
 const VALID_FONT_SIZES = [
