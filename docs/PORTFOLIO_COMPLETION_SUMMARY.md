@@ -185,9 +185,34 @@ Professional landing page hero section positioning Cornerstone MTSS for portfoli
 - Writers Studio can be adapted for mathematical reasoning (writing to explain/justify)
 - Learning Hub can showcase math intervention activities by domain
 
+### English Learner (EL) Support - Grades 6-8
+
+**Critical Tools for EL Students:**
+- **Speaking Studio:** Audio recording + waveform visualization helps EL students build pronunciation awareness and oral fluency
+  - Self-assessment reflection for language confidence building
+  - Playback controls allow students to self-monitor articulation
+  - Visual waveform feedback bridges language barriers
+- **Writers Studio:** Three complexity levels perfect for EL scaffolding
+  - Complexity Level 1: Heavy scaffolding + examples for beginning EL students
+  - Complexity Level 2: Moderate support for intermediate EL students
+  - Complexity Level 3: Minimal support for advanced EL students
+  - Organizers (Story Map, Concept Map, Opinion Map) provide structured thinking frameworks
+- **Learning Hub:** Clear pedagogical purpose labeling helps EL students understand learning objectives
+  - Visual icons + color coding supports comprehension
+  - Multiple ways to organize/understand activities
+- **Game-Based Learning:** Interactive games (Word Quest, Typing Quest) provide low-anxiety vocabulary/fluency practice
+  - Repetition without judgment supports EL confidence
+  - Visual gameplay reduces language dependence
+
+**Grade 6-8 Transition Support:**
+- Addresses critical adolescent development period for EL students
+- Supports identity development + academic language growth simultaneously
+- Self-assessment tools (Speaking Studio, reflection in Writers Studio) build metacognitive awareness
+- Peer-friendly features (group projection mode in Writers Studio) reduce isolation for EL students
+
 ---
 
-## 📊 MTSS Tier Differentiation for Reading & Math
+## 📊 MTSS Tier Differentiation for Reading, Math, & EL
 
 All tools support Tier 1/2/3 differentiation:
 
@@ -312,7 +337,7 @@ This portfolio demonstrates:
 
 **Ideal Pitch:**
 
-> "Cornerstone MTSS is an evidence-based, privacy-first intervention platform for literacy and mathematics specialists. Built on Wilson Brainframes and the Science of Reading, it provides assessment tools, interactive games, and structured writing and speaking activities—all aligned with leading intervention curricula (Fishtank ELA, Wilson Reading System, Fundations, UFLI, Just Words, LLI, Illustrative Math K-12, Bridges). The platform operates within a local-first architecture and demonstrates deep understanding of MTSS tiering, curriculum integration, differentiation, and modern educational technology design principles."
+> "Cornerstone MTSS is an evidence-based, privacy-first intervention platform for literacy, mathematics, and English learner specialists. Built on Wilson Brainframes and the Science of Reading, it provides assessment tools, interactive games, and structured writing and speaking activities—all aligned with leading intervention curricula (Fishtank ELA, Wilson Reading System, Fundations, UFLI, Just Words, LLI, Illustrative Math K-12, Bridges). The platform includes specialized EL support for grades 6-8 transitions and operates within a local-first architecture, demonstrating deep understanding of MTSS tiering, curriculum integration, differentiation, EL needs, and modern educational technology design principles."
 
 **Target Audiences:**
 - School districts evaluating MTSS solutions
