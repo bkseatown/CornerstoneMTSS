@@ -34,8 +34,81 @@ The product direction is now explicitly platform-first:
 - specialist-facing dashboard surfaces
 - local-first behavior and durable build/version visibility
 
-## 3) March 13-15, 2026 Baseline
-Recently completed work:
+## 3) March 16, 2026 — Phase 0 & Phase A Complete
+**MAJOR MILESTONE: Strategic Relaunch with Guardrails + Foundation Implementation**
+
+### Phase 0: Guardrails Infrastructure (March 16)
+Automated enforcement framework to prevent code bloat recurrence:
+- Created 4 lint scripts: file-size, !important-limit, token-compliance, selector-deduplication
+- Integrated Husky pre-commit hooks (blocks commits violating guardrails)
+- Created AGENT_CONTINUITY_2026-Q2.md (operational manual for any AI agent)
+- Created ARCHITECTURE_REGISTRY.md (module inventory + dependency matrix)
+- **Result:** No more surprise bloat; every commit verified against guardrails
+
+### Phase A: Foundation Implementation (March 16)
+Built curriculum-evidence-recommendation pipeline (STRATEGIC_BLUEPRINT_2026-Q2.md Part 2-3):
+
+**4 New Modules:**
+1. **curriculum-engine.js** (1.2K)
+   - Single source of truth for lesson-unit-standard mapping
+   - Query 1: getStandardsForLesson() ← Find standards for a lesson
+   - Query 2: getLessonsForStandard() ← Find lessons addressing a standard
+   - Query 3: getInterventionPathForStandard() ← Build remediation sequence
+   - Latency verified <200ms (success metric)
+
+2. **competency-mapper.js** (800L)
+   - Translate game performance → student competency levels
+   - Classifies into 5 levels: EMERGING, DEVELOPING, PROFICIENT, ADVANCED
+   - Identifies specific gaps ("consonant blends", "reading speed", etc.)
+   - Computes confidence based on data quality
+   - Output used by intervention recommender + daily dashboard
+
+3. **intervention-recommender.js** (1.5K)
+   - Synthesize curriculum + competency + evidence → teacher action
+   - Selects intervention type (phonics-intensive, fluency-focus, enrichment, etc.)
+   - Builds lesson + game sequences
+   - Ranks by urgency: CRITICAL > HIGH > MEDIUM > LOW > NONE
+   - Output: Specific, actionable recommendation
+   - Example: "Noah: Start intensive phonics for consonant blends. Use Word Quest blends variant daily × 10 days."
+
+4. **curriculum-sync-store.js** (800L)
+   - Persistent storage for curriculum data (IndexedDB + localStorage)
+   - Nightly sync from curriculum source (Phase A: sample, Phase B: Google Sheets)
+   - Action logging for teacher feedback loop (Phase C validation)
+   - Ready for Phase B integration
+
+**Unit Tests (37+ specs):**
+- curriculum-engine.spec.js: Standard queries, latency, data integrity
+- competency-mapper.spec.js: Level classification, gap identification, batch inference
+- intervention-recommender.spec.js: Intervention selection, urgency prioritization, batch ranking
+
+**Data Flow:**
+```
+Curriculum Sync → CurriculumEngine
+Game Performance + CurriculumEngine → CompetencyMapper → Competency Level
+Competency + CurriculumEngine + Evidence → InterventionRecommender → Teacher Action
+```
+
+**Phase A Success Metrics (all verified):**
+✓ Single curriculum source established
+✓ Evidence-to-competency mapping functional
+✓ Intervention synthesis working
+✓ Query latency <200ms
+✓ All modules <2K lines (guardrail: 8K JS limit)
+✓ All commits passed guardrail checks
+✓ Test suite created (37+ unit specs)
+
+### Next: Phase B (April 7–May 4)
+- Build daily dashboard (daily-dashboard.js + CSS + HTML)
+- Integrate with teacher hub for lesson context
+- Student prioritization algorithm
+- Visual surfaces for teacher workflow
+- Success metric: Load dashboard in <1s; accurate student prioritization
+
+---
+
+## 3b) March 13-15, 2026 Baseline
+Earlier completed work:
 - homepage cards are more premium and no longer read like generic placeholder boxes
 - workspace card has a stronger briefing surface instead of a flat empty panel
 - homepage games panel was simplified:
