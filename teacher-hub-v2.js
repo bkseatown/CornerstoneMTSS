@@ -580,7 +580,7 @@
 
   function openClassDetailPage(blockId) {
     if (!blockId) return;
-    hubState.set({ context: { mode: "class", studentId: "", classId: blockId } });
+    hubState.set({ context: { mode: "class", studentId: "", classId: blockId }, active_class_context: { classId: blockId }, active_block: { id: blockId } });
     try {
       var next = new URL(window.location.href);
       next.searchParams.set("classId", String(blockId));

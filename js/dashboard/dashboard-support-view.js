@@ -435,6 +435,22 @@
         var visiblePriorities = studentSupport.needs.length
           ? studentSupport.needs.slice(0, 3).map(function (n) { return summarizeNeed(n).goal; })
           : anchorDrivenPriorities(studentId);
+        if (!visiblePriorities.length && Evidence && typeof Evidence.getSkillModel === "function") {
+          var SkillLabels = window.CSSkillLabels;
+          var skillModel = Evidence.getSkillModel(studentId);
+          var topNeeds = skillModel && Array.isArray(skillModel.topNeeds) ? skillModel.topNeeds : [];
+          var seenSkills = {};
+          visiblePriorities = topNeeds.filter(function (need) {
+            if (seenSkills[need.skillId]) return false;
+            seenSkills[need.skillId] = true;
+            return true;
+          }).slice(0, 3).map(function (need) {
+            var label = SkillLabels && typeof SkillLabels.getSkillLabel === "function"
+              ? SkillLabels.getSkillLabel(need.skillId)
+              : need.skillId;
+            return "SWBAT improve " + label + " (current mastery " + Math.round(need.mastery || 0) + "%).";
+          });
+        }
         el.supportBody.innerHTML = [
           '<div class="td-support-item"><h4>Instructional priorities</h4><p>' + (visiblePriorities.length ? visiblePriorities.join(" ") : "No instructional priorities captured yet.") + "</p></div>",
           '<div class="td-support-item"><h4>Last 14 days trend</h4><p>Use Skill Tiles + Recent Sessions for trend checks before meetings.</p></div>',
