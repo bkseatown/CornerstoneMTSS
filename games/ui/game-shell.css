@@ -7609,7 +7609,8 @@ body.game-platform-page[data-shell-view="gallery"] main.cg-shell {
   min-height: 100dvh !important;
   height: 100dvh !important;
   padding: 0 !important;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {

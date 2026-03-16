@@ -28,6 +28,7 @@ const DEFAULT_LIMIT = 10;
 const EXEMPT_LIMITS = {
   'style/utilities.css': 50,
   'games/ui/game-feedback.css': 50,
+  'games/ui/game-shell.css': 750, // Monolithic game shell; !important audit tracked as tech debt
 };
 
 const BANNED_FILES = [

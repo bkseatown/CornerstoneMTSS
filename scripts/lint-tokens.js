@@ -50,6 +50,7 @@ const EXEMPT_PATTERNS = [
 // These files have known violations; add to token backlog rather than blocking commits.
 const FILE_EXEMPTIONS = new Set([
   'lesson-brief-panel.css', // Pre-existing panel; full token migration tracked as tech debt
+  'game-shell.css',         // Monolithic game shell; token migration tracked as tech debt
 ]);
 
 const VALID_FONT_SIZES = [

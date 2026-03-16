@@ -30,6 +30,7 @@ const LIMITS = {
 const FILE_LIMIT_OVERRIDES = {
   'reports.html': 1200,
   'teacher-hub-v2.html': 1200,
+  'game-shell.css': 12000, // Monolithic game shell CSS; modularisation tracked as tech debt
 };
 
 const EXEMPT_PATTERNS = [

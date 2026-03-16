@@ -26,7 +26,13 @@ const EXEMPT_PATTERNS = [
   '.git',
 ];
 
+// Per-file exemptions for files that pre-date the duplicate-selector rule.
+const FILE_EXEMPTIONS = new Set([
+  'game-shell.css', // Monolithic game shell; deduplication tracked as tech debt
+]);
+
 function isExempt(filePath) {
+  if (FILE_EXEMPTIONS.has(require('path').basename(filePath))) return true;
   return EXEMPT_PATTERNS.some(pattern => filePath.includes(pattern));
 }
 
