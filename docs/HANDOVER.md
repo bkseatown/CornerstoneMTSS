@@ -168,6 +168,52 @@ Teacher sees: "Do this with these 3 students today"
 
 ---
 
+## 3a) March 17, 2026 — Ava Audio Playback Fix ✅ COMPLETE
+**CRITICAL BUG FIX: Audio Manifest Regression**
+
+### Issue: Azure Ava recorded audio failing silently
+User reported:
+- Word "teeth" played as SILENCE (no audio)
+- Definition read via robot-sounding browser TTS (not Ava)
+- Music continued playing during speech (music pause not working)
+
+### Root Cause Analysis
+`_getAssetBasePath()` in `js/audio.js` incorrectly computed asset base path for extensionless URLs:
+- Page URL: `http://127.0.0.1:4173/word-quest` (no `.html`)
+- Function treated `/word-quest` as a directory (not a page)
+- Computed base = `/word-quest`
+- All audio paths became: `/word-quest/assets/audio/words/teeth_word_2607_word.mp3` → 404 error
+- Manifest lookup succeeded (paths normalized consistently with wrong base)
+- `_playFile()` silently failed (onerror caught, no TTS fallback in "recorded" mode)
+
+### Solution
+**Fix: Strip last path segment for extensionless URLs**
+
+Changed line 65 in `js/audio.js`:
+```javascript
+// Before: base = pathname; (WRONG for extensionless URLs)
+
+// After:
+const segments = pathname.split('/');
+segments.pop();
+base = segments.join('/') || '';
+```
+
+Results:
+- `/word-quest` → base = `''` (paths: `/assets/audio/...`) ✓
+- `/CornerstoneMTSS/word-quest` → base = `/CornerstoneMTSS` ✓
+- `/word-quest.html` → base = `''` (unchanged) ✓
+
+### Verification
+✓ Manifest loads correctly: 14,524 audio entries
+✓ Audio paths resolve correctly: 200 OK for `/assets/audio/words/teeth_word_2607_word.mp3`
+✓ Playback initiated successfully
+✓ Music pause/resume bridge established correctly
+
+**Commit: `de9e6ab3`**
+
+---
+
 ## 3b) March 16, 2026 — Word Quest Visual Regression Fixes ✅ COMPLETE
 **CRITICAL REGRESSIONS FIXED IN THIS SESSION**
 
@@ -636,6 +682,20 @@ Treat these files as the durable project memory:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
 
 ## 11) Next Best Moves
+
+### PENDING (Current Session, March 17)
+**Dark/Light Theme Unification**
+- User request: Unify visual feel across platform with mid-range brightness
+- Current state: Game gallery on dark mode too monotone; hub/hub/reports/case-mgmt all-white
+- Approach:
+  1. Identify all white-background pages: teacher-hub-v2, reports, case-management, literacy, numeracy
+  2. Review game-gallery color palette for variation (reduce single-color monotone feel)
+  3. Add complementary accent colors to white pages (maintain readability)
+  4. Ensure both dark and light theme variants are balanced (mid-range brightness)
+  5. Screenshot validate against FIGMA_AUDIT_SCORECARD.md
+- Estimate: Complex visual design task; requires token system review + CSS updates across multiple files
+
+### BACKLOG
 1. Strengthen lesson-alignment trust:
    - improve mapping for grade, curriculum, unit, lesson, objective, and SWBAT
    - prioritize IM, Fishtank, Fundations / Just Words / UFLI-adjacent support

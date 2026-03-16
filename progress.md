@@ -1,5 +1,18 @@
 Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
+- 2026-03-17: Fixed critical Ava audio playback regression
+  - Issue: Azure Ava recorded word audio failing silently; definitions read via browser TTS instead
+  - Root cause: `_getAssetBasePath()` in `js/audio.js` treated extensionless URLs like `/word-quest` as directories, prefixing audio paths with `/word-quest/assets/...` → 404 errors
+  - Fix: Modified function to strip last path segment for extensionless URLs (treat as page names, not directories)
+  - Result: Audio manifest loads correctly (14,524 entries), word audio plays via recorded Ava voice, music pause/resume working
+  - Commit: `de9e6ab3`
+  - Status: COMPLETE + documented in `docs/HANDOVER.md` section 3a
+
+- 2026-03-17: Pending task: Dark/Light Theme Unification
+  - User request: Make hub/workspace/reports/case-management pages darker (currently all-white); reduce monotone feel of game gallery on dark theme
+  - Approach: Mid-range brightness for both dark and light modes, unified but visually distinct across pages
+  - Status: BACKLOG - requires token system review and CSS updates across multiple pages
+
 - 2026-03-15: Updated the active handover docs from the current screenshot-verified stabilization state in `docs/HANDOVER.md`, `docs/FIGMA_AUDIT_SCORECARD.md`, and `progress.md`.
   - recorded the March 15 shared-shell stabilization truths:
     - gallery floating music strip regression removed
