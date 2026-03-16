@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Switcher - Cornerstone MTSS</title>
+
+  <!-- Design tokens -->
+  <link rel="stylesheet" href="../style/tokens.css?v=20260316a" />
+  <link rel="stylesheet" href="../style/components.css?v=20260316a" />
+  <link rel="stylesheet" href="../style/themes.css?v=20260316a" />
+
+  <style>
+    /**
+     * class-switcher.css
+     * Mobile-optimized multi-class context switching interface
+     * Token-first design, no hardcoded colors, responsive layout
+     */
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-canvas);
+      font-family: var(--font-family-base);
+      font-size: var(--fs-body);
+      color: var(--text-primary);
+    }
+
+    .class-switcher-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .class-switcher-header {
+      background-color: var(--surface-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--space-3);
+    }
+
+    .class-switcher-title {
+      margin: 0;
+      padding: 0;
+      font-size: var(--fs-headline);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .class-switcher-content {
+      flex: 1;
+      padding: var(--space-3);
+      overflow-y: auto;
+    }
+
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .class-card {
+      background-color: var(--surface-default);
+      border: 2px solid var(--border-default);
+      border-radius: 12px;
+      padding: var(--space-3);
+      cursor: pointer;
+      transition: all 200ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .class-card:hover {
+      border-color: var(--border-emphasis);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .class-card:active {
+      background-color: var(--surface-active);
+    }
+
+    .class-card.active {
+      border-color: var(--color-emphasis);
+      background-color: var(--bg-secondary);
+    }
+
+    .class-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .class-card-title {
+      margin: 0;
+      padding: 0;
+      font-size: var(--fs-subheading);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .class-card-badge {
+      background-color: var(--color-info);
+      color: white;
+      padding: var(--space-1) var(--space-2);
+      border-radius: 4px;
+      font-size: var(--fs-caption);
+      font-weight: 600;
+    }
+
+    .class-card-meta {
+      display: flex;
+      gap: var(--space-3);
+      font-size: var(--fs-caption);
+      color: var(--text-secondary);
+    }
+
+    .class-card-metrics {
+      display: flex;
+      gap: var(--space-2);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .metric {
+      flex: 1;
+      text-align: center;
+    }
+
+    .metric-label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: var(--space-1);
+    }
+
+    .metric-value {
+      display: block;
+      font-size: var(--fs-subheading);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .standup-summary {
+      background-color: var(--surface-default);
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      padding: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .standup-title {
+      margin: 0 0 var(--space-2) 0;
+      padding: 0;
+      font-size: var(--fs-subheading);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .standup-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+    }
+
+    .standup-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-2);
+      background-color: var(--bg-secondary);
+      border-radius: 4px;
+    }
+
+    .standup-metric-label {
+      font-size: var(--fs-caption);
+      color: var(--text-secondary);
+    }
+
+    .standup-metric-value {
+      font-size: var(--fs-body);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 768px) {
+      .class-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .class-switcher-content {
+        padding: var(--space-2);
+      }
+
+      .standup-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      background-color: var(--color-error-bg);
+      color: var(--color-error);
+      padding: var(--space-2);
+      border-radius: 4px;
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body class="class-switcher-page">
+  <header class="class-switcher-header">
+    <h1 class="class-switcher-title">My Classes</h1>
+  </header>
+
+  <main class="class-switcher-content">
+    <!-- Daily standup summary -->
+    <div id="standupSummary" class="standup-summary" style="display: none;">
+      <h2 class="standup-title">Today's Overview</h2>
+      <div class="standup-metrics">
+        <div class="standup-metric">
+          <span class="standup-metric-label">🔴 Primary Focus</span>
+          <span class="standup-metric-value" id="standupPrimary">—</span>
+        </div>
+        <div class="standup-metric">
+          <span class="standup-metric-label">🟡 Secondary Watch</span>
+          <span class="standup-metric-value" id="standupSecondary">—</span>
+        </div>
+        <div class="standup-metric">
+          <span class="standup-metric-label">🟢 On Track</span>
+          <span class="standup-metric-value" id="standupOnTrack">—</span>
+        </div>
+        <div class="standup-metric">
+          <span class="standup-metric-label">📊 Total Students</span>
+          <span class="standup-metric-value" id="standupTotal">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" class="error" style="display: none;">
+      <p id="errorMessage">Failed to load classes</p>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loadingState" class="loading" style="display: none;">
+      <p>Loading your classes...</p>
+    </div>
+
+    <!-- Class grid -->
+    <div id="classGrid" class="class-grid" style="display: none;">
+      <!-- Dynamically populated -->
+    </div>
+  </main>
+
+  <script src="../js/scaling/teacher-context-manager.js?v=20260316a"></script>
+  <script>
+    /**
+     * Class Switcher UI Controller
+     * Manages class selection and multi-class dashboard navigation
+     */
+
+    class ClassSwitcherUI {
+      constructor() {
+        this.contextManager = null;
+        this.teacherId = null;
+        this.classContexts = [];
+      }
+
+      async initialize(contextManager, teacherId) {
+        try {
+          this.contextManager = contextManager;
+          this.teacherId = teacherId;
+
+          const loadingState = document.getElementById('loadingState');
+          loadingState.style.display = 'flex';
+
+          // Fetch class contexts (mock)
+          this.classContexts = await this._fetchClassContexts();
+
+          await this._renderClasses();
+          await this._updateStandup();
+
+          loadingState.style.display = 'none';
+        } catch (err) {
+          this._showError('Failed to load classes: ' + err.message);
+        }
+      }
+
+      async _fetchClassContexts() {
+        // Mock: return sample classes
+        return [
+          {
+            classId: 'C1',
+            subject: 'Reading',
+            grade: '3',
+            studentCount: 20,
+            lessonId: 'L1',
+          },
+          {
+            classId: 'C2',
+            subject: 'Math',
+            grade: '3',
+            studentCount: 18,
+            lessonId: 'M1',
+          },
+          {
+            classId: 'C3',
+            subject: 'Science',
+            grade: '3',
+            studentCount: 20,
+            lessonId: 'S1',
+          },
+        ];
+      }
+
+      async _renderClasses() {
+        const grid = document.getElementById('classGrid');
+        grid.innerHTML = '';
+
+        for (const ctx of this.classContexts) {
+          const perf = await this.contextManager.getClassPerformance(ctx.classId);
+
+          const card = document.createElement('div');
+          card.className = 'class-card';
+          card.onclick = () => this._selectClass(ctx.classId);
+
+          const headerDiv = document.createElement('div');
+          headerDiv.className = 'class-card-header';
+
+          const titleH3 = document.createElement('h3');
+          titleH3.className = 'class-card-title';
+          titleH3.textContent = `${ctx.subject}`;
+
+          const badge = document.createElement('span');
+          badge.className = 'class-card-badge';
+          badge.textContent = ctx.grade;
+
+          headerDiv.appendChild(titleH3);
+          headerDiv.appendChild(badge);
+          card.appendChild(headerDiv);
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'class-card-meta';
+          metaDiv.innerHTML = `<span>${ctx.studentCount} students</span>`;
+          card.appendChild(metaDiv);
+
+          if (perf) {
+            const metricsDiv = document.createElement('div');
+            metricsDiv.className = 'class-card-metrics';
+
+            metricsDiv.innerHTML = `
+              <div class="metric">
+                <span class="metric-label">Primary</span>
+                <span class="metric-value">${perf.metrics.primaryFocus}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Secondary</span>
+                <span class="metric-value">${perf.metrics.secondaryWatch}</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">On Track</span>
+                <span class="metric-value">${perf.metrics.onTrack}</span>
+              </div>
+            `;
+
+            card.appendChild(metricsDiv);
+          }
+
+          grid.appendChild(card);
+        }
+
+        grid.style.display = 'grid';
+      }
+
+      async _updateStandup() {
+        const standup = await this.contextManager.getDailyStandup();
+
+        document.getElementById('standupPrimary').textContent = standup.totalPrimaryFocus;
+        document.getElementById('standupSecondary').textContent = standup.totalSecondaryWatch;
+        document.getElementById('standupOnTrack').textContent = standup.totalOnTrack;
+        document.getElementById('standupTotal').textContent =
+          standup.totalPrimaryFocus + standup.totalSecondaryWatch + standup.totalOnTrack;
+
+        document.getElementById('standupSummary').style.display = 'block';
+      }
+
+      _selectClass(classId) {
+        window.location.href = `/dashboard/daily-dashboard.html?classId=${classId}`;
+      }
+
+      _showError(message) {
+        const errorState = document.getElementById('errorState');
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorState.style.display = 'block';
+        document.getElementById('loadingState').style.display = 'none';
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ui = new ClassSwitcherUI();
+      // Note: In real implementation, would inject real dependencies
+      // ui.initialize(contextManager, 'T001');
+    });
+  </script>
+</body>
+</html>
