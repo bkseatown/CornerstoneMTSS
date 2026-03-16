@@ -103,6 +103,7 @@ html[data-text-size="large"] { --wq-text-size: 18px; }
   --cs-accent-2: #8be28f;
   --cs-radius-stage: 20px;
   --cs-radius-chip: 999px;
+  --radius-key: 14px;
   --cs-shadow-stage: 0 18px 34px rgba(5, 14, 24, 0.3);
   --cs-shadow-float: 0 9px 20px rgba(5, 14, 24, 0.2);
   --cs-h1: clamp(1.9rem, 2.4vw, 2.6rem);
@@ -1751,8 +1752,8 @@ html[data-theme="seahawks"][data-home-mode="play"] .focus-inline-search {
 }
 
 html[data-theme="seahawks"][data-home-mode="play"] .focus-action-btn {
-  width: 44px;
-  height: var(--btn-height-lg);
+  width: 41px;
+  height: 41px;
 }
 
 html[data-home-mode="play"] .grade-target-inline {
@@ -5721,7 +5722,7 @@ html[data-key-style="bubble"] .key {
 }
 
 html[data-home-mode="play"] .key {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   border-color: var(--wq-play-key-border);
   background: var(--wq-play-key-bg);
   color: var(--wq-play-key-color);
