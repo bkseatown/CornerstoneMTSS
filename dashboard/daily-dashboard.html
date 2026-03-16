@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Dashboard - Cornerstone MTSS</title>
+
+  <!-- Shared token system -->
+  <link rel="stylesheet" href="../style/tokens.css?v=20260316a" />
+  <link rel="stylesheet" href="../style/components.css?v=20260316a" />
+  <link rel="stylesheet" href="../style/themes.css?v=20260316a" />
+
+  <!-- Dashboard specific styles -->
+  <link rel="stylesheet" href="./daily-dashboard.css?v=20260316a" />
+</head>
+<body class="daily-dashboard-page" data-theme="light">
+  <!-- Header -->
+  <header class="daily-header">
+    <div class="daily-header-content">
+      <div class="daily-header-context">
+        <h1 class="daily-title">TODAY'S FOCUS</h1>
+        <p class="daily-subtitle" id="headerSubtitle">
+          <span class="daily-grade">—</span>
+          <span class="daily-subject">—</span>
+          <span class="daily-lesson">—</span>
+        </p>
+      </div>
+      <div class="daily-header-time" id="headerTime">
+        <span class="daily-time-label">Updated</span>
+        <span class="daily-time-value" id="timeValue">—</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main dashboard container -->
+  <main class="daily-main">
+    <!-- Primary Focus Section (3 students) -->
+    <section class="daily-section daily-section-primary" id="primaryFocusSection">
+      <div class="daily-section-header">
+        <h2 class="daily-section-title">🔴 PRIMARY FOCUS</h2>
+        <p class="daily-section-subtitle">3 students needing action today</p>
+        <div class="daily-section-count" id="primaryCount">0</div>
+      </div>
+
+      <div class="daily-section-content" id="primaryFocusList">
+        <!-- Students dynamically inserted here -->
+      </div>
+    </section>
+
+    <!-- Secondary Watch Section (5 students) -->
+    <section class="daily-section daily-section-secondary" id="secondaryWatchSection">
+      <div class="daily-section-header">
+        <h2 class="daily-section-title">🟡 SECONDARY WATCH</h2>
+        <p class="daily-section-subtitle">5 students to monitor this week</p>
+        <div class="daily-section-count" id="secondaryCount">0</div>
+      </div>
+
+      <div class="daily-section-content" id="secondaryWatchList">
+        <!-- Students dynamically inserted here -->
+      </div>
+    </section>
+
+    <!-- On Track Section (remaining students) -->
+    <section class="daily-section daily-section-ontrack" id="onTrackSection">
+      <div class="daily-section-header">
+        <h2 class="daily-section-title">🟢 ON TRACK</h2>
+        <p class="daily-section-subtitle">No action needed — continue current pace</p>
+        <div class="daily-section-count" id="onTrackCount">0</div>
+      </div>
+
+      <div class="daily-section-content" id="onTrackList">
+        <!-- Compact list of on-track students -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Student card template (hidden, used for dynamic rendering) -->
+  <template id="studentCardTemplate">
+    <div class="daily-student-card" data-student-id="">
+      <div class="daily-card-header">
+        <h3 class="daily-student-name">—</h3>
+        <span class="daily-urgency-badge" data-urgency="">—</span>
+      </div>
+
+      <div class="daily-card-content">
+        <div class="daily-competency-section">
+          <p class="daily-label">Current Level</p>
+          <p class="daily-competency-level">—</p>
+          <p class="daily-gap-description">—</p>
+        </div>
+
+        <div class="daily-action-section" style="display: none;">
+          <p class="daily-label">Recommended Action</p>
+          <p class="daily-action-primary">—</p>
+          <p class="daily-action-secondary">—</p>
+        </div>
+      </div>
+
+      <div class="daily-card-footer">
+        <button class="daily-button-action" data-action="view-details">View Details</button>
+        <button class="daily-button-action" data-action="mark-done" style="display: none;">Mark Complete</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Compact student list item template -->
+  <template id="studentCompactTemplate">
+    <div class="daily-student-compact" data-student-id="">
+      <span class="daily-student-name-compact">—</span>
+      <span class="daily-status-compact">On track</span>
+    </div>
+  </template>
+
+  <!-- Loading state -->
+  <div class="daily-loading" id="loadingState" style="display: none;">
+    <p>Loading today's dashboard...</p>
+  </div>
+
+  <!-- Error state -->
+  <div class="daily-error" id="errorState" style="display: none;">
+    <p id="errorMessage">An error occurred. Please try again.</p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/curriculum/curriculum-engine.js?v=20260316a"></script>
+  <script src="../js/evidence/competency-mapper.js?v=20260316a"></script>
+  <script src="../js/interventions/intervention-recommender.js?v=20260316a"></script>
+  <script src="../js/db/curriculum-sync-store.js?v=20260316a"></script>
+  <script src="../js/dashboard/daily-dashboard.js?v=20260316a"></script>
+  <script src="./daily-dashboard-ui.js?v=20260316a"></script>
+</body>
+</html>
