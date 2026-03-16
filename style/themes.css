@@ -420,8 +420,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── COFFEE / STARBUCKS ── Green #00704A + espresso + cream
    Rich espresso atmosphere. Cream keys like a latte             */
 [data-theme="coffee"] {
-  --page-bg:      #35241b;
-  --page-bg2:     #241913;
+  --page-bg:      #4a3933;
+  --page-bg2:     #3d3229;
   --plate-bg:     rgba(203,160,95,0.08);
   --plate-border: rgba(203,160,95,0.28);
   --tile-face:    linear-gradient(160deg, #fff8ef 0%, #f0dcc8 100%);
@@ -461,8 +461,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── MATRIX ── Electric green on deep green. INTENTIONALLY high contrast.
    Dark forest green page — the dark IS the brand here. Mint keys readable. */
 [data-theme="matrix"] {
-  --page-bg:      #1a3a2e;
-  --page-bg2:     #102319;
+  --page-bg:      #2d4a42;
+  --page-bg2:     #234037;
   --plate-bg:     rgba(65,175,118,0.08);
   --plate-border: rgba(82,217,152,0.36);
   --tile-face:    linear-gradient(160deg, #e8efe8 0%, #d6e2d8 100%);
@@ -585,8 +585,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
    Page: deep burgundy (armor in shadow). Keys: metallic gold.
    Feels like wearing the suit.                                   */
 [data-theme="ironman"] {
-  --page-bg:      #4a1e1a;
-  --page-bg2:     #35140f;
+  --page-bg:      #5d3530;
+  --page-bg2:     #4d2923;
   --plate-bg:     rgba(249,199,79,0.06);
   --plate-border: rgba(249,199,79,0.28);
   --tile-face:    linear-gradient(160deg, #fff8ee 0%, #efdfc0 100%);
@@ -627,8 +627,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
    Vivid Marvel red header, Captain America blue accent.
    Kids feel like they're IN a Marvel comic.                      */
 [data-theme="marvel"] {
-  --page-bg:      #2b3e69;
-  --page-bg2:     #1d2b4a;
+  --page-bg:      #3f5279;
+  --page-bg2:     #354666;
   --plate-bg:     rgba(237,29,36,0.08);
   --plate-border: rgba(237,29,36,0.28);
   --tile-face:    linear-gradient(160deg, #fff6ee 0%, #f2dfd3 100%);
@@ -667,8 +667,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 
 /* ── DEMON HUNTER ── electric teal-purple neon ─────────── */
 [data-theme="demonhunter"] {
-  --page-bg:      #1b2444;
-  --page-bg2:     #121a34;
+  --page-bg:      #2f3855;
+  --page-bg2:     #252f45;
   --plate-bg:     rgba(34,211,238,0.08);
   --plate-border: rgba(244,114,182,0.25);
   --tile-face:    linear-gradient(160deg, #eef2ff 0%, #dfe7ff 100%);
@@ -753,8 +753,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── KUROMI ── Sanrio: purple #514283 + pink bow #F181B2
    Pastel goth. Medium dark purple page (NOT black). Pink bow keys.    */
 [data-theme="kuromi"] {
-  --page-bg:      #332046;
-  --page-bg2:     #251436;
+  --page-bg:      #443d54;
+  --page-bg2:     #39334a;
   --plate-bg:     rgba(241,129,178,0.07);
   --plate-border: rgba(241,129,178,0.30);
   --tile-face:    linear-gradient(160deg, #fef8ff 0%, #f5e8ff 100%);

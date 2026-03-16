@@ -2578,6 +2578,36 @@ html[data-home-mode="play"] .focus-inline-results {
   font-weight: 820;
 }
 
+.theme-name-indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.62rem;
+  font-weight: 720;
+  padding: 4px 6px;
+  margin: 0 2px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--tile-face) 12%, transparent);
+  color: color-mix(in oklab, var(--text) 86%, var(--text-muted) 14%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: clamp(80px, 12vw, 140px);
+  border: 1px solid color-mix(in oklab, var(--tile-border) 34%, transparent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-name-indicator:hover {
+  background: color-mix(in oklab, var(--tile-face) 24%, transparent);
+  border-color: color-mix(in oklab, var(--tile-border) 60%, transparent);
+}
+
+html[data-home-mode="play"] .theme-name-indicator {
+  font-size: 0.56rem;
+  padding: 3px 5px;
+  margin: 0 1px;
+}
+
 /* ── Settings panel ─────────────────────────────────── */
 .settings-panel {
   position:      fixed;
@@ -9347,13 +9377,15 @@ html[data-home-mode="play"] .header-main-row {
 html[data-home-mode="play"] .board-zone {
   min-height: 0;
   gap: var(--wq-stage-gap);
-  justify-content: flex-start;
+  justify-content: center;
   align-content: start;
   width: min(100%, 980px);
   max-width: 980px;
   padding-inline: clamp(10px, 2.8vw, 28px);
   margin-top: clamp(6px, 0.8vh, 12px);
   margin-bottom: clamp(8px, 1.2vh, 16px);
+  margin-left: auto;
+  margin-right: auto;
   z-index: 1;
 }
 

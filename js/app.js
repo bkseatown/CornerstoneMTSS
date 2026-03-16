@@ -3285,6 +3285,15 @@
     labelEl.title = `Current theme: ${getThemeDisplayLabel(normalized)}`;
   }
 
+  function syncBannerThemeName(themeId) {
+    const themeIndicator = _el('theme-name-indicator');
+    if (!themeIndicator) return;
+    const normalized = normalizeTheme(themeId || document.documentElement.getAttribute('data-theme'), getThemeFallback());
+    const displayLabel = getThemeDisplayLabel(normalized);
+    themeIndicator.textContent = displayLabel;
+    themeIndicator.title = `Current theme: ${displayLabel}. Click to change theme or use Settings.`;
+  }
+
   function syncWordQuestRootThemeClass(themeId) {
     const root = document.body;
     if (!(root instanceof HTMLElement)) return;
@@ -3302,6 +3311,7 @@
     const select = _el('s-theme');
     if (select && select.value !== normalized) select.value = normalized;
     syncSettingsThemeName(normalized);
+    syncBannerThemeName(normalized);
     syncWordQuestRootThemeClass(normalized);
     syncMusicForTheme();
     if (beforeTheme !== normalized) {
@@ -8420,6 +8430,14 @@
   _el('theme-dock-toggle-btn')?.addEventListener('click', (event) => {
     event.preventDefault();
     if (!isQuickPopoverAllowed()) return;
+    toggleQuickPopover('theme');
+  });
+  _el('theme-name-indicator')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (!isQuickPopoverAllowed()) {
+      _el('settings-btn')?.click();
+      return;
+    }
     toggleQuickPopover('theme');
   });
   _el('music-dock-toggle-btn')?.addEventListener('click', (event) => {
