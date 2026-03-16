@@ -62,7 +62,11 @@ const WQAudio = (() => {
       if (last.includes('.')) {
         base = pathname.slice(0, -(last.length + 1));
       } else {
-        base = pathname;
+        // Extensionless path (e.g., /word-quest or /CornerstoneMTSS/word-quest)
+        // Treat last segment as a page name, not a directory. Strip it.
+        const segments = pathname.split('/');
+        segments.pop();
+        base = segments.join('/') || '';
       }
     }
     _assetBasePath = base === '/' ? '' : base;
