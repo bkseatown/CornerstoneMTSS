@@ -6192,32 +6192,32 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .hint-clue-card {
   position: fixed;
-  top: calc(var(--header-h) + var(--focus-h) + 18px);
-  left: calc(50% + (var(--playfield-width) * 0.5) + 48px);
-  transform: translateY(-10px) scale(0.985);
-  width: min(342px, calc(100vw - 24px));
-  max-height: min(42vh, 308px);
+  bottom: clamp(50px, 8vh, 120px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px) scale(0.92);
+  width: min(260px, calc(100vw - 40px));
+  max-height: min(35vh, 220px);
   overflow: auto;
-  padding: 10px 11px 10px;
-  border-radius: 14px;
+  padding: 9px 10px 9px;
+  border-radius: 12px;
   background:
-    radial-gradient(circle at 92% -8%, rgba(226, 228, 232, 0.42), transparent 50%),
-    radial-gradient(circle at 6% 0%, rgba(214, 220, 227, 0.34), transparent 46%),
+    radial-gradient(circle at 92% -8%, rgba(226, 228, 232, 0.3), transparent 50%),
+    radial-gradient(circle at 6% 0%, rgba(214, 220, 227, 0.24), transparent 46%),
     linear-gradient(160deg, #f9fafb 0%, #f0f3f7 56%, #eef2f6 100%);
-  border: 1px solid color-mix(in oklab, var(--panel-border) 76%, #95a5b7 24%);
+  border: 1px solid color-mix(in oklab, var(--panel-border) 72%, #95a5b7 28%);
   color: #1d3346;
   box-shadow:
-    0 16px 30px rgba(20, 28, 40, 0.2),
-    inset 0 1px 0 rgba(255,255,255,0.7);
+    0 10px 22px rgba(20, 28, 40, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.6);
   display: grid;
-  gap: 9px;
-  font-size: 0.82rem;
-  line-height: 1.32;
+  gap: 8px;
+  font-size: 0.78rem;
+  line-height: 1.3;
   text-align: left;
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 204;
   opacity: 0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, pointer-events 0.2s ease;
 }
 
 .hint-clue-card.is-compact {
@@ -6237,7 +6237,8 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .hint-clue-card.visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
 }
 
 .hint-clue-head {
@@ -6268,19 +6269,21 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .hint-clue-title {
-  font-size: clamp(0.96rem, 1.05vw, 1.08rem);
-  font-weight: 930;
-  letter-spacing: 0.012em;
+  font-size: clamp(0.82rem, 0.95vw, 0.92rem);
+  font-weight: 900;
+  letter-spacing: 0.008em;
   text-transform: none;
   color: #2a3948;
+  margin: 0;
 }
 
 .hint-clue-message {
-  max-width: 32ch;
-  font-size: clamp(0.74rem, 0.86vw, 0.84rem);
-  font-weight: 780;
-  line-height: 1.34;
+  max-width: 28ch;
+  font-size: clamp(0.70rem, 0.80vw, 0.76rem);
+  font-weight: 760;
+  line-height: 1.32;
   color: #334659;
+  margin: 0;
 }
 
 .refresh-latest-banner {
@@ -6413,15 +6416,15 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .hint-clue-btn {
-  min-height: 36px;
-  padding: 0 13px;
+  min-height: 30px;
+  padding: 0 11px;
   border-radius: 999px;
-  border: 1px solid color-mix(in oklab, #55cab8 52%, var(--panel-border) 48%);
+  border: 1px solid color-mix(in oklab, #55cab8 48%, var(--panel-border) 52%);
   background: linear-gradient(145deg, #d8faf3 0%, #d7f0ff 100%);
   color: #1e4a65;
-  font-size: 0.8rem;
-  font-weight: 840;
-  box-shadow: 0 4px 10px rgba(25, 58, 84, 0.14);
+  font-size: 0.74rem;
+  font-weight: 820;
+  box-shadow: 0 2px 6px rgba(25, 58, 84, 0.10);
 }
 
 .hint-clue-btn:hover {
@@ -9374,7 +9377,8 @@ html[data-home-mode="play"] .board-zone {
   align-content: start;
   width: min(100%, 980px);
   max-width: 980px;
-  padding-inline: clamp(10px, 2.8vw, 28px);
+  padding-left: clamp(12px, 2.8vw, 32px);
+  padding-right: clamp(18px, 3.6vw, 42px);
   margin-top: clamp(6px, 0.8vh, 12px);
   margin-bottom: clamp(8px, 1.2vh, 16px);
   margin-left: auto;
