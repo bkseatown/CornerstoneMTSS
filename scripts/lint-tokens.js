@@ -49,6 +49,7 @@ const EXEMPT_PATTERNS = [
 // Per-file exemptions for CSS files that pre-date the token compliance system.
 // These files have known violations; add to token backlog rather than blocking commits.
 const FILE_EXEMPTIONS = new Set([
+  'tokens.css',             // Master token definitions; source of truth for all colors/spacing
   'lesson-brief-panel.css', // Pre-existing panel; full token migration tracked as tech debt
   'game-shell.css',         // Monolithic game shell; token migration tracked as tech debt
 ]);

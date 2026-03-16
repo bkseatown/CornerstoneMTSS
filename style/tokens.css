@@ -3,6 +3,12 @@
    Shared across teacher dashboard, hero, reading lab, sentence studio
    ================================================================== */
 
+/* ─── Generated Color Tokens ───
+   Systematic OKLCH scales auto-generated from scripts/generate-color-tokens.js
+   Regenerate with: node scripts/generate-color-tokens.js
+   ─────────────────────────────────────────────────────────────── */
+@import url('./generated-color-tokens.css');
+
 :root {
   /* ===== Platform Design System — 2026-03 =====
      Shared art direction for landing, hub, gallery, and game shells.
