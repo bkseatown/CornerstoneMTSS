@@ -371,3 +371,57 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── SWBAT + Curriculum path ──────────────────────── */
+.cs-brief-swbat {
+  margin: 10px 0 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+  border-left: 3px solid var(--accent);
+}
+.cs-brief-swbat-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 3px;
+}
+.cs-brief-swbat-text {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-strong);
+  margin: 0;
+}
+.cs-brief-curriculum-path {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  margin: 6px 0 8px;
+}
+.cs-brief-verified-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.cs-brief-verified-badge--exact {
+  background: var(--bg-secure);
+  color: var(--status-secure);
+  border: 1px solid color-mix(in oklab, var(--status-secure) 30%, transparent);
+}
+.cs-brief-verified-badge--broad {
+  background: var(--bg-developing);
+  color: var(--status-developing);
+  border: 1px solid color-mix(in oklab, var(--status-developing) 30%, transparent);
+}
+.cs-brief-path-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}

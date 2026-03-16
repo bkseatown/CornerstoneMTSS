@@ -424,13 +424,26 @@
     }).join("") + '</div>';
   }
 
+  function classroomContextLine() {
+    var p = params();
+    var from = text(p.get("from") || "");
+    var block = text(p.get("block") || "");
+    var subject = text(p.get("subject") || "");
+    if (!from) return "";
+    var source = from === "hub" ? "Hub" : from === "reports" ? "Reports" : from;
+    var detail = block || subject || "";
+    return "Opened from " + source + (detail ? " \u00b7 " + detail : "");
+  }
+
   function buildHero(student, demo) {
     var tags = Array.isArray(demo.identity.tags) ? demo.identity.tags : [];
+    var contextLine = classroomContextLine();
     return [
       '<div class="sp-hero-main">',
       '  <p class="sp-kicker">Student</p>',
       '  <h1>' + esc(demo.identity.display || (student && student.name) || "Student") + '</h1>',
-      '  <p class="sp-subline">' + esc([demo.identity.grade, demo.identity.support, demo.identity.service].filter(Boolean).join(" · ")) + '</p>',
+      '  <p class="sp-subline">' + esc([demo.identity.grade, demo.identity.support, demo.identity.service].filter(Boolean).join(" \u00b7 ")) + '</p>',
+      (contextLine ? '  <p class="sp-classroom-context"><span class="sp-context-badge">\ud83d\udcc5</span> ' + esc(contextLine) + '</p>' : ""),
       '  <p class="sp-hero-copy">' + esc(demo.summary) + '</p>',
       '  <div class="sp-chip-row">' + tags.map(function (tag) {
         return '<span class="sp-chip">' + esc(tag) + '</span>';

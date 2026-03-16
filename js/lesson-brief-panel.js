@@ -1227,12 +1227,27 @@
     var noteKey = noteKeyForBrief(brief);
     var noteText = getNoteForKey(noteKey);
     var saved = !!loadDailySelection(_selection.studentId, _selection.blockId);
+    var verifiedBadge = brief.sourceType === "verified"
+      ? '<span class="cs-brief-verified-badge cs-brief-verified-badge--exact">&#10003; Lesson verified</span>'
+      : '<span class="cs-brief-verified-badge cs-brief-verified-badge--broad">&#126; Current unit</span>';
     return [
       '<section class="cs-brief-card">',
       '  <p class="cs-brief-kicker">' + escapeHtml(brief.curriculumLabel) + "</p>",
       '  <h3 class="cs-brief-card-title">' + escapeHtml(brief.title) + "</h3>",
+      (brief.curriculumPath ? [
+        '  <div class="cs-brief-curriculum-path">',
+        '    ' + verifiedBadge,
+        '    <span class="cs-brief-path-text">' + escapeHtml(brief.curriculumPath) + "</span>",
+        "  </div>"
+      ].join("\n") : ""),
       (brief.contextLine ? '<p class="cs-brief-summary">' + escapeHtml(brief.contextLine) + "</p>" : ""),
       '  <span class="cs-brief-phase">' + escapeHtml(brief.phaseLabel) + "</span>",
+      (brief.swbat ? [
+        '  <div class="cs-brief-swbat">',
+        '    <p class="cs-brief-swbat-label">SWBAT</p>',
+        '    <p class="cs-brief-swbat-text">' + escapeHtml(brief.swbat) + "</p>",
+        "  </div>"
+      ].join("\n") : ""),
       '  <div class="cs-brief-section">',
       '    <h4 class="cs-brief-section-title">60-second brief</h4>',
       '    <p class="cs-brief-copy">' + escapeHtml(brief.summary) + "</p>",
@@ -1255,6 +1270,12 @@
       "      <label>Fast support moves</label>",
       renderList(brief.supportMoves),
       "    </div>",
+      (brief.interventionRecs && brief.interventionRecs.length ? [
+        '    <div class="cs-brief-field">',
+        "      <label>Intervention-based instruction</label>",
+        renderList(brief.interventionRecs),
+        "    </div>"
+      ].join("\n") : ""),
       '    <div class="cs-brief-field">',
       "      <label>What to look for</label>",
       renderList(brief.lookFors),
@@ -1531,6 +1552,18 @@
       title: titleBits.join(" - ") || "Illustrative Math",
       contextLine: contextLine(),
       phaseLabel: "Lesson briefing",
+      swbat: entry && entry.officialFocus
+        ? "Students will be able to " + entry.officialFocus.toLowerCase().replace(/\.$/, "") + (entry.supportMove ? ", using " + entry.supportMove.toLowerCase().replace(/^use /, "").replace(/\.$/, "") + "." : ".")
+        : unitMeta && unitMeta.focus
+          ? "Students will be able to apply " + unitMeta.focus + " using visual models and number reasoning."
+          : "Students will be able to use a visual model to represent and explain the mathematical relationship.",
+      curriculumPath: ["Illustrative Math", grade ? "Grade " + grade : null, unit ? "Unit " + unit : null, lesson ? "Lesson " + lesson : null].filter(Boolean).join(" · "),
+      sourceType: entry ? "verified" : "broad",
+      interventionRecs: [
+        "Pre-teach the key vocabulary and model before the lesson warm-up.",
+        "Keep one visual representation visible throughout the lesson (fraction strip, number line, or area model).",
+        "After the cool-down, use the student's error to design tomorrow's targeted practice."
+      ],
       summary: entry && entry.officialFocus
         ? entry.officialFocus
         : unitMeta && unitMeta.focus
@@ -1599,6 +1632,14 @@
       title: formatGradeLabel(normalizeGrade(unit.grade)) + " - " + (unit.title || "Fishtank unit") + " - Lesson " + lesson,
       contextLine: contextLine(),
       phaseLabel: phaseNode.phaseLabel || "Lesson briefing",
+      swbat: "Students will be able to " + (skills[0] || "engage with text evidence") + (skills[1] ? " and " + skills[1] : "") + " within the context of " + (tokens.unitTitle || "this unit") + ".",
+      curriculumPath: ["Fishtank ELA", unit.grade ? "Grade " + normalizeGrade(unit.grade) : null, unit.title ? unit.title : null, "Lesson " + lesson].filter(Boolean).join(" · "),
+      sourceType: "broad",
+      interventionRecs: [
+        "Preview the anchor text or key vocabulary before whole-class work begins.",
+        "Provide one sentence frame or discussion prompt aligned to the lesson question.",
+        "Use the same text as the class but with a shorter passage or pre-marked evidence."
+      ],
       summary: replace(phaseNode.summaryTemplate),
       mainConcept: replace(phaseNode.coreConceptTemplate),
       workedExample: replace(phaseNode.workedExampleTemplate),
@@ -1625,6 +1666,16 @@
       title: formatGradeLabel(grade) + " - " + (unit.title || "EL unit"),
       contextLine: contextLine(),
       phaseLabel: "Unit briefing",
+      swbat: entry && entry.officialFocus
+        ? "Students will be able to " + entry.officialFocus.toLowerCase().replace(/\.$/, "") + "."
+        : "Students will be able to analyze text evidence, contribute to structured discussion, and produce evidence-based writing within the EL Education module.",
+      curriculumPath: ["EL Education", grade ? "Grade " + grade : null, module && module.title ? module.title : null, unit.title ? unit.title : null].filter(Boolean).join(" · "),
+      sourceType: entry ? "verified" : "broad",
+      interventionRecs: [
+        "Preview the note-catcher structure and vocabulary before the lesson begins.",
+        "Provide one sentence stem aligned to the evidence standard for the unit.",
+        "After the lesson, review the note-catcher together and highlight one strong piece of evidence."
+      ],
       summary: entry && entry.officialFocus ? entry.officialFocus : String(unit.summary || ""),
       mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : String(unit.mainConcept || ""),
       workedExample: String(unit.workedExample || ""),
@@ -1649,6 +1700,14 @@
       title: "UFLI Lesson " + _selection.lesson,
       contextLine: contextLine(),
       phaseLabel: "Current lesson",
+      swbat: "Students will be able to blend, read, and encode words with the UFLI Lesson " + _selection.lesson + " target pattern in isolation and connected text.",
+      curriculumPath: "UFLI Foundations · Lesson " + _selection.lesson,
+      sourceType: "broad",
+      interventionRecs: [
+        "Open with the cumulative review routine before introducing the new pattern (same sequence every session).",
+        "Correct at the phoneme level: model the sound, have the student echo, then reread the word.",
+        "End every session with 1-2 connected-text sentences containing the target pattern."
+      ],
       summary: entry && entry.officialFocus ? entry.officialFocus : "Keep the UFLI routine tight and cumulative: review, model, blend, spell, read, and transfer.",
       mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : "Students need accuracy at the sound-pattern level before speed or independence.",
       workedExample: "Pick one target word, say each sound, blend it, spell it, then reread it in a short phrase or sentence.",
@@ -1688,6 +1747,16 @@
       title: "Fundations " + labelFor(FUNDATIONS_LEVELS, _selection.level) + " - Unit " + _selection.lesson,
       contextLine: contextLine(),
       phaseLabel: "Structured literacy",
+      swbat: entry && entry.officialFocus
+        ? "Students will be able to " + entry.officialFocus.toLowerCase().replace(/\.$/, "") + "."
+        : "Students will be able to decode, encode, and transfer the target Fundations pattern in dictation and connected text.",
+      curriculumPath: "Fundations · " + labelFor(FUNDATIONS_LEVELS, _selection.level) + " · Unit " + _selection.lesson,
+      sourceType: entry && entry.sourceType === "verified" ? "verified" : "broad",
+      interventionRecs: [
+        "Use sound-tapping or finger-spelling before dictation to anchor the phoneme sequence.",
+        "Mark the pattern consistently before asking the student to read or spell independently.",
+        "Connect the unit pattern to a word the student already knows before introducing new words."
+      ],
       summary: truthLines(entry, "Use the current Fundations unit for explicit decoding, encoding, and connected-text transfer."),
       mainConcept: entry && entry.progressMonitoring ? entry.progressMonitoring : "Students need to connect sounds, letters, marking, and spelling in the same routine so the pattern becomes stable.",
       workedExample: "Tap the sounds in one word, mark the pattern, read it, spell it, and use it in a short dictated sentence.",
@@ -1726,6 +1795,14 @@
       title: unit.label,
       contextLine: contextLine(),
       phaseLabel: "Word study intervention",
+      swbat: "Students will be able to decode and spell multisyllabic words using the patterns taught in Just Words " + unit.label + " and transfer them into connected reading and writing.",
+      curriculumPath: "Just Words · " + unit.label,
+      sourceType: "broad",
+      interventionRecs: [
+        "Mark the syllable boundaries before reading each target word.",
+        "Limit the word set to 5-8 words and add 2-3 transfer sentences per session.",
+        "Repeat dictated sentences from the previous session before introducing new words."
+      ],
       summary: entry && entry.officialFocus ? entry.officialFocus : "Keep Just Words fast, explicit, and closely tied to reading and spelling transfer.",
       mainConcept: entry && entry.assessmentDetail ? entry.assessmentDetail : "Older students need direct word analysis plus immediate application in connected text, not isolated drills only.",
       workedExample: "Take one multisyllabic word or morpheme pattern, mark the chunks, read it, spell it, then use it in a phrase or short sentence.",
@@ -1763,6 +1840,14 @@
       title: "Heggerty routine - " + routine.label,
       contextLine: contextLine(),
       phaseLabel: "Oral phonemic awareness",
+      swbat: "Students will be able to " + routine.focus + " as part of the daily Heggerty/Haggerty phonemic awareness sequence.",
+      curriculumPath: "Heggerty / Haggerty PA · " + routine.label,
+      sourceType: "broad",
+      interventionRecs: [
+        "Keep the PA routine purely oral — do not add print until the oral response is accurate.",
+        "Slow the pace on manipulation tasks and repeat with corrective echo before moving on.",
+        "Connect oral work to a letter-sound card the student knows before transitioning to decoding."
+      ],
       summary: "This routine is targeting " + routine.focus + ". Keep it oral, brisk, and highly responsive to student errors.",
       mainConcept: "Heggerty is about hearing and manipulating sounds before print gets added, so the support job is precision and pace.",
       workedExample: "Say the word, pause, and have the student say the sounds or manipulate one sound before repeating the full word.",
@@ -1798,6 +1883,14 @@
       title: component.label + (_selection.lessonLabel ? " - " + _selection.lessonLabel : ""),
       contextLine: contextLine(),
       phaseLabel: component.phaseLabel,
+      swbat: "Students will be able to " + component.summary.toLowerCase().replace(/\.$/, "") + ".",
+      curriculumPath: "Bridges Math · " + component.label + (_selection.lessonLabel ? " · " + _selection.lessonLabel : ""),
+      sourceType: "broad",
+      interventionRecs: [
+        "Name the one mathematical idea before beginning the task (one concept per session).",
+        "Anchor in one concrete or visual representation before asking for an explanation.",
+        "After the activity, have the student say or write one sentence about what the model proves."
+      ],
       summary: component.summary,
       mainConcept: component.mainConcept,
       workedExample: component.workedExample,
@@ -1820,6 +1913,14 @@
       title: genre.label + " - " + stage.label,
       contextLine: contextLine(),
       phaseLabel: "Writing support",
+      swbat: "Students will be able to " + stage.concept.toLowerCase().replace(/\.$/, "") + " in a " + genre.label.toLowerCase() + " piece.",
+      curriculumPath: "Step Up to Writing · " + genre.label + " · " + stage.label,
+      sourceType: "broad",
+      interventionRecs: [
+        "Pre-fill the first section of the organizer together before the student works independently.",
+        "Keep the color-coding consistent with what the classroom teacher uses.",
+        "End the session with one sentence read aloud from the draft to build editing awareness."
+      ],
       summary: "This writing block is centered on " + genre.label.toLowerCase() + " work during the " + stage.label.toLowerCase() + " stage.",
       mainConcept: stage.concept,
       workedExample: "Take one paragraph or sentence set and ask the student to name the color-coded job of each part before revising the writing itself.",
@@ -1858,6 +1959,14 @@
       title: course + " - " + lesson,
       contextLine: contextLine(),
       phaseLabel: "Manual humanities briefing",
+      swbat: "Students will be able to identify the central claim or question in " + unit + ", select and explain supporting evidence, and contribute to academic discussion" + text + ".",
+      curriculumPath: ["SAS Humanities 9", unit !== "current unit" ? unit : null, lesson !== "today's lesson" ? lesson : null].filter(Boolean).join(" · "),
+      sourceType: "broad",
+      interventionRecs: [
+        "Preview the central question and one key source or passage before class.",
+        "Provide an annotation target: one question to answer while reading, not open-ended annotation.",
+        "After the discussion, have the student write one sentence stating the claim and one piece of evidence."
+      ],
       summary: "This briefing is anchored to " + unit + text + ". The main support job is helping the student track the central claim, the evidence that matters, and the language needed to discuss it clearly.",
       mainConcept: "Humanities support usually means reducing task load without reducing the intellectual demand: one question, one claim, one piece of evidence at a time.",
       workedExample: "Ask the student to identify the strongest line, image, or idea in the source and explain what it suggests in one clear sentence before expanding.",

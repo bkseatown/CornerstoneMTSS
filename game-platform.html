@@ -14,6 +14,36 @@
   <link rel="stylesheet" href="./games/ui/game-feedback.css?v=20260307k">
   <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260316a">
   <script src="./js/theme-registry.js?v=20260315c"></script>
+  <style>
+    .cg-instructional-context {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 10px 6px;
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .cg-ctx-skill, .cg-ctx-group, .cg-ctx-fit {
+      color: rgba(255,255,255,0.72);
+      display: block;
+    }
+    .cg-ctx-log {
+      display: block;
+      margin-top: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 11px;
+      transition: background 0.15s;
+    }
+    .cg-ctx-log:hover { background: rgba(255,255,255,0.2); }
+  </style>
 </head>
 <body class="game-platform-page">
   <!-- FOUC prevention: apply saved theme before first paint -->
@@ -167,42 +197,74 @@
         "word-quest": {
           title: "Word Quest",
           description: "Solve the clue and guess the hidden word.",
-          tags: "Warm-up • Vocabulary • Small groups"
+          tags: "Warm-up \u2022 Vocabulary \u2022 Small groups",
+          targetSkill: "Vocabulary retrieval and phonological word-form",
+          groupSize: "2-6 students or whole class",
+          lessonFit: "Warm-up or closing routine; aligns with any unit vocabulary set",
+          logGoal: "Log target words attempted and accuracy rate"
         },
         "word-typing": {
           title: "Typing Quest",
           description: "Practice typing real words while building speed and accuracy.",
-          tags: "Fluency • Keyboarding"
+          tags: "Fluency \u2022 Keyboarding",
+          targetSkill: "Orthographic fluency and keyboarding automaticity",
+          groupSize: "Individual or paired practice",
+          lessonFit: "Fluency block or intervention warm-up",
+          logGoal: "Log WPM score and error patterns"
         },
         "word-connections": {
           title: "Word Clue",
           description: "Give clues so your team guesses the word.",
-          tags: "Speaking • Small groups"
+          tags: "Speaking \u2022 Small groups",
+          targetSkill: "Expressive vocabulary and semantic association",
+          groupSize: "3-8 students, team format",
+          lessonFit: "Vocabulary review or discussion warm-up",
+          logGoal: "Note which vocabulary clusters students accessed independently"
         },
         "morphology-builder": {
           title: "Build the Word",
           description: "Combine prefixes, roots, and endings to build real words.",
-          tags: "Morphology • Word study"
+          tags: "Morphology \u2022 Word study",
+          targetSkill: "Morphological awareness: prefixes, roots, suffixes",
+          groupSize: "Individual, paired, or small group",
+          lessonFit: "Word study block or Just Words / Wilson reinforcement",
+          logGoal: "Log which morpheme combinations the student built correctly"
         },
         "concept-ladder": {
           title: "Clue Ladder",
           description: "Reveal clues step-by-step and guess the word.",
-          tags: "Inference • Teams • Discussion"
+          tags: "Inference \u2022 Teams \u2022 Discussion",
+          targetSkill: "Inferencing and academic vocabulary in context",
+          groupSize: "2-8 students or whole class",
+          lessonFit: "Comprehension warm-up or pre-reading vocabulary activation",
+          logGoal: "Note how many clues students needed and which vocabulary was unfamiliar"
         },
         "error-detective": {
           title: "Fix the Sentence",
           description: "Find the mistake and correct the sentence.",
-          tags: "Grammar • Editing"
+          tags: "Grammar \u2022 Editing",
+          targetSkill: "Sentence-level editing: grammar, punctuation, syntax",
+          groupSize: "Individual or small group",
+          lessonFit: "Writing block editing practice or grammar mini-lesson",
+          logGoal: "Log error types identified and correction accuracy"
         },
         "rapid-category": {
           title: "Word Categories",
           description: "Name as many words in the category as possible.",
-          tags: "Retrieval • Speaking • Teams"
+          tags: "Retrieval \u2022 Speaking \u2022 Teams",
+          targetSkill: "Semantic fluency and category-based word retrieval",
+          groupSize: "2-10 students, individual or team",
+          lessonFit: "Vocabulary review or executive function fluency warm-up",
+          logGoal: "Log word count and note any category confusion or perseveration"
         },
         "sentence-builder": {
           title: "Build a Sentence",
           description: "Arrange the words to form a correct sentence.",
-          tags: "Syntax • Writing • Small groups"
+          tags: "Syntax \u2022 Writing \u2022 Small groups",
+          targetSkill: "Syntax awareness and sentence structure",
+          groupSize: "Individual or small group",
+          lessonFit: "Writing warm-up or grammar intervention",
+          logGoal: "Note which sentence structures required prompting"
         }
       };
 
@@ -231,6 +293,19 @@
         if (previewBoard) previewBoard.classList.add("preview-board");
         previewRows.forEach(function (row) { row.classList.add("tile-row"); });
         previewTiles.forEach(function (tile) { tile.classList.add("tile"); });
+
+        // Inject instructional context block if not already present
+        if (!card.querySelector(".cg-instructional-context") && (data.targetSkill || data.logGoal)) {
+          var ctx = document.createElement("div");
+          ctx.className = "cg-instructional-context";
+          var inner = "";
+          if (data.targetSkill) inner += '<span class="cg-ctx-skill">\uD83C\uDFAF ' + data.targetSkill + '</span>';
+          if (data.groupSize) inner += '<span class="cg-ctx-group">\uD83D\uDC65 ' + data.groupSize + '</span>';
+          if (data.lessonFit) inner += '<span class="cg-ctx-fit">\uD83D\uDCCC ' + data.lessonFit + '</span>';
+          if (data.logGoal) inner += '<a class="cg-ctx-log" href="./reports.html" title="Log result to Reports">\uD83D\uDCCB After session: ' + data.logGoal + '</a>';
+          ctx.innerHTML = inner;
+          card.appendChild(ctx);
+        }
       }
 
       function updateAll() {

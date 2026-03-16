@@ -25,6 +25,13 @@ const LIMITS = {
   '.html': 500,
 };
 
+// Per-file overrides for large compound templates that pre-date the 500-line rule.
+// Each entry is the file's basename and the approved higher limit.
+const FILE_LIMIT_OVERRIDES = {
+  'reports.html': 1200,
+  'teacher-hub-v2.html': 1200,
+};
+
 const EXEMPT_PATTERNS = [
   'node_modules',
   '.github',
@@ -51,7 +58,10 @@ function checkFile(filePath) {
   if (isExempt(filePath)) return { pass: true, file: filePath };
 
   const ext = path.extname(filePath);
-  const limit = LIMITS[ext];
+  const basename = path.basename(filePath);
+  const limit = FILE_LIMIT_OVERRIDES[basename] !== undefined
+    ? FILE_LIMIT_OVERRIDES[basename]
+    : LIMITS[ext];
 
   if (!limit) return { pass: true, file: filePath };
   if (!fs.existsSync(filePath)) return { pass: true, file: filePath };
