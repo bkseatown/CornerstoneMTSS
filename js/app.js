@@ -8448,6 +8448,25 @@
   _el('theme-preview-done')?.addEventListener('click', () => {
     closeQuickPopover('theme');
   });
+
+  /* Keyboard navigation for theme popover */
+  _el('theme-preview-slot')?.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      if (window.WQThemeNav && typeof window.WQThemeNav.cycleTheme === 'function') {
+        window.WQThemeNav.cycleTheme(-1);
+        e.preventDefault();
+      }
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      if (window.WQThemeNav && typeof window.WQThemeNav.cycleTheme === 'function') {
+        window.WQThemeNav.cycleTheme(1);
+        e.preventDefault();
+      }
+    } else if (e.key === 'Escape') {
+      closeQuickPopover('theme');
+      e.preventDefault();
+    }
+  });
+
   _el('quick-music-done')?.addEventListener('click', () => {
     closeQuickPopover('music');
   });
