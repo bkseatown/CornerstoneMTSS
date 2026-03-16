@@ -344,7 +344,7 @@
   <div id="classroom-turn-line" class="classroom-turn-line hidden" aria-live="polite"></div>
 
   <!-- ── Settings overlay ─────────────────────────── -->
-  <div id="settings-panel" class="settings-panel">
+  <div id="settings-panel" class="settings-panel hidden">
     <div class="settings-header">
       <div class="settings-title-wrap">
         <span>Settings</span>
@@ -355,7 +355,7 @@
     <div class="settings-body">
       <div class="settings-view-switch" role="tablist" aria-label="Settings view">
         <button id="settings-tab-quick" class="settings-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="settings-quick" data-settings-tab="quick">Essentials</button>
-        <button id="settings-tab-advanced" class="settings-tab" type="button" role="tab" aria-selected="false" aria-controls="settings-advanced" data-settings-tab="advanced">Advanced</button>
+        <button id="settings-tab-advanced" class="settings-tab hidden" type="button" role="tab" aria-selected="false" aria-controls="settings-advanced" data-settings-tab="advanced">Advanced</button>
       </div>
 
       <section id="settings-quick" class="settings-section is-active" role="tabpanel" aria-labelledby="settings-tab-quick" data-settings-section="quick">

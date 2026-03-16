@@ -45,7 +45,7 @@
   position: fixed;
   top: 18px;
   right: 22px;
-  z-index: 120;
+  z-index: 40;
   display: grid;
   justify-items: end;
   gap: 10px;
@@ -11125,3 +11125,21 @@ body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
   overflow-x: hidden !important;
 }
 
+
+/* Disabled button styling (Sprint 1 UX fix) */
+button:disabled,
+button[disabled],
+.audio-btn:disabled,
+.quick-action-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  color: #999 !important;
+  background-color: #f5f5f5 !important;
+}
+
+button:disabled:hover,
+button[disabled]:hover {
+  opacity: 0.5 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
