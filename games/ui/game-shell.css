@@ -7750,8 +7750,12 @@ body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker {
   flex-direction: row !important;
   flex-wrap: wrap !important;
   align-items: center !important;
+  align-self: flex-start !important;
+  height: fit-content !important;
   top: 10px !important;
   right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
   width: auto !important;
   max-width: 212px !important;
   padding: 5px 7px !important;
