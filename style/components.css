@@ -127,11 +127,11 @@ html[data-home-mode="play"] {
   --main-max-width: 600px;
   --focus-max-width: 600px;
   --quest-max-width: 540px;
-  --tile-size: 62px;
+  --tile-size: 72px;
   --playfield-width: 336px;
   --key-h: 48px;
   --key-min-w: 32px;
-  --gap-key: 6px;
+  --gap-key: 9px;
   --gap-tile: 6px;
   --play-header-h: 54px;
 }
@@ -5722,7 +5722,7 @@ html[data-key-style="bubble"] .key {
 }
 
 html[data-home-mode="play"] .key {
-  border-radius: var(--radius-sm);
+  border-radius: 5px;
   border-color: var(--wq-play-key-border);
   background: var(--wq-play-key-bg);
   color: var(--wq-play-key-color);
@@ -5733,7 +5733,7 @@ html[data-home-mode="play"] .key {
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
-  padding: 3px 5px;
+  padding: 6px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
