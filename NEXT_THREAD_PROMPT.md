@@ -2,7 +2,7 @@
 
 ## What is Cornerstone MTSS?
 
-**Cornerstone MTSS** is a comprehensive specialist-facing instructional support platform designed for intervention teachers, EAL/support teachers, and literacy specialists managing student literacy development across K-8.
+**Cornerstone MTSS** is a comprehensive specialist-facing instructional support platform designed for intervention teachers, EAL/support teachers, and literacy specialists managing student literacy development across K-12 (ages 5-18).
 
 ### The Problem It Solves
 - Intervention teachers and specialists need a way to **diagnose literacy gaps quickly** (phonics, fluency, comprehension, etc.)
@@ -50,7 +50,7 @@ Behind the scenes:
 - **Academically credible** — Built on Science of Reading principles (phonics-first, systematic instruction)
 - **Visually alive without noisy** — Color and motion used intentionally, not overwhelmingly
 - **Accessible & EAL-friendly** — Clear language, high contrast, keyboard-navigable
-- **K-8 respectable** — Works for kindergarteners and 8th graders without feeling juvenile
+- **K-12 respectable** — Works for kindergarteners and high schoolers without feeling juvenile or patronizing
 
 ---
 
