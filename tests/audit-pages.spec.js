@@ -18,8 +18,7 @@ const PAGES = [
   { slug: 'precision-play', url: 'precision-play.html' },
   { slug: 'reading-lab', url: 'reading-lab.html' },
   { slug: 'sentence-surgery', url: 'sentence-surgery.html' },
-  { slug: 'reports', url: 'reports.html' },
-  { slug: 'admin-dashboard', url: 'admin-dashboard.html' }
+  { slug: 'reports', url: 'reports.html' }
 ];
 
 const OUT_DIR = path.resolve('.artifacts', 'ui-audit', 'screenshots');

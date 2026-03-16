@@ -461,7 +461,7 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── MATRIX ── Electric green on deep green. INTENTIONALLY high contrast.
    Dark forest green page — the dark IS the brand here. Mint keys readable. */
 [data-theme="matrix"] {
-  --page-bg:      #173126;
+  --page-bg:      #1a3a2e;
   --page-bg2:     #102319;
   --plate-bg:     rgba(65,175,118,0.08);
   --plate-border: rgba(82,217,152,0.36);
@@ -1121,6 +1121,88 @@ html[data-home-mode="play"][data-theme="seahawks"] {
   --wq-play-vowel-shadow: #b07bff;
 }
 
+/* ── FOREST ── soft sage studio, natural green ───────────── */
+[data-theme="forest"] {
+  --page-bg:      #d9eee2;
+  --page-bg2:     #aed4bc;
+  --plate-bg:     rgba(30,110,66,0.09);
+  --plate-border: rgba(40,130,80,0.26);
+  --tile-face:    linear-gradient(160deg, #f4fbf6 0%, #e6f4eb 100%);
+  --tile-border:  #5aaa78;
+  --tile-text:    #0d2c1a;
+  --tile-shadow:  0 3px 0 #3d7a56, 0 1px 4px rgba(16,74,44,0.18);
+  --tile-filled-border: #2ea85e;
+  --key-bg:       #c8e4d4;
+  --key-text:     #0d2c1a;
+  --key-shadow:   0 3px 0 #3c7552, 0 1px 3px rgba(14,70,40,0.16);
+  --key-hover:    #dcf0e4;
+  --vowel-accent: #1a8fa0;
+  --brand:        #1e7a42;
+  --brand-dk:     #165e32;
+  --brand-text:   #ffffff;
+  --accent:       #e89238;
+  --header-bg:    linear-gradient(90deg, #196838 0%, #247a44 100%);
+  --header-border: rgba(190,238,210,0.42);
+  --wq-play-header-top-bg: var(--header-bg);
+  --focusbar-bg:  rgba(198,232,212,0.90);
+  --panel-bg:     #edf8f1;
+  --panel-border: rgba(28,110,68,0.18);
+  --panel-shadow: 0 8px 32px rgba(16,60,36,0.16);
+  --theme-text:         #0d2c1a;
+  --theme-text-muted:   #3a6e50;
+  --modal-bg:     #f0f9f4;
+  --fun-bg:       #d4ece0;
+  --fun-text:     #1a5a34;
+  --fun-border:   #80c4a4;
+  --theme-backdrop:
+    radial-gradient(circle at 18% 8%, rgba(46,168,94,0.16), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(232,146,56,0.10), transparent 18%),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 12px),
+    linear-gradient(180deg, #d9eee2, #aed4bc);
+  --wq-play-vowel-shadow: #22a8b4;
+}
+
+/* ── CLASSIC ── warm parchment, storybook reading nook ────── */
+[data-theme="classic"] {
+  --page-bg:      #f4edd6;
+  --page-bg2:     #e2d0af;
+  --plate-bg:     rgba(100,70,24,0.08);
+  --plate-border: rgba(120,86,32,0.24);
+  --tile-face:    linear-gradient(160deg, #fffef8 0%, #f8f2e4 100%);
+  --tile-border:  #c4a87a;
+  --tile-text:    #2c1c08;
+  --tile-shadow:  0 3px 0 #9e7c48, 0 1px 4px rgba(80,50,10,0.16);
+  --tile-filled-border: #b68228;
+  --key-bg:       #ede0c4;
+  --key-text:     #2c1c08;
+  --key-shadow:   0 3px 0 #9e7a46, 0 1px 3px rgba(76,48,8,0.14);
+  --key-hover:    #f5ead4;
+  --vowel-accent: #6878b4;
+  --brand:        #7a4c14;
+  --brand-dk:     #5c380e;
+  --brand-text:   #ffffff;
+  --accent:       #c28020;
+  --header-bg:    linear-gradient(90deg, #5e380e 0%, #7a4c14 100%);
+  --header-border: rgba(218,188,136,0.40);
+  --wq-play-header-top-bg: var(--header-bg);
+  --focusbar-bg:  rgba(238,224,196,0.92);
+  --panel-bg:     #fdf9f0;
+  --panel-border: rgba(120,86,32,0.14);
+  --panel-shadow: 0 8px 32px rgba(80,50,10,0.16);
+  --theme-text:         #2c1c08;
+  --theme-text-muted:   #7a5c38;
+  --modal-bg:     #fdfaf2;
+  --fun-bg:       #f0e4c8;
+  --fun-text:     #4a2c0c;
+  --fun-border:   #c4a274;
+  --theme-backdrop:
+    radial-gradient(circle at 18% 8%, rgba(194,128,32,0.14), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(104,120,180,0.10), transparent 18%),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 14px),
+    linear-gradient(180deg, #f4edd6, #e2d0af);
+  --wq-play-vowel-shadow: #7888c4;
+}
+
 [data-theme] {
   --text: var(--theme-text, var(--text-primary));
   --text-muted: var(--theme-text-muted, var(--text-secondary));
@@ -1151,7 +1233,7 @@ html[data-home-mode="play"][data-theme="seahawks"] {
   --theme-backdrop:
     radial-gradient(circle at 14% 8%, rgba(152,242,143,0.16), transparent 28%),
     repeating-linear-gradient(180deg, rgba(152,242,143,0.05) 0 2px, transparent 2px 8px),
-    linear-gradient(180deg, #173126, #102319);
+    linear-gradient(180deg, #1a3a2e, #102319);
 }
 
 .wordquest-root.theme-ironman {

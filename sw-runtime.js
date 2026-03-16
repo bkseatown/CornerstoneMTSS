@@ -26,7 +26,6 @@ const CORE_FILES = [
   './writing-studio.html',
   './numeracy.html',
   './literacy.html',
-  './admin-dashboard.html',
   './activities/decoding-diagnostic.html',
   './sw.js',
   './sw-runtime.js'

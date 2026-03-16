@@ -211,9 +211,6 @@
     if (path.endsWith("teacher-dashboard.html") || path.endsWith("reports.html")) {
       checks.mounts.teacherDashboard = has("td-root") && has("td-groups");
     }
-    if (path.endsWith("admin-dashboard.html")) {
-      checks.mounts.adminDashboard = has("admin-root") && has("admin-class-bars");
-    }
     if (path.endsWith("paragraph-builder.html")) {
       checks.mounts.paragraphBuilder = has("pb-root") && has("pb-metrics");
     }

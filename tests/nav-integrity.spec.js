@@ -23,8 +23,7 @@ test.describe('Navigation integrity', () => {
       { path: '/sentence-surgery.html', marker: '.ss-container' },
       { path: '/activities/decoding-diagnostic.html', marker: 'body' },
       { path: '/writing-studio.html', marker: 'body' },
-      { path: '/numeracy.html', marker: 'body' },
-      { path: '/admin-dashboard.html', marker: 'body' }
+      { path: '/numeracy.html', marker: 'body' }
     ];
 
     for (const route of routes) {

@@ -9,7 +9,6 @@ const HTML_PATHS = [
   path.join(ROOT, 'index.html'),
   path.join(ROOT, 'reports.html'),
   path.join(ROOT, 'teacher-hub-v2.html'),
-  path.join(ROOT, 'cornerstone-mtss.html'),
   path.join(ROOT, 'word-quest.html')
 ];
 const CHECK_FILES = [
@@ -39,7 +38,18 @@ const ALLOWED_DYNAMIC_IDS = new Set([
   'cs-demo-toast',
   'cs-demo-toast-bar',
   'cs-demo-toast-text',
-  'csHeaderTitleCenter'
+  'csHeaderTitleCenter',
+  // Dynamically injected by app.js into the teacher panel / share surface at runtime.
+  // All references use optional chaining so absence is safe; tracked here to avoid
+  // false-positive dead-hook failures after cornerstone-mtss.html was removed.
+  'first-run-mode-help',
+  'play-style-toggle',
+  's-starter-words',
+  'teacher-open-reading-lab-btn',
+  'teacher-open-sentence-surgery-btn',
+  'teacher-open-writing-studio-btn',
+  'wq-share-bundle-btn',
+  'wq-share-result-btn'
 ]);
 
 const SELECTOR_PATTERNS = [
