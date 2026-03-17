@@ -117,10 +117,10 @@
 .th2-list {
   flex: 1;
   overflow-y: auto;
-  padding: 6px 6px;
+  padding: 4px 4px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .th2-list-empty {
@@ -195,10 +195,10 @@
 .th2-block-card {
   width: 100%;
   display: block;
-  padding: 10px 12px;
+  padding: 6px 8px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: 8px;
   text-align: left;
   cursor: pointer;
   font-family: inherit;
@@ -234,19 +234,19 @@
 .th2-block-card-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .th2-block-card-time {
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
 
 .th2-block-card-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -255,7 +255,7 @@
 }
 
 .th2-block-card-meta {
-  font-size: 11.5px;
+  font-size: 10.5px;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
