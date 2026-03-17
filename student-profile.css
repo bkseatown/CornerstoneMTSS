@@ -358,3 +358,113 @@ body.sp-page {
       "team";
   }
 }
+
+/* ─── VISUAL HIERARCHY & BREATHING ROOM ENHANCEMENTS ─── */
+
+.sp-panel {
+  padding: 14px 16px;
+  gap: 8px;
+}
+
+.sp-profile-grid {
+  gap: 8px;
+}
+
+.sp-hero {
+  padding: 16px 18px;
+}
+
+.sp-header {
+  padding: 10px 14px;
+  gap: 14px;
+}
+
+.sp-list {
+  gap: 8px;
+}
+
+.sp-plan-links {
+  gap: 8px;
+}
+
+.sp-chip-row {
+  gap: 8px;
+}
+
+/* Enhanced button styling */
+.sp-btn {
+  padding: 0 16px;
+  min-height: 36px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 160ms ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.sp-btn:hover,
+.sp-btn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sp-btn-primary {
+  background: var(--accent, #2b5da8);
+  color: white;
+  border-color: var(--accent, #2b5da8);
+  font-weight: 800;
+}
+
+.sp-btn-primary:hover,
+.sp-btn-primary:focus-visible {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 110%, white 0%);
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 110%, white 0%);
+}
+
+/* Better section titles */
+.sp-section-title {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* List item improvements */
+.sp-list-item {
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: background 160ms ease;
+}
+
+.sp-list-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.sp-list-item strong {
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Header meta styling */
+.sp-header-meta {
+  padding: 2px 0;
+}
+
+.sp-header-meta strong {
+  margin-bottom: 2px;
+}
+
+/* Responsive improvements */
+@media (max-width: 1180px) {
+  .sp-panel {
+    padding: 12px 14px;
+  }
+  
+  .sp-header {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+}

@@ -334,3 +334,140 @@ body.cm-page {
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── STREAMLINED VISUAL HIERARCHY ENHANCEMENTS ─── */
+
+.cm-panel {
+  padding: 14px 16px;
+  gap: 8px;
+}
+
+.cm-header {
+  padding: 12px 16px;
+  gap: 14px;
+}
+
+.cm-top-grid {
+  gap: 8px;
+}
+
+.cm-main-grid {
+  gap: 8px;
+}
+
+/* Enhanced action/due strip items */
+.cm-due-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cm-status-pill {
+  padding: 8px 12px;
+  min-height: 38px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 160ms ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cm-status-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cm-status-pill[data-tone="urgent"] {
+  background: linear-gradient(135deg, rgba(227, 135, 107, 0.22), rgba(227, 135, 107, 0.12));
+  border-color: rgba(227, 135, 107, 0.32);
+  font-weight: 800;
+}
+
+.cm-status-pill[data-tone="watch"] {
+  background: linear-gradient(135deg, rgba(241, 210, 124, 0.26), rgba(241, 210, 124, 0.14));
+  border-color: rgba(241, 210, 124, 0.36);
+}
+
+.cm-status-pill[data-tone="steady"] {
+  background: linear-gradient(135deg, rgba(100, 200, 150, 0.20), rgba(100, 200, 150, 0.10));
+  border-color: rgba(100, 200, 150, 0.30);
+}
+
+/* Task and doc cards */
+.cm-task-card,
+.cm-doc-card {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 160ms ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cm-task-card:hover,
+.cm-doc-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.cm-doc-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Chip improvements */
+.cm-chip-row {
+  gap: 8px;
+}
+
+.cm-chip {
+  padding: 0 10px;
+  min-height: 28px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 120ms ease;
+}
+
+.cm-chip:hover {
+  background: rgba(244, 247, 252, 1);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Better section layout */
+.cm-section-head {
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 4px;
+}
+
+/* Sidebar styling */
+.cm-sidebar {
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-sidebar .cm-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Enhanced responsive */
+@media (max-width: 1180px) {
+  .cm-header {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .cm-panel {
+    padding: 12px 14px;
+  }
+}
