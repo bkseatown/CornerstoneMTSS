@@ -132,6 +132,15 @@
   text-align: center;
 }
 
+/* Hide empty list status messages completely */
+.th2-list-empty.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* Student item */
 
 .th2-student {
