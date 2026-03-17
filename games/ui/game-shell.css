@@ -31,9 +31,10 @@
 
 .cg-brand-copy h1 {
   margin: 0;
-  font-size: 32px;
-  line-height: 1;
+  font-size: 36px;
+  line-height: 1.1;
   letter-spacing: -0.02em;
+  font-weight: 800;
 }
 
 .cg-brand-copy p {
@@ -168,18 +169,18 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
 }
 
 .cg-gallery-hero__copy > p:last-of-type {
-  margin-top: 8px;
+  margin-top: 12px;
   max-width: 42ch;
   color: var(--cg-reading-muted);
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .cg-gallery-hero__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .cg-gallery-hero__panel {
@@ -192,11 +193,11 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
 }
 
 .cg-gallery-hero__panel-kicker {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--cg-reading-muted);
+  color: var(--cg-primary);
 }
 
 .cg-gallery-hero__panel strong {
@@ -324,13 +325,14 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
 }
 
 .cg-game-card {
-  padding: 16px 18px;
+  padding: 20px 22px;
   border: 1px solid var(--cg-border);
   border-radius: var(--cg-radius-xl);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  background: var(--cg-surface-soft);
+  box-shadow: var(--cg-shadow-soft);
+  background: var(--cg-panel);
   cursor: pointer;
   text-align: left;
+  transition: all 200ms ease;
 }
 
 .cg-game-card.is-active {
@@ -361,7 +363,15 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
   align-items: flex-start;
 }
 
-.cg-game-card h3,
+.cg-game-card h3 {
+  margin: 0 0 8px 0;
+  font-family: var(--cg-font-heading);
+  color: var(--cg-reading-ink);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .cg-main-card h2,
 .cg-main-card h3,
 .cg-rail-card h2,
