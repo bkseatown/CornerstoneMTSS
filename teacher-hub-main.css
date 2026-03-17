@@ -11,7 +11,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 32px 40px;
+  padding: 24px 32px;
+  background: linear-gradient(180deg, rgba(26, 45, 77, 0.98), rgba(18, 28, 48, 0.98));
 }
 
 /* ── Empty state ───────────────────────────────────────── */
@@ -122,9 +123,9 @@
   gap: 18px;
   padding: 22px 24px;
   border-radius: 22px;
-  background: rgba(251, 251, 252, 0.92);
-  border: 1px solid rgba(22, 29, 41, 0.07);
-  box-shadow: 0 16px 34px rgba(39, 51, 72, 0.08);
+  background: linear-gradient(180deg, rgba(237, 238, 243, 0.96), rgba(227, 230, 240, 0.96));
+  border: 1px solid rgba(160, 140, 110, 0.18);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
 }
 
 .th2-block-context-header__title {
@@ -169,9 +170,9 @@
   min-height: 116px;
   padding: 16px 18px;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(160, 140, 110, 0.14);
+  background: rgba(234, 236, 241, 0.72);
+  box-shadow: inset 0 1px 0 rgba(160, 140, 110, 0.04);
 }
 
 .th2-priority-signal__label {
@@ -200,8 +201,8 @@
 .th2-day-strip,
 .th2-active-context,
 .th2-quick-rail {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  background: linear-gradient(180deg, rgba(238, 240, 246, 0.88), rgba(228, 231, 240, 0.88));
+  border: 1px solid rgba(160, 140, 110, 0.2);
   border-radius: 22px;
   padding: 20px 22px;
   box-shadow: 0 16px 36px rgba(18, 28, 45, 0.08);
@@ -228,7 +229,7 @@
   padding: 16px;
   border: 1px solid rgba(148, 165, 192, 0.26);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(239,244,251,0.84));
+  background: linear-gradient(180deg, rgba(240, 242, 248, 0.92), rgba(230, 233, 243, 0.92));
   text-align: left;
   cursor: pointer;
   display: flex;
@@ -637,7 +638,7 @@
 .th2-secondary-card--lesson-nav {
   background:
     radial-gradient(circle at top right, rgba(86, 136, 216, 0.10), transparent 30%),
-    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,248,253,0.98));
+    linear-gradient(180deg, rgba(242, 244, 250, 0.96), rgba(232, 235, 244, 0.96));
 }
 
 .th2-secondary-card--lesson-nav .th2-today-sub {

@@ -5479,7 +5479,7 @@
       '<section class="th2-day-brief th2-day-brief--overview">',
       '  <p class="th2-section-label">Day overview</p>',
       '  <h2 class="th2-day-brief__title">What changes today</h2>',
-      '  <div class="th2-day-brief__summary-row"><p class="th2-day-brief__summary">See schedule shifts first, then open the clearest class move.</p><div class="th2-day-brief__microchips"><span>' + escapeHtml(String(totalBlocks)) + ' blocks</span></div></div>',
+      '  <div class="th2-day-brief__summary-row"><div class="th2-day-brief__microchips"><span>' + escapeHtml(String(totalBlocks)) + ' blocks</span></div></div>',
       (schedulePattern ? '<div class="th2-day-brief__pattern"><span class="th2-day-brief__pattern-label">Cycle</span><strong>' + escapeHtml(schedulePattern) + '</strong></div>' : ''),
       '  <div class="th2-day-brief__actions"><button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Google Calendar</button><a class="th2-inline-link" href="reports.html">Go to reports</a></div>',
       '  <div class="th2-day-overview__events">',
