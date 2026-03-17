@@ -10265,3 +10265,189 @@ html[data-home-mode="play"] .key-backspace-glyph {
 .celebrate-layer {
   z-index: var(--z-celebration);
 }
+
+/* ===== Week 2 Reveal Modal Restoration ===== */
+
+/* Confetti animation - Rain effect from top */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-10px) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(100px);
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  position: fixed;
+  pointer-events: none;
+  z-index: var(--z-celebration);
+}
+
+.confetti-piece.falling {
+  animation: confettiFall 2.5s ease-in forwards;
+}
+
+/* Reveal Card Animations - Multiple styles for variety */
+
+/* Style A: Flip reveal with 3D rotation */
+#end-modal.reveal-flip {
+  animation: revealFlip 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
+  perspective: 1000px;
+}
+
+@keyframes revealFlip {
+  0% {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+/* Style B: Slide up and fade */
+#end-modal.reveal-slide-fade {
+  animation: revealSlideFade 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes revealSlideFade {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Style C: Scale bloom with spring easing */
+#end-modal.reveal-scale-bloom {
+  animation: revealBloom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes revealBloom {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Style D: Vertical swipe reveal */
+#end-modal.reveal-swipe {
+  animation: revealSwipe 0.7s cubic-bezier(0.43, 0.13, 0.15, 0.96) both;
+}
+
+@keyframes revealSwipe {
+  0% {
+    clip-path: inset(100% 0 0 0);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* Phonics rule display below word */
+#modal-phonics-rule {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary, #5a7d8f);
+  font-style: italic;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+#modal-phonics-rule.hidden {
+  display: none;
+}
+
+/* Modal positioning for responsiveness */
+
+/* Mobile/Narrow view (<768px) - Modal appears above board */
+@media (max-width: 767px) {
+  #modal-overlay {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    justify-content: flex-end;
+    padding-bottom: 0;
+  }
+
+  #end-modal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 65vh;
+    max-width: none;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    overflow-y: auto;
+    margin: 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Ensure game board is visible above modal */
+  #play-shell {
+    z-index: calc(var(--z-modal) - 1);
+  }
+}
+
+/* Desktop/Wide view (≥768px) - Modal appears to the side */
+@media (min-width: 768px) {
+  #modal-overlay {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+  }
+
+  #play-shell {
+    grid-column: 1;
+    grid-row: 1;
+    z-index: 1;
+  }
+
+  #end-modal {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    width: 400px;
+    max-width: none;
+    max-height: 85vh;
+    align-self: flex-start;
+    margin-top: 0;
+  }
+}
+
+/* Click-out modal dismiss */
+#modal-overlay:not(.hidden) {
+  cursor: pointer;
+}
+
+#end-modal {
+  cursor: default;
+}
+
+/* Ensure modal-overlay click doesn't close when clicking modal */
+#end-modal,
+#modal-word,
+.audio-row,
+#play-again-btn {
+  pointer-events: auto;
+}

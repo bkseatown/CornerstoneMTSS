@@ -303,6 +303,41 @@ const WQUI = (() => {
     }
   }
 
+  // ─── Reveal Animation Cycling ──────────────────
+  const REVEAL_ANIMATIONS = ['flip', 'slide-fade', 'scale-bloom', 'swipe'];
+  let nextRevealAnimationIndex = 0;
+
+  function getNextRevealAnimation() {
+    const animation = REVEAL_ANIMATIONS[nextRevealAnimationIndex];
+    nextRevealAnimationIndex = (nextRevealAnimationIndex + 1) % REVEAL_ANIMATIONS.length;
+    return animation;
+  }
+
+  function playConfettiAnimation() {
+    if (!won) return; // Only for wins
+
+    const confettiCount = 50;
+    const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+
+    for (let i = 0; i < confettiCount; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece falling';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.top = '-10px';
+      piece.style.width = Math.random() * 8 + 4 + 'px';
+      piece.style.height = Math.random() * 8 + 4 + 'px';
+      piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      piece.style.opacity = Math.random() * 0.7 + 0.3;
+      piece.style.animationDelay = Math.random() * 0.2 + 's';
+      piece.style.animationDuration = (Math.random() * 0.8 + 2) + 's';
+
+      document.body.appendChild(piece);
+
+      setTimeout(() => piece.remove(), 3000);
+    }
+  }
+
   // ─── Modal ──────────────────────────────────────
   function showModal(state) {
     const { won, word, entry, guesses } = state;
@@ -354,10 +389,25 @@ const WQUI = (() => {
     _el('modal-next-step-title').textContent = nextStepTitle;
     _el('modal-next-step-copy').textContent = nextStepCopy;
 
+    // Populate word letters with reveal animation
     const wordEl = _el('modal-word');
     if (wordEl) {
       wordEl.innerHTML = word.toUpperCase().split('')
         .map((ch, i) => `<span style="--i:${i}">${ch}</span>`).join('');
+      // Remove animation classes to prepare for new animation
+      wordEl.classList.remove(...REVEAL_ANIMATIONS.map(a => `reveal-${a}`));
+    }
+
+    // Display phonics rule below word
+    const phonicsRuleEl = _el('modal-phonics-rule');
+    if (phonicsRuleEl) {
+      const phonicsRule = entry?.phonicsPattern || entry?.rule || '';
+      if (phonicsRule) {
+        phonicsRuleEl.textContent = phonicsRule;
+        phonicsRuleEl.classList.remove('hidden');
+      } else {
+        phonicsRuleEl.classList.add('hidden');
+      }
     }
 
     const sylEl = _el('modal-syllables');
@@ -386,10 +436,23 @@ const WQUI = (() => {
       funWrap.style.display = fun ? '' : 'none';
     }
 
+    // Remove old animation classes
+    _modal.classList.remove(...REVEAL_ANIMATIONS.map(a => `reveal-${a}`));
+
     _overlay.classList.remove('hidden');
     _modal.classList.remove('hidden');
     _modal.classList.toggle('win', won);
     _modal.classList.toggle('loss', !won);
+
+    // Add reveal animation
+    if (won) {
+      const animationStyle = getNextRevealAnimation();
+      _modal.classList.add(`reveal-${animationStyle}`);
+
+      // Play confetti animation after a short delay
+      setTimeout(() => playConfettiAnimation(), 200);
+    }
+
     window.dispatchEvent(new CustomEvent('wq:result-modal-open', {
       detail: {
         won: !!won
