@@ -1,0 +1,1748 @@
+/* THEME SYSTEM OVERRIDES — Dark/Forest/Seahawks Theme Specific Styles
+   Extracted from game-shell.css Phase 2
+   Contains: Per-theme color overrides, focus states, refinements */
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  border: 1px solid rgba(161, 178, 205, 0.34) !important;
+  background:
+    linear-gradient(180deg, rgba(246, 250, 255, 0.98), rgba(231, 239, 250, 0.96)) !important;
+  border-radius: 14px !important;
+  min-height: 66px !important;
+  max-height: 66px !important;
+  padding: 7px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3 {
+  font-size: 1.02rem !important;
+  font-weight: 800 !important;
+  color: #162746 !important;
+  margin: 0 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  font-size: 0.78rem !important;
+  line-height: 1.2 !important;
+  color: #4d5f7c !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  opacity: 0.74 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  min-height: 34px !important;
+  height: 34px !important;
+  border: 1px solid rgba(68, 121, 214, 0.28) !important;
+  box-shadow: 0 8px 16px rgba(46, 88, 164, 0.22) !important;
+}
+
+/* 2026-03-11 containment correction: preview motion must never spill or resize cards */
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  contain: layout paint style;
+  overflow: hidden !important;
+  grid-template-rows: auto auto auto auto 1fr auto !important;
+  transform: none;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview,
+body.game-platform-page[data-shell-view="gallery"] .preview-board {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 70px !important;
+  max-height: 70px !important;
+  height: 70px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview > * {
+  max-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing-track {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing {
+  gap: 5px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing-lane {
+  min-height: 28px;
+  padding: 4px 7px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-key {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 10px;
+}
+
+/* Keep hover animation transforms local and clipped in frame. */
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview * {
+  will-change: transform, opacity;
+}
+
+/* 2026-03-11 persuasion pass: richer card composition without layout drift */
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  padding: 11px !important;
+  gap: 8px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 76px !important;
+  max-height: 76px !important;
+  height: 76px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.86),
+    0 6px 12px rgba(33, 58, 96, 0.12);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  -webkit-line-clamp: 2 !important;
+  line-height: 1.24 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  font-size: 0.72rem !important;
+  color: #5a6c8a !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  min-height: 36px !important;
+  height: 36px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing-lane {
+  background: linear-gradient(90deg, rgba(255,255,255,0.96), rgba(237,244,252,0.96));
+  border: 1px solid rgba(160, 181, 212, 0.36);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-typing .cursor {
+  border-bottom-color: #2f69d5;
+  animation: cg-preview-cursor-blink 1s step-end infinite;
+}
+
+@keyframes cg-preview-cursor-blink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
+/* 2026-03-11 global viewport-fit system (dashboard/stage/course) */
+body.game-platform-page {
+  --page-top-gap: clamp(6px, 1.2vh, 14px);
+  --page-side-gap: clamp(8px, 1.2vw, 16px);
+  --page-bottom-gap: clamp(6px, 1.3vh, 14px);
+  --stage-header-height: clamp(44px, 7vh, 60px);
+  --stage-controls-gap: clamp(6px, 0.95vh, 10px);
+  --dashboard-hero-max: min(22vh, 190px);
+  --course-summary-max: min(28vh, 260px);
+}
+
+/* 2026-03-11 viewport-fit lock: dashboard/stage/course stabilization layer.
+   Intentionally placed last to beat legacy blocks without touching game engines. */
+body.game-platform-page {
+  --page-top-gap: clamp(6px, 1.1vh, 12px);
+  --page-side-gap: clamp(8px, 1vw, 14px);
+  --page-bottom-gap: clamp(6px, 1vh, 12px);
+  --stage-header-height: clamp(42px, 6.3vh, 54px);
+  --stage-controls-gap: clamp(5px, 0.8vh, 9px);
+  --dashboard-hero-max: min(16vh, 126px);
+  --course-summary-max: min(24vh, 220px);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-shell,
+body.game-platform-page[data-shell-view="gallery"] #cg-shell {
+  min-height: 100dvh;
+  height: auto;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-surface {
+  padding: var(--page-top-gap) var(--page-side-gap) var(--page-bottom-gap) !important;
+  gap: clamp(8px, 1vh, 12px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] main.cg-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  margin-bottom: 4px !important;
+  padding: 8px 10px 6px !important;
+  border-radius: 22px !important;
+  border: 1px solid color-mix(in oklab, var(--cg-border) 88%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--cg-surface-strong) 84%, #eef4fb 16%), color-mix(in oklab, var(--cg-surface) 88%, #dfe8f5 12%)) !important;
+  box-shadow: 0 10px 22px color-mix(in oklab, var(--cg-bg-deep, #0b1320) 10%, transparent) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand {
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-mark {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 8px 18px color-mix(in oklab, var(--cg-primary) 18%, transparent) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy .cg-kicker {
+  color: color-mix(in oklab, var(--cg-reading-muted) 86%, #50627f 14%) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
+  font-size: 1.24rem !important;
+  color: color-mix(in oklab, var(--cg-reading-ink) 94%, #1f3558 6%) !important;
+  text-shadow: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-widget,
+body.game-platform-page[data-shell-view="gallery"] .cg-pomo-tab {
+  display: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+body.game-platform-page[data-shell-view="gallery"] .games-grid {
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero {
+  gap: 10px !important;
+  margin-bottom: 4px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__copy,
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__panel {
+  padding: 12px 14px !important;
+  border-color: color-mix(in oklab, var(--cg-border) 92%, #c7d3e6 8%) !important;
+  box-shadow:
+    0 10px 20px color-mix(in oklab, var(--cg-bg-deep, #0b1320) 8%, transparent),
+    inset 0 1px 0 color-mix(in oklab, #ffffff 65%, transparent) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__copy h2 {
+  font-size: clamp(1.45rem, 2.5vw, 1.95rem) !important;
+  max-width: 10ch !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__copy > p:last-of-type,
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__panel p {
+  font-size: 0.88rem !important;
+  line-height: 1.3 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__chips {
+  margin-top: 8px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat {
+  display: grid;
+  gap: 4px;
+  padding: 10px 10px 9px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at top right, rgba(141, 183, 233, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.9), rgba(244,247,252,0.92));
+  border: 1px solid color-mix(in oklab, var(--cg-border) 88%, #d7e2f0 12%);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat span {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cg-reading-muted);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat strong {
+  font-size: 0.96rem;
+  line-height: 1.1;
+  color: var(--cg-reading-ink);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat p {
+  margin: 0;
+  font-size: 0.76rem !important;
+  line-height: 1.28 !important;
+  color: var(--cg-reading-muted) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  min-height: 232px !important;
+  max-height: 248px !important;
+  padding: 10px !important;
+  gap: 6px !important;
+  contain: layout paint !important;
+  overflow: hidden !important;
+  transform: translateY(0) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+  height: fit-content !important;
+  top: 10px !important;
+  right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  max-width: 212px !important;
+  padding: 5px 7px !important;
+  gap: 4px !important;
+  justify-content: flex-start !important;
+  overflow-x: visible !important;
+  overflow-y: hidden !important;
+  border-radius: 18px !important;
+  scrollbar-width: none !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker::-webkit-scrollbar {
+  display: none;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-theme-swatch {
+  flex: 0 0 auto !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  height: 72px !important;
+  min-height: 72px !important;
+  max-height: 72px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview > * {
+  max-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  -webkit-line-clamp: 1 !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play {
+  margin-top: auto !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-shell {
+  padding: var(--page-top-gap) var(--page-side-gap) var(--page-bottom-gap) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  min-height: calc(100dvh - var(--page-top-gap) - var(--page-bottom-gap));
+  gap: var(--stage-controls-gap) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-page {
+  min-height: 0 !important;
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-course-hero {
+  max-height: var(--course-summary-max) !important;
+}
+
+@media (max-height: 860px) and (min-width: 980px) {
+  body.game-platform-page {
+    --dashboard-hero-max: min(14vh, 108px);
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+    margin-bottom: 2px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "filters"
+      "music"
+      "hint" !important;
+    max-height: none !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+    min-height: 214px !important;
+    max-height: 232px !important;
+    padding: 8px !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+  }
+}
+
+/* 2026-03-11 Word Clue rebuild: distinct round-based speaking stage */
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-play-shell {
+  display: block;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-shell {
+  display: grid;
+  gap: 10px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(129, 147, 179, 0.34);
+  background: linear-gradient(180deg, rgba(245, 249, 255, 0.98), rgba(233, 241, 251, 0.98));
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-header h2 {
+  margin: 2px 0 4px;
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  line-height: 1.1;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-header p {
+  margin: 0;
+  color: #4a5f80;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-state[data-state="live"] {
+  background: rgba(227, 104, 76, 0.18);
+  color: #9c2f15;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-state[data-state="reveal"] {
+  background: rgba(61, 128, 78, 0.17);
+  color: #145730;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-stage {
+  display: grid;
+  grid-template-columns: 1.55fr 0.78fr;
+  gap: 10px;
+  min-height: min(72vh, 680px);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-main,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-controls {
+  border-radius: 18px;
+  border: 1px solid rgba(126, 147, 183, 0.34);
+  background: linear-gradient(180deg, rgba(252, 254, 255, 0.98), rgba(239, 246, 255, 0.98));
+  box-shadow: 0 14px 26px rgba(21, 40, 68, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-main {
+  padding: clamp(10px, 1.9vh, 16px);
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-brandbar--play .cg-brand-copy h1,
+body.game-platform-page[data-shell-view="play"] .cg-brandbar--play .cg-brand-copy .cg-display {
+  color: #f6fbff !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.24);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-brandbar--play .cg-brand-copy p {
+  color: rgba(225, 236, 255, 0.92) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-brandbar--play .cg-kicker {
+  color: rgba(198, 215, 241, 0.86) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-variants {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-variant {
+  border: 1px solid rgba(141, 161, 197, 0.44);
+  background: rgba(242, 247, 255, 0.84);
+  color: #28466f;
+  border-radius: 10px;
+  min-height: 34px;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-variant.is-active {
+  border-color: rgba(80, 124, 195, 0.58);
+  background: linear-gradient(180deg, rgba(230, 240, 255, 0.95), rgba(213, 228, 249, 0.95));
+  color: #17365f;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-style-note {
+  margin-top: -2px;
+  border-radius: 10px;
+  border: 1px solid rgba(143, 164, 196, 0.3);
+  background: rgba(236, 244, 255, 0.74);
+  padding: 7px 10px;
+  font-size: 0.86rem;
+  color: #35557f;
+  font-weight: 600;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-card {
+  border-radius: 18px;
+  padding: clamp(12px, 2vh, 18px);
+  background: linear-gradient(165deg, rgba(28, 49, 84, 0.96), rgba(41, 72, 123, 0.94));
+  color: #f4f8ff;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-label {
+  margin: 0 0 8px;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target {
+  font-weight: 900;
+  font-size: clamp(2.15rem, 5vw, 4.1rem);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-category {
+  margin-top: 8px;
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.18);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-image-zone,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-draw-zone {
+  margin-top: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(181, 204, 240, 0.36);
+  background: rgba(255,255,255,0.12);
+  min-height: 92px;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 8px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-image {
+  width: 100%;
+  max-height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-image-placeholder,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-draw-zone {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(233, 242, 255, 0.92);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-prompt {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: #253e66;
+  background: rgba(232, 241, 255, 0.84);
+  border: 1px solid rgba(137, 162, 203, 0.34);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-image-placeholder {
+  width: 100%;
+  min-height: 116px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-visual-art {
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  line-height: 1;
+  filter: drop-shadow(0 10px 18px rgba(9, 22, 40, 0.18));
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-visual-label {
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(232, 243, 255, 0.92);
+}
+
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-blocked-empty {
+  grid-template-columns: 22px 1fr;
+  text-transform: none;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-blocked-empty .cg-word-clue-blocked-word {
+  text-transform: none;
+  font-size: 0.86rem;
+  line-height: 1.28;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-controls {
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-setup,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-live-controls {
+  display: grid;
+  gap: 8px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(130, 150, 186, 0.34);
+  background: rgba(238, 244, 253, 0.88);
+  padding: 8px 10px;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-timer.is-live {
+  border-color: rgba(209, 102, 70, 0.56);
+  background: linear-gradient(180deg, rgba(255, 239, 233, 0.96), rgba(255, 222, 212, 0.96));
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-timer[data-untimed="true"] {
+  border-color: rgba(131, 150, 182, 0.34);
+  background: rgba(235, 243, 255, 0.72);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  background: rgba(229, 240, 255, 0.84);
+  border: 1px solid rgba(112, 136, 176, 0.36);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-result[data-result="gotit"] {
+  background: rgba(222, 245, 231, 0.92);
+  border-color: rgba(80, 156, 104, 0.42);
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-reveal-note {
+  border-radius: 10px;
+  border: 1px solid rgba(132, 151, 181, 0.34);
+  background: rgba(241, 247, 255, 0.88);
+  padding: 8px 10px;
+  color: #335278;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 1100px) {
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-stage {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-variants {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 2026-03-12 shared game-stage viewport budget system */
+body.game-platform-page {
+  --cg-vh-budget: 100dvh;
+  --cg-safe-edge: clamp(12px, 1.4vw, 22px);
+  --cg-shell-pad-inline: var(--cg-safe-edge);
+  --cg-shell-pad-top: clamp(6px, 1vh, 12px);
+  --cg-shell-pad-bottom: max(6px, env(safe-area-inset-bottom));
+  --cg-top-chrome-budget: clamp(44px, 6.8vh, 58px);
+  --cg-bottom-controls-budget: clamp(116px, 17vh, 170px);
+  --cg-stage-gap-budget: clamp(6px, 0.95vh, 10px);
+}
+
+body.game-platform-page[data-shell-view="play"],
+body.game-platform-page[data-shell-view="play"] main.cg-shell,
+body.game-platform-page[data-shell-view="play"] #cg-shell {
+  min-height: var(--cg-vh-budget);
+}
+
+body.game-platform-page[data-shell-view="play"] main.cg-shell {
+  padding: var(--cg-shell-pad-top) var(--cg-shell-pad-inline) var(--cg-shell-pad-bottom) !important;
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="play"] #cg-shell {
+  overflow: hidden;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-brandbar {
+  min-height: var(--cg-top-chrome-budget);
+  margin-bottom: clamp(4px, 0.7vh, 8px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  min-height: calc(var(--cg-vh-budget) - var(--cg-shell-pad-top) - var(--cg-shell-pad-bottom) - var(--cg-top-chrome-budget));
+  gap: var(--cg-stage-gap-budget) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  padding: clamp(10px, 1.3vh, 16px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-meta {
+  margin-bottom: clamp(8px, 1.1vh, 12px);
+  gap: clamp(6px, 0.9vh, 10px);
+}
+
+@media (max-height: 860px) and (min-width: 980px) {
+  body.game-platform-page {
+    --cg-top-chrome-budget: clamp(38px, 5.9vh, 48px);
+    --cg-bottom-controls-budget: clamp(102px, 14.8vh, 144px);
+    --cg-stage-gap-budget: 6px;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-brand-copy h1 {
+    font-size: clamp(1.25rem, 2vw, 1.7rem);
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-brand-copy p {
+    margin-top: 2px;
+    line-height: 1.25;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
+    min-height: clamp(164px, 22vh, 198px);
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-card--portrait {
+    min-height: clamp(272px, 36vh, 356px);
+  }
+}
+
+@media (max-height: 760px) and (min-width: 980px) {
+  body.game-platform-page {
+    --cg-top-chrome-budget: clamp(34px, 5.2vh, 42px);
+    --cg-bottom-controls-budget: clamp(92px, 13.2vh, 128px);
+    --cg-stage-gap-budget: 5px;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+    padding: 8px;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-stage-head h2 {
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
+    min-height: clamp(150px, 20vh, 176px);
+    flex-basis: 164px;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage-grid {
+    grid-template-columns: minmax(240px, 420px) minmax(154px, 198px);
+    gap: 8px;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-card--portrait {
+    min-height: clamp(248px, 33vh, 316px);
+    gap: 5px;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2 .cg-action {
+    min-height: var(--btn-height-sm);
+    font-size: 0.78rem;
+  }
+}
+
+/* 2026-03-12 hard-lock: one-screen fit for all play stages at 100% zoom */
+body.game-platform-page[data-shell-view="play"] {
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="play"] main.cg-shell {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  padding-top: clamp(6px, 0.8vh, 12px) !important;
+  padding-bottom: max(4px, env(safe-area-inset-bottom)) !important;
+  padding-inline: var(--cg-shell-pad-inline) !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"] #cg-shell {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-brandbar {
+  margin-bottom: clamp(2px, 0.5vh, 6px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  min-height: 0 !important;
+  height: calc(100dvh - var(--cg-top-chrome-budget, 56px) - clamp(10px, 1.3vh, 18px)) !important;
+  max-height: calc(100dvh - var(--cg-top-chrome-budget, 56px) - clamp(10px, 1.3vh, 18px)) !important;
+  overflow: hidden !important;
+  gap: clamp(4px, 0.7vh, 8px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell,
+body.game-platform-page[data-shell-view="play"] .cg-stage-board {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--controls,
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--guide {
+  max-height: min(36dvh, 320px) !important;
+  overflow: auto !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime {
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  gap: clamp(6px, 0.8vh, 10px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-app-shell.is-runtime {
+  min-height: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-app-shell.is-hub {
+  min-height: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-appbar {
+  min-height: 0 !important;
+  padding: clamp(8px, 1vh, 10px) clamp(14px, 1.6vw, 18px) !important;
+  gap: clamp(10px, 1vw, 14px) !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement {
+  gap: 12px !important;
+  padding: 16px 16px 14px !important;
+  background: linear-gradient(180deg, rgba(229, 238, 251, 1), rgba(241, 246, 252, 1)) !important;
+  border-color: rgba(143, 169, 208, 0.46) !important;
+  box-shadow: 0 14px 24px rgba(28, 49, 84, 0.08) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-unit-section__head {
+  align-items: center !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-unit-section__head h3 {
+  font-size: clamp(20px, 2.3vw, 28px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-unit-section__head p {
+  max-width: 38ch !important;
+  font-size: 13px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-unit-section__count {
+  padding: 8px 12px !important;
+  border-radius: var(--radius-full) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(154, 177, 212, 0.34) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-lesson-grid--placement {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-lesson-tile {
+  min-height: 154px !important;
+  padding: 12px 12px 10px !important;
+  border-top-width: 5px !important;
+  box-shadow: 0 10px 18px rgba(22, 40, 68, 0.08) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-lesson-glyph {
+  min-height: 40px !important;
+  font-size: 30px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-lesson-number {
+  font-size: 18px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-lesson-tile strong {
+  font-size: 17px !important;
+  line-height: 1.08 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section--placement .cg-typing-lesson-tile small {
+  font-size: 13px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser {
+  gap: 10px !important;
+  padding: 16px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser .cg-typing-lesson-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser .cg-typing-lesson-tile {
+  min-height: 146px !important;
+  padding: 12px 12px 10px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser .cg-typing-lesson-glyph {
+  min-height: 36px !important;
+  font-size: 28px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser .cg-typing-unit-section__handoff,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-unit-section.is-teaser .cg-typing-unit-section__more {
+  font-size: 12px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-page-wrap {
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: clamp(8px, 1vh, 12px) !important;
+  padding: clamp(10px, 1.1vh, 14px) clamp(18px, 2vw, 24px) max(8px, env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-progress-strip {
+  gap: 12px !important;
+  padding: 6px 10px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-page-shell,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-stage-board--typing {
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: auto !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-page {
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-main {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: clamp(8px, 1vh, 12px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-card,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-panel {
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: clamp(8px, 1vh, 12px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime {
+  grid-template-columns: minmax(0, 1fr) clamp(200px, 17vw, 224px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-card--launch,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-card--lesson {
+  gap: clamp(8px, 1vh, 12px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-intro,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-card__head {
+  gap: clamp(10px, 1vw, 14px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-sidebar {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide {
+  overflow: auto !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-head h4 {
+  font-size: 15px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-row {
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-row--2 {
+  margin-left: 18px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-row--3 {
+  margin-left: 36px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-key {
+  min-width: 46px !important;
+  min-height: 48px !important;
+  padding: 5px 7px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-key strong {
+  font-size: 14px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-guide-key.is-space {
+  min-width: 240px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-sidebar {
+  overflow: auto !important;
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-panel {
+  gap: 10px !important;
+}
+
+@media (max-width: 980px) {
+  .cg-typing-course-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .cg-typing-course-start__head p,
+  .cg-typing-course-hero__subtitle {
+    max-width: none;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 2026-03-13 Typing Quest visual identity refinement */
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-preview__track {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-preview__track span {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 22px !important;
+  padding: 0 8px !important;
+  border-radius: var(--radius-full) !important;
+  background: rgba(233, 242, 255, 0.12) !important;
+  color: rgba(235, 243, 255, 0.74) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome {
+  background:
+    radial-gradient(circle at top right, rgba(110, 169, 255, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(236, 243, 251, 0.98), rgba(227, 236, 247, 0.98)) !important;
+  box-shadow: 0 12px 24px rgba(18, 31, 51, 0.08) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start--welcome {
+  box-shadow: 0 10px 18px rgba(9, 22, 41, 0.16) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__action {
+  background: linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.08)) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-preview {
+  border-radius: 20px !important;
+  background: linear-gradient(180deg, rgba(8, 20, 38, 0.38), rgba(13, 30, 54, 0.24)) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-lane {
+  box-shadow: inset 0 -3px 0 rgba(136, 159, 195, 0.16) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(243, 247, 252, 0.82)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-ribbon {
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-ribbon span {
+  border-radius: var(--radius-full) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-jump-chip {
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(239,244,250,0.95)) !important;
+  box-shadow: 0 6px 12px rgba(22, 35, 54, 0.06) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 8px 12px !important;
+  border-radius: var(--radius-lg) !important;
+  background: linear-gradient(180deg, rgba(242, 247, 252, 0.96), rgba(232, 240, 249, 0.96)) !important;
+  border: 1px solid rgba(172, 190, 214, 0.34) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__lane {
+  display: grid !important;
+  gap: 2px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__label {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: #6a7f99 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__lane strong {
+  font-size: 13px !important;
+  color: #233b59 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__dots {
+  display: flex !important;
+  gap: 6px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__dots span {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: var(--radius-full) !important;
+  background: rgba(149, 170, 197, 0.36) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-meter__dots span.is-on {
+  background: linear-gradient(180deg, #4e82d9, #74b0ff) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-stat {
+  padding: 10px 0 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-stat strong {
+  font-size: 24px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome {
+  grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr) !important;
+  gap: 14px !important;
+  padding: 14px !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255, 189, 89, 0.18), transparent 24%),
+    radial-gradient(circle at 92% 14%, rgba(89, 154, 255, 0.18), transparent 30%),
+    linear-gradient(180deg, rgba(238, 244, 251, 0.98), rgba(226, 235, 246, 0.98)) !important;
+  border-color: rgba(141, 166, 196, 0.42) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start--welcome {
+  gap: 12px !important;
+  padding: 16px !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at top left, rgba(113, 170, 255, 0.18), transparent 30%),
+    linear-gradient(160deg, #10233c 0%, #17304c 52%, #214668 100%) !important;
+  box-shadow: 0 18px 36px rgba(13, 25, 43, 0.2) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__head h2 {
+  font-size: clamp(30px, 3.2vw, 44px) !important;
+  max-width: 11ch !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__head p:last-child {
+  max-width: 34ch !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  color: rgba(234, 241, 249, 0.82) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__action {
+  gap: 10px !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.09)) !important;
+  border: 1px solid rgba(204, 224, 255, 0.14) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__target {
+  font-size: clamp(34px, 4vw, 48px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-start__meta {
+  font-size: 13px !important;
+  color: rgba(233, 241, 252, 0.8) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-preview {
+  gap: 8px !important;
+  padding: 12px !important;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(180deg, rgba(8, 20, 38, 0.5), rgba(12, 27, 48, 0.28)) !important;
+  border: 1px solid rgba(197, 217, 248, 0.12) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-lane {
+  min-height: 48px !important;
+  border-radius: var(--radius-lg) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(240, 246, 255, 0.02)) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-coach {
+  display: grid !important;
+  gap: 2px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-coach span {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: rgba(191, 212, 240, 0.76) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-welcome-coach strong {
+  color: #f4f8ff !important;
+  font-size: 14px !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview--journey {
+  gap: 10px !important;
+  padding: 16px !important;
+  border-radius: 24px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(243, 247, 252, 0.92)) !important;
+  border: 1px solid rgba(182, 198, 218, 0.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-overview__head h3 {
+  font-size: clamp(1.35rem, 2vw, 1.9rem) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-ribbon span {
+  min-height: 32px !important;
+  padding-inline: 10px !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(238, 244, 250, 0.92)) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-plan-progress {
+  height: 12px !important;
+  background: rgba(194, 208, 224, 0.42) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-plan-progress-fill {
+  background: linear-gradient(90deg, #63a4ff 0%, #6dc7a0 100%) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-jump-chip {
+  min-height: 64px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(192, 205, 220, 0.52) !important;
+}
+
+@media (max-width: 1120px) {
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2 {
+  height: calc(100% - clamp(4px, 0.7vh, 8px)) !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  gap: clamp(4px, 0.55vh, 7px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-preview-portrait-deck {
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  padding-block: 0 !important;
+  position: relative !important;
+  z-index: 5 !important;
+  isolation: isolate !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
+  min-height: 150px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage-grid,
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-card {
+  min-height: 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-stage {
+  margin-top: clamp(2px, 0.45vh, 6px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-target-card--portrait {
+  min-height: clamp(210px, 25vh, 300px) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-controls {
+  margin-top: 0 !important;
+  gap: clamp(4px, 0.4vh, 6px) !important;
+  padding-bottom: max(2px, env(safe-area-inset-bottom)) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-word-clue-v2-action-row .cg-action {
+  min-height: 44px !important;
+  padding: 6px 10px !important;
+}
+
+@media (max-height: 800px) and (min-width: 980px) {
+  body.game-platform-page[data-shell-view="play"] .cg-brandbar {
+    min-height: 38px !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-card,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime-panel {
+    padding: 8px !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .wc-mini-card {
+    min-height: 138px !important;
+  }
+}
+
+/* 2026-03-13 minimized viewport contract: compress, stack, then scroll */
+@media (max-width: 1180px), (max-height: 820px) {
+  body.game-platform-page[data-shell-view="gallery"],
+  body.game-platform-page[data-shell-view="play"] {
+    overflow: auto !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-shell,
+  body.game-platform-page[data-shell-view="gallery"] #cg-shell,
+  body.game-platform-page[data-shell-view="gallery"] .cg-surface,
+  body.game-platform-page[data-shell-view="play"] main.cg-shell,
+  body.game-platform-page[data-shell-view="play"] #cg-shell,
+  body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    height: auto !important;
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: minmax(0, auto) !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-stage-shell,
+  body.game-platform-page[data-shell-view="play"] .cg-stage-board,
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--controls,
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--guide,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-app-shell.is-runtime,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-app-shell.is-hub,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-page-shell,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-stage-board--typing {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-course-welcome,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-runtime {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 780px), (max-height: 700px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid,
+  body.game-platform-page[data-shell-view="gallery"] .games-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"] main.cg-shell {
+    padding-inline: clamp(10px, 3vw, 16px) !important;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-play-shell,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-page-wrap {
+    gap: 10px !important;
+  }
+}
+
+/* 2026-03-15 stabilization pass:
+   keep gallery controls in one compact band and raise readability on dark shells */
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup .cg-setup-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px 12px !important;
+  min-width: 0 !important;
+  flex: 1 1 320px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-setup__hint {
+  order: 3 !important;
+  flex: 1 0 100% !important;
+  margin-top: 0 !important;
+}
+
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__panel-grid {
+  gap: 10px !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--cg-panel-strong) 96%, #ffffff 4%), color-mix(in oklab, var(--cg-panel) 94%, #f4f8fc 6%)) !important;
+  border: 1px solid color-mix(in oklab, var(--cg-border-strong) 86%, rgba(255,255,255,0.08)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 8px 18px color-mix(in oklab, var(--cg-bg-deep) 16%, transparent) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat span,
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat p {
+  color: var(--cg-reading-muted-strong) !important;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-hero__stat strong {
+  color: var(--cg-reading-ink) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"] .cg-surface,
+body.game-platform-page[data-game-theme="forest"] .cg-surface,
+body.game-platform-page[data-game-theme="seahawks"] .cg-surface {
+  background: color-mix(in oklab, var(--cg-panel-strong) 94%, rgba(255,255,255,0.03)) !important;
+  border-color: color-mix(in oklab, var(--cg-border-strong) 92%, rgba(255,255,255,0.08)) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"] .cg-main-card,
+body.game-platform-page[data-game-theme="forest"] .cg-main-card,
+body.game-platform-page[data-game-theme="seahawks"] .cg-main-card,
+body.game-platform-page[data-game-theme="dark"] .cg-zone-card,
+body.game-platform-page[data-game-theme="forest"] .cg-zone-card,
+body.game-platform-page[data-game-theme="seahawks"] .cg-zone-card,
+body.game-platform-page[data-game-theme="dark"] .cg-stage-shell,
+body.game-platform-page[data-game-theme="forest"] .cg-stage-shell,
+body.game-platform-page[data-game-theme="seahawks"] .cg-stage-shell {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--cg-panel-strong) 96%, rgba(255,255,255,0.04)), color-mix(in oklab, var(--cg-panel) 94%, rgba(255,255,255,0.02))) !important;
+  border-color: color-mix(in oklab, var(--cg-border-strong) 92%, rgba(255,255,255,0.08)) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"] .cg-main-card h1,
+body.game-platform-page[data-game-theme="dark"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="dark"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="forest"] .cg-main-card h1,
+body.game-platform-page[data-game-theme="forest"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="forest"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="seahawks"] .cg-main-card h1,
+body.game-platform-page[data-game-theme="seahawks"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="seahawks"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="dark"] .cg-zone-card h1,
+body.game-platform-page[data-game-theme="dark"] .cg-zone-card h2,
+body.game-platform-page[data-game-theme="dark"] .cg-zone-card h3,
+body.game-platform-page[data-game-theme="forest"] .cg-zone-card h1,
+body.game-platform-page[data-game-theme="forest"] .cg-zone-card h2,
+body.game-platform-page[data-game-theme="forest"] .cg-zone-card h3,
+body.game-platform-page[data-game-theme="seahawks"] .cg-zone-card h1,
+body.game-platform-page[data-game-theme="seahawks"] .cg-zone-card h2,
+body.game-platform-page[data-game-theme="seahawks"] .cg-zone-card h3 {
+  color: rgba(245, 250, 255, 0.96) !important;
+  -webkit-text-fill-color: rgba(245, 250, 255, 0.96) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"] .cg-main-card p,
+body.game-platform-page[data-game-theme="dark"] .cg-zone-card p,
+body.game-platform-page[data-game-theme="dark"] .cg-kicker,
+body.game-platform-page[data-game-theme="dark"] .cg-micro-label,
+body.game-platform-page[data-game-theme="forest"] .cg-main-card p,
+body.game-platform-page[data-game-theme="forest"] .cg-zone-card p,
+body.game-platform-page[data-game-theme="forest"] .cg-kicker,
+body.game-platform-page[data-game-theme="forest"] .cg-micro-label,
+body.game-platform-page[data-game-theme="seahawks"] .cg-main-card p,
+body.game-platform-page[data-game-theme="seahawks"] .cg-zone-card p,
+body.game-platform-page[data-game-theme="seahawks"] .cg-kicker,
+body.game-platform-page[data-game-theme="seahawks"] .cg-micro-label {
+  color: rgba(220, 233, 245, 0.84) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"],
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"],
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] {
+  --cg-play-surface: #eaf0f4 !important;
+  --cg-play-surface-strong: #f8fbfd !important;
+  --cg-play-border: #c8d5df !important;
+  --cg-play-ink: #142233 !important;
+  --cg-play-muted: #536373 !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-stage-shell,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-round-guide,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-host-panel,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-feedback,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-result-banner,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-focus-panel,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-prompt-card,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-zone-card,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-stage-shell,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-round-guide,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-host-panel,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-feedback,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-result-banner,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-focus-panel,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-prompt-card,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-zone-card,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-stage-shell,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-round-guide,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-host-panel,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-feedback,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-result-banner,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-focus-panel,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-prompt-card,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-zone-card {
+  background: var(--cg-play-surface-strong) !important;
+  color: var(--cg-play-ink) !important;
+  border-color: var(--cg-play-border) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-chip,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-action-quiet,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-choice,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-input,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-textarea,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-select,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-chip,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-action-quiet,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-choice,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-input,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-textarea,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-select,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-chip,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-action-quiet,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-choice,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-input,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-textarea,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-select {
+  background: var(--cg-play-surface) !important;
+  color: var(--cg-play-ink) !important;
+  border-color: var(--cg-play-border) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-chip *,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-action-quiet *,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-chip *,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-action-quiet *,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-chip *,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-action-quiet *,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-round-guide__row strong,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-round-guide__row span,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-host-panel__meta,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-round-guide__row strong,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-round-guide__row span,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-host-panel__meta,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-round-guide__row strong,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-round-guide__row span,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-host-panel__meta {
+  color: var(--cg-play-ink) !important;
+  -webkit-text-fill-color: var(--cg-play-ink) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-hero,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-hero,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-hero,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-premium-note,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-premium-note,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-premium-note,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-bench,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-bench,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-bench,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-tray,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-tray,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-tray {
+  background: var(--cg-play-surface-strong) !important;
+  color: var(--cg-play-ink) !important;
+  border-color: var(--cg-play-border) !important;
+}
+
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-hero h3,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-hero p,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-stat span,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-stat strong,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-bench__head,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-forge-tray__head,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-premium-note h4,
+body.game-platform-page[data-game-theme="dark"][data-shell-view="play"] .cg-premium-note p,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-hero h3,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-hero p,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-stat span,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-stat strong,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-bench__head,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-forge-tray__head,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-premium-note h4,
+body.game-platform-page[data-game-theme="forest"][data-shell-view="play"] .cg-premium-note p,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-hero h3,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-hero p,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-main-card h2,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-main-card h3,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-stat span,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-stat strong,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-bench__head,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-forge-tray__head,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-premium-note h4,
+body.game-platform-page[data-game-theme="seahawks"][data-shell-view="play"] .cg-premium-note p {
+  color: var(--cg-play-ink) !important;
+  -webkit-text-fill-color: var(--cg-play-ink) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-zone-card__body,
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-game-layout {
+  display: grid !important;
+  width: 100% !important;
+  align-content: start !important;
+  justify-content: initial !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-zone-card--play .cg-zone-card__body,
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-game-layout--builder,
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-premium-stage--forge,
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-forge,
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-forge-layout {
+  width: 100% !important;
+  justify-self: stretch !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-game-layout--builder {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+body.game-platform-page[data-shell-view="play"][data-game-id="morphology-builder"] .cg-forge-layout__main {
+  display: grid !important;
+  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) !important;
+  width: 100% !important;
+  justify-content: initial !important;
+}
+
