@@ -346,3 +346,98 @@
 .th2-trend-dot[data-trend="up"]     { background: var(--status-secure, #22c55e); }
 .th2-trend-dot[data-trend="stable"] { background: var(--text-muted, #94a3b8); }
 .th2-trend-dot[data-trend="down"]   { background: var(--status-risk, #ef4444); }
+
+/* ── Sidebar footer ────────────────────────────────────── */
+.th2-sidebar-footer {
+  flex-shrink: 0;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border-subtle, #c5cfe0);
+  background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(243,247,252,0.5));
+}
+
+.th2-sidebar-footer-auth {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.th2-auth-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.th2-auth-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.th2-auth-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.th2-auth-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.th2-classroom-sync-row,
+.th2-google-signin-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.th2-classroom-sync-btn,
+.th2-google-signin-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.th2-classroom-sync-btn:hover,
+.th2-google-signin-btn:hover {
+  background: #f5f5f5;
+  border-color: #aaa;
+}
+
+.th2-google-signout-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: transparent;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.th2-google-signout-btn:hover {
+  background: #f9f9f9;
+  border-color: #bbb;
+}
+
+.th2-sidebar-footer-row {
+  display: flex;
+  gap: 8px;
+}

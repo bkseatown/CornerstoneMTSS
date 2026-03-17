@@ -61,13 +61,9 @@
   --wq-play-focus-chip-bg: color-mix(in oklab, var(--panel-bg) 62%, #ffffff 38%);
   --wq-play-focus-chip-border: color-mix(in oklab, var(--panel-border) 78%, #ffffff 22%);
   --wq-play-focus-chip-shadow: none;
-  --wq-play-board-bg: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--plate-bg) 72%, #ffffff 28%) 0%,
-    color-mix(in oklab, var(--plate-bg) 86%, #d7e0e8 14%) 100%
-  );
-  --wq-play-board-border: color-mix(in oklab, var(--plate-border) 84%, #d7e0e8 16%);
-  --wq-play-board-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);  /* Simplified from 4-layer shadow for cleaner appearance */
+  --wq-play-board-bg: transparent;
+  --wq-play-board-border: transparent;
+  --wq-play-board-shadow: none;
   --wq-play-board-radius: var(--radius-plate);
   --wq-play-board-pad-y: clamp(14px, calc(var(--tile-size) * 0.28), 22px);
   --wq-play-board-pad-x: clamp(12px, calc(var(--tile-size) * 0.24), 20px);
