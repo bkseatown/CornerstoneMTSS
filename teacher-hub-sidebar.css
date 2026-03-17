@@ -392,6 +392,13 @@
   color: var(--text-primary);
 }
 
+/* Hide auth sync/signin rows when not needed (preserves schedule space) */
+.th2-sidebar-footer .th2-auth-chip.hidden,
+.th2-sidebar-footer .th2-classroom-sync-row.hidden,
+.th2-sidebar-footer .th2-google-signin-row.hidden {
+  display: none !important;
+}
+
 .th2-classroom-sync-row,
 .th2-google-signin-row {
   display: flex;
