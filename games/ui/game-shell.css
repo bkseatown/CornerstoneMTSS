@@ -808,10 +808,9 @@ body.game-platform-page .cg-surface {
 body.game-platform-page .cg-game-card {
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--cg-surface-strong) 88%, #ffffff 12%) 0%, color-mix(in oklab, var(--cg-surface) 88%, #d7e6f6 12%) 100%);
-  border: 1.5px solid color-mix(in oklab, var(--cg-border) 82%, transparent);
-  box-shadow: 0 18px 34px color-mix(in oklab, var(--cg-bg-deep) 16%, transparent);
+  background: var(--cg-panel-strong);
+  border: 1.5px solid var(--cg-border-strong);
+  box-shadow: var(--cg-shadow-soft);
   color: var(--cg-reading-ink);
   border-radius: var(--cg-radius-xl);
   transition: transform 180ms var(--motion-ease), box-shadow 220ms var(--motion-ease), border-color 220ms var(--motion-ease), background 220ms var(--motion-ease);
@@ -823,8 +822,8 @@ body.game-platform-page .cg-game-card::before {
   inset: 0 0 auto 0;
   height: 72px;
   background:
-    radial-gradient(circle at 12% 10%, rgba(255,255,255,0.66) 0%, transparent 48%),
-    linear-gradient(180deg, color-mix(in oklab, var(--cg-primary) 10%, #ffffff 90%) 0%, transparent 100%);
+    radial-gradient(circle at 12% 10%, color-mix(in oklab, var(--cg-primary) 20%, transparent) 0%, transparent 48%),
+    linear-gradient(180deg, color-mix(in oklab, var(--cg-primary) 14%, transparent) 0%, transparent 100%);
   pointer-events: none;
 }
 
@@ -834,12 +833,16 @@ body.game-platform-page .cg-game-card:hover {
   transform: translateY(-3px) scale(1.01);
 }
 body.game-platform-page .cg-game-card.is-active {
-  border-color: color-mix(in oklab, var(--cg-primary) 38%, var(--cg-border-strong));
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--cg-primary) 18%, transparent), 0 22px 42px color-mix(in oklab, var(--cg-bg-deep) 22%, transparent);
-  background: linear-gradient(180deg, color-mix(in oklab, var(--cg-surface-strong) 92%, #ffffff 8%) 0%, color-mix(in oklab, var(--cg-surface) 92%, #d7e6f6 8%) 100%);
+  border-color: var(--cg-primary);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--cg-primary) 18%, transparent), var(--cg-shadow-glow);
+  background: var(--cg-panel-strong);
 }
 body.game-platform-page .cg-game-card h3 { font-size: 1.5rem; font-weight: 700; color: var(--cg-reading-ink); letter-spacing: -0.04em; line-height: 0.96; }
-body.game-platform-page .cg-game-card p  { color: var(--cg-reading-muted); }
+body.game-platform-page .cg-game-card p  {
+  color: var(--cg-reading-muted-strong);
+  font-size: 14px;
+  line-height: 1.5;
+}
 
 body.game-platform-page .cg-card-badge {
   display: inline-flex;
