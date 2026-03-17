@@ -15376,6 +15376,11 @@
     } catch {}
     if (DEMO_MODE) runDemoCoachForStart();
     if (!DEMO_MODE) positionDemoLaunchButton();
+    // Auto-focus game board so students can start typing immediately
+    const gameBoard = _el('game-board');
+    if (gameBoard && typeof gameBoard.focus === 'function') {
+      setTimeout(() => gameBoard.focus(), 50);
+    }
   }
 
   const reflowLayout = () => {
