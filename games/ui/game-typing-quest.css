@@ -255,8 +255,8 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   align-content: start;
   padding: 26px 28px;
   background:
-    radial-gradient(circle at top left, rgba(91, 148, 255, 0.18), transparent 34%),
-    linear-gradient(160deg, #16263a 0%, #1f3651 100%);
+    radial-gradient(circle at top left, rgba(200, 140, 80, 0.12), transparent 34%),
+    linear-gradient(160deg, #1f1a15 0%, #261d18 100%);
   border-color: rgba(89, 129, 196, 0.34);
   color: #f5f8ff;
 }

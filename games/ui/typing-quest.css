@@ -5,8 +5,9 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── 2. TYPING QUEST — Course Map + Lesson Runtime ─────────── */
+/* TEST MARKER: Color balance fix v1 applied */
 body.typing-quest-page {
-  background: #1a1f28;
+  background: #16161a;
 }
 
 .cg-typing-app-shell {
@@ -14,7 +15,7 @@ body.typing-quest-page {
   min-height: 100dvh;
   background:
     radial-gradient(ellipse 560px 720px at 50% 54%, rgba(180, 140, 80, 0.15) 0%, transparent 70%),
-    linear-gradient(180deg, #1a1f28 0%, #1f2535 50%, #15191f 100%);
+    linear-gradient(180deg, #16161a 0%, #1f1f28 50%, #14141a 100%);
   color: #fff;
 }
 
@@ -59,7 +60,7 @@ body.typing-quest-page {
   justify-content: space-between;
   gap: 18px;
   padding: 12px 28px;
-  background: #1f2b38;
+  background: #1a1a1e;
   color: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -259,8 +260,8 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   align-content: start;
   padding: 26px 28px;
   background:
-    radial-gradient(circle at top left, rgba(91, 148, 255, 0.18), transparent 34%),
-    linear-gradient(160deg, #16263a 0%, #1f3651 100%);
+    radial-gradient(circle at top left, rgba(200, 140, 80, 0.12), transparent 34%),
+    linear-gradient(160deg, #1f1a15 0%, #261d18 100%);
   border-color: rgba(89, 129, 196, 0.34);
   color: #f5f8ff;
 }
