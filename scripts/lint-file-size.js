@@ -31,6 +31,8 @@ const FILE_LIMIT_OVERRIDES = {
   'reports.html': 1200,
   'teacher-hub-v2.html': 1200,
   'game-shell.css': 12000, // Monolithic game shell CSS; modularisation tracked as tech debt
+  'app.js': 20000, // Actively being modularized (RFC in EXTRACTION_PLAN.md); target <8000 by end of Q2
+  'word-quest.html': 1500, // Actively being modularized; game-specific surface
 };
 
 const EXEMPT_PATTERNS = [
