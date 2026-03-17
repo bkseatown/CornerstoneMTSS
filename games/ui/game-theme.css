@@ -74,11 +74,11 @@ body.game-platform-page[data-game-theme="dark"] {
 body.game-platform-page[data-game-theme="ocean"] {
   --cg-bg:            #133651;
   --cg-bg-deep:       #0b2234;
-  --cg-panel:         rgba(226, 244, 250, 0.9);
-  --cg-panel-strong:  rgba(241, 250, 253, 0.95);
-  --cg-ink:           #103149;
-  --cg-muted:         #527c95;
-  --cg-muted-strong:  #31556d;
+  --cg-panel:         rgba(45, 90, 125, 0.85);
+  --cg-panel-strong:  rgba(60, 110, 145, 0.90);
+  --cg-ink:           #f0f4ff;
+  --cg-muted:         #a0c5e0;
+  --cg-muted-strong:  #c0d9eb;
   --cg-border:        rgba(24, 111, 147, 0.16);
   --cg-border-strong: rgba(24, 111, 147, 0.3);
   --cg-shadow:        0 8px 0 rgba(24, 58, 81, 0.26), 0 18px 38px rgba(11, 34, 52, 0.18);
@@ -114,11 +114,11 @@ body.game-platform-page[data-game-theme="ocean"] {
 body.game-platform-page[data-game-theme="sunset"] {
   --cg-bg:            #5a345f;
   --cg-bg-deep:       #35203d;
-  --cg-panel:         rgba(255, 245, 247, 0.9);
-  --cg-panel-strong:  rgba(255, 249, 250, 0.95);
-  --cg-ink:           #43263f;
-  --cg-muted:         #8f657f;
-  --cg-muted-strong:  #6d4a62;
+  --cg-panel:         rgba(110, 70, 95, 0.85);
+  --cg-panel-strong:  rgba(130, 85, 115, 0.90);
+  --cg-ink:           #f0e8f4;
+  --cg-muted:         #d4a8c8;
+  --cg-muted-strong:  #e0bdd8;
   --cg-border:        rgba(210, 111, 144, 0.16);
   --cg-border-strong: rgba(210, 111, 144, 0.32);
   --cg-shadow:        0 8px 0 rgba(93, 55, 79, 0.24), 0 18px 36px rgba(67, 38, 63, 0.16);
@@ -262,11 +262,11 @@ body.game-platform-page[data-game-theme="coffee"] {
 body.game-platform-page[data-game-theme="seahawks"] {
   --cg-bg: #7f9bb0;
   --cg-bg-deep: #55748e;
-  --cg-panel: rgba(227, 234, 240, 0.94);
-  --cg-panel-strong: rgba(241, 246, 249, 0.98);
-  --cg-ink: #11283d;
-  --cg-muted: #4b667a;
-  --cg-muted-strong: #23415a;
+  --cg-panel: rgba(60, 95, 120, 0.85);
+  --cg-panel-strong: rgba(80, 115, 140, 0.90);
+  --cg-ink: #f0f4ff;
+  --cg-muted: #b5d0e0;
+  --cg-muted-strong: #d0e0f0;
   --cg-border: rgba(105, 190, 40, 0.18);
   --cg-border-strong: rgba(105, 190, 40, 0.34);
   --cg-primary: #69be28;
@@ -300,11 +300,11 @@ body.game-platform-page[data-game-theme="seahawks"] {
 body.game-platform-page[data-game-theme="huskies"] {
   --cg-bg: #695999;
   --cg-bg-deep: #4b3971;
-  --cg-panel: rgba(247, 241, 228, 0.9);
-  --cg-panel-strong: rgba(252, 247, 237, 0.95);
-  --cg-ink: #2b2142;
-  --cg-muted: #766983;
-  --cg-muted-strong: #5a4e68;
+  --cg-panel: rgba(100, 75, 125, 0.85);
+  --cg-panel-strong: rgba(120, 95, 145, 0.90);
+  --cg-ink: #f5f0ff;
+  --cg-muted: #d4bce8;
+  --cg-muted-strong: #e0cff5;
   --cg-border: rgba(183, 165, 122, 0.18);
   --cg-border-strong: rgba(183, 165, 122, 0.34);
   --cg-primary: #b7a57a;
@@ -320,6 +320,45 @@ body.game-platform-page[data-game-theme="huskies"] {
     radial-gradient(ellipse at 16% 8%, rgba(183,165,122,0.18) 0%, transparent 32%),
     radial-gradient(ellipse at 85% 10%, rgba(113,88,216,0.16) 0%, transparent 30%),
     linear-gradient(180deg, #f2ead8 0%, #cabcde 34%, #7e69ac 100%);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: STARBUCKS  — forest green / white / cream
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="starbucks"] {
+  --cg-bg: #1f4620;
+  --cg-bg-deep: #0f2810;
+  --cg-panel: rgba(50, 85, 55, 0.85);
+  --cg-panel-strong: rgba(70, 105, 75, 0.90);
+  --cg-ink: #f5f5f0;
+  --cg-muted: #a8d5b8;
+  --cg-muted-strong: #c5e5d0;
+  --cg-border: rgba(165, 212, 180, 0.2);
+  --cg-border-strong: rgba(165, 212, 180, 0.35);
+  --cg-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 14px 36px rgba(0,0,0,0.3);
+  --cg-shadow-soft: 0 3px 0 rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.2);
+  --cg-shadow-glow: 0 0 0 2px rgba(165,212,180,0.4), 0 6px 0 rgba(0,0,0,0.4), 0 20px 48px rgba(0,0,0,0.3);
+  --cg-primary: #00704a;
+  --cg-primary-2: #00845d;
+  --cg-primary-soft: rgba(0, 112, 74, 0.18);
+  --cg-accent: #d4af37;
+  --cg-accent-2: #e5c158;
+  --cg-accent-soft: rgba(212, 175, 55, 0.18);
+  --cg-positive: #00704a;
+  --cg-positive-soft: rgba(0, 112, 74, 0.18);
+  --cg-negative: #d42d2d;
+  --cg-negative-soft: rgba(212, 45, 45, 0.18);
+  --cg-warning: #d4af37;
+  --cg-warning-soft: rgba(212, 175, 55, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 14% 10%, rgba(0,112,74,0.2) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 8%, rgba(212,175,55,0.16) 0%, transparent 32%),
+    linear-gradient(175deg, #1f4620 0%, #0f2810 45%, #051805 100%);
+  --cg-texture: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #004d32, 0 8px 20px rgba(0,112,74,0.4);
+  --cg-primary-btn-press: 0 2px 0 #004d32, 0 4px 10px rgba(0,112,74,0.35);
 }
 
 body.game-platform-page[data-game-theme="superman"],
@@ -611,7 +650,7 @@ body.game-platform-page::before {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding: 24px;
+  padding: var(--space-5);
 }
 
 /* ── Surface ── */
