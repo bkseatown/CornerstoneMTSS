@@ -6,15 +6,15 @@
 
 /* ── 2. TYPING QUEST — Course Map + Lesson Runtime ─────────── */
 body.typing-quest-page {
-  background: #0d1b28;
+  background: #1a1f28;
 }
 
 .cg-typing-app-shell {
   width: 100%;
   min-height: 100dvh;
   background:
-    radial-gradient(ellipse 560px 720px at 50% 54%, rgba(127, 153, 175, 0.22) 0%, transparent 70%),
-    linear-gradient(180deg, #0d1b28 0%, #0f2236 50%, #0a1520 100%);
+    radial-gradient(ellipse 560px 720px at 50% 54%, rgba(180, 140, 80, 0.15) 0%, transparent 70%),
+    linear-gradient(180deg, #1a1f28 0%, #1f2535 50%, #15191f 100%);
   color: #fff;
 }
 
@@ -29,13 +29,13 @@ body.typing-quest-page {
   padding: 10px 16px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.92);
-  color: #0d1b28;
+  color: #1a1f28;
 }
 
 .cg-typing-app-shell .cg-action-primary {
-  border-color: #4eb3ff;
-  background: #4eb3ff;
-  color: #0d1b28;
+  border-color: #ff9a44;
+  background: #ff9a44;
+  color: #fff;
 }
 
 .cg-typing-app-shell .cg-action-quiet:hover,

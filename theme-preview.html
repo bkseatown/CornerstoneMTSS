@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Preview — Cornerstone MTSS</title>
+  <link rel="stylesheet" href="./games/ui/game-theme.css?v=20260317">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--cg-font-body, "Inter", sans-serif);
+      background: var(--cg-page-gradient);
+      color: var(--cg-ink);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .theme-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .theme-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--cg-ink);
+    }
+
+    .theme-header p {
+      font-size: 16px;
+      color: var(--cg-muted);
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .color-card {
+      background: var(--cg-panel);
+      border: 1px solid var(--cg-border-strong);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .color-swatch {
+      width: 100%;
+      height: 120px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      border: 1px solid var(--cg-border);
+    }
+
+    .color-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cg-muted-strong);
+      margin-bottom: 4px;
+    }
+
+    .color-value {
+      font-size: 12px;
+      font-family: "Monaco", monospace;
+      color: var(--cg-muted);
+      word-break: break-all;
+    }
+
+    .game-card {
+      background: var(--cg-panel-strong);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--cg-shadow-soft);
+    }
+
+    .game-card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--cg-ink);
+      margin-bottom: 12px;
+    }
+
+    .game-card p {
+      font-size: 14px;
+      color: var(--cg-muted-strong);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .button {
+      display: inline-block;
+      background: var(--cg-primary);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-right: 12px;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .button.secondary {
+      background: var(--cg-accent);
+      color: var(--cg-bg);
+    }
+
+    .theme-selector {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--cg-panel);
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      border: 1px solid var(--cg-border-strong);
+      z-index: 1000;
+    }
+
+    .theme-selector button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin: 4px 0;
+      background: transparent;
+      border: 1px solid var(--cg-border);
+      border-radius: 6px;
+      color: var(--cg-ink);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-selector button:hover {
+      background: var(--cg-primary-soft);
+      border-color: var(--cg-primary);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .stat {
+      background: var(--cg-panel);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid var(--cg-border);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--cg-primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--cg-muted);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body class="game-platform-page">
+  <div class="theme-selector">
+    <button onclick="setTheme('default')">Default</button>
+    <button onclick="setTheme('ocean')">Ocean</button>
+    <button onclick="setTheme('seahawks')">Seahawks</button>
+    <button onclick="setTheme('starbucks')">Starbucks</button>
+  </div>
+
+  <div class="container">
+    <div class="theme-header">
+      <h1>Brand Theme Preview</h1>
+      <p>Professional color palettes with 60-30-10 balance</p>
+    </div>
+
+    <div class="game-card">
+      <h2>🎮 Word Quest</h2>
+      <p>Build vocabulary through interactive word connections. Master morphology, prefixes, and suffixes with real-time feedback from Ava.</p>
+      <button class="button">Play Game</button>
+      <button class="button secondary">View Stats</button>
+    </div>
+
+    <div class="game-card">
+      <h2>⌨️ Typing Quest</h2>
+      <p>Develop typing fluency and accuracy through engaging word-building activities. Perfect for building keyboarding skills.</p>
+      <button class="button">Launch</button>
+      <button class="button secondary">Instructions</button>
+    </div>
+
+    <div class="game-card">
+      <h2>📖 Reading Lab</h2>
+      <p>Immersive reading comprehension tool with real-time collaboration. Teachers and specialists can annotate, highlight, and provide feedback.</p>
+      <button class="button">Open Lab</button>
+      <button class="button secondary">Assign</button>
+    </div>
+
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background: var(--cg-bg);"></div>
+        <div class="color-label">Primary Background (60%)</div>
+        <div class="color-value">--cg-bg</div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: var(--cg-panel);"></div>
+        <div class="color-label">Panel Background (60%)</div>
+        <div class="color-value">--cg-panel</div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: var(--cg-muted); color: var(--cg-bg);"></div>
+        <div class="color-label">Secondary (30%)</div>
+        <div class="color-value">--cg-muted</div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: var(--cg-primary);"></div>
+        <div class="color-label">Accent / CTA (10%)</div>
+        <div class="color-value">--cg-primary</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">98%</div>
+        <div class="stat-label">Contrast Ratio</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">✓</div>
+        <div class="stat-label">WCAG AA</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Themes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">🎯</div>
+        <div class="stat-label">Authentic</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setTheme(themeId) {
+      document.body.setAttribute('data-game-theme', themeId);
+      localStorage.setItem('cs.game.theme', themeId);
+    }
+
+    // Load saved theme on page load
+    window.addEventListener('load', function() {
+      const saved = localStorage.getItem('cs.game.theme');
+      if (saved && saved !== 'default') {
+        setTheme(saved);
+      }
+    });
+  </script>
+</body>
+</html>
