@@ -12,7 +12,7 @@
    Modularized size: ~1,200 lines (85% reduction)
    ─────────────────────────────────────────────── */
 
-@import url('./teacher-hub-sidebar.css?v=20260317a');
+@import url('./teacher-hub-sidebar.css?v=20260317b');
 @import url('./teacher-hub-main.css?v=20260317a');
 @import url('./teacher-hub-animations.css?v=20260317a');
 
@@ -60,16 +60,17 @@ body.th2-page {
 }
 
 .th2-list {
-  padding: 6px;
-  gap: 6px;
+  flex: 1;
+  padding: 4px;
+  gap: 1px;
 }
 
 .th2-block-card {
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 6px 8px;
   background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(244,247,252,0.94));
   border: 1px solid rgba(164, 179, 200, 0.18);
-  box-shadow: 0 6px 14px rgba(37, 50, 72, 0.04);
+  box-shadow: 0 2px 6px rgba(37, 50, 72, 0.02);
 }
 
 .th2-block-card:hover {
