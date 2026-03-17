@@ -272,6 +272,14 @@
   text-overflow: ellipsis;
 }
 
+.th2-block-card-meta-alt {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .th2-block-card-count {
   font-size: 11px;
   color: var(--text-muted);

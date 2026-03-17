@@ -4363,8 +4363,17 @@
       var isCurrent = isCurrentTimeBlock(block);
       var label = escapeHtml(block.label || block.classSection || "Class");
       var time = escapeHtml(block.timeLabel || "");
-      var sub = [escapeHtml(block.teacher || ""), escapeHtml(block.subject || "")].filter(Boolean).join(" • ");
+      var teacher = escapeHtml(block.teacher || "");
+      var subject = escapeHtml(block.subject || "");
+      var lesson = escapeHtml(block.lesson || "");
+      var curriculum = escapeHtml(block.curriculum || "");
       var studentCount = block.studentIds && block.studentIds.length;
+
+      // Build metadata: Teacher • Subject on first meta line
+      var meta1 = [teacher, subject].filter(Boolean).join(" • ");
+      // Build second meta line: Curriculum and Lesson info
+      var meta2 = [curriculum, lesson].filter(Boolean).join(" • ");
+
       return [
         '<button class="th2-block-card' + (isActive ? " is-active" : "") + (isCurrent ? " is-current" : "") + '"',
         '  data-open-block="' + escapeHtml(block.id) + '"',
@@ -4374,7 +4383,8 @@
         '  <div class="th2-block-card-body">',
         (time ? '    <span class="th2-block-card-time">' + time + '</span>' : ""),
         '    <span class="th2-block-card-name">' + label + '</span>',
-        (sub ? '    <span class="th2-block-card-meta">' + sub + '</span>' : ""),
+        (meta1 ? '    <span class="th2-block-card-meta">' + meta1 + '</span>' : ""),
+        (meta2 ? '    <span class="th2-block-card-meta th2-block-card-meta-alt">' + meta2 + '</span>' : ""),
         '  </div>',
         '</button>'
       ].join("\n");
