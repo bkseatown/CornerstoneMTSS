@@ -4393,9 +4393,10 @@
       var sidebarDate = todayDateStr();
       var sidebarNote = timedBlock
         ? (isCurrentTimeBlock(timedBlock) ? "In progress" : "Up next: " + (timedBlock.label || timedBlock.subject || "Block"))
-        : "After school";
+        : "";
       el.sidebarCtx.classList.add("th2-sidebar-ctx");
-      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + escapeHtml(sidebarDate) + '</p><p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>';
+      el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + escapeHtml(sidebarDate) + '</p>' +
+        (sidebarNote ? '<p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>' : '');
     }
     window.requestAnimationFrame(function () {
       var focusCard = el.list.querySelector(".th2-block-card.is-active, .th2-block-card.is-current");
