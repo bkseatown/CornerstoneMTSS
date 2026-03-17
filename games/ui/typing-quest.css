@@ -262,7 +262,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   background:
     radial-gradient(circle at top left, rgba(200, 140, 80, 0.12), transparent 34%),
     linear-gradient(160deg, #1f1a15 0%, #261d18 100%);
-  border-color: rgba(89, 129, 196, 0.34);
+  border-color: rgba(160, 140, 110, 0.28);
   color: #f5f8ff;
 }
 
@@ -302,7 +302,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   display: grid;
   gap: 14px;
   padding: 24px 26px;
-  background: linear-gradient(180deg, rgba(245, 248, 253, 0.98) 0%, rgba(235, 241, 248, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(250, 247, 243, 0.98) 0%, rgba(243, 239, 233, 0.95) 100%);
 }
 
 .cg-typing-course-hero__main .cg-display {
@@ -424,13 +424,13 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
 .cg-typing-unit-card:hover:not(:disabled),
 .cg-typing-unit-card:focus-visible:not(:disabled) {
   transform: translateY(-2px);
-  border-color: #90b7d8;
-  box-shadow: 0 8px 18px rgba(60, 150, 230, 0.12);
+  border-color: #c9b089;
+  box-shadow: 0 8px 18px rgba(180, 140, 80, 0.12);
 }
 
 .cg-typing-unit-card.is-current {
-  border-color: #5c9fe2;
-  background: #eff7ff;
+  border-color: #d4a574;
+  background: #faf7f2;
 }
 
 .cg-typing-unit-card.is-locked {
