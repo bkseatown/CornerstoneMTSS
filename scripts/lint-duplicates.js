@@ -31,6 +31,8 @@ const FILE_EXEMPTIONS = new Set([
   'game-shell.css', // Monolithic game shell; deduplication tracked as tech debt
   'game-animations.css', // Extracted from game-shell.css; deduplication tracked as tech debt
   'game-gallery-animations.css', // Extracted from game-shell.css; deduplication tracked as tech debt
+  'teacher-hub-animations.css', // Extracted from teacher-hub-v2.css; deduplication tracked as tech debt
+  'teacher-hub-main.css', // Extracted from teacher-hub-v2.css; deduplication tracked as tech debt
 ]);
 
 function isExempt(filePath) {

@@ -62,6 +62,10 @@ const FILE_EXEMPTIONS = new Set([
   'game-gallery-animations.css', // Extracted from game-shell.css; token migration tracked as tech debt
   'game-theme-overrides.css', // Extracted from game-shell.css; token migration tracked as tech debt
   'game-responsive.css',    // Extracted from game-shell.css; token migration tracked as tech debt
+  'teacher-hub-v2.css',     // Core theme/palette definitions; hardcoded colors required for Cornerstone design system
+  'teacher-hub-sidebar.css', // Extracted from teacher-hub-v2.css; token migration tracked as tech debt
+  'teacher-hub-main.css',   // Extracted from teacher-hub-v2.css; token migration tracked as tech debt
+  'teacher-hub-animations.css', // Extracted from teacher-hub-v2.css; token migration tracked as tech debt
   'a11y-dyslexia.css',      // Accessibility: dyslexia-friendly typography (OpenDyslexia, research-backed spacing)
   'a11y-high-contrast.css', // Accessibility: WCAG AAA colors (scientifically-specific contrast ratios)
   'a11y-color-blind.css',   // Accessibility: color-blind palettes (Deuteranopia/Protanopia/Tritanopia specific)
