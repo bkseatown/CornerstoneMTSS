@@ -4369,10 +4369,19 @@
       var curriculum = escapeHtml(block.curriculum || "");
       var studentCount = block.studentIds && block.studentIds.length;
 
+      // Extract grade from classSection (e.g., "Grade 4 Math" → "G4")
+      var grade = "";
+      if (block.classSection) {
+        var gradeMatch = block.classSection.match(/Grade\s+(\d+)/i);
+        if (gradeMatch) {
+          grade = "G" + gradeMatch[1];
+        }
+      }
+
       // Build metadata: Teacher • Subject on first meta line
       var meta1 = [teacher, subject].filter(Boolean).join(" • ");
-      // Build second meta line: Curriculum and Lesson info
-      var meta2 = [curriculum, lesson].filter(Boolean).join(" • ");
+      // Build second meta line: Curriculum • Grade • Lesson info
+      var meta2 = [curriculum, grade, lesson].filter(Boolean).join(" • ");
 
       return [
         '<button class="th2-block-card' + (isActive ? " is-active" : "") + (isCurrent ? " is-current" : "") + '"',
