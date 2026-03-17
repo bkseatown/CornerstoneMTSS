@@ -15712,6 +15712,20 @@
       }
       return;
     }
+    const endModalOpen = !(_el('end-modal')?.classList.contains('hidden'));
+    if (endModalOpen) {
+      if (e.key === ' ' || e.code === 'Space') {
+        // Spacebar advances to next word (like Wordle)
+        e.preventDefault();
+        _el('new-game-btn')?.click();
+        return;
+      } else if (e.key === 'Escape') {
+        // Escape skips celebration and goes to next word
+        e.preventDefault();
+        _el('new-game-btn')?.click();
+        return;
+      }
+    }
     const themePopoverOpen = !(_el('theme-preview-strip')?.classList.contains('hidden'));
     const musicPopoverOpen = !(_el('quick-music-strip')?.classList.contains('hidden'));
     if (themePopoverOpen || musicPopoverOpen) {

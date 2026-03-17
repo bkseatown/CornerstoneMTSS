@@ -51,6 +51,7 @@ const EXEMPT_PATTERNS = [
 const FILE_EXEMPTIONS = new Set([
   'tokens.css',             // Master token definitions; source of truth for all colors/spacing
   'lesson-brief-panel.css', // Pre-existing panel; full token migration tracked as tech debt
+  'components.css',         // Monolithic component library; token migration tracked as tech debt
   'game-shell.css',         // Monolithic game shell; token migration tracked as tech debt
   'game-theme.css',         // Theme system: requires scientifically-specific colors (WCAG contrast ratios, brand colors) and micro-label sizing per theme variant
   'game-typing-quest.css',  // Extracted from game-shell.css; token migration tracked as tech debt

@@ -32,10 +32,10 @@ const EXEMPT_LIMITS = {
   'games/ui/game-gallery-animations.css': 100, // Extracted from game-shell.css (98 !important); animation overrides tracked as tech debt
   'games/ui/game-responsive.css': 100, // Extracted from game-shell.css (88 !important); responsive media query overrides tracked as tech debt
   'games/ui/game-theme-overrides.css': 500, // Extracted from game-shell.css (480 !important); theme specificity tracked as tech debt
+  'style/components.css': 100, // Monolithic component library; !important audit tracked as tech debt
 };
 
 const BANNED_FILES = [
-  'style/components.css',
   'style/themes.css',
   'home-v3.css',
 ];

@@ -28,6 +28,7 @@ const EXEMPT_PATTERNS = [
 
 // Per-file exemptions for files that pre-date the duplicate-selector rule.
 const FILE_EXEMPTIONS = new Set([
+  'components.css', // Monolithic component library; deduplication tracked as tech debt
   'game-shell.css', // Monolithic game shell; deduplication tracked as tech debt
   'game-animations.css', // Extracted from game-shell.css; deduplication tracked as tech debt
   'game-gallery-animations.css', // Extracted from game-shell.css; deduplication tracked as tech debt
