@@ -25,7 +25,31 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
       - uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run guardrails checks
+        run: |
+          echo "🔍 Running UI quality audit..."
+          npm run audit:ui || { echo "❌ UI audit failed"; exit 1; }
+          echo "✅ UI audit passed"
+
+          echo "🔍 Checking build badge..."
+          npm run hud:check || { echo "❌ Build badge check failed"; exit 1; }
+          echo "✅ Build badge check passed"
+
+          echo "🔍 Running pre-release validation..."
+          npm run release:check || { echo "❌ Release check failed"; exit 1; }
+          echo "✅ Release check passed"
+
+      - name: Update build badge
+        run: node build-stamp.js
 
       - name: Prepare Pages artifact
         run: |

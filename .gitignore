@@ -26,3 +26,18 @@ CODEX_PHASE_*.txt
 
 # AI config (contains Azure API key — user-created, not committed)
 js/ai-config.js
+
+# Environment variables (contains secrets, never commit)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.production.local
+.env.development.local
+
+# Database
+server/database/*.log
+server/database/backups/
+server/database/migrations/
+logs/
+*.sql.gz
