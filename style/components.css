@@ -10489,43 +10489,34 @@ html[data-home-mode="play"] .key-backspace-glyph {
 /* Game board and keyboard tile improvements */
 
 /* Square tiles instead of rounded */
-body.game-platform-page .cg-letter-box {
-  border-radius: 0;
+.tile {
+  border-radius: 0 !important;
 }
 
 /* Larger tiles with more internal padding */
-.cg-quest-board .cg-letter-box {
+#game-board .tile {
   width: 80px;
   height: 80px;
   font-size: 32px;
   padding: 4px;
 }
 
-/* Projector/classroom view: larger square tiles */
-html[data-view-mode="projector"] .cg-quest-board .cg-letter-box,
-html[data-view-mode="classroom"] .cg-quest-board .cg-letter-box {
-  width: 100px;
-  height: 100px;
-  font-size: 40px;
-  padding: 6px;
-}
-
 /* Increase spacing between tiles */
-.cg-quest-board {
+#game-board {
   gap: 10px;
 }
 
 /* Square keyboard buttons with better spacing */
-body.game-platform-page[data-shell-view="play"] .cg-key-strip__key {
+.cg-key-strip__key {
   min-width: 48px;
   min-height: 48px;
   padding: 10px 12px;
-  border-radius: 0;
+  border-radius: 0 !important;
   font-size: 0.9rem;
 }
 
 /* Increase keyboard button spacing */
-body.game-platform-page[data-shell-view="play"] .cg-key-strip {
+.cg-key-strip {
   gap: 10px;
 }
 
