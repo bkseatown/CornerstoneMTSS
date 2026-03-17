@@ -60,7 +60,7 @@ body.cm-page {
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+  color: color-mix(in oklab, var(--text-primary) 56%, var(--muted) 44%);
 }
 
 .cm-search input {
@@ -108,6 +108,11 @@ body.cm-page {
 
 .cm-top-grid {
   grid-template-columns: minmax(0, 1.32fr) minmax(340px, 0.68fr);
+  background: rgba(250, 249, 246, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 28px;
+  padding: 12px 16px;
+  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
 }
 
 .cm-main-grid {
@@ -153,6 +158,13 @@ body.cm-page {
   background: rgba(255, 255, 255, 0.74);
   font-size: 0.8rem;
   font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cm-summary-chip {
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 0.85rem;
+  border-color: color-mix(in oklab, var(--border) 72%, white 28%);
 }
 
 .cm-status-pill[data-tone="urgent"] {
@@ -337,6 +349,14 @@ body.cm-page {
 
 /* ─── STREAMLINED VISUAL HIERARCHY ENHANCEMENTS ─── */
 
+.cm-top-grid > .cm-panel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 6px;
+}
+
 .cm-panel {
   padding: 14px 16px;
   gap: 8px;
@@ -441,23 +461,74 @@ body.cm-page {
 }
 
 /* Better section layout */
-.cm-section-head {
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  margin-bottom: 4px;
+/* Section head improvements */
+.cm-panel-caseload .cm-section-head {
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 64%, white 36%);
+  margin-bottom: 10px;
 }
 
-/* Sidebar styling */
+.cm-section-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.cm-section-head > div:first-child {
+  flex: 1;
+}
+
+.cm-section-head h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.cm-section-head .cm-kicker {
+  color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
+  margin-bottom: 6px;
+}
+
+/* Sidebar styling - UNIFIED VISUAL SPACE */
 .cm-sidebar {
-  gap: 8px;
+  gap: 0;
   display: flex;
   flex-direction: column;
+  background: rgba(250, 249, 246, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 28px;
+  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
+  overflow: hidden;
 }
 
 .cm-sidebar .cm-panel {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   overflow-y: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cm-sidebar .cm-panel:last-child {
+  border-bottom: none;
+}
+
+/* Main caseload panel should have more prominence */
+.cm-panel-caseload {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Sidebar panel kickers */
+.cm-sidebar .cm-kicker {
+  color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
 }
 
 /* Enhanced responsive */
