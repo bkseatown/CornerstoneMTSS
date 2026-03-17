@@ -1,0 +1,135 @@
+/* GALLERY VIEW — Game Card Gallery Module
+   Extracted from game-shell.css modularization 2026-03-17
+   Contains gallery layout, card styling, mini previews */
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brandbar {
+  padding: 22px 24px 10px;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy h1 {
+  color: rgba(249, 250, 252, 0.98);
+  letter-spacing: -0.045em;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  color: rgba(231, 236, 244, 0.82);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy .cg-kicker {
+  color: rgba(221, 227, 239, 0.58);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-brand-copy p {
+  display: block;
+  max-width: 760px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-shell {
+  padding: 0 24px 32px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  min-height: 0;
+  padding: 18px;
+  background: var(--cg-panel-strong);
+  border: 1.5px solid var(--cg-border-strong);
+  box-shadow: var(--cg-shadow-soft);
+  cursor: pointer;
+  gap: 10px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption,
+body.game-platform-page[data-shell-view="gallery"] .cg-kicker {
+  color: var(--cg-reading-ink);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  color: var(--cg-reading-muted-strong);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  background: color-mix(in oklab, var(--cg-primary) 8%, var(--cg-panel));
+  border-color: var(--cg-border);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-letter,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-word-chip,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-piece {
+  color: #f8faff;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-taboo-target,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-taboo-list li,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-category-label,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-join,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-error,
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-fix {
+  color: #2a354b;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-rung {
+  color: #f5f7fb;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-rung--active {
+  color: #203044;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-rung--locked {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-part {
+  color: #ffffff;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-mini-piece--blank {
+  color: #203044;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 42px color-mix(in oklab, var(--cg-bg-deep) 20%, transparent);
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--cg-muted-strong);
+  font-weight: 700;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head {
+  margin-bottom: 2px;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-card-badge:hover,
+body.game-platform-page[data-shell-view="gallery"] .cg-card-badge:focus-visible {
+  background: rgba(171, 178, 190, 0.98);
+  color: #162033;
+  outline: none;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-play-shell {
+  display: grid;
+  gap: 14px;

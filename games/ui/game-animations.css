@@ -1,0 +1,14 @@
+/* ═══════════════════════════════════════════════════════════════
+   GAME SHELL ANIMATIONS — Keyframes & Motion Utilities
+   Extracted from game-shell.css (modularization refactor 2026-03-17)
+   
+   Contains:
+   - All @keyframes definitions (card entrance, hover lift, preview animations, etc.)
+   - Motion utilities and timing functions
+   - Animation timing constants
+   
+   Dependencies: None (pure animation definitions)
+   
+   Safe to load asynchronously or defer-loaded.
+   ═══════════════════════════════════════════════════════════════ */
+

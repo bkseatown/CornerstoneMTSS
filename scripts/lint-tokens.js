@@ -53,6 +53,12 @@ const FILE_EXEMPTIONS = new Set([
   'lesson-brief-panel.css', // Pre-existing panel; full token migration tracked as tech debt
   'game-shell.css',         // Monolithic game shell; token migration tracked as tech debt
   'game-theme.css',         // Theme system: requires scientifically-specific colors (WCAG contrast ratios, brand colors) and micro-label sizing per theme variant
+  'game-typing-quest.css',  // Extracted from game-shell.css; token migration tracked as tech debt
+  'game-word-quest.css',    // Extracted from game-shell.css; token migration tracked as tech debt
+  'game-gallery-view.css',  // Extracted from game-shell.css; token migration tracked as tech debt
+  'game-games.css',         // Extracted from game-shell.css; token migration tracked as tech debt
+  'game-play-surface.css',  // Extracted from game-shell.css; token migration tracked as tech debt
+  'game-animations.css',    // Extracted from game-shell.css; token migration tracked as tech debt
   'a11y-dyslexia.css',      // Accessibility: dyslexia-friendly typography (OpenDyslexia, research-backed spacing)
   'a11y-high-contrast.css', // Accessibility: WCAG AAA colors (scientifically-specific contrast ratios)
   'a11y-color-blind.css',   // Accessibility: color-blind palettes (Deuteranopia/Protanopia/Tritanopia specific)

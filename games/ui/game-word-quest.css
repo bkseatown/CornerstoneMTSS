@@ -1,0 +1,51 @@
+/* WORD QUEST — Complete Game Shell Module
+   Extracted from game-shell.css modularization 2026-03-17
+   Contains all .cg-quest-* and word-quest specific selectors */
+
+/* ── 1. WORD QUEST — Deduction Board ───────────────────────── */
+.cg-quest-board {
+  display: grid;
+  gap: 20px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.cg-quest-clue {
+  font-size: 19px;
+  font-style: italic;
+  color: var(--cg-muted-strong);
+  text-align: center;
+  line-height: 1.4;
+}
+.cg-quest-grid {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+.cg-quest-board .cg-letter-box {
+  width: 76px;
+  height: 76px;
+  font-size: 28px;
+  border-radius: 18px;
+  flex: 1 1 0;
+  max-width: 88px;
+}
+.cg-quest-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.cg-quest-input-row .cg-input {
+  flex: 1;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+html[data-view-mode="projector"] .cg-quest-board .cg-letter-box,
+html[data-view-mode="classroom"] .cg-quest-board .cg-letter-box {
+  width: 96px;
+  height: 96px;
+  font-size: 36px;
+}
+
