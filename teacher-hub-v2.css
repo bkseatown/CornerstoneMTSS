@@ -61,6 +61,7 @@ body.th2-page {
 
 .th2-list {
   flex: 1;
+  min-height: 0;
   padding: 4px;
   gap: 1px;
 }
