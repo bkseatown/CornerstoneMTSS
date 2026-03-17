@@ -129,12 +129,12 @@ body.sp-page {
 
 .sp-kicker,
 .sp-tile-label {
-  margin: 0 0 6px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  margin: 0 0 8px;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.20em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+  color: color-mix(in oklab, var(--muted) 70%, white 30%);
 }
 
 .sp-hero-main,
@@ -203,26 +203,35 @@ body.sp-page {
 .sp-list-item,
 .sp-compact-card,
 .sp-plan-link {
-  padding: 8px 9px;
+  padding: 12px 14px;
   border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
-  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
+  background: rgba(255, 255, 255, 0.72);
+  transition: all 140ms ease-out;
+}
+
+.sp-list-item:hover,
+.sp-plan-link:hover {
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 42%, white 58%);
+  background: color-mix(in oklab, var(--accent, #2b5da8) 6%, white 94%);
+  box-shadow: 0 4px 12px rgba(43, 93, 168, 0.12);
 }
 
 .sp-meta-card span {
   display: block;
-  margin-bottom: 3px;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  margin-bottom: 6px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+  color: color-mix(in oklab, var(--muted) 74%, white 26%);
 }
 
 .sp-meta-card strong {
   display: block;
-  font-size: 0.8rem;
-  line-height: 1.14;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--text-primary) 96%, var(--muted) 4%);
 }
 
 .sp-compact-card h3,
@@ -236,8 +245,10 @@ body.sp-page {
 .sp-compact-card h3,
 .sp-list-item strong,
 .sp-plan-link strong {
-  font-size: 0.82rem;
-  line-height: 1.18;
+  font-size: 0.86rem;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--text-primary) 98%, var(--muted) 2%);
+  margin-bottom: 2px;
 }
 
 .sp-compact-card p,
@@ -283,8 +294,11 @@ body.sp-page {
 
 .sp-section-title {
   font-family: var(--font-display);
-  font-size: 0.96rem;
-  line-height: 1.06;
+  font-size: 1.12rem;
+  line-height: 1.08;
+  font-weight: 700;
+  color: color-mix(in oklab, var(--text-primary) 98%, var(--muted) 2%);
+  margin-bottom: 2px;
 }
 
 .sp-list {
