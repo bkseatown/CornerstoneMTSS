@@ -1253,13 +1253,13 @@
       '    </div>',
       '  </div>',
       '  <div class="th2-block-command-bar__chips">',
-      '    <span class="th2-command-chip th2-command-chip--' + escapeHtml(alignment.tone) + '"><strong>' + escapeHtml(alignment.label) + '</strong><em>' + escapeHtml(alignment.detail) + '</em></span>',
-      '    <span class="th2-command-chip"><strong>Primary lane</strong><em>' + escapeHtml(deriveBlockSupportSummary(contextData)) + '</em></span>',
+      '    <span class="th2-command-chip th2-command-chip--' + escapeHtml(alignment.tone) + '"><strong>' + escapeHtml(alignment.label) + '</strong> <em>' + escapeHtml(alignment.detail) + '</em></span>',
+      '    <span class="th2-command-chip"><strong>Primary lane</strong> <em>' + escapeHtml(deriveBlockSupportSummary(contextData)) + '</em></span>',
       '  </div>',
       '  <div class="th2-block-command-grid">',
-      '    <article class="th2-block-command-card th2-block-command-card--focus"><span>Teach first</span><strong>' + escapeHtml(derived.mainConcept || classConceptFocus(block)) + '</strong></article>',
-      '    <article class="th2-block-command-card"><span>First support move</span><strong>' + escapeHtml(blockNextMove(contextData)) + '</strong></article>',
-      '    <article class="th2-block-command-card"><span>If pacing changed</span><strong>' + escapeHtml(blockPacingNote(contextData)) + '</strong></article>',
+      '    <article class="th2-block-command-card th2-block-command-card--focus"><span>Teach first</span> <strong>' + escapeHtml(derived.mainConcept || classConceptFocus(block)) + '</strong></article>',
+      '    <article class="th2-block-command-card"><span>First support move</span> <strong>' + escapeHtml(blockNextMove(contextData)) + '</strong></article>',
+      '    <article class="th2-block-command-card"><span>If pacing changed</span> <strong>' + escapeHtml(blockPacingNote(contextData)) + '</strong></article>',
       '  </div>',
       '</section>'
     ].join("");
