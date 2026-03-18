@@ -7064,6 +7064,12 @@ html[data-home-mode="play"] #toast:not(.visible) {
   gap: 9px;
   padding: 11px 12px 14px;
   font-size: 0.9rem;
+  text-align: center;
+}
+
+.first-run-setup-card .modal-body > * {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .first-run-lead {
