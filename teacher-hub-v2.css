@@ -19,44 +19,41 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 /* ══════════════════════════════════════════════════════════
-   SPECIALIST HUB PALETTE — Professional navy + light gray design
-   Three-layer depth: navy-bg → light-gray-cards → accent-highlights
+   SPECIALIST HUB PALETTE — Professional soft gray + warm accent design
+   Three-layer depth: soft-bg → cards → accent-highlights
    ══════════════════════════════════════════════════════════ */
 html {
   color-scheme: only light;
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: #1a2d4d; /* navy fallback */
+  background: #f5f3f0; /* soft cream fallback */
 }
 
-/* Professional dark navy theme with light gray cards and warm accents */
+/* Professional soft palette with subtle depth */
 body.th2-page {
   background:
-    radial-gradient(circle at top left, rgba(160, 140, 110, 0.06), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(74, 124, 180, 0.08), transparent 28%),
-    linear-gradient(155deg, #1a2d4d 0%, #1e3246 48%, #182637 100%);
+    radial-gradient(circle at top left, rgba(212, 167, 106, 0.08), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(200, 190, 175, 0.06), transparent 32%),
+    linear-gradient(155deg, #f9f7f4 0%, #f5f3f0 48%, #f2ede7 100%);
 }
 
 .th2-shell {
-  border: 1px solid rgba(160, 140, 110, 0.22);
-  background: linear-gradient(180deg, rgba(234, 236, 241, 0.96), rgba(224, 228, 235, 0.94));
+  border: 1px solid rgba(180, 170, 155, 0.18);
+  background: linear-gradient(180deg, #f9f8f6 0%, #f6f4f1 100%);
   box-shadow:
-    0 28px 60px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    0 16px 36px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.60);
 }
 
 .th2-sidebar {
-  background: linear-gradient(180deg, rgba(237, 238, 243, 0.98), rgba(228, 230, 238, 0.97));
-  box-shadow: inset -1px 0 0 rgba(160, 140, 110, 0.18);
+  background: linear-gradient(180deg, #ddd5cc 0%, #d4cbc0 100%);
+  box-shadow: inset -1px 0 0 rgba(160, 140, 110, 0.32);
 }
 
+/* Hidden — date/context consolidated into banner */
 .th2-sidebar-context {
-  margin: 0 8px 6px;
-  padding: 10px 12px 8px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(247, 248, 251, 0.88), rgba(240, 242, 248, 0.88));
-  border: 1px solid rgba(160, 140, 110, 0.18);
+  display: none;
 }
 
 .th2-list {
@@ -68,37 +65,37 @@ body.th2-page {
 
 .th2-block-card {
   border-radius: 8px;
-  padding: 6px 8px;
-  background: linear-gradient(180deg, rgba(240, 241, 246, 0.96), rgba(232, 234, 242, 0.96));
-  border: 1px solid rgba(160, 140, 110, 0.16);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 8px 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf8 100%);
+  border: 1px solid rgba(200, 180, 160, 0.42);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
   transition: all 0.12s ease;
 }
 
 .th2-block-card:hover {
-  background: linear-gradient(180deg, rgba(248, 249, 252, 0.98), rgba(240, 243, 249, 0.98));
-  border-color: rgba(160, 140, 110, 0.32);
-  box-shadow: 0 10px 20px rgba(160, 140, 110, 0.12);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfaf8 100%);
+  border-color: rgba(212, 167, 106, 0.42);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Current time block — subtle warm highlight */
 .th2-block-card.is-current {
-  border-color: rgba(239, 180, 76, 0.42);
-  background: linear-gradient(180deg, rgba(255, 250, 240, 0.94), rgba(248, 244, 236, 0.94));
-  box-shadow: inset -3px 0 0 rgba(239, 180, 76, 0.32), 0 4px 12px rgba(160, 140, 110, 0.1);
+  border-color: rgba(212, 167, 106, 0.56);
+  background: linear-gradient(180deg, rgba(255, 252, 245, 0.96), rgba(252, 248, 240, 0.96));
+  box-shadow: inset -3px 0 0 rgba(212, 167, 106, 0.48), 0 4px 12px rgba(212, 167, 106, 0.14);
 }
 
 /* Selected/active block — clear visual emphasis */
 .th2-block-card.is-active {
-  border-color: rgba(160, 140, 110, 0.48);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 246, 250, 0.98));
-  box-shadow: 0 12px 28px rgba(160, 140, 110, 0.18);
+  border-color: rgba(212, 167, 106, 0.64);
+  background: linear-gradient(180deg, #ffffff 0%, #fefbf7 100%);
+  box-shadow: 0 8px 20px rgba(212, 167, 106, 0.22);
 }
 
 .th2-main {
   background:
-    radial-gradient(circle at top right, rgba(222, 182, 120, 0.10), transparent 24%),
-    linear-gradient(180deg, rgba(242, 246, 252, 0.72), rgba(229, 236, 246, 0.46));
+    radial-gradient(circle at top right, rgba(212, 167, 106, 0.16), transparent 32%),
+    linear-gradient(180deg, #fefcf8 0%, #f9f6f1 100%);
 }
 
 .th2-day-schedule-view {
@@ -111,14 +108,16 @@ body.th2-page {
 
 .th2-day-brief,
 .th2-priority-rail {
-  border-color: rgba(174, 188, 208, 0.34);
+  border-color: rgba(200, 180, 160, 0.32);
   box-shadow:
-    0 18px 36px rgba(39, 51, 72, 0.10),
-    inset 0 1px 0 rgba(255,255,255,0.62);
+    0 12px 28px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.80);
 }
 
 .th2-day-brief {
-  padding: 16px 18px;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf8 100%);
+  border-radius: 14px;
 }
 
 .th2-day-brief__title {
@@ -143,13 +142,13 @@ body.th2-page {
   display: inline-flex;
   align-items: center;
   min-height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   border-radius: var(--radius-full);
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(171, 185, 206, 0.26);
+  background: linear-gradient(180deg, #f9f8f6 0%, #f3f1ee 100%);
+  border: 1px solid rgba(200, 180, 160, 0.38);
   font-size: 12px;
   font-weight: 700;
-  color: #4d5c74;
+  color: #5a4d40;
 }
 
 .th2-day-brief__pattern,
@@ -165,8 +164,8 @@ body.th2-page {
   gap: 10px;
   width: fit-content;
   padding: 10px 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(245,248,253,0.92));
-  border-color: rgba(171, 185, 206, 0.28);
+  background: linear-gradient(180deg, #fafaf8 0%, #f3f1ee 100%);
+  border-color: rgba(200, 180, 160, 0.34);
 }
 
 .th2-day-brief__pattern-label {
@@ -174,29 +173,30 @@ body.th2-page {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #6a7890;
+  color: #7a6d62;
 }
 
 .th2-day-brief__pattern strong {
   font-size: 13px;
-  color: #22436f;
+  color: #3d3228;
 }
 
 .th2-day-brief__group {
   background:
-    radial-gradient(circle at top right, rgba(214, 165, 92, 0.10), transparent 32%),
-    linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,245,240,0.94));
-  border-color: rgba(194, 169, 131, 0.24);
+    radial-gradient(circle at top right, rgba(212, 167, 106, 0.12), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%, #fdfbf8 100%);
+  border-color: rgba(212, 167, 106, 0.28);
 }
 
 .th2-command-brief-grid {
-  gap: 10px;
+  gap: 12px;
 }
 
 .th2-command-brief-card {
-  padding: 14px 15px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244,248,253,0.98));
-  border: 1px solid rgba(169, 184, 204, 0.22);
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #fafaf8 0%, #f7f5f2 100%);
+  border: 1px solid rgba(200, 180, 160, 0.28);
+  border-radius: 12px;
 }
 
 .th2-note-actions {
@@ -334,6 +334,7 @@ body.th2-page {
   overflow: hidden;
   gap: 9px;
   padding-top: 18px;
+  padding-left: 24px;
   text-align: left;
 }
 
@@ -364,14 +365,14 @@ body.th2-page {
   inset: 0 auto 0 0;
   width: 6px;
   border-radius: 18px 0 0 18px;
-  background: #7a8ea8;
+  background: #d4a76a;
 }
 
-.th2-priority-item__tone[data-tone="literacy"] { background: linear-gradient(180deg, #4f7fd3 0%, #6aa7f5 100%); }
-.th2-priority-item__tone[data-tone="math"] { background: linear-gradient(180deg, #e39a3c 0%, #f0c25f 100%); }
-.th2-priority-item__tone[data-tone="writing"] { background: linear-gradient(180deg, #3fbe8a 0%, #62d3aa 100%); }
-.th2-priority-item__tone[data-tone="content"] { background: linear-gradient(180deg, #8a6ad3 0%, #b290ec 100%); }
-.th2-priority-item__tone[data-tone="general"] { background: linear-gradient(180deg, #7f93ad 0%, #9db1ca 100%); }
+.th2-priority-item__tone[data-tone="literacy"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
+.th2-priority-item__tone[data-tone="math"] { background: linear-gradient(180deg, #d4a76a 0%, #e0b87a 100%); }
+.th2-priority-item__tone[data-tone="writing"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
+.th2-priority-item__tone[data-tone="content"] { background: linear-gradient(180deg, #d4a76a 0%, #e0b87a 100%); }
+.th2-priority-item__tone[data-tone="general"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
 
 .th2-priority-item__lesson-bar {
   height: 8px;
@@ -449,6 +450,36 @@ body.th2-page {
   background: linear-gradient(180deg, rgba(247, 249, 252, 0.98), rgba(241, 245, 250, 0.96));
 }
 
+.th2-priority-item__cer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(212, 167, 106, 0.12), rgba(200, 153, 86, 0.08));
+  border: 1px solid rgba(212, 167, 106, 0.28);
+  color: #6b4c2c;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.th2-priority-item__cer-link:hover {
+  background: linear-gradient(180deg, rgba(212, 167, 106, 0.18), rgba(200, 153, 86, 0.14));
+  border-color: rgba(212, 167, 106, 0.42);
+  color: #4c3620;
+  text-decoration: none;
+}
+
+.th2-priority-item__cer-link:active {
+  transform: scale(0.98);
+}
+
 .th2-day-brief--overview {
   background:
     radial-gradient(circle at top right, rgba(142, 188, 231, 0.15), transparent 30%),
@@ -468,31 +499,18 @@ html, body {
   height: 100%;
 }
 
+/* Token overrides — redefine for the Cornerstone MTSS palette */
 body.th2-page {
-  /*
-   * Layer 1 — main background: light cool-gray gradient.
-   * Professional, bright, and easy on the eyes.
-   * White cards float clearly on top without feeling dark/heavy.
-   */
-  background:
-    radial-gradient(circle at top right, rgba(198, 142, 101, 0.08), transparent 28%),
-    linear-gradient(155deg, #d2d5db 0%, #c5cad2 46%, #bcc3cb 100%);
+  --text-primary:   #2d2520;   /* dark brown — max legibility */
+  --text-secondary: #5a4d40;   /* warm brown — readable labels */
+  --text-muted:     #8a7a6a;   /* soft warm gray — tertiary info */
+  --surface-elev-1: #ffffff;   /* cards float pure white */
+  --surface-elev-2: #f5f3f0;   /* tinted bg for inputs, hover */
+  --border-subtle:  #d4c5b0;   /* warm neutral border */
+  --accent:         #d4a76a;   /* warm tan — primary accent */
+  --accent-main:    #c89956;   /* deeper tan — active states */
 
-  /*
-   * Token overrides — redefine for the Cornerstone palette.
-   * These cascade to every var() usage inside .th2-page without
-   * touching tokens.css (which the rest of the app uses).
-   */
-  --text-primary:   #0d1117;   /* near-black — max legibility on white cards */
-  --text-secondary: #3d4559;   /* dark slate — readable secondary labels     */
-  --text-muted:     #6b7591;   /* mid-slate  — placeholders, tertiary info   */
-  --surface-elev-1: #fbfbfc;   /* Layer 3 — cards float pure-white           */
-  --surface-elev-2: #eaedf1;   /* tinted bg for inputs, hover, chips         */
-  --border-subtle:  #c8ced7;   /* soft neutral border                        */
-  --accent:         #2b5da8;   /* brand blue — unchanged                     */
-  --accent-main:    #c84b31;   /* terracotta — used for urgent/active states  */
-
-  color: #0d1117;
+  color: #2d2520;
   font-family: var(--font-body, var(--font-sans, system-ui, -apple-system, sans-serif));
   font-size: 15px;
   line-height: 1.52;
@@ -502,6 +520,11 @@ body.th2-page {
 
 body.th2-page.cs-has-nav-shell {
   padding-top: 0;
+}
+
+body.th2-page.cs-has-nav-shell .th2-shell {
+  margin-top: 110px;
+  height: calc(100vh - 110px);
 }
 
 /* ── Shell: two-panel grid ─────────────────────────────── */
@@ -524,4 +547,162 @@ body.th2-page.cs-has-nav-shell {
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+/* ── CER Support Modal ──────────────────────────────── */
+
+.th2-cer-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(45, 37, 32, 0.4);
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 150ms ease;
+}
+
+.th2-cer-modal.hidden {
+  display: none;
+  opacity: 0;
+}
+
+.th2-cer-modal-inner {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(45, 37, 32, 0.15);
+  width: 90%;
+  max-width: 520px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.th2-cer-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #d4c5b0;
+  flex-shrink: 0;
+}
+
+.th2-cer-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d2520;
+}
+
+.th2-cer-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #8a7a6a;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.th2-cer-modal-close:hover {
+  color: #2d2520;
+}
+
+.th2-cer-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.th2-cer-scaffold {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.th2-cer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.th2-cer-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2520;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.th2-cer-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(212, 167, 106, 0.12), rgba(200, 153, 86, 0.08));
+  color: #6b4c2c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.th2-cer-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 32px;
+}
+
+.th2-cer-starter {
+  font-size: 13px;
+  color: #5a4d40;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-left: 2px solid #d4a76a;
+  background: #f9f7f4;
+  border-radius: 4px;
+}
+
+.th2-cer-starter-strong {
+  font-weight: 600;
+  color: #2d2520;
+}
+
+.th2-cer-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #d4c5b0;
+  flex-shrink: 0;
+}
+
+.th2-cer-modal-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #d4a76a, #c89956);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.th2-cer-modal-cta:hover {
+  background: linear-gradient(180deg, #c89956, #b88646);
+  transform: translateY(-1px);
+}
+
+.th2-cer-modal-cta:active {
+  transform: translateY(0);
 }

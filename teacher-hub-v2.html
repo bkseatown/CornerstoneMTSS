@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="./style/tokens.css?v=20260306h">
   <link rel="stylesheet" href="./style/typography.css?v=20260306h">
   <link rel="stylesheet" href="./style/nav-shell.css?v=20260312a">
-  <link rel="stylesheet" href="./teacher-hub-v2.css?v=20260318a">
+  <link rel="stylesheet" href="./teacher-hub-v2.css?v=20260318j">
   <link rel="stylesheet" href="./css/curriculum-panel.css?v=20260306h">
   <link rel="stylesheet" href="./css/lesson-brief-panel.css?v=20260316a">
   <link rel="stylesheet" href="./css/onboarding-tour.css?v=20260306j">
@@ -157,6 +157,24 @@
     </div>
   </div>
 
+  <!-- ── CER Support Modal ──────────────────────────────── -->
+  <div id="th2-cer-modal" class="th2-cer-modal hidden" role="dialog" aria-modal="true" aria-labelledby="th2-cer-modal-title">
+    <div class="th2-cer-modal-inner">
+      <div class="th2-cer-modal-head">
+        <h3 id="th2-cer-modal-title" class="th2-cer-modal-title">CER Writing Scaffold</h3>
+        <button id="th2-cer-modal-close" class="th2-cer-modal-close" aria-label="Close">&#x2715;</button>
+      </div>
+      <div id="th2-cer-modal-body" class="th2-cer-modal-body">
+        <!-- Populated by teacher-hub-v2.js -->
+      </div>
+      <div class="th2-cer-modal-footer">
+        <a href="writing-studio.html" class="th2-cer-modal-cta" target="_blank">
+          Open Writing Studio for full CER writing
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Toast host ───────────────────────────────────── -->
   <div id="th2-toast-host" class="th2-toast-host" aria-live="polite" aria-atomic="false"></div>
 
@@ -271,7 +289,7 @@
   <script src="./js/nav-shell.js?v=20260312a"></script>
 
   <!-- ── Application ───────────────────────────────────── -->
-  <script src="./teacher-hub-v2.js?v=20260318a"></script>
+  <script src="./teacher-hub-v2.js?v=20260318c"></script>
   <script>window.CSBackupManager && window.CSBackupManager.init && window.CSBackupManager.init();</script>
 
   <!-- ── Build infrastructure ──────────────────────────── -->

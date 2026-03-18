@@ -878,6 +878,11 @@
     return value;
   }
 
+  function isCERSubject(subject) {
+    var value = String(subject || "").toLowerCase();
+    return /^(ela|english|reading|writing|language arts|science|social studies?)$/i.test(value);
+  }
+
   function inferSupportAreaFromText(text) {
     var value = String(text || "").toLowerCase();
     if (!value) return "";
@@ -4374,14 +4379,14 @@
       if (block.classSection) {
         var gradeMatch = block.classSection.match(/Grade\s+(\d+)/i);
         if (gradeMatch) {
-          grade = "G" + gradeMatch[1];
+          grade = "Grade " + gradeMatch[1];
         }
       }
 
-      // Build metadata: Teacher • Subject on first meta line
-      var meta1 = [teacher, subject].filter(Boolean).join(" • ");
-      // Build second meta line: Curriculum • Grade • Lesson info
-      var meta2 = [curriculum, grade, lesson].filter(Boolean).join(" • ");
+      // Build metadata: Teacher • Curriculum on first meta line
+      var meta1 = [teacher, curriculum].filter(Boolean).join(" • ");
+      // Build second meta line: Grade • Unit/Lesson info
+      var meta2 = [grade, lesson].filter(Boolean).join(" • ");
 
       return [
         '<button class="th2-block-card' + (isActive ? " is-active" : "") + (isCurrent ? " is-current" : "") + '"',
@@ -4400,9 +4405,7 @@
     }).join("");
     if (el.sidebarCtx) {
       var sidebarDate = todayDateStr();
-      var sidebarNote = timedBlock
-        ? (isCurrentTimeBlock(timedBlock) ? "In progress" : "Up next: " + (timedBlock.label || timedBlock.subject || "Block"))
-        : "";
+      var sidebarNote = "";
       el.sidebarCtx.classList.add("th2-sidebar-ctx");
       el.sidebarCtx.innerHTML = '<p class="th2-sidebar-date">' + escapeHtml(sidebarDate) + '</p>' +
         (sidebarNote ? '<p class="th2-sidebar-urgency">' + escapeHtml(sidebarNote) + '</p>' : '');
@@ -4748,6 +4751,213 @@
     }
   }
 
+  /* ── CER Support Modal ──────────────────────────────── */
+
+  var CER_SCAFFOLDING = {
+    "ela": {
+      title: "CER Writing: ELA",
+      claim: [
+        "The author shows that...",
+        "The character's decision to... demonstrates...",
+        "This passage reveals that...",
+        "Based on the text, ...",
+      ],
+      evidence: [
+        "This is shown when...",
+        "An example is when...",
+        "The author states...",
+        "The text specifically says...",
+      ],
+      reasoning: [
+        "This matters because...",
+        "This develops the theme by...",
+        "This is significant because...",
+        "This supports the story by...",
+      ]
+    },
+    "english": {
+      title: "CER Writing: English",
+      claim: [
+        "The author conveys that...",
+        "The speaker argues that...",
+        "This text suggests...",
+        "The main idea is...",
+      ],
+      evidence: [
+        "Evidence of this includes...",
+        "For instance, the author writes...",
+        "A specific example is...",
+        "The passage demonstrates...",
+      ],
+      reasoning: [
+        "This proves the claim because...",
+        "This evidence supports the claim by...",
+        "The significance lies in...",
+        "This strengthens the argument because...",
+      ]
+    },
+    "reading": {
+      title: "CER Writing: Reading",
+      claim: [
+        "From the reading, we can conclude that...",
+        "The text establishes that...",
+        "This passage indicates that...",
+        "The key idea is...",
+      ],
+      evidence: [
+        "This can be seen when...",
+        "As the text explains...",
+        "The author provides evidence by...",
+        "Specifically, the passage states...",
+      ],
+      reasoning: [
+        "This matters to the reader because...",
+        "This connects to...",
+        "This is important because...",
+        "This demonstrates how...",
+      ]
+    },
+    "science": {
+      title: "CER Writing: Science",
+      claim: [
+        "The data shows that...",
+        "Based on observations...",
+        "The evidence suggests that...",
+        "This experiment demonstrates...",
+      ],
+      evidence: [
+        "The evidence includes...",
+        "This can be seen in...",
+        "The results show...",
+        "The data indicates...",
+      ],
+      reasoning: [
+        "This demonstrates that...",
+        "This supports the conclusion because...",
+        "This explains why...",
+        "This relationship means...",
+      ]
+    },
+    "social studies": {
+      title: "CER Writing: Social Studies",
+      claim: [
+        "The source suggests that...",
+        "The historical event shows...",
+        "This document reveals...",
+        "The evidence indicates that...",
+      ],
+      evidence: [
+        "The text states...",
+        "The document reveals...",
+        "Primary sources show...",
+        "Historical records indicate...",
+      ],
+      reasoning: [
+        "This indicates that...",
+        "This reflects the importance of...",
+        "This shows how...",
+        "This connection reveals...",
+      ]
+    }
+  };
+
+  function getCERScaffoldingForSubject(subject) {
+    var subj = String(subject || "").toLowerCase().trim();
+    return CER_SCAFFOLDING[subj] || CER_SCAFFOLDING["ela"] || {};
+  }
+
+  function renderCERModal(subject) {
+    var scaffold = getCERScaffoldingForSubject(subject);
+    var html = [
+      '<div class="th2-cer-scaffold">',
+      '  <div class="th2-cer-section">',
+      '    <div class="th2-cer-section-title">',
+      '      <span class="th2-cer-section-icon">C</span>',
+      '      <span>Claim</span>',
+      '    </div>',
+      '    <div class="th2-cer-section-content">',
+      (scaffold.claim || []).map(function (starter) {
+        return '      <div class="th2-cer-starter"><span class="th2-cer-starter-strong">' + escapeHtml(starter) + '</span></div>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-cer-section">',
+      '    <div class="th2-cer-section-title">',
+      '      <span class="th2-cer-section-icon">E</span>',
+      '      <span>Evidence</span>',
+      '    </div>',
+      '    <div class="th2-cer-section-content">',
+      (scaffold.evidence || []).map(function (starter) {
+        return '      <div class="th2-cer-starter"><span class="th2-cer-starter-strong">' + escapeHtml(starter) + '</span></div>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-cer-section">',
+      '    <div class="th2-cer-section-title">',
+      '      <span class="th2-cer-section-icon">R</span>',
+      '      <span>Reasoning</span>',
+      '    </div>',
+      '    <div class="th2-cer-section-content">',
+      (scaffold.reasoning || []).map(function (starter) {
+        return '      <div class="th2-cer-starter"><span class="th2-cer-starter-strong">' + escapeHtml(starter) + '</span></div>';
+      }).join("\n"),
+      '    </div>',
+      '  </div>',
+      '</div>'
+    ].join("\n");
+    return html;
+  }
+
+  function openCERModal(subject) {
+    var modal = document.getElementById("th2-cer-modal");
+    var body = modal && modal.querySelector("#th2-cer-modal-body");
+    var title = modal && modal.querySelector("#th2-cer-modal-title");
+    if (!modal || !body) return;
+
+    var scaffold = getCERScaffoldingForSubject(subject);
+    if (title) title.textContent = scaffold.title || "CER Writing Scaffold";
+
+    body.innerHTML = renderCERModal(subject);
+    modal.classList.remove("hidden");
+    modal.removeAttribute("aria-hidden");
+  }
+
+  function closeCERModal() {
+    var modal = document.getElementById("th2-cer-modal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  function bindCERLinks(container) {
+    if (!container) return;
+
+    var cerLinks = container.querySelectorAll(".th2-priority-item__cer-link");
+    if (!cerLinks.length) return;
+
+    cerLinks.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        var subject = link.getAttribute("data-cer-subject") || "ELA";
+        openCERModal(subject);
+      });
+    });
+  }
+
+  // Wire up CER modal close button
+  (function () {
+    var closeBtn = document.getElementById("th2-cer-modal-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeCERModal);
+    }
+    var modal = document.getElementById("th2-cer-modal");
+    if (modal) {
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeCERModal();
+      });
+    }
+  })();
+
   /* ── Focus card rendering ──────────────────────────────── */
 
   function renderFocusCard(state) {
@@ -4898,6 +5108,9 @@
 
     /* Wire quick log */
     bindQuickLog(el.focusCard, studentId);
+
+    /* Wire CER quick-links */
+    bindCERLinks(el.focusCard);
 
     showFocusCard();
   }
@@ -5463,7 +5676,8 @@
         swbat: swbat,
         supportCount: supportCount,
         tone: tone,
-        alignment: lessonAlignmentStatus(contextData)
+        alignment: lessonAlignmentStatus(contextData),
+        subject: block.subject || ""
       };
     });
   }
@@ -5479,9 +5693,7 @@
       '<section class="th2-day-brief th2-day-brief--overview">',
       '  <p class="th2-section-label">Day overview</p>',
       '  <h2 class="th2-day-brief__title">What changes today</h2>',
-      '  <div class="th2-day-brief__summary-row"><div class="th2-day-brief__microchips"><span>' + escapeHtml(String(totalBlocks)) + ' blocks</span></div></div>',
       (schedulePattern ? '<div class="th2-day-brief__pattern"><span class="th2-day-brief__pattern-label">Cycle</span><strong>' + escapeHtml(schedulePattern) + '</strong></div>' : ''),
-      '  <div class="th2-day-brief__actions"><button class="th2-day-sched-sync-btn" data-connect-calendar="1" type="button">Sync Google Calendar</button><a class="th2-inline-link" href="reports.html">Go to reports</a></div>',
       '  <div class="th2-day-overview__events">',
       '    <div class="th2-day-overview__events-head"><span class="th2-day-overview__label">Calendar highlights</span><strong>Announcements and exceptions</strong></div>',
       (highlights.length
@@ -5513,6 +5725,7 @@
           '  <p class="th2-priority-item__reason">' + escapeHtml(item.move || item.summary) + '</p>',
           '  <div class="th2-priority-item__fact-row">',
           '    <span class="th2-priority-item__fact"><strong>SWBAT</strong><em>' + escapeHtml(item.swbat.replace(/^SWBAT\s+/i, "")) + '</em></span>',
+          (isCERSubject(item.subject) ? '    <a class="th2-priority-item__cer-link" href="#" data-cer-subject="' + escapeHtml(item.subject) + '" title="Open CER scaffolding">📝 CER</a>' : ''),
           '  </div>',
           '</button>'
         ].join("");
@@ -5533,6 +5746,9 @@
       "</section>",
       "</div>"
     ].join("");
+
+    /* Wire CER quick-links in lesson map */
+    bindCERLinks(el.emptyState);
   }
 
   function showTodaysClasses() {
