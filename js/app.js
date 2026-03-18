@@ -3599,7 +3599,11 @@
       ? 'Open listening coach support'
       : 'Open Clue Sprint for detective clue practice');
     // Show clue button unless help is suppressed (e.g., during team mode)
-    button.classList.toggle('hidden', helpSuppressed);
+    if (helpSuppressed) {
+      button.classList.add('hidden');
+    } else {
+      button.classList.remove('hidden');
+    }
     if (focusButton) {
       const missionMode = isMissionLabStandaloneMode();
       const unlocked = areFocusSupportsUnlocked();

@@ -7060,6 +7060,14 @@ html[data-home-mode="play"] #toast:not(.visible) {
   color: #0f2941;
 }
 
+#phonics-clue-open-btn {
+  display: inline-block !important;
+}
+
+#phonics-clue-open-btn.hidden {
+  display: none !important;
+}
+
 .first-run-setup-card .modal-body {
   gap: 9px;
   padding: 11px 12px 14px;
