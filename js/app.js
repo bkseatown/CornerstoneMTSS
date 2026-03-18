@@ -3598,7 +3598,8 @@
     button.setAttribute('aria-label', listening
       ? 'Open listening coach support'
       : 'Open Clue Sprint for detective clue practice');
-    button.classList.add('hidden');
+    // Show clue button unless help is suppressed (e.g., during team mode)
+    button.classList.toggle('hidden', helpSuppressed);
     if (focusButton) {
       const missionMode = isMissionLabStandaloneMode();
       const unlocked = areFocusSupportsUnlocked();
