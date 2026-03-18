@@ -30,7 +30,7 @@
       <article class="rl-surface cs-stage rl-passage-surface" aria-label="Passage panel">
         <div class="rl-surface-head">
           <h1 class="h1">Reading Lab</h1>
-          <div id="rl-status" class="rl-status">Start reading. Accuracy and phrasing update here.</div>
+          <div id="rl-status" class="rl-status">Ready. Start an attempt.</div>
         </div>
         <div id="rl-coach-ribbon" class="cs-coach-ribbon" role="status" aria-live="polite">
           <span class="cs-coach-chip hidden"></span>
@@ -39,16 +39,16 @@
         </div>
         <div id="rl-passage" class="rl-passage" tabindex="0" aria-label="Reading passage"></div>
         <div class="rl-passage-actions">
-          <button id="rl-send-sentence" class="rl-btn" type="button">Send to Sentence Studio</button>
-          <button id="rl-next-passage" class="rl-btn" type="button">Next Passage</button>
+          <button id="rl-send-sentence" class="rl-btn" type="button">📝 Write about it</button>
+          <button id="rl-next-passage" class="rl-btn" type="button">➡️ Next Story</button>
         </div>
         <div id="rl-comprehension" class="rl-comprehension"></div>
       </article>
 
       <aside class="rl-surface cs-rail rl-control-surface" aria-label="Reading controls and metrics">
         <div class="rl-control-grid">
-          <button id="rl-start" class="rl-btn rl-btn-primary" type="button">Start</button>
-          <button id="rl-stop" class="rl-btn" type="button">Stop</button>
+          <button id="rl-start" class="rl-btn rl-btn-primary" type="button">▶️ Start</button>
+          <button id="rl-stop" class="rl-btn" type="button">⏸ Stop</button>
           <label>Mode
             <select id="rl-mode">
               <option value="read_aloud" selected>Read Aloud</option>
@@ -61,7 +61,7 @@
               <option value="3">Tier 3</option>
             </select>
           </label>
-          <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> Show phrasing prompts</label>
+          <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> 💬 Phrasing Tips</label>
         </div>
 
         <details id="rl-what-track" class="rl-help-toggle">
