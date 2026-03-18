@@ -707,10 +707,14 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
   background: color-mix(in oklab, var(--panel-bg) 80%, #d4dbe5 20%);
   min-width: 88px;
   padding: 4px 12px;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   gap: 7px;
+}
+
+#phonics-clue-open-btn.hidden {
+  display: none !important;
 }
 
 #phonics-clue-open-btn svg {
@@ -7058,14 +7062,6 @@ html[data-home-mode="play"] #toast:not(.visible) {
   font-weight: 900;
   letter-spacing: 0.005em;
   color: #0f2941;
-}
-
-#phonics-clue-open-btn {
-  display: inline-block !important;
-}
-
-#phonics-clue-open-btn.hidden {
-  display: none !important;
 }
 
 .first-run-setup-card .modal-body {
