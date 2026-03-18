@@ -36,6 +36,8 @@ body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   padding: 18px;
   background: var(--cg-panel-strong);
@@ -44,6 +46,15 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card {
   cursor: pointer;
   gap: 10px;
 }
+
+/* Visual order: head → title → preview → description → caption → play → context */
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card-head       { order: 1; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3         { order: 2; margin: 0; }
+body.game-platform-page[data-shell-view="gallery"] .cg-card-preview         { order: 3; flex-shrink: 0; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card > p        { order: 4; flex: 1; margin: 0; }
+body.game-platform-page[data-shell-view="gallery"] .cg-card-caption         { order: 5; }
+body.game-platform-page[data-shell-view="gallery"] .cg-card-play            { order: 6; }
+body.game-platform-page[data-shell-view="gallery"] .cg-instructional-context { order: 7; }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card h3,
 body.game-platform-page[data-shell-view="gallery"] .cg-card-caption,
@@ -56,6 +67,7 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card p {
 }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-card-preview {
+  min-height: 120px;
   background: color-mix(in oklab, var(--cg-primary) 8%, var(--cg-panel));
   border-color: var(--cg-border);
   padding: 8px 10px;
