@@ -15859,6 +15859,41 @@
     if (never?.checked) setSupportPromptMode('off');
     hideSupportChoiceCard();
   });
+  // Make support-choice-card draggable
+  (function setupDraggableHelpModal() {
+    const card = _el('support-choice-card');
+    if (!card) return;
+    const handle = card.querySelector('.support-choice-head');
+    if (!handle) return;
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return; // Only left-click
+      if (e.target instanceof HTMLElement && e.target.closest('button')) return; // Don't drag when clicking close
+      isDragging = true;
+      const rect = card.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      handle.style.cursor = 'grabbing';
+    });
+    document.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const newX = e.clientX - offsetX;
+      const newY = e.clientY - offsetY;
+      const maxX = window.innerWidth - card.offsetWidth;
+      const maxY = window.innerHeight - card.offsetHeight;
+      const x = Math.max(0, Math.min(newX, maxX));
+      const y = Math.max(0, Math.min(newY, maxY));
+      card.style.left = x + 'px';
+      card.style.right = 'auto';
+      card.style.top = y + 'px';
+    });
+    document.addEventListener('pointerup', () => {
+      isDragging = false;
+      handle.style.cursor = 'grab';
+    });
+  })();
   document.addEventListener('pointerdown', (event) => {
     const card = _el('starter-word-card');
     if (!card || card.classList.contains('hidden')) return;

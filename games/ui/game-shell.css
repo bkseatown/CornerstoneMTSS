@@ -381,7 +381,7 @@ body.game-platform-page[data-shell-view="play"] #cg-theme-picker[data-open="true
 .cg-context-chips,
 .cg-feedback-actions {
   display: flex;
-  gap: 10px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 

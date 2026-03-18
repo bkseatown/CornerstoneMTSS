@@ -6595,17 +6595,23 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .support-choice-card {
   position: fixed;
-  top: calc(var(--header-h) + var(--focus-h) + 12px);
-  left: calc(50% + (var(--playfield-width) * 0.5) + 48px);
-  width: min(290px, calc(100vw - 24px));
-  padding: 11px;
-  border-radius: 14px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 78%, #94a5b4 22%);
-  background: linear-gradient(165deg, #f8fafb 0%, #eff3f6 100%);
-  box-shadow: 0 14px 28px rgba(15, 24, 36, 0.2), inset 0 1px 0 rgba(255,255,255,0.82);
+  top: calc(var(--header-h) + var(--focus-h) + 20px);
+  right: 14px;
+  width: min(260px, calc(100vw - 28px));
+  padding: 12px;
+  border-radius: 18px;
+  border: 2px solid #6ba3ff;
+  background: linear-gradient(155deg, #ffffff 0%, #f0f7ff 100%);
+  box-shadow: 0 12px 32px rgba(15, 24, 36, 0.18), inset 0 1px 0 rgba(255,255,255,0.92);
   display: grid;
-  gap: 9px;
+  gap: 10px;
   z-index: 206;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.support-choice-card:active {
+  cursor: grabbing;
 }
 
 .support-choice-head {
@@ -6635,35 +6641,45 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .support-choice-message {
-  font-size: 0.78rem;
-  font-weight: 760;
-  line-height: 1.32;
-  color: #405668;
+  font-size: 0.80rem;
+  font-weight: 700;
+  line-height: 1.28;
+  color: #1a3d5c;
 }
 
 .support-choice-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 7px;
+  gap: 8px;
 }
 
 .support-choice-btn {
-  min-height: 34px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in oklab, var(--panel-border) 78%, #8ca0b3 22%);
-  background: linear-gradient(155deg, #ffffff 0%, #edf2f5 100%);
-  color: #2e4457;
-  font-size: 0.76rem;
-  font-weight: 840;
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid #8fc7ff;
+  background: linear-gradient(155deg, #ffffff 0%, #e6f2ff 100%);
+  color: #1a3d5c;
+  font-size: 0.82rem;
+  font-weight: 800;
   cursor: pointer;
+  transition: all 140ms ease;
+  padding: 10px 8px;
 }
 
 .support-choice-btn:hover {
-  background: linear-gradient(155deg, #f7fbff 0%, #dde7ef 100%);
+  background: linear-gradient(155deg, #f0f8ff 0%, #d0e8ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 163, 255, 0.2);
+}
+
+.support-choice-btn:active {
+  transform: translateY(0px);
 }
 
 .support-choice-btn-muted {
   grid-column: 1 / -1;
+  background: linear-gradient(155deg, #ffffff 0%, #f0f4f8 100%);
+  color: #7a8d9f;
 }
 
 .support-choice-toggle {
