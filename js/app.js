@@ -4595,8 +4595,15 @@
     const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
     if (suggestionBtn) {
       const enabled = suggestionCount >= 4;
-      suggestionBtn.disabled = !enabled;
-      suggestionBtn.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+      if (enabled) {
+        suggestionBtn.classList.remove('hidden');
+        suggestionBtn.disabled = false;
+        suggestionBtn.setAttribute('aria-disabled', 'false');
+      } else {
+        suggestionBtn.classList.add('hidden');
+        suggestionBtn.disabled = true;
+        suggestionBtn.setAttribute('aria-disabled', 'true');
+      }
       suggestionBtn.textContent = '💡 Ideas';
     }
     const neverToggle = _el('support-choice-never');
