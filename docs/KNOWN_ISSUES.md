@@ -43,25 +43,27 @@ Refresh the game page to reload with correct initial state.
 ---
 
 ### 2. Word Quest UI Styling Regressions — GAME CSS
-**Status:** Confirmed, pre-existing
+**Status:** ✅ FIXED (2026-03-18)
 **Severity:** Low (affects visual polish, not functionality)
 **Description:**
-Word Quest game exhibits two styling regressions from earlier color/spacing work:
-1. Game board tiles and keyboard are rendered too small with excessive border-radius
-2. Help popup/modal is oversized and obstructs game interaction
+Word Quest game exhibited two styling regressions from earlier color/spacing work:
+1. ✅ Game board tiles and keyboard rendered too small with excessive border-radius
+2. ✅ Help popup/modal was oversized and obstructed game interaction
 
-**Root Cause:**
-Game CSS changes from commits in visual personality improvement phase (`394e2fd2`, `b6fbc31c`) introduced unintended sizing constraints.
+**Fixes Applied (Commit 772a70f9):**
 
-**Files Affected:**
-- `/games/ui/game-word-quest.css`
-- `/games/ui/game-shell.css`
+**Keyboard Tile Spacing (game-shell.css):**
+- Increased gap between keyboard tiles from 10px to 16px
+- Improves accessibility for early readers and EAL students
 
-**Next Steps:**
-1. Review tile sizing constraints in game-word-quest.css
-2. Check help popup modal sizing rules in game-shell.css
-3. Verify keyboard button dimensions match design spec
-4. Test with multiple viewport sizes
+**Help Modal Redesign (word-quest.html, style/components.css, js/app.js):**
+- Repositioned modal to right side (off to the side of gameboard)
+- Reduced modal size (260px width, more compact padding)
+- Updated color scheme: bright blue border with light blue background
+- Increased button tap targets from 34px to 40px min-height
+- Made modal draggable by header for better positioning flexibility
+- Simplified text to be kid-friendly: "Need Help?" / "Try These" / "Get Clue" / "Skip"
+- Added hover effects with elevation and scale transforms
 
 ---
 
