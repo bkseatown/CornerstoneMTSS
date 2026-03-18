@@ -60,10 +60,18 @@
   <script>
     (function () {
       var url = new URL(window.location.href);
-      if (url.searchParams.get("play") === "1" && url.searchParams.get("game") === "word-typing" && !url.searchParams.get("typingPage")) return;
+      // Check if we're already properly configured for play mode
+      var alreadyConfigured = (
+        url.searchParams.get("play") === "1" &&
+        url.searchParams.get("game") === "word-typing" &&
+        url.searchParams.get("typingPage") === "1"
+      );
+      if (alreadyConfigured) return;
+
+      // Normalize URL for typing quest play mode
       url.searchParams.set("play", "1");
       url.searchParams.set("game", "word-typing");
-      url.searchParams.delete("typingPage");
+      url.searchParams.set("typingPage", "1");
       if (!url.searchParams.get("typingCourseMode")) url.searchParams.set("typingCourseMode", "lesson");
       window.history.replaceState({}, "", url.toString());
     })();
