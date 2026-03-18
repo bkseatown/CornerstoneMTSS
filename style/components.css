@@ -7043,7 +7043,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .first-run-setup-card {
-  width: min(520px, calc(100vw - 18px));
+  width: min(380px, calc(100vw - 18px));
   max-height: min(90vh, 860px);
   overflow: auto;
   border: 1px solid #91adc4;
