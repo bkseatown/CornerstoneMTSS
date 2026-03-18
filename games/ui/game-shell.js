@@ -3409,7 +3409,36 @@
         ].join("");
       }
 
-      function renderTypingWelcomePreview(currentLesson) {
+      function renderTypingKeyboardHandGuide() {
+        var rows = [
+          ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+          ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
+          ["Z", "X", "C", "V", "B", "N", "M"]
+        ];
+        var anchors = ["F", "J"];
+        var leftHandKeys = ["A", "S", "D", "F"];
+        var rightHandKeys = ["J", "K", "L", ";"];
+
+        return [
+          '<div class="cg-typing-keyboard-guide">',
+          '  <div class="cg-typing-keyboard-guide__header">Home Row Finger Placement</div>',
+          '  <div class="cg-typing-keyboard-rows">',
+          rows.map(function (row) {
+            return '    <div class="cg-typing-keyboard-row">' + row.map(function (key) {
+              var isAnchor = anchors.indexOf(key) >= 0;
+              var isLeftHand = leftHandKeys.indexOf(key) >= 0;
+              var isRightHand = rightHandKeys.indexOf(key) >= 0;
+              var classes = 'cg-typing-keyboard-key' + (isAnchor ? ' is-anchor' : '') + (isLeftHand ? ' is-left-hand' : '') + (isRightHand ? ' is-right-hand' : '');
+              return '<button class="' + classes + '" disabled>' + key + '</button>';
+            }).join("") + '</div>';
+          }).join(""),
+          '  </div>',
+          '  <div class="cg-typing-keyboard-guide-label">Rest your index fingers on F and J bumps</div>',
+          '</div>'
+        ].join("");
+      }
+
+      function renderTypingWelcomePreview(currentLesson, includeKeyboardGuide) {
         var lesson = currentLesson || {};
         var target = String(lesson.target || "FJFJ").toUpperCase();
         var previewTyped = target.slice(0, Math.min(2, target.length));
@@ -3426,6 +3455,7 @@
             var cls = activeKeys.indexOf(lower) >= 0 ? ' is-active' : (key === 'F' || key === 'J' ? ' is-home' : '');
             return '<span class="cg-typing-welcome-key' + cls + '">' + runtimeRoot.CSGameComponents.escapeHtml(key) + '</span>';
           }).join("") + '</div>',
+          (includeKeyboardGuide ? renderTypingKeyboardHandGuide() : ''),
           '</div>'
         ].join("");
       }
@@ -3495,7 +3525,7 @@
           '        <span class="cg-typing-course-start__eyebrow">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement check" : "Next lesson") + '</span>',
           '        <strong class="cg-typing-course-start__target">' + runtimeRoot.CSGameComponents.escapeHtml(String((context.typingPlacementRequired ? "FJFJ" : (currentLesson && currentLesson.target) || round.target || "FJFJ")).toUpperCase()) + '</strong>',
           '        <span class="cg-typing-course-start__meta">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "4 quick checks · eyes up and steady" : (((currentLesson && currentLesson.stageLabel) || "Typing practice") + " · target word fluency")) + '</span>',
-          renderTypingWelcomePreview(currentLesson || round),
+          renderTypingWelcomePreview(currentLesson || round, context.typingPlacementRequired),
           '        <div class="cg-typing-welcome-meter"><div class="cg-typing-welcome-meter__lane"><span class="cg-typing-welcome-meter__label">Course rhythm</span><strong>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Placement -> Home row -> Word runs" : ("Now in " + currentUnitMeta.title)) + '</strong></div><div class="cg-typing-welcome-meter__dots">' + progressDots + '</div></div>',
           '        <div class="cg-typing-course-start__actions"><a class="cg-action cg-action-primary cg-typing-course-start__button" href="' + runtimeRoot.CSGameComponents.escapeHtml(continueHref) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Start Placement" : "Open Lesson") + '</a><a class="cg-action cg-action-quiet cg-typing-course-start__subaction" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: "lesson", lessonId: currentLesson && currentLesson.id || "", lessonOrder: currentLesson && currentLesson.lessonOrder || 1 })) + '">' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Unit 1" : "Current Unit") + '</a></div>',
           '      </div>',
