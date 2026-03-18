@@ -874,7 +874,7 @@ body.game-platform-page .cg-game-card.is-active {
 }
 body.game-platform-page .cg-game-card h3 { font-size: 1.5rem; font-weight: 700; color: var(--cg-reading-ink); letter-spacing: -0.04em; line-height: 0.96; }
 body.game-platform-page .cg-game-card p  {
-  color: var(--cg-reading-muted-strong);
+  color: var(--cg-reading-ink);
   font-size: 14px;
   line-height: 1.5;
 }

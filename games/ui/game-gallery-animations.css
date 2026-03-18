@@ -1,6 +1,13 @@
 /* GALLERY VIEW ANIMATIONS — Preview Animations & Refinements
    Extracted from game-shell.css Phase 2
    Contains: Gallery animation previews, card polish, game-specific animations */
+
+/* ── Disable animations on gallery view for cleaner experience ── */
+body.game-platform-page[data-shell-view="gallery"] * {
+  animation: none !important;
+  transition: none !important;
+}
+
 /* ── Projector overrides for builder games ───────────────────── */
 html[data-view-mode="projector"] .cg-forge-slot,
 html[data-view-mode="classroom"] .cg-forge-slot,
