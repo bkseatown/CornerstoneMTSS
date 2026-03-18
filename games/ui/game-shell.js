@@ -201,7 +201,17 @@
     return runtimeRoot.fetch(GAME_MUSIC_CATALOG_URL, { cache: "no-store" })
       .then(function (response) { return response && response.ok ? response.json() : { tracks: [] }; })
       .then(function (catalog) {
-        sharedMusicState.tracks = normalizeMusicTrackList(catalog && catalog.tracks);
+        var rawTracks = Array.isArray(catalog && catalog.tracks) ? catalog.tracks : [];
+        // Filter out gaming/synth tracks by default unless explicitly selected
+        // Gaming mode is only included if user has explicitly enabled it via mode selection
+        var filteredTracks = rawTracks.filter(function (track) {
+          if (!track) return false;
+          var modes = Array.isArray(track.modes) ? track.modes : [];
+          // Exclude "gaming" mode tracks from default list
+          // This ensures synth pop video-style music only plays if explicitly selected
+          return modes.indexOf("gaming") === -1;
+        });
+        sharedMusicState.tracks = normalizeMusicTrackList(filteredTracks);
         sharedMusicState.ready = true;
         if (sharedMusicState.tracks.length) {
           sharedMusicState.index = Math.max(0, Math.min(sharedMusicState.index, sharedMusicState.tracks.length - 1));
