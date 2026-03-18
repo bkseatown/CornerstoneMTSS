@@ -15484,6 +15484,10 @@
     if (_el('support-choice-card') && !_el('support-choice-card')?.classList.contains('hidden')) {
       hideSupportChoiceCard();
     }
+    // Close music player when user starts typing a guess
+    if (/^[a-zA-Z]$/.test(key) && !_el('quick-music-strip')?.classList.contains('hidden')) {
+      closeQuickPopover('music');
+    }
     if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) return;
     const s = WQGame.getState();
     if (s.gameOver) return;
@@ -15741,6 +15745,27 @@
         return;
       }
     }
+    // MacBook keyboard support: F7-F10 for music control
+    if (e.key === 'F7') {
+      e.preventDefault();
+      _el('quick-music-prev')?.click();
+      return;
+    }
+    if (e.key === 'F8') {
+      e.preventDefault();
+      _el('quick-music-toggle')?.click();
+      return;
+    }
+    if (e.key === 'F9') {
+      e.preventDefault();
+      _el('quick-music-next')?.click();
+      return;
+    }
+    if (e.key === 'F10') {
+      e.preventDefault();
+      _el('quick-music-shuffle')?.click();
+      return;
+    }
     const themePopoverOpen = !(_el('theme-preview-strip')?.classList.contains('hidden'));
     const musicPopoverOpen = !(_el('quick-music-strip')?.classList.contains('hidden'));
     if (themePopoverOpen || musicPopoverOpen) {
@@ -15757,9 +15782,9 @@
         }
         return;
       }
-      // Allow letter keys through for game input even when music popover is open
-      if (musicPopoverOpen && /^[a-zA-Z]$/.test(e.key)) {
-        // Don't intercept—let game input handler below process the letter
+      // Allow letter keys and Enter through for game input even when music popover is open
+      if (musicPopoverOpen && (/^[a-zA-Z]$/.test(e.key) || e.key === 'Enter' || e.key === 'Backspace')) {
+        // Don't intercept—let game input handler below process the key
       } else {
         return;
       }
