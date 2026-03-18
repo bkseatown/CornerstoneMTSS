@@ -183,7 +183,7 @@
     }).filter(Boolean);
   }
 
-  function loadSharedMusicCatalog() {
+  function loadSharedMusicCatalog(options) {
     if (sharedMusicState.ready) return Promise.resolve(sharedMusicState.tracks);
     if (sharedMusicState.loading) {
       return new Promise(function (resolve) {
@@ -198,18 +198,24 @@
       });
     }
     sharedMusicState.loading = true;
+    var opts = options && typeof options === "object" ? options : {};
+    var includeGamingMode = opts.includeGamingMode === true;
+
     return runtimeRoot.fetch(GAME_MUSIC_CATALOG_URL, { cache: "no-store" })
       .then(function (response) { return response && response.ok ? response.json() : { tracks: [] }; })
       .then(function (catalog) {
         var rawTracks = Array.isArray(catalog && catalog.tracks) ? catalog.tracks : [];
-        // Filter out gaming/synth tracks by default unless explicitly selected
-        // Gaming mode is only included if user has explicitly enabled it via mode selection
+        // Filter tracks based on mode preferences
         var filteredTracks = rawTracks.filter(function (track) {
           if (!track) return false;
           var modes = Array.isArray(track.modes) ? track.modes : [];
-          // Exclude "gaming" mode tracks from default list
-          // This ensures synth pop video-style music only plays if explicitly selected
-          return modes.indexOf("gaming") === -1;
+          // Exclude "gaming" mode tracks unless explicitly included
+          // Default: synth pop video-style music only plays if explicitly selected
+          // When includeGamingMode=true: include all tracks including gaming
+          if (!includeGamingMode && modes.indexOf("gaming") !== -1) {
+            return false;
+          }
+          return true;
         });
         sharedMusicState.tracks = normalizeMusicTrackList(filteredTracks);
         sharedMusicState.ready = true;
