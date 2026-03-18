@@ -1,0 +1,35 @@
+/* teacher-hub-responsive.css — Responsive breakpoints for Specialist Hub
+   Ensures layout stacks properly on tablet and mobile
+   ═════════════════════════════════════════════════════════ */
+
+/* ── Tablet (768px): Stack sidebar above main content ──────────── */
+@media (max-width: 768px) {
+  .th2-shell {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+  }
+
+  .th2-sidebar {
+    min-height: auto;
+    border-bottom: 1px solid rgba(160, 140, 110, 0.18);
+  }
+
+  .th2-main {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+/* ── Mobile (375px): Further optimize spacing ──────────────────── */
+@media (max-width: 600px) {
+  .th2-sidebar {
+    max-height: 40vh;
+    overflow-y: auto;
+    border-bottom: 1px solid rgba(160, 140, 110, 0.18);
+  }
+
+  .th2-main {
+    overflow-y: auto;
+  }
+}

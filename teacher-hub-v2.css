@@ -12,9 +12,10 @@
    Modularized size: ~1,200 lines (85% reduction)
    ─────────────────────────────────────────────── */
 
-@import url('./teacher-hub-sidebar.css?v=20260318a');
-@import url('./teacher-hub-main.css?v=20260318a');
-@import url('./teacher-hub-animations.css?v=20260317a');
+@import url('./teacher-hub-sidebar.css?v=20260318b');
+@import url('./teacher-hub-main.css?v=20260318b');
+@import url('./teacher-hub-animations.css?v=20260318b');
+@import url('./teacher-hub-responsive.css?v=20260318b');
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -705,4 +706,40 @@ body.th2-page.cs-has-nav-shell .th2-shell {
 
 .th2-cer-modal-cta:active {
   transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE LAYOUT — Mobile & Tablet Adjustments
+   Stack sidebar above main content on smaller screens
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Tablet (768px): Stack sidebar above main content ──────────── */
+@media (max-width: 768px) {
+  .th2-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .th2-sidebar {
+    min-height: auto;
+    border-bottom: 1px solid rgba(160, 140, 110, 0.18);
+  }
+
+  .th2-main {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+/* ── Mobile (375px): Further optimize spacing ──────────────────── */
+@media (max-width: 600px) {
+  .th2-sidebar {
+    max-height: 40vh;
+    overflow-y: auto;
+    border-bottom: 1px solid rgba(160, 140, 110, 0.18);
+  }
+
+  .th2-main {
+    overflow-y: auto;
+  }
 }
