@@ -799,6 +799,7 @@
   var lastSupportPromptShownAt = 0;  // Track when help was last shown to allow reappearing every 30s
   var focusSupportEligibleAt = 0;  // Timestamp when 30 seconds have elapsed for showing help
   var gameStartedAt = 0;  // Track when current game started
+  var supportModalTimer = 0;  // Timer for showing support modal after 30 seconds
 
   // One-time baseline migration so existing installs land on your intended defaults.
   if (localStorage.getItem(PREF_MIGRATION_KEY) !== 'done') {
@@ -3580,6 +3581,24 @@
     return Date.now() >= focusSupportUnlockAt;
   }
 
+  function clearSupportModalTimer() {
+    if (supportModalTimer) {
+      clearTimeout(supportModalTimer);
+      supportModalTimer = 0;
+    }
+  }
+
+  function scheduleSupportModalTimer() {
+    clearSupportModalTimer();
+    // Show support modal 30 seconds after game starts, but only if a wrong guess has been made
+    const waitMs = Math.max(0, (gameStartedAt + 30000) - Date.now());
+    supportModalTimer = setTimeout(() => {
+      if (focusSupportUnlockedByMiss && !currentRoundSupportPromptShown) {
+        showSupportChoiceCard();
+      }
+    }, waitMs);
+  }
+
   function syncHeaderClueLauncherUI(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
     const button = _el('phonics-clue-open-btn');
     const focusButton = _el('focus-help-btn');
@@ -4588,21 +4607,25 @@
     const header = document.querySelector('header');
     const boardRect = boardZone?.getBoundingClientRect?.();
     const headerRect = header?.getBoundingClientRect?.();
-    if (!boardRect || window.innerWidth < 980) {
-      card.style.left = '50%';
-      card.style.top = `${Math.max(92, Math.round((headerRect?.bottom || 82) + 12))}px`;
-      card.style.transform = 'translateX(-50%)';
-      return;
-    }
-    const roomRight = window.innerWidth - boardRect.right - 18;
-    const top = Math.max(Math.round(boardRect.top + 8), Math.round((headerRect?.bottom || 82) + 12));
-    if (roomRight >= 278) {
-      card.style.left = `${Math.max(8, Math.round(boardRect.right + 18))}px`;
+    const top = Math.max(Math.round(boardRect?.top || 100) + 8, Math.round((headerRect?.bottom || 82) + 12));
+    // Always try to position to the right side; only use left side if not enough room
+    const roomRight = window.innerWidth - (boardRect?.right || 400) - 18;
+    if (roomRight >= 200) {
+      // Position to the right of board
+      card.style.right = `${Math.max(8, 18)}px`;
       card.style.top = `${top}px`;
       return;
     }
-    card.style.left = `${Math.max(8, Math.round(boardRect.left - 308))}px`;
-    card.style.top = `${top}px`;
+    // Not enough room on right; position on left side instead
+    const roomLeft = (boardRect?.left || 0) - 18;
+    if (roomLeft >= 200) {
+      card.style.left = `${Math.max(8, Math.round(boardRect?.left || 0) - 200)}px`;
+      card.style.top = `${top}px`;
+      return;
+    }
+    // Neither side has enough room; position at top right as fallback
+    card.style.right = '8px';
+    card.style.top = `${Math.max(92, Math.round((headerRect?.bottom || 82) + 12))}px`;
   }
 
   function showSupportChoiceCard(state) {
@@ -4621,6 +4644,7 @@
     // In detective mode, show every 30 seconds after first guess; in listening mode, show once
     const timeSinceLastPrompt = Date.now() - lastSupportPromptShownAt;
     const shouldShowAgain = isDetectiveMode && timeSinceLastPrompt >= 30000;
+    // Must have at least 1 guess AND wait 30 seconds before showing for first time
     if (!currentRoundSupportPromptShown && (guessCount < 1 || timeElapsed < 30000)) return false;
     if (currentRoundSupportPromptShown && !isDetectiveMode) return false;  // Don't show repeatedly in listening mode
     if (currentRoundSupportPromptShown && !shouldShowAgain) return false;  // In detective, only every 30s
@@ -15290,6 +15314,7 @@
     currentRoundSupportPromptShown = false;
     gameStartedAt = Date.now();
     focusSupportEligibleAt = gameStartedAt + 30000;  // Show help only after 30 seconds
+    clearSupportModalTimer();  // Clear any existing support modal timer from previous round
     scheduleFocusSupportUnlock();
     hideInformantHintCard();
     hideStarterWordCard();
@@ -15554,6 +15579,7 @@
         recordAvaWordQuestEvent('wrong_guess');
         focusSupportUnlockedByMiss = true;
         clearFocusSupportUnlockTimer();
+        scheduleSupportModalTimer();  // Start timer for showing support modal after 30 seconds
         syncHeaderClueLauncherUI();
         syncStarterWordLauncherUI();
         if (!result.lost && Number(result.guesses?.length || 0) === 1) {
@@ -15565,11 +15591,8 @@
         if (!result.lost && avaWqWrongStreak >= 3 && avaWqRapidEvents.length >= 6) {
           speakAvaWordQuestAdaptive('rapid_wrong_streak');
         }
-        if (!result.lost && Number(result.guesses?.length || 0) >= 1) {
-          setTimeout(() => {
-            showSupportChoiceCard(WQGame.getState?.() || result);
-          }, 360);
-        }
+        // Note: showSupportChoiceCard is not called here because it has a 30-second delay check.
+        // The modal will appear automatically when 30 seconds have elapsed (checked via gameStartedAt timer)
       } else {
         avaWqCorrectStreak += 1;
         avaWqWrongStreak = 0;
