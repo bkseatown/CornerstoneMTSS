@@ -5,23 +5,23 @@
   const rows = Array.from(board.querySelectorAll(".landing-preview-board__row"));
   const rowCells = rows.map(row => Array.from(row.querySelectorAll("i")));
 
-  // Hide all cells initially
+  // Hide all letter text initially (tiles stay visible)
   rowCells.forEach(rowCellArray => {
     rowCellArray.forEach(cell => {
-      cell.style.opacity = "0";
+      cell.style.color = "transparent";
     });
   });
 
   const animateTyping = () => {
     let currentDelay = 0;
 
-    // Animate each row sequentially
+    // Animate each row sequentially - reveal letters one by one
     rowCells.forEach((rowCellArray, rowIndex) => {
       // Type out this row's letters one by one
       rowCellArray.forEach((cell, cellIndex) => {
         setTimeout(() => {
-          cell.style.opacity = "1";
-          cell.style.transition = "opacity 100ms ease-in";
+          cell.style.color = "inherit";
+          cell.style.transition = "color 100ms ease-in";
         }, currentDelay);
         currentDelay += 120; // 120ms between each letter
       });
@@ -34,7 +34,7 @@
     setTimeout(() => {
       rowCells.forEach(rowCellArray => {
         rowCellArray.forEach(cell => {
-          cell.style.opacity = "0";
+          cell.style.color = "transparent";
         });
       });
       setTimeout(animateTyping, 500); // Small delay before restarting
