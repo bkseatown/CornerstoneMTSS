@@ -152,7 +152,7 @@ npm install express socket.io cors
 
 ### Production Server Code
 
-Create `server/collab-server.js`:
+Create `archive/collab-staged/server/collab-server.js`:
 
 ```javascript
 const express = require('express');
@@ -339,11 +339,11 @@ process.on('SIGTERM', () => {
 
 ```bash
 # Local testing
-node server/collab-server.js
+node archive/collab-staged/server/collab-server.js
 
 # Production (with PM2)
 npm install -g pm2
-pm2 start server/collab-server.js --name "collab-server"
+pm2 start archive/collab-staged/server/collab-server.js --name "collab-server"
 pm2 save
 pm2 startup
 

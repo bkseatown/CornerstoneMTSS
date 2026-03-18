@@ -10103,8 +10103,8 @@ select:focus {
 html[data-home-mode="play"] #keyboard {
   width: min(var(--keyboard-max-width, 540px), calc(100vw - (var(--wq-safe-edge) * 2) - 8px), calc(100% - 2px));
   max-width: min(540px, calc(100vw - (var(--wq-safe-edge) * 2) - 2px));
-  min-height: min(var(--wq-bottom-controls-budget), 162px);
-  max-height: min(calc(var(--wq-vh) - var(--wq-top-chrome-budget) - 168px), 162px);
+  min-height: calc((var(--key-h) * 3) + (var(--gap-key) * 2) + 14px);
+  max-height: none;
   margin-top: clamp(6px, 0.9vh, 14px);
   margin-bottom: max(2px, env(safe-area-inset-bottom));
   gap: clamp(3px, 0.6vh, 6px);

@@ -101,6 +101,141 @@
   window.CS_CONFIG = buildConfig();
   window.CS_CONFIG.devUnlocked = hasDevUnlock();
 
+  var BUILD_STATE_KEY = "cs_last_known_build_v1";
+  var RELOAD_MARKER_KEY = "cs_build_reload_marker_v1";
+  var CACHE_PREFIX_RE = /^(wq-|cs-cache-|wordquest-|cornerstone-)/i;
+
+  function resolveBuildInfoUrl() {
+    try {
+      return new URL("./build.json", window.location.href).toString();
+    } catch (_e) {
+      return "./build.json";
+    }
+  }
+
+  function normalizeBuildPayload(payload) {
+    if (!payload || typeof payload !== "object") return null;
+    var buildId = String(payload.buildId || payload.build || payload.version || "").trim();
+    if (!buildId) return null;
+    return {
+      buildId: buildId,
+      build: buildId,
+      version: buildId,
+      gitSha: String(payload.gitSha || payload.sha || "").trim(),
+      time: String(payload.time || payload.timestamp || "").trim(),
+      builtAt: String(payload.time || payload.timestamp || "").trim()
+    };
+  }
+
+  function readStoredBuildId() {
+    try {
+      return String(localStorage.getItem(BUILD_STATE_KEY) || "").trim();
+    } catch (_e) {
+      return "";
+    }
+  }
+
+  function writeStoredBuildId(buildId) {
+    try { localStorage.setItem(BUILD_STATE_KEY, String(buildId || "")); } catch (_e) {}
+  }
+
+  function publishBuildPayload(payload) {
+    if (!payload) return;
+    window.__CS_LIVE_BUILD__ = Object.assign({}, payload);
+    window.CS_BUILD = Object.assign({}, window.CS_BUILD || {}, payload);
+    try {
+      window.dispatchEvent(new CustomEvent("cs:build-update", { detail: Object.assign({}, payload) }));
+    } catch (_e) {}
+  }
+
+  function buildReloadUrl(buildId) {
+    try {
+      var nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set("cb", String(buildId || Date.now()));
+      return nextUrl.toString();
+    } catch (_e) {
+      return window.location.href;
+    }
+  }
+
+  function isRuntimeCacheName(name) {
+    return CACHE_PREFIX_RE.test(String(name || ""));
+  }
+
+  async function clearRuntimeCaches() {
+    if (!("caches" in window)) return;
+    try {
+      var names = await caches.keys();
+      var targets = names.filter(isRuntimeCacheName);
+      if (targets.length) {
+        await Promise.all(targets.map(function (name) { return caches.delete(name); }));
+      }
+    } catch (_e) {}
+  }
+
+  async function unregisterServiceWorkers() {
+    if (!("serviceWorker" in navigator) || !navigator.serviceWorker.getRegistrations) return;
+    try {
+      var registrations = await navigator.serviceWorker.getRegistrations();
+      if (registrations.length) {
+        await Promise.all(registrations.map(function (registration) {
+          return registration.unregister().catch(function () { return false; });
+        }));
+      }
+    } catch (_e) {}
+  }
+
+  function shouldSkipFreshnessReload() {
+    try {
+      var params = new URLSearchParams(window.location.search || "");
+      if (params.get("audit") === "1") return true;
+      if (params.get("fresh") === "0") return true;
+    } catch (_e) {}
+    return false;
+  }
+
+  async function enforceLatestBuild() {
+    if (typeof window === "undefined" || typeof fetch !== "function") return;
+    var payload = null;
+    try {
+      var url = resolveBuildInfoUrl();
+      var response = await fetch(url + (url.indexOf("?") >= 0 ? "&" : "?") + "_ts=" + Date.now(), { cache: "no-store" });
+      if (!response.ok) return;
+      payload = normalizeBuildPayload(await response.json());
+    } catch (_e) {
+      return;
+    }
+    if (!payload) return;
+    publishBuildPayload(payload);
+
+    var currentBuild = payload.buildId;
+    var priorBuild = readStoredBuildId();
+    if (!priorBuild) {
+      writeStoredBuildId(currentBuild);
+      await unregisterServiceWorkers();
+      return;
+    }
+
+    if (priorBuild === currentBuild) {
+      await unregisterServiceWorkers();
+      return;
+    }
+
+    writeStoredBuildId(currentBuild);
+    await clearRuntimeCaches();
+    await unregisterServiceWorkers();
+    if (shouldSkipFreshnessReload()) return;
+
+    var marker = window.location.pathname + "::" + currentBuild;
+    try {
+      if (sessionStorage.getItem(RELOAD_MARKER_KEY) === marker) return;
+      sessionStorage.setItem(RELOAD_MARKER_KEY, marker);
+    } catch (_e) {}
+    window.location.replace(buildReloadUrl(currentBuild));
+  }
+
+  Promise.resolve().then(enforceLatestBuild);
+
   function isDevMode() {
     var hasStorageUnlock = hasDevUnlock();
     var fromQuery = false;

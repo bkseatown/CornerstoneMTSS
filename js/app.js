@@ -397,7 +397,7 @@
     return SW_RUNTIME_VERSION;
   }
   const SW_RUNTIME_RESOLVED_VERSION = resolveSwRuntimeVersion();
-  const SW_RUNTIME_URL = `./sw-runtime.js?v=${encodeURIComponent(SW_RUNTIME_VERSION)}`;
+  const SW_RUNTIME_URL = `./sw-runtime.js?v=${encodeURIComponent(SW_RUNTIME_RESOLVED_VERSION)}`;
   var swUpdateToastEl = null;
 
   function showSwUpdateToast(onUpdateNow) {

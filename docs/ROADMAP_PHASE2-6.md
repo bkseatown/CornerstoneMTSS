@@ -33,7 +33,7 @@ Two Specialist Browsers (see live, annotate, sync instantly)
 
 ### Key Components
 
-**1. WebSocket Sync Layer** (`js/collab/session-sync.js`)
+**1. WebSocket Sync Layer** (`archive/collab-staged/js/collab/session-sync.js`)
 ```javascript
 // Real-time state sync for annotations
 const SessionSync = {
@@ -54,7 +54,7 @@ const SessionSync = {
 };
 ```
 
-**2. Annotation Overlay** (`games/ui/collab-overlay.js`)
+**2. Annotation Overlay** (`archive/collab-staged/games/ui/collab-overlay.js`)
 ```javascript
 // SVG overlay on game board for specialist markup
 const CollabOverlay = {
@@ -72,7 +72,7 @@ const CollabOverlay = {
 };
 ```
 
-**3. Decision Recorder** (`js/collab/decision-log.js`)
+**3. Decision Recorder** (`archive/collab-staged/js/collab/decision-log.js`)
 ```javascript
 // Track what specialists chose and why
 const DecisionLog = {
@@ -504,7 +504,7 @@ Phase 1 (Colors + Dashboards + Ava)
 
 If you're continuing this work:
 
-1. **Phase 2 Start**: Read `js/collab/session-sync.js` architecture (create it from this doc)
+1. **Phase 2 Start**: Read `archive/collab-staged/js/collab/session-sync.js` architecture (archived reference)
 2. **Phase 3 Start**: Install `crepe.js` for pitch detection, test with `/activities/reading-lab.html`
 3. **Phase 4 Start**: Add Babylon.js to `index.html`, create `/js/3d/word-quest-3d.js`
 4. **Phase 5 Start**: Create `/style/a11y-*.css` files and integrate into `/js/settings/a11y-settings.js`

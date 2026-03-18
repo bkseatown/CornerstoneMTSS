@@ -30,8 +30,10 @@ Autonomous delivery of **6 major feature phases** plus **production-grade infras
 
 **Purpose:** Specialists co-teach students in real-time with instant synchronization
 
+Archived note: this collaboration slice is no longer in the active repo path. It now lives under `archive/collab-staged/` because it was not wired into shipped pages and the browser/server protocol drifted.
+
 **Files Created:**
-1. `js/collab/session-sync.js` (280 lines)
+1. `archive/collab-staged/js/collab/session-sync.js` (280 lines)
    - WebSocket connection management (Socket.IO pattern)
    - Session join/leave handling
    - Annotation broadcasting (highlights, arrows, notes)
@@ -39,24 +41,24 @@ Autonomous delivery of **6 major feature phases** plus **production-grade infras
    - Real-time message delivery
    - Cursor position tracking for mutual awareness
 
-2. `js/collab/decision-log.js` (340 lines)
+2. `archive/collab-staged/js/collab/decision-log.js` (340 lines)
    - Decision capture: moment, type, rationale, evidence, tags
    - Analytics: breakdown by type, pattern detection
    - Export: JSON & CSV formats
    - Reports: percentages, common errors, intervention suggestions
 
-3. `games/ui/collab-overlay.js` (420 lines)
+3. `archive/collab-staged/games/ui/collab-overlay.js` (420 lines)
    - SVG overlay on game board
    - Methods: highlightWord(), drawAttention(), addNote(), showRemoteCursor()
    - Sticky notes with text wrapping and shadows
    - Remote cursor with pulsing animation
 
-4. `style/collab-overlay.css` (370 lines, exempted)
+4. `archive/collab-staged/style/collab-overlay.css` (370 lines, exempted)
    - Modal styling for message input
    - Message item styling (teacher vs parent distinction)
    - Annotation positioning and colors
 
-5. `docs/COLLAB_INTEGRATION_GUIDE.md` (350 lines)
+5. `archive/collab-staged/docs/COLLAB_INTEGRATION_GUIDE.md` (350 lines)
    - Architecture overview
    - API reference with code examples
    - Node.js server setup instructions
@@ -437,7 +439,7 @@ Quick reference guide:
 | Phase | Features | Files | Lines | Status |
 |---|---|---|---|---|
 | 1 | Color system, tokens, build badge | 4 | 800 | ✅ Complete |
-| 2 | Real-time collaboration | 5 | 1,360 | ✅ Complete |
+| 2 | Real-time collaboration | 5 | 1,360 | Archived |
 | 3 | Voice analysis | 6 | 1,560 | ✅ Complete |
 | 4 | 3D environments | 4 | 1,080 | ✅ Complete |
 | 5 | Accessibility | 8 | 1,460 | ✅ Complete |

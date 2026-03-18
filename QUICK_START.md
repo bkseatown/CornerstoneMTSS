@@ -80,7 +80,7 @@ curl http://localhost:3000/api/health
 
 | Phase | Feature | Key Files |
 |---|---|---|
-| 2 | Real-time collaboration | `js/collab/`, `server/collab-server.js` |
+| 2 | Real-time collaboration | `archive/collab-staged/` |
 | 3 | Voice analysis | `js/voice/`, `games/ui/voice-feedback.js` |
 | 4 | 3D environments | `js/3d/`, `games/ui/game-shell.js` |
 | 5 | Accessibility | `js/settings/a11y-*.js`, `style/a11y-*.css` |
@@ -92,7 +92,7 @@ curl http://localhost:3000/api/health
 |---|---|---|
 | GitHub Actions | `.github/workflows/deploy-pages.yml` | Auto-deployment with guardrails checks |
 | Environment templates | `.env.example`, `.env.production.example` | Configuration for all environments |
-| Database schemas | `server/database/` | MongoDB (Mongoose) + PostgreSQL |
+| Database schemas | `archive/collab-staged/server/database/` | Archived MongoDB + PostgreSQL collaboration schemas |
 | Deployment guide | `server/database/DATABASE_SETUP_GUIDE.md` | Comprehensive setup and migration docs |
 
 ---
@@ -270,20 +270,20 @@ git add . && git commit -m "Fix guardrails"
 
 - **Phases 2-6 Integration:** `docs/INTEGRATION_EXAMPLES.md` (400+ lines)
 - **Deployment Guide:** `docs/DEPLOYMENT_GUIDE.md` (400+ lines)
-- **Database Setup:** `server/database/DATABASE_SETUP_GUIDE.md` (400+ lines)
+- **Database Setup:** `archive/collab-staged/server/database/DATABASE_SETUP_GUIDE.md` (400+ lines, archived)
 - **Voice Analysis:** `docs/VOICE_ANALYSIS_INTEGRATION_GUIDE.md` (300 lines)
 - **3D Environments:** `docs/3D_ENVIRONMENTS_INTEGRATION_GUIDE.md` (400 lines)
 - **Accessibility:** `docs/A11Y_INTEGRATION_GUIDE.md` (330 lines)
 - **Advanced Features:** `docs/PHASE6_ADVANCED_FEATURES_GUIDE.md` (450 lines)
-- **Collaboration:** `docs/COLLAB_INTEGRATION_GUIDE.md` (350 lines)
+- **Collaboration:** `archive/collab-staged/docs/COLLAB_INTEGRATION_GUIDE.md` (350 lines, archived)
 
 ### API References
 
-- **Collaboration:** `js/collab/session-sync.js` (lines 1-50)
+- **Collaboration:** `archive/collab-staged/js/collab/session-sync.js` (lines 1-50, archived)
 - **Voice Analysis:** `js/voice/voice-analyzer.js` (lines 1-100)
 - **3D Rendering:** `js/3d/word-quest-3d.js` (lines 1-80)
 - **Accessibility:** `js/settings/a11y-settings.js` (lines 1-50)
-- **Server:** `server/collab-server.js` (lines 315-476)
+- **Server:** `archive/collab-staged/server/collab-server.js` (lines 315-476, archived)
 
 ---
 

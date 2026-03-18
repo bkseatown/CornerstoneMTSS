@@ -11,7 +11,7 @@ const getArg = (name, fallback = '') => {
   return hit ? hit.slice(prefix.length) : fallback;
 };
 
-const BASE_URL = getArg('base-url', process.env.BASE_URL || 'https://bkseatown.github.io/WordQuest').replace(/\/+$/, '');
+const BASE_URL = getArg('base-url', process.env.BASE_URL || 'https://bkseatown.github.io/CornerstoneMTSS').replace(/\/+$/, '');
 const EXPECTED_BUILD = getArg('expected-build', process.env.EXPECTED_BUILD || '').trim();
 const TIMEOUT_SEC = Number(getArg('timeout-sec', '420')) || 420;
 const INTERVAL_SEC = Number(getArg('interval-sec', '15')) || 15;
