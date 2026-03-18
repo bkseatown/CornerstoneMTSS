@@ -4981,16 +4981,7 @@
       }
     }
 
-    /* ── Gallery setup selects ───────────────────────────── */
-    var setupGrade   = document.getElementById("cg-setup-grade");
-    var setupSubject = document.getElementById("cg-setup-subject");
-    function applyGallerySetup() {
-      if (setupGrade)   { context.gradeBand = setupGrade.value || context.gradeBand; try { localStorage.setItem("cs.gallery.grade", setupGrade.value); } catch (_e) {} }
-      if (setupSubject) { context.subject = setupSubject.value || context.subject;   try { localStorage.setItem("cs.gallery.subject", setupSubject.value); } catch (_e) {} }
-      render();
-    }
-    if (setupGrade)   setupGrade.addEventListener("change", applyGallerySetup);
-    if (setupSubject) setupSubject.addEventListener("change", applyGallerySetup);
+    /* ── Gallery setup selects removed — moved to global settings ── */
 
     ensurePomodoroTicking();
 
