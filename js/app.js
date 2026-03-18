@@ -4597,7 +4597,7 @@
       const enabled = suggestionCount >= 4;
       suggestionBtn.disabled = !enabled;
       suggestionBtn.setAttribute('aria-disabled', enabled ? 'false' : 'true');
-      suggestionBtn.textContent = enabled ? 'Suggestion' : 'No suggestion yet';
+      suggestionBtn.textContent = '💡 Ideas';
     }
     const neverToggle = _el('support-choice-never');
     if (neverToggle) neverToggle.checked = false;
