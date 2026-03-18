@@ -60,7 +60,7 @@ body.game-platform-page[data-game-theme="dark"] {
     radial-gradient(ellipse at 15% 10%, rgba(99,102,241,0.22) 0%, transparent 38%),
     radial-gradient(ellipse at 85% 8%,  rgba(249,115,22,0.18)  0%, transparent 32%),
     radial-gradient(ellipse at 50% 95%, rgba(37,99,235,0.14)   0%, transparent 40%),
-    linear-gradient(175deg, #1e2348 0%, #1a1f3d 45%, #141829 100%);
+    linear-gradient(175deg, #1e2348 0%, #1a1f3d 45%, #1f2945 100%);
   --cg-texture: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
   --cg-texture-size: 28px 28px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
@@ -256,7 +256,7 @@ body.game-platform-page[data-game-theme="coffee"] {
   --cg-page-gradient:
     radial-gradient(ellipse at 15% 10%, rgba(190,134,81,0.18) 0%, transparent 36%),
     radial-gradient(ellipse at 85% 8%, rgba(47,107,87,0.14) 0%, transparent 32%),
-    linear-gradient(180deg, #f4eadb 0%, #d6c2aa 34%, #8f765f 100%);
+    linear-gradient(180deg, #f4eadb 0%, #d6c2aa 34%, #a88470 100%);
 }
 
 /* ═══════════════════════════════════════════════════

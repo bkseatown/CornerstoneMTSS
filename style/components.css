@@ -9685,7 +9685,7 @@ html[data-home-mode="play"] .header-focus-inline-wrap {
   width: min(100%, 520px);
   min-width: min(100%, 220px);
   max-width: 520px;
-  justify-self: start;
+  justify-self: center;
 }
 
 html[data-home-mode="play"] #game-board {
