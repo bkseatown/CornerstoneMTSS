@@ -2624,6 +2624,15 @@
       }
     });
 
+    // Initialize celebrations module for Typing Quest motivational feedback
+    var celebrations = null;
+    if (runtimeRoot.CSGameCelebrations && typeof runtimeRoot.CSGameCelebrations.create === "function") {
+      celebrations = runtimeRoot.CSGameCelebrations.create({ context: context });
+      if (runtimeRoot.CSGameCelebrationsInit && typeof runtimeRoot.CSGameCelebrationsInit.initWithEngine === "function") {
+        runtimeRoot.CSGameCelebrationsInit.initWithEngine(engine, celebrations);
+      }
+    }
+
     function wordClueRoundNeedsDeckRefresh(state) {
       if (!state || state.selectedGameId !== "word-connections" || !state.round) return false;
       var target = String(state.round.targetWord || "").trim().toLowerCase();
