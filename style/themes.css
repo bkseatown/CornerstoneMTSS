@@ -396,8 +396,8 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── COFFEE / STARBUCKS ── Green #00704A + espresso + cream
    Rich espresso atmosphere. Cream keys like a latte             */
 [data-theme="coffee"] {
-  --page-bg:      #4a3933;
-  --page-bg2:     #3d3229;
+  --page-bg:      #8b7355;
+  --page-bg2:     #7a6244;
   --plate-bg:     rgba(203,160,95,0.08);
   --plate-border: rgba(203,160,95,0.28);
   --tile-face:    linear-gradient(160deg, #fff8ef 0%, #f0dcc8 100%);

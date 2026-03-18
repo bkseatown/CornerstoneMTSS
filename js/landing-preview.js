@@ -3,47 +3,43 @@
   if (!board) return;
 
   const rows = Array.from(board.querySelectorAll(".landing-preview-board__row"));
-  const stages = [
-    [
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-    ],
-    [
-      ["miss", "miss", "miss", "miss", "miss"],
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-    ],
-    [
-      ["miss", "miss", "miss", "miss", "miss"],
-      ["miss", "present", "miss", "miss", "miss"],
-      ["neutral", "neutral", "neutral", "neutral", "neutral"],
-    ],
-    [
-      ["miss", "miss", "miss", "miss", "miss"],
-      ["miss", "present", "miss", "miss", "miss"],
-      ["hit", "hit", "hit", "hit", "hit"],
-    ],
-  ];
+  const rowCells = rows.map(row => Array.from(row.querySelectorAll("i")));
 
-  const stateClasses = ["is-hit", "is-present", "is-miss"];
-  let stageIndex = 0;
-
-  const renderStage = () => {
-    const stage = stages[stageIndex];
-    rows.forEach((row, rowIndex) => {
-      const cells = Array.from(row.querySelectorAll("i"));
-      cells.forEach((cell, cellIndex) => {
-        cell.classList.remove(...stateClasses);
-        const nextState = stage?.[rowIndex]?.[cellIndex];
-        if (nextState === "hit") cell.classList.add("is-hit");
-        if (nextState === "present") cell.classList.add("is-present");
-        if (nextState === "miss") cell.classList.add("is-miss");
-      });
+  // Hide all cells initially
+  rowCells.forEach(rowCellArray => {
+    rowCellArray.forEach(cell => {
+      cell.style.opacity = "0";
     });
-    stageIndex = (stageIndex + 1) % stages.length;
+  });
+
+  const animateTyping = () => {
+    let currentDelay = 0;
+
+    // Animate each row sequentially
+    rowCells.forEach((rowCellArray, rowIndex) => {
+      // Type out this row's letters one by one
+      rowCellArray.forEach((cell, cellIndex) => {
+        setTimeout(() => {
+          cell.style.opacity = "1";
+          cell.style.transition = "opacity 100ms ease-in";
+        }, currentDelay);
+        currentDelay += 120; // 120ms between each letter
+      });
+
+      // After this row is complete, pause before starting next row
+      currentDelay += 300;
+    });
+
+    // After all rows shown, wait 1.5 seconds then reset and repeat
+    setTimeout(() => {
+      rowCells.forEach(rowCellArray => {
+        rowCellArray.forEach(cell => {
+          cell.style.opacity = "0";
+        });
+      });
+      setTimeout(animateTyping, 500); // Small delay before restarting
+    }, currentDelay + 1500);
   };
 
-  renderStage();
-  window.setInterval(renderStage, 2400);
+  animateTyping();
 })();
