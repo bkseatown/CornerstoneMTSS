@@ -582,8 +582,9 @@
     team: 'Timed Mode Boost',
     off: 'Off'
   });
-  const CURATED_MUSIC_MODE_ORDER = Object.freeze(['chill', 'lofi', 'coffee', 'team']);
-  const CURATED_MUSIC_MODES = new Set(['off', 'auto', ...CURATED_MUSIC_MODE_ORDER]);
+    // Default music shuffle modes - excludes 'gaming' (opt-in only for arcade/video game tracks)
+  const CURATED_MUSIC_MODE_ORDER = Object.freeze(['chill', 'lofi', 'coffee', 'focus']);
+  const CURATED_MUSIC_MODES = new Set(['off', 'auto', 'gaming', ...CURATED_MUSIC_MODE_ORDER]);
   const QUICK_MUSIC_VIBE_ORDER = CURATED_MUSIC_MODE_ORDER;
   const DEFAULT_PREFS = Object.freeze({
     focus: 'all',

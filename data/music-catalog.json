@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-02-25T06:49:49.028Z",
-  "trackCount": 17,
+  "updatedAt": "2026-03-18T20:30:00.000Z",
+  "trackCount": 43,
   "modeIndex": {
-    "team": [
+    "gaming": [
       "arcade-algorithm-99433352",
       "boss-stage-blueprint-7d1172f5",
       "code-cipher-run-85612e41",
@@ -20,7 +20,11 @@
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
       "elegant-groove-490165",
-      "piano-calm-487704"
+      "piano-calm-487704",
+      "nastelbom-inspirational-501710",
+      "nastelbom-upbeat-501716",
+      "nastelbom-uplifting-501721",
+      "prettyjohn1-lofi-chill-490468"
     ],
     "chill": [
       "cognitive-anchor-81271724",
@@ -28,7 +32,11 @@
       "hyperfocus-halo-91d03a10",
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
-      "soft-focus-485904"
+      "soft-focus-485904",
+      "nastelbom-emotional-piano-490162",
+      "nastelbom-emotional-piano-495887",
+      "nastelbom-instrumental-instrumental-music-501717",
+      "solarflex-emotional-piano-music-499244"
     ],
     "focus": [
       "cognitive-anchor-81271724",
@@ -37,14 +45,16 @@
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
       "piano-calm-487704",
-      "soft-focus-485904"
+      "soft-focus-485904",
+      "nastelbom-instrumental-music-501712"
     ],
     "lofi": [
       "flow-state-lattice-6d250682",
       "hyperfocus-halo-91d03a10",
       "study-sessions-lofi-231879",
       "elegant-groove-490165",
-      "soft-focus-485904"
+      "soft-focus-485904",
+      "prettyjohn1-lofi-chill-490468"
     ]
   },
   "tracks": [
@@ -54,7 +64,7 @@
       "src": "./assets/music/tracks/focus-flow/arcade-algorithm__modes-nerdcore+focus+arcade+scifi+upbeat__bpm-128__energy-low__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 128,
       "energy": "low",
@@ -84,7 +94,7 @@
       "src": "./assets/music/tracks/focus-flow/boss-stage-blueprint__modes-nerdcore+focus+scifi+team__bpm-142__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 142,
       "energy": "mid",
@@ -99,7 +109,7 @@
       "src": "./assets/music/tracks/focus-flow/code-cipher-run__modes-nerdcore+focus+scifi+arcade+upbeat__bpm-132__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 132,
       "energy": "mid",
@@ -131,7 +141,7 @@
       "src": "./assets/music/tracks/focus-flow/counterpoint-drive__modes-classicalbeats+focus+sports+team__bpm-118__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 118,
       "energy": "mid",
@@ -164,7 +174,7 @@
       "src": "./assets/music/tracks/focus-flow/fugue-runner__modes-classicalbeats+focus+upbeat+arcade__bpm-126__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 126,
       "energy": "mid",
@@ -196,7 +206,7 @@
       "src": "./assets/music/tracks/focus-flow/pixel-sonata-rush__modes-nerdcore+focus+arcade+sports+team__bpm-138__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 138,
       "energy": "mid",
@@ -211,7 +221,7 @@
       "src": "./assets/music/tracks/focus-flow/string-theory-sprint__modes-classicalbeats+focus+upbeat+sports__bpm-104__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 104,
       "energy": "mid",
@@ -226,7 +236,7 @@
       "src": "./assets/music/tracks/focus-flow/task-tunnel__modes-deepfocus+focus+upbeat+team__bpm-96__energy-mid__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "team"
+        "gaming"
       ],
       "bpm": 96,
       "energy": "mid",
@@ -316,6 +326,246 @@
       "energy": "low",
       "gain": 0.84,
       "collection": "classroom-drop",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-inspirational-501710",
+      "title": "Inspirational Vibes",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-inspirational-501710.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee"
+      ],
+      "bpm": 95,
+      "energy": "mid",
+      "gain": 0.85,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-instrumental-instrumental-music-501717",
+      "title": "Instrumental Focus",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-instrumental-instrumental-music-501717.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill"
+      ],
+      "bpm": 88,
+      "energy": "low",
+      "gain": 0.86,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-epic-501714",
+      "title": "Epic Moment",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-epic-501714.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 100,
+      "energy": "high",
+      "gain": 0.82,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "solarflex-emotional-piano-music-499244",
+      "title": "Emotional Piano",
+      "src": "./assets/music/tracks/ambient-collection/solarflex-emotional-piano-music-499244.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill"
+      ],
+      "bpm": 78,
+      "energy": "low",
+      "gain": 0.87,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-corporate-501720",
+      "title": "Corporate Professional",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-corporate-501720.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 92,
+      "energy": "low",
+      "gain": 0.83,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-happy-kids-501707",
+      "title": "Happy Kids",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-happy-kids-501707.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 110,
+      "energy": "high",
+      "gain": 0.80,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-asian-asian-china-chinese-music-501705",
+      "title": "Asian Inspired",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-asian-asian-china-chinese-music-501705.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 85,
+      "energy": "low",
+      "gain": 0.84,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-instrumental-music-501712",
+      "title": "Pure Instrumental",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-instrumental-music-501712.mp3",
+      "format": "mp3",
+      "modes": [
+        "focus"
+      ],
+      "bpm": 82,
+      "energy": "low",
+      "gain": 0.85,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-uplifting-501721",
+      "title": "Uplifting Energy",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-uplifting-501721.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee"
+      ],
+      "bpm": 98,
+      "energy": "mid",
+      "gain": 0.82,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "prettyjohn1-lofi-chill-chill_38sec-490468",
+      "title": "Chill Lofi Vibes",
+      "src": "./assets/music/tracks/ambient-collection/prettyjohn1-lofi-chill-chill_38sec-490468.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee",
+        "lofi"
+      ],
+      "bpm": 80,
+      "energy": "low",
+      "gain": 0.86,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-emotional-piano-490162",
+      "title": "Emotional Piano Journey",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-emotional-piano-490162.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill"
+      ],
+      "bpm": 76,
+      "energy": "low",
+      "gain": 0.86,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-ramadan-ramadan-music-489179",
+      "title": "Serene Meditation",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-ramadan-ramadan-music-489179.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 72,
+      "energy": "low",
+      "gain": 0.88,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "prettyjohn1-emotional-piano-487334",
+      "title": "Piano Reflections",
+      "src": "./assets/music/tracks/ambient-collection/prettyjohn1-emotional-piano-487334.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 74,
+      "energy": "low",
+      "gain": 0.87,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-arabic-490152",
+      "title": "Arabic Essence",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-arabic-490152.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 80,
+      "energy": "low",
+      "gain": 0.85,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-upbeat-501716",
+      "title": "Upbeat Momentum",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-upbeat-501716.mp3",
+      "format": "mp3",
+      "modes": [
+        "coffee"
+      ],
+      "bpm": 105,
+      "energy": "mid",
+      "gain": 0.83,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-mystery-mysterious-mystical-music-490164",
+      "title": "Mysterious Atmosphere",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-mystery-mysterious-mystical-music-490164.mp3",
+      "format": "mp3",
+      "modes": [],
+      "bpm": 88,
+      "energy": "low",
+      "gain": 0.84,
+      "collection": "ambient-collection",
+      "sourceType": "user-drop",
+      "licenseRef": "user-added-royalty-free"
+    },
+    {
+      "id": "nastelbom-emotional-piano-495887",
+      "title": "Piano Dreams",
+      "src": "./assets/music/tracks/ambient-collection/nastelbom-emotional-piano-495887.mp3",
+      "format": "mp3",
+      "modes": [
+        "chill"
+      ],
+      "bpm": 75,
+      "energy": "low",
+      "gain": 0.86,
+      "collection": "ambient-collection",
       "sourceType": "user-drop",
       "licenseRef": "user-added-royalty-free"
     }
