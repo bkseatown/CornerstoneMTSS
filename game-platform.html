@@ -15,6 +15,11 @@
   <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260317a">
   <script src="./js/theme-registry.js?v=20260315c"></script>
   <style>
+    /* Prevent flash of wrong theme during page load */
+    body.game-platform-page {
+      background: #efe7d8 !important;
+    }
+
     .cg-instructional-context {
       display: flex;
       flex-direction: column;
@@ -47,7 +52,7 @@
 </head>
 <body class="game-platform-page">
   <!-- FOUC prevention: apply saved theme before first paint -->
-  <script>(function(){var t="";try{t=localStorage.getItem("cs.game.theme")||"";}catch(e){}if(t&&t!=="default")document.body.setAttribute("data-game-theme",t);})();</script>
+  <script>(function(){var t="";try{t=localStorage.getItem("cs.game.theme")||"classic";}catch(e){t="classic";}if(t&&t!=="default")document.body.setAttribute("data-game-theme",t);})();</script>
   <main class="cg-shell">
     <div id="cg-shell"></div>
     <div id="cg-live-region" aria-live="polite" aria-atomic="true" class="cg-hidden"></div>

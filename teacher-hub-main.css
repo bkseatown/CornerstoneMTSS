@@ -997,3 +997,82 @@
 .th2-drawer-title {
   letter-spacing: -0.015em;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE: Mobile (375px) & Tablet (768px)
+   Ensures content reflows properly and text doesn't truncate
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .th2-main {
+    padding: 20px 24px;
+  }
+
+  .th2-command-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 20px;
+  }
+
+  .th2-command-header__title {
+    font-size: 28px;
+  }
+
+  .th2-command-header__status {
+    grid-column: 1;
+  }
+
+  .th2-block-context-header {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .th2-block-context-header__title {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 600px) {
+  .th2-main {
+    padding: 16px 12px;
+  }
+
+  .th2-command-header {
+    padding: 16px 14px;
+    border-radius: 16px;
+    gap: 12px;
+  }
+
+  .th2-command-header__eyebrow {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .th2-command-header__title {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .th2-command-header__date,
+  .th2-command-header__next {
+    font-size: 13px;
+  }
+
+  .th2-block-context-header {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .th2-block-context-header__title {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  .th2-block-context-header__meta {
+    font-size: 12px;
+  }
+
+  .th2-command-center {
+    gap: 12px;
+  }
+}
