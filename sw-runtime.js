@@ -6,7 +6,7 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260310-hubfix-v1';
+const SW_VERSION = '20260313u';
 const RUNTIME_BUILD_ID = new URL(self.location.href).searchParams.get('v') || SW_VERSION;
 const CACHE_PREFIX = `cs-cache-${RUNTIME_BUILD_ID}`;
 const SHELL_CACHE = `${CACHE_PREFIX}-shell`;
@@ -18,12 +18,19 @@ const AUDIO_MAX_ENTRIES = 1800;
 const CORE_FILES = [
   './',
   './index.html',
-  './teacher-dashboard.html',
+  './teacher-hub-v2.html',
+  './game-platform.html',
   './reports.html',
   './word-quest.html',
+  './typing-quest.html',
+  './student-profile.html',
   './reading-lab.html',
   './sentence-surgery.html',
   './writing-studio.html',
+  './precision-play.html',
+  './paragraph-builder.html',
+  './session-runner.html',
+  './case-management.html',
   './numeracy.html',
   './literacy.html',
   './activities/decoding-diagnostic.html',
