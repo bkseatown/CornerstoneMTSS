@@ -46,8 +46,8 @@
   </style>
 </head>
 <body class="game-platform-page" data-game-theme="classic">
-  <!-- Theme loading: saved theme applied via JS below if it exists -->
-  <script>(function(){var t="";try{t=localStorage.getItem("cs.game.theme")||"";}catch(e){}if(t&&t!=="default"&&t!=="classic")document.body.setAttribute("data-game-theme",t);})();</script>
+  <!-- Theme loading: use classic as default, preserve user theme if saved -->
+  <script>(function(){try{var t=localStorage.getItem("cs.game.theme");if(!t){localStorage.setItem("cs.game.theme","classic");t="classic";}if(t&&t!=="classic"&&t!=="default"){document.body.setAttribute("data-game-theme",t);}}catch(e){}})();</script>
   <main class="cg-shell">
     <div id="cg-shell"></div>
     <div id="cg-live-region" aria-live="polite" aria-atomic="true" class="cg-hidden"></div>
