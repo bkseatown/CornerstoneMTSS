@@ -57,6 +57,7 @@
 
   // Curate the exposed picker set so the platform stays readable and premium.
   // Legacy themes remain valid if already saved or referenced directly.
+  // 12 core + 3 popular (huskies, coffee, amongus) = 15 total
   var ACTIVE_THEME_IDS = Object.freeze([
     'default',
     'ocean',
@@ -66,10 +67,13 @@
     'coffee',
     'seahawks',
     'huskies',
+    'mario',
     'zelda',
     'minecraft',
+    'rainbowfriends',
     'dark',
-    'matrix'
+    'matrix',
+    'amongus'
   ]);
 
   var ORDER = Object.freeze(ACTIVE_THEME_IDS.filter(function onlyKnownTheme(id) {
