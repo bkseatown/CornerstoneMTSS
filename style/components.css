@@ -5272,25 +5272,18 @@ html[data-board-style="soundcard"] .tile.filled:not(.correct):not(.present):not(
   border-color: color-mix(in oklab, var(--brand) 34%, var(--tile-border) 66%);
 }
 
+/* Motion removed from typing: no jiggle or spark effects */
 html[data-motion="fun"] .tile.just-typed {
-  animation: tile-jiggle 0.26s cubic-bezier(0.2, 0.95, 0.24, 1.12), tile-lock-glow 0.34s ease-out;
+  /* Removed: animation: tile-jiggle 0.26s cubic-bezier(0.2, 0.95, 0.24, 1.12), tile-lock-glow 0.34s ease-out; */
 }
-html[data-motion="calm"] .tile.just-typed { animation: tile-jiggle 0.22s ease-out; }
+html[data-motion="calm"] .tile.just-typed {
+  /* Removed: animation: tile-jiggle 0.22s ease-out; */
+}
 
-/* Fun-mode lock burst on letter lock-in */
+/* Fun-mode lock burst on letter lock-in — REMOVED for subtle experience */
 html[data-motion="fun"] .tile.just-typed::before {
-  content: '';
-  position: absolute;
-  inset: -20%;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent) 62%, #ffffff 38%) 0 18%, transparent 48%),
-    radial-gradient(circle at 24% 28%, rgba(255,255,255,0.95) 0 5%, transparent 16%),
-    radial-gradient(circle at 78% 30%, rgba(255,255,255,0.82) 0 4%, transparent 14%);
-  opacity: 0;
-  transform: scale(0.35);
-  animation: tile-lock-spark 0.32s ease-out forwards;
+  content: none;
+  /* Removed all spark animation and styling */
 }
 
 /* Result states — scale applied here */
@@ -5350,7 +5343,10 @@ html[data-board-style="soundcard"] .tile.absent {
              tile-flip-pre-color 0.52s linear both;
   transition: none;
 }
-.tile.shake { animation: shake 0.4s ease; }
+/* Shake animation removed for subtle experience - keep only flip rotation */
+.tile.shake {
+  /* Removed: animation: shake 0.4s ease; */
+}
 
 html[data-board-style="soundcard"] .tile.flip {
   animation: tile-flip 0.52s ease-in-out both,

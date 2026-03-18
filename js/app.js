@@ -796,6 +796,7 @@
   var focusSupportUnlockTimer = 0;
   var focusSupportUnlockedByMiss = false;
   var currentRoundSupportPromptShown = false;
+  var lastSupportPromptShownAt = 0;  // Track when help was last shown to allow reappearing every 30s
   var focusSupportEligibleAt = 0;  // Timestamp when 30 seconds have elapsed for showing help
   var gameStartedAt = 0;  // Track when current game started
 
@@ -3730,7 +3731,14 @@
     const hearDefLabel = _el('g-hear-def-label');
     if (hearDefLabel) hearDefLabel.textContent = 'Listen to Definition';
     if (hearDefBtn) {
-      hearDefBtn.classList.toggle('hidden', !listeningMode);
+      // Ensure button is visible in listening/spelling mode
+      if (listeningMode) {
+        hearDefBtn.classList.remove('hidden');
+        hearDefBtn.style.display = '';
+      } else {
+        hearDefBtn.classList.add('hidden');
+        hearDefBtn.style.display = 'none';
+      }
       hearDefBtn.setAttribute('title', 'Listen to the definition audio');
       hearDefBtn.setAttribute('aria-label', 'Listen to the definition audio');
     }
@@ -4596,7 +4604,6 @@
   function showSupportChoiceCard(state) {
     if (isHelpSuppressedForTeamMode()) return false;
     if (getSupportPromptMode() === 'off') return false;
-    if (currentRoundSupportPromptShown) return false;
     if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
     const card = _el('support-choice-card');
     if (!card) return false;
@@ -4605,7 +4612,14 @@
     // Only show help after first attempt AND 30 seconds have elapsed
     const guessCount = Array.isArray(liveState.guesses) ? liveState.guesses.length : 0;
     const timeElapsed = Date.now() - gameStartedAt;
-    if (guessCount < 1 || timeElapsed < 30000) return false;
+    const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+    const isDetectiveMode = playStyle !== 'listening';
+    // In detective mode, show every 30 seconds after first guess; in listening mode, show once
+    const timeSinceLastPrompt = Date.now() - lastSupportPromptShownAt;
+    const shouldShowAgain = isDetectiveMode && timeSinceLastPrompt >= 30000;
+    if (!currentRoundSupportPromptShown && (guessCount < 1 || timeElapsed < 30000)) return false;
+    if (currentRoundSupportPromptShown && !isDetectiveMode) return false;  // Don't show repeatedly in listening mode
+    if (currentRoundSupportPromptShown && !shouldShowAgain) return false;  // In detective, only every 30s
     const suggestionBtn = _el('support-choice-suggestion');
     const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
     if (suggestionBtn) {
@@ -4626,6 +4640,7 @@
     positionSupportChoiceCard();
     card.classList.remove('hidden');
     currentRoundSupportPromptShown = true;
+    lastSupportPromptShownAt = Date.now();  // Track when help was shown for repeat display
     return true;
   }
 
