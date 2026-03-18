@@ -1,0 +1,99 @@
+/* =====================================================
+   Word Quest — modes.css
+   LOCKED: Do not edit selectors or layout.
+   Contains only Projector Mode and Motion overrides.
+   ===================================================== */
+
+/* ── Reduced Motion: OS-level preference ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration:        0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:       0.001ms !important;
+  }
+}
+
+/* ── Reduced Motion: manual toggle in Settings ───────── */
+html[data-motion="reduced"] * {
+  animation-duration:        0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration:       0.001ms !important;
+}
+
+/* ── Projector Mode ──────────────────────────────────── */
+/* Higher contrast, thicker borders, larger type.        */
+/* Designed for classroom display at 10+ feet.           */
+[data-projector="on"] .tile {
+  border-width: 3px;
+  font-size:    calc(var(--tile-size) * 0.50);
+  font-weight:  800;
+}
+
+[data-projector="on"] .key {
+  font-size:   1.05rem;
+  font-weight: 800;
+}
+
+/* Force high-contrast tile text in projector mode */
+[data-projector="on"] .tile:not(.correct):not(.present):not(.absent) {
+  --tile-text: #000000;
+}
+
+/* Projector mode: disable subtle gradients on tiles for cleaner projection */
+[data-projector="on"] .tile:not(.correct):not(.present):not(.absent) {
+  background: #ffffff;
+}
+
+/* Projector mode: stronger feedback borders */
+[data-projector="on"] .tile.correct,
+[data-projector="on"] .tile.present,
+[data-projector="on"] .tile.absent {
+  border-width: 3px;
+}
+
+/* Projector mode: forced Classic feedback (no subtle tinting) */
+/* Safety: ensures color-blind students can still read state */
+[data-projector="on"] .tile.correct::before {
+  content: "✓";
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 0.5em;
+  opacity: 0.7;
+}
+[data-projector="on"] .tile.present::before {
+  content: "·";
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+
+/* Feedback palette switch */
+html[data-feedback="themed"]{
+  /* Theme-aware but semantic-safe:
+     correct stays green-ish, present stays yellow-ish, absent stays gray-ish. */
+  --correct:    color-mix(in oklab, #16a34a 84%, var(--brand) 16%);
+  --correct-lt: color-mix(in oklab, #4ade80 86%, var(--accent) 14%);
+  --correct-dk: color-mix(in oklab, #14532d 84%, var(--brand-dk) 16%);
+  --present:    color-mix(in oklab, #c9b458 84%, var(--accent) 16%);
+  --present-lt: color-mix(in oklab, #e2d26f 88%, var(--accent) 12%);
+  --present-dk: color-mix(in oklab, #8f7f35 86%, var(--brand-dk) 14%);
+  --absent:     color-mix(in oklab, #94a3b8 88%, var(--panel-border) 12%);
+  --absent-dk:  color-mix(in oklab, #475569 90%, var(--brand-dk) 10%);
+}
+
+/* Motion tiers */
+html[data-motion="fun"]{ --motion-mult: 1; }
+html[data-motion="calm"]{ --motion-mult: 0.55; }
+html[data-motion="reduced"]{ --motion-mult: 0; }
+
+/* If OS reduce-motion is enabled, force reduced. */
+@media (prefers-reduced-motion: reduce){
+  html{ --motion-mult: 0; }
+}
+
+/* When motion is reduced, disable celebratory particles & bouncy transforms */
+html[data-motion="reduced"] .wq-anim,
+html[data-motion="reduced"] #confetti-canvas,
+html[data-motion="reduced"] .celebrate-layer{ display:none !important; }

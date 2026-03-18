@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cornerstone.mtss.sas_alignment_pack.schema.v1",
+  "title": "SAS Alignment Pack",
+  "type": "object",
+  "required": [
+    "version",
+    "generatedAt",
+    "sourceDocs",
+    "interventions",
+    "assessments",
+    "goal_bank",
+    "beliefs_principles",
+    "forms_templates"
+  ],
+  "properties": {
+    "version": { "const": "sas_alignment_pack.v1" },
+    "generatedAt": { "type": "string" },
+    "sourceDocs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["doc", "docId", "sha1", "pages"],
+        "properties": {
+          "doc": { "type": "string" },
+          "docId": { "type": "string" },
+          "sha1": { "type": "string" },
+          "pages": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "interventions": { "type": "array", "items": { "$ref": "#/$defs/intervention" } },
+    "assessments": { "type": "array", "items": { "$ref": "#/$defs/assessment" } },
+    "goal_bank": { "type": "array", "items": { "$ref": "#/$defs/goal" } },
+    "beliefs_principles": { "type": "array", "items": { "$ref": "#/$defs/principle" } },
+    "forms_templates": { "type": "array", "items": { "$ref": "#/$defs/template" } }
+  },
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "required": ["doc", "page", "quote_or_snippet"],
+      "properties": {
+        "doc": { "type": "string" },
+        "page": { "type": "integer", "minimum": 1 },
+        "quote_or_snippet": { "type": "string", "maxLength": 200 }
+      }
+    },
+    "intervention": {
+      "type": "object",
+      "required": ["id", "name", "area", "tier", "grades", "source_refs"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "area": { "type": "string" },
+        "tier": { "type": "string", "enum": ["T1", "T2", "T3"] },
+        "grades": { "type": "array", "items": { "type": "string" } },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "dosage": { "type": "string" },
+        "materials": { "type": "array", "items": { "type": "string" } },
+        "fidelity_notes": { "type": "string" },
+        "progress_monitoring": { "type": "string" },
+        "linked_assessments": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" }, "minItems": 1 }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["id", "name", "domain", "grades", "cadence", "what_it_measures", "source_refs"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "domain": { "type": "string" },
+        "grades": { "type": "array", "items": { "type": "string" } },
+        "cadence": { "type": "string" },
+        "what_it_measures": { "type": "string" },
+        "interpretation_notes": { "type": "string" },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" }, "minItems": 1 }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "required": ["id", "domain", "grade_band", "skill", "goal_template_smart", "source_refs"],
+      "properties": {
+        "id": { "type": "string" },
+        "domain": { "type": "string" },
+        "grade_band": { "type": "string" },
+        "skill": { "type": "string" },
+        "baseline_prompt": { "type": "string" },
+        "goal_template_smart": { "type": "string" },
+        "progress_monitoring_method": { "type": "string" },
+        "accommodations_link": { "type": "string" },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" }, "minItems": 1 }
+      }
+    },
+    "principle": {
+      "type": "object",
+      "required": ["id", "principle", "implication_for_design", "source_refs"],
+      "properties": {
+        "id": { "type": "string" },
+        "principle": { "type": "string" },
+        "implication_for_design": { "type": "string" },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" }, "minItems": 1 }
+      }
+    },
+    "template": {
+      "type": "object",
+      "required": ["id", "name", "fields", "usage_notes", "source_refs"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "fields": { "type": "array", "items": { "type": "string" } },
+        "usage_notes": { "type": "string" },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" }, "minItems": 1 }
+      }
+    }
+  }
+}

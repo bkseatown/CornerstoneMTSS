@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "cat",
+    "taboo_words": ["pet", "meow", "kitten"],
+    "definition": "a small furry animal that says meow",
+    "example_sentence": "The cat curled up on the rug.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 2,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "dog",
+    "taboo_words": ["pet", "bark", "puppy"],
+    "definition": "an animal that barks",
+    "example_sentence": "The dog ran to the gate.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 3,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "pig",
+    "taboo_words": ["farm", "oink", "mud"],
+    "definition": "a farm animal that says oink",
+    "example_sentence": "The pig rolled in the mud.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 4,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "pen",
+    "taboo_words": ["write", "ink", "pencil"],
+    "definition": "a tool used for writing with ink",
+    "example_sentence": "I used a pen to sign my name.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 5,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "red",
+    "taboo_words": ["color", "apple", "stop"],
+    "definition": "a color like a fire truck",
+    "example_sentence": "She wore a red jacket to school.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 6,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "teacher",
+    "taboo_words": ["school", "class", "students"],
+    "definition": "a person who helps students learn",
+    "example_sentence": "The teacher explained the directions.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 7,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "nest",
+    "taboo_words": ["bird", "eggs", "tree"],
+    "definition": "a home birds build for eggs",
+    "example_sentence": "A nest rested on the branch.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 8,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "K-1",
+    "target_word": "snow",
+    "taboo_words": ["winter", "cold", "ice"],
+    "definition": "frozen flakes that fall from clouds",
+    "example_sentence": "Snow covered the playground.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  },
+  {
+    "id": 9,
+    "deck_id": "word_clue_supplemental_k1",
+    "grade_band": "G2-3",
+    "target_word": "thunder",
+    "taboo_words": ["storm", "lightning", "loud"],
+    "definition": "the loud sound that follows lightning",
+    "example_sentence": "We heard thunder in the distance.",
+    "source": "supplemental_word_clue",
+    "approved_for_word_clue": true
+  }
+]

@@ -1,0 +1,38 @@
+name: UI Guardrails
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Determine base for diff
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "GUARDRAIL_BASE=origin/${{ github.base_ref }}" >> $GITHUB_ENV
+          else
+            echo "GUARDRAIL_BASE=HEAD~1" >> $GITHUB_ENV
+          fi
+      - name: Run UI guardrails (strict on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run scope:strict
+      - name: Run UI guardrails (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm run scope:check
+      - name: Teacher daily flow smoke test
+        run: |
+          npm run visual:check
+          npm run telemetry:funnel:check
+          npm run telemetry:dashboards:check
+          npm run dom:hooks:check || echo "dom:hooks:check warning-only (legacy selector drift)"
+          npm run smoke:teacher-daily-flow

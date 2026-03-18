@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en" data-theme="default">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ws-build" content="20260301y">
+  <title>Writing Studio</title>
+  <script src="./config.js?v=20260319a"></script>
+  <script src="./storage-schema.js?v=20260301y"></script>
+  <script src="./diagnostics.js?v=20260301y"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260301y">
+  <link rel="stylesheet" href="./style/typography.css?v=20260301y">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
+  <link rel="stylesheet" href="./style/themes.css?v=20260301y">
+  <link rel="stylesheet" href="./writing-studio.css?v=20260315b">
+</head>
+<body class="cs-page-writing cs-hv2-theme-default">
+  <button id="ws-back-home" class="ws-back-home" type="button" aria-label="Back to WordQuest">Back to WordQuest</button>
+  <div id="ws-bg">
+    <header id="ws-topbar">
+        <div class="ws-brand">
+          <div class="ws-dot"></div>
+          <div>
+            <div class="ws-title h2">Writing Studio</div>
+            <div class="ws-subtitle" id="ws-subtitle"></div>
+            <div class="ws-welcome muted" id="ws-welcome">Sentence and paragraph work.</div>
+            <div class="ws-runtime-status" id="ws-runtime-status" aria-live="polite">Online</div>
+            <div class="ws-launch-search-wrap">
+              <input id="ws-launch-search" class="ws-plan-input ws-launch-search" type="search" placeholder="Find a routine or command (e.g., warm-up, small group, teacher)">
+              <div id="ws-launch-results" class="ws-launch-results hidden" role="listbox" aria-label="Writing Studio launcher"></div>
+            </div>
+            <div class="ws-launch-context" id="ws-launch-context" hidden></div>
+          </div>
+        </div>
+
+      <div class="ws-controls">
+        <div class="ws-controls-primary">
+          <button class="ws-chip is-active" data-mode="sentence" type="button">Sentence</button>
+          <button class="ws-chip" data-mode="paragraph" type="button">Paragraph</button>
+          <button class="ws-chip" id="ws-paragraph-builder-btn" type="button">Paragraph Builder</button>
+          <button class="ws-chip" id="ws-teacher-dashboard-btn" type="button">Reports</button>
+          <button class="ws-chip" id="ws-mode-toggle" type="button" aria-label="Switch writing mode">Mode: Sentence</button>
+          <button class="ws-ghost ws-icon-btn" id="ws-setup-toggle" type="button" aria-expanded="false" aria-controls="ws-controls-panel" aria-label="Open command menu" title="Open command menu">...</button>
+        </div>
+        <div class="ws-controls-panel" id="ws-controls-panel" hidden>
+          <div class="ws-controls-advanced" id="ws-controls-advanced">
+          <div class="ws-controls-row">
+            <button class="ws-chip is-active" data-audience="student" type="button">Student</button>
+            <button class="ws-chip" data-audience="teacher" type="button">Teacher</button>
+            <button class="ws-chip" data-audience="support" type="button">LS/EAL</button>
+            <button class="ws-chip" data-audience="family" type="button">Family</button>
+            <button class="ws-chip is-active" data-profile="whole" type="button">Whole Class</button>
+            <button class="ws-chip" data-profile="small" type="button">Small Group</button>
+            <button class="ws-chip" data-profile="one" type="button">1:1</button>
+          </div>
+          <div class="ws-controls-row">
+            <select id="ws-preset-pack" class="ws-plan-input" aria-label="Instruction preset pack">
+              <option value="custom" selected>Preset: Custom</option>
+              <option value="fishtank">Preset: Fish Tank</option>
+              <option value="stepup">Preset: Step Up</option>
+              <option value="eal">Preset: EAL Support</option>
+              <option value="ls">Preset: LS Intervention</option>
+            </select>
+            <select id="ws-grade-band" class="ws-plan-input" aria-label="Grade band">
+              <option value="k2">K-2</option>
+              <option value="35" selected>3-5</option>
+              <option value="68">6-8</option>
+              <option value="912">9-12</option>
+            </select>
+            <button class="ws-chip is-active" id="ws-stepup-toggle" type="button" aria-pressed="true">Step Up Mode</button>
+            <button class="ws-chip" id="ws-model" type="button" aria-pressed="false">Teacher Model: Off</button>
+          <button class="ws-chip" id="ws-impact-toggle" type="button" aria-pressed="false">Review Snapshot</button>
+            <button class="ws-ghost" id="ws-settings" type="button">Theme</button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="ws-stage">
+      <section id="ws-canvas">
+        <div class="ws-canvas-head">
+          <div class="ws-h2">Writing</div>
+          <div class="ws-meta"><span id="ws-metrics">0 sentences • 0 words</span> • <span id="ws-live-hint">Ready to start.</span></div>
+        </div>
+        <div id="ws-flow" class="ws-flow" role="tablist" aria-label="Writing workflow">
+          <button class="ws-step is-active" type="button" data-step="plan">1. Plan</button>
+          <button class="ws-step" type="button" data-step="draft">2. Draft</button>
+          <button class="ws-step" type="button" data-step="revise">3. Revise</button>
+          <button class="ws-step" type="button" data-step="publish">4. Publish</button>
+        </div>
+        <div id="ws-guidance" class="ws-guidance" aria-live="polite">
+          <div class="ws-meta">Next</div>
+          <div id="ws-goal" class="ws-goal">Plan your first idea.</div>
+          <button class="ws-secondary" id="ws-next-step" type="button">Next Step</button>
+        </div>
+        <div class="ws-missions" aria-label="Quick routines">
+          <button class="ws-secondary" id="ws-mission-warmup" type="button">Sentence Repair</button>
+          <button class="ws-secondary" id="ws-mission-plan" type="button">Idea Plan</button>
+          <button class="ws-secondary" id="ws-mission-power" type="button">Paragraph Build</button>
+          <button class="ws-secondary" id="ws-mission-masters" type="button">Model Study</button>
+        </div>
+        <div class="ws-launchpad" id="ws-launchpad" aria-label="60 second class launch">
+          <div class="ws-launchpad-head">
+            <div class="ws-h2">Open routine</div>
+            <div class="ws-meta" id="ws-launchpad-copy">Choose the group and the first move.</div>
+          </div>
+          <div class="ws-launchpad-actions">
+            <button class="ws-secondary" id="ws-quick-whole" type="button">Whole Class</button>
+            <button class="ws-secondary" id="ws-quick-small" type="button">Small Group</button>
+            <button class="ws-secondary" id="ws-quick-one" type="button">1:1</button>
+          </div>
+          <div class="ws-launchpad-actions">
+            <button class="ws-secondary" id="ws-quick-core" type="button">Open Lesson</button>
+            <button class="ws-secondary" id="ws-quick-full" type="button">All Tools</button>
+          </div>
+          <div class="ws-meta" id="ws-quickstart-note">Open one routine and begin.</div>
+        </div>
+        <details class="ws-advanced-canvas" id="ws-advanced-canvas">
+          <summary>Advanced Tools</summary>
+        <div class="ws-fishtank" id="ws-fishtank" aria-label="Curriculum lesson launcher">
+          <div class="ws-fishtank-head">
+            <div class="ws-h2">Curriculum</div>
+            <div class="ws-meta">Set division, course, unit, and lesson.</div>
+          </div>
+          <div class="ws-fishtank-row">
+            <select id="ws-ft-division" class="ws-plan-input" aria-label="Division">
+              <option value="es">Elementary School</option>
+              <option value="ms">Middle School</option>
+              <option value="hs">High School</option>
+            </select>
+            <select id="ws-ft-path" class="ws-plan-input" aria-label="Course pathway"></select>
+            <select id="ws-ft-unit" class="ws-plan-input" aria-label="Unit"></select>
+            <select id="ws-ft-lesson" class="ws-plan-input" aria-label="Lesson"></select>
+          </div>
+          <div class="ws-fishtank-actions">
+            <button class="ws-secondary" id="ws-ft-load" type="button">Load Today</button>
+            <button class="ws-secondary" id="ws-ft-gap" type="button">Gap Support</button>
+            <button class="ws-secondary" id="ws-ft-ssm" type="button">Copy SSM Agenda</button>
+            <button class="ws-secondary" id="ws-ft-iesp" type="button">Copy IESP Goal</button>
+          </div>
+          <details class="ws-more-actions">
+            <summary>More Exports</summary>
+            <div class="ws-fishtank-actions">
+              <button class="ws-secondary" id="ws-ft-note" type="button">Copy Session Note</button>
+              <button class="ws-secondary" id="ws-ft-evidence" type="button">Copy Evidence Log</button>
+              <button class="ws-secondary" id="ws-ft-parent" type="button">Copy Parent Update</button>
+              <button class="ws-secondary" id="ws-ft-handoff" type="button">Copy Teacher Handoff</button>
+              <button class="ws-secondary" id="ws-ft-packet" type="button">Copy LS Team Packet</button>
+            </div>
+          </details>
+          <div class="ws-tip"><strong>Today:</strong> <span id="ws-ft-target">Select a lesson to load writing targets.</span></div>
+        </div>
+        <div class="ws-tip ws-stepup-seq" id="ws-stepup-seq">
+          <strong>Step Up Sequence:</strong> <span id="ws-stepup-target">3-5 sentence focus: topic sentence -> detail sentences -> transition.</span>
+        </div>
+        <div class="ws-pills ws-stepup-colors" id="ws-stepup-colors" aria-label="Step Up color cues">
+          <span class="ws-pill ws-color-topic">Topic</span>
+          <span class="ws-pill ws-color-detail">Detail</span>
+          <span class="ws-pill ws-color-explain">Explain</span>
+          <span class="ws-pill ws-color-transition">Transition</span>
+          <span class="ws-pill ws-color-vocab">Vocab</span>
+        </div>
+        </details>
+        <div id="ws-plan" class="ws-plan" aria-label="Idea builder">
+          <div class="ws-meta">Idea Builder</div>
+          <div class="ws-plan-meter-wrap" aria-live="polite">
+            <div class="ws-plan-meter-head">
+              <span class="ws-meta">Planning Readiness</span>
+              <span id="ws-plan-meter-text" class="ws-meta">0%</span>
+            </div>
+            <div class="ws-plan-meter-track">
+              <div id="ws-plan-meter-fill" class="ws-plan-meter-fill"></div>
+            </div>
+            <div id="ws-plan-meter-note" class="ws-organizer-line">Add ideas to unlock Draft.</div>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-organizer-type" class="ws-plan-input">
+              <option value="sequence">Organizer: Sequence</option>
+              <option value="cer">Organizer: Claim-Evidence-Reasoning</option>
+              <option value="problem">Organizer: Problem-Solution</option>
+            </select>
+            <button class="ws-secondary" id="ws-organizer-apply" type="button">Apply Organizer</button>
+          </div>
+          <div id="ws-organizer-preview" class="ws-organizer-preview"></div>
+          <div id="ws-image-prompts" class="ws-pills"></div>
+          <div class="ws-plan-row">
+            <input id="ws-plan-topic" class="ws-plan-input" type="text" placeholder="Topic or claim idea">
+            <input id="ws-plan-detail" class="ws-plan-input" type="text" placeholder="Detail or evidence">
+            <button class="ws-secondary" id="ws-plan-add" type="button">Add Idea</button>
+          </div>
+          <div id="ws-plan-list" class="ws-plan-list"></div>
+          <button class="ws-secondary" id="ws-plan-use" type="button">Use Plan In Draft</button>
+        </div>
+        <textarea id="ws-editor" placeholder="Start here…"></textarea>
+        <div class="ws-canvas-foot">
+          <button class="ws-secondary" id="ws-dictate" type="button" aria-pressed="false">Dictate</button>
+          <button class="ws-secondary" id="ws-read" type="button">Read Aloud</button>
+          <button class="ws-secondary" id="ws-image-btn" type="button">Image Prompt</button>
+          <input id="ws-image-input" type="file" accept="image/*" hidden>
+        </div>
+        <div id="ws-image-preview" class="ws-image-preview"></div>
+        <div class="ws-canvas-foot">
+          <button class="ws-primary" id="ws-save" type="button">Save Draft</button>
+          <button class="ws-secondary" id="ws-clear" type="button">Clear</button>
+        </div>
+      </section>
+
+      <aside id="ws-rail">
+        <div class="ws-rail-pager" aria-label="Studio sections">
+          <button class="ws-rail-link" id="ws-rail-prev" type="button">Prev</button>
+          <div class="ws-rail-title" id="ws-rail-title">Support</div>
+          <button class="ws-rail-link" id="ws-rail-next" type="button">Next</button>
+          <button class="ws-rail-link" id="ws-rail-toggle" type="button" aria-pressed="false">Show All</button>
+        </div>
+        <div class="ws-rail-block" id="ws-block-coach" data-role-group="all">
+          <div class="ws-h2">Support</div>
+          <div class="ws-coach" id="ws-coach"></div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-scaffold" data-role-group="student,support,teacher">
+          <div class="ws-h2">Scaffold Tools</div>
+          <div class="ws-pills" id="ws-scaffold-tools">
+            <button class="ws-pill" id="ws-scaffold-next" type="button">Next Small Step</button>
+            <button class="ws-pill" id="ws-scaffold-stem" type="button">Sentence Stem</button>
+            <button class="ws-pill" id="ws-scaffold-idea" type="button">Idea Prompt</button>
+            <button class="ws-pill" id="ws-scaffold-evidence" type="button">Evidence Frame</button>
+            <button class="ws-pill" id="ws-scaffold-calm" type="button">Calm Reset</button>
+          </div>
+          <div class="ws-tip"><strong>Cue:</strong> <span id="ws-scaffold-cue">Use one tool, then write one line.</span></div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-caseload" data-role-group="teacher,support">
+          <div class="ws-h2">Student list</div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-playbook" class="ws-plan-input" aria-label="Intervention playbook">
+              <option value="ms-ef">Playbook: MS EF Initiation</option>
+              <option value="ms-eal">Playbook: MS EAL Language Lift</option>
+              <option value="hs-analysis">Playbook: HS Analytical Paragraph</option>
+            </select>
+            <button class="ws-secondary" id="ws-playbook-apply" type="button">Apply Playbook</button>
+          </div>
+          <div class="ws-plan-row">
+            <input id="ws-case-name" class="ws-plan-input" type="text" placeholder="Student">
+            <input id="ws-case-goal" class="ws-plan-input" type="text" placeholder="Goal focus">
+            <button class="ws-secondary" id="ws-case-add" type="button">Add</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-case-next" class="ws-plan-input" type="text" placeholder="Next action">
+            <button class="ws-secondary" id="ws-case-copy" type="button">Copy PLC Board</button>
+          </div>
+          <div class="ws-tip"><strong>From Draft:</strong> update the latest sample for a student.</div>
+          <div id="ws-case-list" class="ws-case-list"></div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <button class="ws-secondary" id="ws-week-plan-build" type="button">Build Week Plan</button>
+            <button class="ws-secondary" id="ws-week-plan-copy" type="button">Copy Week Plan</button>
+          </div>
+          <div class="ws-tip"><strong>Week plan:</strong> <span id="ws-week-plan-text">Build a plan for intervention blocks.</span></div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="support,teacher">
+          <div class="ws-h2">Step Up Toolkit</div>
+          <div class="ws-tip"><strong>Target:</strong> <span id="ws-stepup-grade-target">3-5 sentence focus: topic + 2 details + transition.</span></div>
+          <div class="ws-plan-row">
+            <input id="ws-code-topic" class="ws-plan-input" type="text" maxlength="6" placeholder="Topic code">
+            <input id="ws-code-detail" class="ws-plan-input" type="text" maxlength="6" placeholder="Detail code">
+            <button class="ws-secondary" id="ws-codes-save" type="button">Save Codes</button>
+          </div>
+          <div class="ws-plan-row">
+            <input id="ws-code-explain" class="ws-plan-input" type="text" maxlength="6" placeholder="Explain code">
+            <input id="ws-code-transition" class="ws-plan-input" type="text" maxlength="6" placeholder="Transition code">
+            <button class="ws-secondary" id="ws-codes-reset" type="button">Reset</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-code-vocab" class="ws-plan-input" type="text" maxlength="6" placeholder="Vocab code">
+          </div>
+          <div class="ws-pills">
+            <button class="ws-pill" id="ws-mark-topic" type="button">Mark Topic</button>
+            <button class="ws-pill" id="ws-mark-detail" type="button">Mark Detail</button>
+            <button class="ws-pill" id="ws-mark-explain" type="button">Mark Explain</button>
+            <button class="ws-pill" id="ws-mark-transition" type="button">Mark Transition</button>
+            <button class="ws-pill" id="ws-mark-vocab" type="button">Mark Vocab</button>
+          </div>
+          <button class="ws-secondary" id="ws-stepup-copy" type="button">Copy Marked Draft</button>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-warmup" data-role-group="all">
+          <div class="ws-h2">Warm-Up: Fix It</div>
+          <div class="ws-pills">
+            <span class="ws-pill">Streak: <span id="ws-warmup-streak">0</span></span>
+            <span class="ws-pill">Best: <span id="ws-warmup-best">0</span></span>
+            <span class="ws-pill">Round: <span id="ws-warmup-round-time">--:--</span></span>
+            <span class="ws-pill">Score: <span id="ws-warmup-round-score">0</span></span>
+          </div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-warmup-round-start" type="button">Start Timed Round</button>
+            <button class="ws-secondary" id="ws-warmup-class-toggle" type="button" aria-pressed="false">Class Challenge: Off</button>
+          </div>
+          <div class="ws-tip"><strong>Broken:</strong> <span id="ws-warmup-broken">he run to school because late</span></div>
+          <div class="ws-tip"><strong>Hint:</strong> <span id="ws-warmup-hint">Add capitals, punctuation, and missing words.</span></div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <input id="ws-warmup-input" class="ws-plan-input" type="text" placeholder="Type your fixed sentence">
+            <button class="ws-secondary" id="ws-warmup-check" type="button">Check</button>
+          </div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-warmup-next" type="button">Next Warm-Up</button>
+            <div class="ws-meta" id="ws-warmup-status">Try one fix.</div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-masters" data-role-group="all">
+          <div class="ws-h2">Masters Series</div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-master-strand" class="ws-plan-input" aria-label="Masters strand">
+              <option value="storytelling" selected>Strand: Storytelling</option>
+              <option value="persuasion">Strand: Persuasion</option>
+              <option value="humor">Strand: Humor</option>
+              <option value="communication">Strand: Communication</option>
+            </select>
+            <button class="ws-secondary" id="ws-master-load" type="button">Load Master Move</button>
+          </div>
+          <div class="ws-pills" id="ws-master-mentors" aria-label="Mentor picks"></div>
+          <div class="ws-tip"><strong>One Point:</strong> <span id="ws-master-point">Select a strand to load a model move.</span></div>
+          <div class="ws-tip"><strong>One Example:</strong> <span id="ws-master-example">A short mentor-style example appears here.</span></div>
+          <div class="ws-tip"><strong>Your Try:</strong> <span id="ws-master-try">Use this move in one sentence first.</span></div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-master-insert" type="button">Insert Try Prompt</button>
+            <button class="ws-secondary" id="ws-master-speak" type="button">Hear Example</button>
+          </div>
+          <div class="ws-plan-row ws-plan-row-organizer">
+            <select id="ws-master-length" class="ws-plan-input" aria-label="Playlist length">
+              <option value="15" selected>15 min lesson</option>
+              <option value="25">25 min lesson</option>
+              <option value="40">40 min lesson</option>
+            </select>
+            <button class="ws-secondary" id="ws-master-build-playlist" type="button">Build Playlist</button>
+            <button class="ws-secondary" id="ws-master-copy-playlist" type="button">Copy Sub Script</button>
+          </div>
+          <div class="ws-tip"><strong>Class Playlist:</strong> <span id="ws-master-playlist">Build a playlist to get a substitute-ready script.</span></div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="student,support,teacher">
+          <div class="ws-h2">Feedback</div>
+          <div id="ws-feedback" class="ws-feedback">
+            <div class="ws-tip"><strong>Glow:</strong> <span id="ws-glow">You are getting started.</span></div>
+            <div class="ws-tip"><strong>Grow:</strong> <span id="ws-grow">Add one clear idea.</span></div>
+            <div class="ws-tip"><strong>Go:</strong> <span id="ws-go">Plan your first idea.</span></div>
+            <div class="ws-tip"><strong>Evidence Used:</strong> <span id="ws-evidence">No evidence span yet. Write 2+ sentences.</span></div>
+            <div class="ws-tip"><strong>Revision Patch:</strong> <span id="ws-revision-patch">Before: -- After: --</span></div>
+            <div class="ws-tip"><strong>Feedback Confidence:</strong> <span id="ws-feedback-confidence">Low</span></div>
+          </div>
+          <div id="ws-paragraph-intel" class="ws-feedback ws-paragraph-intel" aria-live="polite">
+            <div class="ws-h2">Paragraph Structure Feedback</div>
+            <div class="ws-tip"><strong>Claim:</strong> <span id="ws-para-claim">0</span></div>
+            <div class="ws-tip"><strong>Evidence:</strong> <span id="ws-para-evidence">0</span></div>
+            <div class="ws-tip"><strong>Explanation:</strong> <span id="ws-para-explanation">0</span></div>
+            <div class="ws-tip"><strong>Transitions:</strong> <span id="ws-para-transitions">0</span></div>
+            <div class="ws-tip"><strong>Total Score:</strong> <span id="ws-para-total">0 / 8</span></div>
+            <div class="ws-tip"><strong>Strength:</strong> <span id="ws-para-strength">Save a paragraph to generate specific feedback.</span></div>
+            <div class="ws-tip"><strong>Growth Focus:</strong> <span id="ws-para-growth">Keep your claim, evidence, and explanation in the same paragraph.</span></div>
+            <div class="ws-tip"><strong>Suggested Next Step:</strong> <span id="ws-para-next">Add one evidence sentence and one explanation sentence.</span></div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="student,support,teacher">
+          <div class="ws-h2">Sprint</div>
+          <div class="ws-sprint">
+            <div id="ws-sprint-time" class="ws-sprint-time" aria-live="polite">03:00</div>
+            <div class="ws-canvas-foot">
+              <button class="ws-secondary" id="ws-sprint-start" type="button">Start Sprint</button>
+              <button class="ws-secondary" id="ws-sprint-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="student,support,teacher">
+          <div class="ws-h2">Vocabulary</div>
+          <div class="ws-pills" id="ws-vocab"></div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="teacher,support">
+          <div class="ws-h2">Conference Copilot</div>
+          <div id="ws-conference" class="ws-conference">
+            <div class="ws-tip"><strong>Strength:</strong> <span id="ws-conference-strength">Student has started.</span></div>
+            <div class="ws-tip"><strong>Target:</strong> <span id="ws-conference-target">Build one clear idea.</span></div>
+            <div class="ws-tip"><strong>Teacher Prompt:</strong> <span id="ws-conference-prompt">Tell me your claim in one sentence.</span></div>
+          </div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-mastery" data-role-group="all">
+          <div class="ws-h2">Mastery Snapshot</div>
+          <div class="ws-plan-row ws-plan-row-organizer ws-benchmark-controls">
+            <select id="ws-framework" class="ws-plan-input" aria-label="Benchmark framework">
+              <option value="ccss" selected>Benchmark: US Common Core</option>
+              <option value="ib">Benchmark: IB MYP</option>
+              <option value="cambridge">Benchmark: Cambridge</option>
+              <option value="naplan">Benchmark: NAPLAN</option>
+              <option value="cefr">Benchmark: CEFR (EAL)</option>
+            </select>
+          </div>
+          <div class="ws-feedback">
+            <div class="ws-tip"><strong>Structure:</strong> <span id="ws-rubric-1">0/3</span></div>
+            <div class="ws-tip"><strong>Evidence/Detail:</strong> <span id="ws-rubric-2">0/3</span></div>
+            <div class="ws-tip"><strong>Language:</strong> <span id="ws-rubric-3">0/3</span></div>
+            <div class="ws-tip"><strong>Overall:</strong> <span id="ws-rubric-score">0/9</span></div>
+            <div class="ws-tip"><strong>Benchmark Lens:</strong> <span id="ws-benchmark-level">Approaching</span></div>
+            <div class="ws-tip"><strong>Calibration:</strong> <span id="ws-calibration">3-5 sentence anchor set</span></div>
+            <div class="ws-tip"><strong>Confidence:</strong> <span id="ws-benchmark-confidence">Low (build more writing)</span></div>
+          </div>
+          <div class="ws-tip"><strong>Descriptor:</strong> <span id="ws-benchmark-note">Draft is developing and needs clearer structure + detail to meet expected proficiency.</span></div>
+          <div class="ws-tip"><strong>Mini-Lesson Next:</strong> <span id="ws-mini-lesson">Teach how to start with one clear idea.</span></div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="student,teacher,support">
+          <div class="ws-h2">Anchor Exemplars</div>
+          <div id="ws-exemplars" class="ws-coach"></div>
+        </div>
+
+        <div class="ws-rail-block" id="ws-block-publish" data-role-group="student,teacher,support">
+          <div class="ws-h2">Publishing Wall</div>
+          <div class="ws-canvas-foot">
+            <button class="ws-secondary" id="ws-pin-line" type="button">Pin Best Line</button>
+            <button class="ws-secondary" id="ws-wall-clear" type="button">Clear Wall</button>
+          </div>
+          <div id="ws-publish-wall" class="ws-publish-wall"></div>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="family,teacher,support">
+          <div class="ws-h2">Family 5-Minute Plan</div>
+          <div class="ws-tip"><strong>1.</strong> Ask your child to read one sentence aloud.</div>
+          <div class="ws-tip"><strong>2.</strong> Praise one strength (clarity, detail, or vocabulary).</div>
+          <div class="ws-tip"><strong>3.</strong> Help add one more sentence using a stem.</div>
+          <button class="ws-secondary" id="ws-family-copy" type="button">Copy Home Prompt</button>
+        </div>
+
+        <div class="ws-rail-block" data-role-group="student,support,teacher">
+          <div class="ws-h2">Checklist</div>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-1">Topic sentence is clear</span></label>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-2">I added two details</span></label>
+          <label class="ws-check"><input type="checkbox"><span id="ws-check-3">I used because/so/but</span></label>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./js/nav-shell.js?v=20260307a"></script>
+  <script src="./build-stamp.js?v=20260319a"></script>
+  <script src="./js/build-badge.js?v=20260301y"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
+  <script src="./js/theme-registry.js?v=20260301y"></script>
+  <script src="./js/feature-flags.js?v=20260301y"></script>
+  <script src="./writing-studio.js?v=20260315b" defer></script>
+
+  <div id="ws-showcase" class="ws-showcase" aria-hidden="true">
+    <button class="ws-ghost ws-showcase-close" id="ws-showcase-close" type="button">Close Showcase</button>
+    <div class="ws-showcase-title">Author Showcase</div>
+    <div class="ws-showcase-sub">Best line from your draft</div>
+    <div class="ws-showcase-line" id="ws-showcase-line">Write something and pin your best line.</div>
+  </div>
+
+  <div id="ws-impact" class="ws-showcase" aria-hidden="true">
+    <button class="ws-ghost ws-showcase-close" id="ws-impact-close" type="button">Close Snapshot</button>
+    <div class="ws-showcase-title">Review Snapshot</div>
+    <div class="ws-showcase-sub" id="ws-impact-sub">Current writing records and copied notes.</div>
+    <div class="ws-showcase-line" id="ws-impact-line">No records yet.</div>
+    <div class="ws-showcase-line ws-impact-review" id="ws-impact-trend">Saved notes will appear here as records build.</div>
+    <div class="ws-showcase-line ws-impact-review" id="ws-mtss-review">Weekly review note will appear after more than one saved sample.</div>
+    <button class="ws-secondary" id="ws-mtss-copy" type="button">Copy Weekly Review</button>
+  </div>
+
+  <div id="ws-tour" class="ws-showcase" aria-hidden="true">
+    <button class="ws-ghost ws-showcase-close" id="ws-tour-close" type="button">Skip</button>
+    <div class="ws-showcase-title">Quick Tour</div>
+    <div class="ws-showcase-sub" id="ws-tour-step">Step 1 of 3</div>
+    <div class="ws-showcase-line ws-impact-review" id="ws-tour-text">Start with one Mission and complete one small task.</div>
+    <div class="ws-canvas-foot">
+      <button class="ws-secondary" id="ws-tour-prev" type="button">Back</button>
+      <button class="ws-secondary" id="ws-tour-next" type="button">Next</button>
+      <button class="ws-primary" id="ws-tour-start" type="button">Start</button>
+    </div>
+  </div>
+
+  <div class="ws-scrim" id="wsGreetingScrim" hidden></div>
+
+  <section class="ws-greeting" id="wsGreeting" hidden aria-modal="true" role="dialog" aria-label="Writing Studio greeting">
+    <header class="ws-greeting-top">
+      <div class="ws-brand">
+        <span class="ws-dot"></span>
+        <div>
+          <div class="ws-title">Writing Studio</div>
+        </div>
+      </div>
+      <button class="ws-skip" id="wsGreetingSkip" type="button">Skip</button>
+    </header>
+
+    <div class="ws-hero">
+      <div class="ws-hero-left">
+        <div class="ws-kicker">QUICK SETUP • ~90 seconds</div>
+        <h1>Choose a writing setup</h1>
+        <p class="ws-hero-copy">
+          Set the role, grade band, and lesson length, then open the writing space.
+        </p>
+
+        <div class="ws-demo" aria-label="Example revision">
+          <div class="ws-demo-row">
+            <div class="ws-demo-label">Student types</div>
+            <div class="ws-demo-bubble">
+              <span class="ws-demo-text" id="wsDemoText">The dog ran.</span>
+              <span class="ws-demo-caret" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="ws-demo-row">
+            <div class="ws-demo-label">Studio coaches</div>
+            <div class="ws-demo-suggest">
+              <span class="ws-demo-chip" data-demo="0">Add detail</span>
+              <span class="ws-demo-chip" data-demo="1">Add because</span>
+              <span class="ws-demo-chip" data-demo="2">Upgrade word choice</span>
+            </div>
+          </div>
+
+          <div class="ws-demo-row ws-demo-outcome">
+            <div class="ws-demo-label">Result</div>
+            <div class="ws-demo-bubble ws-demo-result">
+              <span class="ws-demo-text" id="wsDemoResult">
+                The tired dog ran to the gate because it heard a loud crash.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ws-badges">
+          <span class="ws-badge">Whole Class</span>
+          <span class="ws-badge">Tier 2</span>
+          <span class="ws-badge">Tier 3</span>
+          <span class="ws-badge">EAL / ES</span>
+          <span class="ws-badge">MS/HS Support</span>
+        </div>
+
+        <div class="ws-impact">
+          <div class="ws-impact-item">
+            <div class="ws-impact-label">Setup</div>
+            <div class="ws-impact-value">Whole class, small group, or 1:1</div>
+          </div>
+          <div class="ws-impact-item">
+            <div class="ws-impact-label">Writing focus</div>
+            <div class="ws-impact-value">Plan, draft, revise, publish</div>
+          </div>
+          <div class="ws-impact-item">
+            <div class="ws-impact-label">Saved records</div>
+            <div class="ws-impact-value">Notes and copied drafts stay local</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws-hero-right">
+        <div class="ws-form">
+          <label for="wsRole">Role</label>
+          <select id="wsRole">
+            <option value="teacher" selected>Teacher</option>
+            <option value="student">Student</option>
+          </select>
+
+          <label for="wsGrade">Grade Band</label>
+          <select id="wsGrade">
+            <option value="35" selected>3-5</option>
+            <option value="68">6-8</option>
+            <option value="912">9-12</option>
+          </select>
+
+          <label for="wsLength">Default Lesson Length</label>
+          <select id="wsLength">
+            <option value="15" selected>15 min</option>
+            <option value="25">25 min</option>
+            <option value="40">40 min</option>
+          </select>
+
+          <button class="ws-primary" id="wsStartStudio" type="button">Open Studio</button>
+          <button class="ws-ghost" id="wsStartIntervention" type="button">Support Setup</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="./js/hub-back-nav.js" defer></script>
+</body>
+</html>

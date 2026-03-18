@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentence Studio</title>
+  <script src="./config.js?v=20260319a"></script>
+  <script src="./storage-schema.js?v=20260301y"></script>
+  <script src="./diagnostics.js?v=20260301y"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260301y">
+  <link rel="stylesheet" href="./style/typography.css?v=20260301y">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
+  <link rel="preload" href="./sentence-surgery.css?v=20260301y" as="style">
+  <link rel="stylesheet" href="./sentence-surgery.css?v=20260301y">
+</head>
+<body class="cs-page-surgery writing-studio">
+  <main class="ss-container sentence-workbench" aria-label="Sentence Studio practice">
+    <p class="ss-header kicker">Sentence Studio</p>
+
+    <section class="ss-card" aria-label="Sentence builder">
+      <div class="ss-workbench">
+        <div class="ss-stage cs-stage">
+          <header class="ss-stage-head">
+            <h1 class="h1">Sentence Studio</h1>
+          </header>
+          <div id="ss-coach-ribbon" class="cs-coach-ribbon" role="status" aria-live="polite">
+            <span class="cs-coach-chip hidden"></span>
+            <p class="cs-coach-text"></p>
+            <button class="cs-coach-action hidden" type="button"></button>
+          </div>
+          <div class="ss-sentence-wrapper" aria-label="Structured sentence">
+            <div id="ssSentence" class="ss-sentence" role="group" aria-label="Build your sentence"></div>
+          </div>
+
+          <section class="ss-actions" aria-label="Sentence actions">
+            <button type="button" class="ss-action-btn" data-action="why">❓ Why</button>
+            <button type="button" class="ss-action-btn" data-action="detail">✨ Detail</button>
+            <button type="button" class="ss-action-btn" data-action="verb">⭐ Verb</button>
+            <button type="button" class="ss-action-btn" data-action="clause">🔗 Clause</button>
+            <button type="button" class="ss-action-btn" id="ssTeacherToggle" aria-pressed="false">📋 More</button>
+            <div class="ss-verb-menu hidden" id="ssVerbMenu" role="menu" aria-label="Choose a verb"></div>
+          </section>
+
+          <section class="ss-meter" aria-label="Complexity meter">
+            <div class="ss-meter-bar" id="ssMeterBar"></div>
+          </section>
+          <div class="ss-level" id="ssLevel">Level 1</div>
+
+          <section class="ss-stats" aria-label="Sentence summary">
+            <div><strong id="ssWordCount">Words: 0</strong></div>
+            <div id="ssType">Type: simple</div>
+            <div id="ssFocus">Target skill: Reasoning (because/although)</div>
+          </section>
+        </div>
+
+        <aside class="ss-rail cs-rail">
+          <details class="ss-rail-block" open>
+            <summary>👨‍🏫 Coach</summary>
+            <div id="ssCoachBubble" class="ss-coach hidden" aria-live="polite"></div>
+          </details>
+          <details class="ss-rail-block ss-post-edit hidden">
+            <summary>📊 Details</summary>
+            <details id="ssTraitsPanel" class="ss-post-edit hidden">
+              <summary>View trait scores</summary>
+              <section class="ss-traits" aria-label="Writing traits">
+                <div class="ss-trait"><span>Clarity</span><div class="ss-trait-track"><div id="ssTraitClarity" class="ss-trait-fill"></div></div><span id="ssTraitClarityValue">0</span></div>
+                <div class="ss-trait"><span>Detail</span><div class="ss-trait-track"><div id="ssTraitDetail" class="ss-trait-fill"></div></div><span id="ssTraitDetailValue">0</span></div>
+                <div class="ss-trait"><span>Reasoning</span><div class="ss-trait-track"><div id="ssTraitReasoning" class="ss-trait-fill"></div></div><span id="ssTraitReasoningValue">0</span></div>
+                <div class="ss-trait"><span>Control</span><div class="ss-trait-track"><div id="ssTraitControl" class="ss-trait-fill"></div></div><span id="ssTraitControlValue">0</span></div>
+              </section>
+            </details>
+
+            <aside class="ss-breakdown" id="ssBreakdown" aria-live="polite">
+              <div><strong>Skill Tag:</strong> <span id="ssSkillTag">Emerging sentence</span></div>
+              <div><strong>Suggested Grouping:</strong> <span id="ssGrouping">Tier 2</span></div>
+              <div id="ssBreakdownBody">Words: 0 • Clauses: 0 • Adjectives: 0 • Strong Verb: No</div>
+            </aside>
+
+            <div class="ss-footer ss-post-edit hidden" id="ssFooterCta">
+              <button type="button" id="ssDoneBtn" class="ss-action-btn">✅ Done</button>
+              <button type="button" id="ssTryAnotherBtn" class="ss-action-btn">🔄 Try another</button>
+              <button type="button" id="ssChaosToggleBtn" class="ss-action-btn">🎮 Fix the Chaos</button>
+            </div>
+
+            <section class="ss-timed ss-post-edit hidden" aria-label="Timed mode">
+              <div class="ss-timed-controls">
+                <label for="ssTimedPreset">Timed Mode</label>
+                <select id="ssTimedPreset" class="ss-timed-select">
+                  <option value="l1">Level 1 (90s)</option>
+                  <option value="l2">Level 2 (75s)</option>
+                  <option value="l3">Level 3 (60s)</option>
+                </select>
+                <button type="button" id="ssTimedStartBtn" class="ss-action-btn">⏱️ Start Timed</button>
+                <button type="button" id="ssTimedStopBtn" class="ss-action-btn">⏹️ Stop</button>
+              </div>
+              <div id="ssTimedStatus" class="ss-timed-status">Timed mode idle.</div>
+            </section>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <section id="ssChaosPanel" class="ss-chaos hidden" aria-label="Fix the Chaos game">
+      <h2 class="h2">Fix the Chaos</h2>
+      <p id="ssChaosPrompt">Tap the best fix for this sentence.</p>
+      <div id="ssChaosSentence" class="ss-chaos-sentence"></div>
+      <div class="ss-chaos-actions">
+        <button type="button" class="ss-action-btn" data-chaos-action="punctuate">Insert punctuation</button>
+        <button type="button" class="ss-action-btn" data-chaos-action="replace">Replace word</button>
+        <button type="button" class="ss-action-btn" data-chaos-action="combine">Combine clause</button>
+      </div>
+      <div id="ssChaosResult" class="ss-chaos-result" aria-live="polite"></div>
+    </section>
+
+    <section id="ssDashboard" class="ss-dashboard hidden" aria-label="Class snapshot">
+      <h2 class="h2">Class Snapshot</h2>
+      <div id="ssDashboardStats">Simple: 0% • Complex: 0% • Reasoning: 0% • Strong verbs: 0%</div>
+      <p id="ssDashboardLesson">Suggested mini-lesson: Model complex sentences using subordinating conjunctions.</p>
+    </section>
+
+    <div class="ss-compare" id="ssCompare" aria-hidden="true">
+      <div class="before" id="ssCompareBefore"></div>
+      <div class="after" id="ssCompareAfter"></div>
+    </div>
+  </main>
+
+  <script src="./js/nav-shell.js?v=20260307a"></script>
+  <script src="./build-stamp.js?v=20260319a"></script>
+  <script src="./js/build-badge.js?v=20260301y"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
+  <script src="./sentenceEngine.js?v=20260301y" defer></script>
+  <script src="./cache-engine.js?v=20260301y" defer></script>
+  <script src="./analytics-engine.js?v=20260301y" defer></script>
+  <script src="./performance-engine.js?v=20260301y" defer></script>
+  <script src="./pedagogy-engine.js?v=20260301y" defer></script>
+  <script src="./progression-engine.js?v=20260301y" defer></script>
+  <script src="./ai-service.js?v=20260301y" defer></script>
+  <script src="./aiAnalysis.js?v=20260301y" defer></script>
+  <script src="./teacherLens.js?v=20260301y" defer></script>
+  <script src="./demoMode.js?v=20260301y" defer></script>
+  <script src="./js/ava-coach.js?v=20260301y" defer></script>
+  <script src="./js/coach-ribbon.js?v=20260301y" defer></script>
+  <script src="./sentence-surgery.js?v=20260301y" defer></script>
+  <script src="./js/hub-back-nav.js" defer></script>
+</body>
+</html>

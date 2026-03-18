@@ -1,0 +1,157 @@
+/**
+ * a11y-high-contrast.css
+ * High contrast mode for low vision / color blind users
+ * WCAG AAA compliant (7:1 minimum contrast ratio)
+ */
+
+[data-a11y="high-contrast"] {
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --surface-1: #ffffff;
+  --surface-2: #f0f0f0;
+  --border: #000000;
+  --accent: #ff0000;
+  --accent-secondary: #0000ff;
+
+  color: var(--text-primary);
+  background: var(--surface-1);
+}
+
+/* Ensure all backgrounds are white or very light */
+[data-a11y="high-contrast"] body,
+[data-a11y="high-contrast"] main,
+[data-a11y="high-contrast"] .page-container {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* All text should be black or very dark */
+[data-a11y="high-contrast"] p,
+[data-a11y="high-contrast"] span,
+[data-a11y="high-contrast"] label,
+[data-a11y="high-contrast"] .text {
+  color: #000000;
+}
+
+/* Borders MUST be visible and dark */
+[data-a11y="high-contrast"] *,
+[data-a11y="high-contrast"] *::before,
+[data-a11y="high-contrast"] *::after {
+  border-width: 2px !important;
+  border-color: #000000 !important;
+}
+
+/* Buttons must have very clear borders */
+[data-a11y="high-contrast"] button,
+[data-a11y="high-contrast"] [role="button"],
+[data-a11y="high-contrast"] input[type="button"],
+[data-a11y="high-contrast"] input[type="submit"] {
+  border: 3px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 600;
+}
+
+/* Active/hover states must be unmistakable */
+[data-a11y="high-contrast"] button:hover,
+[data-a11y="high-contrast"] [role="button"]:hover,
+[data-a11y="high-contrast"] button:focus,
+[data-a11y="high-contrast"] [role="button"]:focus {
+  background: #000000;
+  color: #ffffff;
+  outline: 3px solid #ff0000;
+  outline-offset: 2px;
+}
+
+/* Focus indicators MUST be extremely clear */
+[data-a11y="high-contrast"] *:focus,
+[data-a11y="high-contrast"] *:focus-visible {
+  outline: 4px solid #ff0000 !important;
+  outline-offset: 3px !important;
+}
+
+/* Word tiles and game elements */
+[data-a11y="high-contrast"] .word-tile,
+[data-a11y="high-contrast"] .key,
+[data-a11y="high-contrast"] .game-element {
+  border: 3px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Filled/selected state */
+[data-a11y="high-contrast"] .word-tile.filled,
+[data-a11y="high-contrast"] .word-tile.selected,
+[data-a11y="high-contrast"] .key.filled,
+[data-a11y="high-contrast"] .key.selected {
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
+}
+
+/* Status indicators must use symbols + color */
+[data-a11y="high-contrast"] .status-success,
+[data-a11y="high-contrast"] [aria-label*="success"] {
+  color: #008000;
+  font-weight: bold;
+}
+
+[data-a11y="high-contrast"] .status-success::before {
+  content: '✓ ';
+}
+
+[data-a11y="high-contrast"] .status-error,
+[data-a11y="high-contrast"] [aria-label*="error"] {
+  color: #ff0000;
+  font-weight: bold;
+}
+
+[data-a11y="high-contrast"] .status-error::before {
+  content: '✗ ';
+}
+
+/* Remove unnecessary gradients and shadows */
+[data-a11y="high-contrast"] * {
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Cards and panels */
+[data-a11y="high-contrast"] .card,
+[data-a11y="high-contrast"] .panel,
+[data-a11y="high-contrast"] [role="dialog"] {
+  border: 3px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Links must be very obvious */
+[data-a11y="high-contrast"] a,
+[data-a11y="high-contrast"] [role="link"] {
+  color: #0000ff;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  font-weight: 600;
+}
+
+[data-a11y="high-contrast"] a:visited,
+[data-a11y="high-contrast"] [role="link"][aria-current="page"] {
+  color: #800080;
+}
+
+/* Increase touch target sizes */
+[data-a11y="high-contrast"] button,
+[data-a11y="high-contrast"] [role="button"],
+[data-a11y="high-contrast"] a,
+[data-a11y="high-contrast"] input {
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-2);
+}
+
+/* Remove distracting colors in high contrast mode */
+[data-a11y="high-contrast"] .decorative,
+[data-a11y="high-contrast"] .ornament {
+  display: none !important;
+}

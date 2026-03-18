@@ -1,0 +1,422 @@
+[
+  {
+    "id": 1,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "climate",
+    "marked_word": "cl-i-mate",
+    "taboo_words": [
+      "weather",
+      "temperature",
+      "region"
+    ],
+    "definition": "the usual weather conditions in a place over time",
+    "example_sentence": "A desert climate stays dry most of the year."
+  },
+  {
+    "id": 2,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "fraction",
+    "marked_word": "fr-ac-tion",
+    "taboo_words": [
+      "math",
+      "part",
+      "whole"
+    ],
+    "definition": "a number that names part of a whole",
+    "example_sentence": "One fraction of the pizza was left."
+  },
+  {
+    "id": 3,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "habitat",
+    "marked_word": "hab-i-tat",
+    "taboo_words": [
+      "animal",
+      "home",
+      "environment"
+    ],
+    "definition": "the natural home of a plant or animal",
+    "example_sentence": "A pond is a frog habitat."
+  },
+  {
+    "id": 4,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "orbit",
+    "marked_word": "or-bit",
+    "taboo_words": [
+      "planet",
+      "circle",
+      "space"
+    ],
+    "definition": "the curved path of an object in space",
+    "example_sentence": "Earth moves in an orbit around the sun."
+  },
+  {
+    "id": 5,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "process",
+    "marked_word": "pro-cess",
+    "taboo_words": [
+      "steps",
+      "method",
+      "procedure"
+    ],
+    "definition": "a series of steps to do something",
+    "example_sentence": "Writing is a process with many drafts."
+  },
+  {
+    "id": 6,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "predict",
+    "marked_word": "pre-dict",
+    "taboo_words": [
+      "guess",
+      "forecast",
+      "future"
+    ],
+    "definition": "to say what will happen next",
+    "example_sentence": "We predict rain from dark clouds."
+  },
+  {
+    "id": 7,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "compare",
+    "marked_word": "com-pare",
+    "taboo_words": [
+      "alike",
+      "different",
+      "contrast"
+    ],
+    "definition": "to look for similarities and differences",
+    "example_sentence": "Compare the two graphs."
+  },
+  {
+    "id": 8,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "paragraph",
+    "marked_word": "par-a-graph",
+    "taboo_words": [
+      "writing",
+      "sentences",
+      "essay"
+    ],
+    "definition": "a group of related sentences about one main idea",
+    "example_sentence": "Each paragraph has one main idea."
+  },
+  {
+    "id": 9,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "grammar",
+    "marked_word": "gram-mar",
+    "taboo_words": [
+      "language",
+      "rules",
+      "punctuation"
+    ],
+    "definition": "the rules for using words in a language",
+    "example_sentence": "Good grammar helps readers understand."
+  },
+  {
+    "id": 10,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "capture",
+    "marked_word": "cap-ture",
+    "taboo_words": [
+      "catch",
+      "photo",
+      "record"
+    ],
+    "definition": "to take, hold, or record something",
+    "example_sentence": "The camera can capture fast action."
+  },
+  {
+    "id": 11,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "adventure",
+    "marked_word": "ad-ven-ture",
+    "taboo_words": [
+      "trip",
+      "journey",
+      "exciting"
+    ],
+    "definition": "an unusual and exciting experience",
+    "example_sentence": "Our camping trip felt like an adventure."
+  },
+  {
+    "id": 12,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "culture",
+    "marked_word": "cul-ture",
+    "taboo_words": [
+      "traditions",
+      "customs",
+      "society"
+    ],
+    "definition": "the shared beliefs and customs of a group",
+    "example_sentence": "Food is part of culture."
+  },
+  {
+    "id": 13,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "project",
+    "marked_word": "pro-ject",
+    "taboo_words": [
+      "assignment",
+      "build",
+      "presentation"
+    ],
+    "definition": "planned work done over time",
+    "example_sentence": "Our science project tested plant growth."
+  },
+  {
+    "id": 14,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "review",
+    "marked_word": "re-view",
+    "taboo_words": [
+      "study",
+      "check",
+      "again"
+    ],
+    "definition": "to look at something again",
+    "example_sentence": "Review your notes before the quiz."
+  },
+  {
+    "id": 15,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "replay",
+    "marked_word": "re-play",
+    "taboo_words": [
+      "again",
+      "game",
+      "video"
+    ],
+    "definition": "to play again",
+    "example_sentence": "We hit replay on the short video."
+  },
+  {
+    "id": 16,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "transport",
+    "marked_word": "trans-port",
+    "taboo_words": [
+      "move",
+      "carry",
+      "travel"
+    ],
+    "definition": "to move people or things from one place to another",
+    "example_sentence": "Buses transport students to school."
+  },
+  {
+    "id": 17,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "kindness",
+    "marked_word": "kind-ness",
+    "taboo_words": [
+      "nice",
+      "care",
+      "respect"
+    ],
+    "definition": "being friendly and caring to others",
+    "example_sentence": "Kindness makes classrooms feel safe."
+  },
+  {
+    "id": 18,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "hopeful",
+    "marked_word": "hope-ful",
+    "taboo_words": [
+      "optimism",
+      "positive",
+      "future"
+    ],
+    "definition": "feeling or showing hope",
+    "example_sentence": "She felt hopeful about the test."
+  },
+  {
+    "id": 19,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "movement",
+    "marked_word": "move-ment",
+    "taboo_words": [
+      "motion",
+      "travel",
+      "activity"
+    ],
+    "definition": "a change in position",
+    "example_sentence": "The sensor detected movement."
+  },
+  {
+    "id": 20,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "teacher",
+    "marked_word": "teach-er",
+    "taboo_words": [
+      "school",
+      "instructor",
+      "class"
+    ],
+    "definition": "a person who helps students learn",
+    "example_sentence": "The teacher explained the plan."
+  },
+  {
+    "id": 21,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "careful",
+    "marked_word": "care-ful",
+    "taboo_words": [
+      "safe",
+      "cautious",
+      "careless"
+    ],
+    "definition": "paying close attention to avoid mistakes",
+    "example_sentence": "Be careful with the glass."
+  },
+  {
+    "id": 22,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "rewrite",
+    "marked_word": "re-write",
+    "taboo_words": [
+      "edit",
+      "again",
+      "draft"
+    ],
+    "definition": "to write again with changes",
+    "example_sentence": "I will rewrite my opening paragraph."
+  },
+  {
+    "id": 23,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "disagree",
+    "marked_word": "dis-a-gree",
+    "taboo_words": [
+      "argue",
+      "different",
+      "same"
+    ],
+    "definition": "to have a different opinion",
+    "example_sentence": "I disagree with that idea."
+  },
+  {
+    "id": 24,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "preview",
+    "marked_word": "pre-view",
+    "taboo_words": [
+      "before",
+      "watch",
+      "look"
+    ],
+    "definition": "to look at something before full use",
+    "example_sentence": "We watched a preview of the film."
+  },
+  {
+    "id": 25,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "microscope",
+    "marked_word": "mi-cro-scope",
+    "taboo_words": [
+      "science",
+      "lens",
+      "magnify"
+    ],
+    "definition": "a tool that makes very small things look bigger",
+    "example_sentence": "The microscope showed the cells."
+  },
+  {
+    "id": 26,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "energy",
+    "marked_word": "en-er-gy",
+    "taboo_words": [
+      "power",
+      "fuel",
+      "electricity"
+    ],
+    "definition": "the ability to do work or make things happen",
+    "example_sentence": "Running uses a lot of energy."
+  },
+  {
+    "id": 27,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "rainfall",
+    "marked_word": "rain-fall",
+    "taboo_words": [
+      "weather",
+      "precipitation",
+      "inches"
+    ],
+    "definition": "the amount of rain that falls in a place",
+    "example_sentence": "Rainfall was high this spring."
+  },
+  {
+    "id": 28,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "combine",
+    "marked_word": "com-bine",
+    "taboo_words": [
+      "mix",
+      "join",
+      "separate"
+    ],
+    "definition": "to join things together",
+    "example_sentence": "Combine the ingredients in a bowl."
+  },
+  {
+    "id": 29,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "explain",
+    "marked_word": "ex-plain",
+    "taboo_words": [
+      "tell",
+      "describe",
+      "why"
+    ],
+    "definition": "to make an idea clear",
+    "example_sentence": "Can you explain your answer?"
+  },
+  {
+    "id": 30,
+    "deck_id": "taboo_phonics_g4_5_starter_30",
+    "grade_band": "G4-5",
+    "target_word": "evidence",
+    "marked_word": "ev-i-dence",
+    "taboo_words": [
+      "proof",
+      "facts",
+      "clue"
+    ],
+    "definition": "facts or information that show something is true",
+    "example_sentence": "Use evidence from the text."
+  }
+]

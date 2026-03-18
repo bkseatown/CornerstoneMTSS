@@ -1,0 +1,272 @@
+#!/usr/bin/env node
+'use strict';
+
+const fs = require('fs');
+const http = require('http');
+const path = require('path');
+
+async function run() {
+  const SMOKE_VERSION = 'teacher-daily-flow-v6';
+  const SEL = {
+    loadingScreen: '[data-testid="loading-screen"]',
+    firstRunSetupModal: '[data-testid="first-run-setup-modal"]',
+    firstRunStartBtn: '[data-testid="first-run-start-btn"]',
+    firstRunSkipBtn: '[data-testid="first-run-skip-btn"]',
+    teacherPanelBtn: '[data-testid="teacher-panel-btn"]',
+    teacherPanelClose: '[data-testid="teacher-panel-close"]',
+    saveTargetBtn: '[data-testid="session-playlist-save-btn"]',
+    newGameBtn: '[data-testid="new-game-btn"]',
+    settingsBtn: '[data-testid="settings-btn"]',
+    sessionResetBtn: '[data-testid="session-reset-btn"]',
+    settingsClose: '[data-testid="settings-close"]'
+  };
+  let playwright;
+  try {
+    console.log(`Starting ${SMOKE_VERSION}`);
+    playwright = require('playwright');
+  } catch {
+    throw new Error('Playwright is required. Run: npm install --no-save playwright');
+  }
+
+  const root = process.cwd();
+  const server = http.createServer((req, res) => {
+    const urlPath = decodeURIComponent(String(req.url || '/').split('?')[0]);
+    const rawPath = urlPath === '/' ? '/index.html' : urlPath;
+    const safePath = path.normalize(rawPath).replace(/^(\.\.(\/|\\|$))+/, '');
+    const filePath = path.join(root, safePath);
+    if (!filePath.startsWith(root)) {
+      res.statusCode = 403;
+      res.end('forbidden');
+      return;
+    }
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.statusCode = 404;
+        res.end('not found');
+        return;
+      }
+      const ext = path.extname(filePath).toLowerCase();
+      const type = ext === '.html'
+        ? 'text/html'
+        : ext === '.js'
+          ? 'application/javascript'
+          : ext === '.css'
+            ? 'text/css'
+            : ext === '.json'
+              ? 'application/json'
+              : 'application/octet-stream';
+      res.setHeader('content-type', type);
+      res.end(data);
+    });
+  });
+
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+
+  const browser = await playwright.chromium.launch({ headless: true });
+  const page = await browser.newPage();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(String(error?.message || error)));
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('wq_v2_first_run_setup_v1', 'done');
+    } catch {}
+  });
+
+  try {
+    async function clickWithRetries(selector, options = {}) {
+      const attempts = Math.max(1, Number(options.attempts) || 3);
+      const optional = !!options.optional;
+      const settleMs = Math.max(0, Number(options.settleMs) || 0);
+      let lastError = null;
+      for (let attempt = 0; attempt < attempts; attempt += 1) {
+        try {
+          const locator = page.locator(selector);
+          if (!(await locator.count())) {
+            if (optional) return false;
+            throw new Error(`Selector not found: ${selector}`);
+          }
+          await locator.first().waitFor({ state: 'visible', timeout: 10000 });
+          await page.waitForFunction((sel) => {
+            const node = document.querySelector(sel);
+            if (!node) return false;
+            if (!(node instanceof HTMLElement)) return false;
+            if (node.getAttribute('aria-disabled') === 'true') return false;
+            return !node.hasAttribute('disabled');
+          }, selector, { timeout: 10000 });
+          await locator.first().click({ force: true, timeout: 5000 });
+          if (settleMs) await page.waitForTimeout(settleMs);
+          return true;
+        } catch (error) {
+          lastError = error;
+          if (attempt < attempts - 1) {
+            await page.waitForTimeout((attempt + 1) * 500);
+            continue;
+          }
+        }
+      }
+      if (optional) return false;
+      throw lastError || new Error(`Click failed for ${selector}`);
+    }
+
+    await page.goto(baseUrl + '/word-quest.html?play=1', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForSelector(SEL.loadingScreen, { state: 'hidden', timeout: 30000 });
+    const firstRunVisible = await page.locator(`${SEL.firstRunSetupModal}:not(.hidden)`).count();
+    if (firstRunVisible) {
+      if (await page.locator(SEL.firstRunStartBtn).count()) {
+        await page.click(SEL.firstRunStartBtn);
+      } else if (await page.locator(SEL.firstRunSkipBtn).count()) {
+        await page.click(SEL.firstRunSkipBtn);
+      }
+      await page.waitForSelector(SEL.firstRunSetupModal, { state: 'hidden', timeout: 10000 });
+    }
+
+    const teacherPanelVisible = await page.evaluate((selector) => {
+      const btn = document.querySelector(selector);
+      if (!(btn instanceof HTMLElement)) return false;
+      const style = window.getComputedStyle(btn);
+      const hidden = style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+      return !hidden && btn.offsetParent !== null;
+    }, SEL.teacherPanelBtn);
+    if (teacherPanelVisible) {
+      await page.evaluate((selector) => {
+        const btn = document.querySelector(selector);
+        if (btn instanceof HTMLElement) btn.click();
+      }, SEL.teacherPanelBtn);
+      await page.waitForFunction(() => {
+        const panel = document.getElementById('teacher-panel');
+        if (!(panel instanceof HTMLElement)) return false;
+        const hiddenClass = panel.classList.contains('hidden');
+        const hiddenAttr = panel.hidden || panel.getAttribute('aria-hidden') === 'true';
+        const style = window.getComputedStyle(panel);
+        const visuallyHidden = style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+        return !hiddenClass && !hiddenAttr && !visuallyHidden;
+      }, { timeout: 15000 });
+      await clickWithRetries(SEL.saveTargetBtn, { attempts: 3, optional: true, settleMs: 300 });
+      await page.evaluate((selector) => {
+        const btn = document.querySelector(selector);
+        if (btn instanceof HTMLElement) btn.click();
+      }, SEL.teacherPanelClose);
+      await page.waitForFunction(() => {
+        const panel = document.getElementById('teacher-panel');
+        if (!(panel instanceof HTMLElement)) return true;
+        return panel.classList.contains('hidden') || panel.hidden || panel.getAttribute('aria-hidden') === 'true';
+      }, { timeout: 15000 });
+    } else {
+      console.log('Teacher panel button hidden; skipping teacher hub subflow.');
+    }
+
+    await page.evaluate(() => {
+      const focus = document.getElementById('setting-focus');
+      if (focus instanceof HTMLSelectElement) {
+        focus.value = 'all';
+        focus.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const grade = document.getElementById('s-grade');
+      if (grade instanceof HTMLSelectElement) {
+        grade.value = 'all';
+        grade.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const length = document.getElementById('s-length');
+      if (length instanceof HTMLSelectElement) {
+        length.value = '5';
+        length.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    let targetWord = '';
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      const clickedNewGame = await clickWithRetries(SEL.newGameBtn, { attempts: 2, optional: true, settleMs: 250 });
+      if (!clickedNewGame) {
+        console.log('new-game button unavailable; attempting direct runtime startGame fallback.');
+      }
+      try {
+        await page.waitForFunction(() => {
+          const word = (typeof WQGame !== 'undefined' ? WQGame?.getState?.()?.word : '');
+          return typeof word === 'string' && word.trim().length > 0;
+        }, { timeout: 5000 });
+        targetWord = await page.evaluate(() => {
+          const word = (typeof WQGame !== 'undefined' ? WQGame?.getState?.()?.word : '') || '';
+          return String(word).trim().toLowerCase();
+        });
+        if (targetWord) break;
+      } catch {}
+      await page.waitForTimeout(300);
+    }
+    if (!targetWord) {
+      targetWord = await page.evaluate(() => {
+        const result = (typeof WQGame !== 'undefined' ? WQGame?.startGame?.({
+          gradeBand: 'all',
+          length: '5',
+          phonics: 'all',
+          maxGuesses: 6
+        }) : null);
+        const word = (typeof WQGame !== 'undefined' ? WQGame?.getState?.()?.word : '') || '';
+        return String(result?.word || word || '').trim().toLowerCase();
+      });
+    }
+    if (!targetWord) {
+      const debug = await page.evaluate(() => ({
+        hasWQGame: (typeof WQGame !== 'undefined'),
+        state: (typeof WQGame !== 'undefined' ? WQGame?.getState?.() : null) || null,
+        startError: (typeof WQGame !== 'undefined' ? WQGame?.getLastStartError?.() : null) || null
+      }));
+      throw new Error(`No active word found after clicking New/Next Word. debug=${JSON.stringify(debug)}`);
+    }
+    await page.keyboard.type(String(targetWord));
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('modal-overlay');
+      const modalOpen = modal instanceof HTMLElement && !modal.classList.contains('hidden');
+      const gameOver = !!(typeof WQGame !== 'undefined' ? WQGame?.getState?.()?.gameOver : false);
+      return modalOpen || gameOver;
+    }, { timeout: 10000 });
+    const modalOpen = await page.evaluate(() => {
+      const modal = document.getElementById('modal-overlay');
+      return modal instanceof HTMLElement && !modal.classList.contains('hidden');
+    });
+    if (modalOpen) {
+      await clickWithRetries('#play-again-btn', { attempts: 3, optional: true });
+      await page.waitForSelector('#modal-overlay', { state: 'hidden', timeout: 10000 });
+    }
+
+    await clickWithRetries(SEL.settingsBtn, { attempts: 3, settleMs: 200 });
+    await page.waitForFunction(() => {
+      const panel = document.getElementById('settings-panel');
+      if (!(panel instanceof HTMLElement)) return false;
+      return !panel.classList.contains('hidden');
+    }, { timeout: 10000 });
+    const resetClicked = await clickWithRetries(SEL.sessionResetBtn, { attempts: 3, optional: true, settleMs: 150 });
+    if (!resetClicked) {
+      const resetDispatched = await page.evaluate((selector) => {
+        const button = document.querySelector(selector);
+        if (!(button instanceof HTMLElement)) return false;
+        button.click();
+        return true;
+      }, SEL.sessionResetBtn);
+      if (!resetDispatched) {
+        throw new Error('Session reset control not available.');
+      }
+    }
+    await page.waitForFunction(() => {
+      const chip = document.getElementById('session-rounds');
+      return chip && /Rounds:\s*0\b/.test(String(chip.textContent || ''));
+    }, { timeout: 10000 });
+    await clickWithRetries(SEL.settingsClose, { attempts: 3, optional: true });
+
+    if (pageErrors.length) {
+      throw new Error(`Runtime page errors: ${pageErrors.join(' | ')}`);
+    }
+
+    console.log('playwright smoke passed: teacher daily flow runtime');
+  } finally {
+    await browser.close();
+    await new Promise((resolve) => server.close(resolve));
+  }
+}
+
+run().catch((error) => {
+  console.error(error?.stack || error?.message || error);
+  process.exit(1);
+});

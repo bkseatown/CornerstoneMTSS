@@ -1,0 +1,13 @@
+{
+  "grade3": {
+    "unit1": {
+      "title": "Area Concepts",
+      "lessons": {
+        "lesson1": {
+          "contentFocus": "Area Models",
+          "numeracyNode": "Multiplicative Reasoning"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,422 @@
+[
+  {
+    "id": 1,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "cat",
+    "marked_word": "c-a-t",
+    "taboo_words": [
+      "pet",
+      "meow",
+      "kitten"
+    ],
+    "definition": "a small furry animal that says meow",
+    "example_sentence": "The cat slept by the window."
+  },
+  {
+    "id": 2,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "dog",
+    "marked_word": "d-o-g",
+    "taboo_words": [
+      "pet",
+      "bark",
+      "puppy"
+    ],
+    "definition": "an animal that barks",
+    "example_sentence": "The dog ran across the yard."
+  },
+  {
+    "id": 3,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "sun",
+    "marked_word": "s-u-n",
+    "taboo_words": [
+      "sky",
+      "hot",
+      "daytime"
+    ],
+    "definition": "the bright star that lights Earth",
+    "example_sentence": "The sun warmed our faces."
+  },
+  {
+    "id": 4,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "map",
+    "marked_word": "m-a-p",
+    "taboo_words": [
+      "directions",
+      "route",
+      "travel"
+    ],
+    "definition": "a drawing that shows places",
+    "example_sentence": "We used a map to find the park."
+  },
+  {
+    "id": 5,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "pen",
+    "marked_word": "p-e-n",
+    "taboo_words": [
+      "write",
+      "ink",
+      "pencil"
+    ],
+    "definition": "a tool used for writing with ink",
+    "example_sentence": "I used a pen to sign my name."
+  },
+  {
+    "id": 6,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "pig",
+    "marked_word": "p-i-g",
+    "taboo_words": [
+      "farm",
+      "oink",
+      "mud"
+    ],
+    "definition": "a farm animal that says oink",
+    "example_sentence": "The pig rolled in the mud."
+  },
+  {
+    "id": 7,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "red",
+    "marked_word": "r-e-d",
+    "taboo_words": [
+      "color",
+      "apple",
+      "stop"
+    ],
+    "definition": "a color like a fire truck",
+    "example_sentence": "She wore a red hat."
+  },
+  {
+    "id": 8,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "hop",
+    "marked_word": "h-o-p",
+    "taboo_words": [
+      "jump",
+      "bunny",
+      "skip"
+    ],
+    "definition": "to jump with both feet",
+    "example_sentence": "We hop over puddles."
+  },
+  {
+    "id": 9,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "fish",
+    "marked_word": "f-i-sh",
+    "taboo_words": [
+      "swim",
+      "fins",
+      "water"
+    ],
+    "definition": "an animal that lives in water",
+    "example_sentence": "The fish swam in circles."
+  },
+  {
+    "id": 10,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "ship",
+    "marked_word": "sh-i-p",
+    "taboo_words": [
+      "boat",
+      "sail",
+      "ocean"
+    ],
+    "definition": "a large boat for water travel",
+    "example_sentence": "The ship crossed the bay."
+  },
+  {
+    "id": 11,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "chat",
+    "marked_word": "ch-a-t",
+    "taboo_words": [
+      "talk",
+      "speak",
+      "message"
+    ],
+    "definition": "to talk in a friendly way",
+    "example_sentence": "We chat after lunch."
+  },
+  {
+    "id": 12,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "thin",
+    "marked_word": "th-i-n",
+    "taboo_words": [
+      "thick",
+      "skinny",
+      "slim"
+    ],
+    "definition": "not thick; narrow from side to side",
+    "example_sentence": "The thin book fit in my bag."
+  },
+  {
+    "id": 13,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "that",
+    "marked_word": "th-a-t",
+    "taboo_words": [
+      "this",
+      "those",
+      "pronoun"
+    ],
+    "definition": "a word used to point to something",
+    "example_sentence": "That kite is bright blue."
+  },
+  {
+    "id": 14,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "drum",
+    "marked_word": "d-r-u-m",
+    "taboo_words": [
+      "music",
+      "beat",
+      "band"
+    ],
+    "definition": "a musical instrument you hit to make sound",
+    "example_sentence": "He played the drum in music class."
+  },
+  {
+    "id": 15,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "flag",
+    "marked_word": "f-l-a-g",
+    "taboo_words": [
+      "country",
+      "pole",
+      "banner"
+    ],
+    "definition": "a piece of cloth used as a symbol",
+    "example_sentence": "The flag waved in the wind."
+  },
+  {
+    "id": 16,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "clap",
+    "marked_word": "c-l-a-p",
+    "taboo_words": [
+      "hands",
+      "applaud",
+      "sound"
+    ],
+    "definition": "to hit your hands together",
+    "example_sentence": "Please clap for the performers."
+  },
+  {
+    "id": 17,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "stop",
+    "marked_word": "s-t-o-p",
+    "taboo_words": [
+      "go",
+      "halt",
+      "sign"
+    ],
+    "definition": "to end movement or action",
+    "example_sentence": "We stop at the red light."
+  },
+  {
+    "id": 18,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "nest",
+    "marked_word": "n-e-s-t",
+    "taboo_words": [
+      "bird",
+      "eggs",
+      "tree"
+    ],
+    "definition": "a home birds build for eggs",
+    "example_sentence": "A nest sat high in the tree."
+  },
+  {
+    "id": 19,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "milk",
+    "marked_word": "m-i-l-k",
+    "taboo_words": [
+      "drink",
+      "cow",
+      "white"
+    ],
+    "definition": "a white drink from cows",
+    "example_sentence": "I poured milk on my cereal."
+  },
+  {
+    "id": 20,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "hand",
+    "marked_word": "h-a-n-d",
+    "taboo_words": [
+      "fingers",
+      "palm",
+      "wave"
+    ],
+    "definition": "the part of your arm with fingers",
+    "example_sentence": "Raise your hand to answer."
+  },
+  {
+    "id": 21,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "ring",
+    "marked_word": "r-i-ng",
+    "taboo_words": [
+      "finger",
+      "bell",
+      "circle"
+    ],
+    "definition": "a round shape; also a small band worn on a finger",
+    "example_sentence": "The ring was too loose."
+  },
+  {
+    "id": 22,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "song",
+    "marked_word": "s-o-ng",
+    "taboo_words": [
+      "music",
+      "sing",
+      "tune"
+    ],
+    "definition": "a piece of music with words",
+    "example_sentence": "We sang a song together."
+  },
+  {
+    "id": 23,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "king",
+    "marked_word": "k-i-ng",
+    "taboo_words": [
+      "queen",
+      "crown",
+      "ruler"
+    ],
+    "definition": "a male ruler of a kingdom",
+    "example_sentence": "The king wore a heavy crown."
+  },
+  {
+    "id": 24,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "rain",
+    "marked_word": "r-ai-n",
+    "taboo_words": [
+      "cloud",
+      "wet",
+      "umbrella"
+    ],
+    "definition": "water that falls from clouds",
+    "example_sentence": "Rain tapped on the roof."
+  },
+  {
+    "id": 25,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "tree",
+    "marked_word": "t-r-ee",
+    "taboo_words": [
+      "leaves",
+      "trunk",
+      "forest"
+    ],
+    "definition": "a tall plant with a trunk and branches",
+    "example_sentence": "The tree gave us shade."
+  },
+  {
+    "id": 26,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "boat",
+    "marked_word": "b-oa-t",
+    "taboo_words": [
+      "water",
+      "paddle",
+      "lake"
+    ],
+    "definition": "a vehicle that travels on water",
+    "example_sentence": "We rode the boat at the lake."
+  },
+  {
+    "id": 27,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "home",
+    "marked_word": "h-o-me",
+    "taboo_words": [
+      "house",
+      "family",
+      "live"
+    ],
+    "definition": "the place where you live",
+    "example_sentence": "We walked home after school."
+  },
+  {
+    "id": 28,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "bike",
+    "marked_word": "b-i-ke",
+    "taboo_words": [
+      "ride",
+      "wheels",
+      "pedal"
+    ],
+    "definition": "a two-wheeled vehicle you pedal",
+    "example_sentence": "My bike has a blue bell."
+  },
+  {
+    "id": 29,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "cube",
+    "marked_word": "c-u-be",
+    "taboo_words": [
+      "box",
+      "shape",
+      "square"
+    ],
+    "definition": "a solid shape with six square faces",
+    "example_sentence": "The toy block was a cube."
+  },
+  {
+    "id": 30,
+    "deck_id": "taboo_phonics_k_1_starter_30",
+    "grade_band": "K-1",
+    "target_word": "star",
+    "marked_word": "s-t-ar",
+    "taboo_words": [
+      "night",
+      "sky",
+      "shine"
+    ],
+    "definition": "a bright object seen in the night sky",
+    "example_sentence": "One star shone above us."
+  }
+]

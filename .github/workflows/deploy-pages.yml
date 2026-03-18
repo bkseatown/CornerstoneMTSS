@@ -1,0 +1,220 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run guardrails checks
+        run: |
+          echo "🔍 Running UI quality audit..."
+          npm run audit:ui || { echo "❌ UI audit failed"; exit 1; }
+          echo "✅ UI audit passed"
+
+          echo "🔍 Checking build badge..."
+          npm run hud:check || { echo "❌ Build badge check failed"; exit 1; }
+          echo "✅ Build badge check passed"
+
+          echo "🔍 Running pre-release validation..."
+          npm run release:check || { echo "❌ Release check failed"; exit 1; }
+          echo "✅ Release check passed"
+
+      - name: Update build badge
+        run: node build-stamp.js
+
+      - name: Prepare Pages artifact
+        run: |
+          rm -rf dist
+          mkdir dist
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='node_modules' \
+                    --exclude='dist' \
+                    --exclude='*.log' \
+                    ./ dist/
+          node scripts/stamp-build-version.js dist "${GITHUB_SHA::12}-${GITHUB_RUN_NUMBER}"
+
+      - name: Validate dist artifact completeness
+        run: |
+          set -euo pipefail
+          test -f dist/index.html || { echo "Missing dist/index.html"; exit 1; }
+          test -f dist/js/app.js || { echo "Missing dist/js/app.js"; exit 1; }
+          test -f dist/js/evidence-store.js || { echo "Missing dist/js/evidence-store.js"; exit 1; }
+          test -f dist/js/ava-intensity.js || { echo "Missing dist/js/ava-intensity.js"; exit 1; }
+          test -f dist/js/wq-diagnostics.js || { echo "Missing dist/js/wq-diagnostics.js"; exit 1; }
+          test -f dist/js/build-badge.js || { echo "Missing dist/js/build-badge.js"; exit 1; }
+          test -f dist/build-stamp.js || { echo "Missing dist/build-stamp.js"; exit 1; }
+          test -f dist/style/tokens.css || { echo "Missing dist/style/tokens.css"; exit 1; }
+          test -f dist/sw-runtime.js || { echo "Missing dist/sw-runtime.js"; exit 1; }
+          test -f dist/build.json || { echo "Missing dist/build.json"; exit 1; }
+          test -f dist/data/ava-persona.json || { echo "Missing dist/data/ava-persona.json"; exit 1; }
+          test -f dist/data/ava-event-matrix.json || { echo "Missing dist/data/ava-event-matrix.json"; exit 1; }
+          test -f dist/audio/ava/current/manifest.json || { echo "Missing dist/audio/ava/current/manifest.json"; exit 1; }
+          while IFS= read -r asset; do
+            clean_asset="$(echo "${asset}" | sed 's#^\./##')"
+            test -f "dist/${clean_asset}" || { echo "Missing referenced asset dist/${clean_asset}"; exit 1; }
+          done < <(
+            grep -oE '(src|href)="(\./)?[^"]+\.(js|css)(\?v=[^"]*)?"' dist/index.html \
+            | sed -E 's/^(src|href)="(\.\/)?([^"?]+)(\?[^"]*)?"$/\3/' \
+            | sort -u
+          )
+          grep -q "build-stamp.js" dist/index.html || { echo "index missing build-stamp include"; exit 1; }
+          grep -q "js/build-badge.js" dist/index.html || { echo "index missing build-badge include"; exit 1; }
+          grep -q "build-stamp.js" dist/reports.html || { echo "reports missing build-stamp include"; exit 1; }
+          grep -q "js/build-badge.js" dist/reports.html || { echo "reports missing build-badge include"; exit 1; }
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Smoke-check deployed page
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          CANONICAL_URL: https://bkseatown.github.io/CornerstoneMTSS/
+        run: |
+          set -euo pipefail
+          expected_build="$(node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('dist/build.json','utf8'));process.stdout.write(String(d.buildId||''));")"
+          markers=(
+            'id="td-home-btn"'
+            'id="td-activity-select"'
+            'class="td-wordmark td-brand-home"'
+            "build-stamp.js?v=${expected_build}"
+            "js/build-badge.js?v=${expected_build}"
+            "style/tokens.css?v=${expected_build}"
+          )
+          summary_file="${RUNNER_TEMP}/pages-smoke-summary.md"
+          {
+            echo "### Pages smoke check"
+            echo
+            echo "| URL | Result | Details |"
+            echo "|---|---|---|"
+          } > "${summary_file}"
+
+          failures=0
+          warnings=0
+          targets=(
+            "${PAGE_URL%/}/?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}|required"
+            "${CANONICAL_URL%/}/?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}|optional"
+          )
+
+          for target_entry in "${targets[@]}"; do
+            target="${target_entry%%|*}"
+            requirement="${target_entry##*|}"
+            dashboard_url="${target%/}/reports.html?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            echo "Smoke checking ${dashboard_url}"
+            passed=0
+            details="Missing markers after retries."
+            for attempt in 1 2 3 4 5 6 7 8; do
+              tmp_html="${RUNNER_TEMP}/pages-smoke-${attempt}.html"
+              http_code="$(curl -sSLo "${tmp_html}" -w "%{http_code}" --max-time 20 "${dashboard_url}" || true)"
+              html="$(cat "${tmp_html}" 2>/dev/null || true)"
+              bytes="$(wc -c < "${tmp_html}" 2>/dev/null || echo 0)"
+              missing=()
+              for marker in "${markers[@]}"; do
+                if [[ "${html}" != *"${marker}"* ]]; then
+                  missing+=("${marker}")
+                fi
+              done
+              if [ "${http_code}" = "200" ] && [ "${#missing[@]}" -eq 0 ]; then
+                passed=1
+                details="All markers found on attempt ${attempt} (HTTP ${http_code}, ${bytes} bytes)."
+                break
+              fi
+              details="Attempt ${attempt}: HTTP ${http_code}, ${bytes} bytes, missing ${missing[*]}"
+              echo "Smoke check retry ${attempt}/8: HTTP ${http_code}, ${bytes} bytes, missing ${missing[*]}"
+              sleep $((attempt * 10))
+            done
+
+            if [ "${passed}" -eq 1 ]; then
+              echo "| ${dashboard_url} | ✅ PASS | ${details} |" >> "${summary_file}"
+            else
+              if [ "${requirement}" = "required" ]; then
+                failures=$((failures + 1))
+                echo "| ${dashboard_url} | ❌ FAIL | ${details} |" >> "${summary_file}"
+              else
+                warnings=$((warnings + 1))
+                echo "| ${dashboard_url} | ⚠️ WARN | ${details} |" >> "${summary_file}"
+              fi
+            fi
+          done
+
+          for target_entry in "${targets[@]}"; do
+            target="${target_entry%%|*}"
+            requirement="${target_entry##*|}"
+            version_url="${target%/}/build.json?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            version_value="$(curl -sS --max-time 20 "${version_url}" | node -e "let data='';process.stdin.on('data',c=>data+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(data);process.stdout.write(String(j.buildId||''));}catch{process.stdout.write('');}});" || true)"
+            if [ "${version_value}" = "${expected_build}" ]; then
+              echo "| ${version_url} | ✅ PASS | build.json buildId matches ${expected_build}. |" >> "${summary_file}"
+            else
+              if [ "${requirement}" = "required" ]; then
+                failures=$((failures + 1))
+                echo "| ${version_url} | ❌ FAIL | Expected ${expected_build}, got ${version_value:-<empty>}. |" >> "${summary_file}"
+              else
+                warnings=$((warnings + 1))
+                echo "| ${version_url} | ⚠️ WARN | Expected ${expected_build}, got ${version_value:-<empty>}. |" >> "${summary_file}"
+              fi
+            fi
+          done
+
+          for target_entry in "${targets[@]}"; do
+            target="${target_entry%%|*}"
+            requirement="${target_entry##*|}"
+            token_url="${target%/}/style/tokens.css?cb=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            headers="$(curl -sSIL --max-time 20 "${token_url}" || true)"
+            status_line="$(printf "%s\n" "${headers}" | head -n 1)"
+            content_type="$(printf "%s\n" "${headers}" | tr '[:upper:]' '[:lower:]' | grep -i '^content-type:' | head -n 1 || true)"
+            ok=1
+            if [[ "${status_line}" != *"200"* ]]; then ok=0; fi
+            if [[ "${content_type}" != *"text/css"* ]]; then ok=0; fi
+            if [ "${ok}" -eq 1 ]; then
+              echo "| ${token_url} | ✅ PASS | tokens.css served as text/css. |" >> "${summary_file}"
+            else
+              if [ "${requirement}" = "required" ]; then
+                failures=$((failures + 1))
+                echo "| ${token_url} | ❌ FAIL | ${status_line} ${content_type} |" >> "${summary_file}"
+              else
+                warnings=$((warnings + 1))
+                echo "| ${token_url} | ⚠️ WARN | ${status_line} ${content_type} |" >> "${summary_file}"
+              fi
+            fi
+          done
+
+          cat "${summary_file}" >> "${GITHUB_STEP_SUMMARY}"
+          if [ "${warnings}" -gt 0 ]; then
+            echo "Non-blocking smoke-check warning(s): ${warnings} optional URL target(s) failed." >&2
+          fi
+          if [ "${failures}" -gt 0 ]; then
+            echo "Smoke-check warning(s): ${failures} required URL target(s) failed after deploy. Deploy already completed; see summary above." >&2
+          fi

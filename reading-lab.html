@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reading Lab</title>
+  <script src="./config.js?v=20260319a"></script>
+  <script src="./storage-schema.js?v=20260301y"></script>
+  <script src="./diagnostics.js?v=20260301y"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260301y">
+  <link rel="stylesheet" href="./style/typography.css?v=20260301y">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
+  <link rel="stylesheet" href="./style/reading-lab.css?v=20260301y">
+</head>
+<body class="cs-page-reading-lab">
+  <main id="rl-root" class="rl-root cs-stage" aria-label="Reading Lab">
+    <header class="rl-head">
+      <div>
+        <p class="rl-meta-title kicker">Reading Lab</p>
+        <p class="muted">ORF, accuracy, phrasing, and sentence reasoning.</p>
+      </div>
+      <div class="rl-head-actions">
+        <button id="rl-replay-demo" class="rl-btn hidden" type="button">Replay Demo</button>
+        <button id="rl-back-home" class="rl-btn" type="button">Back to Word Quest</button>
+      </div>
+    </header>
+
+    <section class="rl-layout">
+      <article class="rl-surface cs-stage rl-passage-surface" aria-label="Passage panel">
+        <div class="rl-surface-head">
+          <h1 class="h1">Reading Lab</h1>
+          <div id="rl-status" class="rl-status">Ready. Start an attempt.</div>
+        </div>
+        <div id="rl-coach-ribbon" class="cs-coach-ribbon" role="status" aria-live="polite">
+          <span class="cs-coach-chip hidden"></span>
+          <p class="cs-coach-text"></p>
+          <button class="cs-coach-action hidden" type="button"></button>
+        </div>
+        <div id="rl-passage" class="rl-passage" tabindex="0" aria-label="Reading passage"></div>
+        <div class="rl-passage-actions">
+          <button id="rl-send-sentence" class="rl-btn" type="button">📝 Write about it</button>
+          <button id="rl-next-passage" class="rl-btn" type="button">➡️ Next Story</button>
+        </div>
+        <div id="rl-comprehension" class="rl-comprehension"></div>
+      </article>
+
+      <aside class="rl-surface cs-rail rl-control-surface" aria-label="Reading controls and metrics">
+        <div class="rl-control-grid">
+          <button id="rl-start" class="rl-btn rl-btn-primary" type="button">▶️ Start</button>
+          <button id="rl-stop" class="rl-btn" type="button">⏸ Stop</button>
+          <label>Mode
+            <select id="rl-mode">
+              <option value="read_aloud" selected>Read Aloud</option>
+              <option value="silent">Silent Read + Mark</option>
+            </select>
+          </label>
+          <label>Tier
+            <select id="rl-tier">
+              <option value="2" selected>Tier 2</option>
+              <option value="3">Tier 3</option>
+            </select>
+          </label>
+          <label class="rl-checkbox"><input id="rl-prosody-toggle" type="checkbox" checked> 💬 Phrasing Tips</label>
+        </div>
+
+        <details id="rl-what-track" class="rl-help-toggle">
+          <summary>Measures</summary>
+          <div>Accuracy, punctuation, ORF estimate, and reasoning response quality.</div>
+        </details>
+
+        <div id="rl-live-chip" class="rl-live-chip hidden">Accuracy: --</div>
+
+        <div id="rl-mark-tools" class="rl-mark-tools hidden">
+          <strong>Mark Tokens</strong>
+          <div class="rl-mark-buttons">
+            <button type="button" class="rl-btn rl-mark-btn is-active" data-mark="correct">C</button>
+            <button type="button" class="rl-btn rl-mark-btn" data-mark="incorrect">I</button>
+            <button type="button" class="rl-btn rl-mark-btn" data-mark="skip">S</button>
+            <button type="button" class="rl-btn rl-mark-btn" data-mark="self_correct">R</button>
+          </div>
+          <details class="rl-help-toggle">
+            <summary>Keyboard help</summary>
+            <div class="rl-help">Silent keys: <code>C</code>/<code>I</code>/<code>S</code> mark, <code>R</code> self-correct last, <code>Space</code>/<code>→</code> next.</div>
+          </details>
+        </div>
+
+        <div id="rl-metrics-panel" class="rl-metrics-panel hidden">
+          <div class="rl-metrics-summary" id="rl-metrics-summary">
+            <div><strong>Accuracy:</strong> <span id="rl-metric-accuracy">0%</span></div>
+            <div><strong>Punctuation Respect:</strong> <span id="rl-metric-punct">0</span></div>
+            <div><strong>ORF WPM:</strong> <span id="rl-metric-wpm">0</span></div>
+          </div>
+          <details class="rl-help-toggle">
+            <summary>Details</summary>
+            <div class="rl-metrics" id="rl-metrics">
+              <div><strong>Pacing Var:</strong> <span id="rl-metric-pacing">0</span></div>
+              <div><strong>Prosody Cue:</strong> <span id="rl-metric-prosody">--</span></div>
+            </div>
+          </details>
+        </div>
+
+        <div id="rl-hard-word-panel" class="rl-panel hidden" aria-label="Word work">
+          <h3>Word Work</h3>
+          <div id="rl-hard-word-target">Select a word.</div>
+          <div id="rl-hard-word-breakdown"></div>
+          <div id="rl-hard-word-pattern"></div>
+          <label class="rl-checkbox"><input id="rl-heart-toggle" type="checkbox" disabled> Heart word</label>
+          <div class="rl-panel-actions">
+            <button id="rl-hear-word" class="rl-btn" type="button">Hear word</button>
+            <button id="rl-practice-word" class="rl-btn" type="button">Tap-to-spell</button>
+            <button id="rl-send-wordquest" class="rl-btn" type="button">Send to Word Quest focus list</button>
+          </div>
+          <div id="rl-spell-mini" class="hidden">
+            <div id="rl-spell-prompt">Spell the word in 10 seconds.</div>
+            <input id="rl-spell-input" type="text" autocomplete="off" spellcheck="false">
+            <button id="rl-spell-check" class="rl-btn" type="button">Check</button>
+          </div>
+        </div>
+
+        <div id="rl-teacher-summary" class="rl-panel hidden" aria-label="Session summary"></div>
+        <div id="rl-privacy-note" class="rl-privacy-note">Student text is analyzed locally for instruction. School analytics store aggregates only; raw passage text and audio are not stored.</div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./js/nav-shell.js?v=20260307a"></script>
+  <script src="./build-stamp.js?v=20260319a"></script>
+  <script src="./js/build-badge.js?v=20260301y"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
+  <script src="./analytics-engine.js?v=20260301y" defer></script>
+  <script src="./performance-engine.js?v=20260301y" defer></script>
+  <script src="./ai-service.js?v=20260301y" defer></script>
+  <script src="./js/ava-coach.js?v=20260301y" defer></script>
+  <script src="./js/coach-ribbon.js?v=20260301y" defer></script>
+  <script src="./js/reading-lab.js?v=20260301y" defer></script>
+  <!-- Hub back-navigation strip (activates only when ?from=hub is in URL) -->
+  <script src="./js/hub-back-nav.js" defer></script>
+</body>
+</html>

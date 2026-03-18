@@ -1,0 +1,151 @@
+/* GAME SHELL ANIMATIONS — Keyframes & Motion Definitions
+   Extracted from game-shell.css Phase 2 (modularization 2026-03-17)
+   Contains: @keyframes definitions, animation utilities, timing functions
+   Safe for lazy-loading or critical-path optimization */
+
+@keyframes cg-forbidden-flash {
+  0%   { background: rgba(239,68,68,0.22); }
+  100% { background: transparent; }
+}
+
+/* ── Rapid Category countdown bar ────────────── */
+.cg-countdown-bar {
+@keyframes cgTimerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes cgSuccessGlow {
+  0% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+  40% { box-shadow: 0 0 0 10px rgba(29, 143, 95, 0.12); }
+  100% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+}
+
+@keyframes cgCursorBlink {
+  0%, 49% { border-bottom-color: #4f96e3; }
+  50%, 100% { border-bottom-color: transparent; }
+}
+
+@media (max-width: 960px) {
+  body.game-platform-page[data-shell-view="play"] .cg-game-scaffold {
+@keyframes cg-preview-tile-flip {
+  0%, 100% { transform: rotateX(0deg) scale(1); }
+  40% { transform: rotateX(88deg) scale(1.04); }
+  60% { transform: rotateX(0deg) scale(1.02); }
+}
+
+@keyframes cg-preview-tile-state-correct {
+  0%, 20% { background: #d9dee5; border-color: #c8cfda; }
+  30%, 100% { background: #4CAF50; border-color: #3d9143; }
+}
+
+@keyframes cg-preview-tile-state-present {
+  0%, 30% { background: #d9dee5; border-color: #c8cfda; }
+  40%, 100% { background: #FFC107; border-color: #d6a106; }
+}
+
+@keyframes cg-preview-key-pulse {
+  0%, 100% { transform: translateY(0); box-shadow: none; }
+  50% { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28); }
+}
+
+@keyframes cg-preview-flash-warn {
+  0%, 75%, 100% { color: #4f607a; background: transparent; }
+  82% { color: #ffffff; background: rgba(220, 53, 69, 0.86); }
+}
+
+@keyframes cg-preview-slide-part {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(7px); }
+}
+
+@keyframes cg-preview-rung-reveal {
+  0%, 100% { opacity: 0.45; transform: translateX(0); }
+  35% { opacity: 1; transform: translateX(4px); }
+}
+
+@keyframes cg-preview-error-glow {
+  0%, 100% { color: #223550; background: transparent; }
+  50% { color: #b3261e; background: rgba(179, 38, 30, 0.12); }
+}
+
+@keyframes cg-preview-chip-rise {
+  0%, 100% { opacity: 0.45; transform: translateY(3px); }
+  35% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cg-preview-sentence-shift-a {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(6px); }
+}
+
+@keyframes cg-preview-sentence-shift-b {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(-6px); }
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  animation: cg-preview-tile-flip 1.15s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes cg-preview-cursor-blink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0.3; }
+}
+
+/* ── Keyboard Press Animation ────────────────────────────── */
+@keyframes cg-key-press {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(0.96) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.cg-tile-bank button:active,
+body.game-platform-page .cg-action:active {
+  animation: cg-key-press 140ms ease-out;
+}
+
+/* 2026-03-11 global viewport-fit system (dashboard/stage/course) */
+body.game-platform-page {
+  --page-top-gap: clamp(6px, 1.2vh, 14px);
+  --page-side-gap: clamp(8px, 1.2vw, 16px);
+html[data-view-mode="projector"] body.game-platform-page .cg-choice,
+html[data-view-mode="projector"] body.game-platform-page .cg-input,
+html[data-view-mode="projector"] body.game-platform-page .cg-textarea {
+  font-size: 20px;
+}
+
+html[data-view-mode="projector"] body.game-platform-page .cg-textarea {
+  min-height: 180px;
+}
+
+html[data-view-mode="projector"] body.game-platform-page .cg-stage-toolbar,
+html[data-view-mode="projector"] body.game-platform-page .cg-context-chips,
+html[data-view-mode="classroom"] body.game-platform-page .cg-stage-toolbar,
+html[data-view-mode="classroom"] body.game-platform-page .cg-context-chips {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+html[data-view-mode="projector"] body.game-platform-page .cg-chip,
+html[data-view-mode="classroom"] body.game-platform-page .cg-chip {
+  white-space: normal;
+  line-height: 1.2;
+}
+
+@media (max-width: 1380px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1040px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-gallery-grid {
+    grid-template-columns: 1fr;

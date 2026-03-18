@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-page="word-connections">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
+  <title>Cornerstone MTSS - Word Connections</title>
+  <script src="./config.js?v=20260319a"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260301y">
+  <link rel="stylesheet" href="./style/typography.css?v=20260301y">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260301y">
+  <link rel="stylesheet" href="./precision-play.css?v=20260315b">
+</head>
+<body>
+  <main class="pp-shell" id="pp-shell">
+    <header class="pp-top">
+      <div>
+        <h1 class="pp-title">Word Connections</h1>
+        <p class="pp-sub">Speak, act, or draw the word relationship.</p>
+        <p id="pp-alignment-badge" class="pp-alignment-badge">Vocabulary Development</p>
+      </div>
+      <div class="pp-top-actions">
+        <button id="pp-teacher-toggle" class="pp-teacher-btn" type="button" aria-expanded="false" aria-controls="pp-teacher-panel" aria-label="Open teacher controls">👩‍🏫 Teacher</button>
+        <a class="pp-link" href="./reports.html">Back to Reports</a>
+      </div>
+    </header>
+
+    <section class="pp-stage" aria-live="polite">
+      <section id="pp-teacher-panel" class="pp-teacher-panel pp-hidden" aria-label="Teacher controls">
+        <div class="pp-teacher-grid">
+          <div class="pp-field">
+            <label for="pp-mode">Mode</label>
+            <select id="pp-mode-select" class="pp-select">
+              <option value="FUN">FUN</option>
+              <option value="TARGETED" selected>TARGETED</option>
+              <option value="INTERVENTION">INTERVENTION</option>
+            </select>
+          </div>
+          <div class="pp-field">
+            <label for="pp-skill-node">Skill Focus</label>
+            <input id="pp-skill-node" class="pp-input" type="text" value="LIT.VOC.ACAD" placeholder="LIT.MOR.ROOT">
+            <label class="pp-lock" for="pp-lock-skill-node">
+              <input id="pp-lock-skill-node" type="checkbox">
+              Lock to skill node
+            </label>
+          </div>
+          <div class="pp-field">
+            <label for="pp-teacher-word">Add custom target word</label>
+            <input id="pp-teacher-word" class="pp-input" type="text" placeholder="morpheme">
+          </div>
+          <div class="pp-field">
+            <label for="pp-teacher-forbidden">Forbidden words (comma-separated)</label>
+            <input id="pp-teacher-forbidden" class="pp-input" type="text" placeholder="prefix, suffix, part, root">
+          </div>
+          <div class="pp-field">
+            <label for="pp-upload-list">Upload word list</label>
+            <input id="pp-upload-list" class="pp-input" type="file" accept=".json,.csv,.txt">
+          </div>
+          <div class="pp-field">
+            <label class="pp-lock" for="pp-timer-enabled">
+              <input id="pp-timer-enabled" type="checkbox" checked>
+              Timer enabled
+            </label>
+            <div class="pp-actions-inline">
+              <button id="pp-add-custom" class="pp-btn" type="button">Add Custom Word</button>
+              <button id="pp-shuffle-lesson" class="pp-btn" type="button">Shuffle Lesson Set</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pp-setup" class="pp-setup">
+        <div>
+          <h2 class="h3" style="margin:0 0 6px;">Pick a round</h2>
+          <p class="pp-sub" style="margin:0;">Band, pace, mode, and cue.</p>
+        </div>
+
+        <div class="pp-grid">
+          <div class="pp-field">
+            <label for="pp-grade-band">Grade Band</label>
+            <select id="pp-grade-band" class="pp-select">
+              <option value="K-2">K-2</option>
+              <option value="3-5" selected>3-5</option>
+              <option value="6-8">6-8</option>
+              <option value="9-12">9-12</option>
+            </select>
+          </div>
+
+          <div class="pp-field">
+            <label for="pp-energy">Pace</label>
+            <select id="pp-energy" class="pp-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div class="pp-field">
+            <label for="pp-challenge">Mode</label>
+            <select id="pp-challenge" class="pp-select">
+              <option value="FUN">FUN</option>
+              <option value="TARGETED" selected>TARGETED</option>
+              <option value="INTERVENTION">INTERVENTION</option>
+            </select>
+            <button id="pp-advanced-link" class="pp-advanced-link pp-hidden" type="button">⚙️ Advanced ▸</button>
+            <div id="pp-advanced" class="pp-advanced" hidden>
+              <div class="pp-field">
+                <label for="pp-reveal-timing">Required Move Reveal Timing</label>
+                <select id="pp-reveal-timing" class="pp-select">
+                  <option value="immediate" selected>Immediate</option>
+                  <option value="after">After round starts</option>
+                  <option value="teacher">Teacher only</option>
+                </select>
+              </div>
+              <label class="pp-lock" for="pp-log-enabled">
+                <input id="pp-log-enabled" type="checkbox">
+                Enable Session Logging
+              </label>
+            </div>
+          </div>
+
+          <div class="pp-field">
+            <label for="pp-expression-mode">Cue</label>
+            <select id="pp-expression-mode" class="pp-select">
+              <option value="mixed" selected>Mixed</option>
+              <option value="speak">Speak</option>
+              <option value="act">Act</option>
+              <option value="draw">Draw</option>
+            </select>
+            <label class="pp-lock" for="pp-expression-lock">
+              <input id="pp-expression-lock" type="checkbox">
+              Lock expression mode
+            </label>
+          </div>
+        </div>
+
+        <button id="pp-start" class="pp-start" type="button">▶️ Start Round</button>
+      </section>
+
+      <section id="pp-game" class="pp-game pp-hidden">
+        <section class="pp-center">
+          <article class="pp-target">
+            <h2 id="pp-target-word">🎯 Target</h2>
+            <p id="pp-instructional-focus" class="pp-note">Instructional focus: Vocabulary depth</p>
+          </article>
+
+          <article class="pp-forbidden">
+            <p class="td-label" style="margin:0 0 8px;">🚫 Forbidden Words</p>
+            <div id="pp-forbidden-list" class="pp-forbidden-list"></div>
+          </article>
+
+          <article id="pp-required-row" class="pp-required pp-hidden">
+            <p class="td-label" style="margin:0 0 6px;">⚠️ Required Move</p>
+            <div id="pp-required-text" class="pp-value"></div>
+          </article>
+
+          <article class="pp-controls">
+            <label id="pp-required-ok-row" class="pp-lock pp-hidden" for="pp-required-ok">
+              <input id="pp-required-ok" type="checkbox">
+              Required move satisfied
+            </label>
+            <div class="pp-actions" style="margin-top:8px;">
+              <button id="pp-guessed" class="pp-btn primary" type="button">✅ Guessed</button>
+              <button id="pp-skip" class="pp-btn" type="button">⏭️ Skip</button>
+              <button id="pp-next" class="pp-btn" type="button">➡️ Next</button>
+              <button id="pp-end" class="pp-btn" type="button">🏁 End</button>
+            </div>
+            <p id="pp-status" class="pp-note">Ready.</p>
+          </article>
+
+          <article class="pp-expression">
+            <p class="td-label" style="margin:0;">🎭 Expression Cue</p>
+            <p id="pp-expression-cue" class="pp-cue mixed">MIXED</p>
+            <p id="pp-expression-note" class="pp-note">Mixed sequence rotates each round.</p>
+          </article>
+        </section>
+
+        <aside class="pp-side">
+          <article class="pp-stat">
+            <p class="pp-stat-label">Timer</p>
+            <p id="pp-timer" class="pp-stat-value">0s</p>
+          </article>
+          <article class="pp-stat">
+            <p class="pp-stat-label">Score</p>
+            <p id="pp-score" class="pp-stat-value">0</p>
+          </article>
+          <article class="pp-stat">
+            <p class="pp-stat-label">Round</p>
+            <p id="pp-round" class="pp-stat-value">1</p>
+          </article>
+          <article class="pp-stat">
+            <p class="pp-stat-label">Mode</p>
+            <p id="pp-mode" class="pp-stat-value">TARGETED</p>
+          </article>
+          <article class="pp-stat">
+            <p class="pp-stat-label">Practice Type</p>
+            <p id="pp-practice-type" class="pp-stat-value">Word Connections</p>
+          </article>
+        </aside>
+      </section>
+
+      <section id="pp-summary" class="pp-summary pp-hidden" aria-live="polite">
+        <h2 class="h3">📊 Round Summary</h2>
+        <p id="pp-summary-text" class="pp-note">Session summary will appear here.</p>
+        <p id="pp-summary-suggested" class="pp-note"></p>
+        <div class="pp-actions-inline">
+          <button id="pp-summary-next" class="pp-btn primary" type="button">▶️ Next Round</button>
+          <a class="pp-btn" href="./reports.html">⬅️ Reports</a>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="./js/nav-shell.js?v=20260307a"></script>
+  <script src="./js/literacy/word-connections-engine.js?v=20260304a"></script>
+  <script src="./precision-play.js?v=20260315b"></script>
+  <script src="./build-stamp.js?v=20260319a"></script>
+  <script src="./js/build-badge.js?v=20260301y"></script>
+  <script>
+    window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();
+  </script>
+</body>
+</html>

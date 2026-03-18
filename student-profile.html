@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-page="student-profile">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
+  <title>Cornerstone MTSS - Student Profile</title>
+  <script src="./config.js?v=20260319a"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260307d">
+  <link rel="stylesheet" href="./style/typography.css?v=20260307d">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260312a">
+  <link rel="stylesheet" href="./student-profile.css?v=20260315g">
+  <link rel="stylesheet" href="./css/backup-panel.css?v=20260308a">
+</head>
+<body class="sp-page">
+  <main class="sp-shell sp-shell--single">
+    <header class="sp-header">
+      <div class="sp-header-meta" aria-label="Student record context">
+        <span class="sp-header-label">Case management</span>
+        <strong>Student record</strong>
+      </div>
+      <div class="sp-header-actions">
+        <a class="sp-btn sp-btn-quiet" href="./case-management.html">📋 Caseload</a>
+        <a class="sp-btn sp-btn-quiet" href="./teacher-hub-v2.html">👩‍🏫 Hub</a>
+        <a id="sp-reports-link" class="sp-btn sp-btn-quiet" href="./reports.html">📊 Reports</a>
+        <a id="sp-games-link" class="sp-btn sp-btn-primary" href="./game-platform.html">🎮 Games</a>
+      </div>
+    </header>
+
+    <section class="sp-main sp-main--single">
+      <div id="sp-empty-state" class="sp-empty-state">
+        <p class="sp-kicker">Student Profile</p>
+        <h1>Select a student from case management.</h1>
+        <p>This page is reserved for one student at a time so the support picture stays fast and calm.</p>
+        <p><a class="sp-btn sp-btn-primary" href="./case-management.html">📋 Open Caseload</a></p>
+      </div>
+
+      <div id="sp-content" class="sp-content hidden">
+        <section id="sp-hero" class="sp-hero"></section>
+        <section class="sp-profile-grid">
+          <article id="sp-programs-panel" class="sp-panel"></article>
+          <article id="sp-assessment-panel" class="sp-panel"></article>
+          <article id="sp-plans-panel" class="sp-panel"></article>
+          <article id="sp-team-panel" class="sp-panel"></article>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="./storage-schema.js?v=20260307d"></script>
+  <script src="./js/google-auth-config.js?v=20260307d"></script>
+  <script src="./js/auth/google-auth.js?v=20260307d"></script>
+  <script src="./js/auth/google-workspace.js?v=20260307d"></script>
+  <script src="./js/caseload-store.js?v=20260309a"></script>
+  <script src="./js/evidence-store.js?v=20260307d"></script>
+  <script src="./js/support-store.js?v=20260316b"></script>
+  <script src="./js/student-profile-store.js?v=20260307g"></script>
+  <script src="./js/curriculum-truth.js?v=20260316b"></script>
+  <script src="./js/nav-shell.js?v=20260312a"></script>
+  <script src="./student-profile.js?v=20260316a"></script>
+</body>
+</html>

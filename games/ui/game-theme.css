@@ -1,0 +1,576 @@
+/* =====================================================
+   Game Platform — Theme System
+   Themes selected via data-game-theme on body
+   Premium platform shell with distinct flagship accents
+   ===================================================== */
+
+/* ── Shared structure tokens (no colors) ── */
+:root {
+  --cg-font-display: Sora, "Plus Jakarta Sans", Inter, "Segoe UI", sans-serif;
+  --cg-font-body:    Inter, "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  --cg-font-heading: var(--cg-font-display);
+  --cg-font-copy:    var(--cg-font-body);
+  --cg-radius-2xl: 28px;
+  --cg-radius-xl:  22px;
+  --cg-radius-lg:  18px;
+  --cg-radius-md:  14px;
+  --cg-radius-sm:  10px;
+  --cg-tap:        52px;
+}
+
+html[data-view-mode="projector"] {
+  --cg-radius-2xl: 34px;
+  --cg-radius-xl:  28px;
+  --cg-radius-lg:  22px;
+  --cg-radius-md:  18px;
+  --cg-tap:        62px;
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: DARK QUEST  (default)
+   Deep navy · electric blue · vivid orange
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page,
+body.game-platform-page[data-game-theme="dark"] {
+  --cg-bg:            #1a1f3d;
+  --cg-bg-deep:       #13172e;
+  --cg-panel:         rgba(30, 37, 70, 0.96);
+  --cg-panel-strong:  rgba(36, 44, 82, 0.98);
+  --cg-ink:           #f0f4ff;
+  --cg-muted:         #8fa4c8;
+  --cg-muted-strong:  #b4c6e0;
+  --cg-border:        rgba(140, 170, 255, 0.14);
+  --cg-border-strong: rgba(140, 170, 255, 0.28);
+  --cg-shadow:        0 6px 0 rgba(0,0,0,0.5), 0 14px 36px rgba(0,0,0,0.45);
+  --cg-shadow-soft:   0 3px 0 rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.3);
+  --cg-shadow-glow:   0 0 0 2px rgba(99,179,237,0.4), 0 6px 0 rgba(0,0,0,0.5), 0 20px 48px rgba(0,0,0,0.5);
+  --cg-primary:       #2563eb;
+  --cg-primary-2:     #60a5fa;
+  --cg-primary-soft:  rgba(37, 99, 235, 0.2);
+  --cg-accent:        #f97316;
+  --cg-accent-2:      #fb923c;
+  --cg-accent-soft:   rgba(249, 115, 22, 0.2);
+  --cg-positive:      #22c55e;
+  --cg-positive-soft: rgba(34, 197, 94, 0.18);
+  --cg-negative:      #f87171;
+  --cg-negative-soft: rgba(248, 113, 113, 0.18);
+  --cg-warning:       #fbbf24;
+  --cg-warning-soft:  rgba(251, 191, 36, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 15% 10%, rgba(99,102,241,0.22) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 8%,  rgba(249,115,22,0.18)  0%, transparent 32%),
+    radial-gradient(ellipse at 50% 95%, rgba(37,99,235,0.14)   0%, transparent 40%),
+    linear-gradient(175deg, #1e2348 0%, #1a1f3d 45%, #1f2945 100%);
+  --cg-texture: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #b45309, 0 8px 20px rgba(249,115,22,0.4);
+  --cg-primary-btn-press:  0 2px 0 #b45309, 0 4px 10px rgba(249,115,22,0.35);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: OCEAN  — teal / cyan / white
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="ocean"] {
+  --cg-bg:            #133651;
+  --cg-bg-deep:       #0b2234;
+  --cg-panel:         rgba(45, 90, 125, 0.85);
+  --cg-panel-strong:  rgba(60, 110, 145, 0.90);
+  --cg-ink:           #f0f4ff;
+  --cg-muted:         #a0c5e0;
+  --cg-muted-strong:  #c0d9eb;
+  --cg-border:        rgba(24, 111, 147, 0.16);
+  --cg-border-strong: rgba(24, 111, 147, 0.3);
+  --cg-shadow:        0 8px 0 rgba(24, 58, 81, 0.26), 0 18px 38px rgba(11, 34, 52, 0.18);
+  --cg-shadow-soft:   0 4px 0 rgba(24, 58, 81, 0.18), 0 10px 24px rgba(11, 34, 52, 0.12);
+  --cg-shadow-glow:   0 0 0 2px rgba(31, 147, 196, 0.3), 0 8px 0 rgba(24, 58, 81, 0.2), 0 18px 42px rgba(31, 147, 196, 0.15);
+  --cg-primary:       #1f93c4;
+  --cg-primary-2:     #78d7f2;
+  --cg-primary-soft:  rgba(31, 147, 196, 0.16);
+  --cg-accent:        #f2b84b;
+  --cg-accent-2:      #ffd57a;
+  --cg-accent-soft:   rgba(242, 184, 75, 0.18);
+  --cg-positive:      #34d399;
+  --cg-positive-soft: rgba(52, 211, 153, 0.18);
+  --cg-negative:      #f87171;
+  --cg-negative-soft: rgba(248, 113, 113, 0.18);
+  --cg-warning:       #fbbf24;
+  --cg-warning-soft:  rgba(251, 191, 36, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 14%, rgba(120,215,242,0.26) 0%, transparent 40%),
+    radial-gradient(ellipse at 82% 10%, rgba(242,184,75,0.18)  0%, transparent 30%),
+    radial-gradient(ellipse at 50% 92%, rgba(31,147,196,0.1)   0%, transparent 38%),
+    linear-gradient(180deg, #d7ecf4 0%, #b7d7e6 34%, #7ba6bc 100%);
+  --cg-texture: radial-gradient(circle, rgba(16,49,73,0.05) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,30,60,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #166f96, 0 8px 20px rgba(31,147,196,0.28);
+  --cg-primary-btn-press:  0 2px 0 #166f96, 0 4px 10px rgba(31,147,196,0.22);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: SUNSET  — warm purple / coral / gold
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="sunset"] {
+  --cg-bg:            #5a345f;
+  --cg-bg-deep:       #35203d;
+  --cg-panel:         rgba(110, 70, 95, 0.85);
+  --cg-panel-strong:  rgba(130, 85, 115, 0.90);
+  --cg-ink:           #f0e8f4;
+  --cg-muted:         #d4a8c8;
+  --cg-muted-strong:  #e0bdd8;
+  --cg-border:        rgba(210, 111, 144, 0.16);
+  --cg-border-strong: rgba(210, 111, 144, 0.32);
+  --cg-shadow:        0 8px 0 rgba(93, 55, 79, 0.24), 0 18px 36px rgba(67, 38, 63, 0.16);
+  --cg-shadow-soft:   0 4px 0 rgba(93, 55, 79, 0.18), 0 10px 22px rgba(67, 38, 63, 0.12);
+  --cg-shadow-glow:   0 0 0 2px rgba(239, 123, 166, 0.3), 0 8px 0 rgba(93, 55, 79, 0.18), 0 18px 38px rgba(239, 123, 166, 0.14);
+  --cg-primary:       #ef7ba6;
+  --cg-primary-2:     #f8b4c8;
+  --cg-primary-soft:  rgba(239, 123, 166, 0.16);
+  --cg-accent:        #f39a54;
+  --cg-accent-2:      #ffd28a;
+  --cg-accent-soft:   rgba(243, 154, 84, 0.18);
+  --cg-positive:      #a3e635;
+  --cg-positive-soft: rgba(163, 230, 53, 0.18);
+  --cg-negative:      #f87171;
+  --cg-negative-soft: rgba(248, 113, 113, 0.18);
+  --cg-warning:       #fbbf24;
+  --cg-warning-soft:  rgba(251, 191, 36, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 10% 6%,  rgba(239,123,166,0.28) 0%, transparent 40%),
+    radial-gradient(ellipse at 88% 10%, rgba(243,154,84,0.2)   0%, transparent 32%),
+    radial-gradient(ellipse at 50% 94%, rgba(255,210,138,0.14) 0%, transparent 38%),
+    linear-gradient(180deg, #fde7e2 0%, #efc1c7 40%, #b77fa0 100%);
+  --cg-texture: radial-gradient(circle, rgba(67,38,63,0.04) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(50,10,40,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #c45b85, 0 8px 20px rgba(239,123,166,0.28);
+  --cg-primary-btn-press:  0 2px 0 #c45b85, 0 4px 10px rgba(239,123,166,0.22);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: FOREST  — deep green / lime / amber
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="forest"] {
+  --cg-bg:            #0d2318;
+  --cg-bg-deep:       #081510;
+  --cg-panel:         rgba(15, 36, 25, 0.96);
+  --cg-panel-strong:  rgba(20, 46, 32, 0.98);
+  --cg-ink:           #ecfdf5;
+  --cg-muted:         #6abf88;
+  --cg-muted-strong:  #9dd9b4;
+  --cg-border:        rgba(110, 231, 155, 0.14);
+  --cg-border-strong: rgba(110, 231, 155, 0.3);
+  --cg-shadow:        0 6px 0 rgba(0,0,0,0.5), 0 14px 36px rgba(0,20,10,0.5);
+  --cg-shadow-soft:   0 3px 0 rgba(0,0,0,0.35), 0 8px 20px rgba(0,20,10,0.3);
+  --cg-shadow-glow:   0 0 0 2px rgba(74,222,128,0.5), 0 6px 0 rgba(0,0,0,0.5), 0 20px 48px rgba(74,222,128,0.2);
+  --cg-primary:       #4ade80;
+  --cg-primary-2:     #86efac;
+  --cg-primary-soft:  rgba(74, 222, 128, 0.2);
+  --cg-accent:        #facc15;
+  --cg-accent-2:      #fde047;
+  --cg-accent-soft:   rgba(250, 204, 21, 0.2);
+  --cg-positive:      #4ade80;
+  --cg-positive-soft: rgba(74, 222, 128, 0.18);
+  --cg-negative:      #f87171;
+  --cg-negative-soft: rgba(248, 113, 113, 0.18);
+  --cg-warning:       #facc15;
+  --cg-warning-soft:  rgba(250, 204, 21, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 15% 10%, rgba(74,222,128,0.22) 0%, transparent 38%),
+    radial-gradient(ellipse at 85% 8%,  rgba(250,204,21,0.16)  0%, transparent 32%),
+    radial-gradient(ellipse at 50% 95%, rgba(74,222,128,0.10)  0%, transparent 40%),
+    linear-gradient(175deg, #102a1c 0%, #0d2318 45%, #081510 100%);
+  --cg-texture: radial-gradient(circle, rgba(74,222,128,0.05) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,20,10,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #15803d, 0 8px 20px rgba(74,222,128,0.4);
+  --cg-primary-btn-press:  0 2px 0 #15803d, 0 4px 10px rgba(74,222,128,0.35);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: CLASSIC  — warm parchment (light, fun)
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="classic"] {
+  --cg-bg:            #efe7d8;
+  --cg-bg-deep:       #d5ccbc;
+  --cg-panel:         rgba(255, 252, 246, 0.92);
+  --cg-panel-strong:  rgba(255, 253, 249, 0.97);
+  --cg-ink:           #142233;
+  --cg-muted:         #5d6a79;
+  --cg-muted-strong:  #415162;
+  --cg-border:        rgba(20, 34, 51, 0.12);
+  --cg-border-strong: rgba(20, 34, 51, 0.22);
+  --cg-shadow:        0 5px 0 rgba(100,80,40,0.3), 0 12px 30px rgba(0,0,0,0.12);
+  --cg-shadow-soft:   0 3px 0 rgba(100,80,40,0.2), 0 6px 16px rgba(0,0,0,0.08);
+  --cg-shadow-glow:   0 0 0 2px rgba(13,94,102,0.3), 0 5px 0 rgba(100,80,40,0.3), 0 16px 36px rgba(13,94,102,0.16);
+  --cg-primary:       #166c72;
+  --cg-primary-2:     #27a6ac;
+  --cg-primary-soft:  rgba(13, 94, 102, 0.12);
+  --cg-accent:        #c97d41;
+  --cg-accent-2:      #e39a58;
+  --cg-accent-soft:   rgba(217, 128, 56, 0.14);
+  --cg-positive:      #16795e;
+  --cg-positive-soft: rgba(22, 121, 94, 0.12);
+  --cg-negative:      #9a3b37;
+  --cg-negative-soft: rgba(154, 59, 55, 0.12);
+  --cg-warning:       #aa6b1f;
+  --cg-warning-soft:  rgba(170, 107, 31, 0.12);
+  --cg-page-gradient:
+    radial-gradient(circle at 0% 0%, rgba(39,166,172,0.16), transparent 24%),
+    radial-gradient(circle at 100% 0%, rgba(201,125,65,0.16), transparent 22%),
+    radial-gradient(circle at 50% 100%, rgba(22,108,114,0.08), transparent 28%),
+    linear-gradient(180deg, #f8f1e4 0%, #efe7d8 34%, #d5ccbc 100%);
+  --cg-texture:
+    linear-gradient(120deg, rgba(255,255,255,0.26), transparent 18%, transparent 82%, rgba(255,255,255,0.18)),
+    repeating-linear-gradient(135deg, rgba(20,34,51,0.012) 0 2px, transparent 2px 12px);
+  --cg-texture-size: auto;
+  --cg-btn-press-shadow: 0 2px 0 rgba(100,80,40,0.3), 0 4px 10px rgba(0,0,0,0.1);
+  --cg-primary-btn-shadow: 0 4px 0 #0a4a52, 0 8px 20px rgba(13,94,102,0.3);
+  --cg-primary-btn-press:  0 2px 0 #0a4a52, 0 4px 10px rgba(13,94,102,0.2);
+}
+
+/* ═══════════════════════════════════════════════════
+   EXTENDED THEME LIBRARY
+   Restores the broader Word Quest theme family for all games.
+   ═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   THEME: SEAHAWKS  — College Navy / Wolf Gray / Action Green
+   60% Navy (dominant) · 30% Wolf Gray (secondary) · 10% Action Green (accent)
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="seahawks"] {
+  --cg-bg:            #002244;
+  --cg-bg-deep:       #001530;
+  --cg-panel:         rgba(26, 45, 70, 0.90);
+  --cg-panel-strong:  rgba(36, 60, 90, 0.95);
+  --cg-ink:           #f5f5f5;
+  --cg-muted:         #a8b5bd;
+  --cg-muted-strong:  #c8d0d8;
+  --cg-border:        rgba(105, 190, 40, 0.16);
+  --cg-border-strong: rgba(105, 190, 40, 0.32);
+  --cg-shadow:        0 8px 0 rgba(0, 17, 48, 0.48), 0 18px 38px rgba(0, 0, 0, 0.28);
+  --cg-shadow-soft:   0 4px 0 rgba(0, 17, 48, 0.34), 0 10px 24px rgba(0, 0, 0, 0.18);
+  --cg-shadow-glow:   0 0 0 2px rgba(105, 190, 40, 0.35), 0 8px 0 rgba(0, 17, 48, 0.4), 0 18px 42px rgba(0, 0, 0, 0.22);
+  --cg-primary:       #69be28;
+  --cg-primary-2:     #7fcf3f;
+  --cg-primary-soft:  rgba(105, 190, 40, 0.18);
+  --cg-accent:        #a8b5bd;
+  --cg-accent-2:      #c8d0d8;
+  --cg-accent-soft:   rgba(168, 181, 189, 0.18);
+  --cg-positive:      #69be28;
+  --cg-positive-soft: rgba(105, 190, 40, 0.18);
+  --cg-negative:      #ff6b6b;
+  --cg-negative-soft: rgba(255, 107, 107, 0.18);
+  --cg-warning:       #ffd93d;
+  --cg-warning-soft:  rgba(255, 217, 61, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 14% 12%, rgba(105,190,40,0.14) 0%, transparent 26%),
+    radial-gradient(ellipse at 84% 10%, rgba(168,181,189,0.12) 0%, transparent 24%),
+    linear-gradient(125deg, transparent 0 70%, rgba(105,190,40,0.04) 70% 73%, transparent 73% 100%),
+    linear-gradient(180deg, #1a3f5f 0%, #0d2844 36%, #002244 100%);
+  --cg-texture: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  --cg-texture-size: 26px 26px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #42791b, 0 8px 20px rgba(105, 190, 40, 0.35);
+  --cg-primary-btn-press:  0 2px 0 #42791b, 0 4px 10px rgba(105, 190, 40, 0.28);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: HUSKIES  — Royal Purple / Cream / Gold
+   60% Purple (dominant) · 30% Cream (secondary) · 10% Gold (accent)
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="huskies"] {
+  --cg-bg:            #4b2e83;
+  --cg-bg-deep:       #3a1f62;
+  --cg-panel:         rgba(70, 50, 110, 0.88);
+  --cg-panel-strong:  rgba(85, 65, 125, 0.93);
+  --cg-ink:           #f5f0f5;
+  --cg-muted:         #c5b8d4;
+  --cg-muted-strong:  #d8cce5;
+  --cg-border:        rgba(183, 165, 122, 0.16);
+  --cg-border-strong: rgba(183, 165, 122, 0.32);
+  --cg-shadow:        0 8px 0 rgba(58, 31, 98, 0.38), 0 18px 38px rgba(20, 10, 40, 0.24);
+  --cg-shadow-soft:   0 4px 0 rgba(58, 31, 98, 0.28), 0 10px 24px rgba(20, 10, 40, 0.16);
+  --cg-shadow-glow:   0 0 0 2px rgba(183, 165, 122, 0.32), 0 8px 0 rgba(58, 31, 98, 0.3), 0 18px 38px rgba(20, 10, 40, 0.18);
+  --cg-primary:       #b7a57a;
+  --cg-primary-2:     #d4c39a;
+  --cg-primary-soft:  rgba(183, 165, 122, 0.16);
+  --cg-accent:        #b7a57a;
+  --cg-accent-2:      #d4c39a;
+  --cg-accent-soft:   rgba(183, 165, 122, 0.16);
+  --cg-positive:      #6dd689;
+  --cg-positive-soft: rgba(109, 214, 137, 0.18);
+  --cg-negative:      #ff6b6b;
+  --cg-negative-soft: rgba(255, 107, 107, 0.18);
+  --cg-warning:       #ffd93d;
+  --cg-warning-soft:  rgba(255, 217, 61, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 16% 8%, rgba(183,165,122,0.14) 0%, transparent 32%),
+    radial-gradient(ellipse at 85% 10%, rgba(183,165,122,0.10) 0%, transparent 30%),
+    linear-gradient(175deg, #6a4a9a 0%, #4b2e83 45%, #3a1f62 100%);
+  --cg-texture: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
+  --cg-primary-btn-shadow: 0 4px 0 #7a6243, 0 8px 20px rgba(183, 165, 122, 0.3);
+  --cg-primary-btn-press:  0 2px 0 #7a6243, 0 4px 10px rgba(183, 165, 122, 0.25);
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME: STARBUCKS  — forest green / white / cream
+   60% Green (dominant) · 30% White (secondary) · 10% Gold (accent)
+   ═══════════════════════════════════════════════════ */
+body.game-platform-page[data-game-theme="starbucks"] {
+  --cg-bg: #1f4620;
+  --cg-bg-deep: #0f2810;
+  --cg-panel: rgba(50, 85, 55, 0.85);
+  --cg-panel-strong: rgba(70, 105, 75, 0.90);
+  --cg-ink: #f5f5f0;
+  --cg-muted: #a8d5b8;
+  --cg-muted-strong: #c5e5d0;
+  --cg-border: rgba(165, 212, 180, 0.2);
+  --cg-border-strong: rgba(165, 212, 180, 0.35);
+  --cg-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 14px 36px rgba(0,0,0,0.3);
+  --cg-shadow-soft: 0 3px 0 rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.2);
+  --cg-shadow-glow: 0 0 0 2px rgba(165,212,180,0.4), 0 6px 0 rgba(0,0,0,0.4), 0 20px 48px rgba(0,0,0,0.3);
+  --cg-primary: #00704a;
+  --cg-primary-2: #00845d;
+  --cg-primary-soft: rgba(0, 112, 74, 0.18);
+  --cg-accent: #d4af37;
+  --cg-accent-2: #e5c158;
+  --cg-accent-soft: rgba(212, 175, 55, 0.18);
+  --cg-positive: #00704a;
+  --cg-positive-soft: rgba(0, 112, 74, 0.18);
+  --cg-negative: #d42d2d;
+  --cg-negative-soft: rgba(212, 45, 45, 0.18);
+  --cg-warning: #d4af37;
+  --cg-warning-soft: rgba(212, 175, 55, 0.18);
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(165,212,180,0.22) 0%, transparent 34%),
+    radial-gradient(ellipse at 85% 12%, rgba(212,175,55,0.16) 0%, transparent 28%),
+    linear-gradient(180deg, #2d5a37 0%, #1f4620 42%, #0f2810 100%);
+  --cg-texture: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  --cg-texture-size: 28px 28px;
+  --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.25);
+  --cg-primary-btn-shadow: 0 4px 0 #005535, 0 8px 20px rgba(0, 112, 74, 0.35);
+  --cg-primary-btn-press: 0 2px 0 #005535, 0 4px 10px rgba(0, 112, 74, 0.28);
+}
+
+body.game-platform-page[data-game-theme="mario"] {
+  --cg-bg: #d75c46;
+  --cg-bg-deep: #a43c2f;
+  --cg-panel: rgba(252, 246, 233, 0.92);
+  --cg-panel-strong: rgba(255, 250, 241, 0.97);
+  --cg-ink: #3c281f;
+  --cg-muted: #816252;
+  --cg-muted-strong: #644838;
+  --cg-border: rgba(255, 210, 63, 0.2);
+  --cg-border-strong: rgba(255, 210, 63, 0.36);
+  --cg-primary: #2f74d0;
+  --cg-primary-2: #69a4f0;
+  --cg-accent: #ffd23f;
+  --cg-accent-2: #ffe06e;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 12% 8%, rgba(255,210,63,0.24) 0%, transparent 28%),
+    radial-gradient(ellipse at 82% 10%, rgba(47,116,208,0.18) 0%, transparent 30%),
+    linear-gradient(180deg, #f7e7cf 0%, #f0b65b 24%, #e16d4f 58%, #b64031 100%);
+}
+
+body.game-platform-page[data-game-theme="rainbowfriends"] {
+  --cg-bg: #b95e8d;
+  --cg-bg-deep: #7c3c61;
+  --cg-panel: rgba(182, 94, 141, 0.95);
+  --cg-panel-strong: rgba(200, 108, 154, 0.98);
+  --cg-ink: #fff7fb;
+  --cg-muted: #f3d8e7;
+  --cg-muted-strong: #ffeaf4;
+  --cg-border: rgba(82, 196, 214, 0.2);
+  --cg-border-strong: rgba(82, 196, 214, 0.34);
+  --cg-primary: #52c4d6;
+  --cg-primary-2: #8ddcea;
+  --cg-primary-soft: rgba(82, 196, 214, 0.18);
+  --cg-accent: #ffd166;
+  --cg-accent-2: #ffe095;
+  --cg-accent-soft: rgba(255, 209, 102, 0.2);
+  --cg-positive: #52c4d6;
+  --cg-warning: #ffd166;
+  --cg-negative: #ff7f9b;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 16% 10%, rgba(255,209,102,0.18) 0%, transparent 30%),
+    radial-gradient(ellipse at 84% 8%, rgba(82,196,214,0.18) 0%, transparent 28%),
+    linear-gradient(180deg, #cf79a4 0%, #b95e8d 42%, #7c3c61 100%);
+}
+
+body.game-platform-page[data-game-theme="zelda"],
+body.game-platform-page[data-game-theme="minecraft"] {
+  --cg-bg: #536f49;
+  --cg-bg-deep: #33462f;
+  --cg-panel: rgba(247, 242, 227, 0.9);
+  --cg-panel-strong: rgba(252, 248, 238, 0.95);
+  --cg-ink: #2d3020;
+  --cg-muted: #6e6e57;
+  --cg-muted-strong: #575842;
+  --cg-border: rgba(201, 164, 92, 0.18);
+  --cg-border-strong: rgba(201, 164, 92, 0.32);
+  --cg-primary: #6f9a57;
+  --cg-primary-2: #a7c679;
+  --cg-accent: #c79c56;
+  --cg-accent-2: #e1be7d;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(111,154,87,0.18) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 10%, rgba(201,164,92,0.18) 0%, transparent 28%),
+    linear-gradient(180deg, #efe3c4 0%, #b8b085 28%, #6c8a59 58%, #40543a 100%);
+}
+
+body.game-platform-page[data-game-theme="amongus"],
+body.game-platform-page[data-game-theme="dark"] {
+  --cg-bg: #18222d;
+  --cg-bg-deep: #101720;
+  --cg-panel: rgba(59, 75, 92, 0.94);
+  --cg-panel-strong: rgba(86, 103, 121, 0.96);
+  --cg-ink: #f7fbff;
+  --cg-muted: #d7e4ee;
+  --cg-muted-strong: #edf4fa;
+  --cg-border: rgba(108, 196, 122, 0.18);
+  --cg-border-strong: rgba(180, 217, 255, 0.28);
+  --cg-primary: #54b46b;
+  --cg-primary-2: #7fda90;
+  --cg-accent: #5eb6d8;
+  --cg-accent-2: #8fd7f0;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(84,180,107,0.18) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 10%, rgba(94,182,216,0.18) 0%, transparent 28%),
+    linear-gradient(180deg, #56687b 0%, #39495b 42%, #202c37 100%);
+}
+
+body.game-platform-page[data-game-theme="amongus"] {
+  --cg-primary: #d94d5c;
+  --cg-primary-2: #ff7a8b;
+  --cg-accent: #61c6ea;
+  --cg-accent-2: #9fe2fb;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(217,77,92,0.18) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 10%, rgba(97,198,234,0.16) 0%, transparent 28%),
+    linear-gradient(180deg, #283746 0%, #1b2631 42%, #111821 100%);
+}
+
+body.game-platform-page[data-game-theme="kuromi"] {
+  --cg-bg: #433256;
+  --cg-bg-deep: #271c33;
+  --cg-panel: rgba(246, 239, 250, 0.92);
+  --cg-panel-strong: rgba(251, 247, 253, 0.96);
+  --cg-ink: #31253e;
+  --cg-muted: #786888;
+  --cg-muted-strong: #5f526e;
+  --cg-border: rgba(240, 123, 210, 0.18);
+  --cg-border-strong: rgba(240, 123, 210, 0.32);
+  --cg-primary: #d56ac7;
+  --cg-primary-2: #f095e4;
+  --cg-accent: #a7a1ff;
+  --cg-accent-2: #c7c3ff;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(213,106,199,0.18) 0%, transparent 34%),
+    radial-gradient(ellipse at 84% 8%, rgba(167,161,255,0.16) 0%, transparent 28%),
+    linear-gradient(180deg, #f2e7f9 0%, #cab8e2 30%, #7c659d 58%, #382947 100%);
+}
+
+body.game-platform-page[data-game-theme="harrypotter"] {
+  --cg-bg: #7b3d41;
+  --cg-bg-deep: #4f2528;
+  --cg-panel: rgba(250, 243, 230, 0.92);
+  --cg-panel-strong: rgba(255, 248, 238, 0.96);
+  --cg-ink: #372820;
+  --cg-muted: #7a6855;
+  --cg-muted-strong: #624f3f;
+  --cg-border: rgba(217, 180, 76, 0.2);
+  --cg-border-strong: rgba(217, 180, 76, 0.34);
+  --cg-primary: #d9b44c;
+  --cg-primary-2: #f0cf74;
+  --cg-accent: #8b6bb8;
+  --cg-accent-2: #b39ad9;
+  --cg-page-gradient:
+    radial-gradient(ellipse at 18% 10%, rgba(217,180,76,0.18) 0%, transparent 32%),
+    radial-gradient(ellipse at 84% 8%, rgba(139,107,184,0.16) 0%, transparent 28%),
+    linear-gradient(180deg, #f6e9d2 0%, #d9c4a1 28%, #8f5960 58%, #5b2f33 100%);
+}
+
+/* ── Apply page background from theme vars ── */
+body.game-platform-page {
+  --cg-reading-ink: color-mix(in oklab, var(--cg-ink) 94%, #08131f 6%);
+  --cg-reading-muted: color-mix(in oklab, var(--cg-ink) 66%, var(--cg-panel-strong) 34%);
+  --cg-reading-muted-strong: color-mix(in oklab, var(--cg-ink) 80%, var(--cg-panel-strong) 20%);
+  --cg-surface-soft: color-mix(in oklab, var(--cg-panel-strong) 72%, transparent);
+  --cg-surface: color-mix(in oklab, var(--cg-panel-strong) 84%, #ffffff 16%);
+  --cg-surface-strong: color-mix(in oklab, var(--cg-panel-strong) 92%, #ffffff 8%);
+  margin: 0;
+  min-height: 100vh;
+  background: var(--cg-page-gradient);
+  color: var(--cg-reading-ink);
+  font-family: var(--cg-font-copy);
+}
+
+body.game-platform-page[data-game-theme="rainbowfriends"] {
+  --cg-reading-ink: #311d2f;
+  --cg-reading-muted: rgba(49, 29, 47, 0.72);
+  --cg-reading-muted-strong: rgba(49, 29, 47, 0.84);
+}
+
+body.game-platform-page[data-game-theme="dark"],
+body.game-platform-page[data-game-theme="amongus"],
+body.game-platform-page[data-game-theme="forest"] {
+  --cg-reading-ink: #f8fbff;
+  --cg-reading-muted: rgba(241, 247, 252, 0.82);
+  --cg-reading-muted-strong: rgba(248, 251, 255, 0.92);
+  --cg-surface-soft: color-mix(in oklab, var(--cg-panel-strong) 88%, rgba(255,255,255,0.12) 12%);
+  --cg-surface: color-mix(in oklab, var(--cg-panel-strong) 92%, rgba(255,255,255,0.18) 8%);
+  --cg-surface-strong: color-mix(in oklab, var(--cg-panel-strong) 94%, rgba(255,255,255,0.24) 6%);
+}
+
+body.game-platform-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--cg-texture);
+  background-size: var(--cg-texture-size);
+  opacity: 1;
+}
+
+/* ── Shell ── */
+.cg-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: var(--space-5);
+}
+
+/* ── Surface ── */
+.cg-surface {
+  background: var(--cg-panel);
+  border: 1.5px solid var(--cg-border-strong);
+  border-radius: var(--cg-radius-2xl);
+  box-shadow: var(--cg-shadow);
+  backdrop-filter: blur(12px);
+}
+
+/* ── Labels ── */
+.cg-kicker,
+.cg-micro-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: var(--cg-reading-muted);
+}
+
+.cg-display {
+  font-family: var(--cg-font-heading);
+  letter-spacing: 0.01em;
+}
+
+.cg-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  fill: currentColor;
+}

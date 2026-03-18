@@ -1,0 +1,1621 @@
+/* GALLERY VIEW ANIMATIONS — Preview Animations & Refinements
+   Extracted from game-shell.css Phase 2
+   Contains: Gallery animation previews, card polish, game-specific animations */
+
+/* ── Disable animations on gallery view for cleaner experience ── */
+body.game-platform-page[data-shell-view="gallery"] * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ── Projector overrides for builder games ───────────────────── */
+html[data-view-mode="projector"] .cg-forge-slot,
+html[data-view-mode="classroom"] .cg-forge-slot,
+html[data-view-mode="projector"] .cg-sentence-slot,
+html[data-view-mode="classroom"] .cg-sentence-slot {
+  min-height: 62px;
+  font-size: 19px;
+}
+html[data-view-mode="projector"] .cg-morph-tile,
+html[data-view-mode="classroom"] .cg-morph-tile,
+html[data-view-mode="projector"] .cg-phrase-tile,
+html[data-view-mode="classroom"] .cg-phrase-tile {
+  min-height: 58px;
+  font-size: 18px;
+}
+html[data-view-mode="projector"] .cg-case-error-text,
+html[data-view-mode="classroom"] .cg-case-error-text {
+  font-size: 26px;
+}
+html[data-view-mode="projector"] .cg-rush-prompt-text,
+html[data-view-mode="classroom"] .cg-rush-prompt-text {
+  font-size: 36px;
+}
+
+
+.cg-typing-course-page {
+  gap: 22px;
+}
+
+.cg-typing-course-hero {
+  grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.08fr);
+  gap: 20px;
+}
+
+.cg-typing-course-hero__main {
+  align-content: start;
+  background:
+    radial-gradient(circle at top left, rgba(89, 148, 233, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(247, 250, 255, 0.98) 0%, rgba(235, 241, 248, 0.96) 100%);
+}
+
+.cg-typing-course-hero__main .cg-display {
+  font-size: clamp(36px, 4.8vw, 56px);
+  color: #23324a;
+}
+
+.cg-typing-course-hero__subtitle {
+  max-width: 34ch;
+  color: #5c6d82;
+}
+
+.cg-typing-course-ribbon {
+  gap: 10px;
+}
+
+.cg-typing-course-ribbon span {
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(241,246,251,0.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.84);
+}
+
+.cg-typing-course-start__action {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cg-typing-course-start__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cg-typing-course-start__button {
+  min-height: 52px;
+  min-width: 196px;
+  font-size: 16px;
+}
+
+.cg-typing-course-start__subaction {
+  min-height: var(--btn-height-lg);
+  color: #eff5ff;
+  border-color: rgba(209, 225, 243, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cg-typing-course-start__subaction:hover,
+.cg-typing-course-start__subaction:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.cg-typing-unit-section {
+  gap: 16px;
+  padding: 22px;
+  border-radius: 26px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+}
+
+.cg-typing-unit-section--placement {
+  gap: 12px;
+  padding: 18px 18px 16px;
+  background: linear-gradient(180deg, rgba(229, 238, 251, 0.98), rgba(241, 246, 252, 1));
+  border-color: rgba(143, 169, 208, 0.42);
+  box-shadow: 0 16px 28px rgba(28, 49, 84, 0.08);
+}
+
+.cg-typing-unit-section--placement .cg-typing-unit-section__head {
+  align-items: center;
+}
+
+.cg-typing-unit-section--placement .cg-typing-unit-section__head h3 {
+  font-size: clamp(20px, 2.3vw, 30px);
+}
+
+.cg-typing-unit-section--placement .cg-typing-unit-section__head p {
+  max-width: 54ch;
+  font-size: 14px;
+}
+
+.cg-typing-unit-section--placement .cg-typing-unit-section__count {
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(154, 177, 212, 0.32);
+}
+
+.cg-typing-lesson-grid--placement {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-tile {
+  min-height: 162px;
+  padding: 14px 14px 12px;
+  border-top-width: 5px;
+  box-shadow: 0 10px 20px rgba(22, 40, 68, 0.08);
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-glyph {
+  min-height: var(--btn-height-lg);
+  font-size: 34px;
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-number {
+  font-size: 18px;
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-tile strong {
+  font-size: 18px;
+  line-height: 1.08;
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-tile small {
+  font-size: 13px;
+}
+
+.cg-typing-unit-section--placement .cg-typing-lesson-status {
+  font-size: 11px;
+}
+
+.cg-typing-unit-section__head h3 {
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 0.98;
+  color: #25364c;
+}
+
+.cg-typing-lesson-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.cg-typing-lesson-tile {
+  min-height: 196px;
+  padding: 16px 16px 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.98), rgba(232, 239, 247, 0.96));
+  border: 1px solid rgba(112, 143, 181, 0.26);
+  box-shadow: 0 14px 24px rgba(20, 32, 54, 0.08);
+}
+
+.cg-typing-unit-section--unit-0 .cg-typing-lesson-tile { border-top: 6px solid #5b97e1; }
+.cg-typing-unit-section--unit-1 .cg-typing-lesson-tile { border-top: 6px solid #7a7fe1; }
+.cg-typing-unit-section--unit-2 .cg-typing-lesson-tile { border-top: 6px solid #58a7b6; }
+.cg-typing-unit-section--unit-3 .cg-typing-lesson-tile { border-top: 6px solid #6fbe78; }
+.cg-typing-unit-section--unit-4 .cg-typing-lesson-tile { border-top: 6px solid #9c7ee0; }
+.cg-typing-unit-section--placement .cg-typing-lesson-tile { border-top: 6px solid #2f67a8; }
+
+.cg-typing-lesson-number {
+  font-size: 24px;
+}
+
+.cg-typing-lesson-glyph {
+  min-height: 60px;
+  font-size: 48px;
+  color: #36465b;
+}
+
+.cg-typing-lesson-badge {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.cg-typing-lesson-tile strong {
+  font-size: 18px;
+  color: #2e3f55;
+}
+
+.cg-typing-lesson-status {
+  color: #54708c;
+}
+
+.cg-typing-lesson-tile.is-current {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px rgba(75, 144, 212, 0.18), 0 20px 30px rgba(60, 150, 230, 0.12);
+}
+
+.typing-quest-page .cg-brandbar {
+  padding: 10px 18px 4px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(17, 29, 46, 0.94), rgba(24, 37, 56, 0.9));
+  border: 1px solid rgba(169, 185, 208, 0.12);
+}
+
+.typing-quest-page .cg-brand-copy h1,
+.typing-quest-page .cg-brand-copy .cg-display {
+  font-size: clamp(24px, 2.8vw, 34px);
+  letter-spacing: -0.03em;
+}
+
+.typing-quest-page .cg-brand-copy p {
+  display: block;
+  max-width: 48ch;
+  color: rgba(226, 234, 245, 0.72);
+  font-size: 14px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-support-reveal,
+body.game-platform-page[data-shell-view="play"] .cg-choice-preview,
+body.game-platform-page[data-shell-view="play"] .cg-live-check,
+body.game-platform-page[data-shell-view="play"] .cg-case-highlight-row {
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(242,246,252,0.96));
+  box-shadow: 0 12px 24px rgba(14, 21, 36, 0.08);
+}
+
+
+/* Typing Quest course-map refinement */
+.cg-typing-course-page {
+  gap: 18px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.cg-typing-course-map {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.cg-typing-course-hero {
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.cg-typing-course-start,
+.cg-typing-course-hero__main {
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: 0 14px 28px rgba(18, 31, 51, 0.08);
+}
+
+.cg-typing-course-start {
+  background: linear-gradient(180deg, rgba(19, 43, 73, 0.96), rgba(26, 57, 92, 0.96));
+  color: rgba(244, 248, 253, 0.98);
+}
+
+.cg-typing-course-start .cg-kicker,
+.cg-typing-course-start p,
+.cg-typing-course-start__eyebrow,
+.cg-typing-course-start__meta {
+  color: rgba(226, 236, 248, 0.78);
+}
+
+.cg-typing-course-start__head h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.3vw, 44px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.cg-typing-course-start__head p {
+  max-width: 26ch;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.cg-typing-course-start__action {
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(207, 224, 243, 0.18);
+  align-items: flex-start;
+  justify-items: start;
+}
+
+.cg-typing-welcome-preview {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 360px);
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(9, 24, 44, 0.28);
+  border: 1px solid rgba(210, 225, 245, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cg-typing-welcome-lane {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--btn-height-lg);
+  padding: 0 12px;
+  border-radius: 15px;
+  background: rgba(247, 250, 255, 0.96);
+  color: #27415f;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.cg-typing-welcome-lane .typed {
+  color: #203754;
+}
+
+.cg-typing-welcome-lane .cursor {
+  color: #4f82e5;
+  animation: cgTypingCursorBlink 1s steps(1) infinite;
+}
+
+.cg-typing-welcome-lane .remaining {
+  color: #95a4ba;
+}
+
+.cg-typing-welcome-coach {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cg-typing-welcome-coach span {
+  color: rgba(223, 233, 247, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cg-typing-welcome-coach strong {
+  color: #f4f8fd;
+  font-size: 13px;
+}
+
+.cg-typing-welcome-keyboard {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.cg-typing-welcome-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  border-radius: var(--radius-md);
+  background: rgba(247, 250, 255, 0.92);
+  color: #304863;
+  font-size: 13px;
+  font-weight: 900;
+  border: 1px solid rgba(151, 174, 209, 0.22);
+  box-shadow: inset 0 -3px 0 rgba(131, 157, 194, 0.18);
+}
+
+.cg-typing-welcome-key.is-home {
+  background: linear-gradient(180deg, rgba(221, 234, 255, 0.98), rgba(197, 217, 255, 0.98));
+  color: #2552a6;
+}
+
+.cg-typing-welcome-key.is-active {
+  background: linear-gradient(180deg, rgba(193, 230, 174, 0.98), rgba(145, 203, 112, 0.98));
+  color: #204923;
+  border-color: rgba(95, 155, 58, 0.26);
+}
+
+.cg-typing-course-start__target {
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+}
+
+.cg-typing-course-hero__main .cg-display {
+  font-size: clamp(25px, 3.2vw, 36px);
+  line-height: 0.98;
+}
+
+.cg-typing-course-hero__subtitle {
+  max-width: 42ch;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.cg-typing-course-ribbon span {
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cg-typing-jump-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
+}
+
+.cg-typing-jump-chip {
+  display: grid;
+  gap: 6px;
+  min-height: 86px;
+  padding: 12px;
+  border-radius: 18px;
+  text-decoration: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,245,251,0.96));
+  border: 1px solid rgba(189, 204, 222, 0.96);
+  color: #26415f;
+  box-shadow: 0 10px 18px rgba(20, 41, 71, 0.08);
+}
+
+.cg-typing-jump-chip__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: #264d87;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.cg-typing-jump-chip__label {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cg-typing-welcome-starter {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cg-typing-welcome-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(152, 176, 209, 0.34);
+  background: linear-gradient(180deg, rgba(246, 249, 254, 0.98), rgba(234, 241, 250, 0.98));
+  box-shadow: 0 12px 24px rgba(18, 31, 51, 0.08);
+}
+
+.cg-typing-welcome-panel--path {
+  background: linear-gradient(180deg, rgba(243, 247, 255, 0.98), rgba(231, 237, 249, 0.98));
+}
+
+.cg-typing-welcome-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cg-typing-welcome-panel__head h3 {
+  margin: 2px 0 0;
+  font-size: clamp(1.1rem, 1.9vw, 1.5rem);
+  line-height: 1.05;
+  color: #203451;
+}
+
+.cg-typing-welcome-panel__head p:last-child {
+  margin: 6px 0 0;
+  max-width: 34ch;
+  color: #60738a;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.cg-typing-starter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cg-typing-starter-grid--lessons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cg-typing-starter-card {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  min-height: 94px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(153, 175, 205, 0.34);
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241, 246, 252, 0.96));
+  color: #29415f;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(18, 31, 51, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.cg-typing-starter-card:hover,
+.cg-typing-starter-card:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(18, 31, 51, 0.12);
+}
+
+.cg-typing-starter-card__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: rgba(43, 85, 147, 0.12);
+  color: #2a5288;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.cg-typing-starter-card strong {
+  font-size: 0.95rem;
+  line-height: 1.1;
+}
+
+.cg-typing-starter-card small {
+  color: #6c8097;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cg-typing-starter-card.is-primary {
+  border-color: rgba(90, 133, 198, 0.4);
+  background: linear-gradient(180deg, rgba(235, 243, 255, 0.98), rgba(220, 233, 252, 0.98));
+}
+
+.cg-typing-jump-chip.is-locked {
+  opacity: 0.46;
+  pointer-events: none;
+}
+
+.cg-typing-course-catalog {
+  border: 1px solid rgba(191, 206, 221, 0.96);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(244, 248, 253, 0.98), rgba(232, 239, 248, 0.96));
+  box-shadow: 0 18px 32px rgba(21, 42, 71, 0.08);
+  overflow: hidden;
+}
+
+.cg-typing-course-catalog summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px 22px;
+  cursor: pointer;
+  color: #28415f;
+  font-weight: 800;
+}
+
+.cg-typing-course-catalog summary::-webkit-details-marker {
+  display: none;
+}
+
+.cg-typing-course-catalog summary small {
+  color: #67809d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cg-typing-course-catalog__body {
+  display: grid;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+
+.cg-typing-unit-card {
+  position: relative;
+  gap: 10px;
+  min-height: 184px;
+  padding: 15px 15px 14px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(252, 253, 255, 0.98), rgba(239, 244, 250, 0.96));
+  box-shadow: 0 16px 28px rgba(21, 34, 56, 0.08);
+  overflow: hidden;
+}
+
+.cg-typing-unit-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(92, 159, 226, 0.92), rgba(130, 202, 145, 0.92));
+}
+
+.cg-typing-unit-card--step-2::before { background: linear-gradient(90deg, rgba(108, 131, 229, 0.92), rgba(146, 106, 219, 0.92)); }
+.cg-typing-unit-card--step-3::before { background: linear-gradient(90deg, rgba(90, 175, 198, 0.92), rgba(117, 205, 181, 0.92)); }
+.cg-typing-unit-card--step-4::before { background: linear-gradient(90deg, rgba(103, 196, 127, 0.92), rgba(165, 207, 113, 0.92)); }
+.cg-typing-unit-card--step-5::before { background: linear-gradient(90deg, rgba(146, 118, 225, 0.92), rgba(213, 126, 210, 0.92)); }
+
+.cg-typing-unit-card strong {
+  font-size: 22px;
+  line-height: 0.98;
+}
+
+.cg-typing-unit-progress {
+  position: relative;
+  height: 10px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: rgba(205, 217, 231, 0.72);
+}
+
+.cg-typing-unit-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5da1e4, #75c68a);
+}
+
+.cg-typing-unit-card.is-current {
+  transform: translateY(-3px);
+  border-color: rgba(83, 149, 222, 0.76);
+  background: linear-gradient(180deg, rgba(243, 248, 255, 0.98), rgba(230, 239, 249, 0.98));
+  box-shadow: 0 0 0 3px rgba(93, 161, 228, 0.14), 0 22px 34px rgba(34, 60, 97, 0.14);
+}
+
+.cg-typing-unit-section {
+  gap: 14px;
+}
+
+.cg-typing-unit-section--focus {
+  box-shadow: 0 20px 36px rgba(20, 42, 74, 0.1);
+}
+
+.cg-typing-unit-section.is-current {
+  border-color: rgba(92, 159, 226, 0.46);
+  box-shadow: 0 18px 32px rgba(21, 42, 71, 0.1);
+}
+
+.cg-typing-unit-section.is-collapsed {
+  padding: 18px 20px 18px;
+}
+
+.cg-typing-unit-section__status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cg-typing-unit-section__meter,
+.cg-typing-unit-section__flag,
+.cg-typing-unit-section__jump {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cg-typing-unit-section__meter {
+  background: rgba(240, 245, 251, 0.92);
+  color: #58718d;
+  border: 1px solid rgba(206, 217, 229, 0.96);
+}
+
+.cg-typing-unit-section__flag {
+  background: linear-gradient(180deg, rgba(35, 70, 111, 0.96), rgba(26, 56, 91, 0.96));
+  color: #ffffff;
+}
+
+.cg-typing-unit-section__flag.is-locked {
+  background: rgba(230, 236, 243, 0.96);
+  color: #7b8d9f;
+}
+
+.cg-typing-unit-section__jump {
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(191, 206, 221, 0.96);
+  color: #334c68;
+  box-shadow: 0 10px 18px rgba(19, 34, 56, 0.08);
+}
+
+.cg-typing-unit-section__jump:hover,
+.cg-typing-unit-section__jump:focus-visible {
+  transform: translateY(-1px);
+}
+
+.cg-typing-unit-section.is-collapsed .cg-typing-lesson-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.cg-typing-unit-section.is-collapsed .cg-typing-lesson-tile {
+  min-height: 158px;
+}
+
+.cg-typing-unit-section__more {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: var(--btn-height-sm);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(244, 247, 251, 0.96);
+  border: 1px solid rgba(210, 220, 232, 0.96);
+  color: #60758d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cg-typing-unit-section__handoff {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 9px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(187, 203, 220, 0.96);
+  color: #46607d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cg-typing-unit-section__handoff strong {
+  color: #1d3859;
+}
+
+/* Typing Quest polish pass */
+.cg-typing-unit-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(180deg, #1f3e66, #173454);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.cg-typing-unit-state {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: var(--btn-height-sm);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(87, 113, 154, 0.12);
+  color: #51657f;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cg-typing-unit-card {
+  gap: 10px;
+}
+
+.cg-typing-unit-card.is-current .cg-typing-unit-state {
+  background: rgba(74, 149, 229, 0.16);
+  color: #245487;
+}
+
+.cg-typing-unit-card.is-locked .cg-typing-unit-state {
+  background: rgba(122, 141, 161, 0.1);
+  color: #8091a3;
+}
+
+.cg-typing-launch-steps,
+.cg-typing-lesson-cues {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cg-typing-launch-steps span,
+.cg-typing-lesson-cues span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 248, 252, 0.94);
+  border: 1px solid rgba(205, 216, 230, 0.96);
+  color: #5a6d83;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cg-typing-launch-target {
+  justify-items: start;
+}
+
+.cg-typing-target-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.cg-typing-target-word mark {
+  padding: 0 0.08em;
+  border-radius: 0.22em;
+  background: linear-gradient(180deg, rgba(246, 225, 150, 0.96), rgba(236, 197, 82, 0.96));
+  color: #24364c;
+  box-shadow: inset 0 -2px 0 rgba(171, 132, 28, 0.18);
+}
+
+.cg-typing-text-board__target {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 86px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(249, 251, 255, 0.98), rgba(239, 244, 251, 0.96));
+  border: 1px solid rgba(210, 220, 233, 0.96);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.cg-typing-text-board__target .cg-typing-target-word {
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  color: #1f3047;
+}
+
+.cg-typing-runtime-card--launch,
+.cg-typing-runtime-card--lesson,
+.cg-typing-runtime-card--summary {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,248,252,0.97));
+}
+
+.cg-typing-runtime-card__head h3 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 0.98;
+  color: #223248;
+}
+
+.cg-typing-runtime-intro__copy .cg-display {
+  font-size: clamp(32px, 4.2vw, 46px);
+  line-height: 0.98;
+  color: #223248;
+}
+
+.cg-typing-guide-head {
+  align-items: center;
+}
+
+.cg-typing-guide-head .cg-micro-label {
+  margin-bottom: 6px;
+}
+
+.cg-typing-guide-head h4 {
+  max-width: 42ch;
+}
+
+.cg-typing-hand-legend {
+  justify-content: flex-end;
+}
+
+.cg-typing-guide {
+  background: linear-gradient(180deg, rgba(249, 251, 255, 0.98), rgba(240, 245, 251, 0.97));
+}
+
+.cg-typing-guide-keys {
+  padding: 8px 0 2px;
+}
+
+.cg-typing-guide-key.is-active {
+  transform: translateY(-2px);
+}
+
+
+/* Typing Quest runtime refinement */
+.cg-typing-runtime-main {
+  gap: 14px;
+}
+
+.cg-typing-runtime-card--launch,
+.cg-typing-runtime-card--lesson {
+  position: relative;
+  overflow: hidden;
+}
+
+.cg-typing-runtime-card--launch::before,
+.cg-typing-runtime-card--lesson::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(78, 145, 226, 0.96), rgba(116, 205, 149, 0.96));
+}
+
+.cg-typing-runtime-intro,
+.cg-typing-runtime-card__head {
+  gap: 16px;
+}
+
+.cg-typing-runtime-lessonline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 2px 0 2px;
+}
+
+.cg-typing-runtime-lessonline span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--btn-height-sm);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(239, 244, 250, 0.96);
+  border: 1px solid rgba(207, 218, 230, 0.96);
+  color: #556b84;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cg-typing-launch-coach {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(20, 47, 83, 0.08), rgba(91, 151, 232, 0.05));
+  border: 1px solid rgba(162, 191, 228, 0.32);
+}
+
+.cg-typing-launch-coach strong {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4d6e98;
+}
+
+.cg-typing-launch-coach span {
+  color: #284363;
+  line-height: 1.45;
+}
+
+.cg-typing-runtime-cues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cg-typing-runtime-cues span,
+.cg-typing-lesson-cues span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--btn-height-sm);
+  padding: 0 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(206, 219, 234, 0.92);
+  color: #4f6683;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cg-typing-runtime-card--launch .cg-typing-launch-target,
+.cg-typing-runtime-card--lesson .cg-typing-runtime-goal {
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(236, 242, 250, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+}
+
+.cg-typing-progress-panel {
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(236, 242, 250, 0.96));
+}
+
+.cg-typing-lesson-cues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cg-typing-text-board {
+  gap: 16px;
+  padding: 6px 0 8px;
+}
+
+.cg-typing-text-board__target {
+  min-height: 84px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(245, 249, 255, 0.98), rgba(230, 238, 249, 0.98));
+  box-shadow: 0 14px 24px rgba(29, 49, 78, 0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.cg-typing-text-line,
+.cg-typing-text-entry {
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,252,0.96));
+  border: 1px solid rgba(215, 224, 235, 0.96);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+}
+
+.cg-typing-text-line {
+  min-height: 66px;
+}
+
+.cg-typing-text-entry {
+  min-height: 72px;
+  border-bottom: 1px solid rgba(215, 224, 235, 0.96);
+}
+
+.cg-typing-text-char,
+.cg-typing-text-entry__char {
+  min-width: 24px;
+  min-height: 38px;
+}
+
+.cg-typing-text-char.is-current {
+  border-bottom-color: #4f96e3;
+  background: rgba(78, 145, 226, 0.08);
+}
+
+.cg-typing-entry {
+  padding-top: 4px;
+}
+
+.cg-typing-entry .cg-input {
+  min-height: 58px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,247,251,0.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+}
+
+.cg-typing-runtime-sidebar {
+  gap: 10px;
+}
+
+.cg-typing-runtime-panel {
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(237, 243, 250, 0.96));
+  box-shadow: 0 14px 24px rgba(22, 37, 61, 0.08);
+}
+
+.cg-typing-guide {
+  border-radius: 20px;
+  box-shadow: 0 16px 28px rgba(19, 34, 56, 0.08);
+}
+
+.cg-typing-guide-key {
+  border-radius: 14px;
+  box-shadow: 0 6px 12px rgba(20, 34, 56, 0.06);
+}
+
+.cg-typing-guide-key.is-active {
+  box-shadow: 0 12px 20px rgba(60, 150, 230, 0.14), inset 0 -3px 0 rgba(60, 150, 230, 0.16);
+}
+
+@media (max-width: 760px) {
+  .cg-typing-launch-steps,
+  .cg-typing-lesson-cues {
+    flex-direction: column;
+  }
+
+  .cg-typing-text-board__target .cg-typing-target-word {
+    font-size: clamp(34px, 11vw, 56px);
+  }
+}
+
+/* 2026-03-10 game platform gameplay-area upgrade */
+.game-surface,
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+  display: grid;
+  gap: 14px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-meta {
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-stage-head h2 {
+  font-size: clamp(32px, 4.8vw, 54px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-game-scaffold {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 3.4fr) minmax(280px, 1fr);
+  align-items: start;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+  grid-row: span 3;
+  min-height: min(70vh, 760px);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card__body,
+body.game-platform-page[data-shell-view="play"] .cg-game-layout,
+body.game-platform-page[data-shell-view="play"] .cg-quest-board,
+body.game-platform-page[data-shell-view="play"] .cg-clue-stage__main,
+body.game-platform-page[data-shell-view="play"] .cg-forge-layout__main,
+body.game-platform-page[data-shell-view="play"] .cg-rush-arena,
+body.game-platform-page[data-shell-view="play"] .cg-typing-runtime-card--lesson,
+body.game-platform-page[data-shell-view="play"] .cg-typing-runtime-card--launch {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--play .cg-zone-card__body {
+  min-height: 100%;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--controls,
+body.game-platform-page[data-shell-view="play"] .cg-zone-card--guide {
+  min-height: 0;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-action {
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-action:hover,
+body.game-platform-page[data-shell-view="play"] .cg-action:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box,
+body.game-platform-page[data-shell-view="play"] .cg-morph-tile,
+body.game-platform-page[data-shell-view="play"] .cg-phrase-tile,
+body.game-platform-page[data-shell-view="play"] .cg-rush-preview__item,
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card,
+body.game-platform-page[data-shell-view="play"] .cg-typing-guide-key {
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(20, 34, 51, 0.08);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.06);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__copy span {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cg-muted);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__track {
+  height: 10px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: rgba(210, 220, 232, 0.8);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer__track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff9a62, #ff5252);
+}
+
+.timer {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff5252;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-inline-timer[data-tone="danger"] .timer {
+  animation: cgTimerPulse 1s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card {
+  width: min(100%, 360px);
+  margin: 0 auto;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15), 0 0 0 1px rgba(255,255,255,0.5);
+  padding: 20px;
+  position: relative;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-card::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 28px;
+  background: radial-gradient(circle, rgba(255, 101, 132, 0.14), transparent 60%);
+  z-index: -1;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-target {
+  font-size: clamp(42px, 6vw, 66px);
+  line-height: 0.95;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-image {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-divider {
+  height: 1px;
+  margin: 8px 0 14px;
+  background: linear-gradient(90deg, transparent, rgba(20,34,51,0.18), transparent);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-word-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-taboo-pill {
+  justify-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-choice-row--stacked {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-field {
+  display: grid;
+  gap: 6px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-field span {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cg-muted);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-height: 78px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(210, 220, 233, 0.96);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,248,252,0.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86);
+  font-size: clamp(26px, 4.4vw, 48px);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .typed {
+  color: #1d8f5f;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .cursor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.8em;
+  border-bottom: 4px solid #4f96e3;
+  color: #203249;
+  animation: cgCursorBlink 1s steps(1) infinite;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .cursor.is-incorrect {
+  color: #c23636;
+  border-bottom-color: #ff5252;
+  background: rgba(255, 82, 82, 0.08);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-lane .remaining {
+  color: #8a9aac;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-guide-key.is-active {
+  background: rgba(79, 150, 227, 0.16);
+  border-color: rgba(79, 150, 227, 0.4);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-text-entry__char[data-state="correct"] {
+  background: rgba(29, 143, 95, 0.12);
+  color: #1d8f5f;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-typing-text-entry__char[data-state="absent"] {
+  background: rgba(255, 82, 82, 0.12);
+  color: #c23636;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-quest-board {
+  gap: 18px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-quest-grid {
+  min-height: min(34vh, 320px);
+  align-content: center;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box {
+  min-width: clamp(52px, 6vw, 78px);
+  min-height: clamp(58px, 8vh, 94px);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 900;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box.is-revealed {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box[data-state="correct"] {
+  background: rgba(29, 143, 95, 0.14);
+  box-shadow: 0 0 0 2px rgba(29, 143, 95, 0.12), 0 18px 30px rgba(29, 143, 95, 0.16);
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-letter-box[data-state="absent"] {
+  background: rgba(255, 82, 82, 0.12);
+}
+
+body.game-platform-page[data-shell-view="play"] .row-success {
+  animation: cgSuccessGlow 720ms ease;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-key-press-strip .cg-key-strip__key {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-forge-equation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-forge-equation span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(13, 94, 102, 0.08);
+  color: var(--cg-primary);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-rush-fast-entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+body.game-platform-page[data-shell-view="play"] .cg-rush-preview__item {
+  box-shadow: 0 8px 18px rgba(101, 163, 13, 0.1);
+}
+
+@keyframes cgTimerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes cgSuccessGlow {
+  0% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+  40% { box-shadow: 0 0 0 10px rgba(29, 143, 95, 0.12); }
+  100% { box-shadow: 0 0 0 rgba(29, 143, 95, 0); }
+}
+
+@keyframes cgCursorBlink {
+  0%, 49% { border-bottom-color: #4f96e3; }
+  50%, 100% { border-bottom-color: transparent; }
+}
+
+@media (max-width: 960px) {
+  body.game-platform-page[data-shell-view="play"] .cg-game-scaffold {
+    grid-template-columns: 1fr;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+    min-height: min(62vh, 680px);
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .game-surface,
+  body.game-platform-page[data-shell-view="play"] .cg-stage-shell {
+    padding: 14px;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-choice-row--stacked,
+  body.game-platform-page[data-shell-view="play"] .cg-rush-fast-entry {
+    grid-template-columns: 1fr;
+  }
+
+  body.game-platform-page[data-shell-view="play"] .cg-zone-card--play {
+    min-height: 56vh;
+  }
+}
+
+/* 2026-03-11 hover gameplay preview animations (CSS-only, preview layer only) */
+@keyframes cg-preview-tile-flip {
+  0%, 100% { transform: rotateX(0deg) scale(1); }
+  40% { transform: rotateX(88deg) scale(1.04); }
+  60% { transform: rotateX(0deg) scale(1.02); }
+}
+
+@keyframes cg-preview-tile-state-correct {
+  0%, 20% { background: #d9dee5; border-color: #c8cfda; }
+  30%, 100% { background: #4CAF50; border-color: #3d9143; }
+}
+
+@keyframes cg-preview-tile-state-present {
+  0%, 30% { background: #d9dee5; border-color: #c8cfda; }
+  40%, 100% { background: #FFC107; border-color: #d6a106; }
+}
+
+@keyframes cg-preview-key-pulse {
+  0%, 100% { transform: scale(1) translateY(0); box-shadow: none; }
+  40% { transform: scale(0.95) translateY(2px); box-shadow: none; }
+  70% { transform: scale(1.02) translateY(-3px); box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28); }
+}
+
+@keyframes cg-preview-flash-warn {
+  0%, 75%, 100% { color: #4f607a; background: transparent; }
+  82% { color: #ffffff; background: rgba(220, 53, 69, 0.86); }
+}
+
+@keyframes cg-preview-slide-part {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(7px); }
+}
+
+@keyframes cg-preview-rung-reveal {
+  0%, 100% { opacity: 0.45; transform: translateX(0); }
+  35% { opacity: 1; transform: translateX(4px); }
+}
+
+@keyframes cg-preview-error-glow {
+  0%, 100% { color: #223550; background: transparent; }
+  50% { color: #b3261e; background: rgba(179, 38, 30, 0.12); }
+}
+
+@keyframes cg-preview-chip-rise {
+  0%, 100% { opacity: 0.45; transform: translateY(3px); }
+  35% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cg-preview-sentence-shift-a {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(6px); }
+}
+
+@keyframes cg-preview-sentence-shift-b {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(-6px); }
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  animation: cg-preview-tile-flip 1.15s ease-in-out infinite;
+  transform-origin: center;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(1) {
+  animation-name: cg-preview-tile-flip, cg-preview-tile-state-correct;
+  animation-duration: 1.15s, 1.15s;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-quest"] .cg-preview-row:first-child .cg-preview-tile:nth-child(2) {
+  animation-name: cg-preview-tile-flip, cg-preview-tile-state-present;
+  animation-duration: 1.15s, 1.15s;
+  animation-timing-function: ease-in-out, linear;
+  animation-iteration-count: infinite, infinite;
+  animation-delay: 0.15s, 0.15s;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+  animation: cg-preview-key-pulse 0.85s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+  animation-delay: 0.42s;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li {
+  animation: cg-preview-flash-warn 1.6s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(3) { animation-delay: 0.4s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(4) { animation-delay: 0.6s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="morphology-builder"] .cg-mini-part--prefix {
+  animation: cg-preview-slide-part 0.9s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="morphology-builder"] .cg-mini-part--root:first-of-type {
+  animation: cg-preview-slide-part 0.9s ease-in-out infinite reverse;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung {
+  animation: cg-preview-rung-reveal 1.6s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(2) { animation-delay: 0.25s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(3) { animation-delay: 0.5s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="error-detective"] .cg-mini-error {
+  animation: cg-preview-error-glow 1.2s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip {
+  animation: cg-preview-chip-rise 1.3s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(3) { animation-delay: 0.4s; }
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(3) {
+  animation: cg-preview-sentence-shift-a 0.95s ease-in-out infinite;
+}
+
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(2),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(4) {
+  animation: cg-preview-sentence-shift-b 0.95s ease-in-out infinite;
+}
+

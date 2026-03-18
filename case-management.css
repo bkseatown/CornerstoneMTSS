@@ -1,0 +1,544 @@
+@import url("./style/tokens.css");
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body.cm-page {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 214, 176, 0.18), transparent 24%),
+    radial-gradient(circle at 88% 14%, rgba(123, 169, 220, 0.16), transparent 24%),
+    linear-gradient(160deg, #d6dce4 0%, #c8d1db 46%, #bec7d1 100%);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.cm-shell {
+  width: min(1680px, calc(100vw - 28px));
+  height: calc(100dvh - var(--app-safe-vh-margin, 24px));
+  margin: calc(var(--app-safe-vh-margin, 24px) / 2) auto;
+  padding: 8px 0 8px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 8px;
+}
+
+.cm-header,
+.cm-panel {
+  background: rgba(250, 249, 246, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 28px;
+  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
+}
+
+.cm-header {
+  display: grid;
+  grid-template-columns: minmax(260px, auto) minmax(280px, 380px) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.cm-brand h1,
+.cm-panel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 0.98;
+}
+
+.cm-brand h1 {
+  font-size: clamp(1.9rem, 2.7vw, 2.6rem);
+}
+
+.cm-kicker {
+  margin: 0 0 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--text-primary) 56%, var(--muted) 44%);
+}
+
+.cm-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.cm-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  background: rgba(255, 255, 255, 0.76);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.cm-btn-primary {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 12%, white 88%);
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 28%, white 72%);
+}
+
+.cm-top-grid,
+.cm-main-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.cm-top-grid {
+  grid-template-columns: minmax(0, 1.32fr) minmax(340px, 0.68fr);
+  background: rgba(250, 249, 246, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 28px;
+  padding: 12px 16px;
+  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
+}
+
+.cm-main-grid {
+  grid-template-columns: minmax(0, 1.32fr) minmax(330px, 0.68fr);
+  min-height: 0;
+}
+
+.cm-sidebar {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.cm-panel {
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-height: 0;
+}
+
+.cm-panel-hero h2 {
+  font-size: 1.6rem;
+}
+
+.cm-due-strip,
+.cm-plan-filters,
+.cm-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cm-status-pill,
+.cm-filter-chip,
+.cm-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  background: rgba(255, 255, 255, 0.74);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cm-summary-chip {
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 0.85rem;
+  border-color: color-mix(in oklab, var(--border) 72%, white 28%);
+}
+
+.cm-status-pill[data-tone="urgent"] {
+  background: color-mix(in oklab, #e3876b 12%, white 88%);
+  border-color: color-mix(in oklab, #d96d4f 30%, white 70%);
+}
+
+.cm-status-pill[data-tone="watch"] {
+  background: color-mix(in oklab, #f1d27c 18%, white 82%);
+  border-color: color-mix(in oklab, #d9b14a 32%, white 68%);
+}
+
+.cm-status-pill[data-tone="steady"],
+.cm-filter-chip[data-active="true"] {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 11%, white 89%);
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 24%, white 76%);
+}
+
+.cm-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: end;
+}
+
+.cm-student-list,
+.cm-task-list,
+.cm-doc-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.cm-student-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+  max-height: calc(100vh - 330px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.cm-student-card,
+.cm-task-card,
+.cm-doc-card {
+  border-radius: 22px;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.cm-student-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cm-student-card:hover,
+.cm-doc-card:hover {
+  border-color: color-mix(in oklab, var(--accent, #2b5da8) 28%, white 72%);
+  background: color-mix(in oklab, var(--accent, #2b5da8) 6%, white 94%);
+}
+
+.cm-student-card-top,
+.cm-student-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+}
+
+.cm-student-card strong,
+.cm-task-card strong,
+.cm-doc-card strong {
+  display: block;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.cm-student-card p,
+.cm-task-card p,
+.cm-doc-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--text-primary) 76%, var(--muted) 24%);
+}
+
+.cm-tier,
+.cm-risk {
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cm-tier {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 10%, white 90%);
+  color: color-mix(in oklab, var(--text-primary) 76%, var(--accent, #2b5da8) 24%);
+}
+
+.cm-risk[data-risk="high risk"],
+.cm-risk[data-risk="risk"] {
+  background: color-mix(in oklab, #e3876b 18%, white 82%);
+}
+
+.cm-risk[data-risk="monitor"] {
+  background: color-mix(in oklab, #f1d27c 22%, white 78%);
+}
+
+.cm-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cm-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: var(--radius-full);
+  background: rgba(244, 247, 252, 0.92);
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.cm-task-card,
+.cm-doc-card {
+  padding: 10px 12px;
+}
+
+.cm-task-card {
+  display: grid;
+  gap: 6px;
+}
+
+.cm-task-list {
+  max-height: 250px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.cm-task-card span,
+.cm-doc-card span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+}
+
+.cm-doc-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cm-doc-card {
+  display: grid;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cm-empty {
+  margin: 0;
+  font-size: 0.9rem;
+  color: color-mix(in oklab, var(--text-primary) 72%, var(--muted) 28%);
+}
+
+@media (max-width: 1180px) {
+  .cm-header,
+  .cm-top-grid,
+  .cm-main-grid,
+  .cm-student-list,
+  .cm-doc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── STREAMLINED VISUAL HIERARCHY ENHANCEMENTS ─── */
+
+.cm-top-grid > .cm-panel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  gap: 6px;
+}
+
+.cm-panel {
+  padding: 14px 16px;
+  gap: 8px;
+}
+
+.cm-header {
+  padding: 12px 16px;
+  gap: 14px;
+}
+
+.cm-top-grid {
+  gap: 8px;
+}
+
+.cm-main-grid {
+  gap: 8px;
+}
+
+/* Enhanced action/due strip items */
+.cm-due-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cm-status-pill {
+  padding: 8px 12px;
+  min-height: 38px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 160ms ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cm-status-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cm-status-pill[data-tone="urgent"] {
+  background: linear-gradient(135deg, rgba(227, 135, 107, 0.22), rgba(227, 135, 107, 0.12));
+  border-color: rgba(227, 135, 107, 0.32);
+  font-weight: 800;
+}
+
+.cm-status-pill[data-tone="watch"] {
+  background: linear-gradient(135deg, rgba(241, 210, 124, 0.26), rgba(241, 210, 124, 0.14));
+  border-color: rgba(241, 210, 124, 0.36);
+}
+
+.cm-status-pill[data-tone="steady"] {
+  background: linear-gradient(135deg, rgba(100, 200, 150, 0.20), rgba(100, 200, 150, 0.10));
+  border-color: rgba(100, 200, 150, 0.30);
+}
+
+/* Task and doc cards */
+.cm-task-card,
+.cm-doc-card {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 160ms ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cm-task-card:hover,
+.cm-doc-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.cm-doc-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Chip improvements */
+.cm-chip-row {
+  gap: 8px;
+}
+
+.cm-chip {
+  padding: 0 10px;
+  min-height: 28px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all 120ms ease;
+}
+
+.cm-chip:hover {
+  background: rgba(244, 247, 252, 1);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Better section layout */
+/* Section head improvements */
+.cm-panel-caseload .cm-section-head {
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 64%, white 36%);
+  margin-bottom: 10px;
+}
+
+.cm-section-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.cm-section-head > div:first-child {
+  flex: 1;
+}
+
+.cm-section-head h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.cm-section-head .cm-kicker {
+  color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
+  margin-bottom: 6px;
+}
+
+/* Sidebar styling - UNIFIED VISUAL SPACE */
+.cm-sidebar {
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(250, 249, 246, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 28px;
+  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
+  overflow: hidden;
+}
+
+.cm-sidebar .cm-panel {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cm-sidebar .cm-panel:last-child {
+  border-bottom: none;
+}
+
+/* Main caseload panel should have more prominence */
+.cm-panel-caseload {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Sidebar panel kickers */
+.cm-sidebar .cm-kicker {
+  color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%);
+}
+
+/* Enhanced responsive */
+@media (max-width: 1180px) {
+  .cm-header {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .cm-panel {
+    padding: 12px 14px;
+  }
+}

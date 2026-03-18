@@ -1,0 +1,442 @@
+(function teacherStorageModule(root, factory) {
+  if (typeof module === "object" && module.exports) {
+    module.exports = factory();
+    return;
+  }
+  root.CSTeacherStorage = factory();
+})(typeof globalThis !== "undefined" ? globalThis : window, function createTeacherStorage() {
+  "use strict";
+
+  var storageBridge = typeof globalThis !== "undefined" && globalThis.CSStorageBridge
+    ? globalThis.CSStorageBridge
+    : null;
+
+  var KEYS = {
+    teacherProfile: "cs.teacher.profile.v1",
+    scheduleBlocks: "cs.schedule.blocks.v1",
+    classContexts: "cs.class.contexts.v1",
+    students: "cs.students.v1",
+    studentSupport: "cs.student.support.v1",
+    lessonContext: "cs.lesson.context.v1",
+    sessionLogs: "cs.session.logs.v1",
+    legacyLessonBriefBlocks: "cs.lessonBrief.blocks.v1",
+    migrationState: "cs.teacher.migrations.v1"
+  };
+
+  function safeParse(raw, fallback) {
+    try {
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_err) {
+      return fallback;
+    }
+  }
+
+  function readJson(key, fallback) {
+    try {
+      return safeParse(localStorage.getItem(key), fallback);
+    } catch (_err) {
+      return fallback;
+    }
+  }
+
+  function writeJson(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function get(key) {
+    var name = String(key || "").trim();
+    if (!name) return "";
+    if (storageBridge && typeof storageBridge.get === "function") {
+      try {
+        var bridgeValue = storageBridge.get(name);
+        if (bridgeValue !== null && typeof bridgeValue !== "undefined") return bridgeValue;
+      } catch (_err) {}
+    }
+    try {
+      var raw = localStorage.getItem(name);
+      return raw === null ? "" : raw;
+    } catch (_err) {
+      return "";
+    }
+  }
+
+  function set(key, value) {
+    var name = String(key || "").trim();
+    if (!name) return false;
+    if (storageBridge && typeof storageBridge.set === "function") {
+      try { storageBridge.set(name, value); } catch (_err) {}
+    }
+    try {
+      if (value === null || typeof value === "undefined" || value === "") localStorage.removeItem(name);
+      else localStorage.setItem(name, String(value));
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function remove(key) {
+    var name = String(key || "").trim();
+    if (!name) return false;
+    if (storageBridge && typeof storageBridge.remove === "function") {
+      try { storageBridge.remove(name); } catch (_err) {}
+    }
+    try {
+      localStorage.removeItem(name);
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  function todayStamp() {
+    var d = new Date();
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0")
+    ].join("-");
+  }
+
+  function normalizeDayStamp(day) {
+    var value = String(day || "").trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : todayStamp();
+  }
+
+  function normalizeList(values, maxItems) {
+    var out = [];
+    var seen = {};
+    var rows = Array.isArray(values) ? values : [];
+    rows.forEach(function (value) {
+      var text = String(value || "").trim();
+      if (!text || seen[text]) return;
+      seen[text] = true;
+      out.push(text);
+    });
+    return out.slice(0, maxItems || rows.length || 0);
+  }
+
+  function inferSubject(block) {
+    var row = block && typeof block === "object" ? block : {};
+    var explicitSubject = String(row.subject || "").trim();
+    var normalizedExplicit = explicitSubject.toLowerCase();
+    if (normalizedExplicit === "intervention") return "Intervention";
+    if (normalizedExplicit === "ela") return "ELA";
+    if (normalizedExplicit === "math") return "Math";
+    if (normalizedExplicit === "writing") return "Writing";
+    if (normalizedExplicit === "humanities") return "Humanities";
+    if (explicitSubject) return explicitSubject;
+    var subject = String(row.area || "").trim().toLowerCase();
+    if (subject === "intervention") return "Intervention";
+    if (subject === "ela") return "ELA";
+    if (subject === "math") return "Math";
+    if (subject === "writing") return "Writing";
+    if (subject === "humanities") return "Humanities";
+    var label = String(row.curriculum || row.label || "").toLowerCase();
+    if (label.indexOf("math") >= 0 || label.indexOf("bridges") >= 0 || label.indexOf("illustrative") >= 0) return "Math";
+    if (label.indexOf("writing") >= 0 || label.indexOf("step up") >= 0) return "Writing";
+    if (label.indexOf("humanities") >= 0 || label.indexOf("history") >= 0) return "Humanities";
+    if (label.indexOf("fundations") >= 0 || label.indexOf("just words") >= 0 || label.indexOf("ufli") >= 0 || label.indexOf("heggerty") >= 0) return "Intervention";
+    return "ELA";
+  }
+
+  function normalizeBlock(block, day) {
+    var row = block && typeof block === "object" ? block : {};
+    var subject = inferSubject(row);
+    var lesson = String(row.lesson || row.lessonLabel || "").trim();
+    return {
+      id: String(row.id || "blk-" + Date.now()),
+      day: normalizeDayStamp(day || row.day),
+      timeLabel: String(row.timeLabel || row.blockTime || "").trim(),
+      label: String(row.label || row.blockLabel || row.classSection || "").trim(),
+      teacher: String(row.teacher || "").trim(),
+      subject: subject,
+      curriculum: String(row.curriculum || row.programLabel || "").trim(),
+      curriculumId: String(row.curriculumId || row.programId || "").trim(),
+      lesson: lesson,
+      classSection: String(row.classSection || row.section || row.label || "").trim(),
+      supportType: String(row.supportType || "push-in").trim() || "push-in",
+      notes: String(row.notes || "").trim(),
+      rosterRefs: normalizeList(row.rosterRefs || row.studentIds || [], 60),
+      studentIds: normalizeList(row.studentIds || row.rosterRefs || [], 60),
+      lessonContextId: String(row.lessonContextId || "").trim()
+    };
+  }
+
+  function normalizeBlockMap(raw) {
+    var src = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+    var out = {};
+    Object.keys(src).forEach(function (day) {
+      var rows = Array.isArray(src[day]) ? src[day] : [];
+      out[normalizeDayStamp(day)] = rows.map(function (row) {
+        return normalizeBlock(row, day);
+      }).filter(function (row) {
+        return row.id && row.label;
+      });
+    });
+    return out;
+  }
+
+  function loadScheduleMap() {
+    return normalizeBlockMap(readJson(KEYS.scheduleBlocks, {}));
+  }
+
+  function saveScheduleMap(map) {
+    return writeJson(KEYS.scheduleBlocks, normalizeBlockMap(map));
+  }
+
+  function loadScheduleBlocks(day) {
+    var map = loadScheduleMap();
+    var stamp = normalizeDayStamp(day);
+    return Array.isArray(map[stamp]) ? map[stamp].slice() : [];
+  }
+
+  function saveScheduleBlocks(day, rows) {
+    var map = loadScheduleMap();
+    map[normalizeDayStamp(day)] = Array.isArray(rows) ? rows.map(function (row) {
+      return normalizeBlock(row, day);
+    }).filter(function (row) {
+      return row.id && row.label;
+    }) : [];
+    return saveScheduleMap(map);
+  }
+
+  function migrateLessonBriefBlocks() {
+    var scheduleMap = loadScheduleMap();
+    var legacyMap = readJson(KEYS.legacyLessonBriefBlocks, {});
+    var changed = false;
+    if (!legacyMap || typeof legacyMap !== "object") {
+      return { migrated: false, changed: false };
+    }
+    Object.keys(legacyMap).forEach(function (day) {
+      var legacyRows = Array.isArray(legacyMap[day]) ? legacyMap[day] : [];
+      if (!legacyRows.length) return;
+      var stamp = normalizeDayStamp(day);
+      var existing = Array.isArray(scheduleMap[stamp]) ? scheduleMap[stamp].slice() : [];
+      var byId = {};
+      existing.forEach(function (row) {
+        byId[row.id] = row;
+      });
+      legacyRows.forEach(function (row) {
+        var normalized = normalizeBlock(row, stamp);
+        if (!normalized.id || !normalized.label) return;
+        if (byId[normalized.id]) {
+          byId[normalized.id] = Object.assign({}, byId[normalized.id], normalized);
+        } else {
+          byId[normalized.id] = normalized;
+        }
+      });
+      var next = Object.keys(byId).map(function (id) { return byId[id]; });
+      var priorText = JSON.stringify(existing);
+      var nextText = JSON.stringify(next);
+      if (priorText !== nextText) {
+        scheduleMap[stamp] = next;
+        changed = true;
+      }
+    });
+    if (changed) saveScheduleMap(scheduleMap);
+    return { migrated: true, changed: changed };
+  }
+
+  function loadStudentsStore() {
+    var store = readJson(KEYS.students, {});
+    return store && typeof store === "object" && !Array.isArray(store) ? store : {};
+  }
+
+  function saveStudentsStore(store) {
+    return writeJson(KEYS.students, store && typeof store === "object" ? store : {});
+  }
+
+  function loadStudentSupportStore() {
+    var store = readJson(KEYS.studentSupport, {});
+    return store && typeof store === "object" && !Array.isArray(store) ? store : {};
+  }
+
+  function saveStudentSupportStore(store) {
+    return writeJson(KEYS.studentSupport, store && typeof store === "object" ? store : {});
+  }
+
+  function loadSessionLogs() {
+    var rows = readJson(KEYS.sessionLogs, []);
+    return Array.isArray(rows) ? rows : [];
+  }
+
+  function saveSessionLogs(rows) {
+    return writeJson(KEYS.sessionLogs, Array.isArray(rows) ? rows : []);
+  }
+
+  function migrationState() {
+    var state = readJson(KEYS.migrationState, {});
+    return state && typeof state === "object" && !Array.isArray(state) ? state : {};
+  }
+
+  function markMigration(name) {
+    var state = migrationState();
+    state[String(name || "")] = new Date().toISOString();
+    writeJson(KEYS.migrationState, state);
+  }
+
+  function hasMigration(name) {
+    return !!migrationState()[String(name || "")];
+  }
+
+  function migrateLegacyStudents() {
+    if (hasMigration("students")) return { migrated: false, changed: false };
+    var store = loadStudentsStore();
+    var changed = false;
+    var legacyCaseload = readJson("cs_caseload_v1", null);
+    var legacyRows = [];
+    if (legacyCaseload && Array.isArray(legacyCaseload.students)) legacyRows = legacyCaseload.students.slice();
+    var olderRows = readJson("cs.caseload.v1", []);
+    if (Array.isArray(olderRows)) legacyRows = legacyRows.concat(olderRows);
+    legacyRows.forEach(function (row) {
+      var id = String(row && (row.id || row.studentId || row.name) || "").trim();
+      if (!id) return;
+      if (!store[id]) {
+        store[id] = {
+          id: id,
+          name: String(row.name || "Student"),
+          tier: String(row.tier || ""),
+          grade: String(row.grade || row.gradeBand || row.gradeLevel || ""),
+          updatedAt: new Date().toISOString()
+        };
+        changed = true;
+      }
+    });
+    if (changed) saveStudentsStore(store);
+    markMigration("students");
+    return { migrated: true, changed: changed };
+  }
+
+  function migrateLegacySupportStore() {
+    if (hasMigration("studentSupport")) return { migrated: false, changed: false };
+    var store = loadStudentSupportStore();
+    var changed = false;
+    var legacy = readJson("CS_SUPPORT_STORE_V1", null);
+    var students = legacy && legacy.students && typeof legacy.students === "object" ? legacy.students : {};
+    Object.keys(students).forEach(function (studentId) {
+      if (store[studentId]) return;
+      store[studentId] = students[studentId];
+      changed = true;
+    });
+    if (changed) saveStudentSupportStore(store);
+    markMigration("studentSupport");
+    return { migrated: true, changed: changed };
+  }
+
+  function migrateLegacySessionLogs() {
+    if (hasMigration("sessionLogs")) return { migrated: false, changed: false };
+    var logs = loadSessionLogs();
+    var byId = {};
+    logs.forEach(function (row) {
+      var id = String(row && (row.sessionId || row.id) || "");
+      if (id) byId[id] = row;
+    });
+    var changed = false;
+    var legacyLists = [
+      readJson("cs_sessions_v1", []),
+      readJson("CS_EVIDENCE_V1", null) && readJson("CS_EVIDENCE_V1", null).sessions
+    ];
+    legacyLists.forEach(function (rows) {
+      if (!Array.isArray(rows)) return;
+      rows.forEach(function (row) {
+        var id = String(row && (row.sessionId || row.id) || "");
+        if (!id || byId[id]) return;
+        byId[id] = row;
+        changed = true;
+      });
+    });
+    if (changed) {
+      saveSessionLogs(Object.keys(byId).map(function (id) { return byId[id]; }));
+    }
+    markMigration("sessionLogs");
+    return { migrated: true, changed: changed };
+  }
+
+  function migrateLegacyTeacherData() {
+    return {
+      students: migrateLegacyStudents(),
+      studentSupport: migrateLegacySupportStore(),
+      sessionLogs: migrateLegacySessionLogs(),
+      schedule: migrateLessonBriefBlocks()
+    };
+  }
+
+  function loadTeacherProfile() {
+    var profile = readJson(KEYS.teacherProfile, {});
+    if (!profile || typeof profile !== "object" || Array.isArray(profile)) profile = {};
+    return {
+      id: String(profile.id || "").trim(),
+      name: String(profile.name || "").trim(),
+      email: String(profile.email || "").trim(),
+      school: String(profile.school || "").trim()
+    };
+  }
+
+  function saveTeacherProfile(profile) {
+    var current = loadTeacherProfile();
+    var next = Object.assign({}, current, profile || {});
+    return writeJson(KEYS.teacherProfile, next);
+  }
+
+  function loadClassContexts() {
+    var map = readJson(KEYS.classContexts, {});
+    return map && typeof map === "object" && !Array.isArray(map) ? map : {};
+  }
+
+  function saveClassContext(classId, patch) {
+    var map = loadClassContexts();
+    var key = String(classId || "").trim();
+    if (!key) return false;
+    map[key] = Object.assign({}, map[key] || {}, patch || {});
+    return writeJson(KEYS.classContexts, map);
+  }
+
+  function loadLessonContexts() {
+    var map = readJson(KEYS.lessonContext, {});
+    return map && typeof map === "object" && !Array.isArray(map) ? map : {};
+  }
+
+  function saveLessonContext(contextId, patch) {
+    var map = loadLessonContexts();
+    var key = String(contextId || "").trim();
+    if (!key) return false;
+    map[key] = Object.assign({}, map[key] || {}, patch || {});
+    return writeJson(KEYS.lessonContext, map);
+  }
+
+  return {
+    KEYS: KEYS,
+    todayStamp: todayStamp,
+    normalizeDayStamp: normalizeDayStamp,
+    normalizeBlock: normalizeBlock,
+    loadScheduleMap: loadScheduleMap,
+    saveScheduleMap: saveScheduleMap,
+    loadScheduleBlocks: loadScheduleBlocks,
+    saveScheduleBlocks: saveScheduleBlocks,
+    migrateLessonBriefBlocks: migrateLessonBriefBlocks,
+    loadTeacherProfile: loadTeacherProfile,
+    saveTeacherProfile: saveTeacherProfile,
+    loadClassContexts: loadClassContexts,
+    saveClassContext: saveClassContext,
+    loadLessonContexts: loadLessonContexts,
+    saveLessonContext: saveLessonContext,
+    loadStudentsStore: loadStudentsStore,
+    saveStudentsStore: saveStudentsStore,
+    loadStudentSupportStore: loadStudentSupportStore,
+    saveStudentSupportStore: saveStudentSupportStore,
+    loadSessionLogs: loadSessionLogs,
+    saveSessionLogs: saveSessionLogs,
+    migrateLegacyTeacherData: migrateLegacyTeacherData,
+    get: get,
+    set: set,
+    remove: remove,
+    readJson: readJson,
+    writeJson: writeJson
+  };
+});
