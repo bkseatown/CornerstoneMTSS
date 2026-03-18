@@ -9884,6 +9884,18 @@ a:hover,
   #play-style-toggle {
     display: none;
   }
+
+  /* Fix keyboard overflow on mobile play mode */
+  html[data-home-mode="play"] {
+    --gap-key: 3px;
+    --key-min-w: 26px;
+  }
+
+  html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
+    flex: 0 0 clamp(26px, 7vw, 32px);
+    min-width: clamp(26px, 7vw, 32px);
+    max-width: clamp(26px, 7vw, 32px);
+  }
 }
 
 /* ==========================================
@@ -10184,6 +10196,26 @@ html[data-home-mode="play"] .gameplay-audio {
 html[data-home-mode="play"] .key-backspace-glyph {
   width: 28px;
   height: 28px;
+}
+
+/* ═════════════════════════════════════════════════
+   Mobile Play Mode Keyboard Fix (375px-480px)
+   Reduce key size to prevent left-side cut-off
+   ═════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  html[data-home-mode="play"] {
+    --gap-key: 3px;
+  }
+
+  html[data-home-mode="play"] .key-row {
+    gap: 3px;
+  }
+
+  html[data-home-mode="play"] .key:not(.wide):not(.key-chunk) {
+    flex: 0 0 26px !important;
+    min-width: 26px !important;
+    max-width: 26px !important;
+  }
 }
 
 @media (max-height: 860px) and (min-width: 980px) {
