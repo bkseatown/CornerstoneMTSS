@@ -94,6 +94,18 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game
   50%, 100% { opacity: 0.3; }
 }
 
+/* ── Keyboard Press Animation ────────────────────────────── */
+@keyframes cg-key-press {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(0.96) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.cg-tile-bank button:active,
+body.game-platform-page .cg-action:active {
+  animation: cg-key-press 140ms ease-out;
+}
+
 /* 2026-03-11 global viewport-fit system (dashboard/stage/course) */
 body.game-platform-page {
   --page-top-gap: clamp(6px, 1.2vh, 14px);

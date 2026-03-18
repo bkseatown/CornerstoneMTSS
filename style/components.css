@@ -6223,10 +6223,10 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .hint-clue-card {
   position: fixed;
-  bottom: clamp(50px, 8vh, 120px);
-  left: 50%;
-  transform: translateX(-50%) translateY(10px) scale(0.92);
-  width: min(260px, calc(100vw - 40px));
+  top: clamp(140px, calc(var(--header-h, 0px) + var(--focus-h, 0px) + 80px), 200px);
+  right: 8px;
+  transform: translateY(10px) scale(0.92);
+  width: min(240px, calc(100vw - 16px));
   max-height: min(35vh, 220px);
   overflow: auto;
   padding: 9px 10px 9px;
@@ -6268,7 +6268,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .hint-clue-card.visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
