@@ -9,7 +9,7 @@
   rowCells.forEach(rowCellArray => {
     rowCellArray.forEach(cell => {
       cell.style.color = "transparent";
-      cell.style.backgroundColor = "white"; // Neutral white tiles
+      cell.style.background = "white"; // Neutral white tiles
     });
   });
 
@@ -33,16 +33,16 @@
         rowCellArray.forEach(cell => {
           const classList = cell.className;
 
-          // Apply colors based on original class
+          // Apply colors based on original class (matching actual game colors)
           if (classList.includes("is-miss")) {
-            cell.style.backgroundColor = "#787c7f"; // Gray for letters not in word
+            cell.style.background = "linear-gradient(180deg, #d8e1ed, #becad9)"; // Light blue/gray
           } else if (classList.includes("is-present")) {
-            cell.style.backgroundColor = "#c9b458"; // Yellow for correct letter, wrong spot
+            cell.style.background = "linear-gradient(180deg, #efcf77, #d3a641)"; // Yellow/gold
           } else if (classList.includes("is-hit")) {
-            cell.style.backgroundColor = "#6ca965"; // Green for correct spot
+            cell.style.background = "linear-gradient(180deg, #9ed46d, #72b146)"; // Green
           }
 
-          cell.style.transition = "background-color 200ms ease-in";
+          cell.style.transition = "background 200ms ease-in";
         });
       }, rowCompleteDelay);
 
@@ -55,8 +55,8 @@
       rowCells.forEach(rowCellArray => {
         rowCellArray.forEach(cell => {
           cell.style.color = "transparent";
-          cell.style.backgroundColor = "white"; // Reset to neutral
-          cell.style.transition = "background-color 200ms ease-in";
+          cell.style.background = "white"; // Reset to neutral
+          cell.style.transition = "background 200ms ease-in";
         });
       });
       setTimeout(animateTyping, 500); // Small delay before restarting
