@@ -2896,9 +2896,14 @@
   function installMediaSessionControls() {
     if (!('mediaSession' in navigator)) return;
     const safeBind = (action, handler) => {
-      try { navigator.mediaSession.setActionHandler(action, handler); } catch {}
+      try {
+        navigator.mediaSession.setActionHandler(action, (details) => {
+          // Prevent other media players from handling these actions
+          handler(details);
+        });
+      } catch {}
     };
-    safeBind('play', () => {
+    safeBind('play', (details) => {
       const selected = normalizeMusicMode(_el('s-music')?.value || prefs.music || DEFAULT_PREFS.music);
       if (selected === 'off') {
         const next = getPreferredMusicOnMode();
@@ -2912,18 +2917,22 @@
       }
       syncMediaSessionControls();
     });
-    safeBind('pause', () => {
+    safeBind('pause', (details) => {
       if (musicController && typeof musicController.pause === 'function') {
         musicController.pause();
       }
       syncMediaSessionControls();
     });
-    safeBind('nexttrack', () => {
+    safeBind('nexttrack', (details) => {
       stepMusicVibe(1);
     });
-    safeBind('previoustrack', () => {
+    safeBind('previoustrack', (details) => {
       stepMusicVibe(-1);
     });
+    // Set initial playback state to ensure Media Session is active
+    try {
+      navigator.mediaSession.playbackState = 'paused';
+    } catch {}
   }
 
   function syncQuickMusicDock(selectedMode, activeMode) {

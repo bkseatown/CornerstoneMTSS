@@ -145,10 +145,27 @@ function createMusicModule(DEFAULT_PREFS) {
     audioEl = new Audio();
     audioEl.loop = true;
     audioEl.preload = 'auto';
+    audioEl.crossOrigin = 'anonymous';
+    audioEl.controlsList = 'nodownload';
+    // Request audio focus to prevent system media controls from going to competing players
+    if ('requestAudioFocus' in audioEl) {
+      audioEl.requestAudioFocus?.('content');
+    }
     audioEl.addEventListener('error', () => {
       if (mode === 'off') return;
       startSynth(mode);
     });
+    // When audio starts playing, update Media Session to indicate game has audio focus
+    audioEl.addEventListener('play', () => {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
+    }, { passive: true });
+    audioEl.addEventListener('pause', () => {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+    }, { passive: true });
     return audioEl;
   };
 
