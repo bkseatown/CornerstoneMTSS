@@ -796,6 +796,8 @@
   var focusSupportUnlockTimer = 0;
   var focusSupportUnlockedByMiss = false;
   var currentRoundSupportPromptShown = false;
+  var focusSupportEligibleAt = 0;  // Timestamp when 30 seconds have elapsed for showing help
+  var gameStartedAt = 0;  // Track when current game started
 
   // One-time baseline migration so existing installs land on your intended defaults.
   if (localStorage.getItem(PREF_MIGRATION_KEY) !== 'done') {
@@ -4591,6 +4593,10 @@
     if (!card) return false;
     const liveState = state || (WQGame.getState?.() || {});
     if (!liveState?.word || liveState.gameOver) return false;
+    // Only show help after first attempt AND 30 seconds have elapsed
+    const guessCount = Array.isArray(liveState.guesses) ? liveState.guesses.length : 0;
+    const timeElapsed = Date.now() - gameStartedAt;
+    if (guessCount < 1 || timeElapsed < 30000) return false;
     const suggestionBtn = _el('support-choice-suggestion');
     const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
     if (suggestionBtn) {
@@ -15254,6 +15260,8 @@
     focusSupportUnlockedByMiss = false;
     focusSupportUnlockAt = Date.now() + 20000;
     currentRoundSupportPromptShown = false;
+    gameStartedAt = Date.now();
+    focusSupportEligibleAt = gameStartedAt + 30000;  // Show help only after 30 seconds
     scheduleFocusSupportUnlock();
     hideInformantHintCard();
     hideStarterWordCard();

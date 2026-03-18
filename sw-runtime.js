@@ -6,7 +6,7 @@
  * - Audio files: stale-while-revalidate runtime cache (bounded size)
  */
 
-const SW_VERSION = '20260318h';
+const SW_VERSION = '20260318i';
 const RUNTIME_BUILD_ID = new URL(self.location.href).searchParams.get('v') || SW_VERSION;
 const CACHE_PREFIX = `cs-cache-${RUNTIME_BUILD_ID}`;
 const SHELL_CACHE = `${CACHE_PREFIX}-shell`;
