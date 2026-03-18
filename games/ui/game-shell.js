@@ -3481,8 +3481,9 @@
         return [
           '<div class="cg-typing-course-page">',
           '  <section class="cg-typing-course-welcome">',
-          '    <div class="cg-typing-course-start cg-typing-course-start--welcome">',
+          '    <div class="cg-typing-course-start cg-typing-course-start--welcome' + (context.typingPlacementRequired ? ' cg-typing-course-start--placement' : '') + '">',
           '      <div class="cg-typing-course-start__head">',
+          (context.typingPlacementRequired ? '        <span class="cg-typing-course-start--placement__badge">✓ NEW STUDENT · PLACEMENT TEST</span>' : ''),
           '        <p class="cg-kicker">Start your course</p>',
           '        <h2>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Start in the right spot" : ("Continue with " + currentUnitMeta.title)) + '</h2>',
           '        <p>' + runtimeRoot.CSGameComponents.escapeHtml(context.typingPlacementRequired ? "Take one short check, unlock the right path, and begin with confidence." : ("Open " + ((currentLesson && currentLesson.lessonLabel) || "the next lesson") + " and keep building fluent finger patterns.")) + '</p>',
