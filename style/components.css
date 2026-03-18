@@ -6595,16 +6595,16 @@ html[data-home-mode="play"] #toast:not(.visible) {
 
 .support-choice-card {
   position: fixed;
-  top: calc(var(--header-h) + var(--focus-h) + 20px);
-  right: 14px;
-  width: min(260px, calc(100vw - 28px));
-  padding: 12px;
-  border-radius: 18px;
-  border: 2px solid #6ba3ff;
-  background: linear-gradient(155deg, #ffffff 0%, #f0f7ff 100%);
-  box-shadow: 0 12px 32px rgba(15, 24, 36, 0.18), inset 0 1px 0 rgba(255,255,255,0.92);
+  top: calc(var(--header-h) + var(--focus-h) + 24px);
+  right: 8px;
+  width: min(190px, calc(100vw - 16px));
+  padding: 8px;
+  border-radius: 14px;
+  border: 2px solid #5ba3ff;
+  background: linear-gradient(155deg, #ffffff 0%, #e8f4ff 100%);
+  box-shadow: 0 10px 28px rgba(15, 24, 36, 0.16), inset 0 1px 0 rgba(255,255,255,0.94);
   display: grid;
-  gap: 10px;
+  gap: 7px;
   z-index: 206;
   cursor: grab;
   user-select: none;
@@ -6622,9 +6622,9 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .support-choice-title {
-  font-size: 0.98rem;
-  font-weight: 900;
-  color: #314455;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1a3d5c;
 }
 
 .support-choice-close {
@@ -6641,10 +6641,11 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .support-choice-message {
-  font-size: 0.80rem;
-  font-weight: 700;
-  line-height: 1.28;
-  color: #1a3d5c;
+  font-size: 0.75rem;
+  font-weight: 680;
+  line-height: 1.24;
+  color: #2a4d6f;
+  margin: -2px 0 0 0;
 }
 
 .support-choice-actions {
@@ -6654,22 +6655,23 @@ html[data-home-mode="play"] #toast:not(.visible) {
 }
 
 .support-choice-btn {
-  min-height: 40px;
-  border-radius: 12px;
-  border: 1px solid #8fc7ff;
-  background: linear-gradient(155deg, #ffffff 0%, #e6f2ff 100%);
+  min-height: 36px;
+  border-radius: 10px;
+  border: 1px solid #7db8ff;
+  background: linear-gradient(155deg, #ffffff 0%, #e8f2ff 100%);
   color: #1a3d5c;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 140ms ease;
-  padding: 10px 8px;
+  transition: all 120ms ease;
+  padding: 8px 6px;
+  line-height: 1.2;
 }
 
 .support-choice-btn:hover {
-  background: linear-gradient(155deg, #f0f8ff 0%, #d0e8ff 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 163, 255, 0.2);
+  background: linear-gradient(155deg, #f2f9ff 0%, #d8eaff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(107, 163, 255, 0.18);
 }
 
 .support-choice-btn:active {
@@ -6685,10 +6687,18 @@ html[data-home-mode="play"] #toast:not(.visible) {
 .support-choice-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.72rem;
-  font-weight: 760;
-  color: #4c6174;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #5a7189;
+  margin-top: 2px;
+}
+
+.support-choice-toggle input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .listening-mode-overlay {
