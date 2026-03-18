@@ -86,11 +86,10 @@
       <div class="header-right">
         <div id="focus-inline-wrap" class="focus-inline-wrap header-focus-inline-wrap">
           <div class="focus-inline-actions" role="group" aria-label="Quick supports">
-            <button id="focus-help-btn" class="focus-action-btn" type="button" aria-label="Open help options">
-              <svg class="icon-glyph icon-glyph-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <circle cx="12" cy="12" r="8.2"></circle>
-                <path d="M9.7 9.2a2.55 2.55 0 0 1 4.71 1.32c0 1.62-1.69 2.13-2.41 2.91-.34.36-.5.64-.5 1.25"></path>
-                <circle cx="12" cy="17.2" r="0.9" fill="currentColor" stroke="none"></circle>
+            <button id="teacher-dashboard-btn" class="icon-btn" type="button" title="Back to Game Gallery" aria-label="Back to Game Gallery">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M15 18 9 12l6-6"></path>
+                <path d="M9 12h10"></path>
               </svg>
             </button>
           </div>
@@ -160,6 +159,13 @@
           <button id="play-tools-btn" class="icon-btn hidden" type="button" aria-haspopup="dialog" aria-controls="play-tools-drawer" aria-expanded="false" aria-label="Open tools">☰</button>
         </div>
         <div class="header-quick-controls">
+          <button id="focus-help-btn" class="header-quick-btn" type="button" aria-label="Open help options" title="Open help options">
+            <svg class="icon-glyph icon-glyph-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="8.2"></circle>
+              <path d="M9.7 9.2a2.55 2.55 0 0 1 4.71 1.32c0 1.62-1.69 2.13-2.41 2.91-.34.36-.5.64-.5 1.25"></path>
+              <circle cx="12" cy="17.2" r="0.9" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </button>
           <button id="phonics-clue-open-btn" class="header-quick-btn hidden" type="button" title="Open clue card" aria-label="Open Clue Sprint for detective clue practice">
             <span class="quick-btn-label">Clue</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -195,13 +201,6 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M4 19V6a2 2 0 0 1 2-2h6v17H6a2 2 0 0 1-2-2z"></path>
               <path d="M20 19V6a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 0 2-2z"></path>
-            </svg>
-          </button>
-          <button id="teacher-dashboard-btn" class="header-quick-btn" type="button" title="Back to Game Gallery" aria-label="Back to Game Gallery">
-            <span class="sr-only">Back to Game Gallery</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-              <path d="M15 18 9 12l6-6"></path>
-              <path d="M9 12h10"></path>
             </svg>
           </button>
           <button id="new-game-btn" data-testid="new-game-btn" data-no-hover-note="true">Next Word</button>
