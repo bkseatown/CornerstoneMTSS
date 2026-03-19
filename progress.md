@@ -757,3 +757,20 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - `cb6d8ff0`: Remaining focus functions (formatGradeBandLabel, showStarterWordCard, updateFocusSummaryLabel, setFocusValue)
 - **Estimated Coverage**: ~50+ module dependencies resolved; ~90+ functions still requiring imports (many inside init() blocks)
 - **Next Phase**: Identify remaining missing imports + determine architectural refactoring needs for functions wrapped in init() blocks
+
+2026-03-19: ES6 Module Refactoring - Continuation Session (70+ Functions)
+- **5 additional commits** addressing high-frequency cross-module dependencies
+- **Systematic approach**: Identified all 2+ frequency functions and added missing imports
+- **Functions addressed in continuation**:
+  - **Theme & UI Functions**: hideSupportChoiceCard, showAssessmentLockNotice, applyTheme, applyPlayStyle, setHintMode, syncPlayStyleToggleUI, getHintMode, getRevealFocusMode, syncHeaderControlsVisibility, isAssessmentRoundLocked, hideStarterWordCard, showSupportChoiceCard
+  - **Audio & Challenge Functions**: closeRevealChallengeModal, openRevealChallengeModal, startPhonicsClueDeck, skipPhonicsClueCard, saveRevealChallengeResponses, handleChallengeChoiceSelection, getFirstIncompleteChallengeTask, advancePhonicsClueCard, awardPhonicsClueGuessPoint, startStandaloneMissionLab, awardPhonicsClueBonusPoint, togglePhonicsClueTargetVisibility, openFirstRunSetupModal
+  - **Utility Functions**: shouldExpandGradeBandForFocus, getActiveStudentLabel, syncTeacherPresetButtons, getTopErrorKey, copyTextToClipboard, normalizePageMode, setPageMode, persistPageMode, isMissionLabEnabled
+- **Commits in continuation (5)**:
+  - `27c573a0`: Theme and UI function imports (hideSupportChoiceCard, showAssessmentLockNotice, applyTheme, etc.)
+  - `d4a8e5be`: Audio/challenge modal function imports
+  - `c3108622`: Utility and header control function imports  
+  - `b6fb0d96`: Settings and game utility function imports
+  - `a0457e22`: Remaining audio and theme function imports
+- **Current State**: ~70 high-frequency functions properly exported and imported across modules
+- **Quality Checks**: All guardrail checks passing (file sizes, linting, tokens)
+- **Remaining Issues**: ~90+ functions still inside init() blocks requiring architectural refactoring
