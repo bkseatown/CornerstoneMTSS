@@ -6,9 +6,10 @@
 import { prefs, positionDemoLaunchButton, emitTelemetry } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
 import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach } from './app-game.js';
-import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI } from './app-audio.js';
-import { hideSupportChoiceCard } from './app-theme.js';
+import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI, refreshStandaloneMissionLabHub } from './app-audio.js';
+import { hideSupportChoiceCard, hideInformantHintCard } from './app-theme.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
+import { isMissionLabStandaloneMode } from './app-settings.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

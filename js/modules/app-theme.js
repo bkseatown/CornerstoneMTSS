@@ -12,6 +12,7 @@ import { prefs, setPref, savePrefs,
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
 import { formatGradeBandLabel, getEffectiveGameplayGradeBand } from './app-focus.js';
 import { hideMidgameBoost } from './app-game.js';
+import { isMissionLabStandaloneMode } from './app-settings.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);

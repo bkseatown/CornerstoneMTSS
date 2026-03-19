@@ -7,6 +7,8 @@ import { prefs, setPref, savePrefs, normalizeMasterySort, normalizeMasteryFilter
 import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE, WRITING_STUDIO_ENABLED, MIDGAME_BOOST_ENABLED } from './app-constants.js';
 import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade } from './app-focus.js';
 import { getTopErrorKey, newGame, hideMidgameBoost } from './app-game.js';
+import { refreshStandaloneMissionLabHub } from './app-audio.js';
+import { hideInformantHintCard } from './app-theme.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -3832,4 +3834,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode, getActiveStudentLabel, syncTeacherPresetButtons };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, getActiveStudentLabel, syncTeacherPresetButtons, isMissionLabStandaloneMode };
