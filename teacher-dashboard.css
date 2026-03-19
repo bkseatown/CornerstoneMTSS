@@ -445,12 +445,19 @@ body.td-reports-mode {
   display: flex;
   justify-content: space-between;
   align-items: start;
-  gap: 14px;
+  gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(92, 117, 164, 0.08);
 }
 
 .td-reports-panel__head .dashboard-kicker,
 .td-reports-panel__head .dashboard-section-title {
   margin: 0;
+}
+
+.td-reports-panel__head .dashboard-section-title {
+  font-size: 1.3rem;
+  font-weight: 800;
 }
 
 .td-reports-panel .dashboard-section-meta {
@@ -472,26 +479,38 @@ body.td-reports-mode {
 
 .td-reports-pattern-strip {
   display: grid;
-  gap: 4px;
-  padding: 12px 14px;
+  gap: 6px;
+  padding: 16px;
   border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244, 241, 235, 0.9));
-  box-shadow: 0 6px 16px rgba(45, 58, 76, 0.06);
+  border: 1px solid rgba(92, 117, 164, 0.10);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248, 251, 255, 0.92));
+  box-shadow:
+    0 8px 20px rgba(26, 41, 62, 0.10),
+    0 2px 6px rgba(26, 41, 62, 0.05),
+    inset 0 1px 0 rgba(255,255,255,0.48);
+  transition: all 240ms ease;
+}
+
+.td-reports-pattern-strip:hover {
+  box-shadow:
+    0 10px 24px rgba(26, 41, 62, 0.12),
+    0 4px 8px rgba(26, 41, 62, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.52);
 }
 
 .td-reports-pattern-strip span {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--muted) 80%, white 20%);
+  color: var(--accent);
 }
 
 .td-reports-pattern-strip strong {
-  font-size: 1rem;
-  line-height: 1.15;
-  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-strong);
 }
 
 .td-reports-pattern-strip--warn {
