@@ -3,8 +3,24 @@
  * Theme, projector, motion, hint cards, keyboard sync
  */
 
-import { prefs, setPref } from './app-prefs.js';
-import { DEFAULT_PREFS } from './app-constants.js';
+import { prefs, setPref,
+  normalizeTheme, getThemeFallback, getThemeFamily,
+  normalizeUiSkin, normalizeReportCompactMode,
+  normalizeRevealPacing, normalizeRevealAutoNext,
+  emitTelemetry
+} from './app-prefs.js';
+import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
+
+// Helper function for DOM queries
+const _el = id => document.getElementById(id);
+
+// Module state variables
+var starterCoachTimer = 0;
+var informantHintHideTimer = 0;
+var firstRunSetupPending = false;
+var hintMode = 'on';
+var revealFocusMode = 'on';
+var voicePracticeMode = 'optional';
 
   // ─── 4. Theme / projector / motion helpers ──────────
   function getThemeDisplayLabel(themeId) {
@@ -2692,4 +2708,25 @@ import { DEFAULT_PREFS } from './app-constants.js';
 
 function applyThemeBundle() { applyTheme(prefs.theme); applyProjector(); applyMotion(); }
 
-export { applyTheme, applyProjector, applyMotion, applyThemeBundle };
+export {
+  // Core theme application
+  applyTheme, applyProjector, applyMotion, applyThemeBundle,
+  // UI skin and style
+  applyUiSkin, applyPlayStyle, applyKeyboardLayout, applyKeyboardPreset,
+  applyTextSize, applyAtmosphere, applyBoardStyle, applyKeyStyle,
+  applyFeedback, applyStarterWordMode, applyRevealFocusMode,
+  normalizePlayStyle,
+  applyWilsonMode, applyChunkTabsMode, applyReportCompactMode,
+  // Hint and support
+  getHintMode, setHintMode, getRevealFocusMode,
+  getVoicePracticeMode, setVoicePracticeMode, openFirstRunSetupModal,
+  closeFirstRunSetupModal, hasCompletedFirstRunSetup, isAssessmentRoundLocked,
+  // UI synchronization
+  syncPlayStyleToggleUI, syncHeaderStaticIcons, syncSettingsThemeName,
+  syncBannerThemeName, getThemeDisplayLabel,
+  // State helpers
+  isAnyOverlayModalOpen, showAssessmentLockNotice,
+  hideStarterWordCard, showStarterWordCard,
+  hideInformantHintCard,
+  hideSupportChoiceCard, showSupportChoiceCard
+};

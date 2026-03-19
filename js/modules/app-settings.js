@@ -3,8 +3,10 @@
  * Settings panel, review queue, team mode, voice, home navigation
  */
 
-import { prefs } from './app-prefs.js';
-import { DEFAULT_PREFS } from './app-constants.js';
+import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
+import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS } from './app-constants.js';
+import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus } from './app-focus.js';
+import { getTopErrorKey } from './app-game.js';
 
   // ─── 5. Settings panel wiring ───────────────────────
   const SETTINGS_VIEWS = new Set(['quick', 'advanced']);

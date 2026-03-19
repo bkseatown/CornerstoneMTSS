@@ -5,6 +5,171 @@
 
 import { prefs, setPref } from './app-prefs.js';
 import { DEFAULT_PREFS } from './app-constants.js';
+import { isAssessmentRoundLocked, normalizePlayStyle } from './app-theme.js';
+
+// DOM helper
+const _el = id => document.getElementById(id);
+
+  // ─── Curriculum helpers (extracted from app.js) ─────────────────────
+
+  function getCurriculumLengthForFocus(focusValue, fallback = 'any') {
+    const normalizedFocus = String(focusValue || '').trim().toLowerCase();
+    if (normalizedFocus === 'cvc') return '3';
+    return String(fallback || 'any').trim() || 'any';
+  }
+
+  function normalizeCurriculumTarget(rawTarget) {
+    if (!rawTarget || typeof rawTarget !== 'object') return null;
+    const id = String(rawTarget.id || '').trim();
+    const label = String(rawTarget.label || '').trim();
+    if (!id || !label) return null;
+    const focus = String(rawTarget.focus || 'cvc').trim();
+    const rawLength = String(rawTarget.length || 'any').trim();
+    return Object.freeze({
+      id,
+      label,
+      focus,
+      gradeBand: String(rawTarget.gradeBand || 'K-2').trim(),
+      length: getCurriculumLengthForFocus(focus, rawLength),
+      pacing: String(rawTarget.pacing || '').trim()
+    });
+  }
+
+  function getMappedCurriculumTargets(packId) {
+    const table = window.WQCurriculumTaxonomy;
+    if (!table || typeof table !== 'object') return [];
+    const rows = table[packId];
+    if (!Array.isArray(rows) || !rows.length) return [];
+    return rows
+      .map((row) => normalizeCurriculumTarget(row))
+      .filter(Boolean);
+  }
+
+  function resolveUfliLessonMeta(lessonNumber) {
+    if (lessonNumber <= 8) return { focus: 'cvc', gradeBand: 'K-2', length: '3' };
+    if (lessonNumber <= 24) return { focus: 'digraph', gradeBand: 'K-2', length: '4' };
+    if (lessonNumber <= 34) return { focus: 'cvce', gradeBand: 'K-2', length: '4' };
+    if (lessonNumber <= 52) return { focus: 'vowel_team', gradeBand: 'K-2', length: '5' };
+    if (lessonNumber <= 64) return { focus: 'r_controlled', gradeBand: 'K-2', length: '5' };
+    if (lessonNumber <= 80) return { focus: 'welded', gradeBand: 'G3-5', length: '6' };
+    if (lessonNumber <= 104) return { focus: 'multisyllable', gradeBand: 'G3-5', length: '6' };
+    return { focus: 'suffix', gradeBand: 'G3-5', length: '6' };
+  }
+
+  function buildUfliLessonTargets() {
+    const mapped = getMappedCurriculumTargets('ufli');
+    if (mapped.length) return Object.freeze(mapped);
+    const targets = [];
+    for (let lesson = 1; lesson <= 128; lesson += 1) {
+      const meta = resolveUfliLessonMeta(lesson);
+      targets.push(Object.freeze({
+        id: `ufli-lesson-${lesson}`,
+        label: `UFLI Lesson ${lesson}`,
+        focus: meta.focus,
+        gradeBand: meta.gradeBand,
+        length: meta.length,
+        pacing: `Lesson ${lesson}`
+      }));
+    }
+    return Object.freeze(targets);
+  }
+
+  function buildFundationsLessonTargets() {
+    const mapped = getMappedCurriculumTargets('fundations');
+    if (mapped.length) return Object.freeze(mapped);
+    const byLevel = Object.freeze([
+      Object.freeze({ level: 1, units: 14 }),
+      Object.freeze({ level: 2, units: 17 }),
+      Object.freeze({ level: 3, units: 16 })
+    ]);
+    const targets = [];
+    byLevel.forEach((row) => {
+      for (let unit = 1; unit <= row.units; unit += 1) {
+        targets.push(Object.freeze({
+          id: `fundations-l${row.level}-u${unit}`,
+          label: `Fundations Level ${row.level} Unit ${unit}`,
+          focus: 'structured_literacy',
+          gradeBand: row.level <= 1 ? 'K-2' : 'G3-5',
+          length: row.level <= 1 ? '4' : '6',
+          pacing: `Level ${row.level} · Unit ${unit}`
+        }));
+      }
+    });
+    return Object.freeze(targets);
+  }
+
+  function buildWilsonLessonTargets() {
+    const mapped = getMappedCurriculumTargets('wilson');
+    if (mapped.length) return Object.freeze(mapped);
+    const targets = [];
+    for (let step = 1; step <= 12; step += 1) {
+      const gradeBand = step <= 9 ? 'G3-5' : 'G6-8';
+      const length = step <= 9 ? '6' : '7';
+      targets.push(Object.freeze({
+        id: `wilson-step-${step}`,
+        label: `Wilson Reading System Step ${step}`,
+        focus: 'structured_literacy',
+        gradeBand,
+        length,
+        pacing: `Step ${step}`
+      }));
+    }
+    return Object.freeze(targets);
+  }
+
+  function buildLexiaWidaLessonTargets() {
+    const mapped = getMappedCurriculumTargets('lexiawida');
+    if (mapped.length) return Object.freeze(mapped);
+    return Object.freeze([
+      Object.freeze({ id: 'lexia-wida-entering-k2', label: 'Lexia English WIDA Entering (1) · Grade K-2 · Lessons 1-2', focus: 'cvc', gradeBand: 'K-2', length: '3', pacing: 'Entering 1 · K-2' }),
+      Object.freeze({ id: 'lexia-wida-entering-36', label: 'Lexia English WIDA Entering (1) · Grades 3-6 · Lessons 1-3', focus: 'multisyllable', gradeBand: 'G3-5', length: '5', pacing: 'Entering 1 · Grades 3-6' })
+    ]);
+  }
+
+  const CURRICULUM_LESSON_PACKS = Object.freeze({
+    custom: Object.freeze({
+      label: 'Manual (no pack)',
+      targets: Object.freeze([])
+    }),
+    phonics: Object.freeze({
+      label: 'Phonics Curriculum',
+      targets: Object.freeze([
+        Object.freeze({ id: 'phonics-k2-cvc', label: 'Phonics K-2 · CVC and short vowels', focus: 'cvc', gradeBand: 'K-2', length: '3', pacing: 'Weeks 1-6 (Sep-Oct)' }),
+        Object.freeze({ id: 'phonics-k2-digraph', label: 'Phonics K-2 · Digraphs and blends', focus: 'digraph', gradeBand: 'K-2', length: '4', pacing: 'Weeks 7-12 (Oct-Nov)' }),
+        Object.freeze({ id: 'phonics-k2-cvce', label: 'Phonics K-2 · Magic E (CVCe)', focus: 'cvce', gradeBand: 'K-2', length: '4', pacing: 'Weeks 13-18 (Dec-Jan)' }),
+        Object.freeze({ id: 'phonics-35-vowel-team', label: 'Phonics G3-5 · Vowel teams', focus: 'vowel_team', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 19-24 (Feb-Mar)' }),
+        Object.freeze({ id: 'phonics-35-r-controlled', label: 'Phonics G3-5 · R-controlled vowels', focus: 'r_controlled', gradeBand: 'G3-5', length: '5', pacing: 'Weeks 25-30 (Apr-May)' }),
+        Object.freeze({ id: 'phonics-35-multisyllable', label: 'Phonics G3-5 · Multisyllable transfer', focus: 'multisyllable', gradeBand: 'G3-5', length: '6', pacing: 'Weeks 31-36 (May-Jun)' })
+      ])
+    }),
+    ufli: Object.freeze({
+      label: 'UFLI',
+      targets: buildUfliLessonTargets()
+    }),
+    fundations: Object.freeze({
+      label: 'Fundations',
+      targets: buildFundationsLessonTargets()
+    }),
+    wilson: Object.freeze({
+      label: 'Wilson Reading System',
+      targets: buildWilsonLessonTargets()
+    }),
+    lexiawida: Object.freeze({
+      label: 'Lexia English (WIDA)',
+      targets: buildLexiaWidaLessonTargets()
+    }),
+    justwords: Object.freeze({
+      label: 'Just Words',
+      targets: Object.freeze([
+        Object.freeze({ id: 'jw-unit-1', label: 'Just Words Unit 1', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 1' }),
+        Object.freeze({ id: 'jw-unit-2', label: 'Just Words Unit 2', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 2' }),
+        Object.freeze({ id: 'jw-unit-3', label: 'Just Words Unit 3', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 3' }),
+        Object.freeze({ id: 'jw-unit-4', label: 'Just Words Unit 4', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 4' }),
+        Object.freeze({ id: 'jw-unit-5', label: 'Just Words Unit 5', focus: 'structured_literacy', gradeBand: 'G6-8', length: '7', pacing: 'Unit 5' })
+      ])
+    })
+  });
+  const CURRICULUM_PACK_ORDER = Object.freeze(['ufli', 'fundations', 'wilson', 'lexiawida', 'justwords']);
 
   // ─── 6. Focus + grade alignment ─────────────────────
 
@@ -2131,19 +2296,26 @@ import { DEFAULT_PREFS } from './app-constants.js';
     updateFocusSummaryLabel();
   });
 
-  const initialLessonPackState = syncLessonPackControlsFromPrefs();
-  if (initialLessonPackState.packId !== 'custom' && initialLessonPackState.targetId !== 'custom') {
-    applyLessonTargetConfig(initialLessonPackState.packId, initialLessonPackState.targetId);
+  function initFocus() {
+    const initialLessonPackState = syncLessonPackControlsFromPrefs();
+    if (initialLessonPackState.packId !== 'custom' && initialLessonPackState.targetId !== 'custom') {
+      applyLessonTargetConfig(initialLessonPackState.packId, initialLessonPackState.targetId);
+    }
+    syncGradeFromFocus(_el('setting-focus')?.value || prefs.focus || 'all', { silent: true });
+    enforceFocusSelectionForGrade(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade, { toast: false });
+    enforceClassicFiveLetterDefault();
+    applyAllGradeLengthDefault();
+    updateFocusHint();
+    updateFocusGradeNote();
+    syncChunkTabsVisibility();
+    updateFocusSummaryLabel();
+    closeFocusSearchList();
   }
-  syncGradeFromFocus(_el('setting-focus')?.value || prefs.focus || 'all', { silent: true });
-  enforceFocusSelectionForGrade(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade, { toast: false });
-  enforceClassicFiveLetterDefault();
-  applyAllGradeLengthDefault();
-  updateFocusHint();
-  updateFocusGradeNote();
-  syncChunkTabsVisibility();
-  updateFocusSummaryLabel();
-  closeFocusSearchList();
 
-
-export { getFocusValue, setFocusValue, getFocusLabel };
+export {
+  initFocus,
+  setFocusValue,
+  getFocusLabel,
+  getEffectiveGameplayGradeBand,
+  shouldExpandGradeBandForFocus
+};

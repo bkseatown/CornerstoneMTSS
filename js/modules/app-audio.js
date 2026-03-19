@@ -6,6 +6,9 @@
 import { prefs } from './app-prefs.js';
 import { MISSION_LAB_ENABLED } from './app-constants.js';
 
+// DOM helper
+const _el = id => document.getElementById(id);
+
   // ─── 9. Gameplay audio buttons ──────────────────────
   const entry = () => WQGame.getState()?.entry;
 

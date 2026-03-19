@@ -5,6 +5,9 @@
 
 import { prefs } from './app-prefs.js';
 
+// DOM helper
+const _el = id => document.getElementById(id);
+
   // ─── 8. Input handling ──────────────────────────────
   function insertSequenceIntoGuess(sequence) {
     const letters = String(sequence || '').toLowerCase().replace(/[^a-z]/g, '');

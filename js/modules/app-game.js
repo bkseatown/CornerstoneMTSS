@@ -3,8 +3,11 @@
  * Game state, round tracking, error coaching, Deep Dive challenges
  */
 
-import { prefs } from './app-prefs.js';
+import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
 import { DEFAULT_PREFS, MISSION_LAB_ENABLED } from './app-constants.js';
+
+// DOM helper
+const _el = id => document.getElementById(id);
 
   // ─── 7. New game ────────────────────────────────────
   const MIDGAME_BOOST_KEY = 'wq_v2_midgame_boost_state_v1';
@@ -3754,5 +3757,9 @@ import { DEFAULT_PREFS, MISSION_LAB_ENABLED } from './app-constants.js';
     finishWeeklyProbe({ silent: true });
   });
 
+  function initGame() {
+    // Game initialization happens on-demand via newGame()
+    // Wire up event listeners and game state helpers
+  }
 
-export { newGame, resetRoundTracking, buildRoundMetrics };
+export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey };

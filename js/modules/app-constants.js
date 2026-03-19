@@ -13,6 +13,19 @@ const FEATURES = Object.freeze({
 const DEMO_WORDS = Object.freeze(['plant', 'crane', 'shine', 'brave', 'grasp']);
 const DEMO_TARGET_WORD = DEMO_WORDS[0];
 
+// Demo mode detection
+function detectDemoModeConstant() {
+  let fromQuery = false;
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    const demoParam = String(params.get('demo') || '').trim().toLowerCase();
+    const modeParam = String(params.get('mode') || '').trim().toLowerCase();
+    fromQuery = demoParam === '1' || demoParam === 'true' || modeParam === 'demo';
+  } catch {}
+  return fromQuery || window.WQ_DEMO === true;
+}
+const DEMO_MODE = detectDemoModeConstant();
+
 // Storage keys
 const PREF_KEY = 'wq_v2_prefs';
 const PREF_MIGRATION_KEY = 'wq_v2_pref_defaults_20260222';
@@ -123,7 +136,7 @@ function withAppBase(path) {
 }
 
 export {
-  FEATURES, DEMO_WORDS, DEMO_TARGET_WORD,
+  FEATURES, DEMO_MODE, DEMO_WORDS, DEMO_TARGET_WORD,
   PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY, PREF_MUSIC_AUTO_MIGRATION_KEY,
   PREF_GUESSES_DEFAULT_MIGRATION_KEY, FIRST_RUN_SETUP_KEY, SESSION_SUMMARY_KEY, ROSTER_STATE_KEY,
   PROBE_HISTORY_KEY, PROBE_HISTORY_LEGACY_KEYS, STUDENT_GOALS_KEY, PLAYLIST_STATE_KEY,

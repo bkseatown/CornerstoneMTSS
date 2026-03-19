@@ -4,7 +4,7 @@
  */
 
 import {
-  DEFAULT_PREFS, PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY,
+  FEATURES, DEMO_MODE, DEFAULT_PREFS, PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY,
   PREF_MUSIC_AUTO_MIGRATION_KEY, PREF_GUESSES_DEFAULT_MIGRATION_KEY, FIRST_RUN_SETUP_KEY,
   ALLOWED_MUSIC_MODES, ALLOWED_VOICE_MODES, ALLOWED_KEY_STYLES, ALLOWED_KEYBOARD_LAYOUTS,
   ALLOWED_UI_SKINS, KEYBOARD_LAYOUT_ORDER, KEYBOARD_LAYOUT_LABELS, SUPPORT_PROMPT_PREF_KEY,
@@ -2437,7 +2437,7 @@ export {
   // UI normalization
   normalizeKeyboardLayout, normalizeStarterWordMode, normalizeCuratedMusicMode,
   normalizeUiSkin, normalizeTextSize, normalizeKeyboardPresetId, deriveKeyboardPresetId,
-  normalizeKeyboardLayout, getKeyboardLayoutLabel, getNextKeyboardLayout,
+  getKeyboardLayoutLabel, getNextKeyboardLayout,
   getSupportPromptMode, setSupportPromptMode,
   // Theme helpers
   normalizeTheme, getThemeFallback, getThemeFamily, shouldPersistTheme, readThemeFromQuery,
@@ -2447,6 +2447,8 @@ export {
   normalizeRevealPacing, normalizeRevealAutoNext,
   // Music and voice
   normalizeMusicMode, normalizeVoiceMode,
+  // Report and mastery normalization
+  normalizeReportCompactMode, normalizeMasterySort, normalizeMasteryFilter,
   // Telemetry
   emitTelemetry
 };
