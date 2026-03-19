@@ -4023,11 +4023,11 @@ body .hidden {
   color: var(--text-secondary);
 }
 .td-specialist-planning__list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   width: 100%;
-  overflow-x: visible;
+  max-width: 100%;
 }
 .td-specialist-planning__body {
   border: 1px solid color-mix(in oklab, var(--surface-border) 62%, transparent);
