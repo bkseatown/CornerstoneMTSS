@@ -11,6 +11,7 @@ import { prefs, setPref, savePrefs,
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
 import { formatGradeBandLabel } from './app-focus.js';
+import { hideMidgameBoost } from './app-game.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);
