@@ -9,7 +9,7 @@ import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideM
 import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI, refreshStandaloneMissionLabHub } from './app-audio.js';
 import { hideSupportChoiceCard, hideInformantHintCard } from './app-theme.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
-import { isMissionLabStandaloneMode, closeQuickPopover } from './app-settings.js';
+import { isMissionLabStandaloneMode, closeQuickPopover, normalizeReviewWord } from './app-settings.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

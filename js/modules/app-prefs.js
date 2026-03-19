@@ -14,6 +14,7 @@ import {
 import { newGame } from './app-game.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
 import { closeQuickPopover } from './app-settings.js';
+import { normalizePlayStyle } from './app-theme.js';
 
 // Debug mode
 const DEMO_DEBUG_MODE = (() => {
