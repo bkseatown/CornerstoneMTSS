@@ -3,7 +3,7 @@
  * Theme, projector, motion, hint cards, keyboard sync
  */
 
-import { prefs, setPref,
+import { prefs, setPref, savePrefs,
   normalizeTheme, getThemeFallback, getThemeFamily,
   normalizeUiSkin, normalizeReportCompactMode,
   normalizeRevealPacing, normalizeRevealAutoNext,
