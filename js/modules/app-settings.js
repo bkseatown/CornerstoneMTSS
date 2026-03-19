@@ -4,7 +4,7 @@
  */
 
 import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
-import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT } from './app-constants.js';
+import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE } from './app-constants.js';
 import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus } from './app-focus.js';
 import { getTopErrorKey } from './app-game.js';
 
@@ -13,6 +13,42 @@ const _el = id => document.getElementById(id);
 
 // Module state
 let pageMode = 'wordquest';
+
+// Local page mode utilities (extracted from app-prefs)
+const PAGE_MODE_KEY = 'wordquest_page_mode_v1';
+function normalizePageMode(mode) {
+  if (!MISSION_LAB_ENABLED) return 'wordquest';
+  return String(mode || '').trim().toLowerCase() === 'mission-lab'
+    ? 'mission-lab'
+    : 'wordquest';
+}
+function persistPageMode(mode) {
+  try { localStorage.setItem(PAGE_MODE_KEY, normalizePageMode(mode)); } catch {}
+}
+
+// Coach ribbon state and runtime variables
+let homeCoachRibbon = null;
+let wordQuestCoachRibbon = null;
+let homeMode = 'home';
+let wordQuestCoachKey = 'before_guess';
+let firstRunSetupPending = false;
+let focusSupportUnlockAt = 0;
+let focusSupportUnlockTimer = 0;
+let currentRoundSupportPromptShown = false;
+let supportModalTimer = 0;
+
+// Dev mode detection
+function isDevModeEnabled() {
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    if (String(params.get('env') || '').toLowerCase() === 'dev') return true;
+  } catch {}
+  try {
+    return localStorage.getItem('cs_allow_dev') === '1';
+  } catch {
+    return false;
+  }
+}
 
   // ─── 5. Settings panel wiring ───────────────────────
   const SETTINGS_VIEWS = new Set(['quick', 'advanced']);

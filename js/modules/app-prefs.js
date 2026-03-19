@@ -135,6 +135,9 @@ function setSupportPromptMode(mode) {
   } catch {}
 }
 
+// Forward declarations for functions defined later in the 2-space block
+let persistPageMode, normalizePageMode, loadStoredPageMode, readPageModeFromQuery, isMissionLabEnabled;
+
   var autoPhysicalKeyboardSwitchApplied = false;
   var firstRunSetupPending = false;
   var pageMode = 'wordquest';
@@ -1303,18 +1306,18 @@ function setSupportPromptMode(mode) {
   });
   initTelemetryUploader();
 
-  function isMissionLabEnabled() {
+  isMissionLabEnabled = function() {
     return MISSION_LAB_ENABLED;
-  }
+  };
 
-  function normalizePageMode(mode) {
+  normalizePageMode = function(mode) {
     if (!isMissionLabEnabled()) return 'wordquest';
     return String(mode || '').trim().toLowerCase() === 'mission-lab'
       ? 'mission-lab'
       : 'wordquest';
-  }
+  };
 
-  function readPageModeFromQuery() {
+  readPageModeFromQuery = function() {
     try {
       const params = new URLSearchParams(window.location.search || '');
       const raw = params.get('page') || params.get('mode') || '';
@@ -1322,19 +1325,19 @@ function setSupportPromptMode(mode) {
     } catch {
       return 'wordquest';
     }
-  }
+  };
 
-  function loadStoredPageMode() {
+  loadStoredPageMode = function() {
     try {
       return normalizePageMode(localStorage.getItem(PAGE_MODE_KEY) || 'wordquest');
     } catch {
       return 'wordquest';
     }
-  }
+  };
 
-  function persistPageMode(mode) {
+  persistPageMode = function(mode) {
     try { localStorage.setItem(PAGE_MODE_KEY, normalizePageMode(mode)); } catch {}
-  }
+  };
 
   function resolveBuildLabel() {
     const stampedBuild = String(window.CS_BUILD?.version || '').trim();
@@ -2462,3 +2465,6 @@ export {
   // Telemetry
   emitTelemetry
 };
+
+// Explicit exports for page mode functions
+export { persistPageMode, normalizePageMode, loadStoredPageMode, readPageModeFromQuery, isMissionLabEnabled };
