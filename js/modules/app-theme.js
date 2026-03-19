@@ -12,7 +12,7 @@ import { prefs, setPref, savePrefs,
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
 import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset, getFocusLabel, normalizeLessonPackId, setFocusValue, shouldExpandGradeBandForFocus } from './app-focus.js';
 import { hideMidgameBoost } from './app-game.js';
-import { isMissionLabStandaloneMode, normalizeReviewWord, syncTeacherPresetButtons } from './app-settings.js';
+import { isMissionLabStandaloneMode, normalizeReviewWord, syncTeacherPresetButtons, stopVoiceCaptureNow } from './app-settings.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);

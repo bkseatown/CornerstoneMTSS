@@ -9,7 +9,7 @@ import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideM
 import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI, refreshStandaloneMissionLabHub, closeRevealChallengeModal, openRevealChallengeModal, startPhonicsClueDeck, skipPhonicsClueCard, saveRevealChallengeResponses, handleChallengeChoiceSelection, getFirstIncompleteChallengeTask, advancePhonicsClueCard, awardPhonicsClueGuessPoint, startStandaloneMissionLab, awardPhonicsClueBonusPoint, togglePhonicsClueTargetVisibility } from './app-audio.js';
 import { hideSupportChoiceCard, hideInformantHintCard, showStarterWordCard, applyTheme, showSupportChoiceCard, hideStarterWordCard } from './app-theme.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
-import { isMissionLabStandaloneMode, closeQuickPopover, normalizeReviewWord } from './app-settings.js';
+import { isMissionLabStandaloneMode, closeQuickPopover, normalizeReviewWord, openVoicePracticeAndRecord } from './app-settings.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
