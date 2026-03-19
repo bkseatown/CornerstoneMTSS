@@ -4024,8 +4024,10 @@ body .hidden {
 }
 .td-specialist-planning__list {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
+  width: 100%;
+  overflow-x: visible;
 }
 .td-specialist-planning__body {
   border: 1px solid color-mix(in oklab, var(--surface-border) 62%, transparent);
