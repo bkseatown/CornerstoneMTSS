@@ -79,7 +79,7 @@
 
   function appBasePath() {
     var path = String((window.location && window.location.pathname) || '');
-    var markers = ['/WordQuest/', '/Cornerstone%20MTSS/', '/Cornerstone MTSS/'];
+    var markers = ['/WordQuest/', '/CornerstoneMTSS/', '/Cornerstone%20MTSS/', '/Cornerstone MTSS/'];
     for (var i = 0; i < markers.length; i += 1) {
       var marker = markers[i];
       var idx = path.indexOf(marker);
@@ -11472,8 +11472,14 @@
 
   const subjectTagsByWord = new Map();
   const playableWordsFromRaw = new Set();
-  if (window.WQ_WORD_DATA && typeof window.WQ_WORD_DATA === 'object') {
-    Object.values(window.WQ_WORD_DATA).forEach((raw) => {
+  let wordFocusCachesHydrated = false;
+
+  function hydrateWordFocusCaches() {
+    if (wordFocusCachesHydrated) return;
+    const rawEntries = window.WQData && typeof window.WQData.getAllRawEntries === 'function'
+      ? window.WQData.getAllRawEntries()
+      : (window.WQ_WORD_DATA && typeof window.WQ_WORD_DATA === 'object' ? window.WQ_WORD_DATA : {});
+    Object.values(rawEntries).forEach((raw) => {
       const word = String(raw?.display_word || '').trim().toLowerCase();
       if (!word) return;
       if ((raw?.game_tag || 'playable') === 'playable') playableWordsFromRaw.add(word);
@@ -11487,6 +11493,7 @@
       const prior = subjectTagsByWord.get(word) || [];
       subjectTagsByWord.set(word, Array.from(new Set([...prior, ...tags])));
     });
+    wordFocusCachesHydrated = true;
   }
 
   const SUBJECT_WORD_OVERRIDES = Object.freeze({
@@ -11495,6 +11502,7 @@
   });
 
   function matchesSubjectFocus(word, subject) {
+    hydrateWordFocusCaches();
     const normalizedWord = String(word || '').trim().toLowerCase();
     const overrideSubjects = SUBJECT_WORD_OVERRIDES[normalizedWord];
     if (Array.isArray(overrideSubjects) && overrideSubjects.includes(subject)) return true;
@@ -11506,6 +11514,7 @@
   }
 
   function matchesPhonicsFocus(phonicsValue, focus, word) {
+    hydrateWordFocusCaches();
     const phonics = String(phonicsValue || '').toLowerCase();
 
     const hasPrefix = typeof word === 'string' && /^(un|re|pre|dis|mis|non|sub|inter|trans|over|under|anti|de)/.test(word);
