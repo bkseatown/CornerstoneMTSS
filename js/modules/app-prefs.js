@@ -13,6 +13,7 @@ import {
 } from './app-constants.js';
 import { newGame } from './app-game.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
+import { closeQuickPopover } from './app-settings.js';
 
 // Debug mode
 const DEMO_DEBUG_MODE = (() => {

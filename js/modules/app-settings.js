@@ -3834,4 +3834,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode, getActiveStudentLabel, syncTeacherPresetButtons, isMissionLabStandaloneMode };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, getActiveStudentLabel, syncTeacherPresetButtons, isMissionLabStandaloneMode, closeQuickPopover };

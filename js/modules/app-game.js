@@ -15,6 +15,7 @@ import {
   getQuestFilterGradeBand,
   getEffectiveGameplayGradeBand,
   parseFocusPreset,
+  getFocusLabel,
   updateFocusSummaryLabel
 } from './app-focus.js';
 import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode } from './app-theme.js';
