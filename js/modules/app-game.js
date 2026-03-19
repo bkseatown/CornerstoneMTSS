@@ -13,13 +13,11 @@ import {
   getLessonTarget,
   getCurriculumTargetsForGrade,
   getQuestFilterGradeBand,
-  updateFocusSummaryLabel,
-  getPlayableWords
+  updateFocusSummaryLabel
 } from './app-focus.js';
 import { isAssessmentRoundLocked, hideStarterWordCard } from './app-theme.js';
-import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, syncHeaderControlsVisibility, isMissionLabStandaloneMode } from './app-settings.js';
+import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
-import { cancelRevealNarration } from './app-audio.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -3776,4 +3774,4 @@ const _el = id => document.getElementById(id);
     });
   }
 
-export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, formatSignedDelta, copyTextToClipboard };
+export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, copyTextToClipboard };

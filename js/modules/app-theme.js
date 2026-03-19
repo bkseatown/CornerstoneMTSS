@@ -10,9 +10,7 @@ import { prefs, setPref,
   emitTelemetry, setHoverNoteForElement
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
-import { syncHeaderControlsVisibility, isMissionLabStandaloneMode } from './app-settings.js';
-import { cancelRevealNarration } from './app-audio.js';
-import { formatGradeBandLabel, getPlayableWords } from './app-focus.js';
+import { formatGradeBandLabel } from './app-focus.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);
