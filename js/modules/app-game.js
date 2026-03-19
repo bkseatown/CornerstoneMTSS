@@ -3,7 +3,7 @@
  * Game state, round tracking, error coaching, Deep Dive challenges
  */
 
-import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
+import { prefs, normalizeMasterySort, normalizeMasteryFilter, emitTelemetry } from './app-prefs.js';
 import { DEFAULT_PREFS, MISSION_LAB_ENABLED, TEACHER_ASSIGNMENTS_CONTRACT, DEMO_MODE, DEMO_TARGET_WORD, FEATURES, MIDGAME_BOOST_ENABLED } from './app-constants.js';
 import {
   CURRICULUM_PACK_ORDER,
@@ -15,6 +15,8 @@ import {
   getQuestFilterGradeBand
 } from './app-focus.js';
 import { isAssessmentRoundLocked } from './app-theme.js';
+import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer } from './app-settings.js';
+import { stopDemoToastProgress } from './app-prefs.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

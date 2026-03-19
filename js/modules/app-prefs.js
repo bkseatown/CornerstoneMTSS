@@ -2463,7 +2463,7 @@ export {
   // Report and mastery normalization
   normalizeReportCompactMode, normalizeMasterySort, normalizeMasteryFilter,
   // Telemetry
-  emitTelemetry
+  emitTelemetry, stopDemoToastProgress
 };
 
 // Explicit exports for page mode functions
