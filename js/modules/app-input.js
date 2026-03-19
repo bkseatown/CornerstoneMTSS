@@ -3,9 +3,12 @@
  * Keyboard, mouse, touch input handling
  */
 
-import { prefs } from './app-prefs.js';
+import { prefs, positionDemoLaunchButton } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
 import { newGame } from './app-game.js';
+import { updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock } from './app-settings.js';
+import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI } from './app-audio.js';
+import { hideSupportChoiceCard } from './app-theme.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

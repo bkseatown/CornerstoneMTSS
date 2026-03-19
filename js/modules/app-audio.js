@@ -2573,5 +2573,7 @@ export {
   saveChallengeProgress,
   resolveChallengeRank,
   showRevealWordToast,
-  runRevealNarration
+  runRevealNarration,
+  renderPhonicsCluePanel,
+  updatePhonicsClueControlsFromUI
 };
