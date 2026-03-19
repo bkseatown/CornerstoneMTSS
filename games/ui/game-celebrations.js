@@ -557,6 +557,22 @@
     }
 
     /**
+     * Progress bar animation for Typing Quest
+     * Smoothly animates the progress bar fill as user types
+     */
+    function animateProgressBar(fillElement, progressPercent) {
+      if (!fillElement || typeof gsap === "undefined") return;
+
+      // Smoothly animate the progress bar width
+      gsap.killTweensOf(fillElement);
+      gsap.to(fillElement, {
+        width: progressPercent + "%",
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
+
+    /**
      * Escape HTML to prevent XSS
      */
     function escapeHtml(value) {
@@ -585,6 +601,7 @@
       onAnswerCorrect: onAnswerCorrect,
       onAnswerIncorrect: onAnswerIncorrect,
       onKeystrokeCorrect: onKeystrokeCorrect,
+      animateProgressBar: animateProgressBar,
       reset: reset,
       getState: function () { return Object.assign({}, state); }
     };

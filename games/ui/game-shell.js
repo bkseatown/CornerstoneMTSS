@@ -2060,7 +2060,14 @@
       cell.classList.toggle("is-current", index === String(typed || "").length);
     });
     var progressFill = document.getElementById("cg-typing-progress-fill");
-    if (progressFill) progressFill.style.width = metrics.progress + "%";
+    if (progressFill) {
+      // Animate progress bar with GSAP for Typing Quest
+      if (celebrations && typeof celebrations.animateProgressBar === "function") {
+        celebrations.animateProgressBar(progressFill, metrics.progress);
+      } else {
+        progressFill.style.width = metrics.progress + "%";
+      }
+    }
     var questRunner = document.getElementById("cg-typing-quest-runner");
     if (questRunner) questRunner.style.left = "calc(" + metrics.progress + "% - 16px)";
     var wpmNode = document.getElementById("cg-typing-live-wpm");
