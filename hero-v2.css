@@ -282,8 +282,24 @@
 }
 
 .hero-kbd .key-row {
+  display: flex;
   justify-content: center;
   gap: 6px;
+}
+
+/* QWERTY keyboard row offsets for proper alignment */
+.hero-kbd .key-row-1 {
+  /* Row 1 (QWERTYUIOP) - no offset, centered */
+}
+
+.hero-kbd .key-row-2 {
+  /* Row 2 (ASDFGHJKL) - offset right by ~1 key width (48px) */
+  margin-left: 48px;
+}
+
+.hero-kbd .key-row-3 {
+  /* Row 3 (ZXCVBNM) - offset right by ~2.5 key widths (120px) */
+  margin-left: 120px;
 }
 
 .hero-game-key.key {

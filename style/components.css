@@ -5680,6 +5680,40 @@ html[data-keyboard-layout="alphabet-arc"] .key-row-3 {
   padding-inline: 10px;
 }
 
+/* QWERTY keyboard layout row offsets (default layout) */
+html[data-keyboard-layout="standard"],
+html[data-keyboard-layout="qwerty"],
+html:not([data-keyboard-layout]) {
+  /* Default QWERTY layout offsets */
+}
+
+html[data-keyboard-layout="standard"] .key-row-1,
+html[data-keyboard-layout="qwerty"] .key-row-1,
+html:not([data-keyboard-layout]) .key-row-1 {
+  /* Row 1 (QWERTYUIOP) - no offset, centered */
+  margin-left: 0;
+}
+
+html[data-keyboard-layout="standard"] .key-row-2,
+html[data-keyboard-layout="qwerty"] .key-row-2,
+html:not([data-keyboard-layout]) .key-row-2 {
+  /* Row 2 (ASDFGHJKL) - offset right by ~1 key width */
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  padding-inline: 22px 0;
+}
+
+html[data-keyboard-layout="standard"] .key-row-3,
+html[data-keyboard-layout="qwerty"] .key-row-3,
+html:not([data-keyboard-layout]) .key-row-3 {
+  /* Row 3 (ZXCVBNM) - offset right by ~2 key widths */
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  padding-inline: 56px 0;
+}
+
 .key {
   height:        var(--key-h);
   min-width:     var(--key-min-w);
