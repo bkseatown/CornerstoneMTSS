@@ -4,13 +4,35 @@
  */
 
 import {
-  FEATURES, DEMO_MODE, DEFAULT_PREFS, PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY,
+  FEATURES, DEFAULT_PREFS, PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY,
   PREF_MUSIC_AUTO_MIGRATION_KEY, PREF_GUESSES_DEFAULT_MIGRATION_KEY, FIRST_RUN_SETUP_KEY,
   ALLOWED_MUSIC_MODES, ALLOWED_VOICE_MODES, ALLOWED_KEY_STYLES, ALLOWED_KEYBOARD_LAYOUTS,
   ALLOWED_UI_SKINS, KEYBOARD_LAYOUT_ORDER, KEYBOARD_LAYOUT_LABELS, SUPPORT_PROMPT_PREF_KEY,
   DUPE_PREF_KEY, SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED,
   STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG
 } from './app-constants.js';
+
+// Demo mode (defined locally to avoid circular dependency)
+const DEMO_MODE = (() => {
+  let fromQuery = false;
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    const demoParam = String(params.get('demo') || '').trim().toLowerCase();
+    const modeParam = String(params.get('mode') || '').trim().toLowerCase();
+    fromQuery = demoParam === '1' || demoParam === 'true' || modeParam === 'demo';
+  } catch {}
+  return fromQuery || window.WQ_DEMO === true;
+})();
+
+// Debug mode
+const DEMO_DEBUG_MODE = (() => {
+  try {
+    const params = new URLSearchParams(window.location.search || '');
+    return String(params.get('debug') || '').trim() === '1';
+  } catch {
+    return false;
+  }
+})();
 
 // ─── Preference Loading & Storage ──────────────────────────────────
 function loadPrefs() {
