@@ -2341,14 +2341,6 @@ var voicePracticeMode = 'optional';
     )?.[0] || '';
   }
 
-  function syncTeacherPresetButtons(activePreset = detectTeacherPreset()) {
-    document.querySelectorAll('[data-teacher-preset]').forEach((btn) => {
-      const isActive = btn.getAttribute('data-teacher-preset') === activePreset;
-      btn.classList.toggle('is-active', isActive);
-      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
-  }
-
   function applyTeacherPreset(mode) {
     if (isAssessmentRoundLocked()) {
       showAssessmentLockNotice();
