@@ -179,9 +179,9 @@
   --line-tight: var(--lh-tight);
   --line-body: var(--lh-body);
   --fw-regular: 400;
-  --fw-medium: 400;
+  --fw-medium: 500;
   --fw-semibold: 600;
-  --fw-bold: 600;
+  --fw-bold: 700;
   --ls-tight: -0.015em;
   --ls-base: -0.005em;
   --ls-wide: 0.01em;
