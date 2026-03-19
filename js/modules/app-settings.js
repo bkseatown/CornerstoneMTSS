@@ -110,6 +110,7 @@ function bindFirstRunSetupModal() {}
 function openFirstRunSetupModal() {}
 function applyTeacherPreset() {}
 function syncTeacherPresetButton() {}
+function syncTeacherPresetButtons() {}
 function syncAssessmentLockRuntime() {}
 function syncStarterWordLauncherUI() {}
 function syncGameplayAudioStrip() {}
@@ -134,6 +135,42 @@ function isAssessmentRoundLocked() {
 // Play style normalization (from app-theme)
 function normalizePlayStyle(mode) {
   return String(mode || '').toLowerCase() === 'listening' ? 'listening' : 'detective';
+}
+
+// Feature enablement checks (from app-theme)
+function isConfidenceCoachingEnabled() {
+  const toggle = _el('s-confidence-coaching');
+  if (toggle) return !!toggle.checked;
+  return String(prefs.confidenceCoaching || DEFAULT_PREFS.confidenceCoaching).toLowerCase() !== 'off';
+}
+
+function isMeaningPlusFunEnabled() {
+  const toggle = _el('s-meaning-plus-fun');
+  if (toggle) return !!toggle.checked;
+  return String(prefs.meaningPlusFun || DEFAULT_PREFS.meaningPlusFun).toLowerCase() !== 'off';
+}
+
+function isSorNotationEnabled() {
+  const toggle = _el('s-sor-notation');
+  if (toggle) return !!toggle.checked;
+  return String(prefs.sorNotation || DEFAULT_PREFS.sorNotation).toLowerCase() !== 'off';
+}
+
+// Team/classroom normalization (from app-prefs)
+function normalizeTeamMode(mode) {
+  return String(mode || '').trim().toLowerCase() === 'on' ? 'on' : 'off';
+}
+
+function normalizeTeamCount(count) {
+  const num = Number(count) || 0;
+  if (num < 1) return 1;
+  if (num > 4) return 4;
+  return num;
+}
+
+function normalizeTeamSet(set) {
+  const valid = ['team-a', 'team-b', 'team-c', 'team-d'];
+  return valid.includes(String(set || '').toLowerCase()) ? String(set).toLowerCase() : 'team-a';
 }
 
   // ─── 5. Settings panel wiring ───────────────────────
