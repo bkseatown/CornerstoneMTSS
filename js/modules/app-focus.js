@@ -6,7 +6,7 @@
 import { prefs, setPref, setHoverNoteForElement } from './app-prefs.js';
 import { DEFAULT_PREFS } from './app-constants.js';
 import { isAssessmentRoundLocked, normalizePlayStyle } from './app-theme.js';
-import { enforceFocusSelectionForGrade } from './app-settings.js';
+import { enforceFocusSelectionForGrade, closeQuickPopover } from './app-settings.js';
 import { newGame } from './app-game.js';
 
 // DOM helper
@@ -2327,5 +2327,7 @@ export {
   getLessonTarget,
   getCurriculumTargetsForGrade,
   getQuestFilterGradeBand,
-  formatGradeBandLabel
+  formatGradeBandLabel,
+  updateFocusSummaryLabel,
+  getPlayableWords
 };

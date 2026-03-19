@@ -5,7 +5,7 @@
 
 import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
 import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE, WRITING_STUDIO_ENABLED, MIDGAME_BOOST_ENABLED } from './app-constants.js';
-import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade } from './app-focus.js';
+import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade, getPlayableWords } from './app-focus.js';
 import { getTopErrorKey, newGame } from './app-game.js';
 
 // DOM helper
@@ -3832,4 +3832,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, normalizeReviewWord, setVoicePracticeFeedback, syncHeaderControlsVisibility, getActiveStudentLabel };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, normalizeReviewWord, setVoicePracticeFeedback, syncHeaderControlsVisibility, getActiveStudentLabel, closeQuickPopover, parsePx, syncTeacherPresetButtons };

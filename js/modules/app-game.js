@@ -12,9 +12,11 @@ import {
   getLessonPackDefinition,
   getLessonTarget,
   getCurriculumTargetsForGrade,
-  getQuestFilterGradeBand
+  getQuestFilterGradeBand,
+  updateFocusSummaryLabel,
+  getPlayableWords
 } from './app-focus.js';
-import { isAssessmentRoundLocked } from './app-theme.js';
+import { isAssessmentRoundLocked, hideStarterWordCard } from './app-theme.js';
 import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, syncHeaderControlsVisibility } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
 
@@ -3773,4 +3775,4 @@ const _el = id => document.getElementById(id);
     });
   }
 
-export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey };
+export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, formatSignedDelta };

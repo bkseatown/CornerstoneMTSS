@@ -6,7 +6,7 @@
 import { prefs, positionDemoLaunchButton } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
 import { newGame } from './app-game.js';
-import { updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock } from './app-settings.js';
+import { updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, closeQuickPopover } from './app-settings.js';
 import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI } from './app-audio.js';
 import { hideSupportChoiceCard } from './app-theme.js';
 
