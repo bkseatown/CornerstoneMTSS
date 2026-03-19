@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "description": "Performance budgets for Cornerstone MTSS. Alerts when assets exceed thresholds.",
+  "budgets": {
+    "javascript": {
+      "total": "300KB",
+      "unminified": "500KB",
+      "gzip": "90KB",
+      "brotli": "75KB"
+    },
+    "css": {
+      "total": "100KB",
+      "unminified": "300KB",
+      "gzip": "20KB",
+      "brotli": "18KB"
+    },
+    "html": {
+      "total": "50KB",
+      "gzip": "10KB"
+    },
+    "fonts": {
+      "total": "200KB",
+      "gzip": "80KB"
+    },
+    "images": {
+      "total": "500KB",
+      "gzip": "400KB"
+    },
+    "webvitals": {
+      "largestContentfulPaint": "2.5s",
+      "firstInputDelay": "100ms",
+      "cumulativeLayoutShift": "0.1",
+      "firstContentfulPaint": "1.2s",
+      "timeToFirstByte": "600ms"
+    },
+    "lighthouse": {
+      "performance": 85,
+      "accessibility": 95,
+      "best-practices": 90,
+      "seo": 90
+    }
+  },
+  "thresholds": {
+    "warn": 0.9,
+    "error": 1.1
+  },
+  "exclusions": [
+    "*.map",
+    "*.test.js",
+    "node_modules/**",
+    "dist/",
+    "output/"
+  ],
+  "checkpoints": [
+    "index.html",
+    "word-quest.html",
+    "game-platform.html",
+    "teacher-hub-v2.html",
+    "reports.html"
+  ]
+}
