@@ -41,3 +41,8 @@ server/database/backups/
 server/database/migrations/
 logs/
 *.sql.gz
+
+# Large/temporary directories
+Music for CornerstoneMTSS/
+artifacts/
+test-results/
