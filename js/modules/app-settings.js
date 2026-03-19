@@ -8,7 +8,7 @@ import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGN
 import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade, formatGradeBandLabel, updateFocusSummaryLabel } from './app-focus.js';
 import { getTopErrorKey, newGame, hideMidgameBoost } from './app-game.js';
 import { refreshStandaloneMissionLabHub } from './app-audio.js';
-import { hideInformantHintCard, getVoicePracticeMode, showStarterWordCard } from './app-theme.js';
+import { hideInformantHintCard, getVoicePracticeMode, showStarterWordCard, hideSupportChoiceCard, showAssessmentLockNotice, applyTheme, applyPlayStyle, setHintMode, syncPlayStyleToggleUI, getRevealFocusMode } from './app-theme.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

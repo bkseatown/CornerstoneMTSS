@@ -5,7 +5,7 @@
 
 import { prefs, setPref, setHoverNoteForElement, emitTelemetry } from './app-prefs.js';
 import { DEFAULT_PREFS } from './app-constants.js';
-import { isAssessmentRoundLocked, normalizePlayStyle } from './app-theme.js';
+import { isAssessmentRoundLocked, normalizePlayStyle, showAssessmentLockNotice, syncPlayStyleToggleUI, getHintMode } from './app-theme.js';
 import { closeQuickPopover } from './app-settings.js';
 import { newGame } from './app-game.js';
 import { refreshStandaloneMissionLabHub } from './app-audio.js';

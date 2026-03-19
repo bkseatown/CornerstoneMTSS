@@ -10,7 +10,7 @@ import { prefs, setPref, savePrefs,
   emitTelemetry, setHoverNoteForElement, normalizeVoiceMode
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
-import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset, getFocusLabel, normalizeLessonPackId, setFocusValue } from './app-focus.js';
+import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset, getFocusLabel, normalizeLessonPackId, setFocusValue, shouldExpandGradeBandForFocus } from './app-focus.js';
 import { hideMidgameBoost } from './app-game.js';
 import { isMissionLabStandaloneMode, normalizeReviewWord } from './app-settings.js';
 
