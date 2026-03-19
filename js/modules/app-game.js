@@ -23,7 +23,7 @@ import {
 import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode, hideSupportChoiceCard, syncHeaderControlsVisibility } from './app-theme.js';
 import { isMissionLabStandaloneMode, normalizeReviewWord, getTopErrorKey } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
-import { refreshStandaloneMissionLabHub, closeRevealChallengeModal } from './app-audio.js';
+import { refreshStandaloneMissionLabHub, closeRevealChallengeModal, startStandaloneMissionLab } from './app-audio.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

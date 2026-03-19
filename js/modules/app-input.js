@@ -6,8 +6,8 @@
 import { prefs, positionDemoLaunchButton, emitTelemetry } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
 import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach } from './app-game.js';
-import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI, refreshStandaloneMissionLabHub, closeRevealChallengeModal, openRevealChallengeModal, startPhonicsClueDeck, skipPhonicsClueCard, saveRevealChallengeResponses, handleChallengeChoiceSelection, getFirstIncompleteChallengeTask, advancePhonicsClueCard, awardPhonicsClueGuessPoint } from './app-audio.js';
-import { hideSupportChoiceCard, hideInformantHintCard, showStarterWordCard, applyTheme, showSupportChoiceCard } from './app-theme.js';
+import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI, refreshStandaloneMissionLabHub, closeRevealChallengeModal, openRevealChallengeModal, startPhonicsClueDeck, skipPhonicsClueCard, saveRevealChallengeResponses, handleChallengeChoiceSelection, getFirstIncompleteChallengeTask, advancePhonicsClueCard, awardPhonicsClueGuessPoint, startStandaloneMissionLab, awardPhonicsClueBonusPoint, togglePhonicsClueTargetVisibility } from './app-audio.js';
+import { hideSupportChoiceCard, hideInformantHintCard, showStarterWordCard, applyTheme, showSupportChoiceCard, hideStarterWordCard } from './app-theme.js';
 import { getEffectiveGameplayGradeBand } from './app-focus.js';
 import { isMissionLabStandaloneMode, closeQuickPopover, normalizeReviewWord } from './app-settings.js';
 
