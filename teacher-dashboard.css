@@ -83,6 +83,11 @@ body.cs-has-nav-shell .td-shell {
   padding-top: calc(var(--nav-h, 0px) + 4px);
 }
 
+body.td-reports-mode.cs-has-nav-shell .td-shell {
+  height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 12px);
+  max-height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 12px);
+}
+
 @media (max-width: 1180px), (max-height: 820px) {
   body.teacher-dashboard,
   body.td-page {

@@ -71,10 +71,18 @@ if (!/AUDIO_MANIFEST_URL/.test(audioJs) || !/audio-manifest\.json/.test(audioJs)
 }
 
 const swRuntimeSource = swRuntimeJs || swJs;
-if (!/assets\/audio/.test(swRuntimeSource) || !/AUDIO_CACHE/.test(swRuntimeSource)) {
-  fail('service worker runtime is missing runtime audio cache strategy');
+const hasLegacyAudioCaching = /assets\/audio/.test(swRuntimeSource) && /AUDIO_CACHE/.test(swRuntimeSource);
+const hasFreshnessFirstRuntime =
+  /Freshness-first mode/.test(swRuntimeSource) &&
+  /registration\.unregister/.test(swRuntimeSource) &&
+  /never intercept fetches/.test(swRuntimeSource);
+
+if (hasLegacyAudioCaching) {
+  pass('service worker runtime defines legacy runtime audio cache strategy');
+} else if (hasFreshnessFirstRuntime) {
+  pass('service worker runtime defines freshness-first no-cache strategy');
 } else {
-  pass('service worker runtime defines runtime audio cache strategy');
+  fail('service worker runtime is missing a recognized cache or freshness strategy');
 }
 
 if (failures) {

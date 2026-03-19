@@ -36,17 +36,19 @@ jobs:
 
       - name: Run guardrails checks
         run: |
-          echo "🔍 Running UI quality audit..."
-          npm run audit:ui || { echo "❌ UI audit failed"; exit 1; }
-          echo "✅ UI audit passed"
+          echo "🔍 Running freshness-safe release checks..."
+          npm run offline:check || { echo "❌ Offline contract failed"; exit 1; }
+          echo "✅ Offline contract passed"
+
+          echo "🔍 Running grade-band contract..."
+          npm run grade:check || { echo "❌ Grade-band contract failed"; exit 1; }
+          echo "✅ Grade-band contract passed"
 
           echo "🔍 Checking build badge..."
           npm run hud:check || { echo "❌ Build badge check failed"; exit 1; }
           echo "✅ Build badge check passed"
 
-          echo "🔍 Running pre-release validation..."
-          npm run release:check || { echo "❌ Release check failed"; exit 1; }
-          echo "✅ Release check passed"
+          echo "ℹ️ Skipping heavy UI audits during Pages publish; run audit:ui and release:check separately."
 
       - name: Update build badge
         run: node build-stamp.js

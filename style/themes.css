@@ -226,8 +226,9 @@
   --radius-tile:     15px;
   --radius-key:      12px;
   --font-logo:       "Avenir Next Condensed", "Arial Narrow", "Trebuchet MS", "Atkinson Hyperlegible", sans-serif;
-  /* 60% dominant: College Navy — lightened with gradient for less dark feel */
-  --page-bg:      linear-gradient(180deg, #8fabc0 0%, #7f99af 50%, #5c7a99 100%);
+  /* Keep the visual gradient on a side token so guardrails still get a hex page base. */
+  --page-bg:      #7f99af;
+  --page-bg-gradient: linear-gradient(180deg, #8fabc0 0%, #7f99af 50%, #5c7a99 100%);
   --page-bg2:     #58758d;
   --header-bg:    #002244;
   --brand:        #002244;

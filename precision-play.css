@@ -22,11 +22,27 @@ body {
 }
 
 .pp-shell {
-  height: calc(100dvh - 58px);
+  height: calc(
+    100dvh -
+    var(--nav-h, 74px) -
+    var(--app-safe-vh-margin, 24px) -
+    calc(var(--app-safe-vh-margin, 24px) / 2)
+  );
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 12px;
   padding: 12px;
+}
+
+@media (max-width: 920px) {
+  .pp-shell {
+    height: calc(
+      100dvh -
+      var(--nav-h, 88px) -
+      var(--app-safe-vh-margin-compact, 14px) -
+      calc(var(--app-safe-vh-margin-compact, 14px) / 2)
+    );
+  }
 }
 
 .pp-top {

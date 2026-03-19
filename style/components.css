@@ -5101,7 +5101,7 @@ html[data-atmosphere="spark"] .board-plate::after {
   display:               grid;
   grid-template-columns: repeat(var(--word-length, 5), var(--tile-size));
   grid-template-rows:    repeat(var(--max-guesses, 6), var(--tile-size));
-  gap:                   var(--gap-tile);
+  gap:                   max(var(--gap-tile), 10px);
   width:                 max-content;
   max-width:             420px;
   margin:                0 auto;
@@ -9779,7 +9779,7 @@ a:hover,
 
 /* Desktop (1440px+) - Current state preserved */
 @media (max-width: 1200px) {
-  header {
+  body > header {
     padding: var(--header-shell-pad, 7px 10px 6px);
   }
 
@@ -9801,7 +9801,7 @@ a:hover,
 
 /* Tablet (768px-1200px) - Optimized layout */
 @media (max-width: 768px) {
-  header {
+  body > header {
     padding: 6px 8px 5px;
     flex-direction: column;
     gap: 5px;
@@ -9845,7 +9845,7 @@ a:hover,
 
 /* Mobile (480px-768px) - Compact layout */
 @media (max-width: 480px) {
-  header {
+  body > header {
     padding: 5px 6px 4px;
     flex-direction: row;
     gap: 4px;
@@ -10571,11 +10571,6 @@ html[data-home-mode="play"] .key-backspace-glyph {
 }
 
 /* Game board and keyboard tile improvements */
-
-/* Increase spacing between tiles */
-#game-board {
-  gap: 10px;
-}
 
 /* Square keyboard buttons with better spacing */
 .cg-key-strip__key {
