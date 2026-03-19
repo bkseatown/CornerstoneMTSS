@@ -66,22 +66,22 @@
   --action-primary-soft: rgba(79, 133, 209, 0.18);
 
   /* ===== Semantic Status ===== */
-  --status-secure: #4e8d6a;
-  --status-developing: #b58a45;
-  --status-intensify: #b58a45;
-  --status-risk: #b25e5e;
-  --status-ef: #7048e8;
-  --status-literacy: #2e6fd8;
-  --status-writing: #2b8a78;
-  --status-numeracy: #1971c2;
-  --bg-secure: #e6f4ea;
-  --bg-developing: #fff3d8;
-  --bg-intensify: #ffe8d9;
-  --bg-risk: #ffe3e3;
-  --bg-ef: #f3e8ff;
+  --status-secure: #2d7a4a;
+  --status-developing: #c89a3a;
+  --status-intensify: #d97c4a;
+  --status-risk: #a85a5a;
+  --status-ef: #6b4fa8;
+  --status-literacy: #2e5fa8;
+  --status-writing: #2a7a6a;
+  --status-numeracy: #1a6ab8;
+  --bg-secure: #f0f9f5;
+  --bg-developing: #fffbf0;
+  --bg-intensify: #fff5f0;
+  --bg-risk: #faf5f5;
+  --bg-ef: #f8f5ff;
   --glow-primary: none;
-  --warn: #f4c978;
-  --danger: #ff8b8b;
+  --warn: #e8b85a;
+  --danger: #d87a7a;
 
   /* ===== Spacing Scale ===== */
   --space-1: 8px;

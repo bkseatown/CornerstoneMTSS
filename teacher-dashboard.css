@@ -720,31 +720,31 @@ body.td-reports-mode {
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 26%, transparent);
 }
 #td-new-session {
-  background: linear-gradient(135deg, #295fa4 0%, #1f4d87 100%);
+  background: linear-gradient(135deg, #2a5a9a 0%, #1f4a80 100%);
   border-color: transparent;
   color: #ffffff;
-  font-weight: var(--fw-semibold);
+  font-weight: 700;
   box-shadow:
-    0 12px 28px rgba(41, 95, 164, 0.32),
-    0 4px 12px rgba(41, 95, 164, 0.16),
-    inset 0 1px 0 rgba(255,255,255,0.24);
+    0 10px 24px rgba(41, 95, 164, 0.28),
+    0 4px 12px rgba(41, 95, 164, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
 #td-weekly-insights {
-  background: linear-gradient(135deg, rgba(41, 95, 164, 0.14), rgba(74, 124, 255, 0.08));
-  border: 1px solid rgba(41, 95, 164, 0.24);
-  font-weight: var(--fw-semibold);
+  background: rgba(41, 95, 164, 0.08);
+  border: 1px solid rgba(41, 95, 164, 0.18);
+  font-weight: 600;
   box-shadow:
-    0 8px 18px rgba(41, 95, 164, 0.1),
-    inset 0 1px 0 rgba(255,255,255,0.36);
+    0 4px 12px rgba(41, 95, 164, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.32);
 }
 
 #td-new-session:hover {
-  background: linear-gradient(135deg, #2450a0 0%, #1a4080 100%);
+  background: linear-gradient(135deg, #254a92 0%, #1a3f75 100%);
   box-shadow:
-    0 16px 40px rgba(41, 95, 164, 0.4),
-    0 6px 16px rgba(41, 95, 164, 0.2),
-    inset 0 1px 0 rgba(255,255,255,0.32);
+    0 14px 32px rgba(41, 95, 164, 0.32),
+    0 6px 16px rgba(41, 95, 164, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.28);
   transform: translateY(-2px);
 }
 .td-nav-btn {
@@ -1456,13 +1456,9 @@ body.td-reports-mode .td-cockpit-sidebar {
   margin: 0 0 8px;
   font-size: 0.7rem;
   font-weight: 900;
-  color: color-mix(in oklab, var(--accent) 72%, var(--text-secondary) 28%);
+  color: var(--accent);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 78%, transparent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .focus-header {
@@ -1940,10 +1936,6 @@ body.td-classroom-mode .td-cockpit-timeline {
   font-weight: 800;
   color: var(--text-strong);
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--text-strong), color-mix(in oklab, var(--text-strong) 88%, var(--accent) 12%));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .dashboard-section-meta {
