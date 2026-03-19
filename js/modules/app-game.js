@@ -16,6 +16,7 @@ import {
   getEffectiveGameplayGradeBand,
   parseFocusPreset,
   getFocusLabel,
+  formatGradeBandLabel,
   updateFocusSummaryLabel
 } from './app-focus.js';
 import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode } from './app-theme.js';
