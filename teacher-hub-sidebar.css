@@ -60,11 +60,15 @@
   background: linear-gradient(90deg, rgba(45, 109, 240, 0.95), rgba(45, 109, 240, 0));
 }
 
+/* Design Elevation: Section labels enhanced */
 .th2-section-label,
 .th2-empty-label,
 .th2-today-label {
-  letter-spacing: 0.08em;
+  letter-spacing: 0.10em;  /* Increased from 0.08em */
   font-weight: 700;
+  font-size: 0.8rem;       /* Slightly larger */
+  margin-bottom: 12px;     /* Consistent spacing */
+  color: var(--text-secondary);
 }
 
 .th2-brand:hover { opacity: 1; transform: translateY(-1px); }
@@ -201,22 +205,24 @@
 
 /* ── Schedule block card (class mode sidebar) ───────────── */
 
+/* Design Elevation: Student card styling enhanced */
 .th2-block-card {
   width: 100%;
   display: block;
-  padding: 6px 8px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  padding: 8px 10px;  /* Enhanced from 6px 8px */
+  background: rgba(255, 255, 255, 0.3);  /* Subtle background */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;  /* Enhanced from 8px */
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.11s ease, border-color 0.11s ease;
+  transition: all 0.12s ease;
 }
 
 .th2-block-card:hover {
-  background: var(--surface-elev-2);
-  border-color: var(--border-subtle);
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 .th2-block-card:focus-visible {
@@ -225,8 +231,10 @@
 }
 
 .th2-block-card.is-active {
-  background: color-mix(in oklab, var(--surface-elev-2) 80%, var(--accent) 20%);
-  border-color: color-mix(in oklab, var(--accent) 50%, transparent);
+  background: color-mix(in oklab, var(--accent) 15%, transparent);
+  border-color: var(--accent);
+  color: var(--text-strong);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 10%, transparent);
   box-shadow: inset 3px 0 0 var(--accent);
 }
 

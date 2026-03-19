@@ -31,6 +31,7 @@ body.sp-page {
   gap: 6px;
 }
 
+/* Design Elevation: Panel styling enhanced */
 .sp-header,
 .sp-hero,
 .sp-panel,
@@ -38,15 +39,23 @@ body.sp-page {
   background: rgba(250, 249, 246, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 28px;
-  box-shadow: 0 16px 36px rgba(25, 36, 50, 0.08);
+  box-shadow: 0 4px 12px rgba(26, 34, 46, 0.12);  /* Level 2: medium depth */
+  transition: all 0.2s ease;
 }
 
+.sp-panel:hover,
+.sp-hero:hover {
+  box-shadow: 0 8px 16px rgba(26, 34, 46, 0.16);
+  transform: translateY(-1px);
+}
+
+/* Design Elevation: Header enhanced spacing */
 .sp-header {
   display: grid;
   grid-template-columns: minmax(220px, auto) auto;
-  gap: 10px;
+  gap: 16px;  /* Increased from 10px */
   align-items: center;
-  padding: 8px 12px;
+  padding: 12px 16px;  /* Enhanced from 8px 12px */
 }
 
 .sp-header-meta strong {
@@ -139,9 +148,11 @@ body.sp-page {
 
 .sp-hero-main,
 .sp-hero-side,
+/* Design Elevation: Panel padding enhancement */
 .sp-panel {
   display: grid;
-  gap: 6px;
+  gap: 12px;  /* Increased from 6px */
+  padding: 20px 24px;  /* Premium spacing (Phase 2) */
   align-content: start;
 }
 

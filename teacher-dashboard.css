@@ -4805,6 +4805,206 @@ h6 {
 .td-stat-meta  { margin: 4px 0 0; font-size: 11px; color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%); }
 
 /* ======================================================
+   DESIGN ELEVATION: Phase 6 (Color & Contrast)
+   ====================================================== */
+
+/* Strengthen secondary text contrast */
+.dashboard-section-meta {
+  color: var(--text-secondary);
+}
+
+/* Enhance student chip inactive state */
+.td-student-chip {
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+/* Active state clarity */
+.td-student-chip.is-active {
+  color: var(--text-strong);
+  border-color: var(--accent, #2b5da8);
+}
+
+/* ======================================================
+   DESIGN ELEVATION: Phase 5 (Typography Refinement)
+   ====================================================== */
+
+/* Meta text refinement */
+.dashboard-section-meta {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Button text refinement */
+.td-top-btn {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.005em;
+}
+
+/* Secondary title styling */
+.td-title {
+  font-weight: 600;
+}
+
+/* ======================================================
+   DESIGN ELEVATION: Phase 4 (Card Shadows & Depth)
+   ====================================================== */
+
+/* Shadow depth system */
+/* Level 1 (Subtle): Overview cards */
+.td-reports-overview {
+  box-shadow: 0 2px 6px rgba(26, 34, 46, 0.08);
+  border-radius: 12px;
+}
+
+/* Level 2 (Medium): Main section cards */
+.td-specialist-planning,
+.td-reports-panel,
+.td-family-comms {
+  box-shadow: 0 4px 12px rgba(26, 34, 46, 0.12);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.td-specialist-planning:hover,
+.td-reports-panel:hover,
+.td-family-comms:hover {
+  box-shadow: 0 8px 20px rgba(26, 34, 46, 0.16);
+  transform: translateY(-2px);
+}
+
+/* Level 1 (Subtle): Inner content cards */
+.td-cockpit-left .td-todayCard,
+.td-cockpit-right .td-todayCard {
+  box-shadow: 0 2px 4px rgba(26, 34, 46, 0.08);
+  border-radius: 10px;
+}
+
+/* ======================================================
+   DESIGN ELEVATION: Phase 3 (CTA & Button Prominence)
+   ====================================================== */
+
+/* Primary action buttons */
+.td-top-btn.td-top-btn--primary,
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent, #2b5da8) 0%, color-mix(in oklab, var(--accent, #2b5da8) 92%, transparent));
+  color: white;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(41, 95, 164, 0.2);
+  transition: all 0.15s ease;
+}
+
+.td-top-btn.td-top-btn--primary:hover,
+.btn-primary:hover {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent, #2b5da8) 110%, transparent), var(--accent, #2b5da8));
+  box-shadow: 0 8px 20px rgba(41, 95, 164, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Secondary action buttons */
+.td-top-btn:not(.td-top-btn--primary):not(.td-top-btn--quiet) {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition: all 0.12s ease;
+  font-weight: 600;
+}
+
+.td-top-btn:not(.td-top-btn--primary):not(.td-top-btn--quiet):hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Student chip button styling */
+.td-student-chip {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 14px;
+  border-radius: 10px;
+  transition: all 0.12s ease;
+}
+
+.td-student-chip.is-active {
+  background: color-mix(in oklab, var(--accent, #2b5da8) 15%, transparent);
+  border-color: var(--accent, #2b5da8);
+  color: var(--text-strong);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #2b5da8) 10%, transparent);
+}
+
+.td-student-chip:hover:not(.is-active) {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ======================================================
+   DESIGN ELEVATION: Phase 1-2 (Heading Hierarchy & Spacing)
+   ====================================================== */
+
+/* Hide redundant kickers from reports sections */
+.td-reports-overview__head .dashboard-kicker,
+.td-reports-panel__head .dashboard-kicker {
+  display: none;
+}
+
+/* Strengthen section titles - upgrade to h2 level */
+.dashboard-section-title {
+  font-size: 1.5rem;  /* Upgrade to ~24px from ~18px */
+  font-weight: 700;   /* Soften from 800 for premium feel */
+  margin: 0 0 8px 0;  /* Add breathing room */
+  line-height: 1.3;
+  letter-spacing: -0.018em;
+}
+
+/* Add breathing room between major sections */
+.td-specialist-planning,
+.td-reports-panel,
+.td-family-comms {
+  margin-top: 24px;
+  padding: 24px;  /* Premium spacing (Phase 2) */
+}
+
+.td-specialist-planning:first-of-type,
+.td-reports-panel:first-of-type {
+  margin-top: 0;
+}
+
+/* Dashboard body spacing standardization */
+.dashboard {
+  gap: 16px;        /* Increased from ~10px */
+  padding: 16px;    /* Consistent all sides */
+}
+
+.td-cockpit-grid {
+  gap: 16px;        /* Match dashboard gap */
+}
+
+/* Section-to-section vertical rhythm */
+.td-cockpit-main > section {
+  margin-bottom: 32px;  /* 32px between major sections */
+}
+
+.td-cockpit-main > section:last-child {
+  margin-bottom: 0;
+}
+
+/* Card internal spacing: headers with visual separation */
+.td-specialist-planning__head,
+.td-reports-panel__head,
+.td-family-comms__head {
+  gap: 16px;            /* Increased from 12px */
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
+}
+
+/* ======================================================
    WORKFLOW CLARITY & VISUAL GUIDANCE
    ====================================================== */
 
