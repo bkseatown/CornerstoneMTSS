@@ -12,7 +12,7 @@ import {
   STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG, DEMO_MODE
 } from './app-constants.js';
 import { newGame } from './app-game.js';
-import { getEffectiveGameplayGradeBand } from './app-focus.js';
+import { getEffectiveGameplayGradeBand, normalizeLessonPackId, normalizeLessonTargetId } from './app-focus.js';
 import { closeQuickPopover } from './app-settings.js';
 import { normalizePlayStyle } from './app-theme.js';
 
