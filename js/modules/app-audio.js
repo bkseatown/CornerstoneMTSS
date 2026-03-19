@@ -6,7 +6,7 @@
 import { prefs, emitTelemetry, normalizeVoiceMode, isMissionLabEnabled } from './app-prefs.js';
 import { MISSION_LAB_ENABLED, SAFE_DEFAULT_GRADE_BAND } from './app-constants.js';
 import { newGame } from './app-game.js';
-import { normalizeReviewWord, isMissionLabStandaloneMode } from './app-settings.js';
+import { normalizeReviewWord, isMissionLabStandaloneMode, getActiveStudentLabel } from './app-settings.js';
 import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset, getFocusLabel, shouldExpandGradeBandForFocus } from './app-focus.js';
 import { hideInformantHintCard, getVoicePracticeMode, openFirstRunSetupModal, openRevealChallengeModal } from './app-theme.js';
 

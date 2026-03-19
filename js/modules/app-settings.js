@@ -3,7 +3,7 @@
  * Settings panel, review queue, team mode, voice, home navigation
  */
 
-import { prefs, setPref, savePrefs, normalizeMasterySort, normalizeMasteryFilter, normalizeVoiceMode, isMissionLabEnabled, normalizePageMode } from './app-prefs.js';
+import { prefs, setPref, savePrefs, normalizeMasterySort, normalizeMasteryFilter, normalizeVoiceMode, isMissionLabEnabled, normalizePageMode, setPageMode, persistPageMode } from './app-prefs.js';
 import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE, WRITING_STUDIO_ENABLED, MIDGAME_BOOST_ENABLED } from './app-constants.js';
 import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade, formatGradeBandLabel, updateFocusSummaryLabel } from './app-focus.js';
 import { getTopErrorKey, newGame, hideMidgameBoost } from './app-game.js';

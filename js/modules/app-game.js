@@ -21,7 +21,7 @@ import {
   updateFocusSummaryLabel
 } from './app-focus.js';
 import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode, hideSupportChoiceCard, syncHeaderControlsVisibility } from './app-theme.js';
-import { isMissionLabStandaloneMode, normalizeReviewWord } from './app-settings.js';
+import { isMissionLabStandaloneMode, normalizeReviewWord, getTopErrorKey } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
 import { refreshStandaloneMissionLabHub, closeRevealChallengeModal } from './app-audio.js';
 

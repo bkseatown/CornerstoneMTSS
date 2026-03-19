@@ -11,7 +11,7 @@ import {
   DUPE_PREF_KEY, SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED,
   STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG, DEMO_MODE
 } from './app-constants.js';
-import { newGame } from './app-game.js';
+import { newGame, copyTextToClipboard } from './app-game.js';
 import { getEffectiveGameplayGradeBand, normalizeLessonPackId, normalizeLessonTargetId } from './app-focus.js';
 import { closeQuickPopover } from './app-settings.js';
 import { normalizePlayStyle, syncHeaderControlsVisibility } from './app-theme.js';
