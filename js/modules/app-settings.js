@@ -5,7 +5,7 @@
 
 import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
 import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE, WRITING_STUDIO_ENABLED, MIDGAME_BOOST_ENABLED } from './app-constants.js';
-import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus } from './app-focus.js';
+import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade } from './app-focus.js';
 import { getTopErrorKey } from './app-game.js';
 
 // DOM helper
@@ -121,6 +121,12 @@ function syncMediaSessionControls() {}
 function bindSettingsModeCards() {}
 function initRefreshLatestBanner() {}
 function positionQuickPopoverOrContextMenu() {}
+function buildCurrentCurriculumSnapshot() {
+  return {};
+}
+function buildRoundMetrics() {
+  return {};
+}
 
 // Global event bus (fallback if not defined elsewhere)
 const EVENT_BUS_EVENTS = window.EVENT_BUS_EVENTS || {
