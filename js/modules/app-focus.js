@@ -2321,6 +2321,7 @@ export {
   getFocusLabel,
   getEffectiveGameplayGradeBand,
   shouldExpandGradeBandForFocus,
+  parseFocusPreset,
   CURRICULUM_PACK_ORDER,
   normalizeLessonPackId,
   normalizeLessonTargetId,

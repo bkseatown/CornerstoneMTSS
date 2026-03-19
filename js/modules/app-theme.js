@@ -7,10 +7,10 @@ import { prefs, setPref, savePrefs,
   normalizeTheme, getThemeFallback, getThemeFamily,
   normalizeUiSkin, normalizeReportCompactMode,
   normalizeRevealPacing, normalizeRevealAutoNext,
-  emitTelemetry, setHoverNoteForElement
+  emitTelemetry, setHoverNoteForElement, normalizeVoiceMode
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
-import { formatGradeBandLabel, getEffectiveGameplayGradeBand } from './app-focus.js';
+import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset } from './app-focus.js';
 import { hideMidgameBoost } from './app-game.js';
 import { isMissionLabStandaloneMode } from './app-settings.js';
 

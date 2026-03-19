@@ -14,9 +14,10 @@ import {
   getCurriculumTargetsForGrade,
   getQuestFilterGradeBand,
   getEffectiveGameplayGradeBand,
+  parseFocusPreset,
   updateFocusSummaryLabel
 } from './app-focus.js';
-import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard } from './app-theme.js';
+import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode } from './app-theme.js';
 import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, isMissionLabStandaloneMode } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
 import { refreshStandaloneMissionLabHub } from './app-audio.js';
