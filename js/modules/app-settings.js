@@ -128,6 +128,15 @@ function buildRoundMetrics() {
   return {};
 }
 
+// Student/classroom utility stubs
+function getActiveStudentLabel() {
+  return 'Student';
+}
+
+function getCurrentTeamLabel() {
+  return 'Team';
+}
+
 // Global event bus (fallback if not defined elsewhere)
 const EVENT_BUS_EVENTS = window.EVENT_BUS_EVENTS || {
   teacherPanelToggle: 'wq:teacher-panel-toggle',
