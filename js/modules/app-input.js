@@ -5,6 +5,7 @@
 
 import { prefs } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
+import { newGame } from './app-game.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

@@ -5,6 +5,7 @@
 
 import { prefs } from './app-prefs.js';
 import { MISSION_LAB_ENABLED, SAFE_DEFAULT_GRADE_BAND } from './app-constants.js';
+import { newGame } from './app-game.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

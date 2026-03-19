@@ -11,6 +11,7 @@ import {
   DUPE_PREF_KEY, SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED,
   STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG, DEMO_MODE
 } from './app-constants.js';
+import { newGame } from './app-game.js';
 
 // Debug mode
 const DEMO_DEBUG_MODE = (() => {
