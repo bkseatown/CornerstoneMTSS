@@ -3749,27 +3749,26 @@ const _el = id => document.getElementById(id);
     }
     logOverflowDiagnostics('reflowLayout');
   };
-  window.addEventListener('resize', reflowLayout);
-  window.visualViewport?.addEventListener('resize', reflowLayout);
-  window.addEventListener('beforeunload', () => {
-    stopAvaWordQuestIdleWatcher('beforeunload');
-    stopDemoToastProgress();
-    if (_wqDiagTimer) {
-      clearTimeout(_wqDiagTimer);
-      _wqDiagTimer = null;
-    }
-    emitTelemetry('wq_session_end', {
-      duration_ms: Math.max(0, Date.now() - telemetrySessionStartedAt),
-      reason: 'beforeunload'
-    });
-    stopVoiceCaptureNow();
-    clearClassroomTurnTimer();
-    finishWeeklyProbe({ silent: true });
-  });
-
   function initGame() {
     // Game initialization happens on-demand via newGame()
     // Wire up event listeners and game state helpers
+    window.addEventListener('resize', reflowLayout);
+    window.visualViewport?.addEventListener('resize', reflowLayout);
+    window.addEventListener('beforeunload', () => {
+      stopAvaWordQuestIdleWatcher('beforeunload');
+      stopDemoToastProgress();
+      if (_wqDiagTimer) {
+        clearTimeout(_wqDiagTimer);
+        _wqDiagTimer = null;
+      }
+      emitTelemetry('wq_session_end', {
+        duration_ms: Math.max(0, Date.now() - telemetrySessionStartedAt),
+        reason: 'beforeunload'
+      });
+      stopVoiceCaptureNow();
+      clearClassroomTurnTimer();
+      finishWeeklyProbe({ silent: true });
+    });
   }
 
 export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey };
