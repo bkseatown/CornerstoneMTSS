@@ -133,9 +133,10 @@ function getActiveStudentLabel() {
   return 'Student';
 }
 
-function getCurrentTeamLabel() {
-  return 'Team';
-}
+// Rendering stubs for team/group UI
+function renderGroupBuilderPanel() {}
+function renderTeamModePanel() {}
+function renderTeamSetSelector() {}
 
 // Global event bus (fallback if not defined elsewhere)
 const EVENT_BUS_EVENTS = window.EVENT_BUS_EVENTS || {
