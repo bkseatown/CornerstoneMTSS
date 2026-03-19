@@ -295,8 +295,11 @@ body.td-reports-mode {
 
 .td-reports-overview__grid article strong {
   display: block;
-  margin-bottom: 2px;
-  font-size: 1rem;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
 }
 
 .td-overview-eyebrow {
@@ -381,16 +384,25 @@ body.td-reports-mode {
 }
 
 .td-reports-panel {
-  padding: 24px;
+  padding: 28px;
   display: grid;
-  gap: 16px;
+  gap: 20px;
   border: 1px solid rgba(92, 117, 164, 0.14);
   border-radius: var(--radius-3);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248, 251, 255, 0.92));
   box-shadow:
     0 12px 32px rgba(26, 41, 62, 0.12),
     0 4px 12px rgba(26, 41, 62, 0.08),
     inset 0 1px 0 rgba(255,255,255,0.52);
-  transition: box-shadow 240ms ease;
+  transition: all 240ms ease;
+}
+
+.td-reports-panel:hover {
+  box-shadow:
+    0 16px 40px rgba(26, 41, 62, 0.16),
+    0 6px 16px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
 .td-reports-panel--queue {
@@ -1424,12 +1436,16 @@ body.td-reports-mode .td-cockpit-sidebar {
 }
 
 .dashboard-kicker {
-  margin: 0;
-  font-size: var(--fs-1);
-  font-weight: var(--fw-regular);
-  color: var(--text-secondary);
-  letter-spacing: var(--ls-wide);
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: color-mix(in oklab, var(--accent) 72%, var(--text-secondary) 28%);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 78%, transparent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .focus-header {
@@ -1904,8 +1920,13 @@ body.td-classroom-mode .td-cockpit-timeline {
   margin: 0;
   font-size: var(--fs-md);
   line-height: var(--lh-tight);
-  font-weight: var(--fw-semibold);
+  font-weight: 800;
   color: var(--text-strong);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text-strong), color-mix(in oklab, var(--text-strong) 88%, var(--accent) 12%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .dashboard-section-meta {
