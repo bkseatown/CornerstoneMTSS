@@ -7,8 +7,9 @@ import {
   DEFAULT_PREFS, PREF_KEY, PREF_MIGRATION_KEY, PREF_UI_SKIN_RESET_MIGRATION_KEY,
   PREF_MUSIC_AUTO_MIGRATION_KEY, PREF_GUESSES_DEFAULT_MIGRATION_KEY, FIRST_RUN_SETUP_KEY,
   ALLOWED_MUSIC_MODES, ALLOWED_VOICE_MODES, ALLOWED_KEY_STYLES, ALLOWED_KEYBOARD_LAYOUTS,
-  ALLOWED_UI_SKINS, KEYBOARD_LAYOUT_ORDER, SUPPORT_PROMPT_PREF_KEY, DUPE_PREF_KEY,
-  SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED
+  ALLOWED_UI_SKINS, KEYBOARD_LAYOUT_ORDER, KEYBOARD_LAYOUT_LABELS, SUPPORT_PROMPT_PREF_KEY,
+  DUPE_PREF_KEY, SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED,
+  STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG
 } from './app-constants.js';
 
 // ─── Preference Loading & Storage ──────────────────────────────────
@@ -47,6 +48,83 @@ prefs.lessonPack = DEFAULT_PREFS.lessonPack;
 prefs.lessonTarget = DEFAULT_PREFS.lessonTarget;
 
 function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
+
+// ─── Normalization Functions (from original app.js) ──────────────────────────────────
+
+function normalizeKeyboardLayout(mode) {
+  const raw = String(mode || '').trim().toLowerCase();
+  if (raw === 'qwerty') return 'standard';
+  if (raw === 'alpha' || raw === 'abc') return 'alphabet';
+  return ALLOWED_KEYBOARD_LAYOUTS.has(raw) ? raw : DEFAULT_PREFS.keyboardLayout;
+}
+
+function normalizeStarterWordMode(mode) {
+  const raw = String(mode || '').trim().toLowerCase();
+  if (raw === 'ondemand') return 'on_demand';
+  if (raw === 'auto2' || raw === 'after2') return 'after_2';
+  if (raw === 'auto3' || raw === 'after3') return 'after_3';
+  return STARTER_WORD_SUPPORT_MODES.has(raw) ? raw : DEFAULT_PREFS.starterWords;
+}
+
+function normalizeCuratedMusicMode(mode) {
+  const normalized = normalizeMusicMode(mode);
+  if (CURATED_MUSIC_MODES.has(normalized)) return normalized;
+  if (normalized === 'deepfocus' || normalized === 'fantasy' || normalized === 'stealth') return 'lofi';
+  if (normalized === 'classicalbeats') return 'coffee';
+  if (normalized === 'focus') return 'chill';
+  if (normalized === 'nerdcore' || normalized === 'scifi' || normalized === 'upbeat' || normalized === 'arcade' || normalized === 'sports') return 'team';
+  return DEFAULT_PREFS.music;
+}
+
+function normalizeUiSkin(mode) {
+  // Premium skin is temporarily disabled to prevent washed-out gameplay surfaces.
+  return 'classic';
+}
+
+function normalizeTextSize(mode) {
+  const raw = String(mode || '').trim().toLowerCase();
+  if (raw === 'small' || raw === 'large') return raw;
+  return 'medium';
+}
+
+function getKeyboardLayoutLabel(mode) {
+  const normalized = normalizeKeyboardLayout(mode);
+  return KEYBOARD_LAYOUT_LABELS[normalized] || 'QWERTY';
+}
+
+function getNextKeyboardLayout(currentLayout) {
+  const normalized = normalizeKeyboardLayout(currentLayout);
+  const currentIndex = KEYBOARD_LAYOUT_ORDER.indexOf(normalized);
+  const safeIndex = currentIndex >= 0 ? currentIndex : 0;
+  return KEYBOARD_LAYOUT_ORDER[(safeIndex + 1) % KEYBOARD_LAYOUT_ORDER.length];
+}
+
+function normalizeKeyboardPresetId(mode) {
+  const raw = String(mode || '').trim().toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(KEYBOARD_PRESET_CONFIG, raw)) return raw;
+  return 'qwerty-classic';
+}
+
+function deriveKeyboardPresetId(layoutMode, keyStyleMode) {
+  const layout = normalizeKeyboardLayout(layoutMode);
+  const family = layout === 'alphabet' ? 'alphabet' : 'qwerty';
+  return normalizeKeyboardPresetId(`${family}-classic`);
+}
+
+function getSupportPromptMode() {
+  try {
+    return localStorage.getItem(SUPPORT_PROMPT_PREF_KEY) === 'off' ? 'off' : 'on';
+  } catch {
+    return 'on';
+  }
+}
+
+function setSupportPromptMode(mode) {
+  try {
+    localStorage.setItem(SUPPORT_PROMPT_PREF_KEY, mode === 'off' ? 'off' : 'on');
+  } catch {}
+}
+
   var autoPhysicalKeyboardSwitchApplied = false;
   var firstRunSetupPending = false;
   var pageMode = 'wordquest';
@@ -2351,4 +2429,24 @@ function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
   }
 
 
-export { prefs, loadPrefs, savePrefs, setPref, loadStreak, saveStreak, incrementStreak };
+export {
+  // Core preference management
+  prefs, loadPrefs, savePrefs, setPref,
+  // Streak management
+  loadStreak, saveStreak, incrementStreak, renderSafeStreak,
+  // UI normalization
+  normalizeKeyboardLayout, normalizeStarterWordMode, normalizeCuratedMusicMode,
+  normalizeUiSkin, normalizeTextSize, normalizeKeyboardPresetId, deriveKeyboardPresetId,
+  normalizeKeyboardLayout, getKeyboardLayoutLabel, getNextKeyboardLayout,
+  getSupportPromptMode, setSupportPromptMode,
+  // Theme helpers
+  normalizeTheme, getThemeFallback, getThemeFamily, shouldPersistTheme, readThemeFromQuery,
+  // Team mode normalization
+  normalizeTeamMode, normalizeTeamCount, normalizeTeamSet,
+  // Reveal and pacing normalization
+  normalizeRevealPacing, normalizeRevealAutoNext,
+  // Music and voice
+  normalizeMusicMode, normalizeVoiceMode,
+  // Telemetry
+  emitTelemetry
+};
