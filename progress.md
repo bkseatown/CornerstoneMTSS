@@ -738,3 +738,22 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - screenshot-backed truth:
     - the page reads faster and more like an output engine
     - it still has some explanatory copy left, but the first screen is lighter and clearer than before
+
+2026-03-19: ES6 Module Refactoring - High-Frequency Function Imports
+- **11 commits** systematically adding missing cross-module function imports and exports
+- **Architectural Discovery**: ~70 high-frequency functions require explicit ES6 imports/exports
+  - Functions defined inside init() blocks (e.g., inside initSettings, initFocus) cannot be exported as ES6 modules
+  - Removed incorrect imports for functions not at module scope: enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer
+- **Functions Now Exported & Imported**:
+  - 25+ high-frequency functions: emitTelemetry, getEffectiveGameplayGradeBand, isMissionLabStandaloneMode, hideInformantHintCard, refreshStandaloneMissionLabHub, closeQuickPopover, getFocusLabel, parseFocusPreset, normalizeVoiceMode, getVoicePracticeMode, formatGradeBandLabel, showStarterWordCard, normalizeReviewWord, normalizePlayStyle, setFocusValue, updateFocusSummaryLabel, normalizeLessonPackId, normalizeLessonTargetId, and more
+- **Commits (11 total)**:
+  - `91995863`: emitTelemetry + getEffectiveGameplayGradeBand to 5 modules
+  - `97e4e7c9`: isMissionLabStandaloneMode, hideInformantHintCard, refreshStandaloneMissionLabHub
+  - `6af37f30`: parseFocusPreset, normalizeVoiceMode, getVoicePracticeMode
+  - `2e374676`: closeQuickPopover, getFocusLabel
+  - `f9cd9385`: normalizeReviewWord, normalizePlayStyle
+  - `16ac5b3c`: Curriculum functions (normalizeLessonPackId, normalizeLessonTargetId)
+  - `071b8cd6`: Removed functions not at module scope
+  - `cb6d8ff0`: Remaining focus functions (formatGradeBandLabel, showStarterWordCard, updateFocusSummaryLabel, setFocusValue)
+- **Estimated Coverage**: ~50+ module dependencies resolved; ~90+ functions still requiring imports (many inside init() blocks)
+- **Next Phase**: Identify remaining missing imports + determine architectural refactoring needs for functions wrapped in init() blocks
