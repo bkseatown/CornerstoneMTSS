@@ -1,7 +1,7 @@
 # Enhancement Progress Log
 
 Tracking autonomous enhancements to Cornerstone MTSS pages and features.
-Last updated: 2026-03-19
+Last updated: 2026-03-20
 
 ---
 
@@ -23,10 +23,17 @@ Last updated: 2026-03-19
 - **Status**: ✅ COMPLETE (animations live, tested, committed)
 
 ### Typing Quest (typing-quest.html)
-- [ ] GSAP animations for keystroke feedback
+- [x] GSAP animations for keystroke feedback (✅ Commit 04e25281)
+  - [x] Green highlight pulse on correct keystrokes (0.2s animation)
+  - [x] Smooth fade-out reset (0.15s animation)
+  - [x] Safe fallback if GSAP unavailable
+- [x] Progress bar animation (✅ Commit bf5cc302)
+  - [x] Smooth width animation as user types (0.4s power2.out easing)
+  - [x] Connected to paintTypingPreview updates
 - [ ] Sound design for correct keypresses
-- [ ] Progress bar animation
-- **Status**: Pending
+  - Howler.js keystroke feedback sound
+  - Lesson completion celebration sound
+- **Status**: ✅ ANIMATIONS COMPLETE (keystroke + progress bar live)
 
 ### Precision Play (precision-play.html)
 - [ ] Animation on intervention wins
