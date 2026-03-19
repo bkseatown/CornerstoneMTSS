@@ -191,13 +191,25 @@ body.td-reports-mode {
 .td-leadership-card {
   display: grid;
   gap: 8px;
-  padding: 18px;
+  padding: 20px;
   min-height: 168px;
-  border-radius: 20px;
-  border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+  border-radius: var(--radius-3);
+  border: 1px solid rgba(92, 117, 164, 0.14);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(244, 241, 235, 0.78));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 251, 255, 0.88));
+  box-shadow:
+    0 16px 40px rgba(26, 41, 62, 0.14),
+    0 4px 12px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.56);
+  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.td-leadership-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 24px 56px rgba(26, 41, 62, 0.18),
+    0 6px 18px rgba(26, 41, 62, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.64);
 }
 
 .td-leadership-card--signal {
@@ -257,15 +269,28 @@ body.td-reports-mode {
 }
 
 .td-reports-overview__grid article {
-  padding: 16px;
-  border-radius: 18px;
+  padding: 22px;
+  border-radius: var(--radius-3);
   background:
-    radial-gradient(circle at top right, rgba(132, 173, 223, 0.16), transparent 32%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(244, 241, 235, 0.72));
-  border: 1px solid color-mix(in oklab, var(--border) 84%, white 16%);
+    radial-gradient(circle at top right, rgba(132, 173, 223, 0.12), transparent 32%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 251, 255, 0.88));
+  border: 1px solid rgba(92, 117, 164, 0.12);
   display: grid;
-  gap: 8px;
-  min-height: 128px;
+  gap: 12px;
+  min-height: 140px;
+  box-shadow:
+    0 12px 32px rgba(26, 41, 62, 0.12),
+    0 4px 12px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.52);
+  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.td-reports-overview__grid article:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 18px 44px rgba(26, 41, 62, 0.16),
+    0 6px 16px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
 .td-reports-overview__grid article strong {
@@ -356,11 +381,16 @@ body.td-reports-mode {
 }
 
 .td-reports-panel {
-  padding: 18px 20px;
+  padding: 24px;
   display: grid;
-  gap: 12px;
-  border: 1px solid color-mix(in oklab, var(--surface-border) 72%, rgba(255,255,255,0.32));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.48);
+  gap: 16px;
+  border: 1px solid rgba(92, 117, 164, 0.14);
+  border-radius: var(--radius-3);
+  box-shadow:
+    0 12px 32px rgba(26, 41, 62, 0.12),
+    0 4px 12px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.52);
+  transition: box-shadow 240ms ease;
 }
 
 .td-reports-panel--queue {
@@ -617,15 +647,19 @@ body.td-reports-mode {
 .td-top-btn {
   border-radius: var(--radius-2);
   border: 0;
-  background: color-mix(in oklab, var(--surface-1) 90%, #ece8e2 10%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.86));
   color: var(--text-primary);
-  padding: 7px 10px;
+  padding: 9px 14px;
   font: inherit;
   font-size: var(--fs-sm);
-  font-weight: var(--fw-regular);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: background-color var(--dur-1) ease-in-out, border-color var(--dur-1) ease-in-out, color var(--dur-1) ease-in-out, transform var(--dur-1) ease-in-out, box-shadow var(--dur-1) ease-in-out;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 48%, transparent);
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:
+    0 8px 20px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.48),
+    inset 0 0 0 1px rgba(92, 117, 164, 0.08);
 }
 
 .td-top-btn--primary-soft {
@@ -657,19 +691,32 @@ body.td-reports-mode {
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 26%, transparent);
 }
 #td-new-session {
-  background: var(--action-primary);
-  border-color: var(--action-primary);
+  background: linear-gradient(135deg, #295fa4 0%, #1f4d87 100%);
+  border-color: transparent;
   color: #ffffff;
   font-weight: var(--fw-semibold);
+  box-shadow:
+    0 12px 28px rgba(41, 95, 164, 0.32),
+    0 4px 12px rgba(41, 95, 164, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.24);
 }
+
 #td-weekly-insights {
-  background: color-mix(in oklab, var(--surface-1) 82%, #dce8f8 18%);
-  border: 1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+  background: linear-gradient(135deg, rgba(41, 95, 164, 0.14), rgba(74, 124, 255, 0.08));
+  border: 1px solid rgba(41, 95, 164, 0.24);
   font-weight: var(--fw-semibold);
+  box-shadow:
+    0 8px 18px rgba(41, 95, 164, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.36);
 }
+
 #td-new-session:hover {
-  background: var(--action-primary-hover);
-  filter: none;
+  background: linear-gradient(135deg, #2450a0 0%, #1a4080 100%);
+  box-shadow:
+    0 16px 40px rgba(41, 95, 164, 0.4),
+    0 6px 16px rgba(41, 95, 164, 0.2),
+    inset 0 1px 0 rgba(255,255,255,0.32);
+  transform: translateY(-2px);
 }
 .td-nav-btn {
   text-decoration: none;
@@ -690,8 +737,23 @@ body.td-reports-mode {
   min-height: 34px;
   padding-right: 28px;
 }
-.td-top-btn:hover { background: var(--surface-elev-2); box-shadow: 0 4px 10px rgba(61, 45, 27, 0.14); transform: translateY(-1px); }
-.td-top-btn:active { background: var(--surface-elev-2); box-shadow: none; transform: translateY(0); }
+.td-top-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 253, 255, 0.92));
+  box-shadow:
+    0 12px 28px rgba(26, 41, 62, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.56),
+    inset 0 0 0 1px rgba(92, 117, 164, 0.12);
+  transform: translateY(-2px);
+}
+
+.td-top-btn:active {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 251, 255, 0.82));
+  box-shadow:
+    0 6px 14px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    inset 0 0 0 1px rgba(92, 117, 164, 0.08);
+  transform: translateY(0);
+}
 .td-coach-chip { border-color: color-mix(in oklab, var(--accent) 58%, transparent); }
 .td-coach-chip.is-fresh { animation: none; }
 
@@ -786,13 +848,26 @@ body.td-reports-mode .td-cockpit-sidebar {
 
 .td-sidebar-compact-card {
   display: grid;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid color-mix(in oklab, var(--border) 76%, white 24%);
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-3);
+  border: 1px solid rgba(92, 117, 164, 0.12);
   background:
-    radial-gradient(circle at top right, rgba(132, 173, 223, 0.14), transparent 34%),
-    linear-gradient(180deg, rgba(255,255,255,0.84), rgba(241, 237, 230, 0.78));
+    radial-gradient(circle at top right, rgba(132, 173, 223, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248, 251, 255, 0.86));
+  box-shadow:
+    0 12px 32px rgba(26, 41, 62, 0.12),
+    0 4px 12px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.52);
+  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.td-sidebar-compact-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 40px rgba(26, 41, 62, 0.16),
+    0 6px 16px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
 .td-sidebar-compact-card strong {
@@ -908,12 +983,25 @@ body.td-reports-mode .td-cockpit-sidebar {
 
 .td-block-card {
   display: grid;
-  gap: 6px;
-  padding: 12px 12px 12px 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.62);
-  border-left: 6px solid var(--coverage);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 52%, transparent);
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-2);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 251, 255, 0.82));
+  border-left: 4px solid var(--coverage);
+  box-shadow:
+    0 10px 28px rgba(26, 41, 62, 0.1),
+    0 4px 12px rgba(26, 41, 62, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.48);
+  transition: all 240ms ease;
+}
+
+.td-block-card:hover {
+  transform: translateX(2px);
+  box-shadow:
+    0 14px 36px rgba(26, 41, 62, 0.14),
+    0 6px 16px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.52);
 }
 
 .td-block-card--ela { border-left-color: var(--ela); }
@@ -1148,15 +1236,27 @@ body.td-reports-mode .td-cockpit-sidebar {
 .focus-card {
   height: 100%;
   min-height: clamp(320px, 48vh, 560px);
-  padding: 18px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
-  border: 0;
-  box-shadow: 0 8px 20px rgba(25, 34, 48, 0.09);
+  gap: 18px;
+  border: 1px solid rgba(92, 117, 164, 0.14);
+  box-shadow:
+    0 20px 48px rgba(26, 41, 62, 0.16),
+    0 6px 16px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.52);
   position: relative;
-  border-radius: 18px;
+  border-radius: var(--radius-3);
+  transition: all 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.focus-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 28px 64px rgba(26, 41, 62, 0.2),
+    0 10px 24px rgba(26, 41, 62, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.58);
 }
 
 .dashboard-focus > .focus-card:first-child {
