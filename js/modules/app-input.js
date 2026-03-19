@@ -5,7 +5,7 @@
 
 import { prefs, positionDemoLaunchButton } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
-import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideMidgameBoost } from './app-game.js';
+import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach } from './app-game.js';
 import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI } from './app-audio.js';
 import { hideSupportChoiceCard } from './app-theme.js';
 

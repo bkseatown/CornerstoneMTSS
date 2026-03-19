@@ -3774,4 +3774,4 @@ const _el = id => document.getElementById(id);
     });
   }
 
-export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, copyTextToClipboard };
+export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, copyTextToClipboard, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach };
