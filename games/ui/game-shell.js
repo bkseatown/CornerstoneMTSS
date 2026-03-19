@@ -4600,6 +4600,10 @@
             for (var i = previous.length; i < nextRaw.length; i += 1) {
               if (nextRaw.charAt(i) === target.charAt(i)) {
                 if (nextRaw.charAt(i) !== " ") uiState.typingAcceptedChars += 1;
+                // Keystroke feedback animation for Typing Quest
+                if (celebrations && typeof celebrations.onKeystrokeCorrect === "function") {
+                  celebrations.onKeystrokeCorrect(typingInput);
+                }
               } else {
                 uiState.typingMistakes += 1;
                 uiState.typingErrorUntil = Date.now() + 180;

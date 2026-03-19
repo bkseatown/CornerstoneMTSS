@@ -532,6 +532,31 @@
     }
 
     /**
+     * Keystroke feedback animation for Typing Quest
+     * Provides subtle visual feedback when a character is typed correctly
+     */
+    function onKeystrokeCorrect(inputElement) {
+      if (!inputElement || typeof gsap === "undefined") return;
+
+      // Subtle highlight pulse on the input field
+      gsap.killTweensOf(inputElement);
+      gsap.to(inputElement, {
+        boxShadow: "0 0 8px rgba(34, 197, 94, 0.6), inset 0 0 4px rgba(34, 197, 94, 0.3)",
+        duration: 0.2,
+        ease: "power1.out"
+      });
+
+      // Reset the highlight after a brief moment
+      scheduleTimeout(function () {
+        gsap.to(inputElement, {
+          boxShadow: "none",
+          duration: 0.15,
+          ease: "power1.in"
+        });
+      }, 200);
+    }
+
+    /**
      * Escape HTML to prevent XSS
      */
     function escapeHtml(value) {
@@ -559,6 +584,7 @@
       renderMasteryBadges: renderMasteryBadges,
       onAnswerCorrect: onAnswerCorrect,
       onAnswerIncorrect: onAnswerIncorrect,
+      onKeystrokeCorrect: onKeystrokeCorrect,
       reset: reset,
       getState: function () { return Object.assign({}, state); }
     };
