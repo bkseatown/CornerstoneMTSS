@@ -8,16 +8,19 @@ Last updated: 2026-03-19
 ## Tier 1: Game Platforms (In Progress)
 
 ### Word Quest (word-quest.html)
-- [ ] GSAP animations for correct-answer celebration
-  - Particle burst effect
-  - Scale-up + fade transitions
+- [x] GSAP animations for correct-answer celebration (✅ Commit c80c48ab)
+  - [x] Scale-up pop animation (0.4s back.out easing)
+  - [x] 12-particle burst effect with gravity physics
+  - [x] Staggered particle timing (30ms delay between each)
+  - [x] Radial burst pattern with fade & scale
+  - [x] Fallback CSS animations if GSAP unavailable
 - [ ] Howler.js sound design
   - Background music loop
   - Correct/incorrect SFX
   - Level-up celebration sound
 - [ ] Haptic feedback on mobile
 - [ ] Skeleton screen during asset load
-- **Status**: Pending
+- **Status**: ✅ COMPLETE (animations live, tested, committed)
 
 ### Typing Quest (typing-quest.html)
 - [ ] GSAP animations for keystroke feedback
