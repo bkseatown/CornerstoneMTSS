@@ -3832,4 +3832,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade };
