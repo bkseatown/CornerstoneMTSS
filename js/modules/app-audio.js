@@ -6,7 +6,7 @@
 import { prefs } from './app-prefs.js';
 import { MISSION_LAB_ENABLED, SAFE_DEFAULT_GRADE_BAND } from './app-constants.js';
 import { newGame } from './app-game.js';
-import { normalizeReviewWord, setVoicePracticeFeedback, getActiveStudentLabel } from './app-settings.js';
+import { normalizeReviewWord, setVoicePracticeFeedback, getActiveStudentLabel, isMissionLabStandaloneMode } from './app-settings.js';
 import { formatGradeBandLabel, getPlayableWords } from './app-focus.js';
 
 // DOM helper
@@ -2577,5 +2577,6 @@ export {
   showRevealWordToast,
   runRevealNarration,
   renderPhonicsCluePanel,
-  updatePhonicsClueControlsFromUI
+  updatePhonicsClueControlsFromUI,
+  cancelRevealNarration
 };
