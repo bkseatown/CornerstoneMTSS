@@ -96,6 +96,46 @@ function deriveWordState(state) {
   return result;
 }
 
+// UI sync stubs - these control layout and positioning
+function syncPlayHeaderCopy() {}
+function updateFocusHint() {}
+function updateFocusSummaryLabel() {}
+function updateGradeTargetInline() {}
+function positionHintClueCard() {}
+function positionStarterWordCard() {}
+function positionSupportChoiceCard() {}
+function enableDraggableSupportChoiceCard() {}
+function bindSettingsModeCard() {}
+function bindFirstRunSetupModal() {}
+function openFirstRunSetupModal() {}
+function applyTeacherPreset() {}
+function syncTeacherPresetButton() {}
+function syncAssessmentLockRuntime() {}
+function syncStarterWordLauncherUI() {}
+function syncGameplayAudioStrip() {}
+function syncMusicModeButton() {}
+function syncVoiceModeButton() {}
+function updateMusicStatus() {}
+function syncMediaSessionControls() {}
+
+// Assessment lock utilities (from app-theme)
+function isAssessmentLockEnabled() {
+  const toggle = _el('s-assessment-lock');
+  if (toggle) return !!toggle.checked;
+  return (prefs.assessmentLock || DEFAULT_PREFS.assessmentLock) === 'on';
+}
+
+function isAssessmentRoundLocked() {
+  if (!isAssessmentLockEnabled()) return false;
+  const state = WQGame?.getState?.();
+  return Boolean(state?.word && !state?.gameOver);
+}
+
+// Play style normalization (from app-theme)
+function normalizePlayStyle(mode) {
+  return String(mode || '').toLowerCase() === 'listening' ? 'listening' : 'detective';
+}
+
   // ─── 5. Settings panel wiring ───────────────────────
   const SETTINGS_VIEWS = new Set(['quick', 'advanced']);
 
