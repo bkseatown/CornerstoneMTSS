@@ -13,6 +13,7 @@ import {
   getLessonTarget,
   getCurriculumTargetsForGrade,
   getQuestFilterGradeBand,
+  getEffectiveGameplayGradeBand,
   updateFocusSummaryLabel
 } from './app-focus.js';
 import { isAssessmentRoundLocked, hideStarterWordCard } from './app-theme.js';

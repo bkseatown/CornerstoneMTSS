@@ -3,11 +3,12 @@
  * Keyboard, mouse, touch input handling
  */
 
-import { prefs, positionDemoLaunchButton } from './app-prefs.js';
+import { prefs, positionDemoLaunchButton, emitTelemetry } from './app-prefs.js';
 import { DEMO_MODE, MIDGAME_BOOST_ENABLED, FEATURES } from './app-constants.js';
 import { newGame, buildRoundMetrics, resetRoundTracking, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach } from './app-game.js';
 import { renderPhonicsCluePanel, updatePhonicsClueControlsFromUI } from './app-audio.js';
 import { hideSupportChoiceCard } from './app-theme.js';
+import { getEffectiveGameplayGradeBand } from './app-focus.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

@@ -3,11 +3,11 @@
  * Audio buttons, adaptive feedback, challenge task flows
  */
 
-import { prefs } from './app-prefs.js';
+import { prefs, emitTelemetry } from './app-prefs.js';
 import { MISSION_LAB_ENABLED, SAFE_DEFAULT_GRADE_BAND } from './app-constants.js';
 import { newGame } from './app-game.js';
 import { normalizeReviewWord } from './app-settings.js';
-import { formatGradeBandLabel } from './app-focus.js';
+import { formatGradeBandLabel, getEffectiveGameplayGradeBand } from './app-focus.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

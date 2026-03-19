@@ -10,7 +10,7 @@ import { prefs, setPref, savePrefs,
   emitTelemetry, setHoverNoteForElement
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
-import { formatGradeBandLabel } from './app-focus.js';
+import { formatGradeBandLabel, getEffectiveGameplayGradeBand } from './app-focus.js';
 import { hideMidgameBoost } from './app-game.js';
 
 // Helper function for DOM queries
