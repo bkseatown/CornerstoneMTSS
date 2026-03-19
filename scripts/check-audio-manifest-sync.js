@@ -2,10 +2,9 @@
 /* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
+const { WORDS_FILE, loadWordData } = require('./lib/load-word-data');
 
 const ROOT = path.resolve(__dirname, '..');
-const WORDS_FILE = path.join(ROOT, 'data', 'words-inline.js');
 const MANIFEST_FILE = path.join(ROOT, 'data', 'audio-manifest.json');
 
 function fail(message) {
@@ -21,21 +20,6 @@ function normalizePath(value) {
     return trimmed;
   }
   return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-}
-
-function loadWords() {
-  if (!fs.existsSync(WORDS_FILE)) {
-    fail('Missing data/words-inline.js');
-  }
-  const source = fs.readFileSync(WORDS_FILE, 'utf8');
-  const sandbox = { window: {} };
-  vm.createContext(sandbox);
-  vm.runInContext(source, sandbox, { filename: 'words-inline.js' });
-  const data = sandbox.window?.WQ_WORD_DATA;
-  if (!data || typeof data !== 'object') {
-    fail('window.WQ_WORD_DATA is missing in data/words-inline.js');
-  }
-  return data;
 }
 
 function expectedFromWords(wordData) {
@@ -67,7 +51,14 @@ function run() {
     fail('data/audio-manifest.json must contain a paths[] array');
   }
 
-  const expectedPaths = expectedFromWords(loadWords());
+  let words;
+  try {
+    words = loadWordData();
+  } catch (error) {
+    fail(`Unable to load ${WORDS_FILE} (${error.message})`);
+  }
+
+  const expectedPaths = expectedFromWords(words);
   const currentPaths = manifest.paths.map((p) => normalizePath(p)).filter(Boolean).sort();
 
   if (currentPaths.length !== expectedPaths.length) {

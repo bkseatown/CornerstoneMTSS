@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
-
-const ROOT = path.resolve(__dirname, '..');
-const WORDS_FILE = path.join(ROOT, 'data', 'words-inline.js');
+const { WORDS_FILE, loadWordData } = require('./lib/load-word-data');
 const VALID_GRADE_BANDS = ['K-2', 'G3-5', 'G6-8', 'G9-12'];
 const VALID_GRADE_SET = new Set(VALID_GRADE_BANDS);
 
@@ -44,20 +40,17 @@ function normalizeGradeBand(rawGradeBand) {
 
 function loadWords() {
   if (!fs.existsSync(WORDS_FILE)) {
-    fail('Missing data/words-inline.js');
+    fail(`Missing ${WORDS_FILE}`);
     return {};
   }
-  const source = fs.readFileSync(WORDS_FILE, 'utf8');
-  const sandbox = { window: {} };
-  vm.createContext(sandbox);
-  vm.runInContext(source, sandbox, { filename: 'words-inline.js' });
-  const data = sandbox.window?.WQ_WORD_DATA;
-  if (!data || typeof data !== 'object') {
-    fail('window.WQ_WORD_DATA is missing in data/words-inline.js');
+  try {
+    const data = loadWordData();
+    pass(`Loaded ${Object.keys(data).length} entries from data/words.json.`);
+    return data;
+  } catch (error) {
+    fail(`Unable to load data/words.json (${error.message})`);
     return {};
   }
-  pass(`Loaded ${Object.keys(data).length} entries from data/words-inline.js.`);
-  return data;
 }
 
 function analyze(wordData) {

@@ -1,8 +1,8 @@
 /**
  * data.js — Word Quest v2
  * Loads word data and normalizes it to a unified internal format.
- * Supports both the new app_ready_database_FINAL.json AND the old
- * window.WORD_ENTRIES format so the app works right now.
+ * Supports canonical JSON as the primary source plus legacy globals
+ * so the app can migrate without duplicating curriculum truth.
  */
 
 const WQData = (() => {
@@ -185,7 +185,7 @@ const WQData = (() => {
     if (_loaded) return _entries;
     _quarantineItems = [];
 
-    // 1. Inline JS variable (works with file:// — no server needed)
+    // 1. Inline JS variable (legacy compatibility)
     if (window.WQ_WORD_DATA && Object.keys(window.WQ_WORD_DATA).length > 0) {
       _entries = _fromNew(window.WQ_WORD_DATA);
       console.log(`[WQData] Loaded ${Object.keys(_entries).length} words from inline data`);
@@ -193,18 +193,21 @@ const WQData = (() => {
       return _entries;
     }
 
-    // 2. Try fetch (works when served over http/https)
+    // 2. Canonical JSON source
     try {
       const res = await fetch('./data/words.json');
       if (res.ok) {
         const raw = await res.json();
+        if (raw && typeof raw === 'object') {
+          window.WQ_WORD_DATA = raw;
+        }
         _entries = _fromNew(raw);
-        console.log(`[WQData] Loaded ${Object.keys(_entries).length} words from new JSON`);
+        console.log(`[WQData] Loaded ${Object.keys(_entries).length} words from canonical JSON`);
         _finalize();
         return _entries;
       }
     } catch (e) {
-      console.log('[WQData] New JSON not available, trying legacy data');
+      console.log('[WQData] Canonical JSON not available, trying legacy data');
     }
 
     // 3. Fall back to old window.WORD_ENTRIES
@@ -299,6 +302,16 @@ const WQData = (() => {
 
   function isLoaded() { return _loaded; }
 
+  function getAllEntries() {
+    return Object.assign({}, _entries);
+  }
+
+  function getAllRawEntries() {
+    return window.WQ_WORD_DATA && typeof window.WQ_WORD_DATA === 'object'
+      ? window.WQ_WORD_DATA
+      : {};
+  }
+
   function getQuarantineReport() {
     return {
       count: _quarantineItems.length,
@@ -306,5 +319,5 @@ const WQData = (() => {
     };
   }
 
-  return { load, getEntry, getPlayableWords, isLoaded, getQuarantineReport, hasWord };
+  return { load, getEntry, getPlayableWords, isLoaded, getQuarantineReport, hasWord, getAllEntries, getAllRawEntries };
 })();

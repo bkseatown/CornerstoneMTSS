@@ -2,28 +2,10 @@
 /* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
-const vm = require('vm');
+const { loadWordData } = require('./lib/load-word-data');
 
 const ROOT = path.resolve(__dirname, '..');
-const INPUT_FILE = path.join(ROOT, 'data', 'words-inline.js');
 const OUTPUT_FILE = path.join(ROOT, 'data', 'audio-manifest.json');
-
-function loadWordData() {
-  if (!fs.existsSync(INPUT_FILE)) {
-    throw new Error(`Missing input file: ${INPUT_FILE}`);
-  }
-
-  const source = fs.readFileSync(INPUT_FILE, 'utf8');
-  const sandbox = { window: {} };
-  vm.createContext(sandbox);
-  vm.runInContext(source, sandbox, { filename: 'words-inline.js' });
-
-  const data = sandbox.window?.WQ_WORD_DATA;
-  if (!data || typeof data !== 'object') {
-    throw new Error('window.WQ_WORD_DATA was not found in data/words-inline.js');
-  }
-  return data;
-}
 
 function normalizePath(value) {
   if (!value || typeof value !== 'string') return null;
@@ -61,7 +43,7 @@ function buildManifest(wordData) {
 
   return {
     generated_at: new Date().toISOString(),
-    source_file: 'data/words-inline.js',
+    source_file: 'data/words.json',
     words_count: Object.keys(wordData).length,
     referenced_audio_count: totalRefs,
     unique_audio_paths_count: paths.length,

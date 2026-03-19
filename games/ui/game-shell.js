@@ -2176,7 +2176,12 @@
     return true;
   }
 
-  function init() {
+  async function init() {
+    if (runtimeRoot.WQData && typeof runtimeRoot.WQData.load === "function") {
+      try {
+        await runtimeRoot.WQData.load();
+      } catch (_error) {}
+    }
     var params = parseParams();
     var galleryOnly = !params.playMode;
     var context = loadTeacherContext(params);

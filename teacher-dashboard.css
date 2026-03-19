@@ -84,8 +84,9 @@ body.cs-has-nav-shell .td-shell {
 }
 
 body.td-reports-mode.cs-has-nav-shell .td-shell {
-  height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 12px);
-  max-height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 12px);
+  height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 36px);
+  max-height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 36px);
+  padding-bottom: 0 !important;
 }
 
 @media (max-width: 1180px), (max-height: 820px) {
