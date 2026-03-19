@@ -84,15 +84,15 @@
   --danger: #ff8b8b;
 
   /* ===== Spacing Scale ===== */
-  --space-1: 6px;
-  --space-2: 12px;
-  --space-3: 16px;
-  --space-4: 20px;
-  --space-5: 24px;
-  --space-6: 36px;
-  --space-7: 44px;
-  --space-8: 56px;
-  --space-9: 72px;
+  --space-1: 8px;
+  --space-2: 14px;
+  --space-3: 18px;
+  --space-4: 24px;
+  --space-5: 28px;
+  --space-6: 40px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
   --sp-1: var(--space-1);
   --sp-2: var(--space-2);
   --sp-3: var(--space-3);
@@ -111,11 +111,11 @@
   --radius-round: 999px;
 
   /* ===== Shadow System ===== */
-  --shadow-soft: 0 1px 3px rgba(26, 41, 62, 0.08);
-  --shadow-medium: 0 8px 20px rgba(26, 41, 62, 0.12);
-  --shadow-strong: 0 18px 42px rgba(26, 41, 62, 0.16);
-  --shadow-stage: 0 28px 64px rgba(11, 24, 48, 0.2);
-  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+  --shadow-soft: 0 2px 4px rgba(26, 41, 62, 0.1);
+  --shadow-medium: 0 12px 28px rgba(26, 41, 62, 16%);
+  --shadow-strong: 0 24px 52px rgba(26, 41, 62, 0.20);
+  --shadow-stage: 0 36px 80px rgba(11, 24, 48, 0.26);
+  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.62);
 
   /* ===== Border Treatments ===== */
   --border-hairline: 1px solid rgba(48, 38, 20, 0.08);
@@ -143,28 +143,28 @@
   --font: var(--font-ui);
   --font-logo: var(--font-ui);
 
-  --fs-hero: clamp(2.2rem, 3.2vw, 3.4rem);
-  --fs-h1: clamp(2rem, 3vw, 3rem);
-  --fs-h2: clamp(1.35rem, 2vw, 1.9rem);
-  --fs-body: 15px;
-  --fs-small: 13px;
+  --fs-hero: clamp(2.4rem, 3.4vw, 3.6rem);
+  --fs-h1: clamp(2.2rem, 3.2vw, 3.2rem);
+  --fs-h2: clamp(1.5rem, 2.2vw, 2.1rem);
+  --fs-body: 17px;
+  --fs-small: 15px;
   --fs-xxl: var(--fs-h1);
-  --fs-xl: 34px;
-  --fs-lg: 24px;
-  --fs-md: 18px;
-  --fs-base: 15px;
-  --fs-sm: 13px;
-  --fs-xs: 0.875rem;
-  --fs-0: 13px;
-  --fs-1: 13px;
-  --fs-2: 15px;
-  --fs-3: 15px;
-  --fs-4: 18px;
-  --fs-5: 22px;
-  --fs-6: 30px;
-  --fs-7: 42px;
-  --fs-8: 56px;
-  --fs-9: clamp(3rem, 6vw, 5.25rem);
+  --fs-xl: 38px;
+  --fs-lg: 28px;
+  --fs-md: 20px;
+  --fs-base: 17px;
+  --fs-sm: 15px;
+  --fs-xs: 0.94rem;
+  --fs-0: 14px;
+  --fs-1: 15px;
+  --fs-2: 17px;
+  --fs-3: 18px;
+  --fs-4: 20px;
+  --fs-5: 24px;
+  --fs-6: 32px;
+  --fs-7: 46px;
+  --fs-8: 60px;
+  --fs-9: clamp(3.2rem, 6.2vw, 5.5rem);
   --h1: var(--fs-xxl);
   --h2: var(--fs-xl);
   --h3: var(--fs-lg);
