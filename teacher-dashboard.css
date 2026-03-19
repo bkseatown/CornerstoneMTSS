@@ -64,7 +64,7 @@ body.td-page.cs-has-nav-shell {
 
 /* Root dashboard shell */
 .td-shell {
-  width: min(1388px, calc(100vw - 12px));
+  width: min(1388px, calc(100% - 12px));
   height: calc(100dvh - var(--app-safe-vh-margin, 24px));
   max-height: calc(100dvh - var(--app-safe-vh-margin, 24px));
   margin: calc(var(--app-safe-vh-margin, 24px) / 2) auto;
@@ -1927,7 +1927,7 @@ body.td-wow-eval-active .td-shell {
 
 .td-emotion-prompt {
   inset: auto 16px 16px auto;
-  width: min(460px, calc(100vw - 32px));
+  width: min(460px, calc(100% - 32px));
   background: transparent;
   justify-content: flex-end;
   align-items: flex-end;
@@ -1936,7 +1936,7 @@ body.td-wow-eval-active .td-shell {
 
 .td-wow-card,
 .td-emotion-card {
-  width: min(620px, calc(100vw - 36px));
+  width: min(620px, calc(100% - 36px));
   max-height: min(88vh, 760px);
   overflow: auto;
   background: var(--surface-1);
@@ -3226,7 +3226,7 @@ body .hidden {
   animation: tdModalIn 220ms ease-in-out;
 }
 .td-modal-card {
-  width: min(760px, calc(100vw - 28px));
+  width: min(760px, calc(100% - 28px));
   max-height: min(78dvh, 720px);
   border-radius: 18px;
   border: 1px solid color-mix(in oklab, var(--surface-border) 74%, transparent);
@@ -3386,7 +3386,7 @@ body .hidden {
 }
 
 #td-meeting-modal .td-modal-card {
-  width: min(1120px, calc(100vw - 52px));
+  width: min(1120px, calc(100% - 52px));
   max-height: min(90dvh, 940px);
   background:
     radial-gradient(circle at top right, rgba(133, 194, 219, 0.14), transparent 24%),
@@ -3609,11 +3609,11 @@ body .hidden {
 }
 
 .td-report-modal-card {
-  width: min(860px, calc(100vw - 24px));
+  width: min(860px, calc(100% - 24px));
 }
 
 .td-meeting-deck-card {
-  width: min(980px, calc(100vw - 28px));
+  width: min(980px, calc(100% - 28px));
   max-height: min(92vh, 980px);
   background: #ffffff;
 }
@@ -3885,7 +3885,7 @@ body .hidden {
   justify-content: flex-end;
 }
 .td-sas-library-card {
-  width: min(920px, calc(100vw - 24px));
+  width: min(920px, calc(100% - 24px));
 }
 .td-sas-library-grid {
   display: grid;
@@ -4121,7 +4121,7 @@ body .hidden {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  max-width: min(560px, calc(100vw - 22px));
+  max-width: min(560px, calc(100% - 22px));
   padding: 7px 10px;
   border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--border-subtle) 76%, transparent);
@@ -4133,7 +4133,7 @@ body .hidden {
   position: fixed;
   top: 58px;
   right: 0;
-  width: min(460px, calc(100vw - 24px));
+  width: min(460px, calc(100% - 24px));
   height: calc(100dvh - 58px);
   z-index: 55;
   border-left: 1px solid color-mix(in oklab, var(--border-soft) 72%, transparent);
@@ -4168,7 +4168,7 @@ body .hidden {
 .td-coach-ribbon.is-collapsed #td-coach-mute { display: none; }
 
 @media (max-width: 1180px) {
-  .td-shell { width: min(1160px, calc(100vw - 14px)); }
+  .td-shell { width: min(1160px, calc(100% - 14px)); }
   .td-cockpit-grid {
     grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1.35fr) minmax(240px, 0.82fr);
   }
@@ -4195,7 +4195,7 @@ body .hidden {
 }
 
 @media (max-width: 1420px) and (min-width: 1100px) and (min-height: 860px) {
-  .td-shell { width: min(1388px, calc(100vw - 8px)); }
+  .td-shell { width: min(1388px, calc(100% - 8px)); }
   .td-cockpit-grid {
     grid-template-columns: minmax(216px, 0.68fr) minmax(0, 1.7fr) minmax(288px, 0.88fr);
     gap: 8px;
@@ -4213,7 +4213,7 @@ body .hidden {
 }
 
 @media (max-width: 900px) {
-  .td-shell { width: calc(100vw - 10px); }
+  .td-shell { width: calc(100% - 10px); }
   body.teacher-dashboard,
   body.td-page {
     overflow: auto;
@@ -4311,6 +4311,152 @@ button[class*="primary"]:hover {
 }
 
 }
+/* ================================================================
+   PHASE 4: Card & Shadow System
+   Comprehensive standardization of cards, shadows, and depth
+   ================================================================ */
+
+/* Shadow Depth System */
+.card-shadow-1 {
+  box-shadow: 0 2px 8px rgba(26, 41, 62, 0.06);
+}
+
+.card-shadow-2 {
+  box-shadow: var(--shadow-medium);
+}
+
+.card-shadow-3 {
+  box-shadow: var(--shadow-strong);
+}
+
+/* Card Size Variants - Large (24px padding) */
+.card-lg {
+  padding: 24px;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card-bg);
+  box-shadow: var(--shadow-medium);
+}
+
+.card-lg:hover {
+  box-shadow: 0 8px 24px rgba(26, 41, 62, 0.14);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Card Size Variants - Medium (16px padding) */
+.card-md {
+  padding: 16px;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card-bg);
+  box-shadow: var(--shadow-medium);
+}
+
+.card-md:hover {
+  box-shadow: 0 8px 20px rgba(26, 41, 62, 0.12);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Card Size Variants - Small (12px padding) */
+.card-sm {
+  padding: 12px;
+  border-radius: var(--radius-1);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card-bg);
+  box-shadow: 0 2px 8px rgba(26, 41, 62, 0.06);
+}
+
+.card-sm:hover {
+  box-shadow: 0 4px 12px rgba(26, 41, 62, 0.10);
+  transition: all 0.2s ease;
+}
+
+/* Card Unified Base Style */
+.card-unified {
+  position: relative;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card-bg);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform var(--motion-med) var(--motion-ease),
+    box-shadow var(--motion-med) var(--motion-ease),
+    border-color var(--motion-med) var(--motion-ease);
+}
+
+.card-unified::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.2), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 36%);
+  opacity: 0.8;
+}
+
+/* Apply standardized shadow to existing card classes */
+.td-reports-prep-steps article,
+.td-reports-pattern-strip,
+.td-sidebar-compact-card,
+.td-block-card,
+.focus-card {
+  box-shadow: var(--shadow-medium);
+  border-radius: var(--radius-2);
+}
+
+.td-reports-prep-steps article {
+  padding: 16px;
+}
+
+.td-reports-pattern-strip {
+  padding: 14px 16px;
+}
+
+.td-sidebar-compact-card {
+  padding: 16px;
+}
+
+/* Elevation System - 3 Levels */
+.surface-elevated-1 {
+  box-shadow: 0 2px 8px rgba(26, 41, 62, 0.06);
+  background: var(--surface-0);
+}
+
+.surface-elevated-2 {
+  box-shadow: 0 8px 20px rgba(26, 41, 62, 0.12);
+  background: var(--surface-1);
+}
+
+.surface-elevated-3 {
+  box-shadow: 0 18px 42px rgba(26, 41, 62, 0.16);
+  background: var(--surface-2);
+}
+
+/* Interactive card states */
+.card-interactive {
+  cursor: pointer;
+  transition:
+    transform var(--motion-med) var(--motion-ease),
+    box-shadow var(--motion-med) var(--motion-ease),
+    border-color var(--motion-med) var(--motion-ease);
+}
+
+.card-interactive:hover,
+.card-interactive:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(26, 41, 62, 0.16);
+  border-color: color-mix(in oklab, var(--accent) 32%, var(--border-subtle));
+}
+
+.card-interactive:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(26, 41, 62, 0.12);
+}
+
 .td-stat-denom { font-size: 16px; font-weight: 600; color: color-mix(in oklab, var(--text-primary) 72%, var(--muted) 28%); }
 .td-stat-label { margin: 0; font-size: 12px; color: color-mix(in oklab, var(--text-primary) 80%, var(--muted) 20%); }
 .td-stat-meta  { margin: 4px 0 0; font-size: 11px; color: color-mix(in oklab, var(--text-primary) 68%, var(--muted) 32%); }

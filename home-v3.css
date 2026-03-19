@@ -63,7 +63,7 @@ body.cs-home-page {
 }
 
 .landing-shell {
-  width: min(var(--landing-max), calc(100vw - 8px));
+  width: min(var(--landing-max), calc(100% - 8px));
   min-height: calc(100vh - var(--landing-safe-y));
   height: calc(100vh - var(--landing-safe-y));
   margin: 10px auto;
@@ -147,7 +147,7 @@ body.cs-home-page {
 
 @media (max-width: 1100px) {
   .landing-shell {
-    width: min(var(--landing-max), calc(100vw - 20px));
+    width: min(var(--landing-max), calc(100% - 20px));
     min-height: auto;
     margin: 10px auto;
     padding: clamp(12px, 1.5vw, 18px);
@@ -223,7 +223,7 @@ body.cs-home-page {
 
 @media (min-width: 981px) and (max-height: 920px) {
   .landing-shell {
-    width: min(var(--landing-max), calc(100vw - 22px));
+    width: min(var(--landing-max), calc(100% - 22px));
     margin: 4px auto;
     min-height: calc(100vh - 8px);
     padding: 8px;
@@ -1282,7 +1282,7 @@ body.cs-home-page {
 
 @media (max-width: 760px) {
   .landing-shell {
-    width: min(var(--landing-max), calc(100vw - 20px));
+    width: min(var(--landing-max), calc(100% - 20px));
     margin: 10px auto;
     padding: 16px;
   }
@@ -1337,7 +1337,7 @@ body.cs-home-page {
 
 @media (min-width: 981px) and (max-height: 820px) {
   .landing-shell {
-    width: min(var(--landing-max), calc(100vw - 22px));
+    width: min(var(--landing-max), calc(100% - 22px));
     margin: 4px auto;
     padding: 14px;
     gap: 12px;
@@ -1446,7 +1446,7 @@ body.cs-home-page {
 
 @media (min-width: 1600px) and (min-height: 860px) {
   .landing-shell {
-    width: calc(100vw - 6px);
+    width: calc(100% - 6px);
     min-height: calc(100vh - 14px);
     height: calc(100vh - 14px);
     margin: 7px auto;
