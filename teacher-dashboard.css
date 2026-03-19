@@ -214,20 +214,23 @@ body.td-reports-mode {
 
 .td-leadership-card--signal {
   background:
-    radial-gradient(circle at top right, rgba(84, 137, 219, 0.16), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 244, 251, 0.8));
+    radial-gradient(circle at top right, rgba(84, 137, 219, 0.20), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 246, 254, 0.88));
+  border-color: rgba(84, 137, 219, 0.18);
 }
 
 .td-leadership-card--action {
   background:
-    radial-gradient(circle at top right, rgba(79, 181, 132, 0.14), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 247, 242, 0.8));
+    radial-gradient(circle at top right, rgba(79, 181, 132, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 250, 245, 0.88));
+  border-color: rgba(79, 181, 132, 0.16);
 }
 
 .td-leadership-card--proof {
   background:
-    radial-gradient(circle at top right, rgba(219, 157, 84, 0.16), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 242, 235, 0.82));
+    radial-gradient(circle at top right, rgba(219, 157, 84, 0.20), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(252, 245, 238, 0.88));
+  border-color: rgba(219, 157, 84, 0.18);
 }
 
 .td-leadership-card strong {
