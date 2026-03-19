@@ -351,10 +351,18 @@ body.td-reports-mode {
 
 .td-priority-hero {
   display: none;
-  padding: 18px 20px;
+  padding: 24px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  border-radius: var(--radius-3);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 253, 255, 0.92));
+  border: 1px solid rgba(92, 117, 164, 0.14);
+  box-shadow:
+    0 12px 32px rgba(26, 41, 62, 0.12),
+    0 4px 12px rgba(26, 41, 62, 0.08);
+  transition: all 240ms ease;
 }
 
 .td-priority-hero__copy {
@@ -364,10 +372,16 @@ body.td-reports-mode {
 
 .td-priority-hero__copy .dashboard-section-title {
   margin: 0;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
 .td-priority-hero__copy .dashboard-section-meta {
   margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--text-primary) 76%, var(--muted) 24%);
 }
 
 .td-priority-hero__actions {
@@ -2172,25 +2186,35 @@ body.td-wow-eval-active .td-shell {
 }
 
 .launch-card {
-  min-height: 108px;
+  min-height: 120px;
   display: grid;
   align-content: center;
   justify-items: start;
-  gap: 4px;
-  padding: 12px 13px;
+  gap: 6px;
+  padding: 16px;
   text-align: left;
   font-size: var(--fs-sm);
   font-weight: var(--fw-regular);
   border-radius: var(--radius-2);
-  background: var(--surface-1);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248, 251, 255, 0.86));
   color: var(--text-primary);
-  border: 0;
-  box-shadow: 0 1px 4px rgba(26, 42, 62, 0.06), inset 0 0 0 1px color-mix(in oklab, var(--surface-border) 44%, transparent);
+  border: 1px solid rgba(92, 117, 164, 0.12);
+  box-shadow:
+    0 10px 24px rgba(26, 41, 62, 0.1),
+    0 4px 12px rgba(26, 41, 62, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.48);
+  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
 }
 
 .launch-card:hover {
-  background: var(--surface-elev-1);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(250, 253, 255, 0.92));
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 36px rgba(26, 41, 62, 0.14),
+    0 6px 16px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.56);
 }
 
 .launch-card-icon {
