@@ -15,7 +15,7 @@ import {
   getQuestFilterGradeBand
 } from './app-focus.js';
 import { isAssessmentRoundLocked } from './app-theme.js';
-import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer } from './app-settings.js';
+import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, syncHeaderControlsVisibility } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
 
 // DOM helper

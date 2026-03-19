@@ -2466,7 +2466,9 @@ export {
   // Telemetry
   emitTelemetry, stopDemoToastProgress,
   // Demo UI
-  positionDemoLaunchButton
+  positionDemoLaunchButton,
+  // UI helpers
+  setHoverNoteForElement
 };
 
 // Explicit exports for page mode functions

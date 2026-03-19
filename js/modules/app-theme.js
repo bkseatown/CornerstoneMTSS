@@ -7,9 +7,11 @@ import { prefs, setPref,
   normalizeTheme, getThemeFallback, getThemeFamily,
   normalizeUiSkin, normalizeReportCompactMode,
   normalizeRevealPacing, normalizeRevealAutoNext,
-  emitTelemetry
+  emitTelemetry, setHoverNoteForElement
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
+import { syncHeaderControlsVisibility } from './app-settings.js';
+import { formatGradeBandLabel } from './app-focus.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);

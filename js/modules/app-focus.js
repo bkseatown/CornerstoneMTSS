@@ -3,7 +3,7 @@
  * Curriculum, lesson packs, focus selection, grade alignment
  */
 
-import { prefs, setPref } from './app-prefs.js';
+import { prefs, setPref, setHoverNoteForElement } from './app-prefs.js';
 import { DEFAULT_PREFS } from './app-constants.js';
 import { isAssessmentRoundLocked, normalizePlayStyle } from './app-theme.js';
 import { enforceFocusSelectionForGrade } from './app-settings.js';
@@ -2326,5 +2326,6 @@ export {
   getLessonPackDefinition,
   getLessonTarget,
   getCurriculumTargetsForGrade,
-  getQuestFilterGradeBand
+  getQuestFilterGradeBand,
+  formatGradeBandLabel
 };

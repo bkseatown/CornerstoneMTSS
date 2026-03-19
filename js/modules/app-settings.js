@@ -3832,4 +3832,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, normalizeReviewWord };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, normalizeReviewWord, setVoicePracticeFeedback, syncHeaderControlsVisibility, getActiveStudentLabel };
