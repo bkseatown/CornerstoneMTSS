@@ -3,7 +3,8 @@
  * Duplicate-letter dismissible toast and celebratory effects (confetti, stars)
  */
 
-const DUPE_PREF_KEY = 'wq_v2_dupe_dismissed';
+import { DUPE_PREF_KEY } from './app-constants.js';
+
 var _dupeToastEl = null;
 
 const _el = id => document.getElementById(id);

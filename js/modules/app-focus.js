@@ -2317,5 +2317,12 @@ export {
   setFocusValue,
   getFocusLabel,
   getEffectiveGameplayGradeBand,
-  shouldExpandGradeBandForFocus
+  shouldExpandGradeBandForFocus,
+  CURRICULUM_PACK_ORDER,
+  normalizeLessonPackId,
+  normalizeLessonTargetId,
+  getLessonPackDefinition,
+  getLessonTarget,
+  getCurriculumTargetsForGrade,
+  getQuestFilterGradeBand
 };

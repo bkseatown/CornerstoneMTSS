@@ -4,7 +4,17 @@
  */
 
 import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
-import { DEFAULT_PREFS, MISSION_LAB_ENABLED } from './app-constants.js';
+import { DEFAULT_PREFS, MISSION_LAB_ENABLED, TEACHER_ASSIGNMENTS_CONTRACT, DEMO_MODE, DEMO_TARGET_WORD, FEATURES, MIDGAME_BOOST_ENABLED } from './app-constants.js';
+import {
+  CURRICULUM_PACK_ORDER,
+  normalizeLessonPackId,
+  normalizeLessonTargetId,
+  getLessonPackDefinition,
+  getLessonTarget,
+  getCurriculumTargetsForGrade,
+  getQuestFilterGradeBand
+} from './app-focus.js';
+import { isAssessmentRoundLocked } from './app-theme.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);

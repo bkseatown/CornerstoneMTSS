@@ -3,8 +3,9 @@
  * Data loading and loading recovery UI
  */
 
+import { LOADING_WATCHDOG_MS } from './app-constants.js';
+
 const loadingEl = document.getElementById('loading-screen');
-const LOADING_WATCHDOG_MS = 18000;
 var loadingRecoveryShown = false;
 
 function buildCacheBustedUrl() {

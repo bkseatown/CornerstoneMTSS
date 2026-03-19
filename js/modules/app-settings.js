@@ -4,9 +4,15 @@
  */
 
 import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
-import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS } from './app-constants.js';
+import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT } from './app-constants.js';
 import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus } from './app-focus.js';
 import { getTopErrorKey } from './app-game.js';
+
+// DOM helper
+const _el = id => document.getElementById(id);
+
+// Module state
+let pageMode = 'wordquest';
 
   // ─── 5. Settings panel wiring ───────────────────────
   const SETTINGS_VIEWS = new Set(['quick', 'advanced']);

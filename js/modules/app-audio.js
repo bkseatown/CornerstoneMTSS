@@ -4,7 +4,7 @@
  */
 
 import { prefs } from './app-prefs.js';
-import { MISSION_LAB_ENABLED } from './app-constants.js';
+import { MISSION_LAB_ENABLED, SAFE_DEFAULT_GRADE_BAND } from './app-constants.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -2537,4 +2537,40 @@ const _el = id => document.getElementById(id);
 
 function initAudio() { /* wired in app.js */ }
 
-export { initAudio };
+export {
+  initAudio,
+  saveRevealChallengeResponses,
+  handleChallengeChoiceSelection,
+  startPhonicsClueDeck,
+  awardPhonicsClueGuessPoint,
+  awardPhonicsClueBonusPoint,
+  advancePhonicsClueCard,
+  skipPhonicsClueCard,
+  togglePhonicsClueTargetVisibility,
+  startStandaloneMissionLab,
+  refreshStandaloneMissionLabHub,
+  closePhonicsClueModal,
+  openRevealChallengeModal,
+  closeRevealChallengeModal,
+  buildDeepDiveState,
+  getFirstIncompleteChallengeTask,
+  setChallengeActiveTask,
+  getChallengeInstructionText,
+  syncChallengeActionButtons,
+  updateChallengeStationUI,
+  renderChallengeChoiceButtons,
+  computeChallengeScore,
+  updateChallengeScoreUI,
+  getChallengeChoice,
+  syncChallengeResponseSummary,
+  syncChallengePacingTimer,
+  getChallengeLevelDisplay,
+  resolveMissionScoreBand,
+  getChallengeScaffoldProfile,
+  buildChallengeQuickstartCopy,
+  loadChallengeProgress,
+  saveChallengeProgress,
+  resolveChallengeRank,
+  showRevealWordToast,
+  runRevealNarration
+};
