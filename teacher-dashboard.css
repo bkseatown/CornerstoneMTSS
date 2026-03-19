@@ -272,28 +272,28 @@ body.td-reports-mode {
 }
 
 .td-reports-overview__grid article {
-  padding: 22px;
+  padding: 26px;
   border-radius: var(--radius-3);
   background:
-    radial-gradient(circle at top right, rgba(132, 173, 223, 0.12), transparent 32%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 251, 255, 0.88));
-  border: 1px solid rgba(92, 117, 164, 0.12);
+    radial-gradient(circle at top right, rgba(132, 173, 223, 0.10), transparent 32%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 255, 0.92));
+  border: 1px solid rgba(92, 117, 164, 0.10);
   display: grid;
-  gap: 12px;
-  min-height: 140px;
+  gap: 14px;
+  min-height: 150px;
   box-shadow:
-    0 12px 32px rgba(26, 41, 62, 0.12),
-    0 4px 12px rgba(26, 41, 62, 0.08),
-    inset 0 1px 0 rgba(255,255,255,0.52);
-  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    0 14px 36px rgba(26, 41, 62, 0.13),
+    0 4px 12px rgba(26, 41, 62, 0.07),
+    inset 0 1px 0 rgba(255,255,255,0.56);
+  transition: all 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .td-reports-overview__grid article:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow:
-    0 18px 44px rgba(26, 41, 62, 0.16),
-    0 6px 16px rgba(26, 41, 62, 0.1),
-    inset 0 1px 0 rgba(255,255,255,0.58);
+    0 20px 48px rgba(26, 41, 62, 0.18),
+    0 8px 20px rgba(26, 41, 62, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.64);
 }
 
 .td-reports-overview__grid article strong {
@@ -354,18 +354,27 @@ body.td-reports-mode {
 
 .td-priority-hero {
   display: none;
-  padding: 24px;
+  padding: 32px;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 28px;
   border-radius: var(--radius-3);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 253, 255, 0.92));
-  border: 1px solid rgba(92, 117, 164, 0.14);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(252, 254, 255, 0.95));
+  border: 1px solid rgba(92, 117, 164, 0.12);
   box-shadow:
-    0 12px 32px rgba(26, 41, 62, 0.12),
-    0 4px 12px rgba(26, 41, 62, 0.08);
-  transition: all 240ms ease;
+    0 16px 40px rgba(26, 41, 62, 0.14),
+    0 4px 12px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.64);
+  transition: all 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.td-priority-hero:hover {
+  box-shadow:
+    0 20px 48px rgba(26, 41, 62, 0.18),
+    0 6px 16px rgba(26, 41, 62, 0.1),
+    inset 0 1px 0 rgba(255,255,255,0.72);
+  transform: translateY(-2px);
 }
 
 .td-priority-hero__copy {
@@ -878,25 +887,25 @@ body.td-reports-mode .td-cockpit-sidebar {
 .td-sidebar-compact-card {
   display: grid;
   gap: 12px;
-  padding: 18px;
+  padding: 20px;
   border-radius: var(--radius-3);
-  border: 1px solid rgba(92, 117, 164, 0.12);
+  border: 1px solid rgba(92, 117, 164, 0.10);
   background:
-    radial-gradient(circle at top right, rgba(132, 173, 223, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248, 251, 255, 0.86));
+    radial-gradient(circle at top right, rgba(132, 173, 223, 0.08), transparent 34%),
+    linear-gradient(135deg, rgba(255,255,255,0.94), rgba(250, 252, 255, 0.90));
   box-shadow:
-    0 12px 32px rgba(26, 41, 62, 0.12),
-    0 4px 12px rgba(26, 41, 62, 0.08),
-    inset 0 1px 0 rgba(255,255,255,0.52);
-  transition: all 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    0 12px 28px rgba(26, 41, 62, 0.11),
+    0 4px 12px rgba(26, 41, 62, 0.07),
+    inset 0 1px 0 rgba(255,255,255,0.56);
+  transition: all 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .td-sidebar-compact-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow:
-    0 16px 40px rgba(26, 41, 62, 0.16),
-    0 6px 16px rgba(26, 41, 62, 0.1),
-    inset 0 1px 0 rgba(255,255,255,0.58);
+    0 16px 36px rgba(26, 41, 62, 0.14),
+    0 6px 16px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.62);
 }
 
 .td-sidebar-compact-card strong {
@@ -1265,27 +1274,29 @@ body.td-reports-mode .td-cockpit-sidebar {
 .focus-card {
   height: 100%;
   min-height: clamp(320px, 48vh, 560px);
-  padding: 28px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
-  border: 1px solid rgba(92, 117, 164, 0.14);
+  gap: 20px;
+  border: 1px solid rgba(92, 117, 164, 0.11);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.98), rgba(252, 254, 255, 0.95));
   box-shadow:
-    0 20px 48px rgba(26, 41, 62, 0.16),
-    0 6px 16px rgba(26, 41, 62, 0.1),
-    inset 0 1px 0 rgba(255,255,255,0.52);
+    0 20px 48px rgba(26, 41, 62, 0.14),
+    0 6px 16px rgba(26, 41, 62, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.64);
   position: relative;
   border-radius: var(--radius-3);
-  transition: all 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .focus-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   box-shadow:
-    0 28px 64px rgba(26, 41, 62, 0.2),
-    0 10px 24px rgba(26, 41, 62, 0.14),
-    inset 0 1px 0 rgba(255,255,255,0.58);
+    0 28px 64px rgba(26, 41, 62, 0.18),
+    0 10px 24px rgba(26, 41, 62, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.70);
 }
 
 .dashboard-focus > .focus-card:first-child {
