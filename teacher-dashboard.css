@@ -84,9 +84,13 @@ body.cs-has-nav-shell .td-shell {
 }
 
 body.td-reports-mode.cs-has-nav-shell .td-shell {
-  height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 36px);
-  max-height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 36px);
+  height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 48px);
+  max-height: calc(100dvh - var(--app-safe-vh-margin, 24px) - 48px);
   padding-bottom: 0 !important;
+}
+
+body.td-reports-mode {
+  overflow: hidden !important;
 }
 
 @media (max-width: 1180px), (max-height: 820px) {
@@ -4274,6 +4278,38 @@ html[data-motion="reduced"] * {
 .td-stat-num {
   font-size: 32px; font-weight: 800;
   color: var(--text-primary); line-height: 1;
+/* ── Enhanced CTA Prominence (Design Elevation) ── */
+.td-top-btn {
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.td-top-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.td-top-btn:active {
+  transform: translateY(0);
+}
+
+/* Primary action buttons */
+.th2-day-sched-sync-btn,
+.th2-firstrun-banner__btn,
+[class*="cta"],
+button[class*="primary"] {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+[class*="cta"]:hover,
+button[class*="primary"]:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  transform: translateY(-2px);
+}
+
 }
 .td-stat-denom { font-size: 16px; font-weight: 600; color: color-mix(in oklab, var(--text-primary) 72%, var(--muted) 28%); }
 .td-stat-label { margin: 0; font-size: 12px; color: color-mix(in oklab, var(--text-primary) 80%, var(--muted) 20%); }

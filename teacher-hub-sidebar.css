@@ -115,13 +115,12 @@
 /* ── Student list ──────────────────────────────────────── */
 
 .th2-list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  flex: 0 1 auto;
+  overflow-y: visible;
   padding: 4px 4px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 8px;
 }
 
 .th2-list-empty {
