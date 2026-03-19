@@ -16,8 +16,11 @@ let pageMode = 'wordquest';
 
 // Local page mode utilities (extracted from app-prefs)
 const PAGE_MODE_KEY = 'wordquest_page_mode_v1';
+function isMissionLabEnabled() {
+  return MISSION_LAB_ENABLED;
+}
 function normalizePageMode(mode) {
-  if (!MISSION_LAB_ENABLED) return 'wordquest';
+  if (!isMissionLabEnabled()) return 'wordquest';
   return String(mode || '').trim().toLowerCase() === 'mission-lab'
     ? 'mission-lab'
     : 'wordquest';
@@ -48,6 +51,49 @@ function isDevModeEnabled() {
   } catch {
     return false;
   }
+}
+
+// Diagnostic functions (stubs - full implementations in app.js)
+function logOverflowDiagnostics(tag) {
+  // Dev-only logging; stub here
+  if (!isDevModeEnabled()) return;
+}
+
+function assertHomeNoScrollDev() {
+  // Dev-only assertion; stub here
+  if (!isDevModeEnabled()) return;
+}
+
+// Utility functions from app-prefs
+function setHoverNoteForElement(el, note) {
+  if (!el) return;
+  const text = String(note || '').replace(/\s+/g, ' ').trim();
+  if (!text) {
+    el.removeAttribute('data-hover-note');
+    return;
+  }
+  el.setAttribute('data-hover-note', text);
+  if (el.hasAttribute('title')) el.removeAttribute('title');
+}
+
+function deriveWordState(state) {
+  const guess = String(state?.guess || '').toUpperCase();
+  const word = String(state?.word || '').toUpperCase();
+  const wordLength = Number(state?.wordLength || 0) || 5;
+  const result = [];
+  for (let i = 0; i < wordLength; i += 1) {
+    const letter = guess[i] || '';
+    if (letter === '') {
+      result[i] = 'empty';
+    } else if (letter === word[i]) {
+      result[i] = 'correct';
+    } else if (word.includes(letter)) {
+      result[i] = 'present';
+    } else {
+      result[i] = 'absent';
+    }
+  }
+  return result;
 }
 
   // ─── 5. Settings panel wiring ───────────────────────
