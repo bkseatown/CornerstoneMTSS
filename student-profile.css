@@ -11,8 +11,8 @@ body {
 body.sp-page {
   background:
     radial-gradient(circle at 12% 10%, rgba(255, 211, 166, 0.20), transparent 22%),
-    radial-gradient(circle at 88% 16%, rgba(126, 167, 214, 0.18), transparent 24%),
-    linear-gradient(160deg, #d6dbe3 0%, #cbd3dc 44%, #bec7d1 100%);
+    radial-gradient(circle at 88% 16%, rgba(57, 101, 105, 0.15), transparent 24%),
+    linear-gradient(160deg, #dbd6cf 0%, #cec8c0 44%, #c2bbb3 100%);
   color: var(--text-primary);
   font-family: var(--font-body);
   overflow: hidden;
@@ -96,8 +96,8 @@ body.sp-page {
 }
 
 .sp-btn-primary {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 13%, white 87%);
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 26%, white 74%);
+  background: color-mix(in oklab, var(--accent, #84422c) 13%, white 87%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 26%, white 74%);
 }
 
 .sp-main--single {
@@ -223,9 +223,9 @@ body.sp-page {
 
 .sp-list-item:hover,
 .sp-plan-link:hover {
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 42%, white 58%);
-  background: color-mix(in oklab, var(--accent, #2b5da8) 6%, white 94%);
-  box-shadow: 0 4px 12px rgba(43, 93, 168, 0.12);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 42%, white 58%);
+  background: color-mix(in oklab, var(--accent, #84422c) 6%, white 94%);
+  box-shadow: 0 4px 12px rgba(132, 66, 44, 0.12);
 }
 
 .sp-meta-card span {
@@ -343,8 +343,8 @@ body.sp-page {
 }
 
 .sp-plan-link:hover {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 7%, white 93%);
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 28%, white 72%);
+  background: color-mix(in oklab, var(--accent, #84422c) 7%, white 93%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 28%, white 72%);
 }
 
 .sp-compact-lines {
@@ -419,16 +419,16 @@ body.sp-page {
 }
 
 .sp-btn-primary {
-  background: var(--accent, #2b5da8);
+  background: var(--accent, #84422c);
   color: white;
-  border-color: var(--accent, #2b5da8);
+  border-color: var(--accent, #84422c);
   font-weight: 800;
 }
 
 .sp-btn-primary:hover,
 .sp-btn-primary:focus-visible {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 110%, white 0%);
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 110%, white 0%);
+  background: color-mix(in oklab, var(--accent, #84422c) 110%, white 0%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 110%, white 0%);
 }
 
 /* Better section titles */

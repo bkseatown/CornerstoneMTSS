@@ -1,11 +1,11 @@
 :root {
   --pp-bg: var(--surface-base-gradient, #f4f6f8);
-  --pp-surface: color-mix(in oklab, var(--surface-elev-1, #ffffff) 92%, #eef4fc 8%);
+  --pp-surface: color-mix(in oklab, var(--surface-elev-1, #ffffff) 92%, #f4f0ea 8%);
   --pp-surface-2: var(--surface-elev-2, #f0f2f5);
   --pp-border: var(--surface-border, rgba(0, 0, 0, 0.08));
   --pp-text: var(--text-primary, #1c2733);
   --pp-muted: var(--text-secondary, #4a5a6a);
-  --pp-accent: var(--action-primary, #2b5da8);
+  --pp-accent: var(--action-primary, #84422c);
   --pp-secure: var(--status-secure, #4e8d6a);
   --pp-dev: var(--status-developing, #b58a45);
   --pp-intense: #8a5d99;
@@ -200,13 +200,13 @@ body {
   font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(43, 93, 168, 0.24);
+  box-shadow: 0 8px 18px rgba(132, 66, 44,0.24);
   transition: transform var(--dur-1) ease-in-out, box-shadow var(--dur-1) ease-in-out, filter var(--dur-1) ease-in-out;
 }
 
 .pp-start:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(43, 93, 168, 0.28);
+  box-shadow: 0 10px 22px rgba(132, 66, 44,0.28);
 }
 
 .pp-game {
@@ -516,7 +516,7 @@ body {
 .pp-action-btn:focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 0 0 3px rgba(132, 66, 44, 0.1);
 }
 
 /* Fun hover elevation */

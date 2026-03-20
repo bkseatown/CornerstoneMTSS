@@ -11,8 +11,8 @@ body {
 body.cm-page {
   background:
     radial-gradient(circle at 12% 12%, rgba(255, 214, 176, 0.18), transparent 24%),
-    radial-gradient(circle at 88% 14%, rgba(123, 169, 220, 0.16), transparent 24%),
-    linear-gradient(160deg, #d6dce4 0%, #c8d1db 46%, #bec7d1 100%);
+    radial-gradient(circle at 88% 14%, rgba(57, 101, 105, 0.14), transparent 24%),
+    linear-gradient(160deg, #dbd6cf 0%, #ccc6be 46%, #c0b9b0 100%);
   color: var(--text-primary);
   font-family: var(--font-body);
 }
@@ -96,8 +96,8 @@ body.cm-page {
 }
 
 .cm-btn-primary {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 12%, white 88%);
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 28%, white 72%);
+  background: color-mix(in oklab, var(--accent, #84422c) 12%, white 88%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 28%, white 72%);
 }
 
 .cm-top-grid,
@@ -179,8 +179,8 @@ body.cm-page {
 
 .cm-status-pill[data-tone="steady"],
 .cm-filter-chip[data-active="true"] {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 11%, white 89%);
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 24%, white 76%);
+  background: color-mix(in oklab, var(--accent, #84422c) 11%, white 89%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 24%, white 76%);
 }
 
 .cm-section-head {
@@ -223,8 +223,8 @@ body.cm-page {
 
 .cm-student-card:hover,
 .cm-doc-card:hover {
-  border-color: color-mix(in oklab, var(--accent, #2b5da8) 28%, white 72%);
-  background: color-mix(in oklab, var(--accent, #2b5da8) 6%, white 94%);
+  border-color: color-mix(in oklab, var(--accent, #84422c) 28%, white 72%);
+  background: color-mix(in oklab, var(--accent, #84422c) 6%, white 94%);
 }
 
 .cm-student-card-top,
@@ -264,8 +264,8 @@ body.cm-page {
 }
 
 .cm-tier {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 10%, white 90%);
-  color: color-mix(in oklab, var(--text-primary) 76%, var(--accent, #2b5da8) 24%);
+  background: color-mix(in oklab, var(--accent, #84422c) 10%, white 90%);
+  color: color-mix(in oklab, var(--text-primary) 76%, var(--accent, #84422c) 24%);
 }
 
 .cm-risk[data-risk="high risk"],
@@ -289,7 +289,7 @@ body.cm-page {
   min-height: 26px;
   padding: 0 9px;
   border-radius: var(--radius-full);
-  background: rgba(244, 247, 252, 0.92);
+  background: rgba(250, 247, 244,0.92);
   border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
   font-size: 0.74rem;
   font-weight: 700;
@@ -456,7 +456,7 @@ body.cm-page {
 }
 
 .cm-chip:hover {
-  background: rgba(244, 247, 252, 1);
+  background: rgba(250, 247, 244,1);
   border-color: rgba(0, 0, 0, 0.12);
 }
 
