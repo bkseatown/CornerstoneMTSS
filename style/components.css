@@ -9631,8 +9631,8 @@ html[data-home-mode="play"] .board-zone {
   align-content: start;
   width: min(100%, 980px);
   max-width: 980px;
-  padding-left: clamp(12px, 2.8vw, 32px);
-  padding-right: clamp(18px, 3.6vw, 42px);
+  padding-left: clamp(15px, 3.2vw, 37px);
+  padding-right: clamp(15px, 3.2vw, 37px);
   margin-top: clamp(6px, 0.8vh, 12px);
   margin-bottom: clamp(8px, 1.2vh, 16px);
   margin-left: auto;
