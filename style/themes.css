@@ -438,10 +438,10 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 /* ── MATRIX ── Electric green on deep green. INTENTIONALLY high contrast.
    Dark forest green page — the dark IS the brand here. Mint keys readable. */
 [data-theme="matrix"] {
-  --page-bg:      #2d4a42;
-  --page-bg2:     #234037;
-  --plate-bg:     rgba(65,175,118,0.08);
-  --plate-border: rgba(82,217,152,0.36);
+  --page-bg:      #4d6a62;
+  --page-bg2:     #3d5a52;
+  --plate-bg:     rgba(65,175,118,0.12);
+  --plate-border: rgba(82,217,152,0.40);
   --tile-face:    linear-gradient(160deg, #e8efe8 0%, #d6e2d8 100%);
   --tile-border:  #5ea97f;
   --tile-text:    #0c1914;
@@ -456,22 +456,22 @@ html[data-home-mode="play"][data-theme="seahawks"] {
   --brand-dk:     #1e834f;
   --brand-text:   #05120b;
   --accent:       #98f28f;
-  --header-bg:    #0b2f24;
-  --header-border: rgba(118,241,172,0.44);
-  --focusbar-bg:  rgba(12,34,24,0.72);
-  --panel-bg:     #1c3a2f;
-  --panel-border: rgba(80,208,140,0.3);
-  --panel-shadow: 0 8px 32px rgba(0,0,0,0.66);
+  --header-bg:    #2b4f44;
+  --header-border: rgba(118,241,172,0.48);
+  --focusbar-bg:  rgba(32,54,44,0.8);
+  --panel-bg:     #3c5a4f;
+  --panel-border: rgba(80,208,140,0.4);
+  --panel-shadow: 0 8px 32px rgba(0,0,0,0.40);
   --theme-text:         #d8f7e6;
   --theme-text-muted:   #aee8c8;
-  --modal-bg:     #1d352b;
-  --fun-bg:       #0d1f16;
+  --modal-bg:     #3d554a;
+  --fun-bg:       #2d3f36;
   --fun-text:     #8be27e;
   --fun-border:   #2f6a4c;
   --theme-backdrop:
     radial-gradient(circle at 14% 8%, rgba(152,242,143,0.16), transparent 28%),
     repeating-linear-gradient(180deg, rgba(152,242,143,0.05) 0 2px, transparent 2px 8px),
-    linear-gradient(180deg, #173126, #102319);
+    linear-gradient(180deg, #4d6a62, #3d5a52);
   --wq-play-vowel-shadow: #5be39e;
 }
 
@@ -977,10 +977,10 @@ html[data-home-mode="play"][data-theme="seahawks"] {
 
 /* ── AMONG US ── deep space with crewmate red + visor cyan ── */
 [data-theme="amongus"] {
-  --page-bg:      #202543;
-  --page-bg2:     #11162d;
-  --plate-bg:     rgba(94,112,190,0.10);
-  --plate-border: rgba(225,29,72,0.30);
+  --page-bg:      #404563;
+  --page-bg2:     #31364d;
+  --plate-bg:     rgba(94,112,190,0.14);
+  --plate-border: rgba(225,29,72,0.34);
   --tile-face:    linear-gradient(160deg, #f6f8ff 0%, #e5e9ff 100%);
   --tile-border:  #7f8cb8;
   --tile-text:    #0f1534;
@@ -995,23 +995,23 @@ html[data-home-mode="play"][data-theme="seahawks"] {
   --brand-dk:     #be123c;
   --brand-text:   #ffffff;
   --accent:       #22d3ee;
-  --header-bg:    #202544;
-  --header-border: rgba(103,224,245,0.38);
-  --focusbar-bg:  rgba(16,20,42,0.78);
-  --panel-bg:     #24305b;
-  --panel-border: rgba(94,112,190,0.32);
-  --panel-shadow: 0 8px 32px rgba(0,0,0,0.60);
+  --header-bg:    #404564;
+  --header-border: rgba(103,224,245,0.42);
+  --focusbar-bg:  rgba(36,40,62,0.84);
+  --panel-bg:     #44507b;
+  --panel-border: rgba(94,112,190,0.36);
+  --panel-shadow: 0 8px 32px rgba(0,0,0,0.36);
   --theme-text:         #ecf0ff;
   --theme-text-muted:   #c2cbed;
-  --modal-bg:     #1f2a52;
-  --fun-bg:       #121937;
+  --modal-bg:     #3f4a72;
+  --fun-bg:       #322a47;
   --fun-text:     #8fe9ff;
   --fun-border:   #345d86;
   --theme-backdrop:
     radial-gradient(circle at 18% 10%, rgba(34,211,238,0.12), transparent 18%),
     radial-gradient(circle at 72% 18%, rgba(255,255,255,0.16) 0 1px, transparent 1px) 0 0 / 26px 26px,
     radial-gradient(circle at 16% 8%, rgba(225,29,72,0.18), transparent 24%),
-    linear-gradient(180deg, #202543, #11162d);
+    linear-gradient(180deg, #404563, #31364d);
   --wq-play-vowel-shadow: #59daf3;
 }
 

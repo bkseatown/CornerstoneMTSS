@@ -6509,7 +6509,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   font-size: clamp(0.70rem, 0.80vw, 0.76rem);
   font-weight: 760;
   line-height: 1.32;
-  color: #ffffff;
+  color: #1d3346;
   margin: 0;
 }
 
