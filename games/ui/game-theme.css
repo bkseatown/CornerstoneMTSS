@@ -32,8 +32,8 @@ html[data-view-mode="projector"] {
    ═══════════════════════════════════════════════════ */
 body.game-platform-page,
 body.game-platform-page[data-game-theme="dark"] {
-  --cg-bg:            #1a1f3d;
-  --cg-bg-deep:       #13172e;
+  --cg-bg:            #2a3a4a;
+  --cg-bg-deep:       #1f2b3a;
   --cg-panel:         rgba(30, 37, 70, 0.96);
   --cg-panel-strong:  rgba(36, 44, 82, 0.98);
   --cg-ink:           #f0f4ff;
@@ -72,8 +72,8 @@ body.game-platform-page[data-game-theme="dark"] {
    THEME: OCEAN  — teal / cyan / white
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="ocean"] {
-  --cg-bg:            #133651;
-  --cg-bg-deep:       #0b2234;
+  --cg-bg:            #2a4a6a;
+  --cg-bg-deep:       #1a3a5a;
   --cg-panel:         rgba(45, 90, 125, 0.85);
   --cg-panel-strong:  rgba(60, 110, 145, 0.90);
   --cg-ink:           #f0f4ff;
@@ -112,8 +112,8 @@ body.game-platform-page[data-game-theme="ocean"] {
    THEME: SUNSET  — warm purple / coral / gold
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="sunset"] {
-  --cg-bg:            #5a345f;
-  --cg-bg-deep:       #35203d;
+  --cg-bg:            #7a4a7f;
+  --cg-bg-deep:       #6a3a6f;
   --cg-panel:         rgba(110, 70, 95, 0.85);
   --cg-panel-strong:  rgba(130, 85, 115, 0.90);
   --cg-ink:           #f0e8f4;
@@ -152,8 +152,8 @@ body.game-platform-page[data-game-theme="sunset"] {
    THEME: FOREST  — deep green / lime / amber
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="forest"] {
-  --cg-bg:            #0d2318;
-  --cg-bg-deep:       #081510;
+  --cg-bg:            #1a3a2a;
+  --cg-bg-deep:       #152a22;
   --cg-panel:         rgba(15, 36, 25, 0.96);
   --cg-panel-strong:  rgba(20, 46, 32, 0.98);
   --cg-ink:           #ecfdf5;
@@ -180,7 +180,7 @@ body.game-platform-page[data-game-theme="forest"] {
     radial-gradient(ellipse at 15% 10%, rgba(74,222,128,0.22) 0%, transparent 38%),
     radial-gradient(ellipse at 85% 8%,  rgba(250,204,21,0.16)  0%, transparent 32%),
     radial-gradient(ellipse at 50% 95%, rgba(74,222,128,0.10)  0%, transparent 40%),
-    linear-gradient(175deg, #102a1c 0%, #0d2318 45%, #081510 100%);
+    linear-gradient(175deg, #1a3a2a 0%, #1a3a2a 45%, #152a22 100%);
   --cg-texture: radial-gradient(circle, rgba(74,222,128,0.05) 1px, transparent 1px);
   --cg-texture-size: 28px 28px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,20,10,0.3);
@@ -239,8 +239,8 @@ body.game-platform-page[data-game-theme="classic"] {
    60% Navy (dominant) · 30% Wolf Gray (secondary) · 10% Action Green (accent)
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="seahawks"] {
-  --cg-bg:            #002244;
-  --cg-bg-deep:       #001530;
+  --cg-bg:            #1a3a5f;
+  --cg-bg-deep:       #0f2850;
   --cg-panel:         rgba(26, 45, 70, 0.90);
   --cg-panel-strong:  rgba(36, 60, 90, 0.95);
   --cg-ink:           #f5f5f5;
@@ -267,7 +267,7 @@ body.game-platform-page[data-game-theme="seahawks"] {
     radial-gradient(ellipse at 14% 12%, rgba(105,190,40,0.14) 0%, transparent 26%),
     radial-gradient(ellipse at 84% 10%, rgba(168,181,189,0.12) 0%, transparent 24%),
     linear-gradient(125deg, transparent 0 70%, rgba(105,190,40,0.04) 70% 73%, transparent 73% 100%),
-    linear-gradient(180deg, #1a3f5f 0%, #0d2844 36%, #002244 100%);
+    linear-gradient(180deg, #2a4a6a 0%, #1a3a5a 36%, #1a3a5f 100%);
   --cg-texture: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
   --cg-texture-size: 26px 26px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);
@@ -320,8 +320,8 @@ body.game-platform-page[data-game-theme="huskies"] {
    60% Green (dominant) · 30% White (secondary) · 10% Gold (accent)
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="starbucks"] {
-  --cg-bg: #1f4620;
-  --cg-bg-deep: #0f2810;
+  --cg-bg: #3a5f3a;
+  --cg-bg-deep: #2a4f2a;
   --cg-panel: rgba(50, 85, 55, 0.85);
   --cg-panel-strong: rgba(70, 105, 75, 0.90);
   --cg-ink: #f5f5f0;
@@ -347,7 +347,7 @@ body.game-platform-page[data-game-theme="starbucks"] {
   --cg-page-gradient:
     radial-gradient(ellipse at 18% 10%, rgba(165,212,180,0.22) 0%, transparent 34%),
     radial-gradient(ellipse at 85% 12%, rgba(212,175,55,0.16) 0%, transparent 28%),
-    linear-gradient(180deg, #2d5a37 0%, #1f4620 42%, #0f2810 100%);
+    linear-gradient(180deg, #3a6a4a 0%, #3a5f3a 42%, #2a4f2a 100%);
   --cg-texture: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
   --cg-texture-size: 28px 28px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.25);
@@ -423,8 +423,8 @@ body.game-platform-page[data-game-theme="minecraft"] {
 
 body.game-platform-page[data-game-theme="amongus"],
 body.game-platform-page[data-game-theme="dark"] {
-  --cg-bg: #18222d;
-  --cg-bg-deep: #101720;
+  --cg-bg: #2a3a4a;
+  --cg-bg-deep: #1f2b3a;
   --cg-panel: rgba(59, 75, 92, 0.94);
   --cg-panel-strong: rgba(86, 103, 121, 0.96);
   --cg-ink: #f7fbff;
@@ -439,7 +439,7 @@ body.game-platform-page[data-game-theme="dark"] {
   --cg-page-gradient:
     radial-gradient(ellipse at 18% 10%, rgba(84,180,107,0.18) 0%, transparent 34%),
     radial-gradient(ellipse at 84% 10%, rgba(94,182,216,0.18) 0%, transparent 28%),
-    linear-gradient(180deg, #56687b 0%, #39495b 42%, #202c37 100%);
+    linear-gradient(180deg, #3a4a5a 0%, #2a3a4a 42%, #1f2b3a 100%);
 }
 
 body.game-platform-page[data-game-theme="amongus"] {
@@ -450,7 +450,7 @@ body.game-platform-page[data-game-theme="amongus"] {
   --cg-page-gradient:
     radial-gradient(ellipse at 18% 10%, rgba(217,77,92,0.18) 0%, transparent 34%),
     radial-gradient(ellipse at 84% 10%, rgba(97,198,234,0.16) 0%, transparent 28%),
-    linear-gradient(180deg, #283746 0%, #1b2631 42%, #111821 100%);
+    linear-gradient(180deg, #3a4a5a 0%, #2a3a4a 42%, #1f2b3a 100%);
 }
 
 body.game-platform-page[data-game-theme="kuromi"] {

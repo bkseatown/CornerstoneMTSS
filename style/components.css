@@ -552,9 +552,9 @@ header {
   border-radius: var(--radius-sm);
 }
 .logo span {
-  color: var(--logo-quest, color-mix(in oklab, #f3fff8 86%, var(--vowel-accent) 14%));
+  color: #ffffff;
   position: relative;
-  text-shadow: 0 1px 1px rgba(8, 16, 28, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .logo span::before {
   content: '·';
@@ -2363,6 +2363,7 @@ html[data-home-mode="play"] .focus-inline-results {
   bottom: auto;
   transform: translateX(-50%);
   top: max(80px, calc(env(safe-area-inset-top) + 72px)) !important;
+  z-index: 9999 !important;
 }
 
 .quick-music-popover {
@@ -6347,7 +6348,7 @@ html[data-home-mode="play"] #toast:not(.visible) {
   font-size: clamp(0.70rem, 0.80vw, 0.76rem);
   font-weight: 760;
   line-height: 1.32;
-  color: #334659;
+  color: #ffffff;
   margin: 0;
 }
 
