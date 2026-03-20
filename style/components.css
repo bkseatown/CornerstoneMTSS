@@ -705,6 +705,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 #phonics-clue-open-btn {
   border-color: color-mix(in oklab, var(--panel-border) 74%, #8ba5ba 26%);
   background: color-mix(in oklab, var(--panel-bg) 80%, #d4dbe5 20%);
+  color: var(--text-primary);
   min-width: 88px;
   padding: 4px 12px;
   display: inline-flex !important;
@@ -5586,13 +5587,28 @@ html[data-play-style="listening"] #focus-hint-toggle {
   );
 }
 
-html[data-play-style="listening"] #g-hear-word {
+html[data-play-style="listening"] #g-hear-word,
+html[data-play-style="listening"] #g-hear-def {
   min-width: 0;
   width: auto;
+  flex: 1 1 auto;
   justify-content: center;
+  border-radius: 8px 0 0 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-html[data-play-style="listening"] #g-hear-word svg {
+html[data-play-style="listening"] #g-hear-def {
+  border-radius: 0 8px 8px 0;
+  border-right: none;
+}
+
+html[data-play-style="listening"] #g-hear-word:hover,
+html[data-play-style="listening"] #g-hear-def:hover {
+  background: linear-gradient(145deg, color-mix(in oklab, var(--accent) 64%, var(--brand) 36%), color-mix(in oklab, var(--brand-dk) 84%, #000000 16%)) !important;
+}
+
+html[data-play-style="listening"] #g-hear-word svg,
+html[data-play-style="listening"] #g-hear-def svg {
   width: 16px;
   height: 16px;
 }

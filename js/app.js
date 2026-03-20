@@ -8592,6 +8592,55 @@
     if (settingsInput) settingsInput.value = '';
   });
 
+  /* Music keyboard shortcuts (F7-F12) and auto-pause on voice audio */
+  document.addEventListener('keydown', (event) => {
+    if (event.target?.matches('input, textarea, select, [contenteditable]')) return;
+    switch (event.code) {
+      case 'F7': // Toggle music
+        event.preventDefault();
+        toggleMusicQuick();
+        break;
+      case 'F8': // Previous vibe
+        event.preventDefault();
+        stepMusicVibe(-1);
+        break;
+      case 'F9': // Next vibe
+        event.preventDefault();
+        stepMusicVibe(1);
+        break;
+      case 'F10': // Shuffle vibe
+        event.preventDefault();
+        shuffleMusicVibe();
+        break;
+      case 'F11': // Volume down
+        event.preventDefault();
+        const volDown = _el('quick-music-vol') || _el('s-music-vol');
+        if (volDown) {
+          const current = parseFloat(volDown.value) || 0.5;
+          volDown.value = Math.max(0, current - 0.1);
+          volDown.dispatchEvent(new Event('input'));
+        }
+        break;
+      case 'F12': // Volume up
+        event.preventDefault();
+        const volUp = _el('quick-music-vol') || _el('s-music-vol');
+        if (volUp) {
+          const current = parseFloat(volUp.value) || 0.5;
+          volUp.value = Math.min(1, current + 0.1);
+          volUp.dispatchEvent(new Event('input'));
+        }
+        break;
+    }
+  });
+
+  /* Auto-pause music when voice audio plays */
+  const pauseMusicOnVoiceAudio = () => {
+    if (musicController && _el('s-music')?.value !== 'off') {
+      musicController.pause?.();
+    }
+  };
+  document.addEventListener('play', pauseMusicOnVoiceAudio, true);
+
   _el('s-voice')?.addEventListener('change', e => {
     const normalized = normalizeVoiceMode(e.target.value);
     e.target.value = normalized;
