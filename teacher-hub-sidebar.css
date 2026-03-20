@@ -32,7 +32,7 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #2d5ea0;
+  color: #84422c;
   opacity: 0.98;
   transition: opacity 0.12s ease, transform 0.12s ease;
   padding: 6px 10px 6px 0;
@@ -44,8 +44,8 @@
   width: 10px;
   height: 10px;
   border-radius: 3px;
-  background: linear-gradient(180deg, #2d6df0 0%, #204b9a 100%);
-  box-shadow: 0 0 0 3px rgba(45, 109, 240, 0.12);
+  background: linear-gradient(180deg, #84422c 0%, #6b3420 100%);
+  box-shadow: 0 0 0 3px rgba(132, 66, 44, 0.12);
   flex: 0 0 auto;
 }
 
@@ -57,7 +57,7 @@
   bottom: 0;
   height: 2px;
   border-radius: var(--radius-full);
-  background: linear-gradient(90deg, rgba(45, 109, 240, 0.95), rgba(45, 109, 240, 0));
+  background: linear-gradient(90deg, rgba(132, 66, 44, 0.95), rgba(132, 66, 44, 0));
 }
 
 /* Design Elevation: Section labels enhanced */
@@ -72,8 +72,8 @@
 }
 
 .th2-brand:hover { opacity: 1; transform: translateY(-1px); }
-.th2-brand-word { color: #1d3760; }
-.th2-brand-mtss { color: #4c6ea4; }
+.th2-brand-word { color: #6b3420; }
+.th2-brand-mtss { color: #396569; }
 .th2-brand-sep { opacity: 0.45; font-size: 14px; letter-spacing: 0; }
 
 /* ── Search ────────────────────────────────────────────── */

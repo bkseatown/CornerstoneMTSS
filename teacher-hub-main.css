@@ -12,7 +12,6 @@
   align-items: center;
   justify-content: flex-start;
   padding: 24px 32px;
-  background: linear-gradient(180deg, rgba(26, 45, 77, 0.98), rgba(18, 28, 48, 0.98));
 }
 
 /* ── Empty state ───────────────────────────────────────── */
@@ -83,8 +82,8 @@
   border-radius: 24px;
   color: #f4f7fb;
   background:
-    radial-gradient(circle at top right, rgba(199, 144, 105, 0.2), transparent 34%),
-    linear-gradient(135deg, #24272d 0%, #313844 52%, #414a58 100%);
+    radial-gradient(circle at top right, rgba(132, 66, 44, 0.2), transparent 34%),
+    linear-gradient(135deg, #2d1f17 0%, #3d2820 52%, #4a3228 100%);
   box-shadow: 0 20px 44px rgba(15, 23, 41, 0.22);
 }
 
@@ -240,12 +239,12 @@
 
 .th2-day-block:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(43, 93, 168, 0.12);
+  box-shadow: 0 10px 24px rgba(57, 101, 105,0.12);
 }
 
 .th2-day-block.is-active {
-  border-color: rgba(43, 93, 168, 0.34);
-  box-shadow: 0 14px 30px rgba(43, 93, 168, 0.16);
+  border-color: rgba(57, 101, 105,0.34);
+  box-shadow: 0 14px 30px rgba(57, 101, 105,0.16);
 }
 
 .th2-day-block__time {
@@ -424,11 +423,11 @@
   min-height: 28px;
   padding: 0 11px;
   border-radius: var(--radius-full);
-  background: rgba(146, 111, 62, 0.10);
-  color: color-mix(in oklab, #7e5630 80%, var(--text-primary) 20%);
+  background: rgba(132, 66, 44,0.10);
+  color: color-mix(in oklab, #84422c 80%, var(--text-primary) 20%);
   font-size: 11px;
   font-weight: 700;
-  border: 1px solid rgba(146, 111, 62, 0.16);
+  border: 1px solid rgba(132, 66, 44,0.16);
 }
 
 .th2-companion-panel__grid {
@@ -516,8 +515,8 @@
 
 .th2-priority-row:hover {
   transform: translateY(-1px);
-  border-color: rgba(43, 93, 168, 0.26);
-  box-shadow: 0 10px 20px rgba(43, 93, 168, 0.08);
+  border-color: rgba(57, 101, 105,0.26);
+  box-shadow: 0 10px 20px rgba(57, 101, 105,0.08);
 }
 
 .th2-priority-row__main,
@@ -603,8 +602,8 @@
 
 .th2-quick-action:hover {
   transform: translateY(-1px);
-  border-color: rgba(43, 93, 168, 0.3);
-  box-shadow: 0 10px 24px rgba(43, 93, 168, 0.1);
+  border-color: rgba(57, 101, 105,0.3);
+  box-shadow: 0 10px 24px rgba(57, 101, 105,0.1);
 }
 
 .th2-quick-action strong {
@@ -909,13 +908,13 @@
   background: var(--action-primary);
   color: #fff;
   border-color: var(--action-primary);
-  box-shadow: 0 4px 12px rgba(43, 93, 168, 0.22);
+  box-shadow: 0 4px 12px rgba(57, 101, 105,0.22);
 }
 
 .th2-btn-primary:hover {
   background: var(--action-primary-hover);
   border-color: var(--action-primary-hover);
-  box-shadow: 0 6px 16px rgba(43, 93, 168, 0.28);
+  box-shadow: 0 6px 16px rgba(57, 101, 105,0.28);
 }
 
 .th2-btn-quiet {

@@ -8,8 +8,8 @@
   --landing-radius-xl: clamp(24px, 2.4vw, 32px);
   --landing-radius-lg: clamp(18px, 2vw, 24px);
   --landing-radius-md: 16px;
-  --landing-border: rgba(69, 88, 118, 0.18);
-  --landing-border-strong: rgba(37, 53, 78, 0.18);
+  --landing-border: rgba(132, 66, 44, 0.12);
+  --landing-border-strong: rgba(132, 66, 44, 0.18);
   --landing-text: var(--landing-text);
   --landing-text-soft: var(--landing-text-soft);
   --landing-text-muted: var(--text-label-mute-sm);
@@ -22,10 +22,10 @@
   --landing-workspace:
     linear-gradient(180deg, var(--panel-workspace), var(--panel-workspace-alt));
   --landing-hero:
-    radial-gradient(circle at top left, rgba(92, 133, 214, 0.18), transparent 34%),
-    radial-gradient(circle at 72% 24%, rgba(239, 180, 76, 0.16), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(81, 171, 161, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(250, 247, 241, 0.98), rgba(235, 242, 250, 0.97));
+    radial-gradient(circle at top left, rgba(132, 66, 44, 0.18), transparent 34%),
+    radial-gradient(circle at 72% 24%, rgba(57, 101, 105, 0.16), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(0, 96, 85, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(250, 247, 241, 0.98), rgba(245, 243, 239, 0.97));
   --landing-focus:
     linear-gradient(180deg, var(--landing-blue-dark) 0%, var(--landing-blue-medium) 46%, var(--landing-blue-rich) 100%);
   --landing-shadow-lg:
@@ -54,9 +54,9 @@ body.cs-home-page {
   min-height: auto;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, var(--overlay-blue-18), transparent 22%),
-    radial-gradient(circle at top right, var(--overlay-gold-16), transparent 18%),
-    radial-gradient(circle at bottom right, var(--overlay-green-12), transparent 22%),
+    radial-gradient(circle at top left, var(--overlay-copper-18), transparent 22%),
+    radial-gradient(circle at top right, var(--overlay-tertiary-16), transparent 18%),
+    radial-gradient(circle at bottom right, var(--overlay-secondary-12), transparent 22%),
     linear-gradient(145deg, var(--landing-dark-1) 0%, var(--landing-dark-2) 38%, var(--landing-dark-3) 74%, var(--landing-dark-4) 100%);
   color: var(--landing-text);
   font-family: var(--font-body, var(--font-ui, var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif)));
@@ -95,10 +95,10 @@ body.cs-home-page {
   padding: 12px 18px;
   border-radius: var(--landing-radius-xl);
   background:
-    radial-gradient(circle at 12% 0%, var(--radial-blue-24), transparent 30%),
-    radial-gradient(circle at 78% 12%, var(--overlay-gold-20), transparent 22%),
-    radial-gradient(circle at 100% 100%, var(--radial-green-14), transparent 28%),
-    linear-gradient(135deg, rgba(247, 243, 236, 0.98), rgba(233, 241, 251, 0.98));
+    radial-gradient(circle at 12% 0%, var(--radial-copper-24), transparent 30%),
+    radial-gradient(circle at 78% 12%, var(--overlay-tertiary-20), transparent 22%),
+    radial-gradient(circle at 100% 100%, var(--radial-secondary-14), transparent 28%),
+    linear-gradient(135deg, rgba(251, 249, 245, 0.98), rgba(245, 243, 239, 0.98));
 }
 
 .landing-header__intro {
@@ -691,8 +691,8 @@ body.cs-home-page {
   gap: 4px;
   padding: 10px 12px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(29, 58, 108, 0.94), rgba(43, 80, 140, 0.88));
-  color: #eef5ff;
+  background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+  color: #ffffff;
 }
 
 .landing-hub-panel__strip strong {
@@ -701,7 +701,7 @@ body.cs-home-page {
 }
 
 .landing-hub-panel__strip span {
-  color: rgba(231, 241, 255, 0.84);
+  color: rgba(255, 255, 255, 0.84);
   line-height: 1.26;
   font-size: 0.78rem;
 }
@@ -718,7 +718,7 @@ body.cs-home-page {
   padding: 9px 10px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(111, 133, 173, 0.14);
+  border: 1px solid rgba(132, 66, 44, 0.10);
 }
 
 .landing-hub-note span {
@@ -731,7 +731,7 @@ body.cs-home-page {
 
 .landing-hub-note strong {
   font-size: 0.86rem;
-  color: #21385f;
+  color: #3d3835;
   line-height: 1.22;
 }
 
@@ -742,8 +742,8 @@ body.cs-home-page {
   padding: 9px 11px;
   border-radius: var(--radius-lg);
   background: var(--overlay-white-88);
-  border: 1px solid rgba(111, 133, 173, 0.18);
-  color: #445976;
+  border: 1px solid rgba(132, 66, 44, 0.12);
+  color: #54433e;
   font-size: 0.76rem;
   line-height: 1.3;
 }
@@ -752,8 +752,8 @@ body.cs-home-page {
   width: 10px;
   height: 10px;
   border-radius: var(--radius-full);
-  background: linear-gradient(180deg, #f3c566, #d78944);
-  box-shadow: 0 0 0 6px rgba(224, 179, 98, 0.12);
+  background: linear-gradient(180deg, #84422c, #6b3420);
+  box-shadow: 0 0 0 6px rgba(132, 66, 44, 0.12);
   flex: none;
 }
 
@@ -792,8 +792,8 @@ body.cs-home-page {
   padding: 0 10px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(111, 133, 173, 0.16);
-  color: #44607f;
+  border: 1px solid rgba(132, 66, 44, 0.12);
+  color: #54433e;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -806,13 +806,13 @@ body.cs-home-page {
   padding: 9px 10px;
   border-radius: 14px;
   background: var(--overlay-white-82);
-  border: 1px solid rgba(111, 133, 173, 0.14);
+  border: 1px solid rgba(132, 66, 44, 0.10);
 }
 
 .landing-hub-student strong,
 .landing-workspace-record strong {
   font-size: 0.84rem;
-  color: #21385f;
+  color: #3d3835;
   line-height: 1.18;
 }
 
@@ -867,7 +867,7 @@ body.cs-home-page {
   padding: 8px 10px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(111, 133, 173, 0.14);
+  border: 1px solid rgba(132, 66, 44, 0.10);
 }
 
 .landing-workspace-list__row span {
@@ -880,7 +880,7 @@ body.cs-home-page {
 
 .landing-workspace-list__row strong {
   font-size: 0.8rem;
-  color: #21385f;
+  color: #3d3835;
   line-height: 1.16;
   text-align: right;
   max-width: 180px;
@@ -921,7 +921,7 @@ body.cs-home-page {
 
 .landing-destination__summary {
   margin: 0;
-  color: #4d6277;
+  color: #86736d;
   font-size: 0.76rem;
   line-height: 1.28;
   max-width: 38ch;
@@ -995,16 +995,16 @@ body.cs-home-page {
 }
 
 .landing-btn:focus-visible {
-  outline: 3px solid rgba(74, 124, 255, 0.36);
+  outline: 3px solid rgba(132, 66, 44, 0.36);
   outline-offset: 3px;
 }
 
 .landing-btn--primary {
-  background: linear-gradient(135deg, #2a5a9a 0%, #1f4a80 100%);
+  background: var(--btn-gradient-primary);
   color: #fff;
   box-shadow:
-    0 12px 28px rgba(33, 62, 102, 0.32),
-    0 4px 12px rgba(33, 62, 102, 0.16),
+    0 12px 28px rgba(107, 52, 32, 0.32),
+    0 4px 12px rgba(107, 52, 32, 0.16),
     inset 0 1px 0 rgba(255,255,255,0.20);
   letter-spacing: 0.02em;
   font-weight: 800;
@@ -1012,8 +1012,8 @@ body.cs-home-page {
 
 .landing-btn--primary:hover {
   box-shadow:
-    0 18px 40px rgba(33, 62, 102, 0.36),
-    0 8px 18px rgba(33, 62, 102, 0.20),
+    0 18px 40px rgba(107, 52, 32, 0.36),
+    0 8px 18px rgba(107, 52, 32, 0.20),
     inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
@@ -1022,21 +1022,21 @@ body.cs-home-page {
 }
 
 .landing-btn--secondary {
-  background: linear-gradient(135deg, rgba(77, 111, 153, 0.90), rgba(58, 88, 128, 0.85));
+  background: var(--btn-gradient-secondary);
   color: #fff;
   box-shadow:
-    0 10px 24px rgba(46, 67, 103, 0.20),
-    0 4px 12px rgba(46, 67, 103, 0.10),
+    0 10px 24px rgba(57, 101, 105, 0.20),
+    0 4px 12px rgba(57, 101, 105, 0.10),
     inset 0 1px 0 rgba(255,255,255,0.16);
   letter-spacing: 0.01em;
   font-weight: 700;
 }
 
 .landing-btn--secondary:hover {
-  background: linear-gradient(135deg, rgba(77, 111, 153, 0.95), rgba(58, 88, 128, 0.90));
+  background: var(--btn-gradient-secondary);
   box-shadow:
-    0 14px 32px rgba(46, 67, 103, 0.24),
-    0 6px 16px rgba(46, 67, 103, 0.12),
+    0 14px 32px rgba(57, 101, 105, 0.24),
+    0 6px 16px rgba(57, 101, 105, 0.12),
     inset 0 1px 0 rgba(255,255,255,0.20);
 }
 
@@ -1069,12 +1069,12 @@ body.cs-home-page {
   place-items: center;
   min-height: 44px;
   border-radius: 7px;
-  background: linear-gradient(180deg, #eef4fb, #d7e2ef);
-  border: 1px solid rgba(92, 116, 152, 0.2);
+  background: linear-gradient(180deg, #f5f3ef, #eae8e4);
+  border: 1px solid rgba(132, 66, 44, 0.12);
   box-shadow:
-    inset 0 -3px 0 rgba(68, 96, 134, 0.22),
-    0 3px 7px rgba(34, 52, 86, 0.08);
-  color: rgba(84, 104, 136, 0.76);
+    inset 0 -3px 0 rgba(107, 52, 32, 0.12),
+    0 3px 7px rgba(107, 52, 32, 0.06);
+  color: rgba(107, 52, 32, 0.56);
   font-style: normal;
   font-size: 0.94rem;
   font-weight: 900;
@@ -1083,12 +1083,12 @@ body.cs-home-page {
 }
 
 .landing-preview-board__row i.is-hit {
-  background: linear-gradient(180deg, #9ed46d, #72b146);
+  background: linear-gradient(180deg, #84422c, #6b3420);
   color: #fff;
-  border-color: rgba(62, 118, 33, 0.28);
+  border-color: rgba(132, 66, 44, 0.36);
   box-shadow:
-    inset 0 -4px 0 rgba(46, 94, 22, 0.24),
-    0 6px 10px rgba(48, 91, 34, 0.18);
+    inset 0 -4px 0 rgba(107, 52, 32, 0.24),
+    0 6px 10px rgba(107, 52, 32, 0.18);
   font-style: normal;
   font-size: 0.94rem;
   font-weight: 900;
@@ -1098,12 +1098,12 @@ body.cs-home-page {
 }
 
 .landing-preview-board__row i.is-present {
-  background: linear-gradient(180deg, #efcf77, #d3a641);
-  color: #fffdf4;
-  border-color: rgba(143, 105, 28, 0.24);
+  background: linear-gradient(180deg, #396569, #2a5059);
+  color: #ffffff;
+  border-color: rgba(57, 101, 105, 0.36);
   box-shadow:
-    inset 0 -4px 0 rgba(126, 88, 18, 0.22),
-    0 6px 10px rgba(128, 92, 26, 0.16);
+    inset 0 -4px 0 rgba(42, 80, 89, 0.22),
+    0 6px 10px rgba(57, 101, 105, 0.16);
   font-style: normal;
   font-size: 0.94rem;
   font-weight: 900;

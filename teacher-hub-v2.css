@@ -34,7 +34,7 @@ html {
 /* Professional soft palette with subtle depth */
 body.th2-page {
   background:
-    radial-gradient(circle at top left, rgba(212, 167, 106, 0.08), transparent 35%),
+    radial-gradient(circle at top left, rgba(132, 66, 44,0.08), transparent 35%),
     radial-gradient(circle at bottom right, rgba(200, 190, 175, 0.06), transparent 32%),
     linear-gradient(155deg, #f9f7f4 0%, #f5f3f0 48%, #f2ede7 100%);
 }
@@ -75,27 +75,27 @@ body.th2-page {
 
 .th2-block-card:hover {
   background: linear-gradient(180deg, #ffffff 0%, #fcfaf8 100%);
-  border-color: rgba(212, 167, 106, 0.42);
+  border-color: rgba(132, 66, 44,0.42);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Current time block — subtle warm highlight */
 .th2-block-card.is-current {
-  border-color: rgba(212, 167, 106, 0.56);
+  border-color: rgba(132, 66, 44,0.56);
   background: linear-gradient(180deg, rgba(255, 252, 245, 0.96), rgba(252, 248, 240, 0.96));
-  box-shadow: inset -3px 0 0 rgba(212, 167, 106, 0.48), 0 4px 12px rgba(212, 167, 106, 0.14);
+  box-shadow: inset -3px 0 0 rgba(132, 66, 44,0.48), 0 4px 12px rgba(132, 66, 44,0.14);
 }
 
 /* Selected/active block — clear visual emphasis */
 .th2-block-card.is-active {
-  border-color: rgba(212, 167, 106, 0.64);
+  border-color: rgba(132, 66, 44,0.64);
   background: linear-gradient(180deg, #ffffff 0%, #fefbf7 100%);
-  box-shadow: 0 8px 20px rgba(212, 167, 106, 0.22);
+  box-shadow: 0 8px 20px rgba(132, 66, 44,0.22);
 }
 
 .th2-main {
   background:
-    radial-gradient(circle at top right, rgba(212, 167, 106, 0.16), transparent 32%),
+    radial-gradient(circle at top right, rgba(132, 66, 44,0.16), transparent 32%),
     linear-gradient(180deg, #fefcf8 0%, #f9f6f1 100%);
 }
 
@@ -184,9 +184,9 @@ body.th2-page {
 
 .th2-day-brief__group {
   background:
-    radial-gradient(circle at top right, rgba(212, 167, 106, 0.12), transparent 35%),
+    radial-gradient(circle at top right, rgba(132, 66, 44,0.12), transparent 35%),
     linear-gradient(180deg, #ffffff 0%, #fdfbf8 100%);
-  border-color: rgba(212, 167, 106, 0.28);
+  border-color: rgba(132, 66, 44,0.28);
 }
 
 .th2-command-brief-grid {
@@ -232,7 +232,7 @@ body.th2-page {
   padding: 12px;
   border-radius: 18px;
   background:
-    radial-gradient(circle at top right, rgba(118, 174, 228, 0.16), transparent 32%),
+    radial-gradient(circle at top right, rgba(57, 101, 105,0.16), transparent 32%),
     linear-gradient(180deg, rgba(255,255,255,0.96), rgba(240,246,255,0.96));
   border: 1px solid rgba(152, 177, 214, 0.28);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.74);
@@ -248,7 +248,7 @@ body.th2-page {
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #687791;
+  color: #86736d;
 }
 
 .th2-day-overview__events-head strong {
@@ -286,10 +286,10 @@ body.th2-page {
 
 .th2-day-overview__event[data-tone="support"] {
   background:
-    radial-gradient(circle at top right, rgba(118, 174, 228, 0.18), transparent 32%),
+    radial-gradient(circle at top right, rgba(57, 101, 105,0.18), transparent 32%),
     linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240, 246, 255, 0.96));
-  border-color: rgba(146, 176, 221, 0.34);
-  border-left-color: #4d7fca;
+  border-color: rgba(57, 101, 105,0.34);
+  border-left-color: #396569;
 }
 
 .th2-day-overview__event[data-tone="focus"] {
@@ -352,7 +352,7 @@ body.th2-page {
 
 .th2-priority-item--lesson .th2-priority-item__status {
   background: rgba(43, 93, 168, 0.08);
-  color: #2b5da8;
+  color: #396569;
   border-radius: var(--radius-full);
   padding: 6px 10px;
   font-size: 10px;
@@ -366,14 +366,14 @@ body.th2-page {
   inset: 0 auto 0 0;
   width: 6px;
   border-radius: 18px 0 0 18px;
-  background: #d4a76a;
+  background: #84422c;
 }
 
-.th2-priority-item__tone[data-tone="literacy"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
-.th2-priority-item__tone[data-tone="math"] { background: linear-gradient(180deg, #d4a76a 0%, #e0b87a 100%); }
-.th2-priority-item__tone[data-tone="writing"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
-.th2-priority-item__tone[data-tone="content"] { background: linear-gradient(180deg, #d4a76a 0%, #e0b87a 100%); }
-.th2-priority-item__tone[data-tone="general"] { background: linear-gradient(180deg, #c89956 0%, #d4a76a 100%); }
+.th2-priority-item__tone[data-tone="literacy"] { background: linear-gradient(180deg, #6b3420 0%, #84422c 100%); }
+.th2-priority-item__tone[data-tone="math"] { background: linear-gradient(180deg, #84422c 0%, #a25942 100%); }
+.th2-priority-item__tone[data-tone="writing"] { background: linear-gradient(180deg, #6b3420 0%, #84422c 100%); }
+.th2-priority-item__tone[data-tone="content"] { background: linear-gradient(180deg, #84422c 0%, #a25942 100%); }
+.th2-priority-item__tone[data-tone="general"] { background: linear-gradient(180deg, #6b3420 0%, #84422c 100%); }
 
 .th2-priority-item__lesson-bar {
   height: 8px;
@@ -458,8 +458,8 @@ body.th2-page {
   min-height: 32px;
   padding: 6px 12px;
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(212, 167, 106, 0.12), rgba(200, 153, 86, 0.08));
-  border: 1px solid rgba(212, 167, 106, 0.28);
+  background: linear-gradient(180deg, rgba(132, 66, 44,0.12), rgba(107, 52, 32,0.08));
+  border: 1px solid rgba(132, 66, 44,0.28);
   color: #6b4c2c;
   font-size: 11.5px;
   font-weight: 700;
@@ -471,8 +471,8 @@ body.th2-page {
 }
 
 .th2-priority-item__cer-link:hover {
-  background: linear-gradient(180deg, rgba(212, 167, 106, 0.18), rgba(200, 153, 86, 0.14));
-  border-color: rgba(212, 167, 106, 0.42);
+  background: linear-gradient(180deg, rgba(132, 66, 44,0.18), rgba(107, 52, 32,0.14));
+  border-color: rgba(132, 66, 44,0.42);
   color: #4c3620;
   text-decoration: none;
 }
@@ -483,7 +483,7 @@ body.th2-page {
 
 .th2-day-brief--overview {
   background:
-    radial-gradient(circle at top right, rgba(142, 188, 231, 0.15), transparent 30%),
+    radial-gradient(circle at top right, rgba(57, 101, 105,0.15), transparent 30%),
     linear-gradient(180deg, rgba(255,255,255,0.9), rgba(244,248,255,0.92));
   border: 1px solid rgba(171, 192, 220, 0.3);
 }
@@ -502,14 +502,14 @@ html, body {
 
 /* Token overrides — redefine for the Cornerstone MTSS palette */
 body.th2-page {
-  --text-primary:   #2d2520;   /* dark brown — max legibility */
-  --text-secondary: #5a4d40;   /* warm brown — readable labels */
-  --text-muted:     #8a7a6a;   /* soft warm gray — tertiary info */
+  --text-primary:   #1b1c1a;   /* dark brown — max legibility */
+  --text-secondary: #54433e;   /* warm brown — readable labels */
+  --text-muted:     #86736d;   /* soft warm gray — tertiary info */
   --surface-elev-1: #ffffff;   /* cards float pure white */
   --surface-elev-2: #f5f3f0;   /* tinted bg for inputs, hover */
   --border-subtle:  #d4c5b0;   /* warm neutral border */
-  --accent:         #d4a76a;   /* warm tan — primary accent */
-  --accent-main:    #c89956;   /* deeper tan — active states */
+  --accent:         #84422c;   /* copper primary — ScholarFlow Terra */
+  --accent-main:    #6b3420;   /* copper dark — active states */
 
   color: #2d2520;
   font-family: var(--font-body, var(--font-sans, system-ui, -apple-system, sans-serif));
@@ -650,7 +650,7 @@ body.th2-page.cs-has-nav-shell .th2-shell {
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(212, 167, 106, 0.12), rgba(200, 153, 86, 0.08));
+  background: linear-gradient(180deg, rgba(132, 66, 44,0.12), rgba(107, 52, 32,0.08));
   color: #6b4c2c;
   font-size: 12px;
   font-weight: 700;
@@ -668,7 +668,7 @@ body.th2-page.cs-has-nav-shell .th2-shell {
   color: #5a4d40;
   line-height: 1.5;
   padding: 8px 12px;
-  border-left: 2px solid #d4a76a;
+  border-left: 2px solid #84422c;
   background: #f9f7f4;
   border-radius: 4px;
 }
@@ -689,7 +689,7 @@ body.th2-page.cs-has-nav-shell .th2-shell {
   align-items: center;
   justify-content: center;
   padding: 10px 16px;
-  background: linear-gradient(180deg, #d4a76a, #c89956);
+  background: linear-gradient(180deg, #84422c, #6b3420);
   color: #ffffff;
   border-radius: 8px;
   font-size: 13px;
@@ -700,7 +700,7 @@ body.th2-page.cs-has-nav-shell .th2-shell {
 }
 
 .th2-cer-modal-cta:hover {
-  background: linear-gradient(180deg, #c89956, #b88646);
+  background: linear-gradient(180deg, #6b3420, #572719);
   transform: translateY(-1px);
 }
 

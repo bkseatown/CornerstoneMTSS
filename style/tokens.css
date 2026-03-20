@@ -1,7 +1,9 @@
 /* ==================================================================
-   Design tokens — premium pragmatic ed-tech
-   Shared across teacher dashboard, hero, reading lab, sentence studio
+   Design tokens — ScholarFlow Terra design system
+   Shared across all surfaces: landing, hub, gallery, and game shells
    ================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 
 /* ─── Generated Color Tokens ───
    Systematic OKLCH scales auto-generated from scripts/generate-color-tokens.js
@@ -10,78 +12,90 @@
 @import url('./generated-color-tokens.css');
 
 :root {
-  /* ===== Platform Design System — 2026-03 =====
-     Shared art direction for landing, hub, gallery, and game shells.
-     Keep these tokens stable so page-level CSS composes from one source. */
+  /* ===== ScholarFlow Terra Design System — 2026-03 =====
+     Warm, professional, educational aesthetic.
+     Copper + Teal + Forest Green palette for MTSS specialist platforms.
+     ===== */
+
+  /* ===== Core ScholarFlow Terra Color Palette ===== */
+  /* Primary: Copper/Terracotta — warm, approachable, educational */
+  --primary: #84422c;
+  --primary-dark: #6b3420;
+  --primary-light: #a25942;
+  --primary-pale: #ffdbd0;
+
+  /* Secondary: Teal/Ocean — calm, professional, growth-oriented */
+  --secondary: #396569;
+  --secondary-dark: #2a5059;
+  --secondary-light: #5a8b93;
+  --secondary-pale: #bcebef;
+
+  /* Tertiary: Forest Green — natural, growth symbolism */
+  --tertiary: #006055;
+  --tertiary-dark: #00453e;
+  --tertiary-light: #167a6d;
+  --tertiary-pale: #9bf3e2;
 
   /* ===== Core Academic Surface System — Warm Neutral ===== */
-  /*
-   * Design intent: warm paper-like neutrals — neither harsh white nor blue-tinted.
-   * Background reads as "quality surface", cards feel elevated but inviting.
-   * Single balanced mode — works in bright offices and home environments.
-   */
-  --surface-base: #efede8;
-  --surface-base-top: #eceae4;
-  --surface-base-mid: #efede8;
-  --surface-base-bottom: #f2f0ea;
-  --surface-base-gradient: linear-gradient(160deg, #ebebef 0%, #eeece7 48%, #f1efe9 100%);
+  --surface-base: #fbf9f5;
+  --surface-base-top: #fbf9f5;
+  --surface-base-mid: #f5f3ef;
+  --surface-base-bottom: #eae8e4;
+  --surface-base-gradient: linear-gradient(160deg, #fbf9f5 0%, #f5f3ef 48%, #eae8e4 100%);
 
-  /* ===== Page Background: Professional, Light-Safe, Dark-Mode Compatible ===== */
-  /* Uses warm neutrals that remain readable in light mode and adapt gracefully in dark mode.
-     Gradient flows diagonally (155deg) creating visual interest without harsh transitions.
-     Applied globally to html/body — all pages inherit this unified aesthetic. */
-  --page-bg-primary: #e8edf4;
-  --page-bg-secondary: #dbe4ef;
-  --page-bg-tertiary: #ccd7e7;
-  --page-bg-gradient: linear-gradient(152deg, #e9eef5 0%, #dce4ee 44%, #cfd8e6 100%);
+  /* ===== Page Background: Warm, Professional, Dark-Mode Compatible ===== */
+  --page-bg-primary: #fbf9f5;
+  --page-bg-secondary: #f5f3ef;
+  --page-bg-tertiary: #eae8e4;
+  --page-bg-gradient: linear-gradient(152deg, #fbf9f5 0%, #f5f3ef 44%, #eae8e4 100%);
 
-  --surface-elev-1: #fcfaf6;
-  --surface-elev-2: #efebe3;
-  --surface-elev-3: #e2ddd5;
-  --surface-focus: #ece7df;
-  --bg-900: #efede8;
-  --bg-850: #e9e6df;
-  --surface-0: #fefcfa;
-  --surface-1: #fefcfa;
-  --surface-2: #e9e6df;
-  --surface-3: #e1ddd6;
-  --surface-border: rgba(48, 38, 20, 0.10);
-  --border-subtle: rgba(48, 38, 20, 0.07);
-  --border-strong: rgba(48, 38, 20, 0.13);
-  --border-soft: rgba(48, 38, 20, 0.09);
+  --surface-elev-1: #ffffff;
+  --surface-elev-2: #f5f3ef;
+  --surface-elev-3: #eae8e4;
+  --surface-focus: #e4e2de;
+  --bg-900: #fbf9f5;
+  --bg-850: #f5f3ef;
+  --surface-0: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #f5f3ef;
+  --surface-3: #eae8e4;
+  --surface-border: rgba(132, 66, 44, 0.08);
+  --border-subtle: rgba(132, 66, 44, 0.06);
+  --border-strong: rgba(132, 66, 44, 0.12);
+  --border-soft: rgba(132, 66, 44, 0.08);
 
   /* ===== Typography ===== */
-  --text-primary: #1a2430;
-  --text-secondary: #425466;
-  --text-muted: #6f7c89;
-  --text-strong: #16202b;
-  --text: #2a3948;
-  --muted: #6f7c89;
+  --text-primary: #1b1c1a;
+  --text-secondary: #54433e;
+  --text-muted: #86736d;
+  --text-strong: #0f0e0d;
+  --text: #3d3835;
+  --muted: #86736d;
 
   /* ===== Primary Action ===== */
-  --accent: #295fa4;
-  --accent-2: #4f85d1;
-  --action-primary: #295fa4;
-  --action-primary-hover: #204d87;
-  --action-primary-soft: rgba(79, 133, 209, 0.18);
+  --accent: #84422c;
+  --accent-2: #a25942;
+  --action-primary: #84422c;
+  --action-primary-hover: #6b3420;
+  --action-primary-soft: rgba(132, 66, 44, 0.12);
 
   /* ===== Semantic Status ===== */
-  --status-secure: #2d7a4a;
-  --status-developing: #c89a3a;
+  --status-secure: #006055;
+  --status-developing: #d4a574;
   --status-intensify: #d97c4a;
-  --status-risk: #a85a5a;
+  --status-risk: #ba1a1a;
   --status-ef: #6b4fa8;
   --status-literacy: #2e5fa8;
-  --status-writing: #2a7a6a;
-  --status-numeracy: #1a6ab8;
+  --status-writing: #006055;
+  --status-numeracy: #396569;
   --bg-secure: #f0f9f5;
   --bg-developing: #fffbf0;
   --bg-intensify: #fff5f0;
   --bg-risk: #faf5f5;
   --bg-ef: #f8f5ff;
   --glow-primary: none;
-  --warn: #e8b85a;
-  --danger: #d87a7a;
+  --warn: #d4a574;
+  --danger: #ba1a1a;
 
   /* ===== Spacing Scale ===== */
   --space-1: 8px;
@@ -111,11 +125,11 @@
   --radius-round: 999px;
 
   /* ===== Shadow System ===== */
-  --shadow-soft: 0 2px 4px rgba(26, 41, 62, 0.1);
-  --shadow-medium: 0 12px 28px rgba(26, 41, 62, 16%);
-  --shadow-strong: 0 24px 52px rgba(26, 41, 62, 0.20);
-  --shadow-stage: 0 36px 80px rgba(11, 24, 48, 0.26);
-  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  --shadow-soft: 0 2px 4px rgba(27, 28, 26, 0.08);
+  --shadow-medium: 0 12px 28px rgba(27, 28, 26, 0.12);
+  --shadow-strong: 0 24px 52px rgba(27, 28, 26, 0.16);
+  --shadow-stage: 0 36px 80px rgba(27, 28, 26, 0.20);
+  --shadow-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.60);
 
   /* ===== Border Treatments ===== */
   --border-hairline: 1px solid rgba(48, 38, 20, 0.08);
@@ -124,20 +138,20 @@
   --border-accent-line: 1px solid color-mix(in oklab, var(--accent) 32%, transparent);
 
   /* ===== Surface Styles ===== */
-  --surface-card-bg: linear-gradient(180deg, rgba(252, 250, 246, 0.98), rgba(243, 246, 251, 0.95));
-  --surface-panel-bg: linear-gradient(180deg, rgba(248, 245, 239, 0.96), rgba(235, 241, 248, 0.93));
-  --surface-stage-bg: linear-gradient(180deg, rgba(36, 50, 71, 0.99), rgba(24, 36, 56, 0.99));
-  --surface-tint-blue: linear-gradient(180deg, rgba(74, 124, 255, 0.12), rgba(74, 124, 255, 0.03));
-  --surface-tint-violet: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.03));
-  --surface-tint-mint: linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.03));
-  --surface-tint-gold: linear-gradient(180deg, rgba(239, 180, 76, 0.16), rgba(239, 180, 76, 0.03));
-  --surface-tint-coral: linear-gradient(180deg, rgba(225, 123, 106, 0.14), rgba(225, 123, 106, 0.03));
+  --surface-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 243, 239, 0.96));
+  --surface-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(251, 249, 245, 0.95));
+  --surface-stage-bg: linear-gradient(180deg, rgba(61, 56, 53, 0.99), rgba(43, 39, 35, 0.99));
+  --surface-tint-copper: linear-gradient(180deg, rgba(132, 66, 44, 0.12), rgba(132, 66, 44, 0.03));
+  --surface-tint-teal: linear-gradient(180deg, rgba(57, 101, 105, 0.12), rgba(57, 101, 105, 0.03));
+  --surface-tint-green: linear-gradient(180deg, rgba(0, 96, 85, 0.12), rgba(0, 96, 85, 0.03));
+  --surface-tint-gold: linear-gradient(180deg, rgba(212, 165, 116, 0.16), rgba(212, 165, 116, 0.03));
+  --surface-tint-secondary: linear-gradient(180deg, rgba(162, 89, 66, 0.14), rgba(162, 89, 66, 0.03));
 
   /* ===== Typography Scale ===== */
-  --font-ui: Inter, "Segoe UI", system-ui, sans-serif;
+  --font-ui: Manrope, "Segoe UI", system-ui, sans-serif;
   --font-sans: var(--font-ui);
-  --font-display: Sora, "Plus Jakarta Sans", Inter, "Segoe UI", system-ui, sans-serif;
-  --font-body: Inter, "Segoe UI", system-ui, sans-serif;
+  --font-display: Manrope, "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body: Manrope, "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --font-family: var(--font-ui);
   --font: var(--font-ui);
@@ -214,8 +228,8 @@
   /* ===== Hover / Accent Glow ===== */
   --hover-lift-y: -3px;
   --hover-scale: 1.01;
-  --accent-glow-soft: 0 0 0 1px rgba(76, 132, 214, 0.14), 0 18px 30px rgba(55, 95, 162, 0.14);
-  --accent-glow-strong: 0 0 0 1px rgba(76, 132, 214, 0.2), 0 24px 36px rgba(55, 95, 162, 0.18);
+  --accent-glow-soft: 0 0 0 1px rgba(132, 66, 44, 0.14), 0 18px 30px rgba(132, 66, 44, 0.12);
+  --accent-glow-strong: 0 0 0 1px rgba(132, 66, 44, 0.20), 0 24px 36px rgba(132, 66, 44, 0.16);
 
   /* ===== Focus Indicators (Keyboard Navigation) ===== */
   --focus-color: #0066cc;
@@ -224,18 +238,18 @@
   --focus-ring: 2px solid var(--focus-color);
 
   /* ===== Artistic Typography ===== */
-  --text-gradient-primary: linear-gradient(135deg, #295fa4 0%, #1a2430 100%);
+  --text-gradient-primary: linear-gradient(135deg, #84422c 0%, #a25942 100%);
   --text-shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.1);
   --heading-weight: 700;
   --heading-letter-space: -0.02em;
 
   /* ===== Button System (Standardized) ===== */
-  --btn-height-sm: 30px;
-  --btn-height: 40px;
-  --btn-height-lg: 44px;
-  --btn-padding-sm: 4px 10px;
-  --btn-padding: 0 12px;
-  --btn-padding-lg: 8px 14px;
+  --btn-height-sm: 32px;
+  --btn-height: 44px;
+  --btn-height-lg: 48px;
+  --btn-padding-sm: 6px 12px;
+  --btn-padding: 10px 20px;
+  --btn-padding-lg: 12px 24px;
 
   /* ===== Border Radius System (Standardized) ===== */
   --radius-sm: 8px;
@@ -243,19 +257,19 @@
   --radius-lg: 16px;
   --radius-full: 999px;
 
-  /* ===== Landing Page Hero Colors (New) ===== */
-  --landing-dark-1: #1b2b3d;
-  --landing-dark-2: #24384c;
-  --landing-dark-3: #31475c;
-  --landing-dark-4: #44566d;
-  --landing-accent-blue: #2a5ea8;
-  --landing-accent-gold: #d49435;
-  --landing-accent-green: #2f7e70;
-  --landing-ink-strong: #162233;
-  --landing-text: #172432;
-  --landing-text-soft: #495c6d;
+  /* ===== Landing Page Hero Colors ===== */
+  --landing-dark-1: #3d3835;
+  --landing-dark-2: #54433e;
+  --landing-dark-3: #6b5d55;
+  --landing-dark-4: #86736d;
+  --landing-accent-copper: #84422c;
+  --landing-accent-teal: #396569;
+  --landing-accent-green: #006055;
+  --landing-ink-strong: #1b1c1a;
+  --landing-text: #2a2b29;
+  --landing-text-soft: #54433e;
 
-  /* ===== Overlay Opacity Tokens (New) ===== */
+  /* ===== Overlay Opacity Tokens ===== */
   --overlay-white-74: rgba(255, 255, 255, 0.74);
   --overlay-white-80: rgba(255, 255, 255, 0.80);
   --overlay-white-82: rgba(255, 255, 255, 0.82);
@@ -263,37 +277,37 @@
   --overlay-white-92: rgba(255, 255, 255, 0.92);
   --overlay-white-90: rgba(255, 255, 255, 0.90);
   --overlay-white-24: rgba(255, 255, 255, 0.24);
-  --overlay-dark-dim: rgba(0, 0, 0, 0.16);
-  --overlay-blue-18: rgba(92, 133, 214, 0.18);
-  --overlay-gold-20: rgba(239, 180, 76, 0.20);
-  --overlay-gold-16: rgba(239, 180, 76, 0.16);
-  --overlay-green-12: rgba(81, 171, 161, 0.12);
+  --overlay-dark-dim: rgba(0, 0, 0, 0.12);
+  --overlay-copper-18: rgba(132, 66, 44, 0.18);
+  --overlay-tertiary-20: rgba(0, 96, 85, 0.20);
+  --overlay-tertiary-16: rgba(0, 96, 85, 0.16);
+  --overlay-secondary-12: rgba(57, 101, 105, 0.12);
 
-  /* ===== Landing Border Colors (New) ===== */
-  --landing-border: rgba(69, 88, 118, 0.18);
-  --landing-border-strong: rgba(37, 53, 78, 0.18);
-  --landing-border-light: rgba(92, 116, 152, 0.14);
-  --landing-border-lighter: rgba(92, 116, 152, 0.2);
+  /* ===== Landing Border Colors ===== */
+  --landing-border: rgba(132, 66, 44, 0.12);
+  --landing-border-strong: rgba(84, 67, 62, 0.16);
+  --landing-border-light: rgba(134, 115, 109, 0.10);
+  --landing-border-lighter: rgba(134, 115, 109, 0.14);
 
-  /* ===== Button Gradients (New) ===== */
-  --btn-gradient-primary: linear-gradient(180deg, #2e66b3 0%, #1d406c 100%);
-  --btn-gradient-secondary: linear-gradient(180deg, #4d6f99 0%, #314f77 100%);
+  /* ===== Button Gradients ===== */
+  --btn-gradient-primary: linear-gradient(180deg, #84422c 0%, #6b3420 100%);
+  --btn-gradient-secondary: linear-gradient(180deg, #396569 0%, #2a5059 100%);
 
-  /* ===== Premium Theme Color Overrides (New) ===== */
-  --premium-bg: radial-gradient(circle at 14% 12%, #cfe1ff 0%, #d7e4fb 38%, #c4d6f3 100%);
-  --premium-surface-1: rgba(233, 241, 255, 0.96);
-  --premium-surface-2: rgba(218, 230, 248, 0.94);
-  --premium-surface-3: rgba(206, 223, 245, 0.94);
-  --premium-text-strong: #10233f;
-  --premium-text-default: #1b3555;
-  --premium-text-muted: #3f5672;
-  --premium-accent: #0077b8;
-  --premium-accent-strong: #005d90;
-  --premium-border-soft: rgba(16, 35, 63, 0.12);
-  --premium-blue-glow: rgba(11, 140, 207, 0.2);
-  --premium-blue-strong: #0b8ccf;
-  --premium-blue-dk: #006aa9;
-  --premium-blue-light: #0c88cb;
+  /* ===== Premium Theme Color Overrides ===== */
+  --premium-bg: radial-gradient(circle at 14% 12%, #fce8df 0%, #f5ebe5 38%, #eadfe0 100%);
+  --premium-surface-1: rgba(251, 249, 245, 0.97);
+  --premium-surface-2: rgba(245, 243, 239, 0.96);
+  --premium-surface-3: rgba(234, 232, 228, 0.95);
+  --premium-text-strong: #1b1c1a;
+  --premium-text-default: #3d3835;
+  --premium-text-muted: #86736d;
+  --premium-accent: #84422c;
+  --premium-accent-strong: #6b3420;
+  --premium-border-soft: rgba(132, 66, 44, 0.10);
+  --premium-copper-glow: rgba(132, 66, 44, 0.15);
+  --premium-copper-strong: #a25942;
+  --premium-copper-dk: #6b3420;
+  --premium-copper-light: #a25942;
   --premium-white-96: rgba(255, 255, 255, 0.96);
   --premium-white-95: rgba(255, 255, 255, 0.95);
 
@@ -349,19 +363,19 @@
   --shadow-dark-7: rgba(18, 28, 42, 0.07);
   --shadow-dark-24-lg: rgba(5, 12, 22, 0.24);
 
-  /* ===== Radial Gradient Overlays (New) ===== */
-  --radial-blue-24: rgba(97, 143, 223, 0.24);
-  --radial-green-14: rgba(69, 159, 142, 0.14);
-  --radial-gold-18: rgba(223, 145, 52, 0.18);
-  --radial-blue-gold-18: rgba(79, 133, 209, 0.18);
-  --radial-gold-gold-16: rgba(255, 220, 145, 0.16);
-  --radial-blue-blue-14: rgba(79, 133, 209, 0.14);
+  /* ===== Radial Gradient Overlays ===== */
+  --radial-copper-24: rgba(132, 66, 44, 0.24);
+  --radial-teal-14: rgba(57, 101, 105, 0.14);
+  --radial-green-18: rgba(0, 96, 85, 0.18);
+  --radial-copper-teal-18: rgba(132, 66, 44, 0.18);
+  --radial-tertiary-16: rgba(0, 96, 85, 0.16);
+  --radial-secondary-14: rgba(57, 101, 105, 0.14);
 
-  /* ===== Additional Surface Overlays (New) ===== */
-  --surface-premium-light: rgba(235, 241, 250, 0.99);
-  --surface-premium-lighter: rgba(222, 232, 246, 0.98);
-  --surface-workspace-light: rgba(236, 242, 248, 0.99);
-  --surface-workspace-lighter: rgba(220, 230, 242, 0.98);
+  /* ===== Additional Surface Overlays ===== */
+  --surface-premium-light: rgba(251, 249, 245, 0.99);
+  --surface-premium-lighter: rgba(245, 243, 239, 0.98);
+  --surface-workspace-light: rgba(251, 249, 245, 0.98);
+  --surface-workspace-lighter: rgba(245, 243, 239, 0.97);
 }
 
 :where(button, [role="button"], input, select, textarea, a):focus-visible {

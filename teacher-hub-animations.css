@@ -40,7 +40,7 @@
 
 .th2-block-card:hover {
   animation: th2-card-lift 0.3s ease-out forwards;
-  box-shadow: 0 14px 28px rgba(43, 93, 168, 0.12);
+  box-shadow: 0 14px 28px rgba(57, 101, 105,0.12);
 }
 
 /* Day brief entrance */
@@ -89,7 +89,7 @@
 
 .th2-priority-item:hover {
   animation: th2-priority-hover 0.2s ease forwards;
-  box-shadow: inset 4px 0 0 0 rgba(43, 93, 168, 0.16);
+  box-shadow: inset 4px 0 0 0 rgba(57, 101, 105,0.16);
 }
 
 /* Button lift animations */
@@ -106,7 +106,7 @@ button:not(:disabled):hover,
 [role="button"]:hover,
 .th2-action-btn:hover {
   animation: th2-button-lift 0.25s ease-out forwards;
-  box-shadow: 0 6px 12px rgba(43, 93, 168, 0.15);
+  box-shadow: 0 6px 12px rgba(57, 101, 105,0.15);
 }
 
 /* Tier badge pulse animation */
@@ -174,9 +174,9 @@ button:not(:disabled):hover,
 button:focus-visible,
 [role="button"]:focus-visible,
 .th2-action-btn:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #84422c;
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+  box-shadow: 0 0 0 3px rgba(132, 66, 44, 0.18);
 }
 
 /* Smooth transitions for all interactive elements */
