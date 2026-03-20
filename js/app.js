@@ -8641,6 +8641,70 @@
   };
   document.addEventListener('play', pauseMusicOnVoiceAudio, true);
 
+  /* Music progress bar and song info updates */
+  function formatTime(seconds) {
+    const secs = Math.floor(seconds);
+    const mins = Math.floor(secs / 60);
+    const displaySecs = secs % 60;
+    return `${mins}:${String(displaySecs).padStart(2, '0')}`;
+  }
+
+  function updateMusicProgress() {
+    const audioEl = musicController?.getAudioElement?.();
+    const trackInfo = musicController?.getCurrentTrackInfo?.();
+    const titleEl = _el('quick-music-song-title');
+    const progressEl = _el('quick-music-progress');
+    const currentEl = _el('quick-music-time-current');
+    const durationEl = _el('quick-music-time-duration');
+
+    if (!audioEl) {
+      if (titleEl) titleEl.textContent = 'No song playing';
+      if (progressEl) progressEl.value = 0;
+      if (currentEl) currentEl.textContent = '0:00';
+      if (durationEl) durationEl.textContent = '0:00';
+      return;
+    }
+
+    // Update song title with scrolling animation
+    if (titleEl && trackInfo?.title) {
+      const displayTitle = trackInfo.title || 'Playing...';
+      if (titleEl.textContent !== displayTitle) {
+        titleEl.textContent = displayTitle;
+      }
+    }
+
+    // Update progress bar
+    if (progressEl && audioEl.duration) {
+      const percent = (audioEl.currentTime / audioEl.duration) * 100;
+      progressEl.value = percent;
+    }
+
+    // Update time display
+    if (currentEl) currentEl.textContent = formatTime(audioEl.currentTime || 0);
+    if (durationEl) durationEl.textContent = formatTime(audioEl.duration || 0);
+  }
+
+  // Handle progress bar seeking
+  _el('quick-music-progress')?.addEventListener('input', (e) => {
+    const audioEl = musicController?.getAudioElement?.();
+    if (!audioEl || !audioEl.duration) return;
+    const percent = parseFloat(e.target.value) / 100;
+    audioEl.currentTime = percent * audioEl.duration;
+  });
+
+  // Update progress bar on audio time update
+  if (musicController?.getAudioElement?.()) {
+    setInterval(updateMusicProgress, 200);
+  } else {
+    // If audio element not ready yet, retry after music starts
+    const retryProgress = setInterval(() => {
+      if (musicController?.getAudioElement?.()) {
+        clearInterval(retryProgress);
+        setInterval(updateMusicProgress, 200);
+      }
+    }, 1000);
+  }
+
   _el('s-voice')?.addEventListener('change', e => {
     const normalized = normalizeVoiceMode(e.target.value);
     e.target.value = normalized;

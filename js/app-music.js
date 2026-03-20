@@ -203,6 +203,7 @@ function createMusicModule(DEFAULT_PREFS) {
     const src = String(rawTrack.src || '').trim();
     if (!src) return null;
     const id = String(rawTrack.id || src).trim();
+    const title = String(rawTrack.title || rawTrack.name || '').trim() || 'Track';
     const modes = Array.from(new Set(
       (Array.isArray(rawTrack.modes) ? rawTrack.modes : [])
         .map(normalizePlaybackMode)
@@ -214,7 +215,8 @@ function createMusicModule(DEFAULT_PREFS) {
       id,
       src,
       modes,
-      gain
+      gain,
+      title
     };
   };
 
@@ -415,6 +417,17 @@ function createMusicModule(DEFAULT_PREFS) {
     },
     getCustomFileCount() {
       return customTracks.length;
+    },
+    getAudioElement() {
+      return audioEl;
+    },
+    getCurrentTrackInfo() {
+      if (!activeTrackId || !catalog) return null;
+      const allTracks = catalog.tracks || [];
+      return allTracks.find((t) => t.id === activeTrackId) || null;
+    },
+    getMode() {
+      return mode;
     }
   };
 }

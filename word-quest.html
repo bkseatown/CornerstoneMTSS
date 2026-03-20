@@ -331,6 +331,19 @@
       </label>
       <span id="quick-music-label" class="theme-preview-music-label" aria-live="polite">Stopped</span>
     </div>
+    <div class="quick-music-info-strip">
+      <div class="quick-music-song-info" aria-live="polite" aria-label="Now playing">
+        <span id="quick-music-song-title">No song playing</span>
+      </div>
+      <div class="quick-music-progress-wrap">
+        <input id="quick-music-progress" class="quick-music-progress" type="range" min="0" max="100" value="0" aria-label="Music progress" title="Click to seek">
+      </div>
+      <div class="quick-music-time-display">
+        <span id="quick-music-time-current" class="quick-music-time">0:00</span>
+        <span class="quick-music-time-sep">/</span>
+        <span id="quick-music-time-duration" class="quick-music-time">0:00</span>
+      </div>
+    </div>
     <button id="quick-music-done" class="quick-popover-done" type="button" aria-label="Close music controls">Done</button>
   </div>
   <div id="play-tools-drawer" class="play-tools-drawer hidden" role="dialog" aria-label="WordQuest tools" aria-hidden="true">

@@ -2533,6 +2533,82 @@ html[data-home-mode="play"] .focus-inline-results {
   text-overflow: ellipsis;
 }
 
+/* Music player info and progress bar enhancements */
+.quick-music-info-strip {
+  display: grid;
+  gap: 6px;
+  padding: 0 6px 8px;
+  border-top: 1px solid color-mix(in oklab, var(--panel-border) 48%, transparent);
+}
+
+.quick-music-song-info {
+  min-height: 18px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#quick-music-song-title {
+  display: inline-block;
+  animation: scroll-horizontal 12s linear infinite;
+  padding-right: 20px;
+}
+
+#quick-music-song-title:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.quick-music-progress-wrap {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+
+.quick-music-progress {
+  flex: 1 1 auto;
+  height: 6px;
+  border-radius: 3px;
+  accent-color: color-mix(in oklab, var(--brand) 62%, var(--panel-border) 38%);
+  background: color-mix(in oklab, var(--panel-border) 42%, transparent);
+  cursor: pointer;
+  transition: height 0.2s ease;
+}
+
+.quick-music-progress:hover {
+  height: 8px;
+}
+
+.quick-music-time-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: color-mix(in oklab, var(--text-muted) 78%, var(--text) 22%);
+  font-variant-numeric: tabular-nums;
+}
+
+.quick-music-time {
+  min-width: 28px;
+  text-align: center;
+}
+
+.quick-music-time-sep {
+  flex: 0 0 auto;
+}
+
 .quick-popover-done {
   flex: 0 0 auto;
   min-height: 22px;
