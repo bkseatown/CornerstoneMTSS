@@ -152,8 +152,8 @@ body.game-platform-page[data-game-theme="sunset"] {
    THEME: FOREST  — deep green / lime / amber
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="forest"] {
-  --cg-bg:            #1a3a2a;
-  --cg-bg-deep:       #152a22;
+  --cg-bg:            #2a5a3a;
+  --cg-bg-deep:       #1a4a2a;
   --cg-panel:         rgba(15, 36, 25, 0.96);
   --cg-panel-strong:  rgba(20, 46, 32, 0.98);
   --cg-ink:           #ecfdf5;
@@ -180,7 +180,7 @@ body.game-platform-page[data-game-theme="forest"] {
     radial-gradient(ellipse at 15% 10%, rgba(74,222,128,0.22) 0%, transparent 38%),
     radial-gradient(ellipse at 85% 8%,  rgba(250,204,21,0.16)  0%, transparent 32%),
     radial-gradient(ellipse at 50% 95%, rgba(74,222,128,0.10)  0%, transparent 40%),
-    linear-gradient(175deg, #1a3a2a 0%, #1a3a2a 45%, #152a22 100%);
+    linear-gradient(175deg, #2a5a3a 0%, #2a5a3a 45%, #1a4a2a 100%);
   --cg-texture: radial-gradient(circle, rgba(74,222,128,0.05) 1px, transparent 1px);
   --cg-texture-size: 28px 28px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,20,10,0.3);
@@ -239,8 +239,8 @@ body.game-platform-page[data-game-theme="classic"] {
    60% Navy (dominant) · 30% Wolf Gray (secondary) · 10% Action Green (accent)
    ═══════════════════════════════════════════════════ */
 body.game-platform-page[data-game-theme="seahawks"] {
-  --cg-bg:            #1a3a5f;
-  --cg-bg-deep:       #0f2850;
+  --cg-bg:            #2a5a7f;
+  --cg-bg-deep:       #1a4a6f;
   --cg-panel:         rgba(26, 45, 70, 0.90);
   --cg-panel-strong:  rgba(36, 60, 90, 0.95);
   --cg-ink:           #f5f5f5;
@@ -267,7 +267,7 @@ body.game-platform-page[data-game-theme="seahawks"] {
     radial-gradient(ellipse at 14% 12%, rgba(105,190,40,0.14) 0%, transparent 26%),
     radial-gradient(ellipse at 84% 10%, rgba(168,181,189,0.12) 0%, transparent 24%),
     linear-gradient(125deg, transparent 0 70%, rgba(105,190,40,0.04) 70% 73%, transparent 73% 100%),
-    linear-gradient(180deg, #2a4a6a 0%, #1a3a5a 36%, #1a3a5f 100%);
+    linear-gradient(180deg, #2a5a7f 0%, #2a5a7f 36%, #1a4a6f 100%);
   --cg-texture: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
   --cg-texture-size: 26px 26px;
   --cg-btn-press-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.3);

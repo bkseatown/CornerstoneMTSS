@@ -10164,9 +10164,10 @@ html[data-home-mode="play"] #keyboard::before {
   display: none;
 }
 
-html[data-home-mode="play"][data-play-style="listening"] .play-support-row {
+/* Removed: was hiding gameplay-audio buttons in listening mode */
+/* html[data-home-mode="play"][data-play-style="listening"] .play-support-row {
   display: none !important;
-}
+} */
 
 html[data-home-mode="play"] .play-support-row {
   width: min(560px, calc(100vw - (var(--wq-safe-edge) * 2) - 8px));
