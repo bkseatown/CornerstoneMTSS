@@ -705,13 +705,18 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 #phonics-clue-open-btn {
   border-color: color-mix(in oklab, var(--panel-border) 74%, #8ba5ba 26%);
   background: color-mix(in oklab, var(--panel-bg) 80%, #d4dbe5 20%);
-  color: #ffffff;
+  color: var(--text-primary);
   min-width: 88px;
   padding: 4px 12px;
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
   gap: 7px;
+}
+
+/* Override for dark themes to ensure visibility */
+[data-theme-family="dark"] #phonics-clue-open-btn {
+  color: #ffffff;
 }
 
 #phonics-clue-open-btn.hidden {

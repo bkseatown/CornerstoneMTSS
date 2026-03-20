@@ -129,7 +129,7 @@
   --wq-play-menu-card-bg: color-mix(in oklab, var(--panel-bg) 92%, #ffffff 8%);
   --wq-play-menu-card-border: color-mix(in oklab, var(--panel-border) 68%, #ffffff 32%);
   --wq-play-menu-card-hover-bg: color-mix(in oklab, var(--panel-bg) 82%, var(--accent) 18%);
-  --wq-play-menu-card-active-bg: color-mix(in oklab, var(--panel-bg) 70%, var(--accent) 30%);
+  --wq-play-menu-card-active-bg: color-mix(in oklab, #ffffff 85%, var(--accent) 15%);
   --theme-backdrop:
     radial-gradient(circle at 16% 6%, color-mix(in oklab, var(--brand) 16%, transparent), transparent 44%),
     linear-gradient(180deg, var(--page-bg), var(--page-bg2));
@@ -179,10 +179,10 @@
 
 /* ── DARK ── visible slate, not void ──────────────────── */
 [data-theme="dark"] {
-  --page-bg:      #3a4a5c;
-  --page-bg2:     #2a3848;
-  --plate-bg:     rgba(0,0,0,0.25);
-  --plate-border: rgba(255,255,255,0.08);
+  --page-bg:      #5a6a7c;
+  --page-bg2:     #4a5a6c;
+  --plate-bg:     rgba(0,0,0,0.15);
+  --plate-border: rgba(255,255,255,0.12);
   --tile-face:    linear-gradient(160deg, #f8fafc 0%, #e8f0fa 100%);
   --tile-border:  #cbd5e1;
   --tile-text:    #0f172a;
@@ -197,22 +197,22 @@
   --brand-dk:     #0284c7;
   --brand-text:   #0f172a;
   --accent:       #34d399;
-  --header-bg:    #1e3a52;
-  --header-border: rgba(255,255,255,0.08);
-  --focusbar-bg:  rgba(30,50,70,0.6);
-  --panel-bg:     #243040;
-  --panel-border: rgba(255,255,255,0.08);
-  --panel-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --header-bg:    #3e5a72;
+  --header-border: rgba(255,255,255,0.12);
+  --focusbar-bg:  rgba(50,70,90,0.7);
+  --panel-bg:     #445060;
+  --panel-border: rgba(255,255,255,0.12);
+  --panel-shadow: 0 8px 32px rgba(0,0,0,0.3);
   --theme-text:         #e2e8f0;
   --theme-text-muted:   #b7c4d3;
-  --modal-bg:     #243040;
-  --fun-bg:       #1a2a3a;
+  --modal-bg:     #445060;
+  --fun-bg:       #3a4a5a;
   --fun-text:     #7dd3fc;
-  --fun-border:   #1e4060;
+  --fun-border:   #3e5070;
   --theme-backdrop:
     radial-gradient(circle at 15% 8%, rgba(56,189,248,0.18), transparent 34%),
     repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0 12px, transparent 12px 28px),
-    linear-gradient(180deg, #3a4a5c, #2a3848);
+    linear-gradient(180deg, #5a6a7c, #4a5a6c);
 }
 
 /* ── SEAHAWKS ── Navy #002244 + Action Green #69BE28 + Wolf Gray #A5ACAF
