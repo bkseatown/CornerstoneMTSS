@@ -2370,6 +2370,10 @@ html[data-home-mode="play"] .focus-inline-results {
   width: min(356px, calc(100vw - 12px));
 }
 
+.quick-music-strip {
+  z-index: 9999 !important;
+}
+
 .quick-setup-popover {
   width: min(318px, calc(100vw - 12px));
   align-items: stretch;
