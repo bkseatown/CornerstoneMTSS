@@ -1,9 +1,9 @@
 :root {
-  --ss-bg: linear-gradient(145deg, #1f2a35 0%, #243848 44%, #1b2632 100%);
-  --ss-text: #e8edf2;
-  --ss-muted: #a7b6c6;
-  --ss-accent: #7fb6ff;
-  --ss-accent-2: #f3c873;
+  --ss-bg: linear-gradient(145deg, #1e2820 0%, #243025 44%, #1a231d 100%);
+  --ss-text: #ede9e4;
+  --ss-muted: #a09689;
+  --ss-accent: #d4956a;
+  --ss-accent-2: #e8a86e;
   --ss-border: rgba(255, 255, 255, 0.12);
   --cs-h1: clamp(1.9rem, 2.4vw, 2.6rem);
   --cs-h2: clamp(1.3rem, 1.6vw, 1.6rem);
@@ -224,7 +224,7 @@ body.cs-page-surgery.cs-has-nav-shell {
 
 .ss-slot.active,
 .ss-slot:focus {
-  border-bottom-color: #4fc3f7;
+  border-bottom-color: #d4956a;
   box-shadow: 0 4px 10px rgba(79, 195, 247, 0.36);
 }
 
@@ -395,7 +395,7 @@ body.cs-page-surgery.cs-has-nav-shell {
 .ss-trait-fill {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, #8bb4ff, #f3d488);
+  background: linear-gradient(90deg, #84422c, #d4956a);
   transition: width 260ms cubic-bezier(.4, 0, .2, 1);
 }
 
@@ -626,7 +626,7 @@ body.teacher-mode .ss-breakdown {
 .ss-action-btn:hover {
   animation: ssActionBounce 0.3s ease-out;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(127, 182, 255, 0.25);
+  box-shadow: 0 6px 12px rgba(212, 149, 106,0.25);
 }
 
 .ss-action-btn:active {
@@ -639,7 +639,7 @@ body.teacher-mode .ss-breakdown {
     background-color: transparent;
   }
   100% {
-    background-color: rgba(127, 182, 255, 0.2);
+    background-color: rgba(212, 149, 106,0.2);
   }
 }
 

@@ -8,18 +8,18 @@
   --ws-gap-4: 24px;
   --ws-gap-5: 32px;
   /* 60-30-10 visual system */
-  --ws-60-base: #f4f7fb;
-  --ws-30-surface: #1e2d3e;
-  --ws-30-surface-2: #26384d;
-  --ws-10-accent: #5ec8ff;
+  --ws-60-base: #f7f4f0;
+  --ws-30-surface: #1e2820;
+  --ws-30-surface-2: #253022;
+  --ws-10-accent: #d4956a;
   --ws-10-warm: #ffbf69;
-  --ws-neutral-border: rgba(199, 210, 224, 0.34);
-  --ws-neutral-surface: rgba(23, 31, 41, 0.68);
-  --ws-neutral-surface-soft: rgba(17, 25, 35, 0.58);
-  --ws-neutral-ink: rgba(239, 245, 252, 0.95);
-  --ws-ink-dark: #132236;
+  --ws-neutral-border: rgba(200, 190, 178, 0.34);
+  --ws-neutral-surface: rgba(22, 28, 20, 0.68);
+  --ws-neutral-surface-soft: rgba(16, 22, 15, 0.58);
+  --ws-neutral-ink: rgba(242, 238, 232, 0.95);
+  --ws-ink-dark: #131e12;
   --ws-ink-light: rgba(255, 255, 255, 0.94);
-  --ws-muted: rgba(226, 237, 252, 0.78);
+  --ws-muted: rgba(224, 214, 200, 0.78);
 }
 
 *,
@@ -36,7 +36,7 @@ body.cs-page-writing {
   min-height: 100dvh;
   margin: 0;
   background:
-    radial-gradient(1200px 700px at 20% 10%, rgba(94, 200, 255, 0.2) 0%, rgba(0, 0, 0, 0) 55%),
+    radial-gradient(1200px 700px at 20% 10%, rgba(212, 149, 106,0.2) 0%, rgba(0, 0, 0, 0) 55%),
     linear-gradient(135deg, #101824 0%, #1b2a3c 45%, #121e2d 100%);
   color: var(--ws-ink-light);
   font-family: var(--font-sans);
@@ -321,7 +321,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(94, 200, 255, 0.2);
+  border: 1px solid rgba(212, 149, 106,0.2);
   background: rgba(17, 28, 41, 0.34);
 }
 
@@ -336,7 +336,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   padding: var(--ws-gap-1);
   border-radius: var(--radius-md);
   background: rgba(17, 28, 41, 0.72);
-  border: 1px solid rgba(94, 200, 255, 0.16);
+  border: 1px solid rgba(212, 149, 106,0.16);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.3);
   z-index: 6;
 }
@@ -367,12 +367,12 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-controls-panel .ws-chip:hover,
 .ws-controls-panel .ws-ghost:hover {
   background: transparent;
-  border-bottom-color: rgba(94, 200, 255, 0.28);
+  border-bottom-color: rgba(212, 149, 106,0.28);
 }
 
 .ws-controls-panel .ws-chip.is-active {
   background: transparent;
-  border-bottom-color: rgba(94, 200, 255, 0.55);
+  border-bottom-color: rgba(212, 149, 106,0.55);
 }
 
 #ws-controls-panel .ws-plan-input {
@@ -384,7 +384,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 #ws-controls-panel .ws-plan-input:focus {
-  border-bottom-color: rgba(94, 200, 255, 0.85);
+  border-bottom-color: rgba(212, 149, 106,0.85);
 }
 
 .ws-chip,
@@ -399,8 +399,8 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-chip.is-active {
-  background: rgba(94, 200, 255, 0.18);
-  border-color: rgba(94, 200, 255, 0.52);
+  background: rgba(212, 149, 106,0.18);
+  border-color: rgba(212, 149, 106,0.52);
 }
 
 .ws-ghost {
@@ -424,7 +424,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   padding: var(--ws-gap-5);
   border-radius: var(--ws-radius-lg);
   background: rgba(30, 45, 62, 0.78);
-  border: 1px solid rgba(94, 200, 255, 0.2);
+  border: 1px solid rgba(212, 149, 106,0.2);
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(12px);
   position: relative;
@@ -525,7 +525,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
   background: rgba(38, 56, 77, 0.42);
-  border: 1px solid rgba(94, 200, 255, 0.24);
+  border: 1px solid rgba(212, 149, 106,0.24);
 }
 
 .ws-missions {
@@ -572,8 +572,8 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   gap: var(--ws-gap-2);
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
-  background: linear-gradient(120deg, rgba(94, 200, 255, 0.16), rgba(255, 191, 105, 0.14));
-  border: 1px solid rgba(94, 200, 255, 0.36);
+  background: linear-gradient(120deg, rgba(212, 149, 106,0.16), rgba(255, 191, 105, 0.14));
+  border: 1px solid rgba(212, 149, 106,0.36);
 }
 
 .ws-launchpad-head {
@@ -666,7 +666,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   padding: var(--ws-gap-2);
   border-radius: var(--ws-radius-md);
   background: rgba(38, 56, 77, 0.28);
-  border: 1px solid rgba(94, 200, 255, 0.14);
+  border: 1px solid rgba(212, 149, 106,0.14);
 }
 
 .ws-plan-meter-wrap {
@@ -721,7 +721,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 .ws-plan-input:focus {
-  border-color: rgba(94, 200, 255, 0.85);
+  border-color: rgba(212, 149, 106,0.85);
 }
 
 .ws-plan-list {
@@ -790,8 +790,8 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 }
 
 #ws-editor:focus {
-  border-color: rgba(94, 200, 255, 0.85);
-  box-shadow: 0 0 0 4px rgba(94, 200, 255, 0.2);
+  border-color: rgba(212, 149, 106,0.85);
+  box-shadow: 0 0 0 4px rgba(212, 149, 106,0.2);
 }
 
 #ws-editor::placeholder {
@@ -815,7 +815,7 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
 .ws-primary {
   background: var(--ws-10-accent);
   color: #0d1a2a;
-  border-color: rgba(94, 200, 255, 0.76);
+  border-color: rgba(212, 149, 106,0.76);
 }
 
 .ws-secondary {
@@ -964,14 +964,14 @@ body.cs-page-writing.cs-hv2-theme-seahawks #ws-editor {
   border-radius: 0;
   background: transparent;
   border: none;
-  border-left: 3px solid rgba(94, 200, 255, 0.45);
+  border-left: 3px solid rgba(212, 149, 106,0.45);
   font-size: 14px;
   line-height: 1.45;
 }
 
 #ws-rail .ws-tip {
   background: transparent;
-  border-left-color: rgba(94, 200, 255, 0.36);
+  border-left-color: rgba(212, 149, 106,0.36);
 }
 
 .ws-exemplar {
@@ -1023,8 +1023,8 @@ button.ws-pill {
 }
 
 .ws-master-mentor.is-active {
-  border-color: rgba(94, 200, 255, 0.65);
-  background: rgba(94, 200, 255, 0.22);
+  border-color: rgba(212, 149, 106,0.65);
+  background: rgba(212, 149, 106,0.22);
 }
 
 .ws-check {
@@ -1806,7 +1806,7 @@ body.cs-writing-greeting-open .app-shell {
   }
   100% {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(94, 200, 255, 0.2);
+    box-shadow: 0 6px 12px rgba(212, 149, 106,0.2);
   }
 }
 
