@@ -1,4 +1,7 @@
 # Cornerstone MTSS — Layout & Formatting Audit
+
+> Historical audit snapshot: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date:** March 20, 2026  
 **Status:** Comprehensive visual and structural review
 
@@ -119,4 +122,3 @@ Multiple pages have stacked heading/kicker combinations that create visual clutt
 **Medium Impact:**
 3. Streamline section headers across all pages
 4. Ensure consistent spacing on cards and sections
-

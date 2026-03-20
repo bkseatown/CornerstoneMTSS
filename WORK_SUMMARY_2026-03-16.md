@@ -1,5 +1,7 @@
 # Work Summary — Session of March 16, 2026
 
+> Historical summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Duration:** 4-5 hours
 **Commits:** 59 total (56 before this session + 3 today)
 **Quality Checks:** All guardrail checks passing
@@ -237,4 +239,3 @@ All strategic planning documents are in `/docs/`:
 **Status:** All planning complete, ready for Phase 2 execution
 
 **Recommendation:** Start with Phase 2A tomorrow morning (1-2 hours) for quick visual improvement, then proceed to Phase 1E for architectural unification.
-

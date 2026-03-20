@@ -481,6 +481,7 @@ function createPhonicsClueModule(deps) {
     toggleTargetVisibility: togglePhonicsClueTargetVisibility,
     renderPanel: renderPhonicsCluePanel,
     syncDeckSelect: syncPhonicsClueDeckSelect,
+    startTurnTimer: startPhonicsClueTurnTimer,
     updateControlsFromUI: updatePhonicsClueControlsFromUI,
     ensureDeckData: ensurePhonicsClueDeckData
   };

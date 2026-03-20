@@ -8,28 +8,38 @@ Cornerstone MTSS is a specialist-facing instructional support platform with prem
 - Keep `.zip` files as read-only backups, not as active dev sources.
 - Product direction and requirements baseline:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/VISION.md`
-- Primary continuity docs:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/REGRESSION_GUARDRAILS.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_DESIGN_SYSTEM.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_LAYOUT_OWNERS.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PLATFORM_EXCELLENCE_PLAYBOOK.md`
+- Current continuity docs:
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PROJECT_STATUS.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DOCS_INDEX.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SHIP_AND_DEBUG_CHECKLIST.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/ARCHITECTURE_MAP.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_CORE_ANALYSIS.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULES_1_2_PLAYBOOK.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_QUICK_REFERENCE.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/MODULES_3_4_5_EXTRACTION_PLAYBOOK.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/QUICK_START.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DEPLOYMENT_GUIDE.md`
+
+Supplemental refactor notes that may describe target-state module names rather than current checked-in files:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/MODULES_1_2_EXTRACTION_PLAYBOOK.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/CODEX_QUICK_REFERENCE.md`
 
 ## Quick Start
-1. Run local server:
+1. Install dependencies:
    - `cd /Users/robertwilliamknaus/Desktop/Cornerstone MTSS`
-   - `python3 -m http.server 4174`
-2. Open:
-   - `http://127.0.0.1:4174/index.html`
-3. Hard refresh when needed:
+   - `npm install`
+2. Run local server:
+   - `python3 -m http.server 4173`
+3. Open:
+   - `http://127.0.0.1:4173/index.html`
+4. Hard refresh when needed:
    - `Cmd+Shift+R`
 
 ## What This Repo Is Building
 - A full specialist/intervention platform, not only a word game.
 - A shared premium game family with distinct identities:
   - Word Quest
-  - Typing Quest
   - Word Clue
   - sentence/word building games
 - A no-scroll-by-default desktop product surface where pages should fit cleanly unless the viewport is truly small.
@@ -38,10 +48,12 @@ Cornerstone MTSS is a specialist-facing instructional support platform with prem
 ## Important Note For New Codex Threads
 A new Codex thread in this same worktree should not be assumed to know prior or archived conversation history.
 Use the repo docs as the durable memory layer:
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PROJECT_STATUS.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DOCS_INDEX.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SHIP_AND_DEBUG_CHECKLIST.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SESSION_LOG.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/QUICK_START.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DEPLOYMENT_GUIDE.md`
 
 ## HUD Guardrails
 - Run contract checks:
@@ -57,23 +69,26 @@ Use the repo docs as the durable memory layer:
   - `npm run scope:check`
   - `npm run scope:strict`
 - Main docs:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/hud-spec-v1.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/hud-acceptance-checklist.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/HANDOVER.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/CONTINUITY_PLAYBOOK.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AGENT_CONTINUITY.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SESSION_LOG.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/NONCODER_SAFETY_GUIDE.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/AUDIO_OFFLINE_DEPLOY_CHECKLIST.md`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/CAPACITY_PROOF_PLAYBOOK.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DOCS_INDEX.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/PROJECT_STATUS.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/SHIP_AND_DEBUG_CHECKLIST.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/ARCHITECTURE_MAP.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/REFACTOR_ROADMAP.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/QUICK_START.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DEPLOYMENT_GUIDE.md`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
 
 ## Key Architecture Files
 - Entry/UI wiring:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-runtime-helpers.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-phonics-clue.js`
 - Shared game platform:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/typing-quest.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/precision-play.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.css`
 - Theme system:
@@ -103,13 +118,13 @@ Use the repo docs as the durable memory layer:
 - Schedule:
   - runs hourly (`cron: 17 * * * *`) and on manual dispatch.
 - What it checks on live GitHub Pages:
-  - `/WordQuest/build.json` returns valid JSON and contains `buildId`.
+  - `/CornerstoneMTSS/build.json` returns valid JSON and contains `buildId`.
   - `build.json.time` is parseable and not stale (older than 14 days).
-  - `/WordQuest/teacher-dashboard.html` includes:
+  - `/CornerstoneMTSS/reports.html` includes:
     - `build-stamp.js`
     - `js/build-badge.js`
     - `js/nav-shell.js`
-  - `/WordQuest/style/tokens.css` returns `200` and `content-type: text/css`.
+  - `/CornerstoneMTSS/style/tokens.css` returns `200` and `content-type: text/css`.
 - Failure behavior:
   - workflow fails and opens a GitHub issue with a link to the failed run.
 - Manual run:

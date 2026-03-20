@@ -1,4 +1,7 @@
 # Session Summary: March 17, 2026
+
+> Historical session summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 ## Strategic Platform Advancement: Phase 1 Complete
 
 ---

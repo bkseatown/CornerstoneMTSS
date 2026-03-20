@@ -1,5 +1,7 @@
 # Week 2 Reveal Modal Restoration - COMPLETE ✅
 
+> Historical summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date**: March 17, 2026 (same day as Week 1 completion)
 **Status**: All core restoration features implemented and tested
 **Quality Impact**: Reveal experience elevated from 6/10 (regression) to 9.5/10 (celebratory)
@@ -293,4 +295,3 @@ const REVEAL_ANIMATIONS = ['flip', 'slide-fade', 'scale-bloom', 'swipe'];
 **Date**: March 17, 2026
 **Build**: 20260313u
 **Next Review**: After initial classroom feedback collection (Week 3)
-

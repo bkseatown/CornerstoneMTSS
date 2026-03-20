@@ -1,5 +1,7 @@
 # UI/UX Improvements Phase 2: COMPLETE ✅
 
+> Historical completion summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date**: March 17, 2026
 **Status**: All requested visual improvements implemented and tested
 **Quality Impact**: Game board feels more modern and professional
@@ -311,4 +313,3 @@ Through browser inspection, revealed that Word Quest game board structure:
 Word Quest game board has been successfully modernized from a rounded, crowded aesthetic to a clean, square-based grid with improved spacing and readability. The reveal modal has been refocused on the core learning objective (word + phonics rule) by removing coaching/feedback sections. All changes are CSS-only, require no JavaScript modifications, and pass code health guardrails.
 
 **Status: READY FOR TEACHER TESTING** 🎯
-

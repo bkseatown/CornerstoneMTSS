@@ -1,4 +1,7 @@
 # Cornerstone MTSS — Comprehensive Design Elevation
+
+> Historical planning doc: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Target:** Exceptional, premium, polished across all surfaces  
 **Date:** 2026-03-20
 
@@ -140,4 +143,3 @@
 - [ ] Typography is refined and readable
 - [ ] Every surface feels intentional, not accidental
 - [ ] User can navigate intuitively without confusion
-

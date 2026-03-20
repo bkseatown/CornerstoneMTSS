@@ -1,5 +1,7 @@
 # Reveal Modal & Modal UI Restoration Plan
 
+> Historical planning doc: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Status**: Ready for Week 2 Polish Phase
 **Priority**: CRITICAL - Current reveal experience is a significant regression
 **Estimated Time**: 4-5 hours

@@ -1,5 +1,7 @@
 # Week 1 Completion Summary: Teacher Launch Readiness
 
+> Historical summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date**: March 17, 2026
 **Status**: ✅ CRITICAL FIXES COMPLETE → 8.5/10 → 9.0/10
 **Quality Gate**: Ready for classroom launch with known restoration items for Week 2

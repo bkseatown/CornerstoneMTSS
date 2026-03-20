@@ -1,5 +1,7 @@
 # CORNERSTONE MTSS — COMPLETE VISUAL AUDIT & FIX PLAN
 
+> Historical planning doc: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date:** March 17, 2026
 **Status:** Comprehensive Issues Identified + Fix Strategy Ready
 

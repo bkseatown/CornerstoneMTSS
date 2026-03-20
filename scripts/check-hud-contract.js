@@ -8,6 +8,7 @@ const ROOT = path.resolve(__dirname, '..');
 const FILES = {
   index: 'index.html',
   app: 'js/app.js',
+  appMain: 'js/app-main.js',
   nav: 'js/theme-nav.js',
   registry: 'js/theme-registry.js',
   components: 'style/components.css',
@@ -178,6 +179,8 @@ function fail(message) {
 function run() {
   const indexHtml = readFile(FILES.index);
   const appJs = readFile(FILES.app);
+  const appMainJs = fs.existsSync(path.join(ROOT, FILES.appMain)) ? readFile(FILES.appMain) : '';
+  const appRuntimeJs = `${appJs}\n${appMainJs}`;
   const navJs = readFile(FILES.nav);
   const registryJs = readFile(FILES.registry);
   const componentsCss = readFile(FILES.components);
@@ -317,13 +320,13 @@ function run() {
   }
 
   if (
-    appJs.includes('renderThemeOptions') &&
-    appJs.includes('normalizeTheme') &&
-    appJs.includes('window.WQTheme')
+    appRuntimeJs.includes('renderThemeOptions') &&
+    appRuntimeJs.includes('normalizeTheme') &&
+    appRuntimeJs.includes('window.WQTheme')
   ) {
-    pass('js/app.js is wired to the theme registry and exposes canonical runtime theme API.');
+    pass('App runtime is wired to the theme registry and exposes canonical runtime theme API.');
   } else {
-    fail('js/app.js is missing one or more required theme registry wiring hooks.');
+    fail('App runtime is missing one or more required theme registry wiring hooks.');
   }
 
   const themeSelectMatch = indexHtml.match(/<select id="s-theme"[^>]*>([\s\S]*?)<\/select>/);

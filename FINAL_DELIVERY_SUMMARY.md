@@ -1,5 +1,7 @@
 # Cornerstone MTSS Platform — Final Delivery Summary
 
+> Historical summary: use for background context only. Do not treat this file as the current source of truth. Start with `README.md`, `QUICK_START.md`, and `docs/PROJECT_STATUS.md`.
+
 **Date:** March 17, 2026
 **Status:** ✅ Production Ready
 **Commit:** cc4666a8
