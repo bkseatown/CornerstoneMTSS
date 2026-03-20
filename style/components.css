@@ -2586,14 +2586,14 @@ html[data-home-mode="play"] .focus-inline-results {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 24px;
-  padding: 0 2px;
+  min-height: 28px;
+  padding: 2px 0;
 }
 
 .quick-music-progress {
   flex: 1 1 auto;
-  height: 5px;
-  border-radius: 2.5px;
+  height: 9px;
+  border-radius: 4.5px;
   accent-color: color-mix(in oklab, var(--brand) 68%, var(--accent, #84422c) 32%);
   background: color-mix(in oklab, var(--panel-border) 58%, transparent);
   cursor: pointer;
@@ -2605,8 +2605,8 @@ html[data-home-mode="play"] .focus-inline-results {
 .quick-music-progress::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: color-mix(in oklab, var(--brand) 68%, var(--accent, #84422c) 32%);
   cursor: grab;
@@ -2620,8 +2620,8 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .quick-music-progress::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: color-mix(in oklab, var(--brand) 68%, var(--accent, #84422c) 32%);
   border: none;

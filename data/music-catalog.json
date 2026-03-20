@@ -8,6 +8,7 @@
       "boss-stage-blueprint-7d1172f5",
       "code-cipher-run-85612e41",
       "counterpoint-drive-9fdf791c",
+      "flow-state-lattice-6d250682",
       "fugue-runner-7c9284bf",
       "pixel-sonata-rush-37d34e94",
       "string-theory-sprint-093d703c",
@@ -16,7 +17,6 @@
     "coffee": [
       "baroque-pulse-e921cfb3",
       "cognitive-anchor-81271724",
-      "flow-state-lattice-6d250682",
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
       "elegant-groove-490165",
@@ -28,7 +28,6 @@
     ],
     "chill": [
       "cognitive-anchor-81271724",
-      "flow-state-lattice-6d250682",
       "hyperfocus-halo-91d03a10",
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
@@ -40,7 +39,6 @@
     ],
     "focus": [
       "cognitive-anchor-81271724",
-      "flow-state-lattice-6d250682",
       "hyperfocus-halo-91d03a10",
       "study-sessions-lofi-231879",
       "classroom-chill-495123",
@@ -49,7 +47,6 @@
       "nastelbom-instrumental-music-501712"
     ],
     "lofi": [
-      "flow-state-lattice-6d250682",
       "hyperfocus-halo-91d03a10",
       "study-sessions-lofi-231879",
       "elegant-groove-490165",
@@ -156,10 +153,7 @@
       "src": "./assets/music/tracks/focus-flow/flow-state-lattice__modes-deepfocus+focus+lofi+coffee__bpm-80__energy-low__license-original-focus-flow-pack.wav",
       "format": "wav",
       "modes": [
-        "chill",
-        "coffee",
-        "focus",
-        "lofi"
+        "gaming"
       ],
       "bpm": 80,
       "energy": "low",
