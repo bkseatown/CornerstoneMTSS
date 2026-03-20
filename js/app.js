@@ -8493,6 +8493,19 @@
   _el('session-rerun-onboarding-btn')?.addEventListener('click', () => {
     rerunOnboardingSetup();
   });
+
+  /* Move popover elements outside play-shell to prevent overflow:hidden clipping */
+  (() => {
+    const musicPopover = _el('quick-music-strip');
+    const themePopover = _el('theme-preview-strip');
+    if (musicPopover && musicPopover.parentElement?.id === 'play-shell') {
+      document.body.appendChild(musicPopover);
+    }
+    if (themePopover && themePopover.parentElement?.id === 'play-shell') {
+      document.body.appendChild(themePopover);
+    }
+  })();
+
   _el('theme-dock-toggle-btn')?.addEventListener('click', (event) => {
     event.preventDefault();
     if (!isQuickPopoverAllowed()) return;
