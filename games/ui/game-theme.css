@@ -501,6 +501,16 @@ body.game-platform-page {
   --cg-surface-soft: color-mix(in oklab, var(--cg-panel-strong) 72%, transparent);
   --cg-surface: color-mix(in oklab, var(--cg-panel-strong) 84%, #ffffff 16%);
   --cg-surface-strong: color-mix(in oklab, var(--cg-panel-strong) 92%, #ffffff 8%);
+
+  /* ─── ScholarFlow Terra CTA Platform Colors ─── */
+  /* These override per-theme colors for platform-level actions (CTA buttons, progress, focus states) */
+  --cg-cta: #84422c;           /* Copper primary */
+  --cg-cta-2: #a25942;         /* Copper light */
+  --cg-cta-soft: rgba(132, 66, 44, 0.14);
+  --cg-cta-glow: rgba(132, 66, 44, 0.24);
+  --cg-cta-shadow: 0 4px 0 #6b3420, 0 8px 20px rgba(132, 66, 44, 0.24);
+  --cg-cta-press: 0 2px 0 #6b3420, 0 4px 10px rgba(132, 66, 44, 0.20);
+
   margin: 0;
   min-height: 100vh;
   background: var(--cg-page-gradient);
