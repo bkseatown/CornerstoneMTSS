@@ -557,7 +557,7 @@
     'fantasy',
     'scifi',
     'upbeat',
-    'arcade',
+    'gaming',
     'sports',
     'stealth',
     'team',
