@@ -2374,10 +2374,10 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .quick-music-popover {
-  width: min(320px, calc(100vw - 12px));
+  width: min(300px, calc(100vw - 12px));
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 #quick-music-strip {
@@ -2547,8 +2547,8 @@ html[data-home-mode="play"] .focus-inline-results {
 /* Music player info and progress bar enhancements — unified system */
 .quick-music-info-strip {
   display: grid;
-  gap: 4px;
-  padding: 6px 6px 4px;
+  gap: 3px;
+  padding: 4px 6px 4px;
   background: color-mix(in oklab, var(--panel-bg) 60%, var(--panel-border) 40%);
   border-radius: 8px;
   margin: 0;
@@ -2558,6 +2558,7 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .quick-music-song-info {
+  display: none;
   min-height: 16px;
   font-size: 0.62rem;
   font-weight: 800;
@@ -2591,7 +2592,7 @@ html[data-home-mode="play"] .focus-inline-results {
   display: flex;
   align-items: center;
   gap: 4px;
-  min-height: 20px;
+  min-height: 18px;
   padding: 0;
 }
 
