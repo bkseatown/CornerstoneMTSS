@@ -705,7 +705,7 @@ html[data-page-mode="wordquest"] #mission-lab-nav-btn {
 #phonics-clue-open-btn {
   border-color: color-mix(in oklab, var(--panel-border) 74%, #8ba5ba 26%);
   background: color-mix(in oklab, var(--panel-bg) 80%, #d4dbe5 20%);
-  color: var(--text-primary);
+  color: #ffffff;
   min-width: 88px;
   padding: 4px 12px;
   display: inline-flex !important;
@@ -10300,7 +10300,7 @@ html[data-home-mode="play"] #keyboard {
   margin-bottom: max(2px, env(safe-area-inset-bottom));
   gap: clamp(3px, 0.6vh, 6px);
   overflow: visible;
-  align-self: start;
+  align-self: center;
   position: relative;
   z-index: 1;
   padding: 2px 0 2px;
