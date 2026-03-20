@@ -194,9 +194,9 @@ body.td-reports-mode {
   padding: 20px;
   min-height: 168px;
   border-radius: var(--radius-3);
-  border: 1px solid rgba(92, 117, 164, 0.14);
+  border: 1px solid rgba(132, 66, 44,0.14);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 251, 255, 0.88));
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(252, 249, 245,0.88));
   box-shadow:
     0 16px 40px rgba(26, 41, 62, 0.14),
     0 4px 12px rgba(26, 41, 62, 0.08),
@@ -277,7 +277,7 @@ body.td-reports-mode {
   background:
     radial-gradient(circle at top right, rgba(132, 173, 223, 0.10), transparent 32%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 252, 255, 0.92));
-  border: 1px solid rgba(92, 117, 164, 0.10);
+  border: 1px solid rgba(132, 66, 44,0.10);
   display: grid;
   gap: 14px;
   min-height: 150px;
@@ -324,7 +324,7 @@ body.td-reports-mode {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #2f66c9, #87b8ff);
+  background: linear-gradient(90deg, #84422c, #a25942);
 }
 
 .td-overview-meter--warm span,
@@ -361,7 +361,7 @@ body.td-reports-mode {
   border-radius: var(--radius-3);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(252, 254, 255, 0.95));
-  border: 1px solid rgba(92, 117, 164, 0.12);
+  border: 1px solid rgba(132, 66, 44,0.12);
   box-shadow:
     0 16px 40px rgba(26, 41, 62, 0.14),
     0 4px 12px rgba(26, 41, 62, 0.08),
@@ -413,10 +413,10 @@ body.td-reports-mode {
   padding: 28px;
   display: grid;
   gap: 20px;
-  border: 1px solid rgba(92, 117, 164, 0.14);
+  border: 1px solid rgba(132, 66, 44,0.14);
   border-radius: var(--radius-3);
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248, 251, 255, 0.92));
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(252, 249, 245,0.92));
   box-shadow:
     0 12px 32px rgba(26, 41, 62, 0.12),
     0 4px 12px rgba(26, 41, 62, 0.08),
@@ -447,7 +447,7 @@ body.td-reports-mode {
   align-items: start;
   gap: 18px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(92, 117, 164, 0.08);
+  border-bottom: 1px solid rgba(132, 66, 44,0.08);
 }
 
 .td-reports-panel__head .dashboard-kicker,
@@ -482,8 +482,8 @@ body.td-reports-mode {
   gap: 6px;
   padding: 16px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(92, 117, 164, 0.10);
-  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248, 251, 255, 0.92));
+  border: 1px solid rgba(132, 66, 44,0.10);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(252, 249, 245,0.92));
   box-shadow:
     0 8px 20px rgba(26, 41, 62, 0.10),
     0 2px 6px rgba(26, 41, 62, 0.05),
@@ -705,7 +705,7 @@ body.td-reports-mode {
   border-radius: var(--radius-2);
   border: 0;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.86));
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(252, 249, 245,0.86));
   color: var(--text-primary);
   padding: 9px 14px;
   font: inherit;
@@ -716,7 +716,7 @@ body.td-reports-mode {
   box-shadow:
     0 8px 20px rgba(26, 41, 62, 0.1),
     inset 0 1px 0 rgba(255,255,255,0.48),
-    inset 0 0 0 1px rgba(92, 117, 164, 0.08);
+    inset 0 0 0 1px rgba(132, 66, 44,0.08);
 }
 
 .td-top-btn--primary-soft {
@@ -748,30 +748,30 @@ body.td-reports-mode {
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 26%, transparent);
 }
 #td-new-session {
-  background: linear-gradient(135deg, #2a5a9a 0%, #1f4a80 100%);
+  background: linear-gradient(135deg, #84422c 0%, #6b3420 100%);
   border-color: transparent;
   color: #ffffff;
   font-weight: 700;
   box-shadow:
-    0 10px 24px rgba(41, 95, 164, 0.28),
-    0 4px 12px rgba(41, 95, 164, 0.14),
+    0 10px 24px rgba(132, 66, 44,0.28),
+    0 4px 12px rgba(132, 66, 44,0.14),
     inset 0 1px 0 rgba(255,255,255,0.22);
 }
 
 #td-weekly-insights {
-  background: rgba(41, 95, 164, 0.08);
-  border: 1px solid rgba(41, 95, 164, 0.18);
+  background: rgba(132, 66, 44,0.08);
+  border: 1px solid rgba(132, 66, 44,0.18);
   font-weight: 600;
   box-shadow:
-    0 4px 12px rgba(41, 95, 164, 0.08),
+    0 4px 12px rgba(132, 66, 44,0.08),
     inset 0 1px 0 rgba(255,255,255,0.32);
 }
 
 #td-new-session:hover {
-  background: linear-gradient(135deg, #254a92 0%, #1a3f75 100%);
+  background: linear-gradient(135deg, #6b3420 0%, #542b18 100%);
   box-shadow:
-    0 14px 32px rgba(41, 95, 164, 0.32),
-    0 6px 16px rgba(41, 95, 164, 0.16),
+    0 14px 32px rgba(132, 66, 44,0.32),
+    0 6px 16px rgba(132, 66, 44,0.16),
     inset 0 1px 0 rgba(255,255,255,0.28);
   transform: translateY(-2px);
 }
@@ -799,16 +799,16 @@ body.td-reports-mode {
   box-shadow:
     0 12px 28px rgba(26, 41, 62, 0.14),
     inset 0 1px 0 rgba(255,255,255,0.56),
-    inset 0 0 0 1px rgba(92, 117, 164, 0.12);
+    inset 0 0 0 1px rgba(132, 66, 44,0.12);
   transform: translateY(-2px);
 }
 
 .td-top-btn:active {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 251, 255, 0.82));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(252, 249, 245,0.82));
   box-shadow:
     0 6px 14px rgba(26, 41, 62, 0.1),
     inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 0 0 1px rgba(92, 117, 164, 0.08);
+    inset 0 0 0 1px rgba(132, 66, 44,0.08);
   transform: translateY(0);
 }
 .td-coach-chip { border-color: color-mix(in oklab, var(--accent) 58%, transparent); }
@@ -908,7 +908,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   gap: 12px;
   padding: 20px;
   border-radius: var(--radius-3);
-  border: 1px solid rgba(92, 117, 164, 0.10);
+  border: 1px solid rgba(132, 66, 44,0.10);
   background:
     radial-gradient(circle at top right, rgba(132, 173, 223, 0.08), transparent 34%),
     linear-gradient(135deg, rgba(255,255,255,0.94), rgba(250, 252, 255, 0.90));
@@ -1044,7 +1044,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   padding: 16px;
   border-radius: var(--radius-2);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 251, 255, 0.82));
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(252, 249, 245,0.82));
   border-left: 4px solid var(--coverage);
   box-shadow:
     0 10px 28px rgba(26, 41, 62, 0.1),
@@ -1298,7 +1298,7 @@ body.td-reports-mode .td-cockpit-sidebar {
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
-  border: 1px solid rgba(92, 117, 164, 0.11);
+  border: 1px solid rgba(132, 66, 44,0.11);
   background:
     linear-gradient(135deg, rgba(255,255,255,0.98), rgba(252, 254, 255, 0.95));
   box-shadow:
@@ -2263,9 +2263,9 @@ body.td-wow-eval-active .td-shell {
   font-weight: var(--fw-regular);
   border-radius: var(--radius-2);
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248, 251, 255, 0.86));
+    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(252, 249, 245,0.86));
   color: var(--text-primary);
-  border: 1px solid rgba(92, 117, 164, 0.12);
+  border: 1px solid rgba(132, 66, 44,0.12);
   box-shadow:
     0 10px 24px rgba(26, 41, 62, 0.1),
     0 4px 12px rgba(26, 41, 62, 0.06),
@@ -3747,7 +3747,7 @@ body .hidden {
 }
 
 .td-meeting-privacy-chip {
-  color: rgba(248, 251, 255, 0.88);
+  color: rgba(252, 249, 245,0.88);
 }
 
 .td-meeting-setup-strip #td-meeting-setup-toggle {
@@ -4822,7 +4822,7 @@ h6 {
 /* Active state clarity */
 .td-student-chip.is-active {
   color: var(--text-strong);
-  border-color: var(--accent, #2b5da8);
+  border-color: var(--accent, #84422c);
 }
 
 /* ======================================================
@@ -4890,20 +4890,20 @@ h6 {
 /* Primary action buttons */
 .td-top-btn.td-top-btn--primary,
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent, #2b5da8) 0%, color-mix(in oklab, var(--accent, #2b5da8) 92%, transparent));
+  background: linear-gradient(135deg, var(--accent, #84422c) 0%, color-mix(in oklab, var(--accent, #84422c) 92%, transparent));
   color: white;
   font-weight: 700;
   padding: 12px 22px;
   border-radius: 8px;
   border: none;
-  box-shadow: 0 4px 12px rgba(41, 95, 164, 0.2);
+  box-shadow: 0 4px 12px rgba(132, 66, 44,0.2);
   transition: all 0.15s ease;
 }
 
 .td-top-btn.td-top-btn--primary:hover,
 .btn-primary:hover {
-  background: linear-gradient(135deg, color-mix(in oklab, var(--accent, #2b5da8) 110%, transparent), var(--accent, #2b5da8));
-  box-shadow: 0 8px 20px rgba(41, 95, 164, 0.3);
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent, #84422c) 110%, transparent), var(--accent, #84422c));
+  box-shadow: 0 8px 20px rgba(132, 66, 44,0.3);
   transform: translateY(-1px);
 }
 
@@ -4932,10 +4932,10 @@ h6 {
 }
 
 .td-student-chip.is-active {
-  background: color-mix(in oklab, var(--accent, #2b5da8) 15%, transparent);
-  border-color: var(--accent, #2b5da8);
+  background: color-mix(in oklab, var(--accent, #84422c) 15%, transparent);
+  border-color: var(--accent, #84422c);
   color: var(--text-strong);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #2b5da8) 10%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent, #84422c) 10%, transparent);
 }
 
 .td-student-chip:hover:not(.is-active) {
