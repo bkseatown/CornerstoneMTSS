@@ -2364,14 +2364,16 @@ html[data-home-mode="play"] .focus-inline-results {
   transform: translateX(-50%);
   top: max(80px, calc(env(safe-area-inset-top) + 72px)) !important;
   z-index: 9999 !important;
+  position: fixed !important;
 }
 
 .quick-music-popover {
   width: min(356px, calc(100vw - 12px));
 }
 
-.quick-music-strip {
+#quick-music-strip {
   z-index: 9999 !important;
+  position: fixed !important;
 }
 
 .quick-setup-popover {
