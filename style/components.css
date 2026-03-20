@@ -2370,6 +2370,9 @@ html[data-home-mode="play"] .focus-inline-results {
 
 .quick-music-popover {
   width: min(356px, calc(100vw - 12px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 #quick-music-strip {
@@ -2446,16 +2449,19 @@ html[data-home-mode="play"] .focus-inline-results {
 }
 
 .quick-music-cluster {
-  flex: 1 1 auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
-  min-height: 24px;
-  padding: 1px 5px;
+  min-height: 28px;
+  padding: 2px 6px;
   border-radius: var(--radius-full);
   border: 1px solid color-mix(in oklab, var(--panel-border) 60%, transparent);
   background: color-mix(in oklab, var(--panel-bg) 90%, transparent);
   box-shadow: none;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .theme-preview-music {
@@ -2537,11 +2543,13 @@ html[data-home-mode="play"] .focus-inline-results {
 .quick-music-info-strip {
   display: grid;
   gap: 8px;
-  padding: 10px 8px 6px;
+  padding: 12px 8px 8px;
   background: color-mix(in oklab, var(--panel-bg) 60%, var(--panel-border) 40%);
   border-radius: 12px;
-  margin: 0 2px;
+  margin: 0;
   border: 1px solid color-mix(in oklab, var(--panel-border) 52%, transparent);
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .quick-music-song-info {
