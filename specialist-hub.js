@@ -2300,6 +2300,10 @@
   };
   var FP_VALID = /^[A-Za-z]$/;
 
+  var badgesModule = window.createSpecialistHubBadgesModule && typeof window.createSpecialistHubBadgesModule === "function"
+    ? window.createSpecialistHubBadgesModule({ hubMemory: hubMemory, escapeHtml: escapeHtml })
+    : null;
+
   function getFpLevel(studentId) {
     var lsKey = "cs.hub.fp." + studentId;
     var stored = hubMemory.getString(lsKey, "__missing__");
