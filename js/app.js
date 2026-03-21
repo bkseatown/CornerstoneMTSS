@@ -6616,10 +6616,19 @@
     const popRect = popover.getBoundingClientRect();
     let left = anchorRect.right - popRect.width;
     left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
-    let top = anchorRect.bottom + 8;
-    if (top + popRect.height > window.innerHeight - margin) {
-      top = Math.max(margin, anchorRect.top - popRect.height - 8);
+
+    // Special positioning for music panel in Word Quest play mode
+    let top;
+    if (popover.id === 'quick-music-strip' && document.body.classList.contains('wordquest-root')) {
+      // Position music controls below the game board (340px from top)
+      top = 340;
+    } else {
+      top = anchorRect.bottom + 8;
+      if (top + popRect.height > window.innerHeight - margin) {
+        top = Math.max(margin, anchorRect.top - popRect.height - 8);
+      }
     }
+
     popover.style.left = `${Math.round(left)}px`;
     popover.style.top = `${Math.round(top)}px`;
   }
