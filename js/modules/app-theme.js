@@ -1233,7 +1233,12 @@ var voicePracticeMode = 'optional';
     const sentenceBtn = _el('hint-clue-sentence-btn');
     let showAction = false;
     if (sentenceBtn) {
-      const actionMode = String(normalized.actionMode || '').trim().toLowerCase();
+      const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+      let actionMode = String(normalized.actionMode || '').trim().toLowerCase();
+      // Safety check: word-meaning should only show in listening mode
+      if (playStyle !== 'listening' && actionMode === 'word-meaning') {
+        actionMode = 'none';
+      }
       showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
       sentenceBtn.dataset.mode = actionMode || 'none';
       sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence (contains word)';
