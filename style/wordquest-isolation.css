@@ -50,7 +50,6 @@
 .wordquest-root #quick-music-strip {
   display: flex !important;
   position: fixed !important;
-  top: 340px !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
