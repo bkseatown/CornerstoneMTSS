@@ -2304,6 +2304,10 @@
     ? window.createSpecialistHubBadgesModule({ hubMemory: hubMemory, escapeHtml: escapeHtml })
     : null;
 
+  var curriculumModule = window.createSpecialistHubCurriculumModule && typeof window.createSpecialistHubCurriculumModule === "function"
+    ? window.createSpecialistHubCurriculumModule({ hubMemory: hubMemory, escapeHtml: escapeHtml })
+    : null;
+
   function getFpLevel(studentId) {
     var lsKey = "cs.hub.fp." + studentId;
     var stored = hubMemory.getString(lsKey, "__missing__");
