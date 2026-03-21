@@ -1395,7 +1395,7 @@ var voicePracticeMode = 'optional';
     const suggestionBtn = _el('support-choice-suggestion');
     const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
     if (suggestionBtn) {
-      const enabled = suggestionCount >= 4;
+      const enabled = suggestionCount >= 3;
       if (enabled) {
         suggestionBtn.classList.remove('hidden');
         suggestionBtn.disabled = false;
