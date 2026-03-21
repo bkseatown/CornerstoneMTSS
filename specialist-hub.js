@@ -6630,6 +6630,10 @@
 
   /* ── Google Auth + Classroom sync ──────────────────────────────────── */
 
+  var googleWorkspaceModule = window.createSpecialistHubGoogleWorkspaceModule && typeof window.createSpecialistHubGoogleWorkspaceModule === "function"
+    ? window.createSpecialistHubGoogleWorkspaceModule({ showToast: showToast, loadCaseload: loadCaseload })
+    : null;
+
   function initGoogleAuth() {
     var chipEl       = document.getElementById("th2-auth-chip");
     var avatarEl     = document.getElementById("th2-auth-avatar");
