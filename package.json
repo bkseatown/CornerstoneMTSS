@@ -28,6 +28,8 @@
     "telemetry:dashboards:check": "node scripts/check-telemetry-dashboard-contract.js",
     "theme:balance:check": "node scripts/check-theme-balance.js",
     "dom:hooks:check": "node scripts/check-dead-dom-hooks.js",
+    "app:factories:check": "node scripts/check-app-main-factories.js",
+    "wordquest:factories:check": "node scripts/check-app-main-factories.js",
     "hub:arch:check": "node scripts/check-hub-architecture-guardrails.js",
     "visual:check": "node scripts/check-visual-baseline.js",
     "lint:sizes": "node scripts/lint-file-size.js",

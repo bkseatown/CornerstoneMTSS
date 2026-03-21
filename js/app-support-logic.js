@@ -30,12 +30,87 @@ function createSupportLogicModule(deps) {
     showToast = () => {},
     shouldExpandGradeBandForFocus = () => false,
     getSorHintProfiles = () => ({}),
-    getStarterWordHelpers = () => null,
     syncRoundTrackingLocals = () => {},
     ui = null,
     updateCurrentRow = () => {},
     updateNextActionLine = () => {}
   } = deps || {};
+
+  function buildStarterWordConstraint(state) {
+    const wordState = deriveWordState(state);
+    const fixedLetters = Array.from({ length: wordState.length }, (_, index) => (
+      wordState.correctPositions[index] || ''
+    ));
+    return {
+      length: wordState.length,
+      guessCount: wordState.guessCount,
+      fixedLetters,
+      excludedByPosition: wordState.forbiddenByPosition,
+      minCounts: wordState.minCounts,
+      maxCounts: wordState.maxCounts,
+      absentLetters: wordState.absentLetters,
+      guessedLetters: wordState.guessedLetters,
+      wordState
+    };
+  }
+
+  function wordMatchesStarterConstraint(word, constraint, options = {}) {
+    const normalizedWord = normalizeReviewWord(word);
+    const length = Math.max(1, Number(constraint?.length || 0));
+    if (!normalizedWord || normalizedWord.length !== length) return false;
+    const enforceMaxCounts = options.enforceMaxCounts !== false;
+    const letterCounts = {};
+    for (let index = 0; index < normalizedWord.length; index += 1) {
+      const letter = normalizedWord[index];
+      if (constraint.fixedLetters[index] && constraint.fixedLetters[index] !== letter) return false;
+      if (constraint.excludedByPosition[index]?.has(letter)) return false;
+      letterCounts[letter] = (letterCounts[letter] || 0) + 1;
+    }
+    for (const letter of constraint.absentLetters) {
+      if ((letterCounts[letter] || 0) > 0) return false;
+    }
+    for (const [letter, minimum] of Object.entries(constraint.minCounts || {})) {
+      if ((letterCounts[letter] || 0) < minimum) return false;
+    }
+    if (enforceMaxCounts) {
+      for (const [letter, maximum] of Object.entries(constraint.maxCounts || {})) {
+        if ((letterCounts[letter] || 0) > maximum) return false;
+      }
+    }
+    return true;
+  }
+
+  function scoreStarterWordCandidate(word, constraint) {
+    const normalizedWord = normalizeReviewWord(word);
+    if (!normalizedWord) return 0;
+    let score = 0;
+    const letterCounts = {};
+    for (const ch of normalizedWord) letterCounts[ch] = (letterCounts[ch] || 0) + 1;
+    const counted = new Set();
+    for (let index = 0; index < normalizedWord.length; index += 1) {
+      const letter = normalizedWord[index];
+      if (constraint.fixedLetters[index] && constraint.fixedLetters[index] === letter) score += 4;
+      if (!constraint.guessedLetters.has(letter) && !counted.has(letter)) {
+        score += 2;
+        counted.add(letter);
+      }
+      if ((constraint.minCounts[letter] || 0) > 0) score += 1;
+    }
+    for (const [letter, minimum] of Object.entries(constraint.minCounts || {})) {
+      if ((letterCounts[letter] || 0) < minimum) score -= 14;
+      else score += 6;
+    }
+    for (const letter of constraint.absentLetters || []) {
+      if ((letterCounts[letter] || 0) > 0) score -= 18;
+    }
+    return score;
+  }
+
+  function formatStarterPattern(constraint) {
+    if (!constraint || !Array.isArray(constraint.fixedLetters)) return '';
+    const token = constraint.fixedLetters.map((letter) => (letter ? letter.toUpperCase() : '_')).join('');
+    return token.includes('_') ? token : '';
+  }
 
   function evaluateGuessPattern(guess, target) {
     const safeGuess = String(guess || '').toLowerCase().replace(/[^a-z]/g, '');
@@ -368,7 +443,6 @@ function createSupportLogicModule(deps) {
   }
 
   function pickStarterWordsForRound(state, limit = 9) {
-    const starterWordHelpers = getStarterWordHelpers();
     if (!state?.word || state.gameOver) return [];
     const focus = document.getElementById('setting-focus')?.value || prefs.focus || 'all';
     const selectedGrade = document.getElementById('s-grade')?.value || prefs.grade || defaultPrefs.grade;
@@ -402,7 +476,7 @@ function createSupportLogicModule(deps) {
       addWords(data?.getPlayableWords?.({ gradeBand, length, phonics: 'all', includeLowerBands }), prioritized);
     }
 
-    const constraint = starterWordHelpers?.buildStarterWordConstraint?.(state, deriveWordState) || {
+    const constraint = buildStarterWordConstraint(state) || {
       length: 0,
       guessCount: 0,
       fixedLetters: [],
@@ -416,27 +490,26 @@ function createSupportLogicModule(deps) {
     const candidates = Array.from(prioritized);
     let filtered = candidates;
     if (constraint.guessCount >= 1) {
-      const strict = candidates.filter((word) => starterWordHelpers?.wordMatchesStarterConstraint?.(word, constraint, normalizeReviewWord, { enforceMaxCounts: true }) || false);
+      const strict = candidates.filter((word) => wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: true }));
       filtered = strict;
       if (
         targetWord &&
-        (starterWordHelpers?.wordMatchesStarterConstraint?.(targetWord, constraint, normalizeReviewWord, { enforceMaxCounts: true }) || false) &&
+        wordMatchesStarterConstraint(targetWord, constraint, { enforceMaxCounts: true }) &&
         !filtered.includes(targetWord)
       ) {
         filtered.unshift(targetWord);
       }
     }
     const ranked = pickRandomized(filtered).sort((left, right) => (
-      (starterWordHelpers?.scoreStarterWordCandidate?.(right, constraint, normalizeReviewWord) || 0) -
-      (starterWordHelpers?.scoreStarterWordCandidate?.(left, constraint, normalizeReviewWord) || 0)
+      scoreStarterWordCandidate(right, constraint) -
+      scoreStarterWordCandidate(left, constraint)
     ));
     return ranked.slice(0, Math.max(3, Math.min(12, Number(limit) || 9)));
   }
 
   function getConstraintSafeCoachSuggestion(state) {
-    const starterWordHelpers = getStarterWordHelpers();
     if (!state || !state.word || state.gameOver) return '';
-    const constraint = starterWordHelpers?.buildStarterWordConstraint?.(state, deriveWordState) || {
+    const constraint = buildStarterWordConstraint(state) || {
       length: 0,
       guessCount: 0,
       fixedLetters: [],
@@ -454,7 +527,7 @@ function createSupportLogicModule(deps) {
     let bestScore = -Infinity;
     for (const row of pool) {
       const word = normalizeReviewWord(row);
-      if (!(starterWordHelpers?.wordMatchesStarterConstraint?.(word, constraint, normalizeReviewWord, { enforceMaxCounts: true }) || false)) continue;
+      if (!wordMatchesStarterConstraint(word, constraint, { enforceMaxCounts: true })) continue;
       const uniq = new Set(word.split(''));
       let score = 0;
       uniq.forEach((ch) => {
@@ -523,13 +596,12 @@ function createSupportLogicModule(deps) {
     if (isMissionLabStandaloneMode() || isAnyOverlayModalOpen()) return false;
     hideInformantHintCard();
 
-    const starterWordHelpers = getStarterWordHelpers();
     const state = getGameState() || {};
     const titleEl = document.getElementById('starter-word-title');
     const messageEl = document.getElementById('starter-word-message');
     const guessCount = Array.isArray(state.guesses) ? state.guesses.length : 0;
     const source = String(options.source || 'manual').toLowerCase();
-    const constraint = starterWordHelpers?.buildStarterWordConstraint?.(state, deriveWordState) || {
+    const constraint = buildStarterWordConstraint(state) || {
       length: 0,
       guessCount: 0,
       fixedLetters: [],
@@ -540,7 +612,7 @@ function createSupportLogicModule(deps) {
       guessedLetters: new Set(),
       wordState: deriveWordState(state)
     };
-    const knownPattern = starterWordHelpers?.formatStarterPattern?.(constraint) || '';
+    const knownPattern = formatStarterPattern(constraint) || '';
 
     if (!state.word || state.gameOver) {
       if (titleEl) titleEl.textContent = 'Try a Starter Word';

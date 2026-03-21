@@ -9,17 +9,49 @@ function createDeepDiveUiModule(deps) {
     challengeScaffoldProfile = {},
     challengeTaskFlow = [],
     challengeTaskLabels = {},
-    clearChallengePacingTimer = () => {},
-    clearChallengeSprintTimer = () => {},
+    clearIntervalRef = clearInterval,
+    clearTimeoutRef = clearTimeout,
     el = () => null,
     getChallengeScaffold = () => challengeScaffoldProfile.g35 || {},
+    getChallengePacingTimer = () => 0,
+    getChallengeSprintTimer = () => 0,
     getRevealChallengeState = () => null,
     renderRevealChallengeModal = () => {},
-    setChallengeFeedback = () => {},
     setChallengePacingTimer = () => {},
+    setChallengeSprintTimer = () => {},
     setTaskComplete = () => {},
     setTimer = setTimeout
   } = deps || {};
+
+  function setChallengeFeedback(message, tone = 'default') {
+    const node = el('challenge-live-feedback');
+    if (!node) return;
+    const text = String(message || '').trim();
+    node.textContent = text;
+    node.classList.toggle('hidden', !text);
+    node.classList.toggle('is-good', tone === 'good');
+    node.classList.toggle('is-warn', tone === 'warn');
+  }
+
+  function clearChallengeSprintTimer() {
+    const sprintTimer = Number(getChallengeSprintTimer() || 0);
+    if (sprintTimer) {
+      clearIntervalRef(sprintTimer);
+      setChallengeSprintTimer(0);
+    }
+    const pacingTimer = Number(getChallengePacingTimer() || 0);
+    if (pacingTimer) {
+      clearTimeoutRef(pacingTimer);
+      setChallengePacingTimer(0);
+    }
+  }
+
+  function clearChallengePacingTimer() {
+    const pacingTimer = Number(getChallengePacingTimer() || 0);
+    if (!pacingTimer) return;
+    clearTimeoutRef(pacingTimer);
+    setChallengePacingTimer(0);
+  }
 
   function getChallengeDoneCount(state = getRevealChallengeState()) {
     return challengeTaskFlow.reduce((count, task) => count + (state?.tasks?.[task] ? 1 : 0), 0);
@@ -357,6 +389,8 @@ function createDeepDiveUiModule(deps) {
   }
 
   return {
+    clearChallengePacingTimer,
+    clearChallengeSprintTimer,
     computeChallengeScore,
     getChallengeChoice,
     getChallengeDoneCount,
@@ -365,6 +399,7 @@ function createDeepDiveUiModule(deps) {
     getNextChallengeTask,
     handleChallengeChoiceSelection,
     renderChallengeChoiceButtons,
+    setChallengeFeedback,
     setChallengeActiveTask,
     syncChallengeActionButtons,
     syncChallengePacingTimer,

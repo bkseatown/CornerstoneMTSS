@@ -77,5 +77,5 @@ If two docs disagree, trust this order:
 - If any doc still describes `js/app-main.js` as roughly 18k lines, treat that number as stale.
 - The current checked-in reality is:
   - `js/app.js` about 184 lines
-  - `js/app-main.js` about 5,954 lines
-- The current work is no longer “start the split.” It is “keep the extracted runtime clean, fix init-order regressions, and continue reducing `js/app-main.js` where the boundary is safe.”
+  - `js/word-quest-runtime.js` about 4,291 lines
+- The current work is no longer “start the split.” It is “keep the extracted runtime clean, fix init-order regressions, and continue reducing `js/word-quest-runtime.js` where the boundary is safe.”

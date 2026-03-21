@@ -27,7 +27,6 @@ function createStartupRuntimeModule(deps) {
     el = () => null,
     emitTelemetry = () => {},
     getHintMode = () => 'on',
-    initHoverNoteToasts = () => {},
     installBuildConsistencyHeartbeat = () => {},
     loadSavedPreference = () => null,
     logRuntimeBuildDiagnostics = () => Promise.resolve(),
@@ -47,6 +46,7 @@ function createStartupRuntimeModule(deps) {
     pageModeKey = 'wq_page_mode',
     populateVoiceSelector = () => {},
     prefs = {},
+    requestAnimationFrameRef = requestAnimationFrame,
     runAutoCacheRepairForBuild = () => Promise.resolve(),
     runRemoteBuildConsistencyCheck = () => Promise.resolve(),
     savePrefs = () => {},
@@ -61,9 +61,15 @@ function createStartupRuntimeModule(deps) {
     syncPersistentVersionChip = () => {},
     updateWilsonModeToggle = () => {},
     themeRegistry = null,
+    hoverNoteDelayMs = 500,
+    hoverNoteSelector = '',
     windowRef = window,
     WQUI = null
   } = deps || {};
+
+  let hoverNoteTimer = 0;
+  let hoverNoteTarget = null;
+  let hoverNoteEl = null;
 
   function resolveThemeRegistry() {
     if (typeof themeRegistry === 'function') {
@@ -148,6 +154,137 @@ function createStartupRuntimeModule(deps) {
     } catch {
       return '';
     }
+  }
+
+  function setHoverNoteForElement(node, note) {
+    if (!node) return;
+    const text = String(note || '').replace(/\s+/g, ' ').trim();
+    if (!text) {
+      node.removeAttribute('data-hover-note');
+      return;
+    }
+    node.setAttribute('data-hover-note', text);
+    if (node.hasAttribute('title')) node.removeAttribute('title');
+  }
+
+  function getHoverNoteText(node) {
+    if (!node) return '';
+    if (node.getAttribute('data-no-hover-note') === 'true') return '';
+    const explicit = node.getAttribute('data-hover-note');
+    const fromHint = node.getAttribute('data-hint');
+    const fromAria = node.getAttribute('aria-label');
+    const fromTitle = node.getAttribute('title');
+    const raw = String(explicit || fromHint || fromAria || fromTitle || '').replace(/\s+/g, ' ').trim();
+    if (!raw) return '';
+    if (raw.length <= 120) return raw;
+    return `${raw.slice(0, 117).trimEnd()}...`;
+  }
+
+  function ensureHoverNoteToast() {
+    if (hoverNoteEl && documentRef.body.contains(hoverNoteEl)) return hoverNoteEl;
+    const node = documentRef.createElement('div');
+    node.id = 'hover-note-toast';
+    node.className = 'hover-note-toast hidden';
+    node.setAttribute('role', 'status');
+    node.setAttribute('aria-live', 'polite');
+    node.setAttribute('aria-hidden', 'true');
+    documentRef.body.appendChild(node);
+    hoverNoteEl = node;
+    return hoverNoteEl;
+  }
+
+  function hideHoverNoteToast() {
+    if (hoverNoteTimer) {
+      clearTimeout(hoverNoteTimer);
+      hoverNoteTimer = 0;
+    }
+    hoverNoteTarget = null;
+    if (!hoverNoteEl) return;
+    hoverNoteEl.classList.remove('is-visible');
+    hoverNoteEl.classList.add('hidden');
+    hoverNoteEl.setAttribute('aria-hidden', 'true');
+  }
+
+  function showHoverNoteToast(targetEl) {
+    if (!targetEl || !documentRef.contains(targetEl)) return;
+    const text = getHoverNoteText(targetEl);
+    if (!text) return;
+    const toast = ensureHoverNoteToast();
+    toast.textContent = `✨ ${text}`;
+    toast.classList.remove('hidden');
+    const rect = targetEl.getBoundingClientRect();
+    const showAbove = rect.top > 84;
+    const placement = showAbove ? 'top' : 'bottom';
+    const top = showAbove ? (rect.top - 10) : (rect.bottom + 10);
+    const left = Math.max(14, Math.min(windowRef.innerWidth - 14, rect.left + (rect.width / 2)));
+    toast.style.left = `${left}px`;
+    toast.style.top = `${Math.max(10, Math.min(windowRef.innerHeight - 10, top))}px`;
+    toast.setAttribute('data-placement', placement);
+    toast.setAttribute('aria-hidden', 'false');
+    requestAnimationFrameRef(() => {
+      toast.classList.add('is-visible');
+    });
+  }
+
+  function scheduleHoverNoteToast(targetEl, delay = hoverNoteDelayMs) {
+    if (!windowRef.matchMedia('(hover: hover)').matches) return;
+    if (hoverNoteTimer) {
+      clearTimeout(hoverNoteTimer);
+      hoverNoteTimer = 0;
+    }
+    hoverNoteTarget = targetEl;
+    hoverNoteTimer = windowRef.setTimeout(() => {
+      hoverNoteTimer = 0;
+      if (hoverNoteTarget !== targetEl) return;
+      showHoverNoteToast(targetEl);
+    }, Math.max(0, delay));
+  }
+
+  function initHoverNoteToasts() {
+    if (!windowRef.matchMedia('(hover: hover)').matches) return;
+    const captureHoverNote = (eventTarget) => {
+      const node = eventTarget?.closest?.(hoverNoteSelector);
+      if (!node || !documentRef.contains(node)) return null;
+      if (node.getAttribute('data-no-hover-note') === 'true') return null;
+      if (node.matches(':disabled,[aria-disabled="true"]')) return null;
+      return node;
+    };
+
+    documentRef.addEventListener('mouseover', (event) => {
+      const node = captureHoverNote(event.target);
+      if (!node) return;
+      if (node.hasAttribute('title') && !node.hasAttribute('data-hover-note')) {
+        setHoverNoteForElement(node, node.getAttribute('title'));
+      }
+      scheduleHoverNoteToast(node);
+    }, true);
+
+    documentRef.addEventListener('mouseout', (event) => {
+      const node = captureHoverNote(event.target);
+      if (!node) return;
+      const related = event.relatedTarget;
+      if (related && node.contains(related)) return;
+      hideHoverNoteToast();
+    }, true);
+
+    documentRef.addEventListener('focusin', (event) => {
+      const node = captureHoverNote(event.target);
+      if (!node) return;
+      scheduleHoverNoteToast(node, 320);
+    }, true);
+
+    documentRef.addEventListener('focusout', (event) => {
+      const node = captureHoverNote(event.target);
+      if (!node) return;
+      const related = event.relatedTarget;
+      if (related && node.contains(related)) return;
+      hideHoverNoteToast();
+    }, true);
+
+    documentRef.addEventListener('pointerdown', hideHoverNoteToast, true);
+    documentRef.addEventListener('keydown', hideHoverNoteToast, true);
+    windowRef.addEventListener('scroll', hideHoverNoteToast, { passive: true });
+    windowRef.addEventListener('resize', hideHoverNoteToast, { passive: true });
   }
 
   function initializeStartupPreferences() {
@@ -348,12 +485,14 @@ function createStartupRuntimeModule(deps) {
     getThemeFallback,
     initializeStartupPreferences,
     isMissionLabEnabled,
+    initHoverNoteToasts,
     loadStoredPageMode,
     normalizePageMode,
     normalizeTheme,
     persistPageMode,
     readPageModeFromQuery,
-    readThemeFromQuery
+    readThemeFromQuery,
+    setHoverNoteForElement
   };
 }
 

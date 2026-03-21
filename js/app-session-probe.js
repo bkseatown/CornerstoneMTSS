@@ -5,7 +5,6 @@
 
 function createSessionProbeModule(deps) {
   const {
-    applyChipTone = () => {},
     buildProbeSummary = () => ({}),
     createEmptyProbeState = () => ({}),
     defaultPrefs = {},
@@ -13,11 +12,8 @@ function createSessionProbeModule(deps) {
     formatGradeBandLabel = (value) => String(value || ''),
     formatSignedDelta = (value) => String(value),
     getActiveStudentLabel = () => 'Class',
-    getComparableProbeTrend = () => ({ current: null, previous: null, activeMatches: false }),
     getFocusLabel = () => '',
     getGoalEval = () => ({ statusLabel: 'Not set', progressLabel: 'Set accuracy + guesses target.' }),
-    getLatestProbeSourceForStudent = () => null,
-    matchesProbeRecordStudent = () => false,
     normalizeProbeRounds = (value) => value,
     onRenderStudentGoalPanel = () => {},
     prefs = {},
@@ -31,6 +27,62 @@ function createSessionProbeModule(deps) {
   function getLatestProbePerformance(studentLabel) {
     const trend = getComparableProbeTrend(studentLabel);
     return trend.current || null;
+  }
+
+  function matchesProbeRecordStudent(recordStudent, studentLabel) {
+    const left = String(recordStudent || '').trim() || 'Class';
+    const right = String(studentLabel || '').trim() || 'Class';
+    return left === right;
+  }
+
+  function getProbeRecordsForStudent(studentLabel) {
+    return (Array.isArray(probeHistoryRef?.get?.()) ? probeHistoryRef.get() : [])
+      .filter((record) => matchesProbeRecordStudent(record?.student, studentLabel));
+  }
+
+  function getLatestProbeSourceForStudent(studentLabel) {
+    const probeState = probeStateRef?.get?.() || {};
+    if (probeState.active && matchesProbeRecordStudent(probeState.student, studentLabel)) {
+      return probeState;
+    }
+    return getProbeRecordsForStudent(studentLabel)[0] || null;
+  }
+
+  function buildProbeNumericSummary(source) {
+    const roundsDone = Math.max(0, Number(source?.roundsDone) || 0);
+    const wins = Math.max(0, Number(source?.wins) || 0);
+    const totalGuesses = Math.max(0, Number(source?.totalGuesses) || 0);
+    const totalDurationMs = Math.max(0, Number(source?.totalDurationMs) || 0);
+    const hintRounds = Math.max(0, Number(source?.hintRounds) || 0);
+    return {
+      roundsDone,
+      wins,
+      accuracyRate: roundsDone ? wins / roundsDone : 0,
+      avgGuesses: roundsDone ? totalGuesses / roundsDone : 0,
+      avgTimeSeconds: roundsDone ? (totalDurationMs / roundsDone) / 1000 : 0,
+      hintRate: roundsDone ? hintRounds / roundsDone : 0
+    };
+  }
+
+  function getComparableProbeTrend(studentLabel) {
+    const probeState = probeStateRef?.get?.() || {};
+    const records = getProbeRecordsForStudent(studentLabel);
+    const activeMatches = probeState.active &&
+      matchesProbeRecordStudent(probeState.student, studentLabel) &&
+      Math.max(0, Number(probeState.roundsDone) || 0) > 0;
+    const currentRecord = activeMatches ? probeState : (records[0] || null);
+    const previousRecord = activeMatches ? (records[0] || null) : (records[1] || null);
+    const current = currentRecord ? buildProbeNumericSummary(currentRecord) : null;
+    const previous = previousRecord ? buildProbeNumericSummary(previousRecord) : null;
+    return { current, previous, activeMatches };
+  }
+
+  function applyChipTone(node, tone) {
+    if (!node) return;
+    node.classList.remove('is-good', 'is-warn', 'is-bad');
+    if (tone === 'good') node.classList.add('is-good');
+    if (tone === 'warn') node.classList.add('is-warn');
+    if (tone === 'bad') node.classList.add('is-bad');
   }
 
   function getProbeRecencyMeta(studentLabel) {
@@ -290,11 +342,17 @@ function createSessionProbeModule(deps) {
   }
 
   return {
+    applyChipTone,
+    buildProbeNumericSummary,
     buildProbeSummaryText,
     finishWeeklyProbe,
+    getComparableProbeTrend,
+    getLatestProbeSourceForStudent,
     getLatestProbePerformance,
+    getProbeRecordsForStudent,
     getProbeRecencyMeta,
     getSupportFlagMeta,
+    matchesProbeRecordStudent,
     recordProbeRound,
     renderProbePanel,
     renderProbeSupportChips,

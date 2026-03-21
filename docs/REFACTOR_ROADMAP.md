@@ -6,7 +6,7 @@ Reduce change risk by shrinking the biggest runtime hotspots without destabilizi
 
 ## Highest-Priority Targets
 
-### 1. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js`
+### 1. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/word-quest-runtime.js`
 
 Why first:
 
@@ -20,14 +20,14 @@ Recommended extraction order:
 2. Score, streak, and stats tracking
 3. Keep `js/ui.js` as the rendering layer unless a future slice is clearly DOM-safe and worth moving
 4. Extract only validation-style helpers from input handling
-5. Keep game flow orchestration in `js/app-main.js`
+5. Keep game flow orchestration in `js/word-quest-runtime.js`
 6. Audio and accessibility helpers
 
 Important coupling notes:
 
-- Keep telemetry emission in `js/app-main.js` even when score and metrics helpers move out.
+- Keep telemetry emission in `js/word-quest-runtime.js` even when score and metrics helpers move out.
 - Treat round-tracking cleanup as part of game-flow orchestration, not as a standalone helper extraction.
-- Keep the duplicate-letter toast in `js/app-main.js` for now. It is small, low-value to extract early, and sits on the path from input handling to UI feedback.
+- Keep the duplicate-letter toast in `js/word-quest-runtime.js` for now. It is small, low-value to extract early, and sits on the path from input handling to UI feedback.
 - Treat `js/ui.js` as the current Module 3 boundary. It is already the clean UI layer.
 - Do not extract the main `handleKey()` flow early. If Module 4 moves at all, move pure helpers like validation and feedback utilities.
 - Treat Module 5 as the orchestrator. Do not extract `newGame()` or round-complete control flow unless a future slice is mostly pure helper logic.
@@ -73,7 +73,7 @@ Why fourth:
 Why fifth:
 
 - This file is no longer a refactor hotspot. It is now the small bootstrap entry at about 184 lines.
-- Keep it small and stable. Changes here should stay limited to startup wiring, data loading, and handoff into `js/app-main.js`.
+- Keep it small and stable. Changes here should stay limited to startup wiring, data loading, and handoff into `js/word-quest-runtime.js`.
 
 ## Refactor Rules
 
@@ -93,17 +93,17 @@ A slice is good if:
 
 ## Suggested First Slice
 
-Start with `js/app-main.js` word and curriculum helpers, then score and stats tracking. Those are still the best low-risk extractions now that bootstrap, runtime helpers, and Phonics Clue have already been pulled out. Use `docs/GAMEPLAY_MODULES_1_2_PLAYBOOK.md` when doing the actual extraction work.
+Start with `js/word-quest-runtime.js` word and curriculum helpers, then score and stats tracking. Those are still the best low-risk extractions now that bootstrap, runtime helpers, and Phonics Clue have already been pulled out. Use `docs/GAMEPLAY_MODULES_1_2_PLAYBOOK.md` when doing the actual extraction work.
 
 ## Current Runtime Reality
 
 These Word Quest files are already split and should be treated as the current source of truth:
 
 - `js/app.js`: bootstrap and data-load handoff
-- `js/app-main.js`: main Word Quest runtime and gameplay UI orchestration
+- `js/word-quest-runtime.js`: main Word Quest runtime and gameplay UI orchestration
 - `js/app-runtime-helpers.js`: runtime helpers, demo/route support, diagnostics helpers
 - `js/app-phonics-clue.js`: extracted Phonics Clue Sprint module
 
 ## Recommended Next Step
 
-Use `docs/GAMEPLAY_CORE_ANALYSIS.md` as the primary roadmap for `js/app-main.js` extraction order, use `docs/GAMEPLAY_MODULES_DEEP_DIVE.md` for implementation detail, use `docs/GAMEPLAY_MODULES_1_2_PLAYBOOK.md` for exact Module 1 and Module 2 extraction steps, and use `docs/MODULES_3_4_5_EXTRACTION_PLAYBOOK.md` when touching Modules 3, 4, or 5. Treat `docs/REFACTORING_DEPENDENCY_MAP.md` as historical context unless it is refreshed to match the current split runtime.
+Use `docs/GAMEPLAY_CORE_ANALYSIS.md` as the primary roadmap for `js/word-quest-runtime.js` extraction order, use `docs/GAMEPLAY_MODULES_DEEP_DIVE.md` for implementation detail, use `docs/GAMEPLAY_MODULES_1_2_PLAYBOOK.md` for exact Module 1 and Module 2 extraction steps, and use `docs/MODULES_3_4_5_EXTRACTION_PLAYBOOK.md` when touching Modules 3, 4, or 5. Treat `docs/REFACTORING_DEPENDENCY_MAP.md` as historical context unless it is refreshed to match the current split runtime.

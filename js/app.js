@@ -1,7 +1,7 @@
 /**
  * app.js — Word Quest v2
  * Bootstrap entry point. Loads data, initializes runtime helpers,
- * and hands off the main experience to app-main.js.
+ * and hands off the main experience to word-quest-runtime.js.
  */
 
 (async () => {

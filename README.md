@@ -82,7 +82,7 @@ Use the repo docs as the durable memory layer:
 - Entry/UI wiring:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/word-quest-runtime.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-runtime-helpers.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-phonics-clue.js`
 - Shared game platform:
@@ -107,15 +107,15 @@ Use the repo docs as the durable memory layer:
 ## Word Quest Runtime Status
 - Current checked-in split:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js` is the bootstrap entry and is intentionally small at about 184 lines.
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js` is the remaining orchestration core and is about 5,954 lines.
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/word-quest-runtime.js` is the remaining Word Quest orchestration core and is about 4,291 lines.
 - The old 18k-era `app-main.js` state is no longer current. A large amount of runtime code has already been moved into extracted modules that are loaded by `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`.
 - High-value extracted runtime modules now include:
   - focus and curriculum: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-search-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-curriculum-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-grade-runtime.js`
   - support and hints: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-logic.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-ui.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-shell.js`
-  - Deep Dive and reveal: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-*.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-*.js`
-  - session/reporting/runtime support: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-*.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-playlist-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-teacher-state.js`
+  - Deep Dive and round flow: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-builders.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-core-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-session.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-state.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-ui.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-round-start-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-round-submit-runtime.js`
+  - reveal, session, and voice support: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-flow-support.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-*.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-playlist-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-student-session-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-teacher-state.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-voice-support.js`
 - Current cleanup focus:
-  - keep reducing `js/app-main.js` where safe
+  - keep reducing `js/word-quest-runtime.js` where safe
   - remove stale inline helpers instead of leaving duplicate wrappers
   - fix init-order regressions introduced by the split so the browser runtime boots cleanly before further extractions
 

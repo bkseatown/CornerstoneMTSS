@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, '..');
 const FILES = {
   index: 'index.html',
   app: 'js/app.js',
-  appMain: 'js/app-main.js',
+  appMain: 'js/word-quest-runtime.js',
   nav: 'js/theme-nav.js',
   registry: 'js/theme-registry.js',
   components: 'style/components.css',

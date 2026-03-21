@@ -148,11 +148,11 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   }
 
   function renderRevealChallengeModal(...args) {
-    return deepDiveModal?.renderRevealChallengeModal?.(...args);
+    return deepDiveCoreRuntime?.renderRevealChallengeModal?.(...args);
   }
 
   function closeRevealChallengeModal(...args) {
-    return deepDiveModal?.closeRevealChallengeModal?.(...args);
+    return deepDiveCoreRuntime?.closeRevealChallengeModal?.(...args);
   }
 
   function isConsecutiveDay(prevDay, nextDay) {
@@ -510,22 +510,13 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const supportUiFactory = window.createSupportUiModule;
   const supportLogicFactory = window.createSupportLogicModule;
   const gameplayStatsModuleFactory = window.createGameplayStatsModule;
-  const gameplaySupportModuleFactory = window.createGameplaySupportModule;
-  const inputValidatorsFactory = window.createInputValidators;
   const deepDiveBuildersFactory = window.createDeepDiveBuilders;
   const deepDiveStateFactory = window.createDeepDiveStateModule;
   const deepDiveUiFactory = window.createDeepDiveUiModule;
   const deepDiveSessionFactory = window.createDeepDiveSessionModule;
-  const deepDiveModalFactory = window.createDeepDiveModalModule;
-  const revealTextModuleFactory = window.createRevealTextModule;
-  const revealEffectsModuleFactory = window.createRevealEffectsModule;
-  const starterWordHelpersFactory = window.createStarterWordHelpers;
   const phonicsClueModuleFactory = window.createPhonicsClueModule;
-  const wordReviewModuleFactory = window.createWordReviewModule;
   const midgameBoostFactory = window.createMidgameBoostModule;
   const telemetryDiagnosticsFactory = window.createTelemetryDiagnosticsModule;
-  const buildMaintenanceFactory = window.createBuildMaintenanceModule;
-  const hoverNotesFactory = window.createHoverNotesModule;
   const sessionAnalyticsFactory = window.createSessionAnalyticsModule;
   const sessionMasteryFactory = window.createSessionMasteryModule;
   const sessionProbeFactory = window.createSessionProbeModule;
@@ -539,17 +530,10 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const sessionControlsFactory = window.createSessionControlsModule;
   const musicRuntimeFactory = window.createMusicRuntimeModule;
   const voiceSupportFactory = window.createVoiceSupportModule;
-  const revealRuntimeSupportFactory = window.createRevealRuntimeSupportModule;
-  const thinkingChallengeFactory = window.createThinkingChallengeModule;
   const revealFlowSupportFactory = window.createRevealFlowSupportModule;
   const standaloneMissionFactory = window.createStandaloneMissionModule;
   const deepDiveCoreRuntimeFactory = window.createDeepDiveCoreRuntimeModule;
-  const sessionUtilsFactory = window.createSessionUtilsModule;
-  const revealTimingSupportFactory = window.createRevealTimingSupportModule;
-  const challengeUtilsFactory = window.createChallengeUtilsModule;
-  const probeRuntimeSupportFactory = window.createProbeRuntimeSupportModule;
   const sessionSummaryRuntimeFactory = window.createSessionSummaryRuntimeModule;
-  const rosterRuntimeFactory = window.createRosterRuntimeModule;
   const playlistRuntimeFactory = window.createPlaylistRuntimeModule;
   const studentSessionRuntimeFactory = window.createStudentSessionRuntimeModule;
   const focusSearchRuntimeFactory = window.createFocusSearchRuntimeModule;
@@ -559,16 +543,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const playSettingsRuntimeFactory = window.createPlaySettingsRuntimeModule;
   const playSurfaceBindingsFactory = window.createPlaySurfaceBindingsModule;
   const inputShellFactory = window.createInputShellModule;
-  const inputFlowSupportFactory = window.createInputFlowSupportModule;
   const inputConstraintsFactory = window.createInputConstraintsModule;
   const classroomTurnsFactory = window.createClassroomTurnsModule;
   const coachRuntimeFactory = window.createCoachRuntimeModule;
   const startupRuntimeFactory = window.createStartupRuntimeModule;
   const surfaceSettingsRuntimeFactory = window.createSurfaceSettingsRuntimeModule;
   const maintenanceRuntimeFactory = window.createMaintenanceRuntimeModule;
+  const roundStartRuntimeFactory = window.createRoundStartRuntimeModule;
+  const roundSubmitRuntimeFactory = window.createRoundSubmitRuntimeModule;
   let telemetryDiagnostics = null;
-  let buildMaintenance = null;
-  let hoverNotes = null;
   let sessionAnalytics = null;
   let sessionMastery = null;
   let sessionProbe = null;
@@ -582,18 +565,10 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   let sessionControls = null;
   let musicRuntime = null;
   let voiceSupport = null;
-  let revealRuntimeSupport = null;
-  let thinkingChallenge = null;
   let revealFlowSupport = null;
   let standaloneMission = null;
-  let deepDiveModal = null;
-  let sessionUtils = null;
-  let revealTimingSupport = null;
-  let challengeUtils = null;
   let deepDiveCoreRuntime = null;
-  let probeRuntimeSupport = null;
   let sessionSummaryRuntime = null;
-  let rosterRuntime = null;
   let playlistRuntime = null;
   let studentSessionRuntime = null;
   let focusSearchRuntime = null;
@@ -603,7 +578,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   let playSettingsRuntime = null;
   let playSurfaceBindings = null;
   let inputShell = null;
-  let inputFlowSupport = null;
   let inputConstraints = null;
   let classroomTurns = null;
   let coachRuntime = null;
@@ -868,7 +842,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         showToast: (message) => WQUI.showToast(message),
         shouldExpandGradeBandForFocus,
         getSorHintProfiles: () => SOR_HINT_PROFILES,
-        getStarterWordHelpers: () => starterWordHelpers,
         syncRoundTrackingLocals,
         ui: {
           addLetter: (value) => WQGame.addLetter(value),
@@ -905,31 +878,48 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function showMidgameBoost() { midgameBoostRuntime?.showMidgameBoost?.(); }
   const gameplayStats = typeof gameplayStatsModuleFactory === 'function'
     ? gameplayStatsModuleFactory({
+        buildCurriculumSelectionLabel,
+        buildCurrentCurriculumSnapshot,
         buildMidgameBoostState,
         clock: () => Date.now(),
         emitTelemetry,
-        getMidgameBoostKey: () => midgameBoostRuntime?.MIDGAME_BOOST_KEY || 'wq_v2_midgame_boost_state_v1',
-        getMidgameBoostPool: () => midgameBoostRuntime?.MIDGAME_BOOST_POOL || Object.freeze([]),
-        getSkillDescriptorForRound: (result) => gameplaySupport?.getSkillDescriptorForRound?.(result) || { key: 'classic:all', label: 'Classic mixed practice' },
-        normalizeCounterMap: (raw) => gameplaySupport?.normalizeCounterMap?.(raw) || Object.create(null),
-        normalizeReviewWord,
-        storage: localStorage,
-        streakKey: SAFE_STREAK_KEY
-      })
-    : null;
-  const gameplaySupport = typeof gameplaySupportModuleFactory === 'function'
-    ? gameplaySupportModuleFactory({
-        buildCurriculumSelectionLabel,
-        buildCurrentCurriculumSnapshot,
         formatGradeBandLabel,
         getActiveStudentLabel,
         getErrorNextStepCopy: () => ERROR_NEXT_STEP_COPY,
         getErrorPatternLabels: () => ERROR_PATTERN_LABELS,
         getFocusLabel,
         getFocusValue: () => (_el('setting-focus')?.value || prefs.focus || 'all'),
-        parseFocusPreset
+        getMidgameBoostKey: () => midgameBoostRuntime?.MIDGAME_BOOST_KEY || 'wq_v2_midgame_boost_state_v1',
+        getMidgameBoostPool: () => midgameBoostRuntime?.MIDGAME_BOOST_POOL || Object.freeze([]),
+        getPlayableWords: (options) => WQData.getPlayableWords(options),
+        getRoundLocals: () => ({
+          activeRoundStartedAt,
+          currentRoundHintRequested,
+          currentRoundStarterWordsShown,
+          currentRoundVoiceAttempts,
+          currentRoundErrorCounts,
+          currentRoundSkillKey,
+          currentRoundSkillLabel
+        }),
+        normalizeReviewWord,
+        parseFocusPreset,
+        reviewQueueKey: REVIEW_QUEUE_KEY,
+        reviewQueueMaxItems: REVIEW_QUEUE_MAX_ITEMS,
+        shouldExpandGradeBandForFocus,
+        setRoundLocals: (nextState) => {
+          activeRoundStartedAt = Number(nextState?.activeRoundStartedAt) || 0;
+          currentRoundHintRequested = !!nextState?.currentRoundHintRequested;
+          currentRoundStarterWordsShown = !!nextState?.currentRoundStarterWordsShown;
+          currentRoundVoiceAttempts = Math.max(0, Number(nextState?.currentRoundVoiceAttempts) || 0);
+          currentRoundErrorCounts = gameplayStats?.normalizeCounterMap?.(nextState?.currentRoundErrorCounts) || Object.create(null);
+          currentRoundSkillKey = String(nextState?.currentRoundSkillKey || 'classic:all');
+          currentRoundSkillLabel = String(nextState?.currentRoundSkillLabel || 'Classic mixed practice');
+        },
+        storage: localStorage,
+        streakKey: SAFE_STREAK_KEY
       })
     : null;
+  const gameplaySupport = gameplayStats;
   midgameBoostRuntime = typeof midgameBoostFactory === 'function'
     ? midgameBoostFactory({
         WQUI,
@@ -948,25 +938,30 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         showToast: (message) => WQUI.showToast(message)
       })
     : null;
-  const inputValidators = typeof inputValidatorsFactory === 'function'
-    ? inputValidatorsFactory()
-    : null;
   const deepDiveBuilders = typeof deepDiveBuildersFactory === 'function'
     ? deepDiveBuildersFactory({
+        DEFAULT_PREFS,
         buildLiveHintExample,
         challengeLevels: CHALLENGE_LEVELS,
         challengeWordRoleMeta: CHALLENGE_WORD_ROLE_META,
         deepDiveVariants: DEEP_DIVE_VARIANTS,
         defaultPrefs: DEFAULT_PREFS,
+        documentRef: document,
         detectHintCategoryFromWord,
+        el: _el,
+        formatGradeBandLabel,
+        getActiveMaxGuesses: () => revealFlowSupport?.getActiveMaxGuesses?.() || 6,
         getEffectiveGameplayGradeBand,
+        getFocusLabel,
         getFocusValue: () => _el('setting-focus')?.value || prefs.focus || 'all',
         getSelectedGrade: () => _el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade,
         normalizeHintCategoryFromFocusTag,
         normalizeReviewWord,
-        pickRandom,
+        parseFocusPreset,
+        pickRandom: (...args) => deepDiveBuilders?.pickRandom?.(...args) || '',
+        prefs,
         safeDefaultGradeBand: SAFE_DEFAULT_GRADE_BAND,
-        shuffleList,
+        shuffleList: (...args) => deepDiveBuilders?.shuffleList?.(...args) || [],
         thinkingLevelMeta: THINKING_LEVEL_META,
         WQData
       })
@@ -994,16 +989,18 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         challengeScaffoldProfile: CHALLENGE_SCAFFOLD_PROFILE,
         challengeTaskFlow: CHALLENGE_TASK_FLOW,
         challengeTaskLabels: CHALLENGE_TASK_LABELS,
-        clearChallengePacingTimer,
-        clearChallengeSprintTimer,
+        clearIntervalRef: clearInterval,
+        clearTimeoutRef: clearTimeout,
         el: _el,
+        getChallengePacingTimer: () => challengePacingTimer,
         getChallengeScaffold: (state) => deepDiveState?.getChallengeScaffoldProfile?.(state) || CHALLENGE_SCAFFOLD_PROFILE.g35,
         getRevealChallengeState: () => revealChallengeState,
+        getChallengeSprintTimer: () => challengeSprintTimer,
         renderRevealChallengeModal,
         resolveMissionScoreBand: (score) => deepDiveState?.resolveMissionScoreBand?.(score) || 'Launch',
-        setChallengeFeedback,
         setChallengePacingTimer: (timerId) => { challengePacingTimer = timerId; },
-        setTaskComplete: (task, complete) => setChallengeTaskComplete(task, complete)
+        setChallengeSprintTimer: (timerId) => { challengeSprintTimer = timerId; },
+        setTaskComplete: (task, complete) => deepDiveCoreRuntime?.setChallengeTaskComplete?.(task, complete)
       })
     : null;
   const deepDiveSession = typeof deepDiveSessionFactory === 'function'
@@ -1019,8 +1016,8 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         el: _el,
         emitTelemetry,
         getActiveStudentLabel,
-        getChallengeGradeLabel,
-        getChallengeTopicLabel,
+        getChallengeGradeLabel: (...args) => deepDiveBuilders?.getChallengeGradeLabel?.(...args) || formatGradeBandLabel(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade),
+        getChallengeTopicLabel: (...args) => deepDiveBuilders?.getChallengeTopicLabel?.(...args) || 'Word meaning + sentence clues',
         getRevealChallengeState: () => revealChallengeState,
         isConsecutiveDay,
         isMissionLabEnabled,
@@ -1028,12 +1025,12 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         localDayKey,
         localStorageRef: localStorage,
         normalizeReviewWord,
-        pickRandom,
+        pickRandom: (...args) => deepDiveBuilders?.pickRandom?.(...args) || '',
         renderSessionSummary,
-        setChallengeFeedback,
+        setChallengeFeedback: (...args) => deepDiveUi?.setChallengeFeedback?.(...args),
         setRevealChallengeState: (nextState) => {
           revealChallengeState = nextState;
-          clearChallengeSprintTimer();
+          deepDiveUi?.clearChallengeSprintTimer?.();
         },
         setWrapText: (node, text) => {
           if (node) node.textContent = text;
@@ -1041,54 +1038,12 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         syncUi: () => {
           deepDiveUi?.updateChallengeProgressUI?.();
         },
-        buildThinkingChallenge
+        buildThinkingChallenge: (...args) => deepDiveBuilders?.buildThinkingChallenge?.(...args) || null
       })
-    : null;
-  deepDiveModal = typeof deepDiveModalFactory === 'function'
-    ? deepDiveModalFactory({
-        challengeTaskLabels: CHALLENGE_TASK_LABELS,
-        deepDiveBuilders,
-        deepDiveState,
-        deepDiveUi,
-        el: _el,
-        emitTelemetry,
-        focusReturnState: {
-          get: () => challengeModalReturnFocusEl,
-          set: (value) => {
-            challengeModalReturnFocusEl = value;
-          }
-        },
-        getRevealChallengeState: () => revealChallengeState,
-        getStateWord: () => revealChallengeState?.word || '',
-        hideInformantHintCard,
-        isMissionLabEnabled,
-        isMissionLabStandaloneMode,
-        normalizeReviewWord,
-        setChallengeFeedback,
-        setTaskComplete: setChallengeTaskComplete,
-        startStandaloneMissionLab,
-        uiScaffoldFallback: CHALLENGE_SCAFFOLD_PROFILE.g35
-      })
-    : null;
-  const revealText = typeof revealTextModuleFactory === 'function'
-    ? revealTextModuleFactory()
-    : null;
-  const revealEffects = typeof revealEffectsModuleFactory === 'function'
-    ? revealEffectsModuleFactory({
-        documentRef: document,
-        dupePrefKey: 'wq_v2_dupe_dismissed',
-        getCelebrateLayer: () => _el('celebrate-layer'),
-        getConfettiCanvas: () => _el('confetti-canvas'),
-        getDupeMode: () => _el('s-dupe')?.value || 'on',
-        isAssessmentRoundLocked,
-        localStorageRef: localStorage,
-        WQUI
-      })
-    : null;
-  const starterWordHelpers = typeof starterWordHelpersFactory === 'function'
-    ? starterWordHelpersFactory()
     : null;
   let wordReview = null;
+  let roundStartRuntime = null;
+  let roundSubmitRuntime = null;
   const phonicsClueModule = typeof phonicsClueModuleFactory === 'function'
     ? phonicsClueModuleFactory({ _el, WQUI })
     : null;
@@ -1110,7 +1065,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const loadStreak = () => gameplayStats?.loadStreak?.() ?? 0;
   const saveStreak = (value) => gameplayStats?.saveStreak?.(value);
   const incrementStreak = () => gameplayStats?.incrementStreak?.() ?? 0;
-  let roundTrackingRuntime = null;
   function renderSafeStreak() {
     if (!FEATURES.streakSystem) return;
     const streakCount = _el('streakCount');
@@ -1242,57 +1196,33 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     }
   });
   telemetryDiagnostics?.initTelemetryUploader?.();
-  buildMaintenance = typeof buildMaintenanceFactory === 'function'
-    ? buildMaintenanceFactory({
-        copyTextToClipboard,
-        demoMode: DEMO_MODE,
-        fetchImpl: (...args) => fetch(...args),
-        locationRef: location,
-        localStorageRef: localStorage,
-        navigatorRef: navigator,
-        resolveBuildLabel,
-        sessionStorageRef: sessionStorage,
-        setTimeoutRef: setTimeout,
-        showToast: (message) => WQUI.showToast(message),
-        windowRef: window
-      })
-    : null;
   function buildStableShareLinkUrl(...args) {
-    return buildMaintenance?.buildStableShareLinkUrl?.(...args) || window.location.href;
+    return maintenanceRuntime?.buildStableShareLinkUrl?.(...args) || window.location.href;
   }
   function copyReviewLink(...args) {
-    return buildMaintenance?.copyReviewLink?.(...args);
+    return maintenanceRuntime?.copyReviewLink?.(...args);
   }
   function runAutoCacheRepairForBuild(...args) {
-    return buildMaintenance?.runAutoCacheRepairForBuild?.(...args);
+    return maintenanceRuntime?.runAutoCacheRepairForBuild?.(...args);
   }
   function runRemoteBuildConsistencyCheck(...args) {
-    return buildMaintenance?.runRemoteBuildConsistencyCheck?.(...args);
+    return maintenanceRuntime?.runRemoteBuildConsistencyCheck?.(...args);
   }
   function installBuildConsistencyHeartbeat(...args) {
-    return buildMaintenance?.installBuildConsistencyHeartbeat?.(...args);
+    return maintenanceRuntime?.installBuildConsistencyHeartbeat?.(...args);
   }
   const HOVER_NOTE_DELAY_MS = RUNTIME_CONSTANTS.HOVER_NOTE_DELAY_MS || 500;
   const HOVER_NOTE_TARGET_SELECTOR = RUNTIME_CONSTANTS.HOVER_NOTE_TARGET_SELECTOR || '.icon-btn';
-  hoverNotes = typeof hoverNotesFactory === 'function'
-    ? hoverNotesFactory({
-        delayMs: HOVER_NOTE_DELAY_MS,
-        documentRef: document,
-        requestAnimationFrameRef: requestAnimationFrame,
-        selector: HOVER_NOTE_TARGET_SELECTOR,
-        windowRef: window
-      })
-    : null;
   function setHoverNoteForElement(...args) {
-    return hoverNotes?.setHoverNoteForElement?.(...args);
+    return startupRuntime?.setHoverNoteForElement?.(...args);
   }
   function initHoverNoteToasts(...args) {
-    return hoverNotes?.initHoverNoteToasts?.(...args);
+    return startupRuntime?.initHoverNoteToasts?.(...args);
   }
   sessionAnalytics = typeof sessionAnalyticsFactory === 'function'
     ? sessionAnalyticsFactory({
-        applyChipTone,
-        buildMissionSummaryStats,
+        applyChipTone: (...args) => sessionProbe?.applyChipTone?.(...args),
+        buildMissionSummaryStats: (options = {}) => studentSessionRuntime?.buildMissionSummaryStats?.(options) || { records: [], count: 0, avgScore: 0, avgAttemptsPerStation: 0, completionRate: 0, completedCount: 0, onTimeRate: 0, strongRate: 0, topLevel: '', topLevelLabel: '--' },
         el: _el,
         getActiveStudentLabel,
         getLatestProbePerformance,
@@ -1317,15 +1247,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   }
   sessionMastery = typeof sessionMasteryFactory === 'function'
     ? sessionMasteryFactory({
-        applyChipTone,
+        applyChipTone: (...args) => sessionProbe?.applyChipTone?.(...args),
         el: _el,
         formatSignedDelta,
         formatDurationLabel: (value) => gameplaySupport?.formatDurationLabel?.(value) || '0s',
         getActiveStudentLabel,
-        getComparableProbeTrend,
-        getGoalForStudent,
+        getComparableProbeTrend: (...args) => sessionProbe?.getComparableProbeTrend?.(...args) || { current: null, previous: null, activeMatches: false },
+        getGoalForStudent: (name) => studentSessionRuntime?.getGoalForStudent?.(name) || null,
         getLatestProbePerformance: (studentLabel) => {
-          const trend = getComparableProbeTrend(studentLabel);
+          const trend = sessionProbe?.getComparableProbeTrend?.(studentLabel) || { current: null, previous: null, activeMatches: false };
           return trend.current || null;
         },
         getTopErrorKey: (map) => gameplaySupport?.getTopErrorKey?.(map) || '',
@@ -1377,19 +1307,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   }
   sessionProbe = typeof sessionProbeFactory === 'function'
     ? sessionProbeFactory({
-        applyChipTone,
-        buildProbeSummary,
+        buildProbeSummary: (...args) => sessionSummaryRuntime?.buildProbeSummary?.(...args) || { roundsDone: 0, wins: 0, accuracy: '--', avgGuesses: '--', avgTime: '--', hintRate: '--' },
         createEmptyProbeState,
         defaultPrefs: DEFAULT_PREFS,
         el: _el,
         formatGradeBandLabel,
         formatSignedDelta,
         getActiveStudentLabel,
-        getComparableProbeTrend,
         getFocusLabel,
         getGoalEval: evaluateStudentGoalState,
-        getLatestProbeSourceForStudent,
-        matchesProbeRecordStudent,
         normalizeProbeRounds,
         onRenderStudentGoalPanel: () => renderStudentGoalPanel(),
         prefs,
@@ -1437,9 +1363,9 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   sessionExports = typeof sessionExportsFactory === 'function'
     ? sessionExportsFactory({
         buildMissionSummaryStats,
-        buildProbeSummary,
+        buildProbeSummary: (...args) => sessionSummaryRuntime?.buildProbeSummary?.(...args) || { roundsDone: 0, wins: 0, accuracy: '--', avgGuesses: '--', avgTime: '--', hintRate: '--' },
         buildProbeSummaryText,
-        copyTextToClipboard,
+        copyTextToClipboard: (...args) => sessionSummaryRuntime?.copyTextToClipboard?.(...args),
         defaultPrefs: DEFAULT_PREFS,
         deepDiveBuilders,
         documentRef: document,
@@ -1449,8 +1375,8 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         formatSignedDelta,
         formatDurationLabel: (value) => gameplaySupport?.formatDurationLabel?.(value) || '0s',
         getActiveStudentLabel,
-        getAssignedPlaylistForStudent,
-        getComparableProbeTrend,
+        getAssignedPlaylistForStudent: (studentLabel) => playlistRuntime?.getAssignedPlaylistForStudent?.(studentLabel) || null,
+        getComparableProbeTrend: (...args) => sessionProbe?.getComparableProbeTrend?.(...args) || { current: null, previous: null, activeMatches: false },
         getCurriculumSnapshot: () => ({
           packId: normalizeLessonPackId(prefs.lessonPack || _el('s-lesson-pack')?.value || DEFAULT_PREFS.lessonPack),
           targetId: normalizeLessonTargetId(
@@ -1465,13 +1391,13 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getCurriculumSelectionLabel: () => buildCurriculumSelectionLabel(),
         getFocusLabel,
         getGoalEval: evaluateStudentGoalState,
-        getLatestProbeSourceForStudent,
+        getLatestProbeSourceForStudent: (...args) => sessionProbe?.getLatestProbeSourceForStudent?.(...args) || null,
         deriveMiniLessonKey: () => gameplaySupport?.resolveMiniLessonErrorKey?.(
           activeMiniLessonKey,
           sessionSummary.errorTotals,
           ERROR_MINI_LESSON_PLANS
         ) || 'context_strategy',
-        getMissionLabRecords,
+        getMissionLabRecords: (options = {}) => studentSessionRuntime?.getMissionLabRecords?.(options) || [],
         getProbeHistory: () => probeHistory,
         getProbeRecencyMeta,
         getProbeState: () => probeState,
@@ -1501,7 +1427,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         documentRef: document,
         el: _el,
         getActiveEvidenceSessionId: () => _activeEvidenceSessionId,
-        getActiveMaxGuesses: () => getActiveMaxGuesses(),
+        getActiveMaxGuesses: () => revealFlowSupport?.getActiveMaxGuesses?.() || 6,
         getLocationSearch: () => String(location.search || ''),
         getState: () => WQGame.getState?.() || {},
         localStorageRef: localStorage,
@@ -1512,14 +1438,14 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
           _latestSavedSessionId = String(value || '');
         },
         recordProbeRound,
-        recordSessionRound,
+        recordSessionRound: (result, roundMetrics = {}) => studentSessionRuntime?.recordSessionRound?.(result, roundMetrics),
         refreshStandaloneMissionLabHub,
         renderMiniLessonPanel,
         renderPlaylistControls,
         renderProbePanel,
-        renderRosterControls,
-        renderSessionSummary,
-        maybeApplyStudentPlanForActiveStudent,
+        renderRosterControls: () => studentSessionRuntime?.renderRosterControls?.(),
+        renderSessionSummary: () => studentSessionRuntime?.renderSessionSummary?.(),
+        maybeApplyStudentPlanForActiveStudent: (options = {}) => studentSessionRuntime?.maybeApplyStudentPlanForActiveStudent?.(options) || false,
         setPref,
         prefs,
         showToast: (message) => WQUI.showToast(message),
@@ -1541,7 +1467,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   shellRuntime = typeof shellRuntimeFactory === 'function'
     ? shellRuntimeFactory({
         assertHomeNoScroll,
-        closeQuickPopover,
+        closeQuickPopover: (...args) => settingsRuntime?.closeQuickPopover?.(...args),
         closeFocusSearchList,
         csSetHeaderTitleCenter,
         deepDiveModal,
@@ -1571,18 +1497,18 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         setFocusSearchOpen,
         setFocusSearchReopenGuardUntil: (value) => { focusSearchReopenGuardUntil = value; },
         setHoverNoteForElement,
-        setWordQuestCoachState: (key) => setWordQuestCoachState(key),
+        setWordQuestCoachState: (key) => coachRuntime?.setWordQuestCoachState?.(key),
         showToast: (message) => WQUI.showToast(message),
-        startAvaWordQuestIdleWatcher,
+        startAvaWordQuestIdleWatcher: (...args) => coachRuntime?.startAvaWordQuestIdleWatcher?.(...args),
         startupApp: () => {
           mediaRuntime?.installMediaSessionControls?.();
           musicRuntime?.initMusicRuntime?.(prefs);
           enforceClassicFiveLetterDefault();
           newGame({ launchMissionLab: false });
         },
-        stopAvaWordQuestIdleWatcher,
+        stopAvaWordQuestIdleWatcher: (...args) => coachRuntime?.stopAvaWordQuestIdleWatcher?.(...args),
         syncGameplayAudioStrip,
-        syncHeaderControlsVisibility: () => syncHeaderControlsVisibility(),
+        syncHeaderControlsVisibility: () => panelRuntime?.syncHeaderControlsVisibility?.(),
         syncStarterWordLauncher: syncStarterWordLauncherUI,
         updatePageModeStorage: (value) => {
           pageMode = value;
@@ -1601,7 +1527,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         DEFAULT_PREFS,
         WQAudio,
         closeFocusSearchList,
-        cancelRevealNarration,
+        cancelRevealNarration: (...args) => deepDiveCoreRuntime?.cancelRevealNarration?.(...args),
         detectTeacherPreset,
         documentRef: document,
         el: _el,
@@ -1609,7 +1535,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getHintMode,
         getRevealFocusMode,
         getVoicePracticeMode,
-        handleLessonPackSelectionChange,
+        handleLessonPackSelectionChange: (...args) => preferencesRuntime?.handleLessonPackSelectionChange?.(...args),
         hideMidgameBoost,
         isAssessmentLockEnabled,
         isAssessmentRoundLocked,
@@ -1647,7 +1573,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         applyTeacherPreset,
         bindSettingsAccordion,
         closeFocusSearchList,
-        closeQuickPopover,
+        closeQuickPopover: (...args) => settingsRuntime?.closeQuickPopover?.(...args),
         documentRef: document,
         el: _el,
         emitTelemetry,
@@ -1659,7 +1585,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         isMissionLabStandaloneMode,
         jumpToSettingsGroup,
         logOverflow,
-        maybeDismissDupeToast: (target) => revealEffects?.maybeDismissDupeToast?.(target),
+        maybeDismissDupeToast: (target) => revealFlowSupport?.maybeDismissDupeToast?.(target),
         openNumeracyLabPage,
         openReadingLabPage,
         openSentenceSurgeryPage,
@@ -1672,14 +1598,14 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         routeTo,
         setPageMode,
         setSettingsView,
-        shareWordQuestBundle,
-        shareWordQuestSessionById,
+        shareWordQuestBundle: (...args) => questRuntime?.shareWordQuestBundle?.(...args),
+        shareWordQuestSessionById: (...args) => questRuntime?.shareWordQuestSessionById?.(...args),
         shouldKeepMidgameBoostOpen,
         showAssessmentLockNotice,
         syncPlayHeaderCopy,
         syncPlayToolsRoleVisibility,
         syncQuickPopoverPositions,
-        syncThemePreviewStripVisibility,
+        syncThemePreviewStripVisibility: (...args) => settingsRuntime?.syncThemePreviewStripVisibility?.(...args),
         syncWritingStudioAvailability,
         togglePlayToolsDrawer,
         updateFocusHint,
@@ -1716,7 +1642,12 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getLessonPackSelectElements,
         getLessonTargetSelectElements,
         getNextKeyboardLayout,
-        getThemeDisplayLabel,
+        getThemeDisplayLabel: (themeId) => {
+          const normalized = normalizeTheme(themeId, getThemeFallback());
+          const themeRegistry = window.WQThemeRegistry || null;
+          if (themeRegistry && typeof themeRegistry.getLabel === 'function') return themeRegistry.getLabel(normalized);
+          return normalized;
+        },
         getThemeFallback,
         isAssessmentRoundLocked,
         isFocusValueCompatibleWithGrade,
@@ -1755,8 +1686,8 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     ? sessionControlsFactory({
         WQTeacherAssignmentsFeature: window.WQTeacherAssignmentsFeature,
         buildCurrentCurriculumSnapshot,
-        clearGoalForStudent,
-        clearRosterStudents,
+        clearGoalForStudent: (name) => studentSessionRuntime?.clearGoalForStudent?.(name) || false,
+        clearRosterStudents: () => studentSessionRuntime?.clearRosterStudents?.(),
         contract: TEACHER_ASSIGNMENTS_CONTRACT,
         copyDiagnosticsSummary,
         copyFamilyHandout,
@@ -1771,7 +1702,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         copyReviewLink,
         copySessionOutcomesSummary,
         copySessionSummary,
-        deleteSelectedPlaylist,
+        deleteSelectedPlaylist: () => playlistRuntime?.deleteSelectedPlaylist?.() || false,
         documentRef: document,
         downloadClassRollupCsv,
         downloadCsvBundle,
@@ -1780,42 +1711,42 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         emitTelemetry,
         finishWeeklyProbe,
         getActiveStudentLabel,
-        maybeApplyStudentPlanForActiveStudent,
+        maybeApplyStudentPlanForActiveStudent: (options = {}) => studentSessionRuntime?.maybeApplyStudentPlanForActiveStudent?.(options) || false,
         normalizeGoalAccuracy,
         normalizeGoalGuesses,
         normalizeLessonPackId,
         normalizeLessonTargetId,
         onSetActiveMiniLessonKey: (value) => { activeMiniLessonKey = value; },
         populateTargetSelectForPack: (...args) => teacherAssignmentsFeature?.populateTargetSelectForPack?.(...args) || 'custom',
-        removeActiveRosterStudent,
+        removeActiveRosterStudent: () => studentSessionRuntime?.removeActiveRosterStudent?.() || false,
         renderDiagnosticsPanel,
-        renderGroupBuilderPanel,
+        renderGroupBuilderPanel: () => studentSessionRuntime?.renderGroupBuilderPanel?.(),
         renderMiniLessonPanel,
         renderPlaylistControls,
         renderProbePanel,
-        renderRosterControls,
-        renderSessionSummary,
+        renderRosterControls: () => studentSessionRuntime?.renderRosterControls?.(),
+        renderSessionSummary: () => studentSessionRuntime?.renderSessionSummary?.(),
         renderStudentGoalPanel,
-        renderStudentLockPanel,
+        renderStudentLockPanel: () => studentSessionRuntime?.renderStudentLockPanel?.(),
         rerunOnboardingSetup,
-        resetSessionSummary,
-        saveCurrentTargetToPlaylist,
+        resetSessionSummary: () => studentSessionRuntime?.resetSessionSummary?.(),
+        saveCurrentTargetToPlaylist: () => playlistRuntime?.saveCurrentTargetToPlaylist?.() || false,
         saveGroupPlanState: () => teacherAssignmentsFeature?.saveGroupPlanState?.(),
         saveRosterState,
-        setGoalForStudent,
+        setGoalForStudent: (name, goal) => studentSessionRuntime?.setGoalForStudent?.(name, goal) || false,
         setRosterActive: (value) => {
           rosterState.active = rosterState.students.includes(value) ? value : '';
         },
         setSelectedGroupPlanId: (id) => teacherAssignmentsFeature?.setSelectedGroupPlanId?.(id),
-        setSelectedPlaylistId,
+        setSelectedPlaylistId: (playlistId) => playlistRuntime?.setSelectedPlaylistId?.(playlistId),
         showAssessmentLockNotice,
         showToast: (message) => WQUI.showToast(message),
         startWeeklyProbe,
         teacherAssignmentsFeature,
         isAssessmentRoundLocked,
-        addRosterStudent,
-        assignSelectedPlaylistToActiveStudent,
-        applyAssignedPlaylistForActiveStudent
+        addRosterStudent: (rawName) => studentSessionRuntime?.addRosterStudent?.(rawName) || false,
+        assignSelectedPlaylistToActiveStudent: () => playlistRuntime?.assignSelectedPlaylistToActiveStudent?.() || false,
+        applyAssignedPlaylistForActiveStudent: () => playlistRuntime?.applyAssignedPlaylistForActiveStudent?.() || false
       })
     : null;
   musicRuntime = typeof musicRuntimeFactory === 'function'
@@ -1823,7 +1754,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         DEFAULT_PREFS,
         applyTheme,
         clearLocalMusicFiles,
-        closeQuickPopover,
+        closeQuickPopover: (...args) => settingsRuntime?.closeQuickPopover?.(...args),
         createMusicModule,
         documentRef: document,
         el: _el,
@@ -1833,7 +1764,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         normalizeCuratedMusicMode,
         normalizeTheme,
         normalizeVoiceMode,
-        onInitQuestLoop: () => initQuestLoop(),
+        onInitQuestLoop: (...args) => questRuntime?.initQuestLoop?.(...args),
         onMusicControllerReady: (controller) => {
           musicController = controller;
         },
@@ -1859,7 +1790,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         syncMusicForTheme,
         syncQuickMusicVolume,
         toggleMusicQuick,
-        toggleQuickPopover,
+        toggleQuickPopover: (...args) => settingsRuntime?.toggleQuickPopover?.(...args),
         WQAudio,
         windowRef: window
       })
@@ -1933,7 +1864,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         playVoiceRecording: () => playVoiceRecording(),
         requestAnimationFrameRef: requestAnimationFrame,
         resetVoiceTakeComplete: () => { voiceTakeComplete = false; },
-        runRevealNarration: (state) => runRevealNarration(state),
+        runRevealNarration: (state) => deepDiveCoreRuntime?.runRevealNarration?.(state),
         saveVoiceRecording: () => saveVoiceRecording(),
         scheduleRevealAutoAdvance: () => scheduleRevealAutoAdvance(),
         setTimeoutRef: setTimeout,
@@ -1966,47 +1897,16 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         windowRef: window
       })
     : null;
-  revealRuntimeSupport = typeof revealRuntimeSupportFactory === 'function'
-    ? revealRuntimeSupportFactory({
-        DEFAULT_PREFS,
-        WQGame,
-        buildRevealReadCue: (...args) => revealText?.buildRevealReadCue?.(...args) || '',
-        documentRef: document,
-        el: _el,
-        getRevealMeaningPayload: (...args) => revealText?.getRevealMeaningPayload?.(...args) || {
-          definition: '',
-          funAddOn: '',
-          line: '',
-          readAll: ''
-        },
-        isSorNotationEnabled,
-        shouldIncludeFunInMeaning
-      })
-    : null;
-  thinkingChallenge = typeof thinkingChallengeFactory === 'function'
-    ? thinkingChallengeFactory({
-        DEFAULT_PREFS,
-        THINKING_LEVEL_META,
-        deepDiveBuilders,
-        documentRef: document,
-        el: _el,
-        formatGradeBandLabel,
-        getActiveMaxGuesses: () => getActiveMaxGuesses(),
-        getFocusLabel,
-        parseFocusPreset,
-        pickRandom,
-        prefs
-      })
-    : null;
   revealFlowSupport = typeof revealFlowSupportFactory === 'function'
     ? revealFlowSupportFactory({
         DEFAULT_PREFS,
         WQAudio,
+        WQGame,
         WQUI,
         documentRef: document,
         el: _el,
-        getActiveMaxGuesses: () => getActiveMaxGuesses(),
-        getRevealMeaningPayload: (...args) => revealText?.getRevealMeaningPayload?.(...args) || {
+        getActiveMaxGuesses: () => revealFlowSupport?.getActiveMaxGuesses?.() || 6,
+        getRevealMeaningPayload: (...args) => revealFlowSupport?.getRevealMeaningPayload?.(...args) || {
           definition: '',
           funAddOn: '',
           line: '',
@@ -2014,15 +1914,16 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         },
         getRevealPacingMode,
         getVoicePracticeMode,
+        isSorNotationEnabled,
         isVoiceRecording: () => voiceIsRecording,
         normalizeVoiceMode,
-        pickRandom,
+        pickRandom: (...args) => deepDiveBuilders?.pickRandom?.(...args) || '',
         prefs,
         revealLossToasts: REVEAL_LOSS_TOASTS,
         revealPacingPresets: REVEAL_PACING_PRESETS,
         revealText,
         revealWinToasts: REVEAL_WIN_TOASTS,
-        shouldIncludeFunInMeaning,
+        shouldIncludeFunInMeaning: () => revealFlowSupport?.shouldIncludeFunInMeaningRuntime?.() ?? false,
         voiceTakeCompleteRef: () => voiceTakeComplete
       })
     : null;
@@ -2036,7 +1937,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
           get: () => challengeModalReturnFocusEl,
           set: (value) => { challengeModalReturnFocusEl = value; }
         },
-        clearClassroomTurnTimer,
+        clearClassroomTurnTimer: (...args) => classroomTurns?.clearClassroomTurnTimer?.(...args),
         deepDiveBuilders,
         deepDiveModal,
         deepDiveSession,
@@ -2061,7 +1962,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
           set: (value) => { revealChallengeState = value; }
         },
         shouldExpandGradeBandForFocus,
-        stopAvaWordQuestIdleWatcher,
+        stopAvaWordQuestIdleWatcher: (...args) => coachRuntime?.stopAvaWordQuestIdleWatcher?.(...args),
         stopVoiceCaptureNow,
         telemetrySessionStartedAtRef: () => telemetrySessionStartedAt,
         windowRef: window,
@@ -2071,45 +1972,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         }
       })
     : null;
-  sessionUtils = typeof sessionUtilsFactory === 'function'
-    ? sessionUtilsFactory({
-        documentRef: document,
-        gameplaySupport,
-        navigatorRef: navigator,
-        showToast: (message) => WQUI.showToast(message)
-      })
-    : null;
-  revealTimingSupport = typeof revealTimingSupportFactory === 'function'
-    ? revealTimingSupportFactory({
-        clearIntervalRef: clearInterval,
-        clearTimeoutRef: clearTimeout,
-        el: _el,
-        getRevealAutoAdvanceEndsAt: () => revealAutoAdvanceEndsAt,
-        getRevealAutoNextSeconds,
-        getRevealAutoAdvanceTimer: () => revealAutoAdvanceTimer,
-        getRevealAutoCountdownTimer: () => revealAutoCountdownTimer,
-        getVoiceIsRecording: () => voiceIsRecording,
-        getVoicePracticeMode,
-        onAdvance: () => newGame(),
-        setRevealAutoAdvanceEndsAt: (value) => { revealAutoAdvanceEndsAt = value; },
-        setRevealAutoAdvanceTimer: (value) => { revealAutoAdvanceTimer = value; },
-        setRevealAutoCountdownTimer: (value) => { revealAutoCountdownTimer = value; },
-        setTimeoutRef: setTimeout
-      })
-    : null;
-  challengeUtils = typeof challengeUtilsFactory === 'function'
-    ? challengeUtilsFactory({
-        clearIntervalRef: clearInterval,
-        clearTimeoutRef: clearTimeout,
-        el: _el
-      })
-    : null;
-  probeRuntimeSupport = typeof probeRuntimeSupportFactory === 'function'
-    ? probeRuntimeSupportFactory({
-        getProbeHistory: () => probeHistory,
-        getProbeState: () => probeState
-      })
-    : null;
   sessionSummaryRuntime = typeof sessionSummaryRuntimeFactory === 'function'
     ? sessionSummaryRuntimeFactory({
         challengeReflectionKey: CHALLENGE_REFLECTION_KEY,
@@ -2117,6 +1979,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         challengeTaskFlow: CHALLENGE_TASK_FLOW,
         deepDiveBuilders,
         deepDiveState,
+        documentRef: document,
         el: _el,
         gameplaySupport,
         gameplayStats,
@@ -2125,6 +1988,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getTopMasteryEntry,
         getWQGameState: () => WQGame.getState?.(),
         localStorageRef: localStorage,
+        navigatorRef: navigator,
         renderAdoptionHealthPanel,
         renderMasteryTable,
         renderMiniLessonPanel,
@@ -2134,29 +1998,19 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         setSessionSummary: (nextSummary) => {
           sessionSummary = nextSummary;
         },
+        showToast: (message) => WQUI.showToast(message),
         syncRoundTrackingLocals
-      })
-    : null;
-  rosterRuntime = typeof rosterRuntimeFactory === 'function'
-    ? rosterRuntimeFactory({
-        getRosterState: () => rosterState,
-        getTeacherAssignmentsFeature: () => teacherAssignmentsFeature,
-        renderRosterControls,
-        saveRosterState,
-        setRosterState: (nextState) => {
-          rosterState = nextState;
-        }
       })
     : null;
   playlistRuntime = typeof playlistRuntimeFactory === 'function'
     ? playlistRuntimeFactory({
-        applySnapshotToSettings,
-        buildCurrentTargetSnapshot,
+        applySnapshotToSettings: (snapshot, options = {}) => studentSessionRuntime?.applySnapshotToSettings?.(snapshot, options) || false,
+        buildCurrentTargetSnapshot: () => studentSessionRuntime?.buildCurrentTargetSnapshot?.() || null,
         documentRef: document,
         el: _el,
         getActiveStudentLabel,
         getPlaylistState: () => playlistState,
-        renderPlaylistControls,
+        renderPlaylistControls: (...args) => playlistRuntime?.renderPlaylistControls?.(...args),
         savePlaylistState,
         setPlaylistState: (nextState) => {
           playlistState = nextState;
@@ -2183,16 +2037,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getMissionLabRecords: (...args) => sessionSummaryRuntime?.getMissionLabRecords?.(...args) || [],
         getPrefs: () => prefs,
         getRosterState: () => rosterState,
+        getTeacherAssignmentsFeature: () => teacherAssignmentsFeature,
         normalizeGoalEntry,
         normalizeLessonPackId,
         normalizeLessonTargetId,
         populateLessonTargetSelect,
         recordSessionRound: (...args) => sessionSummaryRuntime?.recordSessionRound?.(...args),
         recordVoiceAttempt: (...args) => sessionSummaryRuntime?.recordVoiceAttempt?.(...args),
-        renderGroupBuilderPanel: (...args) => rosterRuntime?.renderGroupBuilderPanel?.(...args),
         renderPlaylistControls: (...args) => playlistRuntime?.renderPlaylistControls?.(...args),
         renderSessionSummary: (...args) => sessionSummaryRuntime?.renderSessionSummary?.(...args),
-        renderStudentLockPanel: (...args) => rosterRuntime?.renderStudentLockPanel?.(...args),
         resetSessionSummary: (...args) => sessionSummaryRuntime?.resetSessionSummary?.(...args),
         saveGoalState: saveStudentGoalState,
         setLessonPackApplying: (value) => { lessonPackApplying = !!value; },
@@ -2209,7 +2062,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     ? focusSearchRuntimeFactory({
         applyAllGradeLengthDefault,
         applyLessonTargetConfig,
-        closeQuickPopover,
+        closeQuickPopover: (...args) => settingsRuntime?.closeQuickPopover?.(...args),
         clearPinnedFocusSearchValue,
         defaultPrefs: DEFAULT_PREFS,
         demoCloseAllOverlays: () => demoFlow?.closeAllOverlaysForDemo?.(),
@@ -2217,7 +2070,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         documentRef: document,
         el: _el,
         enforceClassicFiveLetterDefault,
-        enforceFocusSelectionForGrade,
+        enforceFocusSelectionForGrade: (...args) => preferencesRuntime?.enforceFocusSelectionForGrade?.(...args),
         emitTelemetry,
         formatGradeBandLabel,
         getEffectiveGameplayGradeBand,
@@ -2231,15 +2084,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getQuestEntries,
         getQuestFilterGradeBand,
         getSectionHeadingMarkup,
-        handleLessonPackSelectionChange,
-        handleLessonTargetSelectionChange,
+        handleLessonPackSelectionChange: (...args) => preferencesRuntime?.handleLessonPackSelectionChange?.(...args),
+        handleLessonTargetSelectionChange: (...args) => preferencesRuntime?.handleLessonTargetSelectionChange?.(...args),
         isAssessmentRoundLocked,
         isEntryGradeBandCompatible,
         normalizeLessonPackId,
         normalizeLessonTargetId,
         parseFocusPreset,
         prefs,
-        refreshStandaloneMissionLabHub,
+        refreshStandaloneMissionLabHub: () => standaloneMission?.refreshStandaloneMissionLabHub?.(),
         releaseLessonPackToManualMode,
         safeDefaultGradeBand: SAFE_DEFAULT_GRADE_BAND,
         setFocusPref: setPref,
@@ -2384,7 +2237,8 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         el: _el,
         emitTelemetry,
         getHintMode,
-        initHoverNoteToasts,
+        hoverNoteDelayMs: HOVER_NOTE_DELAY_MS,
+        hoverNoteSelector: HOVER_NOTE_TARGET_SELECTOR,
         installBuildConsistencyHeartbeat,
         logRuntimeBuildDiagnostics,
         missionLabEnabled: MISSION_LAB_ENABLED,
@@ -2406,6 +2260,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         runAutoCacheRepairForBuild,
         runRemoteBuildConsistencyCheck,
         savePrefs,
+        requestAnimationFrameRef: requestAnimationFrame,
         setPref,
         shouldPersistTheme,
         syncBuildBadge,
@@ -2430,7 +2285,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         applyPlayStyle,
         applyReportCompactMode,
         applyRevealFocusMode,
-        cancelRevealNarration,
+        cancelRevealNarration: (...args) => deepDiveCoreRuntime?.cancelRevealNarration?.(...args),
         clearRevealAutoAdvanceTimer,
         defaultPrefs: DEFAULT_PREFS,
         documentRef: document,
@@ -2450,15 +2305,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         normalizeTeamSet,
         normalizeTurnTimer,
         normalizeVoiceMode,
-        recordAvaWordQuestEvent,
+        recordAvaWordQuestEvent: (...args) => coachRuntime?.recordAvaWordQuestEvent?.(...args),
         renderMasteryTable,
         resetAppearanceAndCache,
-        runRevealNarration,
+        runRevealNarration: (...args) => deepDiveCoreRuntime?.runRevealNarration?.(...args),
         setHintMode,
         setPref,
         setVoicePracticeMode,
         showInformantHintToast,
-        speakAvaWordQuestAdaptive,
+        speakAvaWordQuestAdaptive: (...args) => coachRuntime?.speakAvaWordQuestAdaptive?.(...args),
         syncAssessmentLockRuntime,
         syncClassroomTurnRuntime,
         syncHeaderClueLauncherUI,
@@ -2473,12 +2328,233 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         windowRef: window
       })
     : null;
+  roundStartRuntime = typeof roundStartRuntimeFactory === 'function'
+    ? roundStartRuntimeFactory({
+        DEMO_MODE,
+        DEMO_TARGET_WORD,
+        WQGame,
+        WQUI,
+        buildPlayableWordSet,
+        cancelRevealNarration: (...args) => deepDiveCoreRuntime?.cancelRevealNarration?.(...args),
+        clearClassroomTurnTimer,
+        clearRevealAutoAdvanceTimer,
+        clearSupportModalTimer,
+        clearVoiceClip,
+        closeRevealChallengeModal,
+        demoFlow,
+        demoState,
+        demoUi,
+        demoHelpers: {
+          clearAutoplayTimer: () => clearDemoAutoplayTimer(),
+          clearTimers: demoClearTimers,
+          getDemoRoundComplete: () => demoRoundComplete,
+          setAutoplayTimer: (value) => { demoAutoplayTimer = value; },
+          stopCoachReadyLoop: stopDemoCoachReadyLoop,
+          stopKeyPulse: stopDemoKeyPulse
+        },
+        drawWaveform,
+        el: _el,
+        emitTelemetry,
+        getEffectiveGameplayGradeBand,
+        getFirstRunSetupPending: () => firstRunSetupPending,
+        getFocusLabel,
+        getPrefs: () => prefs,
+        getVoicePracticeMode,
+        getVoiceState: () => ({
+          voicePreviewAudio,
+          voiceTakeComplete
+        }),
+        hideInformantHintCard,
+        hideMidgameBoost,
+        hideStarterWordCard,
+        hideSupportChoiceCard,
+        isMissionLabStandaloneMode,
+        normalizeReviewWord,
+        onRoundDiagnosticsStart: (result) => {
+          try {
+            if (window.CSWQDiagnostics && typeof window.CSWQDiagnostics.createSession === 'function') {
+              _wqDiagSession = window.CSWQDiagnostics.createSession(result.wordLength || 5);
+              _wqDiagTimer = setTimeout(() => {
+                if (_wqDiagSession && !_wqDiagSession.endedAtMs) {
+                  const softSignals = window.CSWQDiagnostics.endSession(_wqDiagSession, false);
+                  _wqDiagSession = null;
+                  if (softSignals) questRuntime?.publishWordQuestSignals?.(softSignals, { soft: true });
+                }
+              }, 90000);
+            }
+          } catch {}
+        },
+        refreshStandaloneMissionLabHub,
+        resetRoundTracking,
+        scheduleFocusSupportUnlock,
+        scheduleStarterCoachHint,
+        setAvaRuntimeState: (nextState = {}) => {
+          avaWqIdleFiredThisRound = !!nextState.idleFiredThisRound;
+          avaWqLastActionAt = Number(nextState.lastActionAt) || Date.now();
+          avaWqLastIdleEmitAt = Number(nextState.lastIdleEmitAt) || 0;
+        },
+        setEvidenceSessionId: (value) => {
+          _activeEvidenceSessionId = String(value || '');
+        },
+        setFocusSupportState: (nextState = {}) => {
+          focusSupportUnlockedByMiss = !!nextState.unlockedByMiss;
+          focusSupportUnlockAt = Number(nextState.unlockAt) || 0;
+          currentRoundSupportPromptShown = !!nextState.promptShown;
+          focusSupportEligibleAt = Number(nextState.eligibleAt) || 0;
+        },
+        setGameStartedAt: (value) => {
+          gameStartedAt = Number(value) || 0;
+        },
+        setMidgameBoostShown: (value) => {
+          midgameBoostShown = !!value;
+        },
+        setRuntimeDiagnosticsState: (nextState = {}) => {
+          if (_wqDiagTimer) clearTimeout(_wqDiagTimer);
+          _wqDiagTimer = Number(nextState.diagTimer) || 0;
+          _wqDiagSession = nextState.diagSession || null;
+          _latestSavedSessionId = String(nextState.latestSavedSessionId || '');
+        },
+        setVoiceState: (nextState = {}) => {
+          if (Object.prototype.hasOwnProperty.call(nextState, 'voicePreviewAudio')) {
+            voicePreviewAudio = nextState.voicePreviewAudio || null;
+          }
+          if (Object.prototype.hasOwnProperty.call(nextState, 'voiceTakeComplete')) {
+            voiceTakeComplete = !!nextState.voiceTakeComplete;
+          }
+        },
+        setWordQuestCoachState: (...args) => coachRuntime?.setWordQuestCoachState?.(...args),
+        startAvaWordQuestIdleWatcher: (...args) => coachRuntime?.startAvaWordQuestIdleWatcher?.(...args),
+        startStandaloneMissionLab: (options = {}) => standaloneMission?.startStandaloneMissionLab?.(options) || false,
+        stopVoiceCaptureNow: (...args) => voiceSupport?.stopVoiceCaptureNow?.(...args),
+        supportUi: {
+          getFocusLabel,
+          removeDupeToast: (...args) => revealFlowSupport?.removeDupeToast?.(...args)
+        },
+        syncAssessmentLockRuntime,
+        syncClassroomTurnRuntime: (...args) => classroomTurns?.syncClassroomTurnRuntime?.(...args),
+        syncFocusSupportRuntimeState,
+        syncHeaderClueLauncherUI,
+        syncHeaderControlsVisibility,
+        syncKeyboardInputLocks,
+        syncStarterWordLauncherUI,
+        updateFocusHint,
+        updateNextActionLine,
+        updateVoicePracticePanel: (state) => { voiceSupport?.updateVoicePracticePanel?.(state); },
+        updateWordQuestShareButton: (...args) => questRuntime?.updateWordQuestShareButton?.(...args),
+        wordReview,
+        windowRef: window
+      })
+    : null;
+  roundSubmitRuntime = typeof roundSubmitRuntimeFactory === 'function'
+    ? roundSubmitRuntimeFactory({
+        DEMO_MODE,
+        FEATURES,
+        MIDGAME_BOOST_ENABLED,
+        WQGame,
+        WQUI,
+        applyTheme,
+        awardQuestProgress: (...args) => questRuntime?.awardQuestProgress?.(...args),
+        buildPlayableWordSet,
+        buildRoundMetrics,
+        clearClassroomTurnTimer: (...args) => classroomTurns?.clearClassroomTurnTimer?.(...args),
+        clearFocusSupportUnlockTimer,
+        closeRevealChallengeModal: (...args) => deepDiveCoreRuntime?.closeRevealChallengeModal?.(...args),
+        demoFlow,
+        demoSetTimeoutRef: demoSetTimeout,
+        demoState,
+        demoUi,
+        el: _el,
+        emitTelemetry,
+        getActiveDiagnosticsSession: () => _wqDiagSession,
+        getCurrentRoundFlags: () => ({
+          hintRequested: currentRoundHintRequested,
+          starterWordsShown: currentRoundStarterWordsShown
+        }),
+        getCurrentTheme: () => normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()),
+        getDiagnosticsApi: () => window.CSWQDiagnostics || null,
+        getDiagnosticsTimer: () => _wqDiagTimer,
+        getEffectiveGameplayGradeBand,
+        getGameplayPrefs: () => prefs,
+        getMidgameBoostShown: () => midgameBoostShown,
+        getThemeFallback,
+        getWrongStreakMeta: () => ({
+          correctStreak: avaWqCorrectStreak,
+          rapidEventsLength: avaWqRapidEvents.length,
+          totalCorrect: avaWqTotalCorrect,
+          totalWrong: avaWqTotalWrong,
+          wrongStreak: avaWqWrongStreak
+        }),
+        hideDemoCoach,
+        hideMidgameBoost,
+        maybeAutoShowStarterWords,
+        maybeShowErrorCoach,
+        normalizeReviewWord,
+        onDemoReplayRequested: () => { demoRoundComplete = true; },
+        onGuessAccepted: () => {},
+        onGuessTooShort: (state) => {
+          WQUI.showToast('Fill in all the letters first');
+          WQUI.shakeRow(state.guesses, state.wordLength);
+          updateNextActionLine();
+          syncKeyboardInputLocks(WQGame.getState?.() || {});
+          if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
+        },
+        onRevealContinue: () => {},
+        onRevealLostOrWon: () => {
+          resetRoundTracking();
+        },
+        publishWordQuestSignals: (...args) => questRuntime?.publishWordQuestSignals?.(...args),
+        recordAvaWordQuestEvent: (...args) => coachRuntime?.recordAvaWordQuestEvent?.(...args),
+        refreshStarterSuggestionsIfOpen,
+        renderSafeStreak,
+        revealFlowSupport,
+        setAvaStreakState: (nextState = {}) => {
+          if (Object.prototype.hasOwnProperty.call(nextState, 'correctStreak')) avaWqCorrectStreak = Number(nextState.correctStreak) || 0;
+          if (Object.prototype.hasOwnProperty.call(nextState, 'wrongStreak')) avaWqWrongStreak = Number(nextState.wrongStreak) || 0;
+          if (Object.prototype.hasOwnProperty.call(nextState, 'totalCorrect')) avaWqTotalCorrect = Number(nextState.totalCorrect) || 0;
+          if (Object.prototype.hasOwnProperty.call(nextState, 'totalWrong')) avaWqTotalWrong = Number(nextState.totalWrong) || 0;
+        },
+        setDiagnosticsState: (nextState = {}) => {
+          if (Object.prototype.hasOwnProperty.call(nextState, 'timer')) _wqDiagTimer = Number(nextState.timer) || 0;
+          if (Object.prototype.hasOwnProperty.call(nextState, 'session')) _wqDiagSession = nextState.session || null;
+        },
+        setFocusSupportState: (nextState = {}) => {
+          if (Object.prototype.hasOwnProperty.call(nextState, 'unlockedByMiss')) {
+            focusSupportUnlockedByMiss = !!nextState.unlockedByMiss;
+          }
+          if (Object.prototype.hasOwnProperty.call(nextState, 'eligibleAt')) {
+            focusSupportEligibleAt = Number(nextState.eligibleAt) || 0;
+          }
+        },
+        setMidgameBoostShown: (value) => {
+          midgameBoostShown = !!value;
+        },
+        setWordQuestCoachState: (...args) => coachRuntime?.setWordQuestCoachState?.(...args),
+        showMidgameBoost,
+        speakAvaWordQuestAdaptive: (...args) => coachRuntime?.speakAvaWordQuestAdaptive?.(...args),
+        startNewGame: (...args) => newGame(...args),
+        stopAvaWordQuestIdleWatcher: (...args) => coachRuntime?.stopAvaWordQuestIdleWatcher?.(...args),
+        syncAssessmentLockRuntime,
+        syncFocusSupportRuntimeState,
+        syncHeaderClueLauncherUI,
+        syncKeyboardInputLocks,
+        syncStarterWordLauncherUI,
+        updateClassroomTurnLine: (...args) => classroomTurns?.updateClassroomTurnLine?.(...args),
+        updateNextActionLine,
+        wordReview,
+        mapGuessFeedbackToSignalStates: (...args) => questRuntime?.mapGuessFeedbackToSignalStates?.(...args) || [],
+        scheduleSupportModalTimer,
+        incrementStreak,
+        midgameBoostTriggerGuess: midgameBoostRuntime?.MIDGAME_BOOST_TRIGGER_GUESS || 3,
+        setDemoAutoplayTimer: (value) => { demoAutoplayTimer = value; },
+        advanceTeamTurn: (...args) => classroomTurns?.advanceTeamTurn?.(...args)
+      })
+    : null;
   inputShell = typeof inputShellFactory === 'function'
     ? inputShellFactory({
         awardPhonicsClueBonusPoint,
         awardPhonicsClueGuessPoint,
         closePhonicsClueModal,
-        closeQuickPopover,
+        closeQuickPopover: (...args) => settingsRuntime?.closeQuickPopover?.(...args),
         demoFlow,
         demoUi,
         deepDiveModal,
@@ -2504,34 +2580,34 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getRevealChallengeState: () => revealChallengeState,
         getStarterWordOpen: () => !(_el('starter-word-card')?.classList.contains('hidden')),
         getSupportChoiceOpen: () => !(_el('support-choice-card')?.classList.contains('hidden')),
-        handleInputUnit,
+        handleInputUnit: (rawUnit) => inputConstraints?.handleInputUnit?.(rawUnit, handleKey),
         handleKey,
         hideListeningModeExplainer,
         hideStarterWordCard,
         hideSupportChoiceCard,
-        isEditableTarget,
+        isEditableTarget: (target) => inputConstraints?.isEditableTarget?.(target) || false,
         isMissionLabStandaloneMode,
         isPlayMode: () => document.documentElement.getAttribute('data-page-mode') !== 'mission-lab',
         newGame,
         normalizeThinkingLevel: (value, fallback) => deepDiveBuilders?.normalizeThinkingLevel?.(value, fallback) || fallback,
         onGameplayInteraction: () => { avaWqLastActionAt = Date.now(); },
         onSetDemoToastAutoCollapsedByPlay: (value) => { demoToastAutoCollapsedByPlay = !!value; },
-        onVisibilityResume: () => { startAvaWordQuestIdleWatcher(); },
-        onVisibilitySuspend: () => { stopAvaWordQuestIdleWatcher('document hidden'); },
-        openVoicePracticeAndRecord,
+        onVisibilityResume: () => { coachRuntime?.startAvaWordQuestIdleWatcher?.(); },
+        onVisibilitySuspend: () => { coachRuntime?.stopAvaWordQuestIdleWatcher?.('document hidden'); },
+        openVoicePracticeAndRecord: (options = {}) => voiceSupport?.openVoicePracticeAndRecord?.(options) || false,
         playChallengeSentence: () => {
-          cancelRevealNarration();
+          deepDiveCoreRuntime?.cancelRevealNarration?.();
           const current = revealChallengeState?.result?.entry || entry();
           if (current) void WQAudio.playSentence(current);
         },
         playChallengeWord: () => {
-          cancelRevealNarration();
+          deepDiveCoreRuntime?.cancelRevealNarration?.();
           const current = revealChallengeState?.result?.entry || entry();
           if (current) void WQAudio.playWord(current);
         },
-        refreshStandaloneMissionLabHub,
+        refreshStandaloneMissionLabHub: () => standaloneMission?.refreshStandaloneMissionLabHub?.(),
         renderPhonicsCluePanel,
-        setChallengeFeedback,
+        setChallengeFeedback: (...args) => deepDiveUi?.setChallengeFeedback?.(...args),
         setRevealChallengeActiveTask: (task) => {
           if (revealChallengeState) revealChallengeState.activeTask = task;
         },
@@ -2542,7 +2618,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         showToast: (message) => WQUI.showToast(message),
         startPhonicsClueDeck,
         startPhonicsClueTurnTimer,
-        startStandaloneMissionLab,
+        startStandaloneMissionLab: (options = {}) => standaloneMission?.startStandaloneMissionLab?.(options) || false,
         togglePhonicsClueTargetVisibility,
         updatePhonicsClueControlsFromUI,
         windowRef: window,
@@ -2556,27 +2632,29 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         }
       })
     : null;
-  inputFlowSupport = typeof inputFlowSupportFactory === 'function'
-    ? inputFlowSupportFactory({
-        WQGame,
-        WQUI
-      })
-    : null;
   inputConstraints = typeof inputConstraintsFactory === 'function'
     ? inputConstraintsFactory({
         defaultPrefs: DEFAULT_PREFS,
+        demoMode: DEMO_MODE,
+        demoUi,
         deriveWordState,
         documentRef: document,
         el: _el,
         getClassroomTeamIndex: () => classroomTeamIndex,
+        getDemoState: () => demoState,
         getPrefs: () => prefs,
         getState: () => WQGame.getState?.() || {},
-        inputValidators,
         normalizeTeamCount,
         normalizeTeamSet,
         normalizeTurnTimer,
+        positionDemoLaunchButton: () => demoUi?.positionDemoLaunchButton?.(),
+        refreshStarterSuggestionsIfOpen,
         showToast: (message) => WQUI.showToast(message),
-        teamLabelSets: () => window.WQAppRuntimeConfig?.TEAM_LABEL_SETS || Object.freeze({})
+        updateCurrentRow: (...args) => WQUI.updateCurrentRow(...args),
+        updateNextActionLine,
+        teamLabelSets: () => window.WQAppRuntimeConfig?.TEAM_LABEL_SETS || Object.freeze({}),
+        WQGame,
+        WQUI
       })
     : null;
   classroomTurns = typeof classroomTurnsFactory === 'function'
@@ -2586,7 +2664,13 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         defaultPrefs: DEFAULT_PREFS,
         documentRef: document,
         el: _el,
-        getCurrentGuessClear: clearCurrentGuessInput,
+        getCurrentGuessClear: () => {
+          const state = WQGame.getState?.();
+          if (!state?.word || !state.guess) return;
+          while ((WQGame.getState?.()?.guess || '').length > 0) WQGame.deleteLetter();
+          const next = WQGame.getState?.();
+          if (next?.wordLength) WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
+        },
         getGameState: () => WQGame.getState?.() || {},
         getHelpSuppressed: isHelpSuppressedForTeamMode,
         getTeamMode: () => normalizeTeamMode(_el('s-team-mode')?.value || prefs.teamMode || DEFAULT_PREFS.teamMode),
@@ -2667,21 +2751,28 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         appPrefKey: PREF_KEY,
         cachesRef: typeof caches !== 'undefined' ? caches : null,
         cancelRevealNarration,
+        copyTextToClipboard,
         defaultPrefs: DEFAULT_PREFS,
+        demoMode: DEMO_MODE,
         diagnosticsLastResetKey: DIAGNOSTICS_LAST_RESET_KEY,
         documentRef: document,
         emitTelemetry,
+        fetchImpl: (...args) => fetch(...args),
         getThemeFallback,
         locationRef: location,
         localStorageRef: localStorage,
         markDiagnosticsReset,
+        navigatorRef: navigator,
         normalizeReviewWord,
         persistTheme: shouldPersistTheme,
         prefs,
+        resolveBuildLabel,
         reviewQueueKey: SHUFFLE_BAG_KEY,
         reviewQueueMaxItems: REVIEW_QUEUE_MAX_ITEMS,
         savePrefs,
+        sessionStorageRef: sessionStorage,
         setPref,
+        setTimeoutRef: setTimeout,
         showAssessmentLockNotice,
         showToast: (message) => WQUI.showToast(message),
         stopVoiceCaptureNow,
@@ -2890,187 +2981,19 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function openWritingStudioPage(...args) {
     return shellRuntime?.openWritingStudioPage?.(...args);
   }
-  function openSentenceSurgeryPage(...args) {
-    return shellRuntime?.openSentenceSurgeryPage?.(...args);
-  }
-  function openReadingLabPage(...args) {
-    return shellRuntime?.openReadingLabPage?.(...args);
-  }
-  function openTeacherDashboardPage(...args) {
-    return shellRuntime?.openTeacherDashboardPage?.(...args);
-  }
-  function openNumeracyLabPage(...args) {
-    return shellRuntime?.openNumeracyLabPage?.(...args);
-  }
-  function initStudentCodeControls(...args) {
-    return shellRuntime?.initStudentCodeControls?.(...args);
-  }
-  function syncTeacherPresetButtons(...args) {
-    return settingsRuntime?.syncTeacherPresetButtons?.(...args);
-  }
-  function applyTeacherPreset(...args) {
-    return settingsRuntime?.applyTeacherPreset?.(...args);
-  }
-  function closeFirstRunSetupModal(...args) {
-    return settingsRuntime?.closeFirstRunSetupModal?.(...args);
-  }
-  function openFirstRunSetupModal(...args) {
-    return settingsRuntime?.openFirstRunSetupModal?.(firstRunSetupPending, ...args);
-  }
-  function bindFirstRunSetupModal(...args) {
-    return settingsRuntime?.bindFirstRunSetupModal?.({ get: () => firstRunSetupPending, set: (value) => { firstRunSetupPending = !!value; } }, ...args);
-  }
-  function bindSettingsModeCards(...args) {
-    return settingsRuntime?.bindSettingsModeCards?.(...args);
-  }
-  function setSettingsView(...args) {
-    return settingsRuntime?.setSettingsView?.(...args);
-  }
-  function bindSettingsAccordion(...args) {
-    return settingsRuntime?.bindSettingsAccordion?.(...args);
-  }
-  function jumpToSettingsGroup(...args) {
-    return settingsRuntime?.jumpToSettingsGroup?.(...args);
-  }
-  function syncQuickPopoverPositions(...args) {
-    return settingsRuntime?.syncQuickPopoverPositions?.(...args);
-  }
-  function closeQuickPopover(...args) {
-    return settingsRuntime?.closeQuickPopover?.(...args);
-  }
   function syncHeaderControlsVisibility(...args) {
     return panelRuntime?.syncHeaderControlsVisibility?.(...args);
   }
-  function positionSettingsPanel(...args) {
-    return panelRuntime?.positionSettingsPanel?.(...args);
-  }
-  function refreshKeyboardLayoutPreview(...args) {
-    return preferencesRuntime?.refreshKeyboardLayoutPreview?.(...args);
-  }
-  function handleLessonPackSelectionChange(...args) {
-    return preferencesRuntime?.handleLessonPackSelectionChange?.(...args);
-  }
-  function handleLessonTargetSelectionChange(...args) {
-    return preferencesRuntime?.handleLessonTargetSelectionChange?.(...args);
-  }
-  function enforceFocusSelectionForGrade(...args) {
-    return preferencesRuntime?.enforceFocusSelectionForGrade?.(...args);
-  }
-  function loadVoiceHistory(...args) {
-    return voiceSupport?.loadVoiceHistory?.(...args) || [];
-  }
-  function saveVoiceHistory(...args) {
-    return voiceSupport?.saveVoiceHistory?.(...args);
-  }
-  function renderVoiceHistoryStrip(...args) {
-    return voiceSupport?.renderVoiceHistoryStrip?.(...args);
-  }
-  function appendVoiceHistory(...args) {
-    return voiceSupport?.appendVoiceHistory?.(...args);
-  }
-  function clearVoiceClip(...args) {
-    return voiceSupport?.clearVoiceClip?.(...args);
-  }
-  function clearVoiceAutoStopTimer(...args) {
-    return voiceSupport?.clearVoiceAutoStopTimer?.(...args);
-  }
-  function clearVoiceCountdownTimer(...args) {
-    return voiceSupport?.clearVoiceCountdownTimer?.(...args);
-  }
-  function resetKaraokeGuide(...args) {
-    return voiceSupport?.resetKaraokeGuide?.(...args);
-  }
-  function stopKaraokeGuide(...args) {
-    return voiceSupport?.stopKaraokeGuide?.(...args);
-  }
-  function runKaraokeGuide(...args) { return voiceSupport?.runKaraokeGuide?.(...args); }
-  function stopVoiceVisualizer(...args) { return voiceSupport?.stopVoiceVisualizer?.(...args); }
-  function stopVoiceStream(...args) { return voiceSupport?.stopVoiceStream?.(...args); }
-  function stopVoiceCaptureNow(...args) { return voiceSupport?.stopVoiceCaptureNow?.(...args); }
   function drawWaveform(...args) { return voiceSupport?.drawWaveform?.(...args); }
   function animateLiveWaveform(...args) { return voiceSupport?.animateLiveWaveform?.(...args); }
   function setVoicePracticeFeedback(...args) { return voiceSupport?.setVoicePracticeFeedback?.(...args); }
-  function analyzeVoiceClip(...args) { return voiceSupport?.analyzeVoiceClip?.(...args) || null; }
-  function updateRevealSorBadge(...args) { return revealRuntimeSupport?.updateRevealSorBadge?.(...args); }
-  function syncRevealMeaningHighlight(...args) { return revealRuntimeSupport?.syncRevealMeaningHighlight?.(...args); }
-  function syncRevealReadCue(...args) { return revealRuntimeSupport?.syncRevealReadCue?.(...args); }
-  function getActiveMaxGuesses(...args) { return revealRuntimeSupport?.getActiveMaxGuesses?.(...args) || 6; }
-  function trimPromptText(...args) { return thinkingChallenge?.trimPromptText?.(...args) || ''; }
-  function pickThinkingLevel(...args) { return thinkingChallenge?.pickThinkingLevel?.(...args) || 'apply'; }
-  function getChallengeFocusLabel(...args) { return thinkingChallenge?.getChallengeFocusLabel?.(...args) || 'Classic (Wordle 5x6)'; }
-  function getChallengeTopicLabel(...args) { return thinkingChallenge?.getChallengeTopicLabel?.(...args) || 'Word meaning + sentence clues'; }
-  function getChallengeGradeLabel(...args) { return thinkingChallenge?.getChallengeGradeLabel?.(...args) || formatGradeBandLabel(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade); }
-  function buildThinkingPrompt(...args) { return thinkingChallenge?.buildThinkingPrompt?.(...args) || ''; }
-  function buildThinkingChallenge(...args) { return thinkingChallenge?.buildThinkingChallenge?.(...args) || null; }
-  function getRevealFeedbackCopy(...args) { return revealFlowSupport?.getRevealFeedbackCopy?.(...args) || { lead: 'Keep going.', coach: '' }; }
-  function getRevealPacingPreset(...args) { return revealFlowSupport?.getRevealPacingPreset?.(...args) || REVEAL_PACING_PRESETS.guided; }
-  function shouldIncludeFunInMeaning() { return revealFlowSupport?.shouldIncludeFunInMeaningRuntime?.() ?? false; }
-  function showRevealWordToast(...args) { return revealFlowSupport?.showRevealWordToast?.(...args); }
-  function shouldNarrateReveal(...args) { return revealFlowSupport?.shouldNarrateReveal?.(...args) ?? true; }
-  function playMeaningWithFun(...args) { return revealFlowSupport?.playMeaningWithFun?.(...args); }
-  function promptLearnerAfterReveal(...args) { return revealFlowSupport?.promptLearnerAfterReveal?.(setVoicePracticeFeedback, ...args); }
-  function resolveStandaloneAutoChallengeLevel(...args) { return standaloneMission?.resolveStandaloneAutoChallengeLevel?.(...args) || 'apply'; }
-  function getStandaloneMissionWordPool(...args) { return standaloneMission?.getStandaloneMissionWordPool?.(...args) || { pool: [], focus: 'all', gradeBand: DEFAULT_PREFS.grade, length: DEFAULT_PREFS.length }; }
-  function buildProbeSummary(...args) { return sessionUtils?.buildProbeSummary?.(...args) || { roundsDone: 0, wins: 0, accuracy: '--', avgGuesses: '--', avgTime: '--', hintRate: '--' }; }
-  function copyTextToClipboard(...args) { return sessionUtils?.copyTextToClipboard?.(...args); }
-  function clearRevealAutoAdvanceTimer(...args) { return revealTimingSupport?.clearRevealAutoAdvanceTimer?.(...args); }
-  function scheduleRevealAutoAdvance() { revealTimingSupport?.scheduleRevealAutoAdvance?.(); }
-  function showModalAutoNextBanner(...args) { return revealTimingSupport?.showModalAutoNextBanner?.(...args); }
-  function waitMs(...args) { return revealTimingSupport?.waitMs?.(...args); }
-  function setChallengeFeedback(...args) { return challengeUtils?.setChallengeFeedback?.(...args); }
-  function pickRandom(...args) { return challengeUtils?.pickRandom?.(...args) || ''; }
-  function shuffleList(...args) { return challengeUtils?.shuffleList?.(...args) || []; }
-  function clearChallengeSprintTimer() {
-    challengeUtils?.clearChallengeSprintTimer?.({ getChallengePacingTimer: () => challengePacingTimer, getChallengeSprintTimer: () => challengeSprintTimer, setChallengePacingTimer: (value) => { challengePacingTimer = value; }, setChallengeSprintTimer: (value) => { challengeSprintTimer = value; } });
-  }
-  function clearChallengePacingTimer() {
-    challengeUtils?.clearChallengePacingTimer?.({ getChallengePacingTimer: () => challengePacingTimer, setChallengePacingTimer: (value) => { challengePacingTimer = value; } });
-  }
-  function cancelRevealNarration() { deepDiveCoreRuntime?.cancelRevealNarration?.(); }
-  function setChallengeTaskComplete(task, complete) { deepDiveCoreRuntime?.setChallengeTaskComplete?.(task, complete); }
-  async function runRevealNarration(result) { await deepDiveCoreRuntime?.runRevealNarration?.(result); }
-  function handleInputUnit(rawUnit) { inputFlowSupport?.handleInputUnit?.(rawUnit, handleKey); }
-  function isEditableTarget(target) { return inputFlowSupport?.isEditableTarget?.(target) || false; }
-  function matchesProbeRecordStudent(...args) { return probeRuntimeSupport?.matchesProbeRecordStudent?.(...args) ?? false; }
-  function getProbeRecordsForStudent(...args) { return probeRuntimeSupport?.getProbeRecordsForStudent?.(...args) || []; }
-  function getLatestProbeSourceForStudent(...args) { return probeRuntimeSupport?.getLatestProbeSourceForStudent?.(...args) || null; }
-  function buildProbeNumericSummary(...args) { return probeRuntimeSupport?.buildProbeNumericSummary?.(...args) || { roundsDone: 0, wins: 0, accuracyRate: 0, avgGuesses: 0, avgTimeSeconds: 0, hintRate: 0 }; }
-  function getComparableProbeTrend(...args) { return probeRuntimeSupport?.getComparableProbeTrend?.(...args) || { current: null, previous: null, activeMatches: false }; }
-  function applyChipTone(...args) { return probeRuntimeSupport?.applyChipTone?.(...args); }
-  function toggleQuickPopover(...args) { return settingsRuntime?.toggleQuickPopover?.(...args); }
-  function syncThemePreviewStripVisibility(...args) { return settingsRuntime?.syncThemePreviewStripVisibility?.(...args); }
-  function clearClassroomTurnTimer(...args) { return classroomTurns?.clearClassroomTurnTimer?.(...args); }
-  function updateClassroomTurnLine(...args) { return classroomTurns?.updateClassroomTurnLine?.(...args); }
-  function positionClassroomTurnLine(...args) { return classroomTurns?.positionClassroomTurnLine?.(...args); }
-  function reflowGameplayLayoutForTurnLine(...args) { return classroomTurns?.reflowGameplayLayoutForTurnLine?.(...args); }
-  function startClassroomTurnClock(...args) { return classroomTurns?.startClassroomTurnClock?.(...args); }
-  function advanceTeamTurn(...args) { return classroomTurns?.advanceTeamTurn?.(...args); }
-  function syncClassroomTurnRuntime(...args) { return classroomTurns?.syncClassroomTurnRuntime?.(...args); }
-  function initCoachRibbons(...args) { return coachRuntime?.initCoachRibbons?.(...args); }
-  function updateHomeCoachRibbon(...args) { return coachRuntime?.updateHomeCoachRibbon?.(...args); }
-  function recordAvaWordQuestEvent(...args) { return coachRuntime?.recordAvaWordQuestEvent?.(...args); }
-  function speakAvaWordQuestAdaptive(...args) { return coachRuntime?.speakAvaWordQuestAdaptive?.(...args); }
-  function startAvaWordQuestIdleWatcher(...args) { return coachRuntime?.startAvaWordQuestIdleWatcher?.(...args); }
-  function stopAvaWordQuestIdleWatcher(...args) { return coachRuntime?.stopAvaWordQuestIdleWatcher?.(...args); }
-  function setWordQuestCoachState(...args) { return coachRuntime?.setWordQuestCoachState?.(...args); }
-  function initQuestLoop(...args) { return questRuntime?.initQuestLoop?.(...args); }
-  function awardQuestProgress(...args) { return questRuntime?.awardQuestProgress?.(...args); }
-  function mapGuessFeedbackToSignalStates(...args) { return questRuntime?.mapGuessFeedbackToSignalStates?.(...args) || []; }
-  function updateWordQuestShareButton(...args) { return questRuntime?.updateWordQuestShareButton?.(...args); }
-  function shareWordQuestSessionById(...args) { return questRuntime?.shareWordQuestSessionById?.(...args); }
-  function shareWordQuestBundle(...args) { return questRuntime?.shareWordQuestBundle?.(...args); }
-  function publishWordQuestSignals(...args) { return questRuntime?.publishWordQuestSignals?.(...args); }
-  function updatePageModeUrl(...args) { return shellRuntime?.updatePageModeUrl?.(...args); }
+  function clearRevealAutoAdvanceTimer(...args) { return revealFlowSupport?.clearRevealAutoAdvanceTimer?.(...args); }
+  function scheduleRevealAutoAdvance() { revealFlowSupport?.scheduleRevealAutoAdvance?.(); }
   var focusSearchReopenGuardUntil = 0;
-  function getThemeRegistry() {
-    return window.WQThemeRegistry || null;
-  }
-  function shouldPersistTheme() {
-    return (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on';
-  }
+  function shouldPersistTheme() { return (prefs.themeSave || DEFAULT_PREFS.themeSave) === 'on'; }
   const themeRuntimeApi = window.WQTheme || null;
   function renderThemeOptionsHook(...args) {
-    return getThemeRegistry()?.renderThemeOptions?.(...args) || null;
+    return (window.WQThemeRegistry?.renderThemeOptions?.(...args)) || null;
   }
   var musicController = null;
   var challengeSprintTimer = 0;
@@ -3331,25 +3254,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   startupRuntime?.initializeStartupPreferences?.();
 
   // ─── 4. Theme / projector / motion helpers ──────────
-  function getThemeDisplayLabel(themeId) {
-    const normalized = normalizeTheme(themeId, getThemeFallback());
-    const themeRegistry = getThemeRegistry();
-    if (themeRegistry && typeof themeRegistry.getLabel === 'function') return themeRegistry.getLabel(normalized);
-    return normalized;
-  }
-
-  function syncSettingsThemeName(themeId) {
-    playSettingsRuntime?.syncSettingsThemeName?.(themeId);
-  }
-
-  function syncBannerThemeName(themeId) {
-    playSettingsRuntime?.syncBannerThemeName?.(themeId);
-  }
-
-  function syncWordQuestRootThemeClass(themeId) {
-    playSettingsRuntime?.syncWordQuestRootThemeClass?.(themeId);
-  }
-
   function applyTheme(name) {
     const beforeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
     const normalized = playSettingsRuntime?.applyTheme?.(name) || normalizeTheme(name, getThemeFallback());
@@ -3391,10 +3295,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
 
   function getRevealPacingMode() {
     return playSettingsRuntime?.getRevealPacingMode?.() || DEFAULT_PREFS.revealPacing;
-  }
-
-  function getRevealAutoNextSeconds() {
-    return playSettingsRuntime?.getRevealAutoNextSeconds?.() || 0;
   }
 
   function syncRevealFocusModalSections() {
@@ -3451,20 +3351,12 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     playSettingsRuntime?.syncPlayStyleToggleUI?.(mode);
   }
 
-  function syncSettingsModeCards(mode = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle)) {
-    playSettingsRuntime?.syncSettingsModeCardsLocal?.(mode);
-  }
-
   function clearFocusSupportUnlockTimer() {
     playSettingsRuntime?.clearFocusSupportUnlockTimer?.();
   }
 
   function scheduleFocusSupportUnlock() {
     playSettingsRuntime?.scheduleFocusSupportUnlock?.();
-  }
-
-  function areFocusSupportsUnlocked() {
-    return playSettingsRuntime?.areFocusSupportsUnlocked?.() || true;
   }
 
   function clearSupportModalTimer() {
@@ -3481,10 +3373,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
 
   function getStarterWordMode() {
     return playSettingsRuntime?.getStarterWordMode?.() || 'on_demand';
-  }
-
-  function getStarterWordAutoThreshold(mode = getStarterWordMode()) {
-    return playSettingsRuntime?.getStarterWordAutoThreshold?.(mode) || 0;
   }
 
   function syncStarterWordLauncherUI(mode = getStarterWordMode()) {
@@ -3527,7 +3415,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
 
   const SOR_HINT_PROFILES = window.WQGuidanceConfig?.SOR_HINT_PROFILES || Object.freeze({});
 
-  function clearStarterCoachTimer() { supportUi?.clearStarterCoachTimer?.(); }
   function clearInformantHintHideTimer() { supportUi?.clearInformantHintHideTimer?.(); }
   function normalizeHintCategoryFromFocusTag(...args) { return supportLogic?.normalizeHintCategoryFromFocusTag?.(...args) || 'general'; }
   function detectHintCategoryFromWord(...args) { return supportLogic?.detectHintCategoryFromWord?.(...args) || 'cvc'; }
@@ -3537,9 +3424,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function getHintUnlockCopy(...args) { return supportLogic?.getHintUnlockCopy?.(...args) || { unlocked: true, minimum: 1, message: '' }; }
   function renderHintExamples(...args) { supportUi?.renderHintExamples?.(...args); }
   function scheduleStarterCoachHint() { supportUi?.scheduleStarterCoachHint?.(); }
-  function evaluateGuessPattern(...args) { return supportLogic?.evaluateGuessPattern?.(...args) || []; }
-  function initializeStarterWordCardDrag() { supportUi?.initializeStarterWordCardDrag?.(); }
-
   function maybeAutoShowStarterWords(state) {
     if (!focusSupportUnlockedByMiss || currentRoundStarterWordsShown) return;
     showSupportChoiceCard(state);
@@ -3553,8 +3437,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function getHeaderIconMarkup(kind) { return surfaceSettingsRuntime?.getHeaderIconMarkup?.(kind) || ''; }
   function syncHeaderStaticIcons() { surfaceSettingsRuntime?.syncHeaderStaticIcons?.(); }
   function applyKeyboardLayout(mode) { return surfaceSettingsRuntime?.applyKeyboardLayout?.(mode) || normalizeKeyboardLayout(mode); }
-  function applyKeyboardPreset(mode, options = {}) { return surfaceSettingsRuntime?.applyKeyboardPreset?.(mode, options) || Object.freeze({}); }
-  function syncKeyboardLayoutToggle() { surfaceSettingsRuntime?.syncKeyboardLayoutToggle?.(); }
   function syncCaseToggleUI() { surfaceSettingsRuntime?.syncCaseToggleUI?.(); }
   function applyChunkTabsMode(mode) { return surfaceSettingsRuntime?.applyChunkTabsMode?.(mode) || 'auto'; }
   function applyAtmosphere(mode) { return surfaceSettingsRuntime?.applyAtmosphere?.(mode) || DEFAULT_PREFS.atmosphere; }
@@ -3566,8 +3448,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function normalizeVoicePracticeMode(mode) { return surfaceSettingsRuntime?.normalizeVoicePracticeMode?.(mode) || 'optional'; }
 
   function getVoicePracticeMode() {
-    if (!STUDENT_RECORDING_ENABLED) return 'off';
-    return normalizeVoicePracticeMode(_el('s-voice-task')?.value || prefs.voicePractice || DEFAULT_PREFS.voicePractice);
+    return !STUDENT_RECORDING_ENABLED ? 'off' : normalizeVoicePracticeMode(_el('s-voice-task')?.value || prefs.voicePractice || DEFAULT_PREFS.voicePractice);
   }
 
   function setVoicePracticeMode(mode, options = {}) { return surfaceSettingsRuntime?.setVoicePracticeMode?.(mode, options) || 'optional'; }
@@ -3576,11 +3457,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
 
   const shouldOfferStartupPreset = !(settingsRuntime?.hasCompletedFirstRunSetup?.()) && !(settingsRuntime?.launchedFromGameGallery?.());
   firstRunSetupPending = shouldOfferStartupPreset;
-
-  function syncFirstRunGradeSelectFromPrefs() { return surfaceSettingsRuntime?.syncFirstRunGradeSelectFromPrefs?.(); }
-  function applyFirstRunGradeSelection() { return surfaceSettingsRuntime?.applyFirstRunGradeSelection?.(); }
-  function applyFirstRunPlayStyleSelection() { return surfaceSettingsRuntime?.applyFirstRunPlayStyleSelection?.(); }
-
 
   function markDiagnosticsReset(reason = 'maintenance') { return surfaceSettingsRuntime?.markDiagnosticsReset?.(reason) || { ts: Date.now(), reason }; }
 
@@ -3602,19 +3478,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function populateVoiceSelector() { surfaceSettingsRuntime?.populateVoiceSelector?.(); }
   function normalizeReviewWord(word) { return surfaceSettingsRuntime?.normalizeReviewWord?.(word) || ''; }
 
-  wordReview = typeof wordReviewModuleFactory === 'function'
-    ? wordReviewModuleFactory({
-        storage: localStorage,
-        now: () => Date.now(),
-        normalizeReviewWord,
-        getPlayableWords: (options) => WQData.getPlayableWords(options),
-        getEffectiveGameplayGradeBand,
-        shouldExpandGradeBandForFocus,
-        getTopErrorKey: (map) => gameplaySupport?.getTopErrorKey?.(map) || '',
-        reviewQueueKey: REVIEW_QUEUE_KEY,
-        reviewQueueMaxItems: REVIEW_QUEUE_MAX_ITEMS
-      })
-    : null;
+  wordReview = gameplayStats;
 
   function buildPlayableWordSet(gradeBand, lengthPref, focusValue) { return wordReview?.buildPlayableWordSet?.(gradeBand, lengthPref, focusValue) || new Set(); }
   function primeShuffleBagWithWord(scope, word) { maintenanceRuntime?.primeShuffleBagWithWord?.(scope, word); }
@@ -3633,46 +3497,14 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   var classroomTurnRemaining = 0;
   var classroomTeamIndex = 0;
 
-  roundTrackingRuntime = typeof createRoundTrackingRuntimeModule === 'function'
-    ? createRoundTrackingRuntimeModule({
-        gameplayStats,
-        normalizeCounterMap: (value) => gameplaySupport?.normalizeCounterMap?.(value) || Object.create(null),
-        getRoundLocals: () => ({
-          activeRoundStartedAt,
-          currentRoundHintRequested,
-          currentRoundStarterWordsShown,
-          currentRoundVoiceAttempts,
-          currentRoundErrorCounts,
-          currentRoundSkillKey,
-          currentRoundSkillLabel
-        }),
-        setRoundLocals: (nextState) => {
-          activeRoundStartedAt = Number(nextState?.activeRoundStartedAt) || 0;
-          currentRoundHintRequested = !!nextState?.currentRoundHintRequested;
-          currentRoundStarterWordsShown = !!nextState?.currentRoundStarterWordsShown;
-          currentRoundVoiceAttempts = Math.max(0, Number(nextState?.currentRoundVoiceAttempts) || 0);
-          currentRoundErrorCounts = gameplaySupport?.normalizeCounterMap?.(nextState?.currentRoundErrorCounts) || Object.create(null);
-          currentRoundSkillKey = String(nextState?.currentRoundSkillKey || 'classic:all');
-          currentRoundSkillLabel = String(nextState?.currentRoundSkillLabel || 'Classic mixed practice');
-        }
-      })
-    : null;
-
   function isTeamModeEnabled() { return surfaceSettingsRuntime?.isTeamModeEnabled?.() || false; }
   function isHelpSuppressedForTeamMode() { return surfaceSettingsRuntime?.isHelpSuppressedForTeamMode?.() || false; }
   function syncTeamHelpSuppressionUI() { surfaceSettingsRuntime?.syncTeamHelpSuppressionUI?.(); }
   function getTeamCount() { return inputConstraints?.getTeamCount?.() || 2; }
   function getTurnTimerSeconds() { return inputConstraints?.getTurnTimerSeconds?.() || 0; }
   function getTeamSet() { return inputConstraints?.getTeamSet?.() || normalizeTeamSet(_el('s-team-set')?.value || prefs.teamSet || DEFAULT_PREFS.teamSet); }
-  function getCurrentTeamLabel() { return inputConstraints?.getCurrentTeamLabel?.() || `Team ${Math.max(1, classroomTeamIndex + 1)}`; }
-  function formatTurnClock(seconds) { return inputConstraints?.formatTurnClock?.(seconds) || '0:00'; }
-  function isKnownAbsentLetter(letter) { return inputConstraints?.isKnownAbsentLetter?.(letter) || false; }
   function pulseBlockedLetterKey(letter) { inputConstraints?.pulseBlockedLetterKey?.(letter); }
   function maybeShowBlockedLetterToast(letter) { inputConstraints?.maybeShowBlockedLetterToast?.(letter); }
-  function getLiveWordState() { return inputConstraints?.getLiveWordState?.() || deriveWordState(WQGame.getState?.() || {}); }
-  function isSmartKeyLockEnabled() { return inputConstraints?.isSmartKeyLockEnabled?.() || false; }
-  function checkLetterEntryConstraints(letter, state, wordState) { return inputConstraints?.checkLetterEntryConstraints?.(letter, state, wordState) || { ok: true }; }
-  function maybeShowConstraintToast(check, letter) { inputConstraints?.maybeShowConstraintToast?.(check, letter); }
   function syncKeyboardInputLocks(state, wordState) { inputConstraints?.syncKeyboardInputLocks?.(state, wordState); }
 
   function refreshStarterSuggestionsIfOpen() {
@@ -3681,17 +3513,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     showStarterWordCard({ source: 'manual' });
   }
 
-  function clearCurrentGuessInput() {
-    const state = WQGame.getState?.();
-    if (!state?.word || !state.guess) return;
-    while ((WQGame.getState?.()?.guess || '').length > 0) {
-      WQGame.deleteLetter();
-    }
-    const next = WQGame.getState?.();
-    if (next?.wordLength) {
-      WQUI.updateCurrentRow(next.guess, next.wordLength, next.guesses.length);
-    }
-  }
 
   function updateNextActionLine(options = {}) {
     const line = _el('next-action-line');
@@ -3743,7 +3564,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     line.textContent = showTopLine ? text : '';
     line.classList.toggle('hidden', !showTopLine || !text);
     line.classList.toggle('is-review', Boolean(reviewWord));
-    updateClassroomTurnLine();
+    classroomTurns?.updateClassroomTurnLine?.();
   }
 
   function isMissionLabStandaloneMode() {
@@ -3790,26 +3611,26 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   // Always land in WordQuest first. Deep Dive opens only from the dedicated tab button.
   pageMode = 'wordquest';
   persistPageMode('wordquest');
-  updatePageModeUrl('wordquest');
-  initCoachRibbons();
+  shellRuntime?.updatePageModeUrl?.('wordquest');
+  coachRuntime?.initCoachRibbons?.();
   initializeHomeMode();
   applyHashRoute();
   csSyncHeaderTitleCenter();
-  updateHomeCoachRibbon();
-  setWordQuestCoachState('before_guess');
-  startAvaWordQuestIdleWatcher();
+  coachRuntime?.updateHomeCoachRibbon?.();
+  coachRuntime?.setWordQuestCoachState?.('before_guess');
+  coachRuntime?.startAvaWordQuestIdleWatcher?.();
   logOverflow('init');
   syncPlayToolsRoleVisibility();
 
-  setSettingsView('quick');
+  settingsRuntime?.setSettingsView?.('quick');
   syncPageModeUI();
   syncHeaderControlsVisibility();
-  syncClassroomTurnRuntime({ resetTurn: true });
-  syncTeacherPresetButtons();
+  classroomTurns?.syncClassroomTurnRuntime?.({ resetTurn: true });
+  settingsRuntime?.syncTeacherPresetButtons?.();
   syncAssessmentLockRuntime({ closeFocus: false });
-  bindFirstRunSetupModal();
+  settingsRuntime?.bindFirstRunSetupModal?.({ get: () => firstRunSetupPending, set: (value) => { firstRunSetupPending = !!value; } });
   enableDraggableSupportChoiceCard();
-  bindSettingsModeCards();
+  settingsRuntime?.bindSettingsModeCards?.();
   panelRuntime?.init?.();
   preferencesRuntime?.init?.();
   sessionControls?.init?.();
@@ -3818,7 +3639,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   inputShell?.init?.();
   standaloneMission?.bindWindowLifecycle?.();
   if (firstRunSetupPending) {
-    openFirstRunSetupModal();
+    settingsRuntime?.openFirstRunSetupModal?.(firstRunSetupPending);
   }
   initRefreshLatestBanner();
 
@@ -3845,56 +3666,35 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const VOICE_HISTORY_KEY = RUNTIME_CONSTANTS.VOICE_HISTORY_KEY || 'wq_v2_voice_history_v1';
   const VOICE_HISTORY_LIMIT = RUNTIME_CONSTANTS.VOICE_HISTORY_LIMIT || 3;
 
-  function setVoiceRecordingUI(isRecording) {
-    voiceSupport?.setVoiceRecordingUI?.(isRecording);
-  }
-
-  var voiceHistory = loadVoiceHistory();
-  function buildVoiceFeedback(analysis, entry = null) {
-    return voiceSupport?.buildVoiceFeedback?.(analysis, entry) || {
-      message: 'Clip captured. Play it back, compare with model audio.',
-      tone: 'default',
-      score: 60,
-      label: 'Captured'
-    };
-  }
-
-  function updateVoicePracticePanel(state) {
-    voiceSupport?.updateVoicePracticePanel?.(state);
-  }
-
-  function openVoicePracticeAndRecord(options = {}) {
-    return voiceSupport?.openVoicePracticeAndRecord?.(options) || false;
-  }
-
+  var voiceHistory = voiceSupport?.loadVoiceHistory?.() || [];
   async function startVoiceRecording() {
     if (voiceIsRecording) return;
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
       setVoicePracticeFeedback('Recording is not available on this device.', true);
       return;
     }
-    clearVoiceCountdownTimer();
+    voiceSupport?.clearVoiceCountdownTimer?.();
     voiceCountdownToken += 1;
     const countdownToken = voiceCountdownToken;
     let secondsLeft = VOICE_COUNTDOWN_SECONDS;
-    setVoiceRecordingUI(false);
+    voiceSupport?.setVoiceRecordingUI?.(false);
     setVoicePracticeFeedback(`Get ready... recording starts in ${secondsLeft}.`);
     voiceCountdownTimer = setInterval(() => {
       secondsLeft -= 1;
       if (!voiceCountdownTimer || countdownToken !== voiceCountdownToken) return;
       if (secondsLeft > 0) {
         setVoicePracticeFeedback(`Get ready... recording starts in ${secondsLeft}.`);
-        setVoiceRecordingUI(false);
+        voiceSupport?.setVoiceRecordingUI?.(false);
         return;
       }
-      clearVoiceCountdownTimer();
+      voiceSupport?.clearVoiceCountdownTimer?.();
     }, 1000);
-    setVoiceRecordingUI(false);
+    voiceSupport?.setVoiceRecordingUI?.(false);
     await waitMs(VOICE_COUNTDOWN_SECONDS * 1000);
     if (countdownToken !== voiceCountdownToken) return;
-    recordVoiceAttempt();
+    studentSessionRuntime?.recordVoiceAttempt?.();
     try {
-      clearVoiceClip();
+      voiceSupport?.clearVoiceClip?.();
       voiceTakeComplete = false;
       voiceChunks = [];
       setVoicePracticeFeedback('Recording now...');
@@ -3904,11 +3704,11 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         if (event.data && event.data.size > 0) voiceChunks.push(event.data);
       });
       voiceRecorder.addEventListener('stop', () => {
-        clearVoiceAutoStopTimer();
+        voiceSupport?.clearVoiceAutoStopTimer?.();
         voiceIsRecording = false;
-        setVoiceRecordingUI(false);
-        stopVoiceVisualizer();
-        stopVoiceStream();
+        voiceSupport?.setVoiceRecordingUI?.(false);
+        voiceSupport?.stopVoiceVisualizer?.();
+        voiceSupport?.stopVoiceStream?.();
         const blob = new Blob(voiceChunks, { type: voiceChunks[0]?.type || 'audio/webm' });
         if (!blob.size) {
           setVoicePracticeFeedback('No audio captured. Please try again.', true);
@@ -3917,28 +3717,33 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         voiceClipBlob = blob;
         voiceClipUrl = URL.createObjectURL(blob);
         voiceTakeComplete = true;
-        if (revealChallengeState) setChallengeTaskComplete('listen', true);
+        if (revealChallengeState) deepDiveCoreRuntime?.setChallengeTaskComplete?.('listen', true);
         const playBtn = _el('voice-play-btn');
         if (playBtn) playBtn.disabled = false;
         const saveBtn = _el('voice-save-btn');
         if (saveBtn) saveBtn.disabled = false;
         setVoicePracticeFeedback('Analyzing your clip...');
         updateVoicePracticePanel(WQGame.getState());
-        void analyzeVoiceClip(blob).then((analysis) => {
+        void (voiceSupport?.analyzeVoiceClip?.(blob) || Promise.resolve(null)).then((analysis) => {
           if (!voiceClipBlob || voiceClipBlob !== blob) return;
-          const review = buildVoiceFeedback(analysis, WQGame.getState()?.entry || null);
+          const review = voiceSupport?.buildVoiceFeedback?.(analysis, WQGame.getState()?.entry || null) || {
+            message: 'Clip captured. Play it back, compare with model audio.',
+            tone: 'default',
+            score: 60,
+            label: 'Captured'
+          };
           setVoicePracticeFeedback(review.message, review.tone);
-          appendVoiceHistory(review);
+          voiceSupport?.appendVoiceHistory?.(review);
         });
       });
       voiceIsRecording = true;
-      setVoiceRecordingUI(true);
+      voiceSupport?.setVoiceRecordingUI?.(true);
       setVoicePracticeFeedback('Recording for 3 seconds...');
       if (localStorage.getItem(VOICE_PRIVACY_TOAST_KEY) !== 'seen') {
         WQUI.showToast('Voice recordings stay on this device only. Nothing is uploaded.');
         localStorage.setItem(VOICE_PRIVACY_TOAST_KEY, 'seen');
       }
-      clearVoiceAutoStopTimer();
+      voiceSupport?.clearVoiceAutoStopTimer?.();
       voiceAutoStopTimer = setTimeout(() => {
         if (voiceRecorder && voiceRecorder.state === 'recording') {
           stopVoiceRecording({ reason: 'auto' });
@@ -3961,21 +3766,21 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     } catch {
       setVoicePracticeFeedback('Microphone access was blocked.', true);
       voiceIsRecording = false;
-      setVoiceRecordingUI(false);
-      clearVoiceAutoStopTimer();
-      stopVoiceVisualizer();
-      stopVoiceStream();
+      voiceSupport?.setVoiceRecordingUI?.(false);
+      voiceSupport?.clearVoiceAutoStopTimer?.();
+      voiceSupport?.stopVoiceVisualizer?.();
+      voiceSupport?.stopVoiceStream?.();
     }
   }
 
   function stopVoiceRecording(options = {}) {
-    clearVoiceAutoStopTimer();
+    voiceSupport?.clearVoiceAutoStopTimer?.();
     if (voiceRecorder && voiceRecorder.state !== 'inactive') {
       voiceRecorder.stop();
       const reason = String(options.reason || 'manual');
       setVoicePracticeFeedback(reason === 'auto' ? 'Saving your 3-second clip...' : 'Saving your recording...');
     } else {
-      stopVoiceCaptureNow();
+      voiceSupport?.stopVoiceCaptureNow?.();
     }
   }
 
@@ -4011,14 +3816,6 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     link.click();
     link.remove();
     setVoicePracticeFeedback('Saved locally to your Downloads folder.');
-  }
-
-  function bindVoicePracticeControls() {
-    voiceSupport?.bindVoicePracticeControls?.();
-  }
-
-  function installRevealModalPatch() {
-    voiceSupport?.installRevealModalPatch?.();
   }
 
   function installResponsiveLayoutPatch() {
@@ -4225,7 +4022,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
 
     WQUI.__layoutPatchApplied = true;
   }
-  installRevealModalPatch();
+  voiceSupport?.installRevealModalPatch?.();
   installResponsiveLayoutPatch();
 
   // ─── 6. Focus + grade alignment ─────────────────────
@@ -4321,18 +4118,13 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function setFocusSearchOpen(isOpen) {
     document.documentElement.setAttribute('data-focus-search-open', isOpen ? 'true' : 'false');
     if (isOpen) closeQuickPopover('all');
-    syncThemePreviewStripVisibility();
+    settingsRuntime?.syncThemePreviewStripVisibility?.();
   }
 
-  function openTeacherWordTools() { focusSearchRuntime?.openTeacherWordTools?.(); }
-  function getFocusSearchButtons() { return focusSearchRuntime?.getFocusSearchButtons?.() || []; }
-  function setFocusNavIndex(nextIndex, options = {}) { focusSearchRuntime?.setFocusNavIndex?.(nextIndex, options); }
   function renderFocusSearchList(rawQuery = '', options = {}) { focusSearchRuntime?.renderFocusSearchList?.(rawQuery, options); }
   function closeFocusSearchList() { focusSearchRuntime?.closeFocusSearchList?.(); }
   function setFocusValue(nextValue, options = {}) { focusSearchRuntime?.setFocusValue?.(nextValue, options); }
-  function setQuestValue(nextValue, options = {}) { focusSearchRuntime?.setQuestValue?.(nextValue, options); }
   focusSearchRuntime?.installFocusDataPatch?.();
-
   focusSearchRuntime?.bindFocusControls?.();
   focusSearchRuntime?.initializeFocusRuntime?.();
 
@@ -4344,10 +4136,10 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   const ERROR_NEXT_STEP_COPY = window.WQGuidanceConfig?.ERROR_NEXT_STEP_COPY || Object.freeze({});
   const ERROR_MINI_LESSON_PLANS = window.WQGuidanceConfig?.ERROR_MINI_LESSON_PLANS || Object.freeze({});
 
-  function syncRoundTrackingLocals() { roundTrackingRuntime?.syncRoundTrackingLocals?.(); }
-  function resetRoundTracking(nextResult = null) { roundTrackingRuntime?.resetRoundTracking?.(nextResult); }
+  function syncRoundTrackingLocals() { gameplayStats?.syncRoundTrackingLocals?.(); }
+  function resetRoundTracking(nextResult = null) { gameplayStats?.resetRoundTrackingAndSync?.(nextResult); }
   function buildRoundMetrics(result, maxGuessesValue) {
-    return roundTrackingRuntime?.buildRoundMetrics?.(result, maxGuessesValue) || {
+    return gameplayStats?.buildRoundMetricsAndSync?.(result, maxGuessesValue) || {
       guessesUsed: Math.max(1, Array.isArray(result?.guesses) ? result.guesses.length : Math.max(1, Number(maxGuessesValue) || 6)),
       durationMs: 0,
       hintRequested: !!currentRoundHintRequested,
@@ -4357,8 +4149,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
       errorCounts: gameplaySupport?.normalizeCounterMap?.(currentRoundErrorCounts) || Object.create(null)
     };
   }
-  function classifyRoundErrorPattern(result) { return roundTrackingRuntime?.classifyRoundErrorPattern?.(result) || ''; }
-  function maybeShowErrorCoach(result) { roundTrackingRuntime?.maybeShowErrorCoach?.(result); }
+  function maybeShowErrorCoach(result) { gameplayStats?.maybeShowErrorCoach?.(result); }
 
   var rosterState = loadRosterState(ROSTER_STATE_KEY);
   var probeHistory = loadProbeHistory();
@@ -4391,207 +4182,10 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     syncLessonPackControlsFromPrefs({ packId: normalizedPack, targetId: normalizedTarget });
     return applyLessonTargetConfig(normalizedPack, normalizedTarget, { toast: !!options.toast });
   }
-  function getAssigneeKeyForStudent(name) { return playlistRuntime?.getAssigneeKeyForStudent?.(name) || 'class'; }
-  function getSelectedPlaylist() { return playlistRuntime?.getSelectedPlaylist?.() || null; }
-  function setSelectedPlaylistId(playlistId) { playlistRuntime?.setSelectedPlaylistId?.(playlistId); }
-  function getAssignedPlaylistContext(studentLabel) { return playlistRuntime?.getAssignedPlaylistContext?.(studentLabel) || null; }
-  function getAssignedPlaylistForStudent(studentLabel) { return playlistRuntime?.getAssignedPlaylistForStudent?.(studentLabel) || null; }
-  function getPlaylistProgressIndex(assigneeKey, playlist) { return playlistRuntime?.getPlaylistProgressIndex?.(assigneeKey, playlist) || 0; }
-  function setPlaylistProgressIndex(assigneeKey, playlist, rawIndex = 0) { playlistRuntime?.setPlaylistProgressIndex?.(assigneeKey, playlist, rawIndex); }
-  function buildCurrentTargetSnapshot() { return studentSessionRuntime?.buildCurrentTargetSnapshot?.() || null; }
-  function applySnapshotToSettings(snapshot, options = {}) { return studentSessionRuntime?.applySnapshotToSettings?.(snapshot, options) || false; }
-  function renderPlaylistControls() { playlistRuntime?.renderPlaylistControls?.(); }
-  function saveCurrentTargetToPlaylist() { return playlistRuntime?.saveCurrentTargetToPlaylist?.() || false; }
-  function assignSelectedPlaylistToActiveStudent() { return playlistRuntime?.assignSelectedPlaylistToActiveStudent?.() || false; }
-  function applyAssignedPlaylistForActiveStudent() { return playlistRuntime?.applyAssignedPlaylistForActiveStudent?.() || false; }
-  function deleteSelectedPlaylist() { return playlistRuntime?.deleteSelectedPlaylist?.() || false; }
-  function getGoalKeyForStudent(name) { return studentSessionRuntime?.getGoalKeyForStudent?.(name) || 'Class'; }
-  function getGoalForStudent(name) { return studentSessionRuntime?.getGoalForStudent?.(name) || null; }
-  function setGoalForStudent(name, goal) { return studentSessionRuntime?.setGoalForStudent?.(name, goal) || false; }
-  function clearGoalForStudent(name) { return studentSessionRuntime?.clearGoalForStudent?.(name) || false; }
-  function renderRosterControls() { studentSessionRuntime?.renderRosterControls?.(); }
-  function renderGroupBuilderPanel() { rosterRuntime?.renderGroupBuilderPanel?.(); }
-  function renderStudentLockPanel() { rosterRuntime?.renderStudentLockPanel?.(); }
-  function maybeApplyStudentPlanForActiveStudent(options = {}) { return rosterRuntime?.maybeApplyStudentPlanForActiveStudent?.(options) || false; }
-  function addRosterStudent(rawName) { return rosterRuntime?.addRosterStudent?.(rawName) || false; }
-  function removeActiveRosterStudent() { return rosterRuntime?.removeActiveRosterStudent?.() || false; }
-  function clearRosterStudents() { rosterRuntime?.clearRosterStudents?.(); }
-  function renderSessionSummary() { studentSessionRuntime?.renderSessionSummary?.(); }
-  function recordSessionRound(result, roundMetrics = {}) { studentSessionRuntime?.recordSessionRound?.(result, roundMetrics); }
   function recordVoiceAttempt() { studentSessionRuntime?.recordVoiceAttempt?.(); }
-  function getMissionLabRecords(options = {}) { return studentSessionRuntime?.getMissionLabRecords?.(options) || []; }
-  function buildMissionSummaryStats(options = {}) {
-    return studentSessionRuntime?.buildMissionSummaryStats?.(options) || { records: [], count: 0, avgScore: 0, avgAttemptsPerStation: 0, completionRate: 0, completedCount: 0, onTimeRate: 0, strongRate: 0, topLevel: '', topLevelLabel: '--' };
-  }
-  function resetSessionSummary() { studentSessionRuntime?.resetSessionSummary?.(); }
 
   function newGame(options = {}) {
-    if (DEMO_MODE && demoRoundComplete && !options.forceDemoReplay) {
-      demoFlow?.showDemoEndOverlay?.(demoClearTimers, stopDemoCoachReadyLoop, stopDemoKeyPulse);
-      return;
-    }
-    if (DEMO_MODE) {
-      demoFlow?.closeDemoEndOverlay?.();
-      if (options.forceDemoReplay) {
-        demoFlow?.resetDemoScriptState?.(
-          demoState,
-          stopDemoCoachReadyLoop,
-          clearDemoAutoplayTimer,
-          stopDemoKeyPulse,
-          demoClearTimers
-        );
-      }
-    }
-    setWordQuestCoachState('before_guess');
-    emitTelemetry('wq_new_word_click', { source: options.launchMissionLab ? 'mission_lab_new' : 'wordquest_new' });
-    focusSupportUnlockedByMiss = false;
-    const roundStartedAt = Date.now();
-    focusSupportUnlockAt = roundStartedAt + 20000;
-    currentRoundSupportPromptShown = false;
-    gameStartedAt = roundStartedAt;
-    focusSupportEligibleAt = 0;
-    syncFocusSupportRuntimeState();
-    clearSupportModalTimer();  // Clear any existing support modal timer from previous round
-    scheduleFocusSupportUnlock();
-    hideInformantHintCard();
-    hideStarterWordCard();
-    hideSupportChoiceCard();
-    deepDiveModal?.closeRevealChallengeModal?.({ silent: true });
-    clearClassroomTurnTimer();
-    resetRoundTracking();
-    _activeEvidenceSessionId = "sess_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
-    if (firstRunSetupPending && !_el('first-run-setup-modal')?.classList.contains('hidden')) {
-      WQUI.showToast('Pick a setup style or skip for now.');
-      return;
-    }
-    if (isMissionLabStandaloneMode()) {
-      if (options.launchMissionLab === false) {
-        refreshStandaloneMissionLabHub();
-        return;
-      }
-      startStandaloneMissionLab();
-      return;
-    }
-    if (
-      getVoicePracticeMode() === 'required' &&
-      !(_el('modal-overlay')?.classList.contains('hidden')) &&
-      !voiceTakeComplete
-    ) {
-      WQUI.showToast('Record your voice before starting the next word.');
-      return;
-    }
-    clearRevealAutoAdvanceTimer();
-    cancelRevealNarration();
-    stopVoiceCaptureNow();
-    if (voicePreviewAudio) {
-      voicePreviewAudio.pause();
-      voicePreviewAudio = null;
-    }
-    clearVoiceClip();
-    voiceTakeComplete = false;
-    drawWaveform();
-    hideMidgameBoost();
-    midgameBoostShown = false;
-    if (_wqDiagTimer) {
-      clearTimeout(_wqDiagTimer);
-      _wqDiagTimer = null;
-    }
-    _wqDiagSession = null;
-    _latestSavedSessionId = '';
-    updateWordQuestShareButton('');
-    avaWqIdleFiredThisRound = false;
-    avaWqLastActionAt = Date.now();
-    avaWqLastIdleEmitAt = 0;
-
-    const s = WQUI.getSettings();
-    if (DEMO_MODE) {
-      s.length = '5';
-      s.maxGuesses = 6;
-      s.focus = 'all';
-    }
-    const focus = DEMO_MODE ? 'all' : (_el('setting-focus')?.value || prefs.focus || 'all');
-    const effectiveGradeBand = getEffectiveGameplayGradeBand(s.gradeBand || 'all', focus);
-    const playableSet = buildPlayableWordSet(effectiveGradeBand, s.length, focus);
-
-    const result = WQGame.startGame({
-      ...s,
-      gradeBand: effectiveGradeBand,
-      focus,
-      phonics: focus,
-      fixedWord: DEMO_MODE ? DEMO_TARGET_WORD : '',
-      disableProgress: DEMO_MODE
-    });
-    if (!result) {
-      const startError = typeof WQGame.getLastStartError === 'function'
-        ? WQGame.getLastStartError()
-        : null;
-      if (startError?.code === 'EMPTY_FILTERED_POOL') {
-        const pieces = [];
-        if (startError.gradeBand && startError.gradeBand !== 'all') pieces.push(`grade ${startError.gradeBand}`);
-        if (startError.phonics && startError.phonics !== 'all') pieces.push(`focus ${getFocusLabel(startError.phonics)}`);
-        if (startError.length && startError.length !== 'any') pieces.push(`${startError.length}-letter words`);
-        const detail = pieces.length ? ` for ${pieces.join(', ')}` : '';
-        WQUI.showToast(`No words available${detail}. Adjust filters or pick Classic.`);
-      } else {
-        WQUI.showToast('No words found — try Classic focus or adjust filters');
-      }
-      updateNextActionLine({ dueCount: wordReview?.countDueReviewWords?.(playableSet) || 0 });
-      syncHeaderClueLauncherUI();
-      syncStarterWordLauncherUI();
-      syncClassroomTurnRuntime({ resetTurn: true });
-      syncAssessmentLockRuntime();
-      return;
-    }
-    resetRoundTracking(result);
-    const startedWord = normalizeReviewWord(result.word);
-    const matchedDueReview = wordReview?.findMatchingDueReview?.(startedWord) || null;
-    if (matchedDueReview) wordReview?.consumeReviewItem?.(matchedDueReview);
-    WQUI.calcLayout(result.wordLength, result.maxGuesses);
-    WQUI.buildBoard(result.wordLength, result.maxGuesses);
-    WQUI.buildKeyboard();
-    syncKeyboardInputLocks(WQGame.getState?.() || {});
-    WQUI.hideModal();
-    _el('new-game-btn')?.classList.remove('pulse');
-    _el('settings-panel')?.classList.add('hidden');
-    syncClassroomTurnRuntime({ resetTurn: true });
-    syncHeaderControlsVisibility();
-    revealEffects?.removeDupeToast?.();
-    updateVoicePracticePanel(WQGame.getState());
-    updateFocusHint();
-    updateNextActionLine({ dueCount: wordReview?.countDueReviewWords?.(playableSet) || 0 });
-    syncHeaderClueLauncherUI();
-    syncStarterWordLauncherUI();
-    scheduleStarterCoachHint();
-    syncAssessmentLockRuntime();
-    startAvaWordQuestIdleWatcher();
-    try {
-      if (window.CSWQDiagnostics && typeof window.CSWQDiagnostics.createSession === 'function') {
-        _wqDiagSession = window.CSWQDiagnostics.createSession(result.wordLength || 5);
-        _wqDiagTimer = setTimeout(() => {
-          if (_wqDiagSession && !_wqDiagSession.endedAtMs) {
-            const softSignals = window.CSWQDiagnostics.endSession(_wqDiagSession, false);
-            _wqDiagSession = null;
-            if (softSignals) publishWordQuestSignals(softSignals, { soft: true });
-          }
-        }, 90000);
-      }
-    } catch {}
-    if (DEMO_MODE) {
-      demoFlow?.runDemoCoachForStart?.(
-        clearDemoAutoplayTimer,
-        { set: (value) => { demoAutoplayTimer = value; } },
-        demoState,
-        stopDemoCoachReadyLoop,
-        stopDemoKeyPulse,
-        demoClearTimers
-      );
-    }
-    if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
-    // Auto-focus game board so students can start typing immediately
-    const gameBoard = _el('game-board');
-    if (gameBoard && typeof gameBoard.focus === 'function') {
-      setTimeout(() => gameBoard.focus(), 50);
-    }
+    return roundStartRuntime?.newGame?.(options);
   }
 
   const reflowLayout = () => standaloneMission?.reflowLayout?.();
@@ -4606,7 +4200,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         demoUi?.collapseDemoToast?.();
       }
     }
-    clearStarterCoachTimer();
+    supportUi?.clearStarterCoachTimer?.();
     if (_el('hint-clue-card') && !_el('hint-clue-card')?.classList.contains('hidden')) {
       hideInformantHintCard();
     }
@@ -4625,204 +4219,13 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     if (s.gameOver) return;
 
     if (key === 'Enter') {
-      const themeAtSubmit = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
-      const result = WQGame.submitGuess();
-      if (!result) return;
-      emitTelemetry('wq_guess_submit', {
-        guess_index: (Array.isArray(result?.guesses) ? result.guesses.length : 0) || 0,
-        guess_length: String(result?.guess || '').length,
-        submit_result: result.error ? String(result.error) : 'accepted'
-      });
-      if (result.error === 'too_short') {
-        WQUI.showToast('Fill in all the letters first');
-        WQUI.shakeRow(s.guesses, s.wordLength);
-        updateNextActionLine();
-        syncKeyboardInputLocks(WQGame.getState?.() || {});
-        if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
-        return;
-      }
-      try {
-        if (_wqDiagSession && window.CSWQDiagnostics && typeof window.CSWQDiagnostics.addGuess === 'function') {
-          window.CSWQDiagnostics.addGuess(
-            _wqDiagSession,
-            result.guess,
-            mapGuessFeedbackToSignalStates(result.result)
-          );
-        }
-      } catch {}
-
-      if (!result.won) {
-        avaWqWrongStreak += 1;
-        avaWqCorrectStreak = 0;
-        avaWqTotalWrong += 1;
-        recordAvaWordQuestEvent('wrong_guess');
-        focusSupportUnlockedByMiss = true;
-        focusSupportEligibleAt = Date.now() + 30000;
-        syncFocusSupportRuntimeState();
-        clearFocusSupportUnlockTimer();
-        scheduleSupportModalTimer();  // Start timer for showing support modal after 30 seconds
-        syncHeaderClueLauncherUI();
-        syncStarterWordLauncherUI();
-        if (!result.lost && Number(result.guesses?.length || 0) === 1) {
-          setWordQuestCoachState('after_first_miss');
-          speakAvaWordQuestAdaptive('after_first_miss');
-        } else if (!result.lost && Number(result.guesses?.length || 0) === 2) {
-          speakAvaWordQuestAdaptive('after_second_miss');
-        }
-        if (!result.lost && avaWqWrongStreak >= 3 && avaWqRapidEvents.length >= 6) {
-          speakAvaWordQuestAdaptive('rapid_wrong_streak');
-        }
-        // Note: showSupportChoiceCard is not called here because it has a 30-second idle delay check.
-        // The chooser appears automatically if the player stays idle for 30 seconds after this guess.
-      } else {
-        avaWqCorrectStreak += 1;
-        avaWqWrongStreak = 0;
-        avaWqTotalCorrect += 1;
-        recordAvaWordQuestEvent('correct_guess');
-        if (avaWqCorrectStreak >= 2) {
-          speakAvaWordQuestAdaptive('streak_three_correct');
-        } else {
-          speakAvaWordQuestAdaptive('near_solve');
-        }
-      }
-
-      const row = result.guesses.length - 1;
-      WQUI.revealRow(result.guess, result.result, row, s.wordLength, () => {
-        if (normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()) !== themeAtSubmit) {
-          applyTheme(themeAtSubmit);
-        }
-        WQUI.updateKeyboard(result.result, result.guess);
-        syncKeyboardInputLocks(WQGame.getState?.() || {});
-        revealEffects?.checkDuplicates?.(result);
-        if (
-          MIDGAME_BOOST_ENABLED &&
-          !result.won &&
-          !result.lost &&
-          !midgameBoostShown &&
-          result.guesses.length === (midgameBoostRuntime?.MIDGAME_BOOST_TRIGGER_GUESS || 3)
-        ) {
-          midgameBoostShown = true;
-          showMidgameBoost();
-        }
-        if (result.won || result.lost) {
-          if (result.won) {
-            if (FEATURES.streakSystem) {
-              incrementStreak();
-              renderSafeStreak();
-            }
-            WQUI.celebrateWinRow?.(row, s.wordLength);
-          }
-          stopAvaWordQuestIdleWatcher('round complete');
-          try {
-            if (_wqDiagTimer) {
-              clearTimeout(_wqDiagTimer);
-              _wqDiagTimer = null;
-            }
-            if (_wqDiagSession && window.CSWQDiagnostics && typeof window.CSWQDiagnostics.endSession === 'function') {
-              const wqSignals = window.CSWQDiagnostics.endSession(_wqDiagSession, !!result.won);
-              _wqDiagSession = null;
-              if (wqSignals) publishWordQuestSignals(wqSignals, {
-                soft: false,
-                helpUsed: !!currentRoundHintRequested || !!currentRoundStarterWordsShown
-              });
-            }
-          } catch {}
-          if (result.won) setWordQuestCoachState('after_correct');
-          const roundMetrics = buildRoundMetrics(result, s.maxGuesses);
-          const guessesUsed = Math.max(1, Number(roundMetrics.guessesUsed) || 1);
-          const zpdInBand = Boolean(
-            (result.won && guessesUsed >= 3 && guessesUsed <= 5) ||
-            (!result.won && result.lost && guessesUsed >= 5 && !!roundMetrics.hintRequested)
-          );
-          emitTelemetry('wq_round_complete', {
-            word_id: normalizeReviewWord(result.word),
-            won: !!result.won,
-            lost: !!result.lost,
-            guesses_used: guessesUsed,
-            max_guesses: Number(s.maxGuesses) || null,
-            hint_used: !!roundMetrics.hintRequested,
-            voice_attempts: Math.max(0, Number(roundMetrics.voiceAttempts) || 0),
-            duration_ms: Math.max(0, Number(roundMetrics.durationMs) || 0),
-            skill_key: roundMetrics.skillKey,
-            skill_label: roundMetrics.skillLabel,
-            zpd_in_band: zpdInBand
-          });
-          clearClassroomTurnTimer();
-          updateClassroomTurnLine();
-          if (!DEMO_MODE) {
-            awardQuestProgress(result, roundMetrics);
-            wordReview?.trackRoundForReview?.(result, s.maxGuesses, roundMetrics);
-          }
-          resetRoundTracking();
-          hideMidgameBoost();
-          syncAssessmentLockRuntime();
-          const focusNow = _el('setting-focus')?.value || prefs.focus || 'all';
-          const activeGradeBand = getEffectiveGameplayGradeBand(
-            _el('s-grade')?.value || 'all',
-            focusNow
-          );
-          const dueCountNow = wordReview?.countDueReviewWords?.(buildPlayableWordSet(
-            activeGradeBand,
-            _el('s-length')?.value || 'any',
-            focusNow
-          )) || 0;
-          updateNextActionLine({ dueCount: dueCountNow });
-          setTimeout(() => {
-            if (DEMO_MODE) {
-              demoRoundComplete = true;
-              WQUI.hideModal();
-              deepDiveModal?.closeRevealChallengeModal?.({ silent: true });
-              hideDemoCoach();
-              _el('new-game-btn')?.classList.remove('pulse');
-              demoAutoplayTimer = demoSetTimeout(() => {
-                newGame({ forceDemoReplay: true });
-              }, 2800);
-            } else {
-              WQUI.showModal(result);
-              _el('new-game-btn')?.classList.add('pulse');
-            }
-            if (normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback()) !== themeAtSubmit) {
-              applyTheme(themeAtSubmit);
-            }
-          }, 520);
-        } else {
-          if (DEMO_MODE) demoFlow?.runDemoCoachAfterGuess?.(result, demoState);
-          maybeShowErrorCoach(result);
-          maybeAutoShowStarterWords(result);
-          advanceTeamTurn();
-          updateNextActionLine();
-          if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
-          refreshStarterSuggestionsIfOpen();
-        }
-      });
+      roundSubmitRuntime?.submitCurrentGuess?.(s);
 
     } else if (key === 'Backspace' || key === '⌫') {
-      WQGame.deleteLetter();
-      const s2 = WQGame.getState();
-      WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
-      syncKeyboardInputLocks(s2);
-      refreshStarterSuggestionsIfOpen();
-      updateNextActionLine();
-      if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
+      inputConstraints?.handleBackspaceKey?.();
 
     } else if (/^[a-zA-Z]$/.test(key)) {
-      const normalizedLetter = String(key || '').toLowerCase();
-      const liveState = WQGame.getState?.() || {};
-      const liveWordState = deriveWordState(liveState);
-      const check = checkLetterEntryConstraints(normalizedLetter, liveState, liveWordState);
-      if (!check.ok) {
-        pulseBlockedLetterKey(normalizedLetter);
-        maybeShowConstraintToast(check, normalizedLetter);
-        updateNextActionLine();
-        return;
-      }
-      WQGame.addLetter(key);
-      const s2 = WQGame.getState();
-      WQUI.updateCurrentRow(s2.guess, s2.wordLength, s2.guesses.length);
-      syncKeyboardInputLocks(s2, liveWordState);
-      refreshStarterSuggestionsIfOpen();
-      updateNextActionLine();
-      if (!DEMO_MODE) demoUi?.positionDemoLaunchButton?.();
+      inputConstraints?.handleLetterKey?.(key);
     }
   }
 
@@ -4835,40 +4238,47 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   var revealChallengeState = null;
   var challengeOnboardingState = deepDiveState?.loadChallengeOnboardingState?.() || { seenCount: 0, dismissed: false };
 
-  function refreshStandaloneMissionLabHub() { return standaloneMission?.refreshStandaloneMissionLabHub?.(); }
-
-  function startStandaloneMissionLab(options = {}) {
-    return standaloneMission?.startStandaloneMissionLab?.(options) || false;
-  }
-
   deepDiveCoreRuntime = typeof deepDiveCoreRuntimeFactory === 'function'
     ? deepDiveCoreRuntimeFactory({
         WQAudio,
         WQUI,
         challengeTaskLabels: CHALLENGE_TASK_LABELS,
-        deepDiveModal,
+        deepDiveBuilders,
         deepDiveState,
         deepDiveUi,
         documentRef: document,
         el: _el,
+        emitTelemetry,
+        focusReturnState: {
+          get: () => challengeModalReturnFocusEl,
+          set: (value) => {
+            challengeModalReturnFocusEl = value;
+          }
+        },
         getDoneCount: (state) => deepDiveUi?.getChallengeDoneCount?.(state) || 0,
         getRevealChallengeState: () => revealChallengeState,
-        getRevealPacingPreset,
+        getRevealPacingPreset: (...args) => revealFlowSupport?.getRevealPacingPreset?.(...args) || REVEAL_PACING_PRESETS.guided,
+        getStateWord: () => revealChallengeState?.word || '',
+        hideInformantHintCard,
         isConfettiEnabled: () => {
           const settings = WQUI?.getSettings?.();
           return !(settings && settings.confetti === false);
         },
-        playMeaningWithFun,
-        promptLearnerAfterReveal,
-        renderRevealChallengeModal: (...args) => deepDiveModal?.renderRevealChallengeModal?.(...args),
+        isMissionLabEnabled,
+        isMissionLabStandaloneMode,
+        normalizeReviewWord,
+        playMeaningWithFun: (...args) => revealFlowSupport?.playMeaningWithFun?.(...args),
+        promptLearnerAfterReveal: (...args) => revealFlowSupport?.promptLearnerAfterReveal?.(voiceSupport?.setVoicePracticeFeedback?.bind(voiceSupport), ...args),
         revealEffects,
-        runKaraokeGuide,
-        setChallengeFeedback,
+        runKaraokeGuide: (...args) => voiceSupport?.runKaraokeGuide?.(...args),
+        setChallengeFeedback: (...args) => deepDiveUi?.setChallengeFeedback?.(...args),
         setRevealChallengeState: (value) => { revealChallengeState = value; },
-        shouldNarrateReveal,
+        startStandaloneMissionLab: (options = {}) => standaloneMission?.startStandaloneMissionLab?.(options) || false,
+        shouldNarrateReveal: (...args) => revealFlowSupport?.shouldNarrateReveal?.(...args) ?? true,
         syncRevealChallengeLaunch: (result) => deepDiveSession?.syncRevealChallengeLaunch?.(result),
-        syncRevealMeaningHighlight,
-        waitMs
+        syncRevealMeaningHighlight: (...args) => revealFlowSupport?.syncRevealMeaningHighlight?.(...args),
+        uiScaffoldFallback: CHALLENGE_SCAFFOLD_PROFILE.g35,
+        waitMs: (...args) => revealFlowSupport?.waitMs?.(...args)
       })
     : null;
   deepDiveCoreRuntime?.initSupportChoiceCardDrag?.();

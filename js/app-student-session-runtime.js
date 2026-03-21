@@ -7,6 +7,7 @@ function createStudentSessionRuntimeModule(deps) {
   const {
     DEFAULT_PREFS = {},
     WQUI = null,
+    getTeacherAssignmentsFeature = () => null,
     el = (id) => document.getElementById(id),
     formatGradeBandLabel = (value) => String(value || ''),
     formatLengthPrefLabel = (value) => String(value || ''),
@@ -35,8 +36,6 @@ function createStudentSessionRuntimeModule(deps) {
     updateLessonPackNote = () => {},
     applyLessonTargetConfig = () => false,
     renderPlaylistControls = () => {},
-    renderGroupBuilderPanel = () => {},
-    renderStudentLockPanel = () => {},
     renderSessionSummary = () => {},
     recordSessionRound = () => {},
     recordVoiceAttempt = () => {},
@@ -44,6 +43,53 @@ function createStudentSessionRuntimeModule(deps) {
     buildMissionSummaryStats = () => null,
     resetSessionSummary = () => {}
   } = deps || {};
+
+  function renderGroupBuilderPanel() {
+    getTeacherAssignmentsFeature()?.renderGroupBuilderPanel?.();
+  }
+
+  function renderStudentLockPanel() {
+    getTeacherAssignmentsFeature()?.renderStudentLockPanel?.();
+  }
+
+  function maybeApplyStudentPlanForActiveStudent(options = {}) {
+    return getTeacherAssignmentsFeature()?.maybeApplyStudentPlanForActiveStudent?.(options) || false;
+  }
+
+  function addRosterStudent(rawName) {
+    const name = String(rawName || '').trim().replace(/\s+/g, ' ');
+    if (!name) return false;
+    const rosterState = getRosterState();
+    if (rosterState.students.includes(name)) {
+      rosterState.active = name;
+      renderRosterControls();
+      return true;
+    }
+    rosterState.students.push(name);
+    rosterState.students.sort((a, b) => a.localeCompare(b));
+    rosterState.active = name;
+    renderRosterControls();
+    return true;
+  }
+
+  function removeActiveRosterStudent() {
+    const rosterState = getRosterState();
+    const active = String(rosterState.active || '').trim();
+    if (!active) return false;
+    rosterState.students = rosterState.students.filter((name) => name !== active);
+    rosterState.active = rosterState.students[0] || '';
+    getTeacherAssignmentsFeature()?.removeStudentReferences?.(active);
+    renderRosterControls();
+    return true;
+  }
+
+  function clearRosterStudents() {
+    const rosterState = getRosterState();
+    rosterState.students = [];
+    rosterState.active = '';
+    getTeacherAssignmentsFeature()?.clearStudentAssignments?.();
+    renderRosterControls();
+  }
 
   function buildCurrentTargetSnapshot() {
     const prefs = getPrefs();
@@ -181,17 +227,23 @@ function createStudentSessionRuntimeModule(deps) {
   }
 
   return Object.freeze({
+    addRosterStudent,
     applySnapshotToSettings,
     buildCurrentTargetSnapshot,
     buildMissionSummaryStats,
+    clearRosterStudents,
     clearGoalForStudent,
     getGoalForStudent,
     getGoalKeyForStudent,
     getMissionLabRecords,
+    maybeApplyStudentPlanForActiveStudent,
+    removeActiveRosterStudent,
     recordSessionRound,
     recordVoiceAttempt,
+    renderGroupBuilderPanel,
     renderRosterControls,
     renderSessionSummary,
+    renderStudentLockPanel,
     resetSessionSummary,
     setGoalForStudent
   });
