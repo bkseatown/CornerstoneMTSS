@@ -856,8 +856,8 @@ function normalizeTeamSet(set) {
     // Special positioning for music panel in Word Quest play mode
     let top;
     if (popover.id === 'quick-music-strip' && document.body.classList.contains('wordquest-root')) {
-      // Position music controls overlaid on the banner at the top
-      top = 12;
+      // Position music controls just below the banner, overlaying top of content
+      top = 85;
     } else {
       top = anchorRect.bottom + 8;
       if (top + popRect.height > window.innerHeight - margin) {
