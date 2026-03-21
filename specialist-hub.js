@@ -6568,6 +6568,10 @@
   });
 
   /* ── Cost dashboard initialization ──────────────────────────────────── */
+  var costDashboardModule = window.createSpecialistHubCostDashboardModule && typeof window.createSpecialistHubCostDashboardModule === "function"
+    ? window.createSpecialistHubCostDashboardModule()
+    : null;
+
   function initCostDashboard() {
     var dashboard = document.getElementById("th2-cost-dashboard");
     var closeBtn = document.getElementById("th2-cost-dashboard-close");
