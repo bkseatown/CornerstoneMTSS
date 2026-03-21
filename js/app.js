@@ -15527,6 +15527,8 @@
       insertSequenceIntoGuess(unit);
     }
   }
+  // Export immediately after definition so it's available globally ASAP
+  window.handleInputUnit = handleInputUnit;
 
   function handleKey(key) {
     avaWqLastActionAt = Date.now();

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Quest Runtime Diagnostic</title>
+  <style>
+    body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; max-width: 1000px; margin: 0 auto; }
+    h1 { color: #4ec9b0; }
+    .pass { color: #6a9955; }
+    .fail { color: #f48771; }
+    .warn { color: #dcdcaa; }
+    .section { margin: 20px 0; padding: 10px; border-left: 3px solid #007acc; }
+    pre { background: #252526; padding: 10px; overflow-x: auto; }
+    button { background: #007acc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 0; }
+    button:hover { background: #0098ff; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Word Quest Runtime Diagnostic</h1>
+  <p>This page diagnoses Word Quest issues by checking runtime state.</p>
+
+  <button onclick="runDiagnostic()">Run Full Diagnostic</button>
+  <button onclick="openWordQuest()">Open Word Quest</button>
+
+  <div id="results"></div>
+
+  <script>
+    function runDiagnostic() {
+      const results = document.getElementById('results');
+      let html = '<h2>📋 Diagnostic Results</h2>';
+
+      // Test 1: JavaScript
+      html += '<div class="section"><strong>1. JavaScript Enabled</strong><br>';
+      html += '<span class="pass">✅ JavaScript is working</span>';
+      html += '</div>';
+
+      // Test 2: Global Objects
+      html += '<div class="section"><strong>2. Global Objects</strong><br>';
+      const checks = [
+        { name: 'window', val: typeof window },
+        { name: 'document', val: typeof document },
+        { name: 'localStorage', val: typeof localStorage },
+        { name: 'fetch', val: typeof fetch },
+      ];
+      checks.forEach(c => {
+        const ok = c.val !== 'undefined';
+        html += `${ok ? '<span class="pass">✅</span>' : '<span class="fail">❌</span>'} ${c.name}<br>`;
+      });
+      html += '</div>';
+
+      // Test 3: DOM Elements
+      html += '<div class="section"><strong>3. DOM Elements</strong><br>';
+      const keyboard = document.getElementById('keyboard');
+      const board = document.getElementById('board');
+      html += `${keyboard ? '<span class="pass">✅</span>' : '<span class="fail">❌</span>'} Keyboard div: ${keyboard ? 'Found, ' + keyboard.children.length + ' children' : 'NOT FOUND'}<br>`;
+      html += `${board ? '<span class="pass">✅</span>' : '<span class="warn">⚠️</span>'} Board div: ${board ? 'Found' : 'Not found (may be generated dynamically)'}<br>`;
+      html += '</div>';
+
+      // Test 4: CSS
+      html += '<div class="section"><strong>4. Stylesheets</strong><br>';
+      const sheets = document.styleSheets.length;
+      html += `${sheets > 0 ? '<span class="pass">✅</span>' : '<span class="fail">❌</span>'} Stylesheets: ${sheets}<br>`;
+      html += '</div>';
+
+      // Test 5: Recommendations
+      html += '<div class="section"><strong>5. Troubleshooting Steps</strong><br>';
+
+      if (!keyboard) {
+        html += '<span class="fail">❌ CRITICAL: Keyboard div not found!</span><br>';
+        html += 'Solutions:<br>';
+        html += '• Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)<br>';
+        html += '• Open DevTools (F12) → Console tab<br>';
+        html += '• Check for red error messages<br>';
+        html += '• Check Network tab for 404 errors<br>';
+      } else if (keyboard.children.length === 0) {
+        html += '<span class="warn">⚠️ Keyboard div exists but is empty!</span><br>';
+        html += 'Solutions:<br>';
+        html += '• JavaScript game.js may not have executed<br>';
+        html += '• Wait 5+ seconds for all scripts to load<br>';
+        html += '• Check DevTools Console for errors<br>';
+        html += '• Look for "500 Internal Server Error" in Network tab<br>';
+      } else {
+        html += '<span class="pass">✅ Keyboard is loaded with ' + keyboard.children.length + ' keys!</span><br>';
+      }
+
+      html += '</div>';
+
+      results.innerHTML = html;
+    }
+
+    function openWordQuest() {
+      window.open('http://localhost:8888/word-quest.html?play=1', 'wq');
+    }
+
+    window.addEventListener('load', runDiagnostic);
+  </script>
+</body>
+</html>
