@@ -2318,6 +2318,10 @@
   var searchModule = window.createSpecialistHubSearchModule && typeof window.createSpecialistHubSearchModule === "function"
     ? window.createSpecialistHubSearchModule({ TeacherSearchService: TeacherSearchService, hubMemory: hubMemory })
     : null;
+
+  var uiModule = window.createSpecialistHubUIModule && typeof window.createSpecialistHubUIModule === "function"
+    ? window.createSpecialistHubUIModule({ escapeHtml: escapeHtml })
+    : null;
   function getFpLevel(studentId) {
     var lsKey = "cs.hub.fp." + studentId;
     var stored = hubMemory.getString(lsKey, "__missing__");
