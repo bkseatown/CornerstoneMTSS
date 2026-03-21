@@ -1234,9 +1234,11 @@ var voicePracticeMode = 'optional';
     let showAction = false;
     if (sentenceBtn) {
       const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+      const isDetectiveMode = playStyle !== 'listening';
       let actionMode = String(normalized.actionMode || '').trim().toLowerCase();
-      // Safety check: word-meaning should only show in listening mode
-      if (playStyle !== 'listening' && actionMode === 'word-meaning') {
+      // In detective mode: hide sentence/definition button completely (only show phonics clue + suggestions)
+      // In listening mode: show the "Hear Word + Meaning" button
+      if (isDetectiveMode) {
         actionMode = 'none';
       }
       showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
