@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./style/typography.css?v=20260314d">
   <link rel="stylesheet" href="./style/platform-hero.css?v=20260316a">
   <link rel="stylesheet" href="./home-v3.css?v=20260318c">
+  <link rel="stylesheet" href="./landing-auth.css?v=20260321g">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260310a">
 </head>
 <body class="cs-home-page">
@@ -27,6 +28,32 @@
         </div>
       </div>
     </header>
+
+    <!-- Authentication Section -->
+    <section class="landing-auth" id="landing-auth-section" aria-label="Authentication">
+      <!-- Unauthenticated State: Sign In Prompt -->
+      <div class="landing-auth__prompt" id="auth-unauthenticated">
+        <div class="landing-auth__content">
+          <h2>Welcome to Cornerstone MTSS</h2>
+          <p>Sign in with your Google account to access the Specialist Hub and manage your student caseload.</p>
+          <button class="landing-btn landing-btn--primary" id="landing-sign-in-btn" type="button">
+            🔐 Sign In with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- Authenticated State: User Greeting -->
+      <div class="landing-auth__greeting" id="auth-authenticated" style="display: none;">
+        <div class="landing-auth__user">
+          <img class="landing-auth__avatar" id="landing-user-avatar" src="" alt="User avatar" style="display: none;">
+          <div class="landing-auth__info">
+            <span class="landing-auth__name" id="landing-user-name">Loading...</span>
+            <span class="landing-auth__email" id="landing-user-email"></span>
+          </div>
+        </div>
+        <button class="landing-auth__signout" id="landing-sign-out-btn" type="button">Sign Out</button>
+      </div>
+    </section>
 
     <section class="landing-destinations" aria-label="Main destinations">
       <article class="landing-destination landing-destination--hub">
@@ -172,5 +199,6 @@
   <script src="./js/build-badge.js?v=20260316a"></script>
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
   <script src="./js/landing-preview.js?v=20260318c"></script>
+  <script src="./landing-auth.js?v=20260321g"></script>
 </body>
 </html>
