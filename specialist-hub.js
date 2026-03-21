@@ -2308,6 +2308,12 @@
     ? window.createSpecialistHubCurriculumModule({ hubMemory: hubMemory, escapeHtml: escapeHtml })
     : null;
 
+  var curriculumRegistry = window.CURRICULUM_REGISTRY || (window.createCurriculumRegistry && typeof window.createCurriculumRegistry === "function" ? window.createCurriculumRegistry() : null);
+
+  var quickReferenceModule = window.createSpecialistHubQuickReferenceModule && typeof window.createSpecialistHubQuickReferenceModule === "function"
+    ? window.createSpecialistHubQuickReferenceModule({ registry: curriculumRegistry, escapeHtml: escapeHtml })
+    : null;
+
   function getFpLevel(studentId) {
     var lsKey = "cs.hub.fp." + studentId;
     var stored = hubMemory.getString(lsKey, "__missing__");
