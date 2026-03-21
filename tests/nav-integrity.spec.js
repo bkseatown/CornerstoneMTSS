@@ -16,14 +16,14 @@ test.describe('Navigation integrity', () => {
 
     const routes = [
       { path: '/index.html', marker: 'body' },
-      { path: '/teacher-hub-v2.html', marker: '#th2-main, #th2-shell, body' },
-      { path: '/reports.html?audit=1&mode=daily', marker: '#td-shell' },
+      { path: '/specialist-hub.html', marker: '#th2-main, #th2-shell, body' },
+      { path: '/my-workspace.html?audit=1&mode=daily', marker: '#td-shell' },
       { path: '/word-quest.html', marker: 'body' },
       { path: '/reading-lab.html', marker: '#rl-root' },
-      { path: '/sentence-surgery.html', marker: '.ss-container' },
+      { path: '/sentence-studio.html', marker: '.ss-container' },
       { path: '/activities/decoding-diagnostic.html', marker: 'body' },
       { path: '/writing-studio.html', marker: 'body' },
-      { path: '/numeracy.html', marker: 'body' }
+      { path: '/number-lab.html', marker: 'body' }
     ];
 
     for (const route of routes) {

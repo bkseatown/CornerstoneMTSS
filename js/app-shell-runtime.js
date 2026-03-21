@@ -135,8 +135,8 @@ function createShellRuntimeModule(deps) {
   function csComputeHeaderTitleCenter() {
     const path = String(locationRef.pathname || '').toLowerCase();
     if (path.endsWith('/reading-lab.html')) return 'Reading Lab';
-    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html')) return 'Reports';
-    if (path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
+    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html') || path.endsWith('/my-workspace.html')) return 'My Workspace';
+    if (path.endsWith('/sentence-studio.html') || path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
     const mode = documentRef.documentElement.getAttribute('data-home-mode');
     if (mode === 'home') return 'Cornerstone MTSS';
     if (mode === 'play') return 'Word Quest';
@@ -289,7 +289,7 @@ function createShellRuntimeModule(deps) {
     const targetWord = String(state?.word || '').trim().toUpperCase();
     const clueSentence = String(state?.entry?.sentence || '').trim();
     const activeTheme = normalizeTheme(documentRef.documentElement.getAttribute('data-theme'), getThemeFallback());
-    const url = new URL(withAppBase('sentence-surgery.html'), windowRef.location.origin);
+    const url = new URL(withAppBase('sentence-studio.html'), windowRef.location.origin);
     url.searchParams.set('theme', activeTheme);
     url.searchParams.set('wq_focus', focusValue);
     url.searchParams.set('wq_focus_label', focusLabel);
@@ -319,7 +319,7 @@ function createShellRuntimeModule(deps) {
   }
 
   function openTeacherDashboardPage() {
-    const url = new URL(withAppBase('game-platform.html'), windowRef.location.origin);
+    const url = new URL(withAppBase('my-activities.html'), windowRef.location.origin);
     try {
       const params = new URLSearchParams(windowRef.location.search || '');
       if (params.get('demo') === '1') url.searchParams.set('demo', '1');
@@ -329,7 +329,7 @@ function createShellRuntimeModule(deps) {
   }
 
   function openNumeracyLabPage() {
-    const url = new URL(withAppBase('numeracy.html'), windowRef.location.origin);
+    const url = new URL(withAppBase('number-lab.html'), windowRef.location.origin);
     try {
       const params = new URLSearchParams(windowRef.location.search || '');
       if (params.get('demo') === '1') url.searchParams.set('demo', '1');
@@ -354,7 +354,7 @@ function createShellRuntimeModule(deps) {
       setHomeMode('home', { scroll: false });
       return;
     }
-    if (route === 'wordquest') {
+    if (route === 'wordquest' || route === 'word-quest') {
       setHomeMode('play', { scroll: false });
       openWordQuestIfNeeded();
       return;
@@ -371,7 +371,7 @@ function createShellRuntimeModule(deps) {
     }
     if (route === 'dashboard' || route === 'admin-demo') {
       setActivityLabel('Specialist Hub');
-      const url = new URL(withAppBase('teacher-hub-v2.html'), windowRef.location.origin);
+      const url = new URL(withAppBase('specialist-hub.html'), windowRef.location.origin);
       if (route === 'admin-demo') url.hash = '#admin-demo';
       windowRef.location.href = url.toString();
       return;
@@ -380,7 +380,7 @@ function createShellRuntimeModule(deps) {
   }
 
   function syncPlayToolsRoleVisibility() {
-    const teacherOnly = el('play-drawer-teacher-dashboard');
+    const teacherOnly = el('play-drawer-my-activities');
     if (!teacherOnly) return;
     teacherOnly.classList.toggle('hidden', !isTeacherRoleEnabled());
   }
@@ -407,7 +407,7 @@ function createShellRuntimeModule(deps) {
   function syncPageModeUI() {
     const missionEnabled = isMissionLabEnabled();
     const missionMode = missionEnabled && isMissionLabStandaloneMode();
-    documentRef.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'wordquest');
+    documentRef.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'word-quest');
     documentRef.documentElement.setAttribute('data-mission-lab', missionEnabled ? 'on' : 'off');
     const navBtn = el('mission-lab-nav-btn');
     if (navBtn) {

@@ -10,11 +10,11 @@ const VIEWPORTS = [
 const ROUTES = [
   { slug: 'index', url: './?audit=1', marker: 'body' },
   { slug: 'literacy-hub', url: 'literacy.html?audit=1', marker: '.cs-hub-root' },
-  { slug: 'numeracy-hub', url: 'numeracy.html?audit=1', marker: '.cs-hub-root' },
-  { slug: 'reports', url: 'reports.html?audit=1&mode=daily', marker: '#td-shell' },
+  { slug: 'number-lab', url: 'number-lab.html?audit=1', marker: '.cs-hub-root' },
+  { slug: 'my-workspace', url: 'my-workspace.html?audit=1&mode=daily', marker: '#td-shell' },
   { slug: 'word-quest', url: 'word-quest.html?audit=1', marker: 'body' },
   { slug: 'reading-lab', url: 'reading-lab.html?audit=1', marker: '#rl-root' },
-  { slug: 'sentence-surgery', url: 'sentence-surgery.html?audit=1', marker: '.ss-container' }
+  { slug: 'sentence-studio', url: 'sentence-studio.html?audit=1', marker: '.ss-container' }
 ];
 
 const MASK_SELECTORS = [

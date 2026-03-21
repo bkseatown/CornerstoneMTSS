@@ -43,7 +43,7 @@
     else if (src.focusTag === "morphology_awareness") skillDomain = "morphology";
 
     return {
-      engine: "wordquest",
+      engine: "word-quest",
       skill_domain: skillDomain,
       confidence: +confidence.toFixed(3),
       next_step: String(src.nextStep || "Run a coached Word Quest round and verify feedback-use strategy."),
@@ -70,7 +70,7 @@
 
     var intensity = (accuracy < 0.85 && punct < 0.60) ? "tier3" : intensityFromConfidence(confidence);
     return {
-      engine: "readinglab",
+      engine: "reading-lab",
       skill_domain: "fluency",
       confidence: +confidence.toFixed(3),
       next_step: String(src.nextStep || "Run a 10-minute fluency routine with punctuation-aware phrasing."),
@@ -91,7 +91,7 @@
     var src = signal && typeof signal === "object" ? signal : {};
     var confidence = clamp(Number(src.confidence || 0.58), 0, 1);
     return {
-      engine: "writingstudio",
+      engine: "writing-studio",
       skill_domain: "reasoning",
       confidence: +confidence.toFixed(3),
       next_step: String(src.next_step || src.nextStep || "Use Sentence Studio to model one because/although sentence, then independent rewrite."),
@@ -103,9 +103,9 @@
 
   function normalizeSignal(input, options) {
     var moduleName = String(options && options.module || input && input.engine || "").toLowerCase();
-    if (moduleName === "wordquest" || moduleName === "word_quest") return normalizeWordQuestSignal(input, options);
-    if (moduleName === "readinglab" || moduleName === "reading_lab") return normalizeReadingLabSignal(input, options);
-    if (moduleName === "writingstudio" || moduleName === "writing_studio") return normalizeWritingStudioSignal(input, options);
+    if (moduleName === "wordquest" || moduleName === "word_quest" || moduleName === "word-quest") return normalizeWordQuestSignal(input, options);
+    if (moduleName === "readinglab" || moduleName === "reading_lab" || moduleName === "reading-lab") return normalizeReadingLabSignal(input, options);
+    if (moduleName === "writingstudio" || moduleName === "writing_studio" || moduleName === "writing-studio" || moduleName === "sentence-studio" || moduleName === "sentence_surgery") return normalizeWritingStudioSignal(input, options);
     return null;
   }
 

@@ -67,8 +67,8 @@
       root.CSEvidenceEngine.recordEvidence({
         studentId: state.studentId,
         timestamp: new Date().toISOString(),
-        module: "numeracy",
-        activityId: "numeracy.quickcheck.v1",
+        module: "number-lab",
+        activityId: "number-lab.quickcheck.v1",
         targets: ["NUM.FLU.FACT"],
         tier: state.tier,
         doseMin: 3,
@@ -78,12 +78,12 @@
           latencyMs: Math.round((elapsed * 1000) / Math.max(1, state.attempts))
         },
         confidence: 0.78,
-        notes: "numeracy-quickcheck"
+        notes: "number-lab-quickcheck"
       });
     }
     if (root.CSSupportStore && typeof root.CSSupportStore.addEvidencePoint === "function") {
       root.CSSupportStore.addEvidencePoint(state.studentId, {
-        module: "numeracy",
+        module: "number-lab",
         domain: "numeracy.fluency",
         metrics: {
           attempts: state.attempts,

@@ -107,7 +107,7 @@ async function run() {
   }
 
   try {
-    await page.goto(`${baseUrl}/reports.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/my-workspace.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForSelector('#td-shell', { state: 'visible', timeout: 15000 });
 
     await page.evaluate(() => {
@@ -121,11 +121,11 @@ async function run() {
     if (tabStepsStart > 0) {
       await page.keyboard.press('Enter');
       await page.waitForTimeout(300);
-      const leftReports = !String(page.url()).includes('reports.html');
+      const leftReports = !String(page.url()).includes('my-workspace.html');
       record('Keyboard Enter activates primary CTA', leftReports, leftReports ? 'navigated to activity surface' : 'no navigation');
     }
 
-    await page.goto(`${baseUrl}/reports.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(`${baseUrl}/my-workspace.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForSelector('#td-shell', { state: 'visible', timeout: 15000 });
 
     const tabStepsMeeting = await tabToElement(page, 'td-meeting-workspace');

@@ -1566,22 +1566,22 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game
   animation-delay: 0.15s, 0.15s;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(1),
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="typing-quest"] .cg-mini-key:nth-child(1),
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="typing-quest"] .cg-mini-key:nth-child(5) {
   animation: cg-preview-key-pulse 0.85s ease-in-out infinite;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-typing"] .cg-mini-key:nth-child(5) {
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="typing-quest"] .cg-mini-key:nth-child(5) {
   animation-delay: 0.42s;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li {
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="dont-say-it"] .cg-mini-taboo-list li {
   animation: cg-preview-flash-warn 1.6s ease-in-out infinite;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(2) { animation-delay: 0.2s; }
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(3) { animation-delay: 0.4s; }
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-connections"] .cg-mini-taboo-list li:nth-child(4) { animation-delay: 0.6s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="dont-say-it"] .cg-mini-taboo-list li:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="dont-say-it"] .cg-mini-taboo-list li:nth-child(3) { animation-delay: 0.4s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="dont-say-it"] .cg-mini-taboo-list li:nth-child(4) { animation-delay: 0.6s; }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="morphology-builder"] .cg-mini-part--prefix {
   animation: cg-preview-slide-part 0.9s ease-in-out infinite;
@@ -1598,16 +1598,16 @@ body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(2) { animation-delay: 0.25s; }
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="concept-ladder"] .cg-mini-rung:nth-child(3) { animation-delay: 0.5s; }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="error-detective"] .cg-mini-error {
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-studio"] .cg-mini-error {
   animation: cg-preview-error-glow 1.2s ease-in-out infinite;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip {
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-categories"] .cg-mini-word-chip {
   animation: cg-preview-chip-rise 1.3s ease-in-out infinite;
 }
 
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(2) { animation-delay: 0.2s; }
-body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="rapid-category"] .cg-mini-word-chip:nth-child(3) { animation-delay: 0.4s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-categories"] .cg-mini-word-chip:nth-child(2) { animation-delay: 0.2s; }
+body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="word-categories"] .cg-mini-word-chip:nth-child(3) { animation-delay: 0.4s; }
 
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(1),
 body.game-platform-page[data-shell-view="gallery"] .cg-game-card:hover[data-game-id="sentence-builder"] .cg-mini-piece:nth-child(3) {

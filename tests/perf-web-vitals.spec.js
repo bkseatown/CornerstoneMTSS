@@ -19,14 +19,14 @@ const ROUTES = [
     interactionSelectors: ['.cs-hub-head h1', '.cs-hub-section h2']
   },
   {
-    slug: 'numeracy-hub',
-    url: 'numeracy.html?audit=1',
+    slug: 'number-lab',
+    url: 'number-lab.html?audit=1',
     marker: '.cs-hub-root',
     interactionSelectors: ['.cs-hub-head h1', '.cs-hub-section h2']
   },
   {
     slug: 'reports',
-    url: 'reports.html?audit=1&mode=daily',
+    url: 'my-workspace.html?audit=1&mode=daily',
     marker: '#td-shell',
     interactionSelectors: ['#td-focus-start-btn', '#td-meeting-workspace', 'button']
   },

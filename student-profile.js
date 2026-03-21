@@ -108,9 +108,9 @@
       ],
       behavior: [],
       files: [
-        { label: "IESP details", href: "./case-management.html#iesp" },
-        { label: "IAP details", href: "./case-management.html#iap" },
-        { label: "IP details", href: "./case-management.html#ip" }
+        { label: "IESP details", href: "./my-students.html#iesp" },
+        { label: "IAP details", href: "./my-students.html#iap" },
+        { label: "IP details", href: "./my-students.html#ip" }
       ],
       notes: [
         "Latest classroom evidence: cool-down and dictated sentence collected this week.",
@@ -148,7 +148,7 @@
         "Keep only the active sound cards visible during decoding work."
       ],
       behavior: [],
-      files: [{ label: "IP details", href: "./case-management.html#ip" }],
+      files: [{ label: "IP details", href: "./my-students.html#ip" }],
       notes: ["This student is the clearest K-2 science of reading example in the demo set."]
     },
     "demo-maya": {
@@ -182,7 +182,7 @@
         "Mark off completion of topic sentence, detail 1, detail 2, and closing."
       ],
       behavior: [],
-      files: [{ label: "IAP details", href: "./case-management.html#iap" }],
+      files: [{ label: "IAP details", href: "./my-students.html#iap" }],
       notes: ["Writing data should stay concrete: rubric notes, organizer use, and classroom samples."]
     },
     "demo-noah": {
@@ -216,7 +216,7 @@
         "Use a brief self-check after equation set-up."
       ],
       behavior: [],
-      files: [{ label: "IESP details", href: "./case-management.html#iesp" }],
+      files: [{ label: "IESP details", href: "./my-students.html#iesp" }],
       notes: ["This is the cleanest place to show conceptual math philosophy as a planning lens, not as a fake product."]
     },
     "demo-zoe": {
@@ -254,7 +254,7 @@
         "BIP: replacement behavior is help request plus return to task after one adult prompt.",
         "Review date set with psychologist and behavior team."
       ],
-      files: [{ label: "BIP details", href: "./case-management.html#bip" }],
+      files: [{ label: "BIP details", href: "./my-students.html#bip" }],
       notes: ["Keep behavior notes factual and brief: incident, response, next review date."]
     },
     "demo-jasmin": {
@@ -288,7 +288,7 @@
         "Use a note-catcher with required sections already labeled."
       ],
       behavior: [],
-      files: [{ label: "IAP details", href: "./case-management.html#iap" }],
+      files: [{ label: "IAP details", href: "./my-students.html#iap" }],
       notes: ["Older-student demo data should feel leaner and more document-based than elementary."]
     },
     "demo-mateo": {
@@ -322,7 +322,7 @@
         "Use teacher outline before written response begins."
       ],
       behavior: [],
-      files: [{ label: "IESP details", href: "./case-management.html#iesp" }, { label: "IP details", href: "./case-management.html#ip" }],
+      files: [{ label: "IESP details", href: "./my-students.html#iesp" }, { label: "IP details", href: "./my-students.html#ip" }],
       notes: ["Case manager remains looped in on accommodations even while the specialist maintains active service delivery."]
     }
   };

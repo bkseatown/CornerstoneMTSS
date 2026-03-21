@@ -35,6 +35,12 @@
   "use strict";
 
   var runtimeRoot = typeof globalThis !== "undefined" ? globalThis : window;
+  var GAME_ID_ALIASES = Object.freeze({
+    "word-connections": "dont-say-it",
+    "error-detective": "sentence-studio",
+    "rapid-category": "word-categories",
+    "word-typing": "typing-quest"
+  });
   var COMMON_WORDS = {
     a: true, an: true, and: true, are: true, as: true, at: true, be: true, because: true, by: true, can: true,
     for: true, from: true, how: true, in: true, into: true, is: true, it: true, its: true, of: true, on: true,
@@ -44,13 +50,13 @@
   var COMMON_SUFFIXES = ["ing", "ed", "er", "est", "ly", "ful", "less", "ment", "tion", "sion", "ion", "ity", "al", "ous", "ive", "able", "ible", "ist"];
   var STATIC_DYNAMIC_GAMES = {
     "word-quest": true,
-    "word-connections": true,
+    "dont-say-it": true,
     "morphology-builder": true,
     "concept-ladder": true,
-    "error-detective": true,
-    "rapid-category": true,
+    "sentence-studio": true,
+    "word-categories": true,
     "sentence-builder": true,
-    "word-typing": true
+    "typing-quest": true
   };
 
   var WORD_QUEST_PACK = [
@@ -94,13 +100,13 @@
 
   var CONTENT = Object.freeze({
     "word-quest": WORD_QUEST_PACK,
-    "word-connections": WORD_CONNECTIONS_PACK,
+    "dont-say-it": WORD_CONNECTIONS_PACK,
     "morphology-builder": morphologyContent || [],
     "concept-ladder": ladderContent || [],
-    "error-detective": errorContent || [],
-    "rapid-category": categoryContent || [],
+    "sentence-studio": errorContent || [],
+    "word-categories": categoryContent || [],
     "sentence-builder": sentenceContent || [],
-    "word-typing": typingContent || []
+    "typing-quest": typingContent || []
   });
 
   var TYPING_PLACEMENT = typingPlacementContent || [];
@@ -582,17 +588,18 @@
   }
 
   function buildDynamicRows(gameId, context) {
+    gameId = normalizeGameId(gameId);
     if (!STATIC_DYNAMIC_GAMES[gameId]) return [];
     var entries = selectWordBankEntries(context);
     if (!entries.length) return [];
     if (gameId === "word-quest") return buildWordQuestRows(entries, context);
-    if (gameId === "word-connections") return buildWordConnectionsRows(entries, context);
+    if (gameId === "dont-say-it") return buildWordConnectionsRows(entries, context);
     if (gameId === "morphology-builder") return buildMorphologyRows(entries);
     if (gameId === "concept-ladder") return buildConceptLadderRows(entries, context);
-    if (gameId === "error-detective") return buildErrorDetectiveRows(entries);
-    if (gameId === "rapid-category") return buildRapidCategoryRows(entries, context);
+    if (gameId === "sentence-studio") return buildErrorDetectiveRows(entries);
+    if (gameId === "word-categories") return buildRapidCategoryRows(entries, context);
     if (gameId === "sentence-builder") return buildSentenceRows(entries, context);
-    if (gameId === "word-typing") {
+    if (gameId === "typing-quest") {
       if (String(context && context.contentMode || "lesson").toLowerCase() === "lesson") return [];
       return buildTypingRows(entries, context);
     }
@@ -600,6 +607,7 @@
   }
 
   function filterStaticDeck(gameId, context) {
+    gameId = normalizeGameId(gameId);
     var ctx = context && typeof context === "object" ? context : {};
     var gradeBand = normalizeGradeBand(ctx.gradeBand || ctx.grade || "K-2");
     var subject = inferSubject(ctx);
@@ -621,7 +629,8 @@
   }
 
   function filterDeck(gameId, context) {
-    if (gameId === "word-typing" && String(context && context.typingCourseMode || "").toLowerCase() === "placement") {
+    gameId = normalizeGameId(gameId);
+    if (gameId === "typing-quest" && String(context && context.typingCourseMode || "").toLowerCase() === "placement") {
       return TYPING_PLACEMENT.slice().sort(function (left, right) {
         return Number(left && left.lessonOrder || 0) - Number(right && right.lessonOrder || 0);
       });
@@ -629,7 +638,7 @@
     var dynamic = buildDynamicRows(gameId, context);
     var rows = filterStaticDeck(gameId, context);
     var deck = dynamic.length ? dynamic.concat(rows) : rows;
-    if (gameId === "word-typing") {
+    if (gameId === "typing-quest") {
       return deck.slice().sort(function (left, right) {
         var a = Number(left && left.lessonOrder || 999);
         var b = Number(right && right.lessonOrder || 999);
@@ -641,8 +650,9 @@
   }
 
   function pickRound(gameId, context, history) {
+    gameId = normalizeGameId(gameId);
     var rows = filterDeck(gameId, context);
-    if (gameId === "word-typing" && context && context.currentTypingLessonId) {
+    if (gameId === "typing-quest" && context && context.currentTypingLessonId) {
       var forced = rows.filter(function (row) {
         return String(row && row.id || "") === String(context.currentTypingLessonId || "");
       })[0];
@@ -667,10 +677,15 @@
           })
         : null;
     }
-    if (gameId === "word-typing") {
+    if (gameId === "typing-quest") {
       return pool[0];
     }
     return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function normalizeGameId(gameId) {
+    var raw = String(gameId || "").trim().toLowerCase();
+    return GAME_ID_ALIASES[raw] || raw;
   }
 
   return {
@@ -684,13 +699,14 @@
       });
     },
     getTypingCourseRows: function (context) {
-      return filterStaticDeck("word-typing", context).slice().sort(function (left, right) {
+      return filterStaticDeck("typing-quest", context).slice().sort(function (left, right) {
         var a = Number(left && left.lessonOrder || 999);
         var b = Number(right && right.lessonOrder || 999);
         if (a !== b) return a - b;
         return String(left && left.id || "").localeCompare(String(right && right.id || ""));
       });
     },
+    normalizeGameId: normalizeGameId,
     generateGameContent: generator && generator.generateGameContent
       ? generator.generateGameContent
       : function () { return null; }

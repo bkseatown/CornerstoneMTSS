@@ -318,7 +318,7 @@ function createQuestRuntimeModule(deps) {
     const repeatRate = Number(signals.repetitionPenalty || 0);
     const tier = Number(signals.updateRespect || 0) < 0.55 || repeatRate > 0.18 ? 'tier3' : 'tier2';
     const session = windowRef.CSCornerstoneSignals.normalizeSignal({
-      engine: 'wordquest',
+      engine: 'word-quest',
       studentCode,
       durationMs: Math.max(0, Number(signals.durSec || 0) * 1000),
       metrics: {
@@ -403,7 +403,7 @@ function createQuestRuntimeModule(deps) {
       const repeatedInvalidLetterPlacementCount = Math.max(0, Math.round((1 - patternAdherence) * guessCount));
       const vowelSwapCount = Math.max(0, Number(signals.uniqueVowels || 0));
       if (windowRef.CSEvidence && typeof windowRef.CSEvidence.appendSession === 'function') {
-        windowRef.CSEvidence.appendSession(studentId, 'wordquest', {
+        windowRef.CSEvidence.appendSession(studentId, 'word-quest', {
           totalGuesses: guessCount,
           solveSuccess: !!signals.solved,
           timeToFirstCorrectLetter: timeToFirstGuess,
@@ -425,7 +425,7 @@ function createQuestRuntimeModule(deps) {
         windowRef.CSEvidence.addSession(studentId, {
           id: deps.getActiveEvidenceSessionId?.() || undefined,
           createdAt: new Date().toISOString(),
-          activity: 'wordquest',
+          activity: 'word-quest',
           durationSec,
           signals: {
             guessCount,
@@ -444,7 +444,7 @@ function createQuestRuntimeModule(deps) {
       }
       if (windowRef.CSSupportStore && typeof windowRef.CSSupportStore.addEvidencePoint === 'function') {
         windowRef.CSSupportStore.addEvidencePoint(studentId, {
-          module: 'wordquest',
+          module: 'word-quest',
           domain: 'literacy.decoding',
           metrics: {
             attempts: guessCount,
@@ -470,7 +470,7 @@ function createQuestRuntimeModule(deps) {
           session: {
             studentId,
             createdAt: new Date().toISOString(),
-            activity: 'wordquest',
+            activity: 'word-quest',
             durationSec: Math.max(0, Number(signals.durSec || 0))
           },
           events: payloadMeta.events || [],
@@ -496,7 +496,7 @@ function createQuestRuntimeModule(deps) {
     try {
       if (windowRef.CSCornerstoneEngine && typeof windowRef.CSCornerstoneEngine.appendSignal === 'function') {
         windowRef.CSCornerstoneEngine.appendSignal(signals, {
-          module: 'wordquest',
+          module: 'word-quest',
           studentId
         });
       }

@@ -34,24 +34,27 @@
   function buildLinks() {
     var links = [
       { href: withBase("index.html"), label: "Home", icon: "⌂", pages: ["", "/", "index.html"] },
-      { href: withBase("teacher-hub-v2.html"), label: "Hub", icon: "◫", pages: ["teacher-hub-v2.html"] },
-      { href: withBase("student-profile.html"), label: "Students", icon: "◌", pages: ["student-profile.html"] },
+      { href: withBase("specialist-hub.html"), label: "Hub", icon: "◫", pages: ["specialist-hub.html", "teacher-hub-v2.html"] },
+      { href: withBase("my-students.html"), label: "My Students", icon: "◌", pages: ["my-students.html", "case-management.html", "student-profile.html"] },
       {
-        href: withBase("game-platform.html"),
-        label: "Practice",
+        href: withBase("my-activities.html"),
+        label: "My Activities",
         icon: "✦",
         pages: [
+          "my-activities.html",
           "game-platform.html",
           "word-quest.html",
           "reading-lab.html",
+          "sentence-studio.html",
           "sentence-surgery.html",
           "writing-studio.html",
+          "number-lab.html",
           "numeracy.html",
           "precision-play.html",
           "decoding-diagnostic.html"
         ]
       },
-      { href: withBase("reports.html"), label: "Reports", icon: "▣", pages: ["teacher-dashboard.html", "reports.html"] }
+      { href: withBase("my-workspace.html"), label: "My Workspace", icon: "▣", pages: ["teacher-dashboard.html", "reports.html", "my-workspace.html"] }
     ];
     return links;
   }
@@ -59,15 +62,22 @@
   function pageMeta(page) {
     var map = {
       "index.html": { eyebrow: "Platform", title: "Cornerstone MTSS" },
+      "specialist-hub.html": { eyebrow: "Daily Command", title: "Specialist Hub" },
       "teacher-hub-v2.html": { eyebrow: "Daily Command", title: "Specialist Hub" },
-      "student-profile.html": { eyebrow: "Student Story", title: "Profile Workspace" },
-      "reports.html": { eyebrow: "Planning", title: "Reports & Prep" },
-      "game-platform.html": { eyebrow: "Practice", title: "Learning Games" },
+      "my-students.html": { eyebrow: "Students", title: "My Students" },
+      "case-management.html": { eyebrow: "Students", title: "My Students" },
+      "student-profile.html": { eyebrow: "Students", title: "Student Profile" },
+      "my-workspace.html": { eyebrow: "Workspace", title: "My Workspace" },
+      "reports.html": { eyebrow: "Workspace", title: "My Workspace" },
+      "my-activities.html": { eyebrow: "Activities", title: "My Activities" },
+      "game-platform.html": { eyebrow: "Activities", title: "My Activities" },
       "word-quest.html": { eyebrow: "Practice", title: "Word Quest" },
       "reading-lab.html": { eyebrow: "Practice", title: "Reading Lab" },
-      "sentence-surgery.html": { eyebrow: "Practice", title: "Sentence Surgery" },
+      "sentence-studio.html": { eyebrow: "Practice", title: "Sentence Studio" },
+      "sentence-surgery.html": { eyebrow: "Practice", title: "Sentence Studio" },
       "writing-studio.html": { eyebrow: "Practice", title: "Writing Studio" },
-      "numeracy.html": { eyebrow: "Practice", title: "Numeracy" },
+      "number-lab.html": { eyebrow: "Practice", title: "Number Lab" },
+      "numeracy.html": { eyebrow: "Practice", title: "Number Lab" },
       "precision-play.html": { eyebrow: "Practice", title: "Precision Play" },
       "decoding-diagnostic.html": { eyebrow: "Assessment", title: "Decoding Diagnostic" }
     };

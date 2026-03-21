@@ -105,7 +105,7 @@ async function waitForDestinationReady(page, urlPattern, readySelector, options 
 }
 
 async function gotoReportsSurface(page, baseUrl) {
-  await page.goto(`${baseUrl}/reports.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.goto(`${baseUrl}/my-workspace.html?audit=1&mode=daily`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await waitForVisible(page, '#td-shell');
 }
 
@@ -324,11 +324,11 @@ async function run() {
       });
       if (!clicked) throw new Error('td-focus-start-btn not found or has no onclick handler');
       await page.waitForFunction(() => {
-        return !String(window.location.href).includes('reports.html');
+        return !String(window.location.href).includes('my-workspace.html');
       }, { timeout: 12000 });
       const after = page.url();
-      if (/reports\.html(?:\?|$)/i.test(after)) {
-        throw new Error(`Expected navigation away from reports surface, URL is still ${after}`);
+      if (/my-workspace\.html(?:\?|$)/i.test(after)) {
+        throw new Error(`Expected navigation away from My Workspace, URL is still ${after}`);
       }
     });
 

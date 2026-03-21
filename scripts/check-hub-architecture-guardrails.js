@@ -15,8 +15,8 @@ function assert(condition, message, failures) {
 }
 
 const failures = [];
-const hubHtml = read('teacher-hub-v2.html');
-const hubJs = read('teacher-hub-v2.js');
+const hubHtml = read('specialist-hub.html');
+const hubJs = read('specialist-hub.js');
 const lessonBriefJs = read('js/lesson-brief-panel.js');
 const storageJs = read('js/teacher/teacher-storage.js');
 const selectorsJs = read('js/teacher/teacher-selectors.js');
@@ -59,7 +59,7 @@ assert(intelligenceJs.includes('CSTeacherIntelligence'), 'Shared teacher intelli
 assert(intelligenceJs.includes('buildTodayPlan'), 'Shared teacher intelligence today-plan builder missing.', failures);
 assert(searchServiceJs.includes('CSTeacherSearchService'), 'Shared teacher search service module missing.', failures);
 
-assert(landingHtml.includes('href="./teacher-hub-v2.html"'), 'Landing page does not route Teacher to the Hub.', failures);
+assert(landingHtml.includes('href="./specialist-hub.html"'), 'Landing page does not route Teacher to the Hub.', failures);
 
 if (failures.length) {
   console.error('Hub architecture guardrail checks failed:');

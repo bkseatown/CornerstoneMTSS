@@ -8,6 +8,17 @@
   "use strict";
 
   var runtimeRoot = typeof globalThis !== "undefined" ? globalThis : window;
+  var GAME_ID_ALIASES = Object.freeze({
+    "word-connections": "dont-say-it",
+    "error-detective": "sentence-studio",
+    "rapid-category": "word-categories",
+    "word-typing": "typing-quest"
+  });
+
+  function normalizeGameId(gameId) {
+    var raw = String(gameId || "").trim().toLowerCase();
+    return GAME_ID_ALIASES[raw] || raw;
+  }
 
   function normalizeGradeBand(value) {
     var raw = String(value || "").toUpperCase();
@@ -27,7 +38,7 @@
       lessonContextId: String(params.get("lessonContextId") || "").trim(),
       subject: String(params.get("subject") || "").trim(),
       programId: String(params.get("programId") || "").trim(),
-      gameId: String(params.get("game") || "").trim(),
+      gameId: normalizeGameId(String(params.get("game") || "").trim()),
       gradeBand: String(params.get("gradeBand") || params.get("grade") || "").trim(),
       lessonTitle: String(params.get("lesson") || "").trim(),
       skillFocus: String(params.get("skillFocus") || "").trim(),
@@ -908,8 +919,8 @@
           };
         }
       },
-      "word-typing": {
-        id: "word-typing",
+      "typing-quest": {
+        id: "typing-quest",
         title: "Typing Quest",
         subtitle: "Type the lesson word, lock the spelling pattern, and build keyboard confidence through real literacy practice.",
         tags: ["Typing + Literacy", "Orthographic Mapping", "Home Row to Full Keyboard"],
@@ -922,8 +933,8 @@
         },
         createRound: function (input) {
           var currentContext = roundContext(input);
-          var deck = registry.filterDeck("word-typing", currentContext) || [];
-          var row = registry.pickRound("word-typing", currentContext, input.history) || {};
+          var deck = registry.filterDeck("typing-quest", currentContext) || [];
+          var row = registry.pickRound("typing-quest", currentContext, input.history) || {};
           var lessonIndex = deck.findIndex(function (item) { return item && item.id === row.id; });
           var unitDeck = deck.filter(function (item) {
             return String(item && item.unitLabel || "") === String(row.unitLabel || "");
@@ -1005,9 +1016,9 @@
           };
         }
       },
-      "word-connections": {
-        id: "word-connections",
-        title: "Off Limits",
+      "dont-say-it": {
+        id: "dont-say-it",
+        title: "Don't Say It!",
         subtitle: "Give a smart clue so your team can guess the lesson word without using the off-limits words on the card.",
         tags: ["Team Guessing", "Academic Language", "Projector Ready"],
         modeLabel: "Clue",
@@ -1189,16 +1200,16 @@
             : { correct: false, nearMiss: clueCount < (round.clues || []).length, message: "Not yet. Take the next clue or rethink the pattern." };
         }
       },
-      "error-detective": {
-        id: "error-detective",
-        title: "Fix the Sentence",
+      "sentence-studio": {
+        id: "sentence-studio",
+        title: "Sentence Studio",
         subtitle: "Spot the mistake, name what went wrong, and pick the fix that repairs the thinking.",
         tags: ["Misconceptions", "Literacy or Math", "Teacher Focus"],
         modeLabel: "Detect",
         baseTimerSeconds: 65,
         roundTarget: 6,
         createRound: function (input) {
-          var row = registry.pickRound("error-detective", roundContext(input), input.history) || {};
+          var row = registry.pickRound("sentence-studio", roundContext(input), input.history) || {};
           return {
             id: row.id || ("error-" + Date.now()),
             promptLabel: row.prompt || "Find the fix.",
@@ -1221,8 +1232,8 @@
             : { correct: false, nearMiss: !!value, message: value ? "Not quite. The right fix: \u201c" + String(round.answer || "") + "\u201d" : "No correction selected." };
         }
       },
-      "rapid-category": {
-        id: "rapid-category",
+      "word-categories": {
+        id: "word-categories",
         title: "Word Categories",
         subtitle: "Race the clock to name as many lesson words as you can in the right category.",
         tags: ["Timed Retrieval", "Projector Ready", "Unique Responses"],
@@ -1230,7 +1241,7 @@
         baseTimerSeconds: 40,
         roundTarget: 5,
         createRound: function (input) {
-          var row = registry.pickRound("rapid-category", roundContext(input), input.history) || {};
+          var row = registry.pickRound("word-categories", roundContext(input), input.history) || {};
           return {
             id: row.id || ("category-" + Date.now()),
             promptLabel: row.prompt || "Fill the category.",
@@ -1320,7 +1331,7 @@
 
   function galleryLaunchHref(gameId, context) {
     if (gameId === "word-quest") return launchHref("./word-quest.html?play=1", context);
-    return launchHref("./game-platform.html?play=1&game=" + encodeURIComponent(gameId), context);
+    return launchHref("./my-activities.html?play=1&game=" + encodeURIComponent(gameId), context);
   }
 
   function clamp(value, min, max) {
@@ -1348,7 +1359,7 @@
   function supportLine(context, state) {
     var subject = context.subject || "ELA";
     var mode = (runtimeRoot.CSGameModes.VIEW_MODES[state.settings.viewMode] || {}).label || "Individual";
-    if (String(state && state.selectedGameId || "") === "word-typing") {
+    if (String(state && state.selectedGameId || "") === "typing-quest") {
       return "Typing Quest Foundations · " + mode + " · " + (context.typingPlacementRequired ? "Placement" : ("Lesson " + String(context.currentTypingLessonOrder || 1)));
     }
     if (String(state && state.selectedGameId || "") === "morphology-builder") {
@@ -1372,12 +1383,12 @@
 
   function galleryCaption(gameId) {
     if (gameId === "word-quest") return "Best for: solo, pairs, fast warm-ups";
-    if (gameId === "word-typing") return "Best for: typing instruction, intervention, centers";
-    if (gameId === "word-connections") return "Best for: partners, teams, projector play";
+    if (gameId === "typing-quest") return "Best for: typing instruction, intervention, centers";
+    if (gameId === "dont-say-it") return "Best for: partners, teams, projector play";
     if (gameId === "morphology-builder") return "Best for: intervention, word study, pairs";
     if (gameId === "concept-ladder") return "Best for: lesson launch, teams, projector";
-    if (gameId === "error-detective") return "Best for: small group, discussion, reteach";
-    if (gameId === "rapid-category") return "Best for: teams, projector, retrieval bursts";
+    if (gameId === "sentence-studio") return "Best for: small group, discussion, reteach";
+    if (gameId === "word-categories") return "Best for: teams, projector, retrieval bursts";
     if (gameId === "sentence-builder") return "Best for: solo, partners, language support";
     return "Best for: quick lesson-ready practice";
   }
@@ -1391,13 +1402,13 @@
 
   function roundFocusLabel(game, round) {
     if (!game || !round) return "";
-    if (game.id === "word-typing") return [round.unitLabel, round.keyboardZone, round.orthographyFocus].filter(Boolean).join(" · ");
+    if (game.id === "typing-quest") return [round.unitLabel, round.keyboardZone, round.orthographyFocus].filter(Boolean).join(" · ");
     if (game.id === "word-quest") return round.answer ? ("Target length · " + String(round.answer).length + " letters") : "";
-    if (game.id === "word-connections") return "Off-limits words stay out";
+    if (game.id === "dont-say-it") return "Don't say the blocked clue words.";
     if (game.id === "morphology-builder") return round.meaningHint ? "Meaning unlock after build" : "Build from parts";
     if (game.id === "concept-ladder") return "Earlier solves earn more";
-    if (game.id === "error-detective") return round.misconception || "Misconception repair";
-    if (game.id === "rapid-category") return "Unique answers score stronger";
+    if (game.id === "sentence-studio") return round.misconception || "Misconception repair";
+    if (game.id === "word-categories") return "Unique answers score stronger";
     if (game.id === "sentence-builder") return round.requiredToken ? ("Must include " + round.requiredToken) : "Academic language required";
     return "";
   }
@@ -1413,11 +1424,11 @@
       firstMove = group ? "Read the clue out loud and agree on one class guess." : "Read the clue and type one confident guess.";
       turnCue = group ? "Teacher chooses when to lock the team answer." : "Use the tile reveal to decide your next move fast.";
       winCue = "Land the correct word before the timer runs out.";
-    } else if (game.id === "word-typing") {
+    } else if (game.id === "typing-quest") {
       firstMove = group ? "Model the target once, then have students name the pattern before anyone types." : "Look at the whole target, notice the pattern, then type without looking down.";
       turnCue = group ? "Use projector mode for modeling, but save real fluency scores for individual keyboards." : "Accuracy comes first. Build to 5 stars before moving on.";
       winCue = "Type the full lesson target and meet the WPM and accuracy goal.";
-    } else if (game.id === "word-connections") {
+    } else if (game.id === "dont-say-it") {
       firstMove = group ? "One speaker gives the first clue while the team listens for the target word." : "Give one clear clue without using any off-limits words.";
       turnCue = group ? "Rotate speakers each round so every team member gets a clue turn." : "Keep the clue short, useful, and lesson-linked.";
       winCue = "Help the guesser land the word without saying the off-limits words.";
@@ -1429,11 +1440,11 @@
       firstMove = "Start with the first clue only.";
       turnCue = group ? "Pause after every clue so teams can commit before revealing more." : "Only reveal another clue if you really need it.";
       winCue = "Solve early to earn the strongest round.";
-    } else if (game.id === "error-detective") {
+    } else if (game.id === "sentence-studio") {
       firstMove = "Spot what is wrong in the example before choosing a fix.";
       turnCue = group ? "Let teams explain why a choice repairs the thinking, not just the wording." : "Choose the fix that repairs the reasoning.";
       winCue = "Close the case with the option that truly fixes the misconception.";
-    } else if (game.id === "rapid-category") {
+    } else if (game.id === "word-categories") {
       firstMove = group ? "Name fast ideas while one person records only the strongest responses." : "Type as many relevant words as you can before time ends.";
       turnCue = group ? "Reject repeats and keep only unique answers that fit the category." : "Unique, lesson-fit words beat filler.";
       winCue = "Collect enough strong responses to clear the round.";
@@ -1456,13 +1467,13 @@
   function nextStepLine(game, outcome) {
     if (!game || !outcome) return "";
     if (outcome.correct || outcome.teacherOverride) {
-      if (game.id === "word-typing") return "Next move: check the star rating, then either replay for mastery or move to the next lesson.";
+      if (game.id === "typing-quest") return "Next move: check the star rating, then either replay for mastery or move to the next lesson.";
       if (game.id === "concept-ladder") return "Next move: start the next round with one clue fewer if the class is ready.";
-      if (game.id === "rapid-category") return "Next move: raise the category challenge or switch teams.";
+      if (game.id === "word-categories") return "Next move: raise the category challenge or switch teams.";
       return "Next move: take the next round while the pattern is still fresh.";
     }
     if (outcome.nearMiss) return "Next move: keep the same round and use the hint before moving on.";
-    if (game.id === "word-connections") return "Next move: try one sharper clue path instead of a full reset.";
+    if (game.id === "dont-say-it") return "Next move: try one sharper clue path instead of a full reset.";
     return "Next move: reset cleanly and try the round again with one stronger first move.";
   }
 
@@ -1478,10 +1489,10 @@
     if (game.id === "word-quest") {
       return step === 0 ? "Variation: fast solve round." : step === 1 ? "Variation: justify before you lock the guess." : "Variation: use the clue meaning, not just the first letter.";
     }
-    if (game.id === "word-typing") {
+    if (game.id === "typing-quest") {
       return step === 0 ? "Variation: accuracy first." : step === 1 ? "Variation: say the chunk, then type it." : "Variation: type the whole word without pausing between parts.";
     }
-    if (game.id === "word-connections") {
+    if (game.id === "dont-say-it") {
       return step === 0 ? "Variation: example clue." : step === 1 ? "Variation: function clue." : "Variation: compare-and-contrast clue.";
     }
     if (game.id === "morphology-builder") {
@@ -1490,10 +1501,10 @@
     if (game.id === "concept-ladder") {
       return step === 0 ? "Variation: solve early." : step === 1 ? "Variation: justify before the reveal." : "Variation: team vote before the next rung.";
     }
-    if (game.id === "error-detective") {
+    if (game.id === "sentence-studio") {
       return step === 0 ? "Variation: name the error first." : step === 1 ? "Variation: compare two possible fixes." : "Variation: explain why the wrong choice fails.";
     }
-    if (game.id === "rapid-category") {
+    if (game.id === "word-categories") {
       return step === 0 ? "Variation: speed burst." : step === 1 ? "Variation: no repeats." : "Variation: quality over quantity.";
     }
     if (game.id === "sentence-builder") {
@@ -1509,13 +1520,13 @@
     if (game.id === "concept-ladder") {
       primaryAction = '<button class="cg-action cg-action-primary" type="button" data-action="reveal-clue">Reveal Next Clue</button>';
       secondaryAction = '<button class="cg-action cg-action-quiet" type="button" data-action="teacher-override">Award Solve</button>';
-    } else if (game.id === "word-connections") {
+    } else if (game.id === "dont-say-it") {
       primaryAction = '<button class="cg-action cg-action-primary" type="button" data-action="teacher-override">Count Team Clue</button>';
       secondaryAction = '<button class="cg-action cg-action-quiet" type="button" data-action="next-round">Rotate Speaker</button>';
-    } else if (game.id === "rapid-category") {
+    } else if (game.id === "word-categories") {
       primaryAction = '<button class="cg-action cg-action-primary" type="button" data-action="teacher-override">Count Team Round</button>';
       secondaryAction = '<button class="cg-action cg-action-quiet" type="button" data-action="next-round">Switch Team</button>';
-    } else if (game.id === "error-detective") {
+    } else if (game.id === "sentence-studio") {
       primaryAction = '<button class="cg-action cg-action-primary" type="button" data-action="teacher-override">Accept Fix</button>';
       secondaryAction = '<button class="cg-action cg-action-quiet" type="button" data-action="next-round">Open Next Case</button>';
     } else {
@@ -2088,19 +2099,21 @@
   function evidenceModuleForGame(gameId, context) {
     var id = String(gameId || "");
     var subject = String(context && context.subject || "").toLowerCase();
-    if (id === "word-quest" || id === "word-typing" || id === "morphology-builder" || id === "rapid-category") return "wordquest";
-    if (id === "sentence-builder") return "sentence_surgery";
-    if (id === "word-connections") return "writing_studio";
-    if (id === "concept-ladder") return subject === "math" ? "numeracy" : "reading_lab";
-    if (id === "error-detective") return subject === "math" ? "numeracy" : "sentence_surgery";
-    return "wordquest";
+    id = normalizeGameId(id);
+    if (id === "word-quest" || id === "typing-quest" || id === "morphology-builder" || id === "word-categories") return "word-quest";
+    if (id === "sentence-builder") return "sentence-studio";
+    if (id === "dont-say-it") return "writing-studio";
+    if (id === "concept-ladder") return subject === "math" ? "number-lab" : "reading-lab";
+    if (id === "sentence-studio") return subject === "math" ? "number-lab" : "sentence-studio";
+    return "word-quest";
   }
 
   function buildLegacyMetrics(gameId, state, context) {
     var rounds = Math.max(1, Number(state && state.roundsCompleted || 0));
     var metrics = state && state.metrics ? state.metrics : {};
     var accuracyRatio = Math.max(0, Math.min(1, Number(metrics.correct || 0) / rounds));
-    if (gameId === "word-quest" || gameId === "morphology-builder" || gameId === "rapid-category" || gameId === "word-typing") {
+    gameId = normalizeGameId(gameId);
+    if (gameId === "word-quest" || gameId === "morphology-builder" || gameId === "word-categories" || gameId === "typing-quest") {
       return {
         solveSuccess: (metrics.correct || 0) >= Math.ceil(rounds / 2),
         totalGuesses: rounds,
@@ -2112,14 +2125,14 @@
         vowelSwapCount: Math.max(0, Number(metrics.incorrect || 0))
       };
     }
-    if (gameId === "word-connections") {
+    if (gameId === "dont-say-it") {
       return {
         paragraphs: Math.max(1, Number(metrics.correct || 0)),
         revisionCount: Math.max(0, Number(metrics.nearMiss || 0) + Number(metrics.incorrect || 0)),
         voiceFlatFlag: Number(metrics.incorrect || 0) > Number(metrics.correct || 0)
       };
     }
-    if (gameId === "sentence-builder" || gameId === "error-detective") {
+    if (gameId === "sentence-builder" || gameId === "sentence-studio") {
       return {
         reasoningAdded: Number(metrics.correct || 0) >= Number(metrics.incorrect || 0),
         runOnFlag: Number(metrics.incorrect || 0) > 0,
@@ -2185,9 +2198,9 @@
     var params = parseParams();
     var galleryOnly = !params.playMode;
     var context = loadTeacherContext(params);
-    var recommendedGame = params.gameId || (runtimeRoot.CSGameContentRegistry && runtimeRoot.CSGameContentRegistry.recommendedGame
+    var recommendedGame = normalizeGameId(params.gameId || (runtimeRoot.CSGameContentRegistry && runtimeRoot.CSGameContentRegistry.recommendedGame
       ? runtimeRoot.CSGameContentRegistry.recommendedGame(context)
-      : "word-quest");
+      : "word-quest"));
     var typingProgress = loadTypingProgress(context);
     var typingCourseRows = runtimeRoot.CSGameContentRegistry && typeof runtimeRoot.CSGameContentRegistry.getTypingCourseRows === "function"
       ? runtimeRoot.CSGameContentRegistry.getTypingCourseRows(context)
@@ -2219,7 +2232,7 @@
       var next = options || {};
       var url = new URL(withAppBase("typing-quest.html"));
       url.searchParams.set("play", "1");
-      url.searchParams.set("game", "word-typing");
+      url.searchParams.set("game", "typing-quest");
       url.searchParams.set("typingPage", "1");
       if (params.studentId) url.searchParams.set("student", params.studentId);
       if (params.classId) url.searchParams.set("classId", params.classId);
@@ -2258,7 +2271,7 @@
       context.typingPlacementRecommendedLessonOrder = recommendedOrder;
       context.typingPlacementRows = typingPlacementRows.slice();
 
-      if (params.typingPage && recommendedGame === "word-typing") {
+      if (params.typingPage && recommendedGame === "typing-quest") {
         var requestedMode = String(params.typingCourseMode || (params.typingLessonId || params.typingLessonOrder ? "lesson" : "") || "").toLowerCase();
         if (requestedMode === "placement") {
           context.typingCourseMode = "placement";
@@ -2635,9 +2648,9 @@
         wordClueCurriculum: "",
         wordClueDifficulty: "all",
         contentMode: context.contentMode || "lesson",
-        timerEnabled: (recommendedGame === "word-typing" || recommendedGame === "word-connections")
+        timerEnabled: (recommendedGame === "typing-quest" || recommendedGame === "dont-say-it")
           ? false
-          : !(recommendedGame === "word-typing" && context.typingPlacementRequired),
+          : !(recommendedGame === "typing-quest" && context.typingPlacementRequired),
         hintsEnabled: true,
         soundEnabled: false,
         customWordSet: "",
@@ -2655,7 +2668,7 @@
     }
 
     function wordClueRoundNeedsDeckRefresh(state) {
-      if (!state || state.selectedGameId !== "word-connections" || !state.round) return false;
+      if (!state || state.selectedGameId !== "dont-say-it" || !state.round) return false;
       var target = String(state.round.targetWord || "").trim().toLowerCase();
       var recordId = String(state.round.cardRecordId || "").trim();
       return !recordId || target === "no matching cards" || target === "loading cards…";
@@ -2698,12 +2711,12 @@
 
     function startTypingRound() {
       var state = engine.getState();
-      if (state.selectedGameId !== "word-typing" || !state.round) return;
+      if (state.selectedGameId !== "typing-quest" || !state.round) return;
       uiState.typingStartedRoundId = state.round.id;
       if (!uiState.typingRoundStartedAt) uiState.typingRoundStartedAt = 0;
       render();
       runtimeRoot.requestAnimationFrame(function () {
-        var input = document.getElementById("cg-word-typing-input");
+        var input = document.getElementById("cg-typing-quest-input");
         if (input && typeof input.focus === "function") input.focus();
       });
     }
@@ -2735,7 +2748,7 @@
     }
 
     function syncWordClueRoundState(state) {
-      if (!state || state.selectedGameId !== "word-connections" || !state.round) return;
+      if (!state || state.selectedGameId !== "dont-say-it" || !state.round) return;
       var clue = uiState.wordClue;
       if (clue.roundId === state.round.id) return;
       stopWordClueTimer();
@@ -2776,7 +2789,7 @@
           stopWordClueTimer();
           clue.phase = "reveal";
           clue.result = "timeout";
-          if (state.selectedGameId === "word-connections" && state.status === "playing") {
+          if (state.selectedGameId === "dont-say-it" && state.status === "playing") {
             engine.submit({ timedOut: true, value: "" });
           }
         }
@@ -2785,7 +2798,7 @@
     }
 
     function syncTypingProgressFromState(state) {
-      if (state.selectedGameId !== "word-typing" || !state.round || !state.lastOutcome || state.status !== "round-summary") return;
+      if (state.selectedGameId !== "typing-quest" || !state.round || !state.lastOutcome || state.status !== "round-summary") return;
       var lessonKey = [
         state.round.id,
         state.status,
@@ -2874,13 +2887,13 @@
       var projectorSuggested = state.settings.viewMode === "projector" || state.settings.viewMode === "classroom";
       runtimeRoot.document.documentElement.setAttribute("data-view-mode", state.settings.viewMode || "individual");
       runtimeRoot.document.body.setAttribute("data-shell-view", galleryOnly ? "gallery" : "play");
-      runtimeRoot.document.body.setAttribute("data-game-id", state.selectedGameId || "");
+      runtimeRoot.document.body.setAttribute("data-game-id", normalizeGameId(state.selectedGameId || ""));
 
       if (galleryOnly) {
         shell.innerHTML = [
           '<div class="cg-brandbar cg-brandbar--gallery">',
           '  <div class="cg-brand">',
-          '    <div class="cg-brand-mark">' + runtimeRoot.CSGameComponents.iconFor(state.selectedGameId, "cg-icon cg-icon--game") + "</div>",
+          '    <div class="cg-brand-mark">' + runtimeRoot.CSGameComponents.iconFor(normalizeGameId(state.selectedGameId), "cg-icon cg-icon--game") + "</div>",
           '    <div class="cg-brand-copy">',
           '      <p class="cg-kicker">Cornerstone MTSS</p>',
           '      <h1 class="cg-display">Choose a Game</h1>',
@@ -2906,8 +2919,8 @@
         return;
       }
 
-      var typingHubMode = currentGame.id === "word-typing" && !params.typingPage;
-      var typingRuntimeMode = currentGame.id === "word-typing" && params.typingPage;
+      var typingHubMode = currentGame.id === "typing-quest" && !params.typingPage;
+      var typingRuntimeMode = currentGame.id === "typing-quest" && params.typingPage;
       var teacherPanelMarkup = uiState.teacherPanelOpen ? [
         '<section class="cg-main-card cg-surface" id="cg-teacher-panel">',
         '  <div class="cg-teacher-panel-head"><p class="cg-kicker">Teacher Control Panel</p><h3>Set the round tone</h3><p class="cg-teacher-panel-copy">Starts with K-2 friendly curriculum words by default.</p></div>',
@@ -2933,8 +2946,8 @@
           ? ((state.round && state.round.lessonLabel || "Lesson") + " · " + (state.round && state.round.stageLabel || "Typing practice"))
           : (state.round && state.round.promptLabel || currentGame.subtitle));
       var toolbarHomeHref = typingRuntimeMode
-        ? withAppBase("game-platform.html?play=1&game=word-typing")
-        : withAppBase("game-platform.html");
+        ? withAppBase("my-activities.html?play=1&game=typing-quest")
+        : withAppBase("my-activities.html");
       var toolbarParts = [
         '<a class="cg-action cg-action-quiet" href="' + runtimeRoot.CSGameComponents.escapeHtml(toolbarHomeHref) + '">' + runtimeRoot.CSGameComponents.iconFor("context") + (typingRuntimeMode ? 'Course Hub' : 'All Games') + '</a>',
         '<button class="cg-action cg-action-quiet" type="button" data-action="toggle-teacher">' + runtimeRoot.CSGameComponents.iconFor("teacher") + (uiState.teacherPanelOpen ? "Close Panel" : "Teacher Controls") + "</button>",
@@ -2953,9 +2966,9 @@
           ? ((state.round && state.round.unitLabel || "Typing Quest Foundations") + " · " + (state.round && state.round.keyboardZone || "Keyboarding"))
           : "Typing Quest Foundations";
         var typingNavParts = [
-          '<a class="cg-typing-appbar__brand" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Typing Quest</a>',
+          '<a class="cg-typing-appbar__brand" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("my-activities.html?play=1&game=typing-quest")) + '">Typing Quest</a>',
           '<nav class="cg-typing-appbar__nav">',
-          '  <a class="cg-typing-appbar__link' + (typingHubMode ? ' is-active' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Course</a>',
+          '  <a class="cg-typing-appbar__link' + (typingHubMode ? ' is-active' : '') + '" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("my-activities.html?play=1&game=typing-quest")) + '">Course</a>',
           (typingRuntimeMode ? '  <a class="cg-typing-appbar__link is-active" href="' + runtimeRoot.CSGameComponents.escapeHtml(typingQuestHref({ typingCourseMode: state.round && state.round.courseMode || "lesson", lessonId: state.round && state.round.id || "", lessonOrder: state.round && state.round.lessonOrder || 1 })) + '">Lesson</a>' : ""),
           (typingRuntimeMode ? '  <button class="cg-typing-appbar__link" type="button" data-action="toggle-teacher">' + (uiState.teacherPanelOpen ? "Close Panel" : "Teacher Controls") + '</button>' : ""),
           '  <button class="cg-typing-appbar__link" type="button" data-action="toggle-music" aria-pressed="' + (sharedMusicState.enabled ? "true" : "false") + '">' + musicButtonLabel() + '</button>',
@@ -2971,9 +2984,9 @@
           '    <div class="cg-typing-appbar__right">',
           '      ' + (typingHubMode
             ? '<span class="cg-typing-appbar__chip">Placement first</span>'
-            : '<a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html?play=1&game=word-typing")) + '">Course Hub</a>') +
+            : '<a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("my-activities.html?play=1&game=typing-quest")) + '">Course Hub</a>') +
           '      <span class="cg-audio-label" data-music-label>' + runtimeRoot.CSGameComponents.escapeHtml(musicStatusLabel()) + '</span>',
-          '      <a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("game-platform.html")) + '">All Games</a>',
+          '      <a class="cg-typing-appbar__link" href="' + runtimeRoot.CSGameComponents.escapeHtml(withAppBase("my-activities.html")) + '">All Activities</a>',
           '    </div>',
           "  </header>",
           '  <div class="cg-typing-page-wrap">',
@@ -2994,7 +3007,7 @@
         return;
       }
 
-      if (currentGame.id === "word-connections" && state.round) {
+      if (currentGame.id === "dont-say-it" && state.round) {
         var clue = uiState.wordClue;
         var landingScreen = clue.screen !== "play";
         if (state.round && (typeof state.round.targetWord !== "string" || !Array.isArray(state.round.forbiddenWords))) {
@@ -3056,7 +3069,7 @@
           shell.innerHTML = [
             '<section class="cg-word-clue-landing" data-style="' + runtimeRoot.CSGameComponents.escapeHtml(clue.cardStyle) + '">',
             '  <header class="cg-word-clue-v2-topbar">',
-            '    <div class="cg-word-clue-v2-title"><h1>Off Limits</h1></div>',
+            '    <div class="cg-word-clue-v2-title"><h1>Don\'t Say It!</h1></div>',
             '    <div class="cg-word-clue-v2-actions">' + toolbarParts.join("") + "</div>",
             "  </header>",
             teacherPanelMarkup,
@@ -3066,7 +3079,7 @@
               '    <div class="cg-word-clue-landing-note"><span class="cg-word-clue-landing-kicker cg-word-clue-landing-kicker--quiet">Direct play</span><strong>Each card opens that mode.</strong></div>',
               "  </section>",
               '  <section class="cg-word-clue-landing-grid" aria-label="Word Clue formats">',
-              '    <article class="cg-word-clue-format-card cg-word-clue-format-card--classic' + (clue.cardStyle === "standard" ? " is-active" : "") + '" role="button" tabindex="0" data-action="wc-open-format" data-format="standard"><div class="cg-word-clue-format-card__head"><span class="cg-chip">Classic</span></div><div class="cg-word-clue-format-card__preview cg-word-clue-format-card__preview--taboo"><div class="cg-word-clue-preview-topline"><span class="cg-word-clue-preview-label">Target Word</span></div><div class="cg-word-clue-preview-main"><strong>HOUSE</strong></div><div class="cg-word-clue-preview-footer cg-word-clue-preview-footer--alert"><span class="cg-word-clue-preview-section">Off Limits</span><div class="cg-word-clue-preview-list"><b>HOME</b><b>LIVE</b><b>FAMILY</b></div></div></div></article>',
+            '    <article class="cg-word-clue-format-card cg-word-clue-format-card--classic' + (clue.cardStyle === "standard" ? " is-active" : "") + '" role="button" tabindex="0" data-action="wc-open-format" data-format="standard"><div class="cg-word-clue-format-card__head"><span class="cg-chip">Classic</span></div><div class="cg-word-clue-format-card__preview cg-word-clue-format-card__preview--taboo"><div class="cg-word-clue-preview-topline"><span class="cg-word-clue-preview-label">Target Word</span></div><div class="cg-word-clue-preview-main"><strong>HOUSE</strong></div><div class="cg-word-clue-preview-footer cg-word-clue-preview-footer--alert"><span class="cg-word-clue-preview-section">Don\'t Say It</span><div class="cg-word-clue-preview-list"><b>HOME</b><b>LIVE</b><b>FAMILY</b></div></div></div></article>',
               '    <article class="cg-word-clue-format-card cg-word-clue-format-card--draw' + (clue.cardStyle === "draw" ? " is-active" : "") + '" role="button" tabindex="0" data-action="wc-open-format" data-format="draw"><div class="cg-word-clue-format-card__head"><span class="cg-chip">Draw</span></div><div class="cg-word-clue-format-card__preview cg-word-clue-format-card__preview--drawcard"><div class="cg-word-clue-preview-topline"><span class="cg-word-clue-preview-label">Target Word</span></div><div class="cg-word-clue-preview-main cg-word-clue-preview-main--icon"><span class="cg-word-clue-preview-icon" aria-hidden="true">✏️</span><strong>SUN</strong></div><div class="cg-word-clue-preview-footer"><div class="cg-word-clue-preview-draw">Sketch it. No letters.</div></div></div></article>',
               '    <article class="cg-word-clue-format-card cg-word-clue-format-card--act' + (clue.cardStyle === "act" ? " is-active" : "") + '" role="button" tabindex="0" data-action="wc-open-format" data-format="act"><div class="cg-word-clue-format-card__head"><span class="cg-chip">Act</span></div><div class="cg-word-clue-format-card__preview cg-word-clue-format-card__preview--act"><div class="cg-word-clue-preview-topline"><span class="cg-word-clue-preview-label">Target Word</span></div><div class="cg-word-clue-preview-main cg-word-clue-preview-main--icon"><span class="cg-word-clue-preview-icon" aria-hidden="true">🙆</span><strong>JUMP</strong></div><div class="cg-word-clue-preview-footer"><div class="cg-word-clue-preview-act">Act it out. No words.</div></div></div></article>',
               '    <article class="cg-word-clue-format-card cg-word-clue-format-card--mixed' + (clue.cardStyle === "mixed" ? " is-active" : "") + '" role="button" tabindex="0" data-action="wc-open-format" data-format="mixed"><div class="cg-word-clue-format-card__head"><span class="cg-chip">Mixed</span></div><div class="cg-word-clue-format-card__preview cg-word-clue-format-card__preview--mix"><div class="cg-word-clue-preview-topline"><span class="cg-word-clue-preview-label">Target Word</span></div><div class="cg-word-clue-preview-main"><strong>HOUSE</strong></div><div class="cg-word-clue-preview-footer cg-word-clue-preview-footer--alert"><span class="cg-word-clue-preview-section">Style Mix</span><div class="cg-word-clue-preview-list"><b>SAY</b><b>DRAW</b><b>ACT</b></div></div></div></article>',
@@ -3082,7 +3095,7 @@
         shell.innerHTML = [
           '<section class="cg-word-clue-v2' + (clue.setupOpen ? ' has-setup-open' : '') + (uiState.teacherPanelOpen ? ' has-teacher-open' : '') + '" data-phase="' + runtimeRoot.CSGameComponents.escapeHtml(clue.phase) + '" data-style="' + runtimeRoot.CSGameComponents.escapeHtml(clue.cardStyle) + '">',
           '  <header class="cg-word-clue-v2-topbar">',
-          '    <div class="cg-word-clue-v2-title"><h1>Off Limits</h1></div>',
+          '    <div class="cg-word-clue-v2-title"><h1>Don\'t Say It!</h1></div>',
           '    <div class="cg-word-clue-v2-actions">' + toolbarParts.join("") + '<button class="cg-action cg-action-quiet" type="button" data-action="wc-back-landing">Formats</button><button class="cg-action cg-action-quiet" type="button" data-action="wc-toggle-setup">' + runtimeRoot.CSGameComponents.escapeHtml(clue.setupOpen ? "Close Round Setup" : "Round Setup") + "</button></div>",
           "  </header>",
           teacherPanelMarkup,
@@ -3108,14 +3121,14 @@
               + (relayStyle ? '<div class="cg-word-clue-relay-band"><span>Speaker 1</span><span>Speaker 2</span><span>Speaker 3</span></div>' : "")
               + (mixedStyle ? '<div class="cg-word-clue-urgency">Mixed round: the clue style can change each turn.</div>' : "")
               + '        <div class="cg-word-clue-danger" aria-label="Off-limits words">'
-              + '          <div class="cg-word-clue-danger-head"><strong>Off Limits</strong><span>Try not to use these clue words</span></div>'
+              + '          <div class="cg-word-clue-danger-head"><strong>Don\'t Say It</strong><span>Try not to use these clue words</span></div>'
               + '          <ul class="cg-word-clue-blocked">' + (hasBlockedWords
                 ? blockedWords.map(function (word, index) {
                     return '<li><span class="cg-word-clue-blocked-index">' + String(index + 1) + '</span><span class="cg-word-clue-blocked-word">' + runtimeRoot.CSGameComponents.escapeHtml(word) + "</span></li>";
                   }).join("")
                 : '<li class="cg-word-clue-blocked-empty"><span class="cg-word-clue-blocked-index">!</span><span class="cg-word-clue-blocked-word">No off-limits words available for this card. Check filters or deck data.</span></li>') + '</ul>'
               + "        </div>")
-            : ('        <div class="cg-word-clue-cover"><span class="cg-word-clue-cover-kicker">Off Limits</span><strong>Speaker card ready</strong><span>Press Show Card to flip and reveal the word.</span></div>')),
+            : ('        <div class="cg-word-clue-cover"><span class="cg-word-clue-cover-kicker">Don\'t Say It</span><strong>Speaker card ready</strong><span>Press Show Card to flip and reveal the word.</span></div>')),
           "      </div>",
           '      <div class="cg-word-clue-prompt">' + runtimeRoot.CSGameComponents.escapeHtml(wordClueStyleDescription(clue.cardStyle)) + "</div>",
           (clue.phase === "reveal" && resultLabel ? ('      <div class="cg-word-clue-result" data-result="' + runtimeRoot.CSGameComponents.escapeHtml(clue.result || "reveal") + '"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(resultLabel) + '</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml(clue.result === "gotit" ? "Strong clue round." : (clue.result === "timeout" ? "Timer expired before a solve." : "Round closed.")) + "</span></div>") : ""),
@@ -3123,8 +3136,8 @@
           '    <aside class="cg-word-clue-v2-setup' + (clue.setupOpen ? " is-open" : "") + '">',
           '      <div class="cg-word-clue-v2-setup-head"><h3>Round setup</h3><p>Secondary controls</p></div>',
           '      <label class="cg-field"><span>Class mode</span><select id="cg-word-clue-group" class="cg-select"><option value="individual"' + (clue.groupMode === "individual" ? " selected" : "") + '>Individual</option><option value="partners"' + (clue.groupMode === "partners" ? " selected" : "") + '>Partners</option><option value="teams"' + (clue.groupMode === "teams" ? " selected" : "") + '>Teams</option><option value="whole-class"' + (clue.groupMode === "whole-class" ? " selected" : "") + '>Whole class</option></select></label>',
-          '      <label class="cg-field"><span>Round type</span><select id="cg-word-connections-mode" class="cg-select"><option value="speak"' + (clue.mode === "speak" ? " selected" : "") + '>Classic clue</option><option value="picture"' + (clue.mode === "picture" ? " selected" : "") + '>Picture clue</option><option value="draw"' + (clue.mode === "draw" ? " selected" : "") + '>Draw it</option><option value="mixed"' + (clue.mode === "mixed" ? " selected" : "") + '>Mixed</option></select></label>',
-          '      <label class="cg-field"><span>Difficulty</span><select id="cg-word-connections-difficulty" class="cg-select"><option value="1"' + (clue.blockedCount === 2 ? " selected" : "") + '>2 off-limits words</option><option value="2"' + (clue.blockedCount === 3 ? " selected" : "") + '>3 off-limits words</option><option value="3"' + (clue.blockedCount === 4 ? " selected" : "") + '>4 off-limits words</option><option value="4"' + (clue.blockedCount === 5 ? " selected" : "") + '>5 off-limits words</option></select></label>',
+          '      <label class="cg-field"><span>Round type</span><select id="cg-dont-say-it-mode" class="cg-select"><option value="speak"' + (clue.mode === "speak" ? " selected" : "") + '>Classic clue</option><option value="picture"' + (clue.mode === "picture" ? " selected" : "") + '>Picture clue</option><option value="draw"' + (clue.mode === "draw" ? " selected" : "") + '>Draw it</option><option value="mixed"' + (clue.mode === "mixed" ? " selected" : "") + '>Mixed</option></select></label>',
+          '      <label class="cg-field"><span>Difficulty</span><select id="cg-dont-say-it-difficulty" class="cg-select"><option value="1"' + (clue.blockedCount === 2 ? " selected" : "") + '>2 off-limits words</option><option value="2"' + (clue.blockedCount === 3 ? " selected" : "") + '>3 off-limits words</option><option value="3"' + (clue.blockedCount === 4 ? " selected" : "") + '>4 off-limits words</option><option value="4"' + (clue.blockedCount === 5 ? " selected" : "") + '>5 off-limits words</option></select></label>',
           '      <label class="cg-field"><span>Timer</span><select id="cg-word-clue-timer" class="cg-select"><option value="untimed"' + (clue.timerPreset === "untimed" ? " selected" : "") + '>Untimed</option><option value="30"' + (clue.timerPreset === "30" ? " selected" : "") + '>30s</option><option value="45"' + (clue.timerPreset === "45" ? " selected" : "") + '>45s</option><option value="60"' + (clue.timerPreset === "60" ? " selected" : "") + '>60s</option></select></label>',
           '      <label class="cg-field"><span>Category</span><input id="cg-word-clue-category" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.categoryContext || "") + '" placeholder="e.g., Ecosystems"></label>',
           '      <div class="cg-word-clue-setup-divider"></div>',
@@ -3140,7 +3153,7 @@
           '      <label class="cg-field"><span>Subject</span><select id="cg-word-clue-custom-subject" class="cg-select"><option value="ELA"' + (clue.customSubject === "ELA" ? " selected" : "") + '>ELA</option><option value="SCIENCE"' + (clue.customSubject === "SCIENCE" ? " selected" : "") + '>Science</option><option value="SEL"' + (clue.customSubject === "SEL" ? " selected" : "") + '>SEL</option></select></label>',
           '      <label class="cg-field"><span>Curriculum tag</span><input id="cg-word-clue-custom-curriculum" class="cg-input" type="text" maxlength="48" value="' + runtimeRoot.CSGameComponents.escapeHtml(clue.customCurriculumTag || "") + '" placeholder="e.g., Classroom routines"></label>',
           '      <button class="cg-action cg-action-quiet" type="button" data-action="wc-save-custom-card">Save to custom deck</button>',
-          '      <textarea id="cg-word-connections-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml("Notes / transcript (optional)…") + '" aria-label="Clue notes"></textarea>',
+          '      <textarea id="cg-dont-say-it-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml("Notes / transcript (optional)…") + '" aria-label="Clue notes"></textarea>',
           (clue.phase === "reveal" ? ('      <div class="cg-word-clue-reveal-note"><strong>Reveal support:</strong> ' + runtimeRoot.CSGameComponents.escapeHtml(revealHint) + "</div>") : ""),
           "    </aside>",
           "    </div>",
@@ -3167,7 +3180,7 @@
       shell.innerHTML = [
         '<div class="cg-brandbar cg-brandbar--play">',
         '  <div class="cg-brand">',
-        '    <div class="cg-brand-mark">' + runtimeRoot.CSGameComponents.iconFor(state.selectedGameId, "cg-icon cg-icon--game") + "</div>",
+        '    <div class="cg-brand-mark">' + runtimeRoot.CSGameComponents.iconFor(normalizeGameId(state.selectedGameId), "cg-icon cg-icon--game") + "</div>",
         '    <div class="cg-brand-copy">',
         '      <p class="cg-kicker">Cornerstone MTSS</p>',
         '      <h1 class="cg-display">' + runtimeRoot.CSGameComponents.escapeHtml(currentGame.title) + "</h1>",
@@ -3196,8 +3209,8 @@
         (compactStageChrome ? "" : ('        <span class="cg-chip" data-tone="focus">' + runtimeRoot.CSGameComponents.iconFor("context") + runtimeRoot.CSGameComponents.escapeHtml(supportLine(context, state)) + '</span>')),
         (compactStageChrome ? "" : (projectorSuggested ? '<span class="cg-chip">' + runtimeRoot.CSGameComponents.iconFor("projector") + 'Projector-safe layout ready</span>' : "")),
         (compactStageChrome ? "" : "      </div>"),
-        (compactStageChrome || currentGame.id === "word-typing" ? "" : renderFeedback(state.feedback)),
-        (currentGame.id === "word-typing" ? "" : renderResultBanner(state, currentGame)),
+        (compactStageChrome || currentGame.id === "typing-quest" ? "" : renderFeedback(state.feedback)),
+        (currentGame.id === "typing-quest" ? "" : renderResultBanner(state, currentGame)),
         '      <div id="cg-stage-board" class="cg-stage-board"></div>',
         "    </div>",
         "  </section>",
@@ -3235,7 +3248,7 @@
       function out(rect) {
         return rect && (rect.left < -1 || rect.right > vw + 1 || rect.bottom > vh + 1);
       }
-      if (state && state.selectedGameId === "word-typing") {
+      if (state && state.selectedGameId === "typing-quest") {
         var overlays = Array.prototype.filter.call(document.querySelectorAll(".cg-typing-course-page, .cg-typing-runtime"), function (node) {
           if (!node) return false;
           var rect = node.getBoundingClientRect();
@@ -3250,7 +3263,7 @@
           || measure(".cg-typing-course-page");
         if (out(typingRect)) runtimeRoot.console.warn("[LayoutFit][typing] overflow", { viewport: { width: vw, height: vh }, rect: typingRect });
       }
-      if (state && state.selectedGameId === "word-connections") {
+      if (state && state.selectedGameId === "dont-say-it") {
         var stageRect = measure(".cg-word-clue-v2");
         var controlsRect = measure(".cg-word-clue-v2-controls");
         if (out(stageRect)) runtimeRoot.console.warn("[LayoutFit][word-clue] stage overflow", { viewport: { width: vw, height: vh }, rect: stageRect });
@@ -3487,7 +3500,7 @@
         ].join("");
       }
 
-      if (game.id === "word-typing" && !params.typingPage) {
+      if (game.id === "typing-quest" && !params.typingPage) {
         var courseSummary = typingCourseSummary(typingProgress, typingCourseRows);
         var currentLesson = typingLessonById(context.currentTypingLessonId) || typingLessonByOrder(context.currentTypingLessonOrder || 1) || round;
         var currentUnitMeta = typingUnitMeta(currentLesson && currentLesson.unitLabel || "Unit 0", (typingCourseRows || []).filter(function (row) {
@@ -3537,7 +3550,7 @@
         ].join("");
       }
 
-      if (game.id === "word-typing") {
+      if (game.id === "typing-quest") {
         var typedValue = String(uiState.typingLockedValue || uiState.lastSubmittedGuess || "").toUpperCase();
         var summaryMetrics = Object.assign({}, typingLiveMetrics(uiState, round, typedValue), state.lastOutcome && state.lastOutcome.stats || {});
         var summaryStars = typingMasteryStars(summaryMetrics, round, !!(state.lastOutcome && state.lastOutcome.correct));
@@ -3689,9 +3702,9 @@
           }).join("") + "</div>",
           "      </div>",
           '      <div class="cg-typing-entry">',
-          '        <input id="cg-word-typing-input" class="cg-input' + (Date.now() < uiState.typingErrorUntil ? " is-invalid" : "") + '" maxlength="' + String(round.target || "").length + '" value="' + runtimeRoot.CSGameComponents.escapeHtml(typed) + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type the lesson target for the class…" : "Type the lesson target…") + '" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Type the target word">',
+          '        <input id="cg-typing-quest-input" class="cg-input' + (Date.now() < uiState.typingErrorUntil ? " is-invalid" : "") + '" maxlength="' + String(round.target || "").length + '" value="' + runtimeRoot.CSGameComponents.escapeHtml(typed) + '" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type the lesson target for the class…" : "Type the lesson target…") + '" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Type the target word">',
           '        <button class="cg-action cg-action-quiet" type="button" data-action="hint">Pattern Hint</button>',
-          '        <button class="cg-action cg-action-primary" type="button" data-submit="word-typing">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Lesson" : "Complete Lesson") + '</button>',
+          '        <button class="cg-action cg-action-primary" type="button" data-submit="typing-quest">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Lesson" : "Complete Lesson") + '</button>',
           '        <button class="cg-action cg-action-quiet" type="button" data-action="repeat-typing-lesson">Restart Lesson</button>',
           '      </div>',
           (state.status !== "playing" ? '<div class="cg-typing-rating-summary"><strong>' + runtimeRoot.CSGameComponents.escapeHtml(readyToAdvance ? "5-star lesson. Move to the next target." : "Replay once more to hit the mastery goal.") + '</strong><span>' + runtimeRoot.CSGameComponents.escapeHtml("Goal: " + typingMetrics.goalWpm + " WPM and " + typingMetrics.goalAccuracy + "% accuracy") + '</span></div>' : ""),
@@ -3774,7 +3787,7 @@
         ].join("");
       }
 
-      if (game.id === "word-connections") {
+      if (game.id === "dont-say-it") {
         var forbiddenStrike = state.lastOutcome && state.lastOutcome.forbidden;
         var speakerNum = ((Number(state.roundIndex || 0) % 4) + 1);
         return renderGameScaffold(game, state, round, {
@@ -3795,7 +3808,7 @@
             (round.imageSrc ? '  <img class="cg-taboo-image word-image" src="' + runtimeRoot.CSGameComponents.escapeHtml(round.imageSrc) + '" alt="' + runtimeRoot.CSGameComponents.escapeHtml(round.targetWord || "Target word") + '">' : ""),
             '  <div class="cg-taboo-divider" role="presentation"></div>',
             '  <div class="cg-taboo-danger-band" aria-label="Off-limits words">',
-            '    <span class="cg-taboo-ban-label">Off Limits</span>',
+            '    <span class="cg-taboo-ban-label">Don\'t Say It</span>',
             '    <ul class="cg-taboo-word-list blocked-words">' + (round.forbiddenWords || []).map(function (word) {
               return '<li class="cg-taboo-pill">' + runtimeRoot.CSGameComponents.escapeHtml(word) + "</li>";
             }).join("") + '</ul>',
@@ -3820,11 +3833,11 @@
           ].join(""),
           controls: [
             '<div class="cg-choice-row cg-choice-row--stacked">',
-            '  <label class="cg-field"><span>Mode</span><select id="cg-word-connections-mode" class="cg-select"><option value="speak"' + (round.playMode === "speak" ? " selected" : "") + '>Classic</option><option value="draw"' + (round.playMode === "draw" ? " selected" : "") + '>Draw</option><option value="act"' + (round.playMode === "act" ? " selected" : "") + '>Act</option><option value="mixed"' + (round.playMode === "mixed" ? " selected" : "") + '>Mixed</option></select></label>',
-            '  <label class="cg-field"><span>Difficulty</span><select id="cg-word-connections-difficulty" class="cg-select"><option value="1"' + (round.blockedCount === 2 ? " selected" : "") + '>1 · 2 off-limits words</option><option value="2"' + (round.blockedCount === 3 ? " selected" : "") + '>2 · 3 off-limits words</option><option value="3"' + (round.blockedCount === 4 ? " selected" : "") + '>3 · 4 off-limits words</option><option value="4"' + (round.blockedCount === 5 ? " selected" : "") + '>4 · 5 off-limits words</option></select></label>',
+            '  <label class="cg-field"><span>Mode</span><select id="cg-dont-say-it-mode" class="cg-select"><option value="speak"' + (round.playMode === "speak" ? " selected" : "") + '>Classic</option><option value="draw"' + (round.playMode === "draw" ? " selected" : "") + '>Draw</option><option value="act"' + (round.playMode === "act" ? " selected" : "") + '>Act</option><option value="mixed"' + (round.playMode === "mixed" ? " selected" : "") + '>Mixed</option></select></label>',
+            '  <label class="cg-field"><span>Difficulty</span><select id="cg-dont-say-it-difficulty" class="cg-select"><option value="1"' + (round.blockedCount === 2 ? " selected" : "") + '>1 · 2 off-limits words</option><option value="2"' + (round.blockedCount === 3 ? " selected" : "") + '>2 · 3 off-limits words</option><option value="3"' + (round.blockedCount === 4 ? " selected" : "") + '>3 · 4 off-limits words</option><option value="4"' + (round.blockedCount === 5 ? " selected" : "") + '>4 · 5 off-limits words</option></select></label>',
             '</div>',
-            '<textarea id="cg-word-connections-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Record the clue or teacher notes for scoring…" : "Write the clue here…") + '" aria-label="Type your clue"></textarea>',
-            '<div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-support-reveal">' + (uiState.supportRevealOpen ? "Hide Reveal" : "Reveal Support") + '</button><button class="cg-action cg-action-primary" type="button" data-submit="word-connections">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Clue" : "Check Clue") + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-round">Next Word</button></div>'
+            '<textarea id="cg-dont-say-it-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Record the clue or teacher notes for scoring…" : "Write the clue here…") + '" aria-label="Type your clue"></textarea>',
+            '<div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="toggle-support-reveal">' + (uiState.supportRevealOpen ? "Hide Reveal" : "Reveal Support") + '</button><button class="cg-action cg-action-primary" type="button" data-submit="dont-say-it">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Clue" : "Check Clue") + '</button><button class="cg-action cg-action-quiet" type="button" data-action="next-round">Next Word</button></div>'
           ].join(""),
           guide: roundGuide(game, state, round)
         });
@@ -3994,7 +4007,7 @@
         });
       }
 
-      if (game.id === "error-detective") {
+      if (game.id === "sentence-studio") {
         return renderGameScaffold(game, state, round, {
           beforePlay: renderHostControls(game, state, round),
           play: [
@@ -4035,12 +4048,12 @@
             "</div>",
             "</div>"
           ].join(""),
-          controls: '<div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="hint">Reveal Explanation</button><button class="cg-action cg-action-primary" type="button" data-submit="error-detective">Confirm Correction</button></div>',
+          controls: '<div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="hint">Reveal Explanation</button><button class="cg-action cg-action-primary" type="button" data-submit="sentence-studio">Confirm Correction</button></div>',
           guide: roundGuide(game, state, round)
         });
       }
 
-      if (game.id === "rapid-category") {
+      if (game.id === "word-categories") {
         var timerSec = round.timerSeconds || game.baseTimerSeconds || 40;
         var remaining = typeof state.timerRemaining === "number" ? state.timerRemaining : timerSec;
         var timerPct = timerSec > 0 ? Math.round((remaining / timerSec) * 100) : 100;
@@ -4081,7 +4094,7 @@
             '<div class="cg-rush-entry">',
             '  <div class="cg-rush-fast-entry"><input id="cg-category-quick-input" class="cg-input" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Type one answer and press Enter…" : "Type one answer and press Enter…") + '" aria-label="Add quick category answer"><button class="cg-action cg-action-quiet" type="button" data-action="add-category-entry">Add</button></div>',
             '  <textarea id="cg-category-text" class="cg-textarea" placeholder="' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Team responses — one per line or comma-separated…" : "Enter responses — one per line or comma-separated…") + '" aria-label="Enter category responses">' + runtimeRoot.CSGameComponents.escapeHtml((uiState.categoryPreview || []).join("\n")) + '</textarea>',
-            '  <div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="hint">Show Hint</button><button class="cg-action cg-action-primary" type="button" data-submit="rapid-category">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Round" : "Score Responses") + '</button></div>',
+            '  <div class="cg-feedback-actions"><button class="cg-action cg-action-quiet" type="button" data-action="hint">Show Hint</button><button class="cg-action cg-action-primary" type="button" data-submit="word-categories">' + runtimeRoot.CSGameComponents.escapeHtml(isGroupView(state) ? "Score Round" : "Score Responses") + '</button></div>',
             '</div>'
           ].join(""),
           guide: roundGuide(game, state, round)
@@ -4117,7 +4130,7 @@
             return;
           }
           resetRoundUi();
-          if (gameId === "word-typing") {
+          if (gameId === "typing-quest") {
             refreshTypingCourseContext();
             persistTypingContextToEngine();
             engine.updateSettings({ timerEnabled: false });
@@ -4133,7 +4146,7 @@
             typingUnlockedOrder: context.typingUnlockedOrder,
             typingCompletedLessons: context.typingCompletedLessons
           });
-          engine.selectGame(gameId);
+          engine.selectGame(normalizeGameId(gameId));
         });
         if (galleryOnly && button.getAttribute("role") === "link") {
           button.addEventListener("keydown", function (event) {
@@ -4149,8 +4162,8 @@
         button.addEventListener("click", function () {
           var action = button.getAttribute("data-action");
           var currentState = engine.getState();
-          var inTypingHub = currentState.selectedGameId === "word-typing" && !params.typingPage;
-          var inTypingRuntime = currentState.selectedGameId === "word-typing" && params.typingPage;
+          var inTypingHub = currentState.selectedGameId === "typing-quest" && !params.typingPage;
+          var inTypingRuntime = currentState.selectedGameId === "typing-quest" && params.typingPage;
           if (action === "toggle-teacher") {
             uiState.teacherPanelOpen = !uiState.teacherPanelOpen;
             var picker = runtimeRoot.document.getElementById("cg-theme-picker");
@@ -4349,7 +4362,7 @@
             return;
           }
           if (action === "wc-begin-live") {
-            if (currentState.selectedGameId !== "word-connections") return;
+            if (currentState.selectedGameId !== "dont-say-it") return;
             uiState.wordClue.phase = "live";
             uiState.wordClue.result = "";
             startWordClueTimer(currentState);
@@ -4357,7 +4370,7 @@
             return;
           }
           if (action === "wc-pass") {
-            if (currentState.selectedGameId !== "word-connections" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
+            if (currentState.selectedGameId !== "dont-say-it" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
             stopWordClueTimer();
             uiState.wordClue.phase = "reveal";
             uiState.wordClue.result = "pass";
@@ -4365,7 +4378,7 @@
             return;
           }
           if (action === "wc-got-it") {
-            if (currentState.selectedGameId !== "word-connections" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
+            if (currentState.selectedGameId !== "dont-say-it" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
             stopWordClueTimer();
             uiState.wordClue.phase = "reveal";
             uiState.wordClue.result = "gotit";
@@ -4373,7 +4386,7 @@
             return;
           }
           if (action === "wc-reveal") {
-            if (currentState.selectedGameId !== "word-connections" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
+            if (currentState.selectedGameId !== "dont-say-it" || currentState.status !== "playing" || uiState.wordClue.phase !== "live") return;
             stopWordClueTimer();
             uiState.wordClue.phase = "reveal";
             uiState.wordClue.result = "reveal";
@@ -4381,7 +4394,7 @@
             return;
           }
           if (action === "wc-pause") {
-            if (currentState.selectedGameId !== "word-connections" || uiState.wordClue.phase !== "live") return;
+            if (currentState.selectedGameId !== "dont-say-it" || uiState.wordClue.phase !== "live") return;
             uiState.wordClue.paused = !uiState.wordClue.paused;
             render();
             return;
@@ -4592,7 +4605,7 @@
         });
       });
 
-      var typingInput = document.getElementById("cg-word-typing-input");
+      var typingInput = document.getElementById("cg-typing-quest-input");
       if (typingInput) {
         typingInput.addEventListener("input", function () {
           var round = engine.getState().round || {};
@@ -4618,22 +4631,22 @@
         typingInput.addEventListener("keydown", function (event) {
           if (event.key === "Enter") {
             event.preventDefault();
-            handleSubmit("word-typing");
+            handleSubmit("typing-quest");
           }
         });
       }
 
-      var clueInput = document.getElementById("cg-word-connections-text");
+      var clueInput = document.getElementById("cg-dont-say-it-text");
       if (clueInput) {
         clueInput.addEventListener("keydown", function (event) {
           if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
             event.preventDefault();
-            handleSubmit("word-connections");
+            handleSubmit("dont-say-it");
           }
         });
       }
 
-      var clueMode = document.getElementById("cg-word-connections-mode");
+      var clueMode = document.getElementById("cg-dont-say-it-mode");
       if (clueMode) clueMode.addEventListener("change", function () {
         uiState.wordClue.mode = String(clueMode.value || "speak");
         if (uiState.wordClue.mode === "picture") uiState.wordClue.cardStyle = "picture";
@@ -4646,7 +4659,7 @@
         engine.restartGame();
       });
 
-      var clueDifficulty = document.getElementById("cg-word-connections-difficulty");
+      var clueDifficulty = document.getElementById("cg-dont-say-it-difficulty");
       if (clueDifficulty) clueDifficulty.addEventListener("change", function () {
         var nextDifficulty = Number(clueDifficulty.value || 3);
         uiState.wordClue.blockedCount = nextDifficulty + 1;
@@ -4767,7 +4780,7 @@
         engine.updateContext({ contentMode: contentMode.value });
         persistTypingContextToEngine();
         engine.updateSettings({ contentMode: contentMode.value });
-        if (engine.getState().selectedGameId === "word-typing" && String(contentMode.value || "").toLowerCase() === "lesson") {
+        if (engine.getState().selectedGameId === "typing-quest" && String(contentMode.value || "").toLowerCase() === "lesson") {
           engine.updateSettings({ timerEnabled: false });
         }
         resetRoundUi();
@@ -4998,15 +5011,16 @@
         engine.submit({ value: value });
         return;
       }
-      if (gameId === "word-typing") {
-        var typedWord = document.getElementById("cg-word-typing-input");
+      gameId = normalizeGameId(gameId);
+      if (gameId === "typing-quest") {
+        var typedWord = document.getElementById("cg-typing-quest-input");
         var typedValue = uiState.typingLockedValue || (typedWord ? typedWord.value : "");
         uiState.lastSubmittedGuess = String(typedValue || "").trim();
         engine.submit({ value: typedValue, stats: typingLiveMetrics(uiState, engine.getState().round || {}, typedValue) });
         return;
       }
-      if (gameId === "word-connections") {
-        var explanation = document.getElementById("cg-word-connections-text");
+      if (gameId === "dont-say-it") {
+        var explanation = document.getElementById("cg-dont-say-it-text");
         engine.submit({ value: explanation ? explanation.value : "" });
         return;
       }
@@ -5016,12 +5030,12 @@
         uiState.revealedClues = 1;
         return;
       }
-      if (gameId === "error-detective") {
+      if (gameId === "sentence-studio") {
         engine.submit({ value: uiState.selectedChoice || "" });
         uiState.selectedChoice = "";
         return;
       }
-      if (gameId === "rapid-category") {
+      if (gameId === "word-categories") {
         var category = document.getElementById("cg-category-text");
         uiState.categoryPreview = [];
         engine.submit({ value: category ? category.value : "" });
@@ -5035,7 +5049,7 @@
 
     engine.subscribe(function (state) {
       syncWordClueRoundState(state);
-      if (state.selectedGameId === "word-connections" && (state.status === "round-complete" || state.status === "round-summary")) {
+      if (state.selectedGameId === "dont-say-it" && (state.status === "round-complete" || state.status === "round-summary")) {
         stopWordClueTimer();
         if (!uiState.wordClue.result) {
           if (state.lastOutcome && (state.lastOutcome.correct || state.lastOutcome.teacherOverride)) uiState.wordClue.result = "gotit";
@@ -5044,7 +5058,7 @@
         }
         uiState.wordClue.phase = "reveal";
       }
-      if (state.selectedGameId === "word-typing" && state.round && state.round.id !== uiState.typingRoundId) {
+      if (state.selectedGameId === "typing-quest" && state.round && state.round.id !== uiState.typingRoundId) {
         uiState.typingRoundId = state.round.id;
         uiState.typingStartedRoundId = "";
         uiState.typingLockedValue = "";

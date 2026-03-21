@@ -251,7 +251,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function setPref(k, v) { prefs[k] = v; savePrefs(prefs); }
   var autoPhysicalKeyboardSwitchApplied = false;
   var firstRunSetupPending = false;
-  var pageMode = 'wordquest';
+  var pageMode = 'word-quest';
   var homeMode = 'home';
   var focusSupportUnlockAt = 0;
   var focusSupportUnlockTimer = 0;
@@ -2828,7 +2828,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
     return sessionExports?.buildClassRollupCsvText?.(...args) || '';
   }
   function buildCsvBundlePrefix(...args) {
-    return sessionExports?.buildCsvBundlePrefix?.(...args) || 'wordquest-class';
+    return sessionExports?.buildCsvBundlePrefix?.(...args) || 'word-quest-class';
   }
   function buildProbeSummaryCsvText(...args) {
     return sessionExports?.buildProbeSummaryCsvText?.(...args) || '';
@@ -3106,15 +3106,15 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   }
 
   function normalizePageMode(mode) {
-    return startupRuntime?.normalizePageMode?.(mode) || 'wordquest';
+    return startupRuntime?.normalizePageMode?.(mode) || 'word-quest';
   }
 
   function readPageModeFromQuery() {
-    return startupRuntime?.readPageModeFromQuery?.() || 'wordquest';
+    return startupRuntime?.readPageModeFromQuery?.() || 'word-quest';
   }
 
   function loadStoredPageMode() {
-    return startupRuntime?.loadStoredPageMode?.() || 'wordquest';
+    return startupRuntime?.loadStoredPageMode?.() || 'word-quest';
   }
 
   function persistPageMode(mode) {
@@ -3598,8 +3598,8 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   function csComputeHeaderTitleCenter() {
     const path = String(location.pathname || '').toLowerCase();
     if (path.endsWith('/reading-lab.html')) return 'Reading Lab';
-    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html')) return 'Reports';
-    if (path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
+    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html') || path.endsWith('/my-workspace.html')) return 'My Workspace';
+    if (path.endsWith('/sentence-studio.html') || path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
     const mode = document.documentElement.getAttribute('data-home-mode');
     if (mode === 'home') return 'Cornerstone MTSS';
     if (mode === 'play') return 'Word Quest';
@@ -3609,9 +3609,9 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
   window.CSRoute = Object.assign(window.CSRoute || {}, { routeTo });
 
   // Always land in WordQuest first. Deep Dive opens only from the dedicated tab button.
-  pageMode = 'wordquest';
-  persistPageMode('wordquest');
-  shellRuntime?.updatePageModeUrl?.('wordquest');
+  pageMode = 'word-quest';
+  persistPageMode('word-quest');
+  shellRuntime?.updatePageModeUrl?.('word-quest');
   coachRuntime?.initCoachRibbons?.();
   initializeHomeMode();
   applyHashRoute();
@@ -3811,7 +3811,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         : 'webm';
     const link = document.createElement('a');
     link.href = voiceClipUrl;
-    link.download = `wordquest-${currentWord}-${stamp}.${ext}`;
+    link.download = `word-quest-${currentWord}-${stamp}.${ext}`;
     document.body.appendChild(link);
     link.click();
     link.remove();

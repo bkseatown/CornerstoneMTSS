@@ -67,7 +67,7 @@
     btn.style.fontWeight = '700';
     btn.style.cursor = 'pointer';
     btn.addEventListener('click', () => {
-      global.location.href = withAppBase('teacher-hub-v2.html');
+      global.location.href = withAppBase('specialist-hub.html');
     });
     global.document.body.appendChild(btn);
   }
@@ -179,11 +179,11 @@
       const demoParam = String(url.searchParams.get('demo') || '').trim().toLowerCase();
       const modeParam = String(url.searchParams.get('mode') || '').trim().toLowerCase();
       const needsFix =
-        pageParam !== 'wordquest' ||
+        (pageParam !== 'wordquest' && pageParam !== 'word-quest') ||
         (demoParam !== '1' && demoParam !== 'true') ||
         modeParam === 'demo';
       if (!needsFix) return false;
-      url.searchParams.set('page', 'wordquest');
+      url.searchParams.set('page', 'word-quest');
       url.searchParams.set('demo', '1');
       url.searchParams.delete('mode');
       global.location.replace(url.toString());

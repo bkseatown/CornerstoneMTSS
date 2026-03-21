@@ -93,7 +93,7 @@ function createRoundStartRuntimeModule(deps) {
 
     setWordQuestCoachState('before_guess');
     emitTelemetry('wq_new_word_click', {
-      source: options.launchMissionLab ? 'mission_lab_new' : 'wordquest_new'
+      source: options.launchMissionLab ? 'mission_lab_new' : 'word-quest_new'
     });
 
     const roundStartedAt = Date.now();

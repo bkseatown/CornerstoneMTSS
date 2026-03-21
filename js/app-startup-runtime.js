@@ -98,10 +98,11 @@ function createStartupRuntimeModule(deps) {
   }
 
   function normalizePageMode(mode) {
-    if (!isMissionLabEnabled()) return 'wordquest';
-    return String(mode || '').trim().toLowerCase() === 'mission-lab'
-      ? 'mission-lab'
-      : 'wordquest';
+    if (!isMissionLabEnabled()) return 'word-quest';
+    const raw = String(mode || '').trim().toLowerCase();
+    if (raw === 'mission-lab') return 'mission-lab';
+    if (raw === 'wordquest' || raw === 'word_quest' || raw === 'word-quest' || raw === '') return 'word-quest';
+    return 'word-quest';
   }
 
   function readPageModeFromQuery() {
@@ -110,15 +111,15 @@ function createStartupRuntimeModule(deps) {
       const raw = params.get('page') || params.get('mode') || '';
       return normalizePageMode(raw);
     } catch {
-      return 'wordquest';
+      return 'word-quest';
     }
   }
 
   function loadStoredPageMode() {
     try {
-      return normalizePageMode(windowRef.localStorage?.getItem(pageModeKey) || 'wordquest');
+      return normalizePageMode(windowRef.localStorage?.getItem(pageModeKey) || 'word-quest');
     } catch {
-      return 'wordquest';
+      return 'word-quest';
     }
   }
 

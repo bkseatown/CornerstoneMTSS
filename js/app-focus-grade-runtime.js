@@ -431,7 +431,7 @@ function createFocusGradeRuntimeModule(deps) {
   function syncPlayHeaderCopy() {
     const prefs = getPrefState();
     const homeBtn = el('home-logo-btn');
-    const galleryBtn = el('teacher-dashboard-btn');
+    const galleryBtn = el('my-activities-btn');
     const nextBtn = el('new-game-btn');
     const focusBtn = el('focus-help-btn');
     const focusInput = el('focus-inline-search');

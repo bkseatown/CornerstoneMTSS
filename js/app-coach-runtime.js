@@ -154,7 +154,7 @@ function createCoachRuntimeModule(deps) {
     const tierRaw = String(localStorageRef.getItem('cs_tier_level') || '').trim();
     const tier = Number(tierRaw || 2) === 3 ? 3 : 2;
     const baseContext = {
-      module: 'wordquest',
+      module: 'word-quest',
       event: String(eventKey || '').trim(),
       tier,
       demo: !!demoMode,

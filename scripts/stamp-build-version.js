@@ -4,10 +4,10 @@ const TARGET_PAGES = [
   'index.html',
   'teacher-dashboard.html',
   'reading-lab.html',
-  'sentence-surgery.html',
+  'sentence-studio.html',
   'writing-studio.html',
   'word-quest.html',
-  'numeracy.html'
+  'number-lab.html'
 ];
 
 function nowIso() {
@@ -105,7 +105,7 @@ function patchHtmlAssetVersions(targetDir, buildId) {
   TARGET_PAGES.forEach((name) => {
     const filePath = path.join(targetDir, name);
     if (!fs.existsSync(filePath)) {
-      if (name === 'numeracy.html') return;
+      if (name === 'number-lab.html') return;
       throw new Error(`[stamp-build-version] required page missing: ${name}`);
     }
     const src = fs.readFileSync(filePath, 'utf8');

@@ -18,7 +18,7 @@
           "Debrief blocked-slot errors and correction strategy."
         ],
         successCriteria: "Repeat blocked-slot count <= 1 in next quick check.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       },
       thirtyMin: {
         title: "Blocked Slot Drill + One-Change Challenge",
@@ -28,7 +28,7 @@
           "Capture final rule statement in student words."
         ],
         successCriteria: "Constraint violations trend down across 2 sessions.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       }
     },
     vowel_mapping: {
@@ -41,7 +41,7 @@
           "Apply pattern before first guess."
         ],
         successCriteria: "Vowel swap count <= 2 in next quick check.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       },
       thirtyMin: {
         title: "Swap-Two-Vowels Scaffold",
@@ -51,7 +51,7 @@
           "Finish with 90-second quick check."
         ],
         successCriteria: "Vowel mapping need severity drops by one band.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       }
     },
     positional_strategy: {
@@ -64,7 +64,7 @@
           "Reflect on what changed and why."
         ],
         successCriteria: "Misplace rate trends downward next 2 sessions.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       },
       thirtyMin: {
         title: "Anchor + Probe Routine",
@@ -74,7 +74,7 @@
           "Run guided + independent rounds."
         ],
         successCriteria: "Student explains position strategy independently.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       }
     },
     guess_efficiency: {
@@ -87,7 +87,7 @@
           "Review clue uptake after each guess."
         ],
         successCriteria: "Avg guess latency improves by 15%.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       },
       thirtyMin: {
         title: "90s Sprint with Rule Cue",
@@ -97,7 +97,7 @@
           "Capture pace target for next session."
         ],
         successCriteria: "Latency and attempts remain in expected band.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       }
     },
     default: {
@@ -110,7 +110,7 @@
           "Set one concrete target for tomorrow."
         ],
         successCriteria: "Maintain stable trend in next session.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       },
       thirtyMin: {
         title: "Guided practice block",
@@ -120,7 +120,7 @@
           "Independent quick check + note."
         ],
         successCriteria: "Trend remains stable or improves.",
-        launch: { activity: "wordquest", url: "word-quest.html?quick=1" }
+        launch: { activity: "word-quest", url: "word-quest.html?quick=1" }
       }
     }
   };

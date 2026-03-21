@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" data-page="my-activities" data-view-mode="individual">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
+  <title>Cornerstone MTSS - My Activities</title>
+  <script src="./config.js?v=20260319a"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260314d">
+  <link rel="stylesheet" href="./style/typography.css?v=20260314d">
+  <link rel="stylesheet" href="./games/ui/game-theme.css?v=20260315f">
+  <link rel="stylesheet" href="./games/ui/game-motion.css?v=20260307k">
+  <link rel="stylesheet" href="./games/ui/game-feedback.css?v=20260307k">
+  <link rel="stylesheet" href="./games/ui/game-shell.css?v=20260317a">
+  <script src="./js/theme-registry.js?v=20260315c"></script>
+  <style>
+    .cg-instructional-context {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 10px 6px;
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .cg-ctx-skill, .cg-ctx-group, .cg-ctx-fit {
+      color: rgba(255,255,255,0.72);
+      display: block;
+    }
+    .cg-ctx-log {
+      display: block;
+      margin-top: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 11px;
+      transition: background 0.15s;
+    }
+    .cg-ctx-log:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body class="my-activities-page game-platform-page" data-game-theme="classic">
+  <!-- Theme loading: use classic as default, upgrade legacy default theme -->
+  <script>(function(){try{var t=localStorage.getItem("cs.game.theme");if(!t||t==="default"){localStorage.setItem("cs.game.theme","classic");t="classic";}if(t&&t!=="classic"){document.body.setAttribute("data-game-theme",t);}}catch(e){}})();</script>
+  <main class="cg-shell">
+    <div id="cg-shell"></div>
+    <div id="cg-live-region" aria-live="polite" aria-atomic="true" class="cg-hidden"></div>
+  </main>
+
+  <!-- Theme picker -->
+  <div id="cg-theme-picker" aria-label="Choose game theme" role="group"></div>
+
+  <script>
+    // Scroll active game into view when a game card is clicked in play mode
+    (function() {
+      document.addEventListener("click", function(e) {
+        var card = e.target.closest && e.target.closest("[data-game-id]");
+        if (!card) return;
+        if (document.body.getAttribute("data-shell-view") === "gallery") return;
+        setTimeout(function() {
+          var main = document.querySelector(".cg-main-card") || document.querySelector(".cg-stage-shell");
+          if (main) main.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 80);
+      });
+    })();
+
+    // Theme switcher
+    (function() {
+      var STORAGE_KEY = "cs.game.theme";
+      var picker = document.getElementById("cg-theme-picker");
+      var themeMeta = {
+        "default": "linear-gradient(135deg,#1a2238,#69be28)",
+        "sunset": "linear-gradient(135deg,#2d1b3d,#f472b6)",
+        "ocean": "linear-gradient(135deg,#0c2a3f,#06b6d4)",
+        "coffee": "linear-gradient(135deg,#264234,#c48642)",
+        "seahawks": "linear-gradient(135deg,#436c8f,#69be28)",
+        "huskies": "linear-gradient(135deg,#5b4b88,#b7a57a)",
+        "superman": "linear-gradient(135deg,#223e75,#e23d3d)",
+        "mario": "linear-gradient(135deg,#ba3c33,#ffd23f)",
+        "zelda": "linear-gradient(135deg,#3f5b3a,#c9a45c)",
+        "amongus": "linear-gradient(135deg,#18222d,#5eb6d8)",
+        "rainbowfriends": "linear-gradient(135deg,#b95e8d,#52c4d6)",
+        "minecraft": "linear-gradient(135deg,#3f5b3a,#7bb661)",
+        "marvel": "linear-gradient(135deg,#223e75,#e23d3d)",
+        "ironman": "linear-gradient(135deg,#6a2e34,#d9b44c)",
+        "harleyquinn": "linear-gradient(135deg,#b95e8d,#52c4d6)",
+        "kuromi": "linear-gradient(135deg,#332542,#d56ac7)",
+        "poppink": "linear-gradient(135deg,#cc78a1,#ffd166)",
+        "harrypotter": "linear-gradient(135deg,#6a2e34,#d9b44c)",
+        "demonhunter": "linear-gradient(135deg,#27444f,#ec6f9a)",
+        "dark": "linear-gradient(135deg,#18222d,#54b46b)",
+        "matrix": "linear-gradient(135deg,#101720,#54b46b)",
+        "forest": "linear-gradient(135deg,#0d2318,#4ade80)",
+        "classic": "linear-gradient(135deg,#efe8dc,#d98038)"
+      };
+      var themeOrder = window.WQThemeRegistry && Array.isArray(window.WQThemeRegistry.order) && window.WQThemeRegistry.order.length
+        ? window.WQThemeRegistry.order.slice()
+        : ["default", "ocean", "seahawks", "starbucks"];
+
+      function themeLabel(themeId) {
+        if (window.WQThemeRegistry && typeof window.WQThemeRegistry.getLabel === "function") {
+          return window.WQThemeRegistry.getLabel(themeId);
+        }
+        return themeId || "Cornerstone Navy";
+      }
+
+      function renderSwatches() {
+        if (!picker) return;
+        picker.innerHTML = '<button class="cg-theme-toggle" type="button" aria-expanded="false" aria-label="Open theme picker">Style</button><div class="cg-theme-picker-panel">' + themeOrder.map(function(themeId) {
+          var label = themeLabel(themeId);
+          return '<button class="cg-theme-swatch" data-theme="' + String(themeId).replace(/"/g, '&quot;') + '" title="' + String(label).replace(/"/g, '&quot;') + '" aria-pressed="false" style="background:' + (themeMeta[themeId] || themeMeta.default) + '"></button>';
+        }).join("") + '</div>';
+      }
+
+      function applyTheme(theme) {
+        if (theme && theme !== "default") {
+          document.body.setAttribute("data-game-theme", theme);
+        } else {
+          document.body.removeAttribute("data-game-theme"); /* Cornerstone Navy: no attribute */
+        }
+        try { localStorage.setItem(STORAGE_KEY, theme || "default"); } catch(e) {}
+        var swatches = document.querySelectorAll(".cg-theme-swatch");
+        swatches.forEach(function(s) {
+          var targetTheme = theme || "default";
+          s.setAttribute("aria-pressed", s.getAttribute("data-theme") === targetTheme ? "true" : "false");
+        });
+      }
+      renderSwatches();
+      var saved = "default";
+      try { saved = localStorage.getItem(STORAGE_KEY) || "default"; } catch(e) { saved = "default"; }
+      applyTheme(saved);
+      var toggle = picker && picker.querySelector(".cg-theme-toggle");
+      if (toggle) {
+        toggle.addEventListener("click", function() {
+          var next = picker.getAttribute("data-open") === "true" ? "false" : "true";
+          picker.setAttribute("data-open", next);
+          toggle.setAttribute("aria-expanded", next);
+        });
+      }
+      document.addEventListener("click", function(event) {
+        if (!picker || picker.getAttribute("data-open") !== "true") return;
+        if (picker.contains(event.target)) return;
+        picker.setAttribute("data-open", "false");
+        if (toggle) toggle.setAttribute("aria-expanded", "false");
+      });
+      var swatches = document.querySelectorAll(".cg-theme-swatch");
+      swatches.forEach(function(s) {
+        s.addEventListener("click", function() {
+          applyTheme(s.getAttribute("data-theme"));
+          if (picker) {
+            picker.setAttribute("data-open", "false");
+            if (toggle) toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script src="./js/teacher/teacher-storage.js?v=20260306o"></script>
+  <script src="./js/teacher/teacher-selectors.js?v=20260306p"></script>
+  <script src="./js/data.js?v=20260319c"></script>
+  <script src="./js/literacy/dont-say-it-engine.js?v=20260321a"></script>
+
+  <script src="./games/core/game-modes.js?v=20260306a"></script>
+  <script src="./games/core/game-state.js?v=20260306a"></script>
+  <script src="./games/core/game-timer.js?v=20260306a"></script>
+  <script src="./games/core/game-score.js?v=20260306a"></script>
+  <script src="./games/core/game-feedback.js?v=20260306a"></script>
+  <script src="./games/core/game-a11y.js?v=20260306a"></script>
+  <script src="./games/core/game-sound.js?v=20260306a"></script>
+  <script src="./games/core/game-engine.js?v=20260308a"></script>
+
+  <script src="./games/content/morphology-content.js?v=20260306a"></script>
+  <script src="./games/content/ladder-content.js?v=20260306a"></script>
+  <script src="./games/content/error-content.js?v=20260306a"></script>
+  <script src="./games/content/category-content.js?v=20260306a"></script>
+  <script src="./games/content/sentence-content.js?v=20260306a"></script>
+  <script src="./games/content/typing-content.js?v=20260307m"></script>
+  <script src="./games/content/typing-placement-content.js?v=20260309a"></script>
+  <script src="./games/content/game-content-generator.js?v=20260315b"></script>
+  <script src="./games/content/game-content-registry.js?v=20260321b"></script>
+
+  <script src="./games/ui/game-components.js?v=20260310c"></script>
+  <script src="./games/ui/game-shell.js?v=20260317a"></script>
+  <script>
+    window.CSGameShell && window.CSGameShell.init && window.CSGameShell.init();
+  </script>
+  <script>
+    (function applyGalleryCardCopyOverrides() {
+      var COPY = {
+        "word-quest": {
+          title: "Word Quest",
+          description: "Solve the clue and guess the hidden word.",
+          tags: "Warm-up \u2022 Vocabulary \u2022 Small groups",
+          targetSkill: "Vocabulary retrieval and phonological word-form",
+          groupSize: "2-6 students or whole class",
+          lessonFit: "Warm-up or closing routine; aligns with any unit vocabulary set",
+          logGoal: "Log target words attempted and accuracy rate"
+        },
+        "typing-quest": {
+          title: "Typing Quest",
+          description: "Practice typing real words while building speed and accuracy.",
+          tags: "Fluency \u2022 Keyboarding",
+          targetSkill: "Orthographic fluency and keyboarding automaticity",
+          groupSize: "Individual or paired practice",
+          lessonFit: "Fluency block or intervention warm-up",
+          logGoal: "Log WPM score and error patterns"
+        },
+        "dont-say-it": {
+          title: "Don't Say It!",
+          description: "Give clues so your team guesses the word.",
+          tags: "Speaking \u2022 Small groups",
+          targetSkill: "Expressive vocabulary and semantic association",
+          groupSize: "3-8 students, team format",
+          lessonFit: "Vocabulary review or discussion warm-up",
+          logGoal: "Note which vocabulary clusters students accessed independently"
+        },
+        "morphology-builder": {
+          title: "Build the Word",
+          description: "Combine prefixes, roots, and endings to build real words.",
+          tags: "Morphology \u2022 Word study",
+          targetSkill: "Morphological awareness: prefixes, roots, suffixes",
+          groupSize: "Individual, paired, or small group",
+          lessonFit: "Word study block or Just Words / Wilson reinforcement",
+          logGoal: "Log which morpheme combinations the student built correctly"
+        },
+        "concept-ladder": {
+          title: "Clue Ladder",
+          description: "Reveal clues step-by-step and guess the word.",
+          tags: "Inference \u2022 Teams \u2022 Discussion",
+          targetSkill: "Inferencing and academic vocabulary in context",
+          groupSize: "2-8 students or whole class",
+          lessonFit: "Comprehension warm-up or pre-reading vocabulary activation",
+          logGoal: "Note how many clues students needed and which vocabulary was unfamiliar"
+        },
+        "sentence-studio": {
+          title: "Sentence Studio",
+          description: "Find the mistake and correct the sentence.",
+          tags: "Grammar \u2022 Editing",
+          targetSkill: "Sentence-level editing: grammar, punctuation, syntax",
+          groupSize: "Individual or small group",
+          lessonFit: "Writing block editing practice or grammar mini-lesson",
+          logGoal: "Log error types identified and correction accuracy"
+        },
+        "word-categories": {
+          title: "Word Categories",
+          description: "Name as many words in the category as possible.",
+          tags: "Retrieval \u2022 Speaking \u2022 Teams",
+          targetSkill: "Semantic fluency and category-based word retrieval",
+          groupSize: "2-10 students, individual or team",
+          lessonFit: "Vocabulary review or executive function fluency warm-up",
+          logGoal: "Log word count and note any category confusion or perseveration"
+        },
+        "sentence-builder": {
+          title: "Build a Sentence",
+          description: "Arrange the words to form a correct sentence.",
+          tags: "Syntax \u2022 Writing \u2022 Small groups",
+          targetSkill: "Syntax awareness and sentence structure",
+          groupSize: "Individual or small group",
+          lessonFit: "Writing warm-up or grammar intervention",
+          logGoal: "Note which sentence structures required prompting"
+        }
+      };
+
+      function updateCard(card) {
+        var id = card && card.getAttribute("data-game-id");
+        if (!id || !COPY[id]) return;
+        var data = COPY[id];
+        var h3 = card.querySelector("h3");
+        var desc = card.querySelector("p");
+        var caption = card.querySelector(".cg-card-caption");
+        var previewBoard = card.querySelector(".cg-preview-board");
+        var previewTiles = card.querySelectorAll(".cg-preview-tile");
+        var previewRows = card.querySelectorAll(".cg-preview-row");
+        if (h3) {
+          if (h3.textContent !== data.title) h3.textContent = data.title;
+          h3.classList.add("game-title");
+        }
+        if (desc) {
+          if (desc.textContent !== data.description) desc.textContent = data.description;
+          desc.classList.add("game-description");
+        }
+        if (caption) {
+          if (caption.textContent !== data.tags) caption.textContent = data.tags;
+          caption.classList.add("game-tags");
+        }
+        if (previewBoard) previewBoard.classList.add("preview-board");
+        previewRows.forEach(function (row) { row.classList.add("tile-row"); });
+        previewTiles.forEach(function (tile) { tile.classList.add("tile"); });
+
+        // Inject instructional context block if not already present
+        if (!card.querySelector(".cg-instructional-context") && (data.targetSkill || data.logGoal)) {
+          var ctx = document.createElement("div");
+          ctx.className = "cg-instructional-context";
+          var inner = "";
+          if (data.targetSkill) inner += '<span class="cg-ctx-skill">\uD83C\uDFAF ' + data.targetSkill + '</span>';
+          if (data.groupSize) inner += '<span class="cg-ctx-group">\uD83D\uDC65 ' + data.groupSize + '</span>';
+          if (data.lessonFit) inner += '<span class="cg-ctx-fit">\uD83D\uDCCC ' + data.lessonFit + '</span>';
+          if (data.logGoal) inner += '<a class="cg-ctx-log" href="./my-workspace.html" title="Log result to My Workspace">\uD83D\uDCCB After session: ' + data.logGoal + '</a>';
+          ctx.innerHTML = inner;
+          card.appendChild(ctx);
+        }
+      }
+
+      function updateAll() {
+        var cards = document.querySelectorAll(".cg-gallery-grid .cg-game-card[data-game-id]");
+        cards.forEach(updateCard);
+      }
+
+      var root = document.getElementById("cg-shell");
+      if (!root) return;
+      updateAll();
+      var queued = false;
+      function scheduleUpdate() {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () {
+          queued = false;
+          updateAll();
+        });
+      }
+      var observer = new MutationObserver(function(mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.type !== "childList") continue;
+          if ((m.target && m.target.closest && m.target.closest(".cg-gallery-grid")) || (m.addedNodes && m.addedNodes.length)) {
+            scheduleUpdate();
+            return;
+          }
+        }
+      });
+      observer.observe(root, { childList: true, subtree: true });
+    })();
+  </script>
+</body>
+</html>

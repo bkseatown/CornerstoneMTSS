@@ -7,8 +7,8 @@ const path = require('path');
 const ROOT = process.cwd();
 const HTML_PATHS = [
   path.join(ROOT, 'index.html'),
-  path.join(ROOT, 'reports.html'),
-  path.join(ROOT, 'teacher-hub-v2.html'),
+  path.join(ROOT, 'my-workspace.html'),
+  path.join(ROOT, 'specialist-hub.html'),
   path.join(ROOT, 'word-quest.html')
 ];
 const CHECK_FILES = [
@@ -46,7 +46,7 @@ const ALLOWED_DYNAMIC_IDS = new Set([
   'play-style-toggle',
   's-starter-words',
   'teacher-open-reading-lab-btn',
-  'teacher-open-sentence-surgery-btn',
+  'teacher-open-sentence-studio-btn',
   'teacher-open-writing-studio-btn',
   'wq-share-bundle-btn',
   'wq-share-result-btn'
@@ -60,8 +60,8 @@ const SELECTOR_PATTERNS = [
 ];
 
 const REQUIRED_PAGE_IDS = {
-  'teacher-hub-v2.html': ['th2-search', 'th2-main', 'th2-empty-state', 'th2-focus-card', 'th2-list', 'th2-sidebar-context'],
-  'reports.html': ['td-search-input', 'td-focus-card', 'td-meeting-workspace', 'td-hub-cta']
+  'specialist-hub.html': ['th2-search', 'th2-main', 'th2-empty-state', 'th2-focus-card', 'th2-list', 'th2-sidebar-context'],
+  'my-workspace.html': ['td-search-input', 'td-focus-card', 'td-meeting-workspace', 'td-hub-cta']
 };
 
 function readIdsFromHtml(filePath) {

@@ -82,7 +82,7 @@
         title: weakFlags.writing ? "Writing Studio Precision" : "Sentence Studio Repair",
         focusSkillId: weakFlags.writing ? "LIT.WRITE.SENT" : "LIT.LANG.SYN",
         minutes: 6,
-        href: weakFlags.writing ? "writing-studio.html" : "sentence-surgery.html"
+        href: weakFlags.writing ? "writing-studio.html" : "sentence-studio.html"
       }, budget);
     }
     if (weakFlags.numeracy && budget.remaining >= 5) {
@@ -91,7 +91,7 @@
         title: "Numeracy Boost",
         focusSkillId: "NUM.FLU.FACT",
         minutes: 6,
-        href: "numeracy.html"
+        href: "number-lab.html"
       }, budget);
     }
 

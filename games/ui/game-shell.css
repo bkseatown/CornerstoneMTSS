@@ -1629,30 +1629,30 @@ body.game-platform-page[data-shell-view="play"] .cg-countdown-bar {
   border-radius: 18px;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-game-layout--clue .cg-focus-panel {
+body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-game-layout--clue .cg-focus-panel {
   display: grid;
   gap: 12px;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-context-chips {
+body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-context-chips {
   padding: 12px;
   border-radius: var(--radius-lg);
   background: #f7efe7;
   border: 1px dashed #d98038;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-focus-panel {
+body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-focus-panel {
   background: linear-gradient(180deg, #fff9f3 0%, #f6ede4 100%);
   border: 1px solid rgba(217, 128, 56, 0.2);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-textarea {
+body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-textarea {
   min-height: 168px;
   background: #ffffff;
   border: 2px solid rgba(217, 128, 56, 0.22);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-prompt-title strong {
+body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-prompt-title strong {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
@@ -1721,52 +1721,52 @@ body.game-platform-page[data-shell-view="play"][data-game-id="concept-ladder"] .
   transform: translateX(14px);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-focus-panel {
+body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-focus-panel {
   background:
     linear-gradient(180deg, #f8fafc 0%, #f2f5f8 100%);
   border: 1px solid rgba(169, 63, 59, 0.14);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-choice-row {
+body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-choice-row {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-prompt-title {
+body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-prompt-title {
   padding: 14px 16px;
   border-radius: var(--radius-lg);
   background: #fff6f5;
   border: 1px solid rgba(169, 63, 59, 0.2);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-choice {
+body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-choice {
   padding-left: 20px;
   border-left: 4px solid rgba(169, 63, 59, 0.28);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-feedback-actions {
+body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-feedback-actions {
   justify-content: flex-start;
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-focus-panel {
+body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-focus-panel {
   background:
     linear-gradient(180deg, #f8fbf9 0%, #eef6f1 100%);
   border: 1px solid rgba(22, 121, 94, 0.16);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-textarea {
+body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-textarea {
   min-height: 152px;
   background: #ffffff;
   border: 2px solid rgba(22, 121, 94, 0.18);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-countdown-bar {
+body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-countdown-bar {
   min-height: 62px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
-body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-prompt-title {
+body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-prompt-title {
   font-size: clamp(26px, 2.6vw, 34px);
 }
 
@@ -1796,18 +1796,18 @@ body.game-platform-page[data-shell-view="play"][data-game-id="sentence-builder"]
 }
 
 @media (min-width: 980px) {
-  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-game-layout--clue,
+  body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-game-layout--clue,
   body.game-platform-page[data-shell-view="play"][data-game-id="concept-ladder"] .cg-game-layout--ladder,
-  body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-game-layout--detective,
-  body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-game-layout--rush {
+  body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-game-layout--detective,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-game-layout--rush {
     grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.3fr);
     align-items: start;
   }
 
-  body.game-platform-page[data-shell-view="play"][data-game-id="word-connections"] .cg-game-layout--clue > .cg-focus-panel,
+  body.game-platform-page[data-shell-view="play"][data-game-id="dont-say-it"] .cg-game-layout--clue > .cg-focus-panel,
   body.game-platform-page[data-shell-view="play"][data-game-id="concept-ladder"] .cg-game-layout--ladder > .cg-focus-panel,
-  body.game-platform-page[data-shell-view="play"][data-game-id="error-detective"] .cg-game-layout--detective > .cg-focus-panel,
-  body.game-platform-page[data-shell-view="play"][data-game-id="rapid-category"] .cg-game-layout--rush > .cg-focus-panel {
+  body.game-platform-page[data-shell-view="play"][data-game-id="sentence-studio"] .cg-game-layout--detective > .cg-focus-panel,
+  body.game-platform-page[data-shell-view="play"][data-game-id="word-categories"] .cg-game-layout--rush > .cg-focus-panel {
     grid-column: 2;
     grid-row: 1 / span 2;
   }
@@ -2488,13 +2488,13 @@ body.game-platform-page .cg-game-card[data-game-id="word-quest"]::after {
 }
 
 /* Typing Quest: Orange/Amber + Keyboard icon — Fluency & typing */
-body.game-platform-page .cg-game-card[data-game-id="word-typing"] {
+body.game-platform-page .cg-game-card[data-game-id="typing-quest"] {
   border-left: 4px solid rgba(251, 146, 60, 0.8) !important;
   background:
     linear-gradient(135deg, rgba(217, 119, 6, 0.32) 0%, rgba(251, 146, 60, 0.24) 100%) !important;
   border-color: rgba(251, 146, 60, 0.6) !important;
 }
-body.game-platform-page .cg-game-card[data-game-id="word-typing"]::after {
+body.game-platform-page .cg-game-card[data-game-id="typing-quest"]::after {
   content: "⌨️";
   position: absolute;
   top: 16px;
@@ -2505,13 +2505,13 @@ body.game-platform-page .cg-game-card[data-game-id="word-typing"]::after {
 }
 
 /* Word Connections (Off Limits): Purple + Speech Bubble icon — Speaking & teams */
-body.game-platform-page .cg-game-card[data-game-id="word-connections"] {
+body.game-platform-page .cg-game-card[data-game-id="dont-say-it"] {
   border-left: 4px solid rgba(168, 85, 247, 0.8) !important;
   background:
     linear-gradient(135deg, rgba(147, 51, 234, 0.32) 0%, rgba(168, 85, 247, 0.24) 100%) !important;
   border-color: rgba(168, 85, 247, 0.6) !important;
 }
-body.game-platform-page .cg-game-card[data-game-id="word-connections"]::after {
+body.game-platform-page .cg-game-card[data-game-id="dont-say-it"]::after {
   content: "💬";
   position: absolute;
   top: 16px;

@@ -12,7 +12,7 @@ import { getTopErrorKey, newGame } from './app-game.js';
 const _el = id => document.getElementById(id);
 
 // Module state
-let pageMode = 'wordquest';
+let pageMode = 'word-quest';
 
 // Local page mode utilities (extracted from app-prefs)
 const PAGE_MODE_KEY = 'wordquest_page_mode_v1';
@@ -20,10 +20,11 @@ function isMissionLabEnabled() {
   return MISSION_LAB_ENABLED;
 }
 function normalizePageMode(mode) {
-  if (!isMissionLabEnabled()) return 'wordquest';
-  return String(mode || '').trim().toLowerCase() === 'mission-lab'
-    ? 'mission-lab'
-    : 'wordquest';
+  if (!isMissionLabEnabled()) return 'word-quest';
+  const raw = String(mode || '').trim().toLowerCase();
+  if (raw === 'mission-lab') return 'mission-lab';
+  if (raw === 'wordquest' || raw === 'word_quest' || raw === 'word-quest' || raw === '') return 'word-quest';
+  return 'word-quest';
 }
 function persistPageMode(mode) {
   try { localStorage.setItem(PAGE_MODE_KEY, normalizePageMode(mode)); } catch {}
@@ -1120,7 +1121,7 @@ function normalizeTeamSet(set) {
     const tierRaw = String(localStorage.getItem('cs_tier_level') || '').trim();
     const tier = Number(tierRaw || 2) === 3 ? 3 : 2;
     const baseContext = {
-      module: 'wordquest',
+      module: 'word-quest',
       event: String(eventKey || '').trim(),
       tier,
       demo: !!DEMO_MODE,
@@ -1210,8 +1211,8 @@ function normalizeTeamSet(set) {
   function csComputeHeaderTitleCenter() {
     const path = String(location.pathname || '').toLowerCase();
     if (path.endsWith('/reading-lab.html')) return 'Reading Lab';
-    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html')) return 'Reports';
-    if (path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
+    if (path.endsWith('/teacher-dashboard.html') || path.endsWith('/reports.html') || path.endsWith('/my-workspace.html')) return 'My Workspace';
+    if (path.endsWith('/sentence-studio.html') || path.endsWith('/sentence-surgery.html') || path.endsWith('/writing-studio.html')) return 'Writing Studio';
     const mode = document.documentElement.getAttribute('data-home-mode');
     if (mode === 'home') return 'Cornerstone MTSS';
     if (mode === 'play') return 'Word Quest';
@@ -1364,7 +1365,7 @@ function normalizeTeamSet(set) {
       setHomeMode('home', { scroll: false });
       return;
     }
-    if (route === 'wordquest') {
+    if (route === 'wordquest' || route === 'word-quest') {
       setHomeMode('play', { scroll: false });
       if (!WQGame.getState?.()?.word) newGame({ launchMissionLab: false });
       return;
@@ -1381,7 +1382,7 @@ function normalizeTeamSet(set) {
     }
     if (route === 'dashboard' || route === 'admin-demo') {
       setActivityLabel('Specialist Hub');
-      const url = new URL(withAppBase('teacher-hub-v2.html'), window.location.origin);
+      const url = new URL(withAppBase('specialist-hub.html'), window.location.origin);
       if (route === 'admin-demo') url.hash = '#admin-demo';
       window.location.href = url.toString();
       return;
@@ -1391,7 +1392,7 @@ function normalizeTeamSet(set) {
   window.CSRoute = Object.assign(window.CSRoute || {}, { routeTo });
 
   function syncPlayToolsRoleVisibility() {
-    const teacherOnly = _el('play-drawer-teacher-dashboard');
+    const teacherOnly = _el('play-drawer-my-activities');
     if (!teacherOnly) return;
     teacherOnly.classList.toggle('hidden', !isTeacherRoleEnabled());
   }
@@ -1422,7 +1423,7 @@ function normalizeTeamSet(set) {
   function syncPageModeUI() {
     const missionEnabled = isMissionLabEnabled();
     const missionMode = missionEnabled && isMissionLabStandaloneMode();
-    document.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'wordquest');
+    document.documentElement.setAttribute('data-page-mode', missionMode ? 'mission-lab' : 'word-quest');
     document.documentElement.setAttribute('data-mission-lab', missionEnabled ? 'on' : 'off');
     const navBtn = _el('mission-lab-nav-btn');
     if (navBtn) {
@@ -1536,9 +1537,9 @@ function normalizeTeamSet(set) {
   });
 
   // Always land in WordQuest first. Deep Dive opens only from the dedicated tab button.
-  pageMode = 'wordquest';
-  persistPageMode('wordquest');
-  updatePageModeUrl('wordquest');
+  pageMode = 'word-quest';
+  persistPageMode('word-quest');
+  updatePageModeUrl('word-quest');
   initCoachRibbons();
   initializeHomeMode();
   applyHashRoute();
@@ -1749,7 +1750,7 @@ function initSettings() {
     _el('voice-help-close')?.addEventListener('click', closeVoiceHelp);
     _el('voice-help-modal')?.addEventListener('click', e => { if (e.target.id === 'voice-help-modal') closeVoiceHelp(); });
     _el('mission-lab-nav-btn')?.addEventListener('click', () => {
-      setPageMode(isMissionLabStandaloneMode() ? 'wordquest' : 'mission-lab');
+      setPageMode(isMissionLabStandaloneMode() ? 'word-quest' : 'mission-lab');
     });
     function openWritingStudioPage() {
       if (!WRITING_STUDIO_ENABLED) {
@@ -1784,7 +1785,7 @@ function initSettings() {
       const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
       const targetWord = String(state?.word || '').trim().toUpperCase();
       const clueSentence = String(state?.entry?.sentence || '').trim();
-      const url = new URL(withAppBase('sentence-surgery.html'), window.location.origin);
+      const url = new URL(withAppBase('sentence-studio.html'), window.location.origin);
       url.searchParams.set('theme', activeTheme);
       url.searchParams.set('wq_focus', focusValue);
       url.searchParams.set('wq_focus_label', focusLabel);
@@ -1814,7 +1815,7 @@ function initSettings() {
     }
 
     function openTeacherDashboardPage() {
-      const url = new URL(withAppBase('game-platform.html'), window.location.origin);
+      const url = new URL(withAppBase('my-activities.html'), window.location.origin);
       try {
         const params = new URLSearchParams(window.location.search || '');
         if (params.get('demo') === '1') url.searchParams.set('demo', '1');
@@ -1826,7 +1827,7 @@ function initSettings() {
     }
 
     function openNumeracyLabPage() {
-      const url = new URL(withAppBase('numeracy.html'), window.location.origin);
+      const url = new URL(withAppBase('number-lab.html'), window.location.origin);
       try {
         const params = new URLSearchParams(window.location.search || '');
         if (params.get('demo') === '1') url.searchParams.set('demo', '1');
@@ -1864,25 +1865,25 @@ function initSettings() {
     } else {
       syncWritingStudioAvailability();
     }
-    _el('sentence-surgery-btn')?.addEventListener('click', openSentenceSurgeryPage);
+    _el('sentence-studio-btn')?.addEventListener('click', openSentenceSurgeryPage);
     _el('reading-lab-btn')?.addEventListener('click', openReadingLabPage);
     _el('teacher-open-writing-studio-btn')?.addEventListener('click', openWritingStudioPage);
-    _el('teacher-open-sentence-surgery-btn')?.addEventListener('click', openSentenceSurgeryPage);
+    _el('teacher-open-sentence-studio-btn')?.addEventListener('click', openSentenceSurgeryPage);
     _el('teacher-open-reading-lab-btn')?.addEventListener('click', openReadingLabPage);
-    _el('teacher-dashboard-btn')?.addEventListener('click', openTeacherDashboardPage);
+    _el('my-activities-btn')?.addEventListener('click', openTeacherDashboardPage);
     _el('play-tools-btn')?.addEventListener('click', togglePlayToolsDrawer);
     _el('play-drawer-close')?.addEventListener('click', () => {
       _el('play-tools-drawer')?.classList.add('hidden');
       _el('play-tools-btn')?.setAttribute('aria-expanded', 'false');
     });
     _el('play-drawer-writing-studio')?.addEventListener('click', openWritingStudioPage);
-    _el('play-drawer-sentence-surgery')?.addEventListener('click', openSentenceSurgeryPage);
+    _el('play-drawer-sentence-studio')?.addEventListener('click', openSentenceSurgeryPage);
     _el('play-drawer-reading-lab')?.addEventListener('click', openReadingLabPage);
-    _el('play-drawer-teacher-dashboard')?.addEventListener('click', openTeacherDashboardPage);
+    _el('play-drawer-my-activities')?.addEventListener('click', openTeacherDashboardPage);
     _el('home-open-writing-studio')?.addEventListener('click', () => routeTo('writing'));
-    _el('home-open-wordquest')?.addEventListener('click', () => routeTo('wordquest'));
+    _el('home-open-word-quest')?.addEventListener('click', () => routeTo('word-quest'));
     _el('home-open-reading-lab')?.addEventListener('click', () => routeTo('reading'));
-    _el('home-open-numeracy')?.addEventListener('click', openNumeracyLabPage);
+    _el('home-open-number-lab')?.addEventListener('click', openNumeracyLabPage);
     _el('wq-share-result-btn')?.addEventListener('click', async () => {
       if (!_latestSavedSessionId) return;
       await shareWordQuestSessionById(_latestSavedSessionId);
@@ -1890,11 +1891,11 @@ function initSettings() {
     _el('wq-share-bundle-btn')?.addEventListener('click', async () => {
       await shareWordQuestBundle();
     });
-    _el('cta-wordquest')?.addEventListener('click', () => routeTo('wordquest'));
+    _el('cta-word-quest')?.addEventListener('click', () => routeTo('word-quest'));
     _el('cta-tools')?.addEventListener('click', () => routeTo('dashboard'));
     _el('home-logo-btn')?.addEventListener('click', () => {
       routeTo('home');
-      setPageMode('wordquest', { force: true });
+      setPageMode('word-quest', { force: true });
       closeFocusSearchList();
       closeQuickPopover('all');
       _el('settings-panel')?.classList.add('hidden');
@@ -3542,7 +3543,7 @@ function initSettings() {
           : 'webm';
       const link = document.createElement('a');
       link.href = voiceClipUrl;
-      link.download = `wordquest-${currentWord}-${stamp}.${ext}`;
+      link.download = `word-quest-${currentWord}-${stamp}.${ext}`;
       document.body.appendChild(link);
       link.click();
       link.remove();

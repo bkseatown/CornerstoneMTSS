@@ -410,7 +410,7 @@
     renderTeacherSummary(metrics);
     setCoachMessage("rl.post", "Next move: " + recommendedNextStep(metrics));
     emitAva({
-      module: "reading_lab",
+      module: "reading-lab",
       event: "paragraph_complete",
       tier: state.tier,
       accuracyPct: metrics.accuracy,
@@ -420,7 +420,7 @@
     });
     if (metrics.accuracy < 85) {
       emitAva({
-        module: "reading_lab",
+        module: "reading-lab",
         event: "low_accuracy",
         tier: state.tier,
         accuracyPct: metrics.accuracy,
@@ -430,7 +430,7 @@
     }
     if (metrics.punctScore < 60) {
       emitAva({
-        module: "reading_lab",
+        module: "reading-lab",
         event: "punctuation_miss",
         tier: state.tier,
         accuracyPct: metrics.accuracy,
@@ -440,7 +440,7 @@
     }
     if (metrics.pacingVar >= 420) {
       emitAva({
-        module: "reading_lab",
+        module: "reading-lab",
         event: "pacing_drop",
         tier: state.tier,
         accuracyPct: metrics.accuracy,
@@ -673,7 +673,7 @@
     var signal = buildReadingLabSignal(metrics);
     if (window.CSCornerstoneEngine && typeof window.CSCornerstoneEngine.appendSession === "function") {
       window.CSCornerstoneEngine.appendSession(signal, {
-        module: "readinglab",
+        module: "reading-lab",
         studentId: String(studentId || "").trim()
       });
     }
@@ -687,7 +687,7 @@
       ? window.CSCornerstoneStore.getStudentCode()
       : null;
     var session = window.CSCornerstoneSignals.normalizeSignal({
-      engine: "readinglab",
+      engine: "reading-lab",
       studentCode: studentCode,
       durationMs: Math.max(0, Number(state.attempt && state.attempt.completedAt || 0) - Number(state.attempt && state.attempt.startedAt || 0)),
       metrics: {
@@ -718,7 +718,7 @@
     if (el.shareResult) el.shareResult.classList.toggle("hidden", !state.latestSessionId);
     if (el.shareBundle) el.shareBundle.classList.toggle("hidden", !state.latestSessionId);
     if (window.CSEvidence && typeof window.CSEvidence.appendSession === "function") {
-      window.CSEvidence.appendSession(studentId || "demo-student", "reading_lab", {
+      window.CSEvidence.appendSession(studentId || "demo-student", "reading-lab", {
         accuracy: Math.max(0, Math.min(100, Number(metrics.accuracy || 0))),
         wpmProxy: Math.max(0, Number(metrics.wpm || 0)),
         selfCorrects: Math.max(0, Math.round((metrics.selfCorrectionRate || 0) * 10)),
@@ -904,7 +904,7 @@
       setStatus("Select a sentence first.");
       return;
     }
-    var url = new URL(withAppBase("sentence-surgery.html"), window.location.origin);
+    var url = new URL(withAppBase("sentence-studio.html"), window.location.origin);
     url.searchParams.set("seed", sentence);
     url.searchParams.set("from", "reading");
     if (state.isDemo) url.searchParams.set("demo", "1");
@@ -984,7 +984,7 @@
     el.backHome.addEventListener("click", function () {
       var params = new URLSearchParams(window.location.search || "");
       if (params.get("from") === "teacher") {
-        window.location.href = withAppBase("teacher-hub-v2.html");
+        window.location.href = withAppBase("specialist-hub.html");
         return;
       }
       window.location.href = withAppBase("index.html");

@@ -28,7 +28,7 @@ function createTelemetryDiagnosticsModule(deps) {
     normalizeLessonPackId = (value) => String(value || '').trim() || 'custom',
     normalizeLessonTargetId = (_pack, value) => String(value || '').trim() || 'custom',
     normalizePageMode = (value) => value,
-    loadStoredPageMode = () => 'wordquest',
+    loadStoredPageMode = () => 'word-quest',
     normalizePlayStyle = (value) => value,
     readPageModeAttr = () => '',
     prefs = {},
@@ -148,7 +148,7 @@ function createTelemetryDiagnosticsModule(deps) {
     try {
       const rows = queue.slice(-200);
       const payload = {
-        app: 'wordquest',
+        app: 'word-quest',
         reason: String(reason || 'manual').trim() || 'manual',
         sent_at_ms: Date.now(),
         rows

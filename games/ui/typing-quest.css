@@ -187,7 +187,7 @@ body.typing-quest-page {
 }
 
 body.typing-quest-page #cg-theme-picker,
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] #cg-theme-picker {
+body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] #cg-theme-picker {
   top: 12px;
   right: 16px;
   max-width: 188px;
@@ -205,25 +205,25 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] #cg-
 }
 
 body.typing-quest-page #cg-theme-picker::-webkit-scrollbar,
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] #cg-theme-picker::-webkit-scrollbar {
+body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] #cg-theme-picker::-webkit-scrollbar {
   display: none;
 }
 
 body.typing-quest-page .cg-theme-swatch,
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-theme-swatch {
+body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] .cg-theme-swatch {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
 }
 
 body.typing-quest-page .cg-typing-appbar,
-body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-appbar {
+body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] .cg-typing-appbar {
   padding-right: 220px;
 }
 
 @media (max-width: 1100px) {
   body.typing-quest-page #cg-theme-picker,
-  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] #cg-theme-picker {
+  body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] #cg-theme-picker {
     top: auto;
     right: 12px;
     bottom: 12px;
@@ -231,7 +231,7 @@ body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-
   }
 
   body.typing-quest-page .cg-typing-appbar,
-  body.game-platform-page[data-shell-view="play"][data-game-id="word-typing"] .cg-typing-appbar {
+  body.game-platform-page[data-shell-view="play"][data-game-id="typing-quest"] .cg-typing-appbar {
     padding-right: 18px;
   }
 }

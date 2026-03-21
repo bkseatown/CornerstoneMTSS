@@ -1,6 +1,39 @@
 # Cornerstone MTSS
 
-Cornerstone MTSS is a specialist-facing instructional support platform with premium instructional games, student support workflows, reports, and a shared visual/product system.
+Cornerstone MTSS is a specialist-facing instructional support platform with a clear top-level structure: Main Landing Page, Specialist Hub, My Students, My Workspace, My Activities, and Student Profiles.
+
+My Workspace is the planning and reporting surface that contains the specialist's full data view: reports, meeting prep, exports, cross-student planning, and related documentation.
+Student Profiles are the per-student detail surfaces for individual progress reporting, meeting notes, and support history.
+
+Canonical surface routes now match the product language:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-students.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`
+
+Canonical activity routes now include:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reading-lab.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/sentence-studio.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/writing-studio.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/number-lab.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/number-lab/index.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/typing-quest.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/precision-play.html`
+
+Legacy routes like `teacher-hub-v2.html`, `case-management.html`, `reports.html`, `game-platform.html`, `sentence-surgery.html`, `numeracy.html`, and `numeracy/index.html` are now compatibility shims or redirects and should not be treated as canonical names.
+
+Canonical naming is now complete across the active platform layer:
+- visible surface/page names
+- activity routes and launcher labels
+- active Word Quest control IDs and page markers
+- canonical activity IDs in the launcher/runtime layer
+- evidence/reporting names for active writes
+- Word Quest page-mode, planner launch, export-prefix, and telemetry labels now write `word-quest`
+
+Remaining old names are intentionally compatibility-only or deeper internal taxonomy/data domains, not the primary product language.
 
 ## Source Of Truth
 - Primary working folder: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS`
@@ -40,8 +73,12 @@ Supplemental refactor notes that may describe target-state module names rather t
 - A full specialist/intervention platform, not only a word game.
 - A shared premium game family with distinct identities:
   - Word Quest
-  - Word Clue
-  - sentence/word building games
+  - Don't Say It!
+  - Typing Quest
+  - Sentence Studio
+  - Reading Lab
+  - Writing Studio
+  - Number Lab
 - A no-scroll-by-default desktop product surface where pages should fit cleanly unless the viewport is truly small.
 - A visually advanced but readable interface with strong contrast, EAL-friendly support, and adaptive scaffolding.
 
@@ -86,7 +123,7 @@ Use the repo docs as the durable memory layer:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-runtime-helpers.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-phonics-clue.js`
 - Shared game platform:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/precision-play.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/game-shell.js`
@@ -117,7 +154,8 @@ Use the repo docs as the durable memory layer:
 - Current cleanup focus:
   - keep reducing `js/word-quest-runtime.js` where safe
   - remove stale inline helpers instead of leaving duplicate wrappers
-  - fix init-order regressions introduced by the split so the browser runtime boots cleanly before further extractions
+  - keep canonical product names aligned across routes, activity IDs, evidence modules, and active docs
+  - preserve compatibility aliases only where they protect old links or saved local data
 
 ## Deploy Target
 - GitHub Pages workflow:
@@ -135,7 +173,7 @@ Use the repo docs as the durable memory layer:
 - What it checks on live GitHub Pages:
   - `/CornerstoneMTSS/build.json` returns valid JSON and contains `buildId`.
   - `build.json.time` is parseable and not stale (older than 14 days).
-  - `/CornerstoneMTSS/reports.html` includes:
+  - `/CornerstoneMTSS/my-workspace.html` includes:
     - `build-stamp.js`
     - `js/build-badge.js`
     - `js/nav-shell.js`
@@ -201,7 +239,7 @@ Use the repo docs as the durable memory layer:
 ### Critical Fixes
 1. **JS IIFE Syntax Error (Line 2889)**
    - **Issue:** Straight double-quotes (`””`) used in a `.showToast()` call where curly quotes were intended
-   - **Effect:** Entire `teacher-hub-v2.js` module failed to parse silently; hub did not initialize
+   - **Effect:** Entire `specialist-hub.js` module failed to parse silently; hub did not initialize
    - **Fix:** Replaced `””` with escaped single quotes `’` in the Classroom sync toast message
    - **Impact:** Hub now boots correctly, morning brief renders, students populate sidebar
 
@@ -257,7 +295,7 @@ Use the repo docs as the durable memory layer:
 ---
 
 ## Teacher Workflow (Command Hub)
-1. Open [teacher-hub-v2.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html) — the new Command Hub (Phase 15)
+1. Open [specialist-hub.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html) — the Specialist Hub
 2. **Sign in with Google** (optional) to sync roster from Google Classroom
 3. View your caseload with urgency-ranked students in sidebar
 4. **Morning Brief:** Rich intelligence surface showing tier distributions, top priority students, and recommended next steps
@@ -266,11 +304,6 @@ Use the repo docs as the durable memory layer:
 7. Track usage with optional **Analytics panel** (📊 button)
 8. Optional: Configure Azure OpenAI for AI-powered coaching narration and sub-plan generation
 
-### Legacy Workflow (Teacher Dashboard v1)
-1. Open [teacher-dashboard.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.html) — the original dashboard
-2. Search/select a student
-3. Review tier and confidence snapshot
-4. Click `Run 90-second Probe` or `Run 10-min session` to launch [session-runner.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/session-runner.html)
-5. Complete session blocks; auto-generate teacher notes
-6. Save session and confirm trend updates
-7. Export progress as CSV/JSON
+### Legacy Workflow Redirects
+1. Older links like [teacher-dashboard.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.html), [reports.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html), [teacher-hub-v2.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html), and [case-management.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/case-management.html) are preserved only as compatibility routes.
+2. New work should use [specialist-hub.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html), [my-workspace.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html), and [my-students.html](/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-students.html).

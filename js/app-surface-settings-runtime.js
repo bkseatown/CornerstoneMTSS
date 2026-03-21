@@ -73,7 +73,7 @@ function createSurfaceSettingsRuntimeModule(deps) {
     const headerRight = documentRef.querySelector('.header-right');
     if (!headerRight) return;
     const iconIds = ['theme-dock-toggle-btn', 'music-dock-toggle-btn', 'teacher-panel-btn', 'case-toggle-btn', 'keyboard-layout-toggle', 'mission-lab-nav-btn', 'settings-btn', 'play-tools-btn'];
-    const quickIds = ['play-style-toggle', 'phonics-clue-open-btn', 'starter-word-open-btn', 'writing-studio-btn', 'sentence-surgery-btn', 'reading-lab-btn', 'new-game-btn'];
+    const quickIds = ['play-style-toggle', 'phonics-clue-open-btn', 'starter-word-open-btn', 'writing-studio-btn', 'sentence-studio-btn', 'reading-lab-btn', 'new-game-btn'];
     let iconGroup = headerRight.querySelector('.header-icon-controls');
     if (!iconGroup) {
       iconGroup = documentRef.createElement('div');
@@ -149,7 +149,7 @@ function createSurfaceSettingsRuntimeModule(deps) {
     if (playToolsBtn) setHoverNoteForElement(playToolsBtn, 'Open activity tools.');
     const writingBtn = el('writing-studio-btn');
     if (writingStudioEnabled && writingBtn) setHoverNoteForElement(writingBtn, 'Open Writing Studio.');
-    const surgeryBtn = el('sentence-surgery-btn');
+    const surgeryBtn = el('sentence-studio-btn');
     if (surgeryBtn) setHoverNoteForElement(surgeryBtn, 'Open Sentence Studio.');
     const readingBtn = el('reading-lab-btn');
     if (readingBtn) setHoverNoteForElement(readingBtn, 'Open Reading Lab.');

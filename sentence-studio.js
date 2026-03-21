@@ -113,7 +113,7 @@
     btn.style.left = "10px";
     btn.style.zIndex = "40";
     btn.addEventListener("click", function () {
-      window.location.href = withAppBase("reports.html");
+      window.location.href = withAppBase("my-workspace.html");
     });
     document.body.appendChild(btn);
   })();
@@ -559,7 +559,7 @@
       ? window.CSAIService.heuristicAnalyze(snap.sentence)
       : window.SSAIAnalysis.analyzeSentenceHeuristic(snap.sentence));
     emitAva({
-      module: "sentence_surgery",
+      module: "sentence-studio",
       event: "paragraph_complete",
       tier: tierLevel,
       paragraphComplete: true,
@@ -642,7 +642,7 @@
     if (shareResultBtn) shareResultBtn.classList.toggle("hidden", !latestSessionId);
     if (shareBundleBtn) shareBundleBtn.classList.toggle("hidden", !latestSessionId);
     if (window.CSEvidence && typeof window.CSEvidence.appendSession === "function") {
-      window.CSEvidence.appendSession(studentCode || "demo-student", "sentence_surgery", {
+      window.CSEvidence.appendSession(studentCode || "demo-student", "sentence-studio", {
         reasoningAdded: !!reasoningAdded,
         runOnFlag: /run-on/i.test(String(signalSet.grammar || "")),
         fragmentFlag: /fragment/i.test(String(signalSet.grammar || "")),
@@ -652,7 +652,7 @@
     }
     if (window.CSSupportStore && typeof window.CSSupportStore.addEvidencePoint === "function") {
       window.CSSupportStore.addEvidencePoint(studentCode || "demo-student", {
-        module: "sentence-surgery",
+        module: "sentence-studio",
         domain: "writing.sentence",
         metrics: {
           editsCount: Math.max(0, Number(editCount || 0)),
@@ -728,7 +728,7 @@
     if (action === "why") {
       setStateCoachText("Write a short WHY phrase after because.", "ss.addWhy");
       emitAva({
-        module: "sentence_surgery",
+        module: "sentence-studio",
         event: "first_reason_added",
         tier: tierLevel,
         firstReasonAdded: true
@@ -760,7 +760,7 @@
       backspaceBurstCount += 1;
       if (backspaceBurstCount >= 4) {
         emitAva({
-          module: "sentence_surgery",
+          module: "sentence-studio",
           event: "repeated_backspace",
           tier: tierLevel,
           backspaceBurst: backspaceBurstCount
@@ -799,7 +799,7 @@
     var reasonValue = sanitize((engine.state && engine.state.slots && engine.state.slots.reason && engine.state.slots.reason.value) || "");
     if (editCount >= 2 && !reasonValue) {
       emitAva({
-        module: "sentence_surgery",
+        module: "sentence-studio",
         event: "reasoning_missing",
         tier: tierLevel,
         edited: true,

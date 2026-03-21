@@ -1,5 +1,5 @@
 /**
- * teacher-hub-v2.js — Context-first Teacher Hub runtime
+ * specialist-hub.js — Context-first Specialist Hub runtime
  *
  * Responsibility surface:
  *   - Bootstrap HubState + HubContext
@@ -567,14 +567,14 @@
 
   function buildHubRoute(params) {
     try {
-      var next = new URL("teacher-hub-v2.html", window.location.href);
+      var next = new URL("specialist-hub.html", window.location.href);
       var input = params && typeof params === "object" ? params : {};
       if (isDemoMode) next.searchParams.set("demo", "1");
       if (input.studentId) next.searchParams.set("student", String(input.studentId));
       if (input.classId) next.searchParams.set("classId", String(input.classId));
       return next.pathname.replace(/^\//, "") + (next.search || "") + (next.hash || "");
     } catch (_e) {
-      return "teacher-hub-v2.html";
+      return "specialist-hub.html";
     }
   }
 
@@ -1016,7 +1016,7 @@
 
   var HUB_SEARCH_RESOURCES = [
     { id: "tool-curriculum", kind: "resource", label: "Curriculum Quick Reference", subtitle: "Open curriculum supports", action: "curriculum" },
-    { id: "tool-workspace", kind: "resource", label: "Reports", subtitle: "Weekly insights, meetings, history, and exports", href: "reports.html" }
+    { id: "tool-workspace", kind: "resource", label: "My Workspace", subtitle: "Weekly insights, meetings, history, and exports", href: "my-workspace.html" }
   ];
 
   function ensureSearchService() {
@@ -1767,7 +1767,7 @@
       '  <div class="th2-quick-command-bar">',
       '    <button class="th2-command-action" data-open-brief="1" data-open-brief-block="' + escapeHtml(contextData.block && contextData.block.id || "") + '" type="button"><strong>Open Class Plan</strong><span>Open the lesson brief when you want accommodations, materials, and the fuller plan.</span></button>',
       '    <button class="th2-command-action" data-open-curriculum="1" type="button"><strong>Open Curriculum</strong><span>Check the lesson sequence, vocabulary, and anchor resources.</span></button>',
-      '    <a class="th2-command-action" href="reports.html"><strong>View Progress</strong><span>Open reports, progress insights, and meeting-ready history.</span></a>',
+      '    <a class="th2-command-action" href="my-workspace.html"><strong>Open My Workspace</strong><span>Open reports, progress insights, and meeting-ready history.</span></a>',
       "  </div>",
       "</section>"
     ].join("");
@@ -2044,8 +2044,8 @@
       base = href;
     } else if (module === "ReadingLab")     { base = "reading-lab.html"; }
     else if (module === "WritingStudio")    { base = "writing-studio.html"; }
-    else if (module === "SentenceStudio")   { base = "sentence-surgery.html"; }
-    else if (module.indexOf("Numeracy") === 0) { base = "numeracy.html"; }
+    else if (module === "SentenceStudio")   { base = "sentence-studio.html"; }
+    else if (module.indexOf("Numeracy") === 0) { base = "number-lab.html"; }
     else if (module === "PrecisionPlay")    { base = "precision-play.html"; }
     else                                    { base = "word-quest.html?play=1"; }
 
@@ -3375,7 +3375,7 @@
         '    <a class="th2-drawer-link" href="student-profile.html?student=' + encodeURIComponent(studentId) + '&from=hub">Open Student Profile &rarr;</a>',
         '  </div>',
         '  <div class="th2-drawer-row">',
-        '    <a class="th2-drawer-link" href="reports.html?student=' + encodeURIComponent(studentId) + '&tab=meeting&from=hub">Open Reports &rarr;</a>',
+        '    <a class="th2-drawer-link" href="my-workspace.html?student=' + encodeURIComponent(studentId) + '&tab=meeting&from=hub">Open My Workspace &rarr;</a>',
         '  </div>',
         '</div>'
       ].join("\n");
@@ -3509,7 +3509,7 @@
 
           if (Evidence && typeof Evidence.appendSession === "function") {
             safe(function () {
-              Evidence.appendSession(studentId, "reading_lab", {
+              Evidence.appendSession(studentId, "reading-lab", {
                 accuracy: Math.max(0, Math.min(1, acc / 100)),
                 wpmProxy: 0,
                 selfCorrects: 0
@@ -3550,7 +3550,7 @@
           var accText = accs.slice(0, 3).map(function (a) {
             return "• " + String(a.title || "Accommodation");
           }).join("\n") || "• Extended time\n• Visual supports";
-          var actHref = window.location.origin + "/" + "teacher-hub-v2.html?student=" + encodeURIComponent(studentId);
+          var actHref = window.location.origin + "/" + "specialist-hub.html?student=" + encodeURIComponent(studentId);
 
           var text = [
             "MTSS STUDENT SUMMARY — " + date,
@@ -3709,37 +3709,37 @@
       var now  = Date.now();
       /* Ava M. — reading lab sessions, improving fluency */
       safe(function () {
-        Evidence.appendSession("demo-ava", "reading_lab", { accuracy: 0.72, wpmProxy: 54, selfCorrects: 2 }, now - 12 * DAY);
-        Evidence.appendSession("demo-ava", "reading_lab", { accuracy: 0.75, wpmProxy: 58, selfCorrects: 3 }, now - 8  * DAY);
-        Evidence.appendSession("demo-ava", "reading_lab", { accuracy: 0.78, wpmProxy: 61, selfCorrects: 2 }, now - 4  * DAY);
-        Evidence.appendSession("demo-ava", "reading_lab", { accuracy: 0.81, wpmProxy: 64, selfCorrects: 4 }, now - 1  * DAY);
+        Evidence.appendSession("demo-ava", "reading-lab", { accuracy: 0.72, wpmProxy: 54, selfCorrects: 2 }, now - 12 * DAY);
+        Evidence.appendSession("demo-ava", "reading-lab", { accuracy: 0.75, wpmProxy: 58, selfCorrects: 3 }, now - 8  * DAY);
+        Evidence.appendSession("demo-ava", "reading-lab", { accuracy: 0.78, wpmProxy: 61, selfCorrects: 2 }, now - 4  * DAY);
+        Evidence.appendSession("demo-ava", "reading-lab", { accuracy: 0.81, wpmProxy: 64, selfCorrects: 4 }, now - 1  * DAY);
       });
       /* Liam T. — word quest phonics, struggling */
       safe(function () {
-        Evidence.appendSession("demo-liam", "wordquest", { misplaceRate: 0.38, absentRate: 0.12, vowelSwapCount: 4 }, now - 14 * DAY);
-        Evidence.appendSession("demo-liam", "wordquest", { misplaceRate: 0.35, absentRate: 0.10, vowelSwapCount: 3 }, now - 9  * DAY);
-        Evidence.appendSession("demo-liam", "wordquest", { misplaceRate: 0.40, absentRate: 0.14, vowelSwapCount: 5 }, now - 4  * DAY);
-        Evidence.appendSession("demo-liam", "wordquest", { misplaceRate: 0.37, absentRate: 0.11, vowelSwapCount: 4 }, now - 2  * DAY);
+        Evidence.appendSession("demo-liam", "word-quest", { misplaceRate: 0.38, absentRate: 0.12, vowelSwapCount: 4 }, now - 14 * DAY);
+        Evidence.appendSession("demo-liam", "word-quest", { misplaceRate: 0.35, absentRate: 0.10, vowelSwapCount: 3 }, now - 9  * DAY);
+        Evidence.appendSession("demo-liam", "word-quest", { misplaceRate: 0.40, absentRate: 0.14, vowelSwapCount: 5 }, now - 4  * DAY);
+        Evidence.appendSession("demo-liam", "word-quest", { misplaceRate: 0.37, absentRate: 0.11, vowelSwapCount: 4 }, now - 2  * DAY);
       });
       /* Maya R. — reading lab, strong ORF */
       safe(function () {
-        Evidence.appendSession("demo-maya", "reading_lab", { accuracy: 0.88, wpmProxy: 87, selfCorrects: 1 }, now - 10 * DAY);
-        Evidence.appendSession("demo-maya", "reading_lab", { accuracy: 0.90, wpmProxy: 91, selfCorrects: 2 }, now - 6  * DAY);
-        Evidence.appendSession("demo-maya", "reading_lab", { accuracy: 0.92, wpmProxy: 94, selfCorrects: 1 }, now - 3  * DAY);
-        Evidence.appendSession("demo-maya", "reading_lab", { accuracy: 0.93, wpmProxy: 97, selfCorrects: 2 }, now - 1  * DAY);
+        Evidence.appendSession("demo-maya", "reading-lab", { accuracy: 0.88, wpmProxy: 87, selfCorrects: 1 }, now - 10 * DAY);
+        Evidence.appendSession("demo-maya", "reading-lab", { accuracy: 0.90, wpmProxy: 91, selfCorrects: 2 }, now - 6  * DAY);
+        Evidence.appendSession("demo-maya", "reading-lab", { accuracy: 0.92, wpmProxy: 94, selfCorrects: 1 }, now - 3  * DAY);
+        Evidence.appendSession("demo-maya", "reading-lab", { accuracy: 0.93, wpmProxy: 97, selfCorrects: 2 }, now - 1  * DAY);
       });
       /* Noah K. — numeracy, moderate */
       safe(function () {
-        Evidence.appendSession("demo-noah", "numeracy", { accuracy: 0.68, speedProxy: 42, hints: 3 }, now - 11 * DAY);
-        Evidence.appendSession("demo-noah", "numeracy", { accuracy: 0.71, speedProxy: 45, hints: 2 }, now - 7  * DAY);
-        Evidence.appendSession("demo-noah", "numeracy", { accuracy: 0.69, speedProxy: 44, hints: 3 }, now - 3  * DAY);
-        Evidence.appendSession("demo-noah", "numeracy", { accuracy: 0.73, speedProxy: 48, hints: 2 }, now - 1  * DAY);
+        Evidence.appendSession("demo-noah", "number-lab", { accuracy: 0.68, speedProxy: 42, hints: 3 }, now - 11 * DAY);
+        Evidence.appendSession("demo-noah", "number-lab", { accuracy: 0.71, speedProxy: 45, hints: 2 }, now - 7  * DAY);
+        Evidence.appendSession("demo-noah", "number-lab", { accuracy: 0.69, speedProxy: 44, hints: 3 }, now - 3  * DAY);
+        Evidence.appendSession("demo-noah", "number-lab", { accuracy: 0.73, speedProxy: 48, hints: 2 }, now - 1  * DAY);
       });
       /* Zoe W. — word quest phonics, early stage */
       safe(function () {
-        Evidence.appendSession("demo-zoe", "wordquest", { misplaceRate: 0.28, absentRate: 0.08, vowelSwapCount: 2 }, now - 9  * DAY);
-        Evidence.appendSession("demo-zoe", "wordquest", { misplaceRate: 0.25, absentRate: 0.07, vowelSwapCount: 1 }, now - 5  * DAY);
-        Evidence.appendSession("demo-zoe", "wordquest", { misplaceRate: 0.22, absentRate: 0.06, vowelSwapCount: 1 }, now - 2  * DAY);
+        Evidence.appendSession("demo-zoe", "word-quest", { misplaceRate: 0.28, absentRate: 0.08, vowelSwapCount: 2 }, now - 9  * DAY);
+        Evidence.appendSession("demo-zoe", "word-quest", { misplaceRate: 0.25, absentRate: 0.07, vowelSwapCount: 1 }, now - 5  * DAY);
+        Evidence.appendSession("demo-zoe", "word-quest", { misplaceRate: 0.22, absentRate: 0.06, vowelSwapCount: 1 }, now - 2  * DAY);
       });
       hubMemory.setString(SEED_KEY, "1");
     }
@@ -5001,7 +5001,7 @@
     var deltaLabel = trend === "up" ? "↑ improving" : (trend === "down" ? "↓ declining" : "→ stable");
 
     var profileHref = "student-profile.html?student=" + encodeURIComponent(studentId) + "&from=hub";
-    var reportsHref = "reports.html?student=" + encodeURIComponent(studentId) + "&from=hub";
+    var reportsHref = "my-workspace.html?student=" + encodeURIComponent(studentId) + "&from=hub";
 
     // Set tier on card element for CSS stripe color
     el.focusCard.setAttribute("data-tier", String(tier));
@@ -5009,9 +5009,9 @@
     var grade = escapeHtml(student.gradeBand || student.grade || "");
     var lastSeenLabel = "No sessions yet";
     if (summary && summary.lastSession) {
-      var moduleNameMap = { wordquest: "Word Quest", reading_lab: "Reading Lab",
-        sentence_surgery: "Sentence Surgery", writing_studio: "Writing Studio",
-        numeracy: "Numeracy", "quick-log": "Quick Note" };
+      var moduleNameMap = { "word-quest": "Word Quest", "reading-lab": "Reading Lab",
+        "sentence-studio": "Sentence Studio", "writing-studio": "Writing Studio",
+        "number-lab": "Number Lab", "quick-log": "Quick Note" };
       var sessionModule = moduleNameMap[summary.lastSession.module] || summary.lastSession.module || "";
       lastSeenLabel = relativeDate(summary.lastSession.timestamp) + (sessionModule ? " · " + sessionModule : "");
     }
@@ -5517,7 +5517,7 @@
       '    <div class="th2-tools-action-row">',
       '      <button class="th2-tools-action" type="button" data-open-brief="1" data-open-brief-block="' + escapeHtml(block && block.id || "") + '"><strong>Class Plan</strong><span>Lesson brief, accommodations, and materials</span></button>',
       '      <button class="th2-tools-action" type="button" data-open-curriculum="1"><strong>Curriculum</strong><span>Sequence, vocabulary, and anchor resources</span></button>',
-      '      <a class="th2-tools-action" href="reports.html"><strong>Reports</strong><span>Progress notes and meeting-ready history</span></a>',
+      '      <a class="th2-tools-action" href="my-workspace.html"><strong>My Workspace</strong><span>Progress notes and meeting-ready history</span></a>',
       '      <button class="th2-tools-action" type="button" data-tools-google="calendar"><strong>Calendar</strong><span>Open or sync today’s schedule</span></button>',
       '    </div>',
       '  </section>',

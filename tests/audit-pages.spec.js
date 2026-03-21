@@ -13,12 +13,12 @@ const PAGES = [
   { slug: 'index', url: './' },
   { slug: 'play', url: './?play=1' },
   { slug: 'literacy-hub', url: 'literacy.html' },
-  { slug: 'numeracy-hub', url: 'numeracy.html' },
+  { slug: 'number-lab', url: 'number-lab.html' },
   { slug: 'word-quest', url: 'word-quest.html' },
   { slug: 'precision-play', url: 'precision-play.html' },
   { slug: 'reading-lab', url: 'reading-lab.html' },
-  { slug: 'sentence-surgery', url: 'sentence-surgery.html' },
-  { slug: 'reports', url: 'reports.html' }
+  { slug: 'sentence-studio', url: 'sentence-studio.html' },
+  { slug: 'my-workspace', url: 'my-workspace.html' }
 ];
 
 const OUT_DIR = path.resolve('.artifacts', 'ui-audit', 'screenshots');

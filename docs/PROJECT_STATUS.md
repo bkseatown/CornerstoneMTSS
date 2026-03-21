@@ -2,14 +2,23 @@
 
 ## Snapshot
 
-Cornerstone MTSS is currently a static-first front-end platform with multiple instructional and teacher-facing surfaces served directly from the repo root.
+Cornerstone MTSS is currently a static-first front-end platform with multiple instructional and specialist-facing surfaces served directly from the repo root.
+
+Current IA direction:
+- Main Landing Page -> Specialist Hub
+- Specialist Hub -> My Students, My Workspace, My Activities
+- Student Profiles are child pages opened from My Students and other specialist workflows
+- My Workspace is the full-data specialist surface for reports, meeting prep, exports, and cross-student planning
 
 The highest-confidence entry points are:
 
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-students.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.html`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`
 
 ## How To Run It
 
@@ -23,6 +32,7 @@ Playwright is already configured around port `4173`.
 
 - `npm run guard:runtime`
 - `npm run hud:check`
+- `npm run app:factories:check`
 - `npm run dom:hooks:check`
 - `npm run audit:a11y`
 - `npm run test:visual:regression`
@@ -39,10 +49,37 @@ Playwright is already configured around port `4173`.
 
 - Landing and game bootstrap: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js`
 - Main Word Quest runtime: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/word-quest-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-runtime-helpers.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-phonics-clue.js`
-- Reports and teacher dashboard: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/dashboard/`
-- Teacher hub v2: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/teacher/`
-- Game platform shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/`
+- My Workspace surface: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/dashboard/`
+- Specialist Hub: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/teacher/`
+- My Activities shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/`
 - Shared themes and HUD system: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-registry.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-nav.js`
+
+## Canonical Naming Reality
+
+- Canonical surface routes:
+  - `specialist-hub.html`
+  - `my-students.html`
+  - `my-workspace.html`
+  - `my-activities.html`
+  - `student-profile.html`
+- Canonical activity routes:
+  - `word-quest.html`
+  - `reading-lab.html`
+  - `sentence-studio.html`
+  - `writing-studio.html`
+  - `typing-quest.html`
+  - `number-lab.html`
+  - `number-lab/index.html`
+  - `precision-play.html`
+- Legacy names still exist only for compatibility and redirects:
+  - `teacher-hub-v2.html`
+  - `teacher-dashboard.html`
+  - `reports.html`
+  - `case-management.html`
+  - `game-platform.html`
+  - `sentence-surgery.html`
+  - `numeracy.html`
+  - `numeracy/index.html`
 
 ## Word Quest Refactor Reality
 
@@ -52,6 +89,9 @@ Playwright is already configured around port `4173`.
 - That means the old “18k app-main.js” planning state is stale. Use current file sizes and loaded modules, not the older extraction estimates, when judging progress.
 - The remaining `word-quest-runtime.js` is now mostly orchestration, reveal flow, input flow, voice flow, and other tightly coupled runtime control paths.
 - `word-quest.html` already loads the extracted runtime modules before `word-quest-runtime.js`; use `npm run app:factories:check` to verify expected factory coverage before trusting claims that modules are “missing from HTML.”
+- The active naming cleanup is now complete at the platform/runtime layer:
+  - canonical activity IDs now include `typing-quest`, `dont-say-it`, `sentence-studio`, `word-categories`, `word-quest`, `reading-lab`, and `number-lab`
+  - evidence, signal, planner, export, and page-mode layers now accept legacy names but write canonical names for active flows
 - Large extracted module families already in the repo include:
   - focus/curriculum/search: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-search-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-curriculum-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-grade-runtime.js`
   - support flow: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-logic.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-ui.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-shell.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-constraints.js`
@@ -68,9 +108,9 @@ Playwright is already configured around port `4173`.
 ## Immediate Risks
 
 - Top-level docs can drift faster than the code unless they are updated alongside structural changes.
-- A few core front-end files are still large, especially `js/word-quest-runtime.js`, `teacher-hub-v2.js`, and `teacher-dashboard.css`, which raises change risk.
+- A few core front-end files are still large, especially `js/word-quest-runtime.js`, `specialist-hub.js`, and `my-workspace.css`, which raises change risk.
 - Some Word Quest modules were extracted faster than their initialization order was cleaned up, so startup regressions are currently a bigger risk than raw file size alone.
-- Historical product naming still appears in some places, so verify paths and live URLs before assuming an older note is current.
+- Historical product naming still appears in deeper datasets, audio packs, CSS class names, and compatibility aliases, but these are no longer the canonical route/UI/runtime names.
 
 ## Recommended Next Cleanup Targets
 

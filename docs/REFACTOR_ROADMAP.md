@@ -10,7 +10,7 @@ Reduce change risk by shrinking the biggest runtime hotspots without destabilizi
 
 Why first:
 
-- It is now the largest gameplay runtime file in the repo at about 18,071 lines.
+- It is now the largest gameplay runtime file in the repo at about 4,291 lines.
 - It owns the main Word Quest UI orchestration after bootstrap was moved out of `js/app.js`.
 - Most future game regressions and maintenance cost now concentrate here.
 
@@ -32,7 +32,7 @@ Important coupling notes:
 - Do not extract the main `handleKey()` flow early. If Module 4 moves at all, move pure helpers like validation and feedback utilities.
 - Treat Module 5 as the orchestrator. Do not extract `newGame()` or round-complete control flow unless a future slice is mostly pure helper logic.
 
-### 2. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js`
+### 2. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.js`
 
 Why second:
 
@@ -47,7 +47,7 @@ Recommended extraction order:
 4. Tour/help behavior
 5. Sync/integration helpers
 
-### 3. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.css`
+### 3. `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.css`
 
 Why third:
 
@@ -74,6 +74,14 @@ Why fifth:
 
 - This file is no longer a refactor hotspot. It is now the small bootstrap entry at about 184 lines.
 - Keep it small and stable. Changes here should stay limited to startup wiring, data loading, and handoff into `js/word-quest-runtime.js`.
+
+## Naming Cleanup Reality
+
+- Product-facing route renames are largely complete.
+- Product-facing and active runtime renames are now complete.
+- Canonical surfaces now use `specialist-hub`, `my-students`, `my-workspace`, and `my-activities`.
+- Canonical activity routes now use `sentence-studio`, `number-lab`, and `typing-quest`.
+- Remaining naming debt is mostly internal taxonomy, dataset, audio-pack, CSS-class, and compatibility-alias work rather than route/file confusion.
 
 ## Refactor Rules
 

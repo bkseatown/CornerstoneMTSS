@@ -34,10 +34,29 @@ cp .env.production.example .env.production
 | Area | Purpose | Key Files |
 |---|---|---|
 | Landing and bootstrap | Main app entry and runtime wiring | `index.html`, `js/app.js`, `word-quest.html` |
-| Teacher workflows | Reports and dashboard surfaces | `reports.html`, `teacher-dashboard.js`, `js/dashboard/` |
-| Teacher hub | Specialist workflow and case context | `teacher-hub-v2.html`, `teacher-hub-v2.js`, `js/teacher/` |
-| Learning surfaces | Student-facing activity pages | `reading-lab.html`, `sentence-surgery.html`, `writing-studio.html`, `precision-play.html` |
+| Teacher workflows | My Workspace surfaces | `my-workspace.html`, `my-workspace.js`, `js/dashboard/` |
+| Specialist hub | Specialist workflow and case context | `specialist-hub.html`, `specialist-hub.js`, `js/teacher/` |
+| Learning surfaces | Specialist-launched activity pages | `word-quest.html`, `reading-lab.html`, `sentence-studio.html`, `writing-studio.html`, `typing-quest.html`, `precision-play.html`, `number-lab.html`, `number-lab/index.html` |
 | Theming and accessibility | Tokens, contrast, modes, navigation | `style/`, `js/theme-registry.js`, `js/theme-nav.js` |
+
+## Canonical Surface Names
+
+- Main Landing Page: `index.html`
+- Specialist Hub: `specialist-hub.html`
+- My Students: `my-students.html`
+- Student Profile: `student-profile.html`
+- My Workspace: `my-workspace.html`
+- My Activities: `my-activities.html`
+
+Legacy pages such as `teacher-hub-v2.html`, `reports.html`, `case-management.html`, `game-platform.html`, `sentence-surgery.html`, and `numeracy.html` are now compatibility shims and should not be used as the primary names in new work.
+
+The active naming cleanup is complete at the platform/runtime layer:
+- canonical surfaces and activity routes are live
+- active launcher/runtime IDs use the canonical names
+- active evidence/reporting writes use canonical activity names
+- active Word Quest page-mode, export, and telemetry names now write `word-quest`
+
+Remaining old-name references are compatibility aliases or deeper internal taxonomy/data domains.
 
 ## High-Value Commands
 

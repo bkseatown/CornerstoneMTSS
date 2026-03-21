@@ -57,7 +57,7 @@
     html[data-home-mode="home"] > body > header { display: none; }
   </style>
 </head>
-<body class="wordquest-root theme-seahawks">
+<body class="word-quest-root wordquest-root theme-seahawks">
 
   <div id="loading-screen" data-testid="loading-screen"><div class="spinner"></div><span>Loading…</span></div>
   <script>
@@ -86,7 +86,7 @@
       <div class="header-right">
         <div id="focus-inline-wrap" class="focus-inline-wrap header-focus-inline-wrap">
           <div class="focus-inline-actions" role="group" aria-label="Quick supports">
-            <button id="teacher-dashboard-btn" class="icon-btn" type="button" title="Back to Game Gallery" aria-label="Back to Game Gallery">
+            <button id="my-activities-btn" class="icon-btn" type="button" title="Back to My Activities" aria-label="Back to My Activities">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                 <path d="M15 18 9 12l6-6"></path>
                 <path d="M9 12h10"></path>
@@ -187,7 +187,7 @@
               <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
             </svg>
           </button>
-          <button id="sentence-surgery-btn" class="header-quick-btn" type="button" title="Open Sentence Studio" aria-label="Open Sentence Studio">
+          <button id="sentence-studio-btn" class="header-quick-btn" type="button" title="Open Sentence Studio" aria-label="Open Sentence Studio">
             <span class="quick-btn-label">Sentence</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M4 7h16"></path>
@@ -225,7 +225,7 @@
         <button class="cs-coach-action hidden" type="button"></button>
       </div>
       <div class="hero-cta">
-        <button id="cta-wordquest" class="primary-btn" type="button">
+        <button id="cta-word-quest" class="primary-btn" type="button">
           Open Literacy
         </button>
         <button id="cta-tools" class="secondary-btn" type="button">
@@ -249,7 +249,7 @@
             </div>
             <p class="home-tools-tile-copy">Instant access probes with diagnostic signals and clear next instructional move.</p>
             <div class="cornerstone-module-links">
-              <button id="home-open-wordquest" class="home-tools-tile-btn" type="button">Word Quest - Strategy Probe</button>
+              <button id="home-open-word-quest" class="home-tools-tile-btn" type="button">Word Quest - Strategy Probe</button>
               <button id="home-open-reading-lab" class="home-tools-tile-btn" type="button">Reading Lab - Fluency & Accuracy</button>
               <button id="home-open-writing-studio" class="home-tools-tile-btn" type="button">Writing Studio - Sentence & Reasoning</button>
             </div>
@@ -259,8 +259,8 @@
               <span class="home-tools-tile-icon" aria-hidden="true">➗</span>
               <h3 class="home-tools-tile-title">NUMERACY</h3>
             </div>
-            <p class="home-tools-tile-copy">Numeracy Lab - Conceptual Reasoning (Bridges / Figureoutable Math).</p>
-            <button id="home-open-numeracy" class="home-tools-tile-btn" type="button">Open Numeracy Lab</button>
+            <p class="home-tools-tile-copy">Number Lab - Conceptual Reasoning (Bridges / Figureoutable Math).</p>
+            <button id="home-open-number-lab" class="home-tools-tile-btn" type="button">Open Number Lab</button>
           </article>
         </div>
         <section class="institutional-alignment-block" aria-label="Institutional alignment">
@@ -348,9 +348,9 @@
   </div>
   <div id="play-tools-drawer" class="play-tools-drawer hidden" role="dialog" aria-label="WordQuest tools" aria-hidden="true">
     <button id="play-drawer-writing-studio" class="quick-action-btn" type="button">Writing Studio</button>
-    <button id="play-drawer-sentence-surgery" class="quick-action-btn" type="button">Sentence Studio</button>
+    <button id="play-drawer-sentence-studio" class="quick-action-btn" type="button">Sentence Studio</button>
     <button id="play-drawer-reading-lab" class="quick-action-btn" type="button">Reading Lab</button>
-    <button id="play-drawer-teacher-dashboard" class="quick-action-btn hidden" type="button">Game Gallery</button>
+    <button id="play-drawer-my-activities" class="quick-action-btn hidden" type="button">My Activities</button>
     <button id="play-drawer-close" class="quick-action-btn" type="button">Close</button>
   </div>
   <div id="next-action-line" class="next-action-line hidden" aria-live="polite"></div>

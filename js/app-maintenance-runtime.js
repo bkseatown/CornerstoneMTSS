@@ -5,7 +5,7 @@
 
 function createMaintenanceRuntimeModule(deps) {
   const {
-    appPrefKey = 'wordquest_prefs_v2',
+    appPrefKey = 'word-quest_prefs_v2',
     cachesRef = null,
     cancelRevealNarration = () => {},
     copyTextToClipboard = async () => {},

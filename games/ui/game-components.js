@@ -7,15 +7,26 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function createGameComponents() {
   "use strict";
 
+  var LEGACY_UI_GAME_IDS = Object.freeze({
+    "word-typing": "typing-quest",
+    "word-connections": "dont-say-it",
+    "error-detective": "sentence-studio",
+    "rapid-category": "word-categories"
+  });
+
   var ICONS = Object.freeze({
     "word-quest": "word-quest",
-    "word-connections": "word-connections",
+    "dont-say-it": "dont-say-it",
     "morphology-builder": "morphology-builder",
     "concept-ladder": "concept-ladder",
-    "error-detective": "error-detective",
-    "rapid-category": "rapid-category",
+    "sentence-studio": "sentence-studio",
+    "word-categories": "word-categories",
     "sentence-builder": "sentence-builder",
+    "typing-quest": "word-quest",
     "word-typing": "word-quest",
+    "word-connections": "dont-say-it",
+    "error-detective": "sentence-studio",
+    "rapid-category": "word-categories",
     score: "score",
     timer: "timer",
     streak: "streak",
@@ -30,8 +41,13 @@
     return "./games/ui/game-icons.svg#cg-icon-" + String(id || "word-quest");
   }
 
+  function normalizeGameId(id) {
+    var raw = String(id || "");
+    return LEGACY_UI_GAME_IDS[raw] || raw;
+  }
+
   function iconFor(id, className) {
-    var key = ICONS[id] || ICONS["word-quest"];
+    var key = ICONS[normalizeGameId(id)] || ICONS["word-quest"];
     return [
       '<svg class="' + escapeHtml(className || "cg-icon") + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
       '  <use href="' + escapeHtml(spriteHref(key)) + '"></use>',
@@ -48,6 +64,7 @@
   }
 
   function renderPreview(gameId) {
+    gameId = normalizeGameId(gameId);
     if (gameId === "word-quest") {
       return [
         '<div class="cg-card-preview" aria-hidden="true">',
@@ -59,7 +76,7 @@
         '</div>'
       ].join("");
     }
-    if (gameId === "word-connections") {
+    if (gameId === "dont-say-it") {
       return [
         '<div class="cg-card-preview" aria-hidden="true">',
         '  <div class="cg-mini-taboo">',
@@ -98,7 +115,7 @@
         '</div>'
       ].join("");
     }
-    if (gameId === "error-detective") {
+    if (gameId === "sentence-studio") {
       return [
         '<div class="cg-card-preview" aria-hidden="true">',
         '  <div class="cg-mini-detective">',
@@ -108,7 +125,7 @@
         '</div>'
       ].join("");
     }
-    if (gameId === "rapid-category") {
+    if (gameId === "word-categories") {
       return [
         '<div class="cg-card-preview" aria-hidden="true">',
         '  <div class="cg-mini-rapid">',
@@ -134,7 +151,7 @@
         '</div>'
       ].join("");
     }
-    if (gameId === "word-typing") {
+    if (gameId === "typing-quest") {
       return [
         '<div class="cg-card-preview" aria-hidden="true">',
         '  <div class="cg-mini-typing">',

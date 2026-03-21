@@ -1045,7 +1045,7 @@ const _el = id => document.getElementById(id);
 
   function syncPlayHeaderCopy() {
     const homeBtn = _el('home-logo-btn');
-    const galleryBtn = _el('teacher-dashboard-btn');
+    const galleryBtn = _el('my-activities-btn');
     const nextBtn = _el('new-game-btn');
     const focusBtn = _el('focus-help-btn');
     const focusInput = _el('focus-inline-search');

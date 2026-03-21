@@ -28,7 +28,7 @@
     var skills = Array.isArray(context.targetSkills) ? context.targetSkills.slice(0, 3) : [];
     if (subject === "Math" && focus.toLowerCase().indexOf("fraction") >= 0) {
       if (game === "concept-ladder") return ["fraction clues", "comparison language", "early-solve points"];
-      if (game === "error-detective") return ["fraction misconceptions", "numerator meaning", "reasoning correction"];
+      if (game === "sentence-studio" || game === "error-detective") return ["fraction misconceptions", "numerator meaning", "reasoning correction"];
       return ["fraction vocabulary", "math language", "comparison reasoning"];
     }
     if (subject === "Intervention" || subject === "ELA") {

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-page="my-students">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="./">
+  <title>Cornerstone MTSS - My Students</title>
+  <script src="./config.js?v=20260319a"></script>
+  <link rel="icon" href="./favicon.ico" sizes="any">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260307d">
+  <link rel="stylesheet" href="./style/typography.css?v=20260307d">
+  <link rel="stylesheet" href="./style/nav-shell.css?v=20260312a">
+  <link rel="stylesheet" href="./my-students.css?v=20260321c">
+</head>
+<body class="my-students-page cm-page">
+  <main class="cm-shell">
+    <header class="cm-header">
+      <div class="cm-brand">
+        <p class="cm-kicker">My Students</p>
+        <h1>Student directory and support records</h1>
+      </div>
+      <label class="cm-search" for="cm-search-input">
+        <input id="cm-search-input" type="search" placeholder="Search student, plan type, or support area..." autocomplete="off">
+      </label>
+      <div class="cm-header-actions">
+        <a class="cm-btn" href="./specialist-hub.html">👩‍🏫 Hub</a>
+        <a class="cm-btn" href="./my-workspace.html">📊 My Workspace</a>
+        <a class="cm-btn cm-btn-primary" href="./student-profile.html?student=demo-ava">👤 Open Profile</a>
+      </div>
+    </header>
+
+    <section class="cm-top-grid">
+      <article class="cm-panel cm-panel-hero">
+        <p class="cm-kicker">Today</p>
+        <h2>What needs attention now</h2>
+        <div id="cm-due-strip" class="cm-due-strip"></div>
+      </article>
+      <article class="cm-panel">
+        <p class="cm-kicker">Plan Types</p>
+        <div id="cm-plan-filters" class="cm-plan-filters"></div>
+      </article>
+    </section>
+
+    <section class="cm-main-grid">
+      <article class="cm-panel cm-panel-caseload">
+        <div class="cm-section-head">
+          <div>
+            <h2>Open one student fast</h2>
+          </div>
+          <div id="cm-caseload-summary" class="cm-summary-chips"></div>
+        </div>
+        <div id="cm-student-list" class="cm-student-list"></div>
+      </article>
+
+      <aside class="cm-sidebar">
+        <article class="cm-panel">
+          <p class="cm-kicker">Due Work</p>
+          <div id="cm-due-list" class="cm-task-list"></div>
+        </article>
+        <article class="cm-panel">
+          <p class="cm-kicker">Documents</p>
+          <div class="cm-doc-grid">
+            <a class="cm-doc-card" href="./my-students.html#iesp"><span>IESP</span><strong>Annual goals and service plan</strong></a>
+            <a class="cm-doc-card" href="./my-students.html#ip"><span>IP</span><strong>Intervention cycle and notes</strong></a>
+            <a class="cm-doc-card" href="./my-students.html#iap"><span>IAP</span><strong>Accommodations and access supports</strong></a>
+            <a class="cm-doc-card" href="./my-students.html#bip"><span>BIP</span><strong>Behavior and review records</strong></a>
+            <a class="cm-doc-card" href="./my-students.html#fba"><span>FBA</span><strong>Function hypotheses and triggers</strong></a>
+            <a class="cm-doc-card" href="./my-students.html#ef"><span>EF</span><strong>Executive-function support notes</strong></a>
+          </div>
+        </article>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./js/support-store.js?v=20260316b"></script>
+  <script src="./js/caseload-store.js?v=20260309a"></script>
+  <script src="./js/evidence-store.js?v=20260307d"></script>
+  <script src="./js/teacher/teacher-selectors.js?v=20260307d"></script>
+  <script src="./js/teacher/teacher-intelligence.js?v=20260307d"></script>
+  <script src="./my-students.js?v=20260321c"></script>
+</body>
+</html>

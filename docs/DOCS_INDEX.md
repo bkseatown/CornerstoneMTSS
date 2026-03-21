@@ -79,3 +79,26 @@ If two docs disagree, trust this order:
   - `js/app.js` about 184 lines
   - `js/word-quest-runtime.js` about 4,291 lines
 - The current work is no longer “start the split.” It is “keep the extracted runtime clean, fix init-order regressions, and continue reducing `js/word-quest-runtime.js` where the boundary is safe.”
+
+## Current Naming Note
+
+- Canonical surface names are:
+  - `specialist-hub`
+  - `my-students`
+  - `my-workspace`
+  - `my-activities`
+  - `student-profile`
+- Canonical activity names/routes are:
+  - `word-quest`
+  - `typing-quest`
+  - `reading-lab`
+  - `sentence-studio`
+  - `writing-studio`
+  - `number-lab`
+  - `precision-play`
+- Canonical runtime/output naming is also now active for:
+  - `word-quest` page-mode
+  - `word-quest` planner launch IDs
+  - `word-quest` export prefixes
+  - active evidence/reporting/signal writes
+- If older docs mention `teacher-hub-v2`, `teacher-dashboard`, `case-management`, `reports`, `game-platform`, `sentence-surgery`, or `numeracy` as the primary route names, treat those as historical or compatibility names unless the doc explicitly says it is describing redirects.

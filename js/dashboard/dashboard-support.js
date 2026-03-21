@@ -396,7 +396,7 @@
         el.shareLink.addEventListener("click", function () {
           if (!state.selectedId) return;
           var buildId = getCurrentBuildId();
-          var link = appendStudentParam("./reports.html", state.selectedId);
+          var link = appendStudentParam("./my-workspace.html", state.selectedId);
           var url = new URL(link, window.location.href);
           if (buildId) url.searchParams.set("v", buildId);
           copyText(url.toString(), function () {

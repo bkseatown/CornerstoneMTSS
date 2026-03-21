@@ -43,10 +43,10 @@
     PrecisionPlay: 'precision-play.html',
     ReadingLab: 'reading-lab.html',
     WritingStudio: 'writing-studio.html',
-    SentenceStudio: 'sentence-surgery.html',
-    NumeracyQuickCheck: 'numeracy.html',
-    NumeracyReinforcement: 'numeracy.html?mode=reinforcement',
-    NumeracyErrorSprint: 'numeracy.html?mode=error-analysis'
+    SentenceStudio: 'sentence-studio.html',
+    NumeracyQuickCheck: 'number-lab.html',
+    NumeracyReinforcement: 'number-lab.html?mode=reinforcement',
+    NumeracyErrorSprint: 'number-lab.html?mode=error-analysis'
   });
 
   function clamp(num, min, max) {

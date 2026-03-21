@@ -123,11 +123,11 @@
   var WORKSPACE_SEARCH_RESOURCES = [
     { id: "workspace-tool-wordquest", kind: "tool", label: "Word Quest", subtitle: "Word game activity surface", href: "word-quest.html?play=1" },
     { id: "workspace-tool-reading", kind: "resource", label: "Reading Lab", subtitle: "Literacy activity", href: "reading-lab.html" },
-    { id: "workspace-tool-sentence", kind: "resource", label: "Sentence Studio", subtitle: "Sentence support surface", href: "sentence-surgery.html" },
+    { id: "workspace-tool-sentence", kind: "resource", label: "Sentence Studio", subtitle: "Sentence support surface", href: "sentence-studio.html" },
     { id: "workspace-tool-writing", kind: "resource", label: "Writing Studio", subtitle: "Writing support surface", href: "writing-studio.html" },
-    { id: "workspace-tool-numeracy", kind: "intervention", label: "Numeracy", subtitle: "Math intervention surface", href: "numeracy.html" },
+    { id: "workspace-tool-numeracy", kind: "intervention", label: "Number Lab", subtitle: "Math intervention surface", href: "number-lab.html" },
     { id: "workspace-tool-diagnostic", kind: "diagnostic", label: "Decoding Diagnostic", subtitle: "Diagnostic activity", href: "activities/decoding-diagnostic.html" },
-    { id: "workspace-tool-hub", kind: "resource", label: "Specialist Hub", subtitle: "Daily operating surface", href: "teacher-hub-v2.html" }
+    { id: "workspace-tool-hub", kind: "resource", label: "Specialist Hub", subtitle: "Daily operating surface", href: "specialist-hub.html" }
   ];
   var workspaceSearchService = null;
 
@@ -1142,7 +1142,7 @@
     if (k === "reading-lab") return "Reading Lab";
     if (k === "sentence-surgery") return "Sentence Studio";
     if (k === "writing-studio") return "Writing Studio";
-    if (k === "numeracy") return "Numeracy";
+    if (k === "numeracy" || k === "number-lab") return "Number Lab";
     if (k === "precision-play") return "Precision Play";
     return "Activity";
   }
@@ -1223,7 +1223,7 @@
     if (id.indexOf("LIT.FLU") === 0) return "Reading Lab";
     if (id.indexOf("LIT.LANG.SYN") === 0 || id.indexOf("LIT.WRITE") === 0) return "Sentence Studio";
     if (id.indexOf("LIT.LANG.VOC") === 0) return "Sentence Studio";
-    if (id.indexOf("NUM.") === 0 || id.indexOf("numeracy.") === 0) return "Numeracy";
+    if (id.indexOf("NUM.") === 0 || id.indexOf("numeracy.") === 0) return "Number Lab";
     if (id.indexOf("decoding.") === 0 || id.indexOf("orthography.") === 0 || id.indexOf("morphology.") === 0) return "Word Quest";
     if (id.indexOf("fluency.") === 0) return "Reading Lab";
     if (id.indexOf("sentence.") === 0 || id.indexOf("writing.") === 0) return "Sentence Studio";
@@ -1392,7 +1392,7 @@
       ? row.priority.topSkills[0]
       : null;
     var skillId = String(top && top.skillId || "").toUpperCase();
-    if (skillId.indexOf("NUM") === 0 || skillId.indexOf("MATH") === 0) return "numeracy.html";
+    if (skillId.indexOf("NUM") === 0 || skillId.indexOf("MATH") === 0) return "number-lab.html";
     if (skillId.indexOf("WRITE") >= 0 || skillId.indexOf("WRI.") >= 0) return "writing-studio.html";
     return "word-quest.html?play=1#wordquest";
   }
@@ -2249,10 +2249,10 @@
     var module = String(moduleName || "");
     if (module === "ReadingLab") return "reading-lab.html";
     if (module === "WritingStudio") return "writing-studio.html";
-    if (module === "SentenceStudio") return "sentence-surgery.html";
+    if (module === "SentenceStudio") return "sentence-studio.html";
     if (module === "WordConnections") return "precision-play.html";
     if (module === "PrecisionPlay") return "precision-play.html";
-    if (module.indexOf("Numeracy") === 0) return "numeracy.html";
+    if (module.indexOf("Numeracy") === 0) return "number-lab.html";
     return "word-quest.html?play=1";
   }
 
@@ -2807,7 +2807,7 @@
   function bindPersistentActions() {
     if (el.numeracyStartSession) {
       el.numeracyStartSession.addEventListener("click", function () {
-        window.location.href = appendStudentParam("./numeracy.html");
+        window.location.href = appendStudentParam("./number-lab.html");
       });
     }
     if (el.executiveStartSession) {

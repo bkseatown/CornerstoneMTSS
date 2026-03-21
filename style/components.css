@@ -584,7 +584,8 @@ header {
   box-shadow: none;
 }
 
-html[data-page-mode="wordquest"] #mission-lab-nav-btn {
+html[data-page-mode="wordquest"] #mission-lab-nav-btn,
+html[data-page-mode="word-quest"] #mission-lab-nav-btn {
   display: none !important;
 }
 
@@ -1160,12 +1161,12 @@ html[data-theme="seahawks"][data-home-mode="play"] #new-game-btn:hover {
   cursor: pointer;
 }
 
-html[data-home-mode="home"] #cta-wordquest {
+html[data-home-mode="home"] #cta-word-quest {
   animation: cs-cta-ready 250ms ease both;
   animation-delay: 140ms;
 }
 
-html[data-motion="reduced"] #cta-wordquest {
+html[data-motion="reduced"] #cta-word-quest {
   animation: none !important;
 }
 
@@ -1485,7 +1486,7 @@ html[data-home-mode="play"] #new-game-btn {
   display: inline-flex !important;
 }
 
-html[data-home-mode="play"] #teacher-dashboard-btn {
+html[data-home-mode="play"] #my-activities-btn {
   display: inline-flex !important;
 }
 
@@ -1503,18 +1504,18 @@ html[data-home-mode="play"] .header-icon-controls {
   flex: 0 0 auto;
 }
 
-html[data-home-mode="play"] #teacher-dashboard-btn,
+html[data-home-mode="play"] #my-activities-btn,
 html[data-home-mode="play"] #new-game-btn {
   align-self: center;
 }
 
-html[data-home-mode="play"] #teacher-dashboard-btn {
+html[data-home-mode="play"] #my-activities-btn {
   min-width: 42px;
   width: 42px;
   padding-inline: 0;
 }
 
-html[data-home-mode="play"] #teacher-dashboard-btn svg {
+html[data-home-mode="play"] #my-activities-btn svg {
   width: 18px;
   height: 18px;
 }
@@ -1528,7 +1529,7 @@ html[data-home-mode="play"] #play-tools-btn.hidden {
 
 html[data-home-mode="play"] #mission-lab-nav-btn,
 html[data-home-mode="play"] #play-tools-btn,
-html[data-home-mode="play"] #sentence-surgery-btn,
+html[data-home-mode="play"] #sentence-studio-btn,
 html[data-home-mode="play"] #reading-lab-btn,
 html[data-home-mode="play"] #writing-studio-btn,
 html[data-home-mode="play"] #phonics-clue-open-btn,
@@ -10510,7 +10511,7 @@ html[data-home-mode="play"] .key-backspace-glyph {
 }
 
 /* Ensure return/back button is always accessible above modals */
-#teacher-dashboard-btn,
+#my-activities-btn,
 #home-logo-btn {
   position: relative;
   z-index: calc(var(--z-settings) + 10);

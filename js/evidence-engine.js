@@ -175,7 +175,7 @@
   }
 
   function normalizeModuleName(value) {
-    return String(value || 'wordquest').toLowerCase().replace(/[^a-z]/g, '');
+    return String(value || 'word-quest').toLowerCase().replace(/[^a-z]/g, '');
   }
 
   function normalizeResult(result) {

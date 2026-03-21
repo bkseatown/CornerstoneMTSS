@@ -633,7 +633,7 @@
   var clearBtn = document.getElementById("ws-clear");
   var modeButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-mode]"));
   var paragraphBuilderBtn = document.getElementById("ws-paragraph-builder-btn");
-  var teacherDashboardBtn = document.getElementById("ws-teacher-dashboard-btn");
+  var teacherDashboardBtn = document.getElementById("ws-my-workspace-btn");
   var modeToggleBtn = document.getElementById("ws-mode-toggle");
   var audienceButtons = Array.prototype.slice.call(document.querySelectorAll(".ws-chip[data-audience]"));
   var presetSelect = document.getElementById("ws-preset-pack");
@@ -4817,7 +4817,7 @@
   function goBackToWordQuest() {
     var params = new URLSearchParams(window.location.search || "");
     if (params.get("from") === "teacher") {
-      window.location.href = withAppBase("reports.html");
+      window.location.href = withAppBase("my-workspace.html");
       return;
     }
     var current = normalizeTheme(document.documentElement.getAttribute("data-theme") || "default");
@@ -4842,7 +4842,7 @@
   }
 
   function openTeacherDashboard() {
-    var url = new URL(withAppBase("reports.html"), window.location.origin);
+    var url = new URL(withAppBase("my-workspace.html"), window.location.origin);
     var params = new URLSearchParams(window.location.search || "");
     if (params.get("demo") === "1") url.searchParams.set("demo", "1");
     window.location.href = url.toString();

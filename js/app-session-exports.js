@@ -68,7 +68,7 @@ function createSessionExportsModule(deps) {
     const hour = String(now.getHours()).padStart(2, '0');
     const minute = String(now.getMinutes()).padStart(2, '0');
     const student = sanitizeFilenameToken(getActiveStudentLabel(), 'class');
-    return `wordquest-${student}-${year}${month}${day}-${hour}${minute}`;
+    return `word-quest-${student}-${year}${month}${day}-${hour}${minute}`;
   }
 
   function pickSamplePracticeWords(limit = 8) {

@@ -6,10 +6,10 @@ const path = require('path');
 
 const root = process.cwd();
 const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const hubHtml = fs.readFileSync(path.join(root, 'teacher-hub-v2.html'), 'utf8');
-const hubSource = fs.readFileSync(path.join(root, 'teacher-hub-v2.js'), 'utf8');
+const hubHtml = fs.readFileSync(path.join(root, 'specialist-hub.html'), 'utf8');
+const hubSource = fs.readFileSync(path.join(root, 'specialist-hub.js'), 'utf8');
 const redirectHtml = fs.readFileSync(path.join(root, 'teacher-dashboard.html'), 'utf8');
-const reportsHtml = fs.readFileSync(path.join(root, 'reports.html'), 'utf8');
+const reportsHtml = fs.readFileSync(path.join(root, 'my-workspace.html'), 'utf8');
 const runtimeState = fs.readFileSync(path.join(root, 'js/teacher-runtime-state.js'), 'utf8');
 const searchIndex = fs.readFileSync(path.join(root, 'js/search/teacher-search-index.js'), 'utf8');
 const searchService = fs.readFileSync(path.join(root, 'js/search/teacher-search-service.js'), 'utf8');
@@ -21,21 +21,21 @@ function requireText(source, pattern, message) {
   if (!pattern.test(source)) throw new Error(message);
 }
 
-requireText(indexHtml, /href="\.\/teacher-hub-v2\.html"/, 'Teacher landing route must point to teacher-hub-v2.html.');
+requireText(indexHtml, /href="\.\/specialist-hub\.html"/, 'Landing page must route to specialist-hub.html.');
 requireText(hubHtml, /id="th2-search"/, 'Teacher Hub search input is missing.');
 requireText(hubHtml, /id="th2-empty-state"/, 'Teacher Hub empty state container is missing.');
-requireText(hubHtml, /js\/teacher\/teacher-storage\.js/, 'Teacher storage helper is not loaded by teacher-hub-v2.html.');
-requireText(hubHtml, /js\/teacher-runtime-state\.js/, 'Unified teacher runtime state is not loaded by teacher-hub-v2.html.');
-requireText(hubHtml, /js\/search\/teacher-search-index\.js/, 'Teacher search index is not loaded by teacher-hub-v2.html.');
-requireText(hubHtml, /js\/search\/teacher-search-service\.js/, 'Teacher search service is not loaded by teacher-hub-v2.html.');
-requireText(hubHtml, /js\/teacher\/teacher-selectors\.js/, 'Shared teacher selectors are not loaded by teacher-hub-v2.html.');
-requireText(hubHtml, /js\/teacher\/teacher-intelligence\.js/, 'Shared teacher intelligence service is not loaded by teacher-hub-v2.html.');
-requireText(redirectHtml, /Opening Reports &amp; Prep/, 'teacher-dashboard.html must remain a redirect shim.');
-requireText(redirectHtml, /\.\/reports\.html/, 'teacher-dashboard.html must redirect to reports.html.');
-requireText(reportsHtml, /id="td-shell"/, 'Reports shell is missing from reports.html.');
-requireText(reportsHtml, /href="\.\/teacher-hub-v2\.html"/, 'Reports & Prep must retain a route back to teacher-hub-v2.html.');
-requireText(reportsHtml, /js\/teacher\/teacher-selectors\.js/, 'Shared teacher selectors are not loaded by reports.html.');
-requireText(reportsHtml, /js\/teacher\/teacher-intelligence\.js/, 'Shared teacher intelligence service is not loaded by reports.html.');
+requireText(hubHtml, /js\/teacher\/teacher-storage\.js/, 'Teacher storage helper is not loaded by specialist-hub.html.');
+requireText(hubHtml, /js\/teacher-runtime-state\.js/, 'Unified teacher runtime state is not loaded by specialist-hub.html.');
+requireText(hubHtml, /js\/search\/teacher-search-index\.js/, 'Teacher search index is not loaded by specialist-hub.html.');
+requireText(hubHtml, /js\/search\/teacher-search-service\.js/, 'Teacher search service is not loaded by specialist-hub.html.');
+requireText(hubHtml, /js\/teacher\/teacher-selectors\.js/, 'Shared teacher selectors are not loaded by specialist-hub.html.');
+requireText(hubHtml, /js\/teacher\/teacher-intelligence\.js/, 'Shared teacher intelligence service is not loaded by specialist-hub.html.');
+requireText(redirectHtml, /Opening My Workspace/, 'teacher-dashboard.html must remain a redirect shim.');
+requireText(redirectHtml, /\.\/my-workspace\.html/, 'teacher-dashboard.html must redirect to my-workspace.html.');
+requireText(reportsHtml, /id="td-shell"/, 'Workspace shell is missing from my-workspace.html.');
+requireText(reportsHtml, /href="\.\/specialist-hub\.html"/, 'My Workspace must retain a route back to specialist-hub.html.');
+requireText(reportsHtml, /js\/teacher\/teacher-selectors\.js/, 'Shared teacher selectors are not loaded by my-workspace.html.');
+requireText(reportsHtml, /js\/teacher\/teacher-intelligence\.js/, 'Shared teacher intelligence service is not loaded by my-workspace.html.');
 
 requireText(
   hubSource,

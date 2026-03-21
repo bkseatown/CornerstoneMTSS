@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=./my-activities.html?play=1&game=typing-quest">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typing Quest</title>
+  <script>
+    (function redirectToTypingQuest() {
+      var current = new URL(window.location.href);
+      var target = new URL("./my-activities.html", current);
+      current.searchParams.forEach(function (value, key) {
+        target.searchParams.set(key, value);
+      });
+      target.searchParams.set("play", "1");
+      target.searchParams.set("game", "typing-quest");
+      window.location.replace(target.toString());
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting to Typing Quest…</p>
+</body>
+</html>

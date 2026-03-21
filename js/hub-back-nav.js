@@ -20,7 +20,7 @@
   if (params.get("from") !== "hub") return;   // no-op on normal navigation
 
   var studentId = params.get("student") || "";
-  var hubHref   = "teacher-hub-v2.html" +
+  var hubHref   = "specialist-hub.html" +
     (studentId ? "?student=" + encodeURIComponent(studentId) : "");
 
   /* ── Inject styles (self-contained, no token dependency) ── */

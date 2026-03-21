@@ -16,7 +16,7 @@
     if (!engine || !celebrations) return;
 
     var cfg = config && typeof config === "object" ? config : {};
-    var supportedGames = Array.isArray(cfg.supportedGames) ? cfg.supportedGames : ["word-typing"];
+    var supportedGames = Array.isArray(cfg.supportedGames) ? cfg.supportedGames : ["typing-quest"];
 
     var previousState = null;
     var lastRoundId = "";

@@ -150,7 +150,7 @@
     var sid = String(student && student.id || "");
     var snap = snapshot || {};
     var last = getLastActivity(sid);
-    var trend = snap.trends && snap.trends.wordquest;
+    var trend = snap.trends && (snap.trends["word-quest"] || snap.trends.wordquest);
     var lastPoint = trend && Array.isArray(trend.last7) && trend.last7.length ? trend.last7[trend.last7.length - 1] : null;
     var score = 0;
     if (!lastPoint) score += 35;

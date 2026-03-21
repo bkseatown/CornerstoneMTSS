@@ -6,15 +6,39 @@ This is a lightweight map of the current runtime so future changes can start fro
 
 ## Top-Level Surfaces
 
-- Landing shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
-- Core game surface: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
-- Teacher workflow surface: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`
-- Specialist hub: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`
+- Main Landing Page: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/index.html`
+- Specialist Hub: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html`
+- My Students: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-students.html`
+- Student Profile: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/student-profile.html`
+- My Workspace: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html`
+- My Activities launcher: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`
+- Core Word Quest activity: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`
+
+Current product meaning:
+- Main Landing Page opens into Specialist Hub.
+- Specialist Hub is the command center and primary post-login destination.
+- My Students is the student directory and access point into Student Profiles.
+- Student Profiles hold one student's individual progress reporting, meeting notes, and support history.
+- My Workspace holds the specialist's full data view: reports, meeting prep, exports, and cross-student planning.
+- My Activities is the specialist-launched activity gallery.
 - Additional learning surfaces:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reading-lab.html`
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/sentence-surgery.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/sentence-studio.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/writing-studio.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/typing-quest.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/number-lab.html`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/number-lab/index.html`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/precision-play.html`
+
+Legacy route shims that should not be treated as canonical:
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/case-management.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/sentence-surgery.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/numeracy.html`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/numeracy/index.html`
 
 ## Runtime Ownership Map
 
@@ -65,11 +89,11 @@ This is a lightweight map of the current runtime so future changes can start fro
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/themes.css`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/modes.css`
 
-### Teacher Dashboard / Reports
+### My Workspace
 
-- Page shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/reports.html`
-- Main dashboard runtime: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.js`
-- Main dashboard styles: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.css`
+- Page shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.html`
+- Main workspace runtime: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.js`
+- Main workspace styles: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.css`
 - Dashboard modules: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/dashboard/`
 - Teacher intelligence/storage support:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/teacher/teacher-storage.js`
@@ -77,19 +101,19 @@ This is a lightweight map of the current runtime so future changes can start fro
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/evidence-store.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/evidence-engine.js`
 
-### Teacher Hub V2
+### Specialist Hub
 
-- Page shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.html`
-- Main runtime: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js`
+- Page shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.html`
+- Main runtime: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.js`
 - Main styles:
-  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.css`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.css`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-main.css`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-sidebar.css`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-animations.css`
 
 ### Game Platform Components
 
-- Shared platform shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`
+- Shared platform shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-activities.html`
 - Core logic: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/core/`
 - Content registries: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/content/`
 - Shared game UI: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/ui/`
@@ -110,11 +134,32 @@ This is a lightweight map of the current runtime so future changes can start fro
 These are the files most likely to create wide regression risk:
 
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/word-quest-runtime.js` about 4,291 lines
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js` about 7,032 lines
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/specialist-hub.js` about 7,032 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/writing-studio.js` about 5,143 lines
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.css` about 5,097 lines
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.js` about 2,992 lines
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.css` about 5,097 lines
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/my-workspace.js` about 2,992 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js` about 184 lines and intentionally small
+
+## Naming Cleanup Status
+
+- Canonical product-facing activity names now in active use:
+  - `Word Quest`
+  - `Typing Quest`
+  - `Don't Say It!`
+  - `Sentence Studio`
+  - `Reading Lab`
+  - `Writing Studio`
+  - `Number Lab`
+- Canonical platform/runtime naming is now complete for:
+  - active routes and page markers
+  - launcher/runtime IDs
+  - active evidence/reporting writes
+  - Word Quest page-mode, export-prefix, planner-launch, and telemetry labels
+- Remaining old names are mostly deeper internals:
+  - compatibility aliases in route and runtime normalizers
+  - evidence and signal backward-compat mappings
+  - engine-folder names like `js/numeracy/`
+  - older dataset/audio/taxonomy bucket names
 
 ## Word Quest Runtime Note
 
@@ -129,4 +174,4 @@ When making changes:
 
 1. Identify the surface first.
 2. Prefer surface-local files before touching shared runtime files.
-3. If a change requires `js/word-quest-runtime.js` or `teacher-hub-v2.js`, assume the blast radius is high and run the route-appropriate checks.
+3. If a change requires `js/word-quest-runtime.js` or `specialist-hub.js`, assume the blast radius is high and run the route-appropriate checks.

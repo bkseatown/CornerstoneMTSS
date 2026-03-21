@@ -13,10 +13,10 @@
     var module = String(moduleName || "");
     if (module === "ReadingLab") return "reading-lab.html";
     if (module === "WritingStudio") return "writing-studio.html";
-    if (module === "SentenceStudio") return "sentence-surgery.html";
+    if (module === "SentenceStudio") return "sentence-studio.html";
     if (module === "WordConnections") return "precision-play.html";
     if (module === "PrecisionPlay") return "precision-play.html";
-    if (module.indexOf("Numeracy") === 0) return "numeracy.html";
+    if (module.indexOf("Numeracy") === 0) return "number-lab.html";
     return "word-quest.html?play=1";
   }
 

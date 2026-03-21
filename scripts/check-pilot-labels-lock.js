@@ -7,13 +7,13 @@ const path = require('path');
 const ROOT = process.cwd();
 
 const LOCKED_LABELS = {
-  'reports.html': [
-    'Reports &amp; Prep',
+  'my-workspace.html': [
+    'My Workspace',
     'Back to Hub',
     'Weekly Insight',
     'Meeting Prep',
     'Open Student Profile',
-    'Generate Weekly Draft'
+    'Open My Students'
   ],
   'word-quest.html': [
     'Grade Band',
@@ -25,9 +25,9 @@ const LOCKED_LABELS = {
     'Literacy Domain',
     'Teacher Command Surface'
   ],
-  'numeracy.html': [
-    'Numeracy Domain',
-    'Teacher Command Surface'
+  'number-lab.html': [
+    'Number Lab',
+    'Conceptual first pathways'
   ]
 };
 

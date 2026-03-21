@@ -36,7 +36,7 @@ function createDemoFlowModule(deps) {
   function ensureDemoParam(url) {
     const next = new URL(url || window.location.href, window.location.href);
     next.searchParams.set('demo', '1');
-    next.searchParams.set('page', 'wordquest');
+    next.searchParams.set('page', 'word-quest');
     next.searchParams.delete('mode');
     return next.toString();
   }
@@ -57,7 +57,7 @@ function createDemoFlowModule(deps) {
     stopDemoAudioTimers();
     const next = new URL(removeDemoParams(window.location.href), window.location.href);
     next.searchParams.set('play', '1');
-    next.searchParams.set('page', 'wordquest');
+    next.searchParams.set('page', 'word-quest');
     window.location.replace(next.toString());
   }
 
@@ -82,7 +82,7 @@ function createDemoFlowModule(deps) {
     document.documentElement.setAttribute('data-focus-search-open', 'false');
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
-    setPageMode('wordquest', { force: true, skipUrl: true });
+    setPageMode('word-quest', { force: true, skipUrl: true });
     syncHeaderControlsVisibility();
     renderDemoDebugReadout();
     return listOpenOverlays().length === 0;

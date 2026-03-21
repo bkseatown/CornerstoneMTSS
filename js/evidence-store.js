@@ -17,11 +17,71 @@
   var MAX_SESSIONS = 600;
   var MAX_STUDENT_SESSIONS = 120;
   var LEGACY_BRIDGE_WARNED = false;
+  var CANONICAL_MODULES = ["word-quest", "reading-lab", "sentence-studio", "writing-studio", "number-lab"];
 
   function now() { return Date.now(); }
 
   function emptyState() {
     return { version: VERSION, updatedAt: now(), students: {}, sessions: [] };
+  }
+
+  function normalizeModuleName(module) {
+    var raw = String(module || "").trim().toLowerCase();
+    if (!raw) return "";
+    if (raw === "wordquest" || raw === "word_quest" || raw === "word-quest") return "word-quest";
+    if (raw === "readinglab" || raw === "reading_lab" || raw === "reading-lab") return "reading-lab";
+    if (raw === "sentencesurgery" || raw === "sentence_surgery" || raw === "sentence-surgery" || raw === "sentence-studio") return "sentence-studio";
+    if (raw === "writingstudio" || raw === "writing_studio" || raw === "writing-studio") return "writing-studio";
+    if (raw === "numeracy" || raw === "numberlab" || raw === "number_lab" || raw === "number-lab") return "number-lab";
+    return raw;
+  }
+
+  function normalizeActivityName(activity) {
+    return normalizeModuleName(activity);
+  }
+
+  function normalizeState(state) {
+    var dirty = false;
+    if (!state || typeof state !== "object") return { state: emptyState(), dirty: true };
+    if (!state.students || typeof state.students !== "object") state.students = {};
+    if (!Array.isArray(state.sessions)) state.sessions = [];
+
+    Object.keys(state.students).forEach(function (studentId) {
+      var student = state.students[studentId];
+      if (!student || typeof student !== "object" || !student.modules || typeof student.modules !== "object") return;
+      var nextModules = {};
+      Object.keys(student.modules).forEach(function (moduleName) {
+        var canonical = normalizeModuleName(moduleName);
+        if (canonical !== moduleName) dirty = true;
+        if (!nextModules[canonical] || typeof nextModules[canonical] !== "object") {
+          nextModules[canonical] = student.modules[moduleName];
+          return;
+        }
+        var target = nextModules[canonical];
+        var source = student.modules[moduleName];
+        var mergedSpark = []
+          .concat(Array.isArray(target.spark) ? target.spark : [])
+          .concat(Array.isArray(source.spark) ? source.spark : [])
+          .slice(-MAX_SPARK_POINTS);
+        target.spark = mergedSpark;
+        if ((!target.last || typeof target.last !== "object") && source.last && typeof source.last === "object") target.last = source.last;
+        target.updatedAt = Math.max(Number(target.updatedAt || 0), Number(source.updatedAt || 0));
+      });
+      student.modules = nextModules;
+    });
+
+    state.sessions = state.sessions.map(function (session) {
+      if (!session || typeof session !== "object") return session;
+      var nextModule = normalizeModuleName(session.module);
+      var nextActivity = normalizeActivityName(session.activity);
+      if (nextModule !== session.module || nextActivity !== session.activity) {
+        dirty = true;
+        session = Object.assign({}, session, { module: nextModule || session.module, activity: nextActivity || session.activity });
+      }
+      return session;
+    });
+
+    return { state: state, dirty: dirty };
   }
 
   function parseJSON(raw) {
@@ -56,7 +116,9 @@
     if (Number(state.version || 0) !== VERSION) return migrate(state);
     if (!state.students || typeof state.students !== "object") state.students = {};
     if (!Array.isArray(state.sessions)) state.sessions = [];
-    return state;
+    var normalized = normalizeState(state);
+    if (normalized.dirty) save(normalized.state);
+    return normalized.state;
   }
 
   function save(state) {
@@ -79,7 +141,7 @@
     student.gradeBand = String(student.gradeBand || "");
     if (!Array.isArray(student.tags)) student.tags = [];
     if (!student.modules || typeof student.modules !== "object") student.modules = {};
-    ["wordquest", "reading_lab", "sentence_surgery", "writing_studio", "numeracy"].forEach(function (module) {
+    CANONICAL_MODULES.forEach(function (module) {
       if (!student.modules[module] || typeof student.modules[module] !== "object") student.modules[module] = {};
       var row = student.modules[module];
       if (!Array.isArray(row.spark)) row.spark = [];
@@ -118,30 +180,31 @@
   }
 
   function scoreFromSession(module, metrics) {
+    var normalizedModule = normalizeModuleName(module);
     var m = metrics || {};
-    if (module === "wordquest") {
+    if (normalizedModule === "word-quest") {
       var solved = m.solveSuccess ? 1 : 0;
       var honor = Number(m.newInfoPerGuess || m.constraintHonorRate || 0.5);
       var vowel = 1 - Math.min(1, Number(m.vowelConfusionProxy || 0));
       return clampPercent((solved * 0.35 + honor * 0.4 + vowel * 0.25) * 100);
     }
-    if (module === "reading_lab") {
+    if (normalizedModule === "reading-lab") {
       return clampPercent((Number(m.accuracy || 0) * 0.55) + (Math.min(100, Number(m.wpmProxy || 0)) * 0.25) + (Math.min(100, Number(m.punct || 0)) * 0.2));
     }
-    if (module === "sentence_surgery") {
+    if (normalizedModule === "sentence-studio") {
       var base = m.reasoningAdded ? 70 : 45;
       if (m.runOnFlag) base -= 10;
       if (m.fragmentFlag) base -= 10;
       base += Math.min(20, Number(m.editsCount || 0) * 2);
       return clampPercent(base);
     }
-    if (module === "writing_studio") {
+    if (normalizedModule === "writing-studio") {
       var p = Math.min(3, Number(m.paragraphs || 0));
       var r = Math.min(20, Number(m.revisionCount || 0) * 2);
       var v = m.voiceFlatFlag ? -8 : 6;
       return clampPercent(45 + p * 12 + r + v);
     }
-    if (module === "numeracy") {
+    if (normalizedModule === "number-lab") {
       var acc = clampPercent(Number(m.accuracy || 0));
       var speed = clampPercent(Number(m.speedProxy || 0));
       var hints = Math.max(0, Number(m.hints || 0));
@@ -151,7 +214,7 @@
   }
 
   function appendSession(studentId, module, metrics, ts) {
-    var mod = String(module || "").trim();
+    var mod = normalizeModuleName(module);
     if (!mod) return null;
     var sid = normalizeStudentId(studentId);
     var state = load();
@@ -276,7 +339,7 @@
       id: String(src.id || createSessionId()),
       studentId: sid,
       createdAt: String(src.createdAt || new Date().toISOString()),
-      activity: String(src.activity || "wordquest"),
+      activity: normalizeActivityName(src.activity || "word-quest"),
       durationSec: durationSec,
       signals: {
         guessCount: guessCount,
@@ -324,12 +387,12 @@
   }
 
   function targetForModule(module) {
-    var mod = String(module || "").toLowerCase();
-    if (mod === "wordquest") return "LIT.DEC.PHG";
-    if (mod === "reading_lab" || mod === "readinglab") return "LIT.FLU.ACC";
-    if (mod === "sentence_surgery" || mod === "sentencesurgery") return "LIT.LANG.SYN";
-    if (mod === "writing_studio" || mod === "writingstudio") return "LIT.WRITE.SENT";
-    if (mod === "numeracy") return "NUM.FLU.FACT";
+    var mod = normalizeModuleName(module);
+    if (mod === "word-quest") return "LIT.DEC.PHG";
+    if (mod === "reading-lab") return "LIT.FLU.ACC";
+    if (mod === "sentence-studio") return "LIT.LANG.SYN";
+    if (mod === "writing-studio") return "LIT.WRITE.SENT";
+    if (mod === "number-lab") return "NUM.FLU.FACT";
     return "";
   }
 
@@ -381,8 +444,8 @@
       window.CSEvidenceEngine.recordEvidence({
         studentId: normalizeStudentId(studentId),
         timestamp: String(envelope && envelope.createdAt || new Date().toISOString()),
-        module: "wordquest",
-        activityId: "legacy.wordquest.session",
+        module: "word-quest",
+        activityId: "legacy.word-quest.session",
         targets: ["LIT.DEC.PHG"],
         tier: "T2",
         doseMin: 3,
@@ -414,7 +477,7 @@
     if (!activity) return sessions[0] || null;
     var target = String(activity || "").toLowerCase();
     for (var i = 0; i < sessions.length; i += 1) {
-      if (String(sessions[i].activity || "").toLowerCase() === target) return sessions[i];
+      if (normalizeActivityName(sessions[i].activity) === normalizeActivityName(target)) return sessions[i];
     }
     return null;
   }
@@ -510,7 +573,7 @@
     });
 
     var wqSeries = recent
-      .filter(function (row) { return String(row.activity || "").toLowerCase() === "wordquest"; })
+      .filter(function (row) { return normalizeActivityName(row.activity) === "word-quest"; })
       .slice(0, 7)
       .reverse()
       .map(function (row) {
@@ -523,17 +586,22 @@
       });
 
     var trends = {
-      wordquest: computeTrend(wqSeries),
-      readinglab: { last7: [], slope: 0, stability: 1 },
-      sentencesurgery: { last7: [], slope: 0, stability: 1 },
-      writingstudio: { last7: [], slope: 0, stability: 1 },
-      numeracy: { last7: [], slope: 0, stability: 1 }
+      "word-quest": computeTrend(wqSeries),
+      "reading-lab": { last7: [], slope: 0, stability: 1 },
+      "sentence-studio": { last7: [], slope: 0, stability: 1 },
+      "writing-studio": { last7: [], slope: 0, stability: 1 },
+      "number-lab": { last7: [], slope: 0, stability: 1 }
     };
+    trends.wordquest = trends["word-quest"];
+    trends.readinglab = trends["reading-lab"];
+    trends.sentencesurgery = trends["sentence-studio"];
+    trends.writingstudio = trends["writing-studio"];
+    trends.numeracy = trends["number-lab"];
 
     return {
       studentId: sid,
       updatedAt: new Date().toISOString(),
-      needs: detectNeedsFromWordQuest(recent.filter(function (row) { return String(row.activity || "").toLowerCase() === "wordquest"; })),
+      needs: detectNeedsFromWordQuest(recent.filter(function (row) { return normalizeActivityName(row.activity) === "word-quest"; })),
       trends: trends,
       lastSessionsByActivity: lastByActivity
     };
@@ -594,11 +662,11 @@
   function sanitizeMetrics(module, metrics) {
     var src = metrics || {};
     var allow = {
-      wordquest: ["totalGuesses", "solveSuccess", "timeToFirstCorrectLetter", "vowelConfusionProxy", "wrongSlotRepeat", "newInfoPerGuess", "streaks", "firstMissAt", "hintsUsed", "idleEvents", "vowelAttemptRatio"],
-      reading_lab: ["accuracy", "wpmProxy", "selfCorrects", "punct", "prosodyFlatFlag", "hardWordsTop3"],
-      sentence_surgery: ["reasoningAdded", "runOnFlag", "fragmentFlag", "editsCount", "timeOnTaskSec"],
-      writing_studio: ["paragraphs", "revisionCount", "voiceFlatFlag", "timeOnTaskSec"],
-      numeracy: ["accuracy", "speedProxy", "hints", "timeOnTaskSec"]
+      "word-quest": ["totalGuesses", "solveSuccess", "timeToFirstCorrectLetter", "vowelConfusionProxy", "wrongSlotRepeat", "newInfoPerGuess", "streaks", "firstMissAt", "hintsUsed", "idleEvents", "vowelAttemptRatio"],
+      "reading-lab": ["accuracy", "wpmProxy", "selfCorrects", "punct", "prosodyFlatFlag", "hardWordsTop3"],
+      "sentence-studio": ["reasoningAdded", "runOnFlag", "fragmentFlag", "editsCount", "timeOnTaskSec"],
+      "writing-studio": ["paragraphs", "revisionCount", "voiceFlatFlag", "timeOnTaskSec"],
+      "number-lab": ["accuracy", "speedProxy", "hints", "timeOnTaskSec"]
     }[module] || [];
 
     var out = {};
@@ -621,10 +689,10 @@
   }
 
   function moduleFocus(module) {
-    if (module === "wordquest") return "Decoding";
-    if (module === "numeracy") return "Numeracy";
-    if (module === "reading_lab") return "Fluency";
-    if (module === "sentence_surgery") return "Sentence";
+    if (module === "word-quest") return "Decoding";
+    if (module === "number-lab") return "Number Lab";
+    if (module === "reading-lab") return "Fluency";
+    if (module === "sentence-studio") return "Sentence";
     return "Writing";
   }
 
@@ -645,14 +713,14 @@
     if (focus === "Sentence") return {
       focus: focus,
       line: "Model one because/although revision, then independent edit.",
-      quickHref: "sentence-surgery.html?student=" + id + "&seed=demo",
-      interventionHref: "sentence-surgery.html?student=" + id + "&mode=intervention"
+      quickHref: "sentence-studio.html?student=" + id + "&seed=demo",
+      interventionHref: "sentence-studio.html?student=" + id + "&mode=intervention"
     };
     if (focus === "Numeracy") return {
       focus: focus,
       line: "Run a 90-second fluency sprint, then assign targeted practice.",
-      quickHref: "numeracy.html?student=" + id + "&mode=quickcheck",
-      interventionHref: "numeracy.html?student=" + id + "&mode=intervention"
+      quickHref: "number-lab.html?student=" + id + "&mode=quickcheck",
+      interventionHref: "number-lab.html?student=" + id + "&mode=intervention"
     };
     return {
       focus: "Writing",
@@ -671,16 +739,16 @@
       return { module: module, avg: avg, spark: spark.slice(-7), last: student.modules[module].last || {} };
     }).sort(function (a, b) { return a.avg - b.avg; });
 
-    var weakest = rows[0] || { module: "wordquest", avg: 50, spark: [] };
+    var weakest = rows[0] || { module: "word-quest", avg: 50, spark: [] };
     var focus = moduleFocus(weakest.module);
     var risk = weakest.avg < 46 ? "risk" : (weakest.avg < 70 ? "steady" : "growing");
     var move = nextMoveForFocus(focus, sid);
 
     var evidenceChips = [];
-    var readingLast = (student.modules.reading_lab && student.modules.reading_lab.last) || {};
-    var wordLast = (student.modules.wordquest && student.modules.wordquest.last) || {};
-    var sentLast = (student.modules.sentence_surgery && student.modules.sentence_surgery.last) || {};
-    var numLast = (student.modules.numeracy && student.modules.numeracy.last) || {};
+    var readingLast = (student.modules["reading-lab"] && student.modules["reading-lab"].last) || {};
+    var wordLast = (student.modules["word-quest"] && student.modules["word-quest"].last) || {};
+    var sentLast = (student.modules["sentence-studio"] && student.modules["sentence-studio"].last) || {};
+    var numLast = (student.modules["number-lab"] && student.modules["number-lab"].last) || {};
     /* accuracy is stored 0–1; display as percentage */
     if (readingLast.accuracy != null) evidenceChips.push({ label: "Accuracy", value: Math.round(Number(readingLast.accuracy || 0) * 100) + "%" });
     if (readingLast.wpmProxy != null) evidenceChips.push({ label: "ORF", value: Math.round(Number(readingLast.wpmProxy || 0)) + " wpm" });

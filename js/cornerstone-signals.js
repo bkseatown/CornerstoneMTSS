@@ -38,10 +38,10 @@
 
   function normalizeEngine(engine) {
     var raw = String(engine || "").trim().toLowerCase();
-    if (raw === "wordquest" || raw === "word_quest" || raw === "word-quest") return "wordquest";
-    if (raw === "readinglab" || raw === "reading_lab" || raw === "reading-lab") return "readinglab";
-    if (raw === "writingstudio" || raw === "writing_studio" || raw === "sentence_surgery" || raw === "sentence-surgery" || raw === "writing") return "writing";
-    return "wordquest";
+    if (raw === "wordquest" || raw === "word_quest" || raw === "word-quest") return "word-quest";
+    if (raw === "readinglab" || raw === "reading_lab" || raw === "reading-lab") return "reading-lab";
+    if (raw === "writingstudio" || raw === "writing_studio" || raw === "writing-studio" || raw === "sentence_surgery" || raw === "sentence-surgery" || raw === "sentence-studio" || raw === "writing") return "writing-studio";
+    return "word-quest";
   }
 
   function normalizeStudentCode(code) {

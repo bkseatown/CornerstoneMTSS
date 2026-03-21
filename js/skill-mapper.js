@@ -116,7 +116,7 @@
     return {
       studentId: studentId,
       createdAt: createdAt,
-      source: 'wordquest',
+      source: 'word-quest',
       skillDelta: skillDelta,
       features: signals
     };

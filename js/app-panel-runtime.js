@@ -267,32 +267,32 @@ function createPanelRuntimeModule(deps) {
 
   function bindNavigationRuntime() {
     el('mission-lab-nav-btn')?.addEventListener('click', () => {
-      setPageMode(isMissionLabStandaloneMode() ? 'wordquest' : 'mission-lab');
+      setPageMode(isMissionLabStandaloneMode() ? 'word-quest' : 'mission-lab');
     });
     if (writingStudioEnabled) {
       el('writing-studio-btn')?.addEventListener('click', openWritingStudioPage);
     } else {
       syncWritingStudioAvailability();
     }
-    el('sentence-surgery-btn')?.addEventListener('click', openSentenceSurgeryPage);
+    el('sentence-studio-btn')?.addEventListener('click', openSentenceSurgeryPage);
     el('reading-lab-btn')?.addEventListener('click', openReadingLabPage);
     el('teacher-open-writing-studio-btn')?.addEventListener('click', openWritingStudioPage);
-    el('teacher-open-sentence-surgery-btn')?.addEventListener('click', openSentenceSurgeryPage);
+    el('teacher-open-sentence-studio-btn')?.addEventListener('click', openSentenceSurgeryPage);
     el('teacher-open-reading-lab-btn')?.addEventListener('click', openReadingLabPage);
-    el('teacher-dashboard-btn')?.addEventListener('click', openTeacherDashboardPage);
+    el('my-activities-btn')?.addEventListener('click', openTeacherDashboardPage);
     el('play-tools-btn')?.addEventListener('click', togglePlayToolsDrawer);
     el('play-drawer-close')?.addEventListener('click', () => {
       el('play-tools-drawer')?.classList.add('hidden');
       el('play-tools-btn')?.setAttribute('aria-expanded', 'false');
     });
     el('play-drawer-writing-studio')?.addEventListener('click', openWritingStudioPage);
-    el('play-drawer-sentence-surgery')?.addEventListener('click', openSentenceSurgeryPage);
+    el('play-drawer-sentence-studio')?.addEventListener('click', openSentenceSurgeryPage);
     el('play-drawer-reading-lab')?.addEventListener('click', openReadingLabPage);
-    el('play-drawer-teacher-dashboard')?.addEventListener('click', openTeacherDashboardPage);
+    el('play-drawer-my-activities')?.addEventListener('click', openTeacherDashboardPage);
     el('home-open-writing-studio')?.addEventListener('click', () => routeTo('writing'));
-    el('home-open-wordquest')?.addEventListener('click', () => routeTo('wordquest'));
+    el('home-open-word-quest')?.addEventListener('click', () => routeTo('word-quest'));
     el('home-open-reading-lab')?.addEventListener('click', () => routeTo('reading'));
-    el('home-open-numeracy')?.addEventListener('click', openNumeracyLabPage);
+    el('home-open-number-lab')?.addEventListener('click', openNumeracyLabPage);
     el('wq-share-result-btn')?.addEventListener('click', async () => {
       const latestSavedSessionId = getLatestSavedSessionId();
       if (!latestSavedSessionId) return;
@@ -301,11 +301,11 @@ function createPanelRuntimeModule(deps) {
     el('wq-share-bundle-btn')?.addEventListener('click', async () => {
       await shareWordQuestBundle();
     });
-    el('cta-wordquest')?.addEventListener('click', () => routeTo('wordquest'));
+    el('cta-word-quest')?.addEventListener('click', () => routeTo('word-quest'));
     el('cta-tools')?.addEventListener('click', () => routeTo('dashboard'));
     el('home-logo-btn')?.addEventListener('click', () => {
       routeTo('home');
-      setPageMode('wordquest', { force: true });
+      setPageMode('word-quest', { force: true });
       closeFocusSearchList();
       closeQuickPopover('all');
       el('settings-panel')?.classList.add('hidden');
