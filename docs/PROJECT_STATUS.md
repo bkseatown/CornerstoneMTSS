@@ -44,10 +44,31 @@ Playwright is already configured around port `4173`.
 - Game platform shell: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/game-platform.html`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/games/`
 - Shared themes and HUD system: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/style/`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-registry.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/theme-nav.js`
 
+## Word Quest Refactor Reality
+
+- The current checked-in Word Quest split is real, not just planned:
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js` is about 184 lines.
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js` is about 5,954 lines.
+- That means the old “18k app-main.js” planning state is stale. Use current file sizes and loaded modules, not the older extraction estimates, when judging progress.
+- The remaining `app-main.js` is now mostly orchestration, reveal flow, input flow, voice flow, and other tightly coupled runtime control paths.
+- Large extracted module families already in the repo include:
+  - focus/curriculum/search: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-search-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-curriculum-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-grade-runtime.js`
+  - support flow: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-logic.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-ui.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-shell.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-constraints.js`
+  - Deep Dive: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-builders.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-config.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-core-runtime.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-modal.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-session.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-state.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-ui.js`
+  - session/reporting/runtime support: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-analytics.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-controls.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-exports.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-mastery.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-probe.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-summary-runtime.js`
+  - demo/reveal/voice support: `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-demo-flow.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-demo-ui.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-*.js`, `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-voice-support.js`
+
+## Current Cleanup Focus
+
+- Continue shrinking `js/app-main.js` only where the extracted boundary is behavior-neutral.
+- Prefer deleting stale inline helpers once a replacement module is wired, instead of leaving shadow implementations behind.
+- Fix init-order regressions from the runtime split before trusting live browser verification. The current active bug-fix pattern is “lazy dependency wiring first, then live browser retest.”
+
 ## Immediate Risks
 
 - Top-level docs can drift faster than the code unless they are updated alongside structural changes.
-- A few core front-end files are very large, especially `js/app-main.js`, `teacher-hub-v2.js`, and `teacher-dashboard.css`, which raises change risk.
+- A few core front-end files are still large, especially `js/app-main.js`, `teacher-hub-v2.js`, and `teacher-dashboard.css`, which raises change risk.
+- Some Word Quest modules were extracted faster than their initialization order was cleaned up, so startup regressions are currently a bigger risk than raw file size alone.
 - Historical product naming still appears in some places, so verify paths and live URLs before assuming an older note is current.
 
 ## Recommended Next Cleanup Targets

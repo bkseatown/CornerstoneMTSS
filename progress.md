@@ -1,5 +1,36 @@
 Original prompt: You are improving the Cornerstone MTSS game platform UI.
 
+- 2026-03-21: Verified detective-mode support flow after the Word Quest modularization cleanup.
+  - Fresh browser reloads on `word-quest.html` are booting cleanly enough to validate the live detective flow again.
+  - Confirmed: after one accepted guess and 30 seconds idle in detective mode, only one helper popup appears first: the support chooser.
+  - Confirmed chooser now exposes only 2 help actions in detective mode:
+    - `💡 Try Words`
+    - `🔍 Clue`
+  - Removed the old `✕ Skip` action from the chooser UI; close `✕` still dismisses the card.
+  - Confirmed clue path:
+    - chooser closes before clue card opens
+    - clue card opens alone
+    - sentence button is hidden in detective mode
+    - one phonics example renders in the clue card
+  - Confirmed suggestion path:
+    - chooser closes before starter-word card opens
+    - starter card opens alone
+    - real suggestion chips now render after an accepted first guess
+    - starter card copy now explains the real rule instead of fake blank pattern text:
+      - green matches stay fixed
+      - yellow letters must appear in the suggestions
+  - Latest live verified example:
+    - first guess `cross`
+    - support chooser message: `Pick one kind of help: a phonics clue or a matching word idea.`
+    - suggestion card produced 6 pattern-match chips
+    - clue card rendered 1 example and no sentence button
+  - Files changed in this support-flow pass:
+    - `word-quest.html`
+    - `js/app-input-shell.js`
+    - `js/app-support-ui.js`
+    - `js/app-support-logic.js`
+  - Script cache-bust versions updated to `20260321h` for the touched support files.
+
 - 2026-03-17: **Phase 1 High-ROI Features Complete** ✅
   - Delivered 3 strategic platform features + critical audio bug fix + complete Phase 2-6 roadmap
   - See `SESSION_SUMMARY_2026-03-17.md` for comprehensive summary
@@ -738,3 +769,14 @@ Original prompt: You are improving the Cornerstone MTSS game platform UI.
   - screenshot-backed truth:
     - the page reads faster and more like an output engine
     - it still has some explanatory copy left, but the first screen is lighter and clearer than before
+
+- 2026-03-21: Started detective-mode support flow fix in Word Quest.
+  - Goal: only one support popup in detective mode after first guess + 30s idle.
+  - Implemented: chooser now gates detective support, clue card hides sentence button in detective mode, clue examples trimmed to one, starter suggestions available only when there are at least 3 valid candidates, and the support timer now waits 30s after the first guess instead of 30s from round start.
+  - Also fixed a bootstrap bug where demo UI initialization referenced demo toast constants before they were defined in js/app-main.js.
+  - Verification so far: node --check on touched JS files plus npm run hud:check all passing.
+
+- 2026-03-21: Cleared the current Word Quest modularization boot blockers enough for fresh Playwright reloads to complete without new page errors.
+  - fixed lazy-init/runtime bridges for voice config, curriculum helpers, theme registry, demo/input shell, teacher presets, and shell page-mode URL updates
+  - bumped active `word-quest.html` script versions to `20260321b` for the patched runtime files so browser validation uses the current code
+  - fresh reload checkpoint: no new page errors on load, ready to resume detective-mode support flow verification

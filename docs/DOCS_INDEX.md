@@ -16,6 +16,12 @@ Start here when you need reliable, current guidance for the checked-in repo:
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_QUICK_REFERENCE.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULES_3_4_5_DEEP_DIVE.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/MODULES_3_4_5_EXTRACTION_PLAYBOOK.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_3_DEEP_DIVE.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_4_DEEP_DIVE.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_3_4_EXTRACTION_PLAYBOOK.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_5_DEEP_DIVE.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_5_EXTRACTION_PLAYBOOK.md`
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/GAMEPLAY_MODULE_5_GOTCHAS.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/docs/DEPLOYMENT_GUIDE.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/progress.md`
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/VISION.md`
@@ -65,3 +71,11 @@ If two docs disagree, trust this order:
 4. `docs/SHIP_AND_DEBUG_CHECKLIST.md`
 5. The code and scripts themselves
 6. Historical summaries
+
+## Current Word Quest Note
+
+- If any doc still describes `js/app-main.js` as roughly 18k lines, treat that number as stale.
+- The current checked-in reality is:
+  - `js/app.js` about 184 lines
+  - `js/app-main.js` about 5,954 lines
+- The current work is no longer “start the split.” It is “keep the extracted runtime clean, fix init-order regressions, and continue reducing `js/app-main.js` where the boundary is safe.”

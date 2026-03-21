@@ -25,6 +25,34 @@ This is a lightweight map of the current runtime so future changes can start fro
 - Extracted support modules:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-runtime-helpers.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-phonics-clue.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-logic.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-support-ui.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-shell.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-input-constraints.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-search-runtime.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-curriculum-runtime.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-focus-grade-runtime.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-demo-flow.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-demo-ui.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-builders.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-config.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-core-runtime.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-modal.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-session.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-state.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-deep-dive-ui.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-flow-support.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-runtime-support.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-text.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-effects.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-reveal-timing-support.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-analytics.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-controls.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-exports.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-mastery.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-probe.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-session-summary-runtime.js`
+  - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-voice-support.js`
 - Supporting preview/motion/theme files:
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest-preview.js`
   - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/hero-v2.js`
@@ -80,12 +108,18 @@ This is a lightweight map of the current runtime so future changes can start fro
 
 These are the files most likely to create wide regression risk:
 
-- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js` about 18,071 lines
+- `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app-main.js` about 5,954 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-hub-v2.js` about 7,032 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/writing-studio.js` about 5,143 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.css` about 5,097 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/teacher-dashboard.js` about 2,992 lines
 - `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/js/app.js` about 184 lines and intentionally small
+
+## Word Quest Runtime Note
+
+- The old 18k planning numbers for `js/app-main.js` are now historical context only.
+- The remaining risk in Word Quest is less about raw file size and more about runtime coupling and init-order correctness across the extracted modules loaded in `/Users/robertwilliamknaus/Desktop/Cornerstone MTSS/word-quest.html`.
+- When debugging Word Quest boot failures, check load order and lazy dependency wiring first before assuming the extracted module itself is wrong.
 
 ## Change Strategy
 
