@@ -3,13 +3,16 @@
  * Theme, projector, motion, hint cards, keyboard sync
  */
 
-import { prefs, setPref,
+import { prefs, setPref, savePrefs,
   normalizeTheme, getThemeFallback, getThemeFamily,
   normalizeUiSkin, normalizeReportCompactMode,
   normalizeRevealPacing, normalizeRevealAutoNext,
-  emitTelemetry
+  emitTelemetry, setHoverNoteForElement, normalizeVoiceMode
 } from './app-prefs.js';
 import { DEFAULT_PREFS, MUSIC_LABELS } from './app-constants.js';
+import { formatGradeBandLabel, getEffectiveGameplayGradeBand, parseFocusPreset, getFocusLabel, normalizeLessonPackId, setFocusValue, shouldExpandGradeBandForFocus } from './app-focus.js';
+import { hideMidgameBoost } from './app-game.js';
+import { isMissionLabStandaloneMode, normalizeReviewWord, syncTeacherPresetButtons, stopVoiceCaptureNow } from './app-settings.js';
 
 // Helper function for DOM queries
 const _el = id => document.getElementById(id);
@@ -1230,7 +1233,14 @@ var voicePracticeMode = 'optional';
     const sentenceBtn = _el('hint-clue-sentence-btn');
     let showAction = false;
     if (sentenceBtn) {
-      const actionMode = String(normalized.actionMode || '').trim().toLowerCase();
+      const playStyle = normalizePlayStyle(_el('s-play-style')?.value || prefs.playStyle || DEFAULT_PREFS.playStyle);
+      const isDetectiveMode = playStyle !== 'listening';
+      let actionMode = String(normalized.actionMode || '').trim().toLowerCase();
+      // In detective mode: hide sentence/definition button completely (only show phonics clue + suggestions)
+      // In listening mode: show the "Hear Word + Meaning" button
+      if (isDetectiveMode) {
+        actionMode = 'none';
+      }
       showAction = actionMode === 'sentence' || actionMode === 'word-meaning';
       sentenceBtn.dataset.mode = actionMode || 'none';
       sentenceBtn.textContent = actionMode === 'word-meaning' ? 'Hear Word + Meaning' : 'Hear Sentence (contains word)';
@@ -1392,7 +1402,7 @@ var voicePracticeMode = 'optional';
     const suggestionBtn = _el('support-choice-suggestion');
     const suggestionCount = pickStarterWordsForRound(liveState, 9).length;
     if (suggestionBtn) {
-      const enabled = suggestionCount >= 4;
+      const enabled = suggestionCount >= 3;
       if (enabled) {
         suggestionBtn.classList.remove('hidden');
         suggestionBtn.disabled = false;
@@ -2336,14 +2346,6 @@ var voicePracticeMode = 'optional';
       (preset.grade ? current.grade === preset.grade : true) &&
       (preset.lessonPack ? current.lessonPack === preset.lessonPack : true)
     )?.[0] || '';
-  }
-
-  function syncTeacherPresetButtons(activePreset = detectTeacherPreset()) {
-    document.querySelectorAll('[data-teacher-preset]').forEach((btn) => {
-      const isActive = btn.getAttribute('data-teacher-preset') === activePreset;
-      btn.classList.toggle('is-active', isActive);
-      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
   }
 
   function applyTeacherPreset(mode) {

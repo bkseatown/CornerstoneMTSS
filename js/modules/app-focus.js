@@ -3,11 +3,12 @@
  * Curriculum, lesson packs, focus selection, grade alignment
  */
 
-import { prefs, setPref } from './app-prefs.js';
+import { prefs, setPref, setHoverNoteForElement, emitTelemetry } from './app-prefs.js';
 import { DEFAULT_PREFS } from './app-constants.js';
-import { isAssessmentRoundLocked, normalizePlayStyle } from './app-theme.js';
-import { enforceFocusSelectionForGrade } from './app-settings.js';
+import { isAssessmentRoundLocked, normalizePlayStyle, showAssessmentLockNotice, syncPlayStyleToggleUI, getHintMode } from './app-theme.js';
+import { closeQuickPopover } from './app-settings.js';
 import { newGame } from './app-game.js';
+import { refreshStandaloneMissionLabHub } from './app-audio.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -2320,11 +2321,14 @@ export {
   getFocusLabel,
   getEffectiveGameplayGradeBand,
   shouldExpandGradeBandForFocus,
+  parseFocusPreset,
   CURRICULUM_PACK_ORDER,
   normalizeLessonPackId,
   normalizeLessonTargetId,
   getLessonPackDefinition,
   getLessonTarget,
   getCurriculumTargetsForGrade,
-  getQuestFilterGradeBand
+  getQuestFilterGradeBand,
+  formatGradeBandLabel,
+  updateFocusSummaryLabel
 };

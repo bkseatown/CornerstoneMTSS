@@ -3,10 +3,12 @@
  * Settings panel, review queue, team mode, voice, home navigation
  */
 
-import { prefs, normalizeMasterySort, normalizeMasteryFilter } from './app-prefs.js';
+import { prefs, setPref, savePrefs, normalizeMasterySort, normalizeMasteryFilter, normalizeVoiceMode, isMissionLabEnabled, normalizePageMode, persistPageMode } from './app-prefs.js';
 import { DEFAULT_PREFS, REVIEW_QUEUE_KEY, REVIEW_QUEUE_MAX_ITEMS, TEACHER_ASSIGNMENTS_CONTRACT, MISSION_LAB_ENABLED, DEMO_MODE, WRITING_STUDIO_ENABLED, MIDGAME_BOOST_ENABLED } from './app-constants.js';
-import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade } from './app-focus.js';
-import { getTopErrorKey, newGame } from './app-game.js';
+import { getEffectiveGameplayGradeBand, shouldExpandGradeBandForFocus, normalizeLessonPackId, normalizeLessonTargetId, getLessonPackDefinition, getLessonTarget, getCurriculumTargetsForGrade, formatGradeBandLabel, updateFocusSummaryLabel } from './app-focus.js';
+import { getTopErrorKey, newGame, hideMidgameBoost } from './app-game.js';
+import { refreshStandaloneMissionLabHub, closeRevealChallengeModal } from './app-audio.js';
+import { hideInformantHintCard, getVoicePracticeMode, showStarterWordCard, hideSupportChoiceCard, showAssessmentLockNotice, applyTheme, applyPlayStyle, setHintMode, syncPlayStyleToggleUI, getRevealFocusMode, openFirstRunSetupModal, isAssessmentRoundLocked, hideStarterWordCard } from './app-theme.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -851,10 +853,19 @@ function normalizeTeamSet(set) {
     const popRect = popover.getBoundingClientRect();
     let left = anchorRect.right - popRect.width;
     left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));
-    let top = anchorRect.bottom + 8;
-    if (top + popRect.height > window.innerHeight - margin) {
-      top = Math.max(margin, anchorRect.top - popRect.height - 8);
+
+    // Special positioning for music panel in Word Quest play mode
+    let top;
+    if (popover.id === 'quick-music-strip' && document.body.classList.contains('wordquest-root')) {
+      // Position music controls just below the banner, overlaying top of content
+      top = 85;
+    } else {
+      top = anchorRect.bottom + 8;
+      if (top + popRect.height > window.innerHeight - margin) {
+        top = Math.max(margin, anchorRect.top - popRect.height - 8);
+      }
     }
+
     popover.style.left = `${Math.round(left)}px`;
     popover.style.top = `${Math.round(top)}px`;
   }
@@ -1634,6 +1645,91 @@ function normalizeTeamSet(set) {
     panel.style.top = `${Math.max(12, top)}px`;
     panel.style.transform = 'none';
   }
+
+// ─── Extracted Functions (formerly nested in initSettings) ──────────────────────
+
+function openWritingStudioPage() {
+  if (!WRITING_STUDIO_ENABLED) {
+    WQUI.showToast('Writing Studio is hidden in this shared build.');
+    return;
+  }
+  const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
+  try { localStorage.setItem('ws_theme_v1', activeTheme); } catch {}
+  const state = WQGame.getState?.() || {};
+  const focusSelect = _el('setting-focus');
+  const focusValue = String(focusSelect?.value || prefs.focus || DEFAULT_PREFS.focus || 'all').trim();
+  const focusLabel = String(focusSelect?.selectedOptions?.[0]?.textContent || focusValue || 'General writing').trim();
+  const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
+  const targetWord = String(state?.word || '').trim().toUpperCase();
+  const clueSentence = String(state?.entry?.sentence || '').trim();
+  const url = new URL(withAppBase('writing-studio.html'), window.location.origin);
+  url.searchParams.set('theme', activeTheme);
+  url.searchParams.set('wq_focus', focusValue);
+  url.searchParams.set('wq_focus_label', focusLabel);
+  url.searchParams.set('wq_grade', gradeValue);
+  if (targetWord) url.searchParams.set('wq_word', targetWord);
+  if (clueSentence) url.searchParams.set('wq_clue', clueSentence);
+  window.location.href = url.toString();
+}
+
+function openReadingLabPage() {
+  const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
+  const state = WQGame.getState?.() || {};
+  const focusSelect = _el('setting-focus');
+  const focusValue = String(focusSelect?.value || prefs.focus || DEFAULT_PREFS.focus || 'all').trim();
+  const focusLabel = String(focusSelect?.selectedOptions?.[0]?.textContent || focusValue || 'Reading practice').trim();
+  const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
+  const targetWord = String(state?.word || '').trim().toUpperCase();
+  const clueSentence = String(state?.entry?.sentence || '').trim();
+  const url = new URL(withAppBase('reading-lab.html'), window.location.origin);
+  url.searchParams.set('theme', activeTheme);
+  url.searchParams.set('wq_focus', focusValue);
+  url.searchParams.set('wq_focus_label', focusLabel);
+  url.searchParams.set('wq_grade', gradeValue);
+  if (targetWord) url.searchParams.set('wq_word', targetWord);
+  if (clueSentence) url.searchParams.set('wq_clue', clueSentence);
+  window.location.href = url.toString();
+}
+
+function openVoicePracticeAndRecord(options = {}) {
+  const mode = getVoicePracticeMode();
+  const practiceDetails = _el('modal-practice-details');
+  if (practiceDetails) practiceDetails.open = true;
+  if (mode === 'off') {
+    setVoicePracticeFeedback('Say It Back is off in Settings. Switch Voice Practice to Optional or Required.', 'warn');
+    return false;
+  }
+  if (voiceIsRecording) {
+    setVoicePracticeFeedback('Recording in progress...');
+    return true;
+  }
+  const shouldAutoStart = options.autoStart !== false;
+  if (shouldAutoStart && !voiceTakeComplete) {
+    void startVoiceRecording();
+    return true;
+  }
+  if (!voiceTakeComplete) {
+    setVoicePracticeFeedback('Tap Record to start a 3-second countdown and capture your voice.');
+  }
+  return true;
+}
+
+function stopVoiceCaptureNow() {
+  clearVoiceAutoStopTimer();
+  clearVoiceCountdownTimer();
+  voiceCountdownToken += 1;
+  try {
+    if (voiceRecorder && voiceRecorder.state !== 'inactive') {
+      voiceRecorder.stop();
+    }
+  } catch {}
+  stopVoiceVisualizer();
+  stopVoiceStream();
+  voiceIsRecording = false;
+  stopKaraokeGuide();
+  setVoiceRecordingUI(false);
+}
+
 function initSettings() {
     _el('settings-btn')?.addEventListener('click', () => {
       if (isAssessmentRoundLocked()) {
@@ -1752,30 +1848,6 @@ function initSettings() {
     _el('mission-lab-nav-btn')?.addEventListener('click', () => {
       setPageMode(isMissionLabStandaloneMode() ? 'word-quest' : 'mission-lab');
     });
-    function openWritingStudioPage() {
-      if (!WRITING_STUDIO_ENABLED) {
-        WQUI.showToast('Writing Studio is hidden in this shared build.');
-        return;
-      }
-      const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
-      try { localStorage.setItem('ws_theme_v1', activeTheme); } catch {}
-      const state = WQGame.getState?.() || {};
-      const focusSelect = _el('setting-focus');
-      const focusValue = String(focusSelect?.value || prefs.focus || DEFAULT_PREFS.focus || 'all').trim();
-      const focusLabel = String(focusSelect?.selectedOptions?.[0]?.textContent || focusValue || 'General writing').trim();
-      const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
-      const targetWord = String(state?.word || '').trim().toUpperCase();
-      const clueSentence = String(state?.entry?.sentence || '').trim();
-      const url = new URL(withAppBase('writing-studio.html'), window.location.origin);
-      url.searchParams.set('theme', activeTheme);
-      url.searchParams.set('wq_focus', focusValue);
-      url.searchParams.set('wq_focus_label', focusLabel);
-      url.searchParams.set('wq_grade', gradeValue);
-      if (targetWord) url.searchParams.set('wq_word', targetWord);
-      if (clueSentence) url.searchParams.set('wq_clue', clueSentence);
-      window.location.href = url.toString();
-    }
-
     function openSentenceSurgeryPage() {
       const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
       const state = WQGame.getState?.() || {};
@@ -1786,25 +1858,6 @@ function initSettings() {
       const targetWord = String(state?.word || '').trim().toUpperCase();
       const clueSentence = String(state?.entry?.sentence || '').trim();
       const url = new URL(withAppBase('sentence-studio.html'), window.location.origin);
-      url.searchParams.set('theme', activeTheme);
-      url.searchParams.set('wq_focus', focusValue);
-      url.searchParams.set('wq_focus_label', focusLabel);
-      url.searchParams.set('wq_grade', gradeValue);
-      if (targetWord) url.searchParams.set('wq_word', targetWord);
-      if (clueSentence) url.searchParams.set('wq_clue', clueSentence);
-      window.location.href = url.toString();
-    }
-
-    function openReadingLabPage() {
-      const activeTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'), getThemeFallback());
-      const state = WQGame.getState?.() || {};
-      const focusSelect = _el('setting-focus');
-      const focusValue = String(focusSelect?.value || prefs.focus || DEFAULT_PREFS.focus || 'all').trim();
-      const focusLabel = String(focusSelect?.selectedOptions?.[0]?.textContent || focusValue || 'Reading practice').trim();
-      const gradeValue = String(_el('s-grade')?.value || prefs.grade || DEFAULT_PREFS.grade || 'all').trim();
-      const targetWord = String(state?.word || '').trim().toUpperCase();
-      const clueSentence = String(state?.entry?.sentence || '').trim();
-      const url = new URL(withAppBase('reading-lab.html'), window.location.origin);
       url.searchParams.set('theme', activeTheme);
       url.searchParams.set('wq_focus', focusValue);
       url.searchParams.set('wq_focus_label', focusLabel);
@@ -3107,22 +3160,6 @@ function initSettings() {
       voiceRecorder = null;
     }
 
-    function stopVoiceCaptureNow() {
-      clearVoiceAutoStopTimer();
-      clearVoiceCountdownTimer();
-      voiceCountdownToken += 1;
-      try {
-        if (voiceRecorder && voiceRecorder.state !== 'inactive') {
-          voiceRecorder.stop();
-        }
-      } catch {}
-      stopVoiceVisualizer();
-      stopVoiceStream();
-      voiceIsRecording = false;
-      stopKaraokeGuide();
-      setVoiceRecordingUI(false);
-    }
-
     function drawWaveform() {}
 
     function animateLiveWaveform() {
@@ -3379,29 +3416,6 @@ function initSettings() {
       if (!voiceTakeComplete && !voiceIsRecording) {
         setVoicePracticeFeedback('Tap Record to start a 3-second countdown, then compare with model audio.');
       }
-    }
-
-    function openVoicePracticeAndRecord(options = {}) {
-      const mode = getVoicePracticeMode();
-      const practiceDetails = _el('modal-practice-details');
-      if (practiceDetails) practiceDetails.open = true;
-      if (mode === 'off') {
-        setVoicePracticeFeedback('Say It Back is off in Settings. Switch Voice Practice to Optional or Required.', 'warn');
-        return false;
-      }
-      if (voiceIsRecording) {
-        setVoicePracticeFeedback('Recording in progress...');
-        return true;
-      }
-      const shouldAutoStart = options.autoStart !== false;
-      if (shouldAutoStart && !voiceTakeComplete) {
-        void startVoiceRecording();
-        return true;
-      }
-      if (!voiceTakeComplete) {
-        setVoicePracticeFeedback('Tap Record to start a 3-second countdown and capture your voice.');
-      }
-      return true;
     }
 
     async function startVoiceRecording() {
@@ -3833,4 +3847,4 @@ function initSettings() {
     installResponsiveLayoutPatch();
 }
 
-export { initSettings, setSettingsView, setHomeMode, setPageMode, enforceFocusSelectionForGrade, stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer, updateNextActionLine, speakAvaWordQuestAdaptive, syncKeyboardInputLock, normalizeReviewWord };
+export { initSettings, setSettingsView, setHomeMode, setPageMode, getActiveStudentLabel, syncTeacherPresetButtons, isMissionLabStandaloneMode, closeQuickPopover, normalizeReviewWord, syncHeaderControlsVisibility, openWritingStudioPage, openReadingLabPage, openVoicePracticeAndRecord, stopVoiceCaptureNow };

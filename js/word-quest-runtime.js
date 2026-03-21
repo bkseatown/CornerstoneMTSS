@@ -725,7 +725,7 @@ window.runWordQuestMain = async function runWordQuestMain(context = {}) {
         getDemoState,
         getDemoTargetWord: () => DEMO_TARGET_WORD,
         getGameState: () => WQGame.getState?.() || null,
-        handleInputUnit,
+        handleInputUnit: window.handleInputUnit || (() => {}),
         hideDemoCoachUi: hideDemoCoach,
         normalizePageMode,
         onCloseDemoEndOverlay: () => {

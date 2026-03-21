@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module Import Test</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+    .test-container { background: white; padding: 20px; border-radius: 8px; }
+    .success { color: green; }
+    .failure { color: red; }
+    .summary { margin-top: 20px; padding: 10px; background: #efefef; border-left: 4px solid blue; }
+    pre { background: #222; color: #0f0; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Module Import Test</h1>
+    <p>Testing if all ES6 modules can be imported without ReferenceErrors...</p>
+    <pre id="output">Loading...</pre>
+    <div id="summary" class="summary"></div>
+  </div>
+
+  <script type="module">
+    import('./js/module-test.js').then(() => {
+      setTimeout(() => {
+        const results = window.__MODULE_TEST_RESULTS;
+        if (results) {
+          const output = document.getElementById('output');
+          const summary = document.getElementById('summary');
+
+          output.textContent = JSON.stringify(results, null, 2);
+
+          if (results.failed.length === 0) {
+            summary.innerHTML = `<strong class="success">✓ All ${results.successful.length} modules imported successfully!</strong>`;
+          } else {
+            summary.innerHTML = `<strong class="failure">✗ ${results.failed.length} modules failed to import:</strong><ul>${results.failed.map(f => `<li>${f.module}: ${f.error}</li>`).join('')}</ul>`;
+          }
+        }
+      }, 100);
+    });
+  </script>
+</body>
+</html>

@@ -2071,7 +2071,14 @@
       cell.classList.toggle("is-current", index === String(typed || "").length);
     });
     var progressFill = document.getElementById("cg-typing-progress-fill");
-    if (progressFill) progressFill.style.width = metrics.progress + "%";
+    if (progressFill) {
+      // Animate progress bar with GSAP for Typing Quest
+      if (celebrations && typeof celebrations.animateProgressBar === "function") {
+        celebrations.animateProgressBar(progressFill, metrics.progress);
+      } else {
+        progressFill.style.width = metrics.progress + "%";
+      }
+    }
     var questRunner = document.getElementById("cg-typing-quest-runner");
     if (questRunner) questRunner.style.left = "calc(" + metrics.progress + "% - 16px)";
     var wpmNode = document.getElementById("cg-typing-live-wpm");
@@ -4618,6 +4625,10 @@
             for (var i = previous.length; i < nextRaw.length; i += 1) {
               if (nextRaw.charAt(i) === target.charAt(i)) {
                 if (nextRaw.charAt(i) !== " ") uiState.typingAcceptedChars += 1;
+                // Keystroke feedback animation for Typing Quest
+                if (celebrations && typeof celebrations.onKeystrokeCorrect === "function") {
+                  celebrations.onKeystrokeCorrect(typingInput);
+                }
               } else {
                 uiState.typingMistakes += 1;
                 uiState.typingErrorUntil = Date.now() + 180;

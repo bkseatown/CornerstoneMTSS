@@ -3,7 +3,7 @@
  * Game state, round tracking, error coaching, Deep Dive challenges
  */
 
-import { prefs, normalizeMasterySort, normalizeMasteryFilter, emitTelemetry } from './app-prefs.js';
+import { prefs, setPref, normalizeMasterySort, normalizeMasteryFilter, emitTelemetry } from './app-prefs.js';
 import { DEFAULT_PREFS, MISSION_LAB_ENABLED, TEACHER_ASSIGNMENTS_CONTRACT, DEMO_MODE, DEMO_TARGET_WORD, FEATURES, MIDGAME_BOOST_ENABLED } from './app-constants.js';
 import {
   CURRICULUM_PACK_ORDER,
@@ -12,11 +12,18 @@ import {
   getLessonPackDefinition,
   getLessonTarget,
   getCurriculumTargetsForGrade,
-  getQuestFilterGradeBand
+  getQuestFilterGradeBand,
+  getEffectiveGameplayGradeBand,
+  parseFocusPreset,
+  getFocusLabel,
+  formatGradeBandLabel,
+  shouldExpandGradeBandForFocus,
+  updateFocusSummaryLabel
 } from './app-focus.js';
-import { isAssessmentRoundLocked } from './app-theme.js';
-import { stopAvaWordQuestIdleWatcher, stopVoiceCaptureNow, clearClassroomTurnTimer } from './app-settings.js';
+import { isAssessmentRoundLocked, hideStarterWordCard, hideInformantHintCard, getVoicePracticeMode, hideSupportChoiceCard } from './app-theme.js';
+import { isMissionLabStandaloneMode, normalizeReviewWord, stopVoiceCaptureNow } from './app-settings.js';
 import { stopDemoToastProgress } from './app-prefs.js';
+import { refreshStandaloneMissionLabHub, closeRevealChallengeModal, startStandaloneMissionLab } from './app-audio.js';
 
 // DOM helper
 const _el = id => document.getElementById(id);
@@ -3773,4 +3780,4 @@ const _el = id => document.getElementById(id);
     });
   }
 
-export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey };
+export { initGame, newGame, resetRoundTracking, buildRoundMetrics, getTopErrorKey, copyTextToClipboard, showMidgameBoost, hideMidgameBoost, maybeShowErrorCoach };

@@ -11,7 +11,10 @@ import {
   DUPE_PREF_KEY, SAFE_DEFAULT_GRADE_BAND, STUDENT_RECORDING_ENABLED,
   STARTER_WORD_SUPPORT_MODES, CURATED_MUSIC_MODES, KEYBOARD_PRESET_CONFIG, DEMO_MODE
 } from './app-constants.js';
-import { newGame } from './app-game.js';
+import { newGame, copyTextToClipboard } from './app-game.js';
+import { getEffectiveGameplayGradeBand, normalizeLessonPackId, normalizeLessonTargetId } from './app-focus.js';
+import { closeQuickPopover, setPageMode, syncHeaderControlsVisibility } from './app-settings.js';
+import { normalizePlayStyle } from './app-theme.js';
 
 // Debug mode
 const DEMO_DEBUG_MODE = (() => {
@@ -2466,7 +2469,9 @@ export {
   // Telemetry
   emitTelemetry, stopDemoToastProgress,
   // Demo UI
-  positionDemoLaunchButton
+  positionDemoLaunchButton,
+  // UI helpers
+  setHoverNoteForElement
 };
 
 // Explicit exports for page mode functions

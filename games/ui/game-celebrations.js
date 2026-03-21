@@ -93,6 +93,7 @@
 
     /**
      * Show celebration feedback when answer is correct
+     * Enhanced with GSAP animations for particle burst effect
      */
     function showCelebration(config) {
       var opts = config && typeof config === "object" ? config : {};
@@ -110,11 +111,95 @@
       ].join("");
 
       feedbackEl.style.display = "grid";
+      feedbackEl.style.opacity = "0";
+      feedbackEl.style.transform = "scale(0.5)";
 
-      // Auto-hide after animation (use tracked timeout for cleanup)
-      scheduleTimeout(function () {
-        if (feedbackEl) feedbackEl.style.display = "none";
-      }, 2600);
+      // Use GSAP for celebration animations if available
+      if (typeof gsap !== "undefined") {
+        // Scale-up pop animation
+        gsap.to(feedbackEl, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out",
+          overwrite: "auto"
+        });
+
+        // Create particle burst effect
+        createParticleBurst(feedbackEl);
+
+        // Fade out and hide
+        scheduleTimeout(function () {
+          gsap.to(feedbackEl, {
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: function () {
+              if (feedbackEl) feedbackEl.style.display = "none";
+            }
+          });
+        }, 2300);
+      } else {
+        // Fallback without GSAP
+        feedbackEl.style.opacity = "1";
+        feedbackEl.style.transform = "scale(1)";
+        scheduleTimeout(function () {
+          if (feedbackEl) feedbackEl.style.display = "none";
+        }, 2600);
+      }
+    }
+
+    /**
+     * Create particle burst effect around celebration element
+     */
+    function createParticleBurst(element) {
+      if (typeof gsap === "undefined") return;
+
+      var rect = element.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      var particleCount = 12;
+
+      for (var i = 0; i < particleCount; i++) {
+        var particle = document.createElement("div");
+        particle.style.position = "fixed";
+        particle.style.pointerEvents = "none";
+        particle.style.left = centerX + "px";
+        particle.style.top = centerY + "px";
+        particle.style.width = "8px";
+        particle.style.height = "8px";
+        particle.style.borderRadius = "50%";
+        particle.style.zIndex = "99999";
+
+        // Alternate colors: gold, yellow, white
+        var colors = ["#fbbf24", "#fcd34d", "#ffffff"];
+        particle.style.backgroundColor = colors[i % colors.length];
+        particle.style.boxShadow = "0 0 4px rgba(251, 191, 36, 0.6)";
+
+        document.body.appendChild(particle);
+
+        // Animate particle burst outward with gravity
+        var angle = (i / particleCount) * Math.PI * 2;
+        var distance = 80 + Math.random() * 40;
+        var endX = Math.cos(angle) * distance;
+        var endY = Math.sin(angle) * distance - 60; // Subtract for gravity
+
+        gsap.to(particle, {
+          x: endX,
+          y: endY,
+          opacity: 0,
+          scale: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          delay: i * 0.03,
+          onComplete: function () {
+            if (particle && particle.parentNode) {
+              particle.parentNode.removeChild(particle);
+            }
+          }
+        });
+      }
     }
 
     /**
@@ -447,6 +532,47 @@
     }
 
     /**
+     * Keystroke feedback animation for Typing Quest
+     * Provides subtle visual feedback when a character is typed correctly
+     */
+    function onKeystrokeCorrect(inputElement) {
+      if (!inputElement || typeof gsap === "undefined") return;
+
+      // Subtle highlight pulse on the input field
+      gsap.killTweensOf(inputElement);
+      gsap.to(inputElement, {
+        boxShadow: "0 0 8px rgba(34, 197, 94, 0.6), inset 0 0 4px rgba(34, 197, 94, 0.3)",
+        duration: 0.2,
+        ease: "power1.out"
+      });
+
+      // Reset the highlight after a brief moment
+      scheduleTimeout(function () {
+        gsap.to(inputElement, {
+          boxShadow: "none",
+          duration: 0.15,
+          ease: "power1.in"
+        });
+      }, 200);
+    }
+
+    /**
+     * Progress bar animation for Typing Quest
+     * Smoothly animates the progress bar fill as user types
+     */
+    function animateProgressBar(fillElement, progressPercent) {
+      if (!fillElement || typeof gsap === "undefined") return;
+
+      // Smoothly animate the progress bar width
+      gsap.killTweensOf(fillElement);
+      gsap.to(fillElement, {
+        width: progressPercent + "%",
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
+
+    /**
      * Escape HTML to prevent XSS
      */
     function escapeHtml(value) {
@@ -474,6 +600,8 @@
       renderMasteryBadges: renderMasteryBadges,
       onAnswerCorrect: onAnswerCorrect,
       onAnswerIncorrect: onAnswerIncorrect,
+      onKeystrokeCorrect: onKeystrokeCorrect,
+      animateProgressBar: animateProgressBar,
       reset: reset,
       getState: function () { return Object.assign({}, state); }
     };
