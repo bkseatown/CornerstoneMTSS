@@ -72,6 +72,9 @@
   }
 
   function enableDestinations() {
+    if (el.destinationsContainer) {
+      el.destinationsContainer.style.display = "block";
+    }
     (el.destinations || []).forEach(function (el) {
       el.style.opacity = "1";
       el.style.pointerEvents = "auto";
@@ -79,6 +82,10 @@
   }
 
   function disableDestinations() {
+    // Hide destinations section completely when not authenticated
+    if (el.destinationsContainer) {
+      el.destinationsContainer.style.display = "none";
+    }
     (el.destinations || []).forEach(function (el) {
       el.style.opacity = "0.4";
       el.style.pointerEvents = "none";
