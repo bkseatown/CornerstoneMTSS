@@ -856,8 +856,21 @@ function normalizeTeamSet(set) {
     // Special positioning for music panel in Word Quest play mode
     let top;
     if (popover.id === 'quick-music-strip' && document.body.classList.contains('wordquest-root')) {
-      // Position music controls below the game board (340px from top)
-      top = 340;
+      // Position music controls below the game board, avoiding overlap with keyboard
+      const gameBoard = document.getElementById('game-board');
+      const keyboard = document.getElementById('keyboard');
+      if (gameBoard && keyboard) {
+        const boardRect = gameBoard.getBoundingClientRect();
+        const keyboardRect = keyboard.getBoundingClientRect();
+        // Place panel between board and keyboard with 8px margin
+        top = boardRect.bottom + 8;
+        // If it would overlap keyboard, push down to below keyboard instead
+        if (top + popRect.height > keyboardRect.top) {
+          top = keyboardRect.bottom + 8;
+        }
+      } else {
+        top = 340;
+      }
     } else {
       top = anchorRect.bottom + 8;
       if (top + popRect.height > window.innerHeight - margin) {
