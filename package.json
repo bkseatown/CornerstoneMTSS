@@ -2,6 +2,8 @@
   "name": "wordquest",
   "private": true,
   "scripts": {
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
     "hud:check": "node scripts/check-hud-contract.js",
     "grade:check": "node scripts/check-grade-band-contract.js",
     "grade:check:strict": "node scripts/check-grade-band-contract.js --strict",
@@ -91,7 +93,10 @@
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.58.2",
     "axe-core": "^4.11.1",
+    "babel-jest": "^29.7.0",
     "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "playwright": "^1.58.2"
   }
 }
