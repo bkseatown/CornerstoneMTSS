@@ -396,6 +396,123 @@
         ? "Next: Intervention"
         : "Next: Targeted");
     summaryEl.classList.remove("pp-hidden");
+
+    // Trigger win animation if successful
+    if (success && requiredMet) {
+      animateWinState(true, modeForEngine() === "INTERVENTION");
+      // Summary entrance animation
+      if (typeof gsap !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        gsap.from(summaryEl, {
+          y: 20,
+          opacity: 0,
+          duration: 0.4,
+          ease: "back.out"
+        });
+        // Stagger stat value reveals
+        var statValues = summaryEl.querySelectorAll(".pp-stat-value");
+        statValues.forEach(function(el, idx) {
+          gsap.from(el, {
+            opacity: 0,
+            y: 10,
+            duration: 0.3,
+            delay: 0.1 + (idx * 0.08),
+            ease: "back.out"
+          });
+        });
+      }
+    }
+  }
+
+  /**
+   * Animate win state with particle burst, target word pop, and color flash
+   * Respects prefers-reduced-motion media query
+   */
+  function animateWinState(success, modeIsIntervention) {
+    if (!success) return;
+
+    // Graceful degrade if GSAP unavailable
+    if (typeof gsap === "undefined") return;
+
+    // Respect reduced motion preference
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var targetWordEl = document.getElementById("pp-target-word");
+    if (!targetWordEl) return;
+
+    // Apply success class to trigger CSS animation (ppSuccessPop)
+    targetWordEl.classList.add("pp-success");
+
+    // Target word scale + color flash tween
+    gsap.to(targetWordEl, {
+      scale: 1.15,
+      opacity: 1,
+      duration: 0.5,
+      ease: "back.out",
+      onComplete: function() {
+        // Reset scale for next round
+        gsap.to(targetWordEl, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out"
+        });
+      }
+    });
+
+    // Particle burst
+    createParticleBurst(targetWordEl, modeIsIntervention ? 18 : 12);
+  }
+
+  /**
+   * Create particle burst animation (copied from game-celebrations.js pattern)
+   * Particles radiate outward from element center with gravity bias
+   */
+  function createParticleBurst(element, particleCount) {
+    if (typeof gsap === "undefined") return;
+
+    var rect = element.getBoundingClientRect();
+    var centerX = rect.left + rect.width / 2;
+    var centerY = rect.top + rect.height / 2;
+    var count = particleCount || 12;
+
+    for (var i = 0; i < count; i++) {
+      var particle = document.createElement("div");
+      particle.style.position = "fixed";
+      particle.style.pointerEvents = "none";
+      particle.style.left = centerX + "px";
+      particle.style.top = centerY + "px";
+      particle.style.width = "8px";
+      particle.style.height = "8px";
+      particle.style.borderRadius = "50%";
+      particle.style.zIndex = "99999";
+
+      // Alternate colors: gold, yellow, white
+      var colors = ["#fbbf24", "#fcd34d", "#ffffff"];
+      particle.style.backgroundColor = colors[i % colors.length];
+      particle.style.boxShadow = "0 0 4px rgba(251, 191, 36, 0.6)";
+
+      document.body.appendChild(particle);
+
+      // Animate particle burst outward with gravity
+      var angle = (i / count) * Math.PI * 2;
+      var distance = 80 + Math.random() * 40;
+      var endX = Math.cos(angle) * distance;
+      var endY = Math.sin(angle) * distance - 60; // Gravity bias
+
+      gsap.to(particle, {
+        x: endX,
+        y: endY,
+        opacity: 0,
+        scale: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: i * 0.03,
+        onComplete: function() {
+          if (particle && particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        }
+      });
+    }
   }
 
   function nextRound() {
@@ -403,6 +520,13 @@
     state.timerId = 0;
     state.round += 1;
     if (!summaryEl.classList.contains("pp-hidden")) summaryEl.classList.add("pp-hidden");
+
+    // Clean up success state from previous round
+    var targetWordEl = document.getElementById("pp-target-word");
+    if (targetWordEl && targetWordEl.classList.contains("pp-success")) {
+      targetWordEl.classList.remove("pp-success");
+    }
+
     updateScoreboard();
 
     var card = getNextCard();

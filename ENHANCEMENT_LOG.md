@@ -36,9 +36,14 @@ Last updated: 2026-03-20
 - **Status**: ✅ ANIMATIONS COMPLETE (keystroke + progress bar live)
 
 ### Precision Play (precision-play.html)
-- [ ] Animation on intervention wins
-- [ ] Real-time feedback animations
-- **Status**: Pending
+- [x] GSAP win-state animations (✅ Commit ecf89b25)
+  - [x] Target word scale + color flash pop (0.5s back.out easing)
+  - [x] Particle burst with gravity physics (12 particles FUN/TARGETED, 18 for INTERVENTION)
+  - [x] Summary entrance animation with staggered stat reveals
+  - [x] Respects prefers-reduced-motion (graceful degrade)
+  - [x] Fallback if GSAP unavailable
+- [x] Real-time feedback animations (particle burst on win is feedback)
+- **Status**: ✅ COMPLETE (animations live, tested, committed)
 
 ### Reading Lab (reading-lab.html)
 - [ ] Chart.js for comprehension progress
