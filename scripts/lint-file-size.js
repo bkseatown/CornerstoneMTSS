@@ -30,10 +30,10 @@ const LIMITS = {
 const FILE_LIMIT_OVERRIDES = {
   'my-workspace.html': 1200,
   'specialist-hub.html': 1200,
-  'game-shell.css': 12000, // Monolithic game shell CSS; modularisation tracked as tech debt
-  'app.js': 20000, // Actively being modularized (RFC in EXTRACTION_PLAN.md); target <8000 by end of Q2
-  'word-quest.html': 1500, // Actively being modularized; game-specific surface
-  'components.css': 12000, // Monolithic component library; modularization in progress
+  'game-shell.css': 12000,
+  'app.js': 20000,
+  'word-quest.html': 1500,
+  'components.css': 12000,
 };
 
 const EXEMPT_PATTERNS = [
@@ -43,6 +43,8 @@ const EXEMPT_PATTERNS = [
   'dist',
   'build',
   '.git',
+  'coverage',
+  'lcov-report',
 ];
 
 function isExempt(filePath) {
@@ -89,13 +91,11 @@ function checkFile(filePath) {
 function getFilesToCheck(isStaged = true) {
   try {
     if (isStaged) {
-      // Only check staged files (for pre-commit hook)
       const output = execSync('git diff --name-only --staged', {
         encoding: 'utf-8',
       });
       return output.split('\n').filter(f => f.trim());
     } else {
-      // Check all non-exempt files (for CI)
       const output = execSync('git ls-files', {
         encoding: 'utf-8',
       });

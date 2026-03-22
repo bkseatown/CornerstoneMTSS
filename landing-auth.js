@@ -1,14 +1,5 @@
 /**
- * landing-auth.js — Authentication flow for index.html
- *
- * Handles:
- * - Google Sign-In button initialization
- * - User session persistence
- * - Authenticated user greeting
- * - Sign-out functionality
- * - Conditional rendering of landing destinations
- *
- * Requires: google-auth.js to be loaded first
+ * landing-auth.js — Authentication flow for index.html gateway
  */
 
 (function landingAuthInit() {
@@ -16,53 +7,37 @@
 
   var GoogleAuth = window.CSGoogleAuth;
   var el = {};
-
-  /* ── Element References ────────────────────────────────────── */
+  var AUTO_REDIRECT_DELAY_MS = 550;
 
   function cacheElements() {
-    el.body = document.body;
-    el.authSection = document.getElementById("landing-auth-section");
     el.signInBtn = document.getElementById("landing-sign-in-btn");
     el.signOutBtn = document.getElementById("landing-sign-out-btn");
-    el.userGreeting = document.getElementById("landing-user-greeting");
+    el.openHubBtn = document.getElementById("landing-open-hub-btn");
     el.userName = document.getElementById("landing-user-name");
     el.userEmail = document.getElementById("landing-user-email");
     el.userAvatar = document.getElementById("landing-user-avatar");
     el.authUnauthenticated = document.getElementById("auth-unauthenticated");
     el.authAuthenticated = document.getElementById("auth-authenticated");
-    el.destinations = document.querySelectorAll(".landing-destination");
-    el.destinationsContainer = document.querySelector(".landing-destinations");
   }
 
-  /* ── Authentication State ────────────────────────────────────── */
-
-  function updateUIForAuthState() {
-    if (!GoogleAuth) {
-      console.warn("[LandingAuth] GoogleAuth not available");
-      showUnauthenticatedUI();
-      return;
-    }
-
-    var user = GoogleAuth.getCurrentUser();
-
-    if (user && user.email) {
-      showAuthenticatedUI(user);
-      enableDestinations();
-    } else {
-      showUnauthenticatedUI();
-      disableDestinations();
-    }
+  function goToSpecialistHub() {
+    window.location.href = "./specialist-hub.html";
   }
 
   function showAuthenticatedUI(user) {
     if (el.authUnauthenticated) el.authUnauthenticated.style.display = "none";
-    if (el.authAuthenticated) el.authAuthenticated.style.display = "block";
+    if (el.authAuthenticated) el.authAuthenticated.style.display = "flex";
 
-    if (el.userName) el.userName.textContent = user.name || "User";
-    if (el.userEmail) el.userEmail.textContent = user.email;
-    if (el.userAvatar && user.picture) {
-      el.userAvatar.src = user.picture;
-      el.userAvatar.style.display = "block";
+    if (el.userName) el.userName.textContent = user && user.name ? user.name : "Specialist";
+    if (el.userEmail) el.userEmail.textContent = user && user.email ? user.email : "";
+    if (el.userAvatar) {
+      if (user && user.picture) {
+        el.userAvatar.src = user.picture;
+        el.userAvatar.style.display = "block";
+      } else {
+        el.userAvatar.removeAttribute("src");
+        el.userAvatar.style.display = "none";
+      }
     }
   }
 
@@ -71,86 +46,63 @@
     if (el.authAuthenticated) el.authAuthenticated.style.display = "none";
   }
 
-  function enableDestinations() {
-    if (el.destinationsContainer) {
-      el.destinationsContainer.style.display = "block";
+  function updateUIForAuthState() {
+    if (!GoogleAuth) {
+      showUnauthenticatedUI();
+      return;
     }
-    (el.destinations || []).forEach(function (el) {
-      el.style.opacity = "1";
-      el.style.pointerEvents = "auto";
-    });
-  }
 
-  function disableDestinations() {
-    // Hide destinations section completely when not authenticated
-    if (el.destinationsContainer) {
-      el.destinationsContainer.style.display = "none";
+    var user = GoogleAuth.getCurrentUser && GoogleAuth.getCurrentUser();
+    if (user && user.email) {
+      showAuthenticatedUI(user);
+    } else {
+      showUnauthenticatedUI();
     }
-    (el.destinations || []).forEach(function (el) {
-      el.style.opacity = "0.4";
-      el.style.pointerEvents = "none";
-    });
   }
-
-  /* ── Event Handlers ─────────────────────────────────────────── */
 
   function handleSignIn() {
-    if (!GoogleAuth) return;
+    if (!GoogleAuth || !GoogleAuth.signIn) return;
 
     GoogleAuth.signIn()
       .then(function (user) {
-        console.log("[LandingAuth] Signed in as:", user.email);
-        updateUIForAuthState();
-        // Optional: auto-navigate to Specialist Hub after successful sign-in
-        // setTimeout(function () {
-        //   window.location.href = "./specialist-hub.html";
-        // }, 500);
+        showAuthenticatedUI(user || {});
+        window.setTimeout(goToSpecialistHub, AUTO_REDIRECT_DELAY_MS);
       })
       .catch(function (err) {
         console.error("[LandingAuth] Sign-in failed:", err);
-        alert("Sign-in failed. Please try again.");
+        window.alert("Sign-in failed. Please try again.");
       });
   }
 
   function handleSignOut() {
-    if (!GoogleAuth) return;
-
+    if (!GoogleAuth || !GoogleAuth.signOut) return;
     GoogleAuth.signOut();
-    console.log("[LandingAuth] Signed out");
-    updateUIForAuthState();
+    showUnauthenticatedUI();
   }
-
-  /* ── Initialization ────────────────────────────────────────── */
 
   function init() {
     cacheElements();
 
-    if (!GoogleAuth) {
-      console.warn("[LandingAuth] GoogleAuth module not loaded");
-      return;
+    if (GoogleAuth && GoogleAuth.init) {
+      GoogleAuth.init();
     }
 
-    // Initialize Google Auth
-    GoogleAuth.init();
-
-    // Wire up event listeners
-    if (el.signInBtn) {
-      el.signInBtn.addEventListener("click", handleSignIn);
-    }
-    if (el.signOutBtn) {
-      el.signOutBtn.addEventListener("click", handleSignOut);
+    if (el.signInBtn) el.signInBtn.addEventListener("click", handleSignIn);
+    if (el.signOutBtn) el.signOutBtn.addEventListener("click", handleSignOut);
+    if (el.openHubBtn) {
+      el.openHubBtn.addEventListener("click", function () {
+        // allow normal navigation while keeping the CTA explicit for keyboard users
+      });
     }
 
-    // Update UI based on current auth state
     updateUIForAuthState();
 
-    // Listen for auth changes (sign-in from other tabs, token expiry, etc.)
-    GoogleAuth.onAuthChange(function (user) {
-      updateUIForAuthState();
-    });
+    if (GoogleAuth && GoogleAuth.onAuthChange) {
+      GoogleAuth.onAuthChange(function () {
+        updateUIForAuthState();
+      });
+    }
   }
-
-  /* ── Auto-init on DOM ready ────────────────────────────────── */
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
@@ -158,13 +110,13 @@
     init();
   }
 
-  // Export for external use
   window.LandingAuth = {
     updateUI: updateUIForAuthState,
     getCurrentUser: function () {
-      return GoogleAuth && GoogleAuth.getCurrentUser();
+      return GoogleAuth && GoogleAuth.getCurrentUser ? GoogleAuth.getCurrentUser() : null;
     },
     signIn: handleSignIn,
-    signOut: handleSignOut
+    signOut: handleSignOut,
+    goToSpecialistHub: goToSpecialistHub
   };
 })();

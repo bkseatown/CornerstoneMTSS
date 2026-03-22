@@ -6,180 +6,52 @@
   <base href="./">
   <title>Cornerstone MTSS</title>
   <link rel="icon" href="./favicon.ico" sizes="any">
-  <link rel="stylesheet" href="./style/tokens.css?v=20260314d">
-  <link rel="stylesheet" href="./style/typography.css?v=20260314d">
-  <link rel="stylesheet" href="./style/platform-hero.css?v=20260316a">
-  <link rel="stylesheet" href="./home-v3.css?v=20260318c">
-  <link rel="stylesheet" href="./landing-auth.css?v=20260321g">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260322a">
+  <link rel="stylesheet" href="./style/typography.css?v=20260322a">
+  <link rel="stylesheet" href="./landing-auth.css?v=20260322a">
   <link rel="stylesheet" href="./css/backup-panel.css?v=20260310a">
 </head>
-<body class="cs-home-page">
-  <main class="landing-shell" aria-label="Cornerstone MTSS welcome page">
-    <select id="s-theme" aria-hidden="true" tabindex="-1" style="display:none;"></select>
-
-    <header class="landing-header" id="dashboard" aria-label="Cornerstone MTSS header">
-      <div class="landing-header__intro">
-        <p class="landing-eyebrow">Cornerstone MTSS</p>
-        <h1 class="landing-title">Today</h1>
-        <div class="landing-header__facts" aria-label="Today overview">
-          <span>Math 8:20</span>
-          <span>1 note due</span>
-          <span>2 drafts ready</span>
-        </div>
+<body class="cs-home-page cs-home-page--gateway">
+  <main class="landing-gateway" aria-label="Cornerstone MTSS welcome page">
+    <section class="landing-gateway__hero" aria-label="Cornerstone MTSS greeting">
+      <p class="landing-gateway__eyebrow">Cornerstone MTSS</p>
+      <h1 class="landing-gateway__title">Specialist support, ready when you are.</h1>
+      <p class="landing-gateway__lede">Sign in to open your Specialist Hub, sync your account, and continue your saved student support workflow.</p>
+      <div class="landing-gateway__chips" aria-label="Platform highlights">
+        <span>Google sign-in</span>
+        <span>Local-first backup</span>
+        <span>Specialist Hub</span>
       </div>
-    </header>
+    </section>
 
-    <!-- Authentication Section -->
     <section class="landing-auth" id="landing-auth-section" aria-label="Authentication">
-      <!-- Unauthenticated State: Sign In Prompt -->
       <div class="landing-auth__prompt" id="auth-unauthenticated">
         <div class="landing-auth__content">
-          <h2>Welcome to Cornerstone MTSS</h2>
-          <p>Sign in with your Google account to access the Specialist Hub and manage your student caseload.</p>
-          <button class="landing-btn landing-btn--primary" id="landing-sign-in-btn" type="button">
-            🔐 Sign In with Google
-          </button>
+          <h2>Welcome back</h2>
+          <p>Use your Google account to load your saved data and continue into Cornerstone MTSS.</p>
+          <button class="landing-auth__primary" id="landing-sign-in-btn" type="button">🔐 Sign In with Google</button>
         </div>
       </div>
 
-      <!-- Authenticated State: User Greeting -->
-      <div class="landing-auth__greeting" id="auth-authenticated" style="display: none;">
+      <div class="landing-auth__greeting" id="auth-authenticated" style="display:none;">
         <div class="landing-auth__user">
-          <img class="landing-auth__avatar" id="landing-user-avatar" src="" alt="User avatar" style="display: none;">
+          <img class="landing-auth__avatar" id="landing-user-avatar" src="" alt="User avatar" style="display:none;">
           <div class="landing-auth__info">
+            <span class="landing-auth__kicker">Signed in</span>
             <span class="landing-auth__name" id="landing-user-name">Loading...</span>
             <span class="landing-auth__email" id="landing-user-email"></span>
           </div>
         </div>
-        <button class="landing-auth__signout" id="landing-sign-out-btn" type="button">Sign Out</button>
+        <div class="landing-auth__actions">
+          <a class="landing-auth__open" id="landing-open-hub-btn" href="./specialist-hub.html">Open Specialist Hub</a>
+          <button class="landing-auth__signout" id="landing-sign-out-btn" type="button">Sign Out</button>
+        </div>
       </div>
-    </section>
-
-    <section class="landing-destinations" aria-label="Main destinations">
-      <article class="landing-destination landing-destination--hub">
-        <div class="landing-destination__scene landing-scene landing-scene--hub" aria-hidden="true">
-          <div class="landing-hub-panel landing-hub-panel--crop">
-            <div class="landing-hub-panel__strip landing-hub-panel__strip--focus">
-              <strong>8:20 Math · Ms. Smith</strong>
-              <span>Illustrative Math · Grade 4 · Unit 2 · Lesson 7</span>
-            </div>
-            <div class="landing-hub-panel__grid landing-hub-panel__grid--crop">
-              <div class="landing-hub-note landing-hub-note--major">
-                <span>SWBAT</span>
-                <strong>Find and explain equivalent fractions.</strong>
-              </div>
-              <div class="landing-hub-note landing-hub-note--major">
-                <span>Support move</span>
-                <strong>Use fraction strips, area models, or number lines to show why two fractions are equal.</strong>
-              </div>
-            </div>
-            <div class="landing-hub-students landing-hub-students--stack">
-              <div class="landing-hub-student landing-hub-student--wide">
-                <strong>Noah K.</strong>
-                <span>T2 Math · needs model-to-equation bridge</span>
-              </div>
-              <div class="landing-hub-student landing-hub-student--wide">
-                <strong>Ava M.</strong>
-                <span>Read directions first · one prompt before independent start</span>
-              </div>
-            </div>
-            <div class="landing-hub-panel__lane landing-hub-panel__lane--strong">
-              <i></i><span>After block: log the cool-down and Noah's model explanation.</span>
-            </div>
-            <div class="landing-hub-roster">
-              <div class="landing-hub-roster__item">
-                <strong>Noah K.</strong>
-                <span>T2 Math</span>
-              </div>
-              <div class="landing-hub-roster__item">
-                <strong>Ava M.</strong>
-                <span>Prompt before start</span>
-              </div>
-              <div class="landing-hub-roster__item">
-                <strong>Maya R.</strong>
-                <span>Check cool-down language</span>
-              </div>
-            </div>
-            <div class="landing-hub-sequence">
-              <span class="landing-hub-sequence__chip">Lesson 7</span>
-              <span class="landing-hub-sequence__chip">Unit 2</span>
-              <span class="landing-hub-sequence__chip">Log cool-down</span>
-            </div>
-          </div>
-        </div>
-        <div class="landing-destination__content">
-          <div class="landing-destination__copy">
-            <h2>Specialist Hub</h2>
-          </div>
-          <a class="landing-btn landing-btn--primary" href="./specialist-hub.html">👩‍🏫 Open Specialist Hub</a>
-        </div>
-      </article>
-
-      <article class="landing-destination landing-destination--games">
-        <div class="landing-destination__scene landing-scene landing-scene--games" aria-hidden="true">
-          <div class="landing-games-panel">
-            <div class="landing-games-panel__board">
-              <div class="landing-preview-board landing-preview-board--quest">
-                <div class="landing-preview-board__row">
-                  <i class="is-miss">C</i><i class="is-miss">H</i><i class="is-miss">A</i><i class="is-miss">I</i><i class="is-miss">R</i>
-                </div>
-                <div class="landing-preview-board__row">
-                  <i class="is-miss">R</i><i class="is-present">O</i><i class="is-miss">U</i><i class="is-miss">N</i><i class="is-miss">D</i>
-                </div>
-                <div class="landing-preview-board__row">
-                  <i class="is-hit">B</i><i class="is-hit">L</i><i class="is-hit">O</i><i class="is-hit">O</i><i class="is-hit">M</i>
-                </div>
-              </div>
-              <div class="landing-games-panel__status">
-                <span class="landing-preview-pill">8 games</span>
-                <span class="landing-preview-pill">Engaging</span>
-                <span class="landing-preview-pill">Science-based</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="landing-destination__content">
-          <div class="landing-destination__copy">
-            <h2>My Activities</h2>
-          </div>
-          <a class="landing-btn landing-btn--secondary" href="./my-activities.html">🎮 Open My Activities</a>
-        </div>
-      </article>
-
-      <article class="landing-destination landing-destination--workspace">
-        <div class="landing-destination__scene landing-scene landing-scene--workspace" aria-hidden="true">
-          <div class="landing-workspace-panel landing-workspace-panel--crop">
-            <div class="landing-workspace-stage">
-              <div class="landing-workspace-list">
-                <div class="landing-workspace-list__row">
-                  <span>Pre-SSM</span>
-                  <strong>Ava M. · April 4</strong>
-                </div>
-                <div class="landing-workspace-list__row">
-                  <span>Family update</span>
-                  <strong>Maya R. draft ready</strong>
-                </div>
-              </div>
-              <div class="landing-workspace-badges">
-                <span class="landing-preview-pill">2 drafts</span>
-                <span class="landing-preview-pill">3 upcoming meetings</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="landing-destination__content">
-          <div class="landing-destination__copy">
-            <h2>My Workspace</h2>
-          </div>
-          <a class="landing-btn landing-btn--secondary" href="./my-workspace.html">📊 Open My Workspace</a>
-        </div>
-      </article>
     </section>
 
     <footer class="landing-utility" aria-label="System utility strip">
       <div class="landing-utility__left">
         <span class="landing-utility__meta">Local-first backup</span>
-        <span class="landing-utility__meta">No cloud dependency</span>
         <span class="landing-utility__meta home-backup-status" data-backup-status="compact">No backup yet</span>
       </div>
       <div class="landing-utility__right">
@@ -198,7 +70,6 @@
   <script src="./build-stamp.js?v=20260319a"></script>
   <script src="./js/build-badge.js?v=20260316a"></script>
   <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
-  <script src="./js/landing-preview.js?v=20260318c"></script>
-  <script src="./landing-auth.js?v=20260321g"></script>
+  <script src="./landing-auth.js?v=20260322a"></script>
 </body>
 </html>
