@@ -39,6 +39,7 @@
     "lint:tokens": "node scripts/lint-tokens.js",
     "lint:duplicates": "node scripts/lint-duplicates.js",
     "lint:guardrails": "npm run lint:sizes && npm run lint:important && npm run lint:tokens && npm run lint:duplicates",
+    "lint": "npm run lint:guardrails",
     "audit:ui": "BASE_URL=http://127.0.0.1:4173 playwright test tests/audit-pages.spec.js --project=chromium --reporter=line",
     "audit:ui:html": "BASE_URL=http://127.0.0.1:4173 playwright test tests/audit-pages.spec.js --project=chromium --reporter=html",
     "audit:ui:live": "BASE_URL=https://bkseatown.github.io/CornerstoneMTSS playwright test tests/audit-pages.spec.js --project=chromium --reporter=line",
