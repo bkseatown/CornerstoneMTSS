@@ -1,0 +1,175 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Specialist Hub — Dark Mode Theme (Material Design 3)
+   ═══════════════════════════════════════════════════════════════════════════════
+
+   Design focus:
+   - Use surface-container colors for GOOD DETAIL VISIBILITY (not pure black)
+   - Bright text for excellent contrast (#d8e3fb on dark backgrounds)
+   - Warm navy background (#081425, #152031) for comfortable extended use
+   - Vibrant accent colors (sky blue, mint) for professional appearance
+   - All WCAG AA verified (4.5:1+ contrast minimum)
+*/
+
+@media (prefers-color-scheme: dark) {
+  body.th2-page {
+    background: linear-gradient(155deg, var(--md3-surface-dim) 0%, var(--md3-surface-container) 100%);
+  }
+
+  .th2-shell {
+    background: var(--md3-surface-container-high);
+    border-color: var(--md3-outline-variant);
+    box-shadow:
+      0 28px 60px rgba(0, 0, 0, 0.30),
+      inset 0 1px 0 rgba(141, 213, 255, 0.12);
+  }
+
+  .th2-sidebar {
+    background:
+      radial-gradient(circle at top left, rgba(141, 213, 255, 0.06), transparent 22%),
+      linear-gradient(180deg, var(--md3-surface-container-high) 0%, var(--md3-surface-container) 100%);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-sidebar-head {
+    background: linear-gradient(
+      180deg,
+      var(--md3-surface-container-highest),
+      var(--md3-surface-container-high)
+    );
+    border-bottom-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-brand,
+  .th2-sidebar-label {
+    color: var(--md3-on-surface);
+  }
+
+  .th2-search {
+    background: var(--md3-surface-container-lowest);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.20);
+  }
+
+  .th2-search::placeholder {
+    color: var(--md3-outline);
+  }
+
+  .th2-block-card {
+    background: var(--md3-surface-container);
+    border-color: var(--md3-outline-variant);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.20);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-block-card:hover {
+    background: var(--md3-surface-container-high);
+    border-color: var(--md3-primary);
+    box-shadow: 0 12px 28px rgba(141, 213, 255, 0.12);
+  }
+
+  .th2-block-card.is-active {
+    background: var(--md3-surface-container-high);
+    border-color: var(--md3-primary);
+    box-shadow: 0 12px 28px rgba(141, 213, 255, 0.16);
+  }
+
+  .th2-block-card.is-current {
+    border-color: var(--md3-primary);
+    background: var(--md3-surface-container-high);
+    box-shadow:
+      inset -3px 0 0 var(--md3-primary),
+      0 6px 16px rgba(141, 213, 255, 0.12);
+  }
+
+  .th2-sidebar-footer {
+    background: linear-gradient(
+      180deg,
+      rgba(21, 32, 49, 0.25),
+      var(--md3-surface-container-high) 22%
+    );
+    border-top-color: var(--md3-outline-variant);
+  }
+
+  .th2-auth-chip {
+    background: var(--md3-surface-container-low);
+    border-color: var(--md3-outline-variant);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.20);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-footer-icon-btn {
+    background: var(--md3-surface-container);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  }
+
+  .th2-footer-icon-btn:hover {
+    background: var(--md3-surface-container-high);
+    border-color: var(--md3-primary);
+    box-shadow: 0 10px 28px rgba(141, 213, 255, 0.12);
+  }
+
+  .th2-main {
+    background:
+      radial-gradient(circle at 82% 10%, rgba(69, 223, 164, 0.08), transparent 22%),
+      radial-gradient(circle at top left, rgba(141, 213, 255, 0.08), transparent 28%),
+      linear-gradient(180deg, var(--md3-surface) 0%, var(--md3-surface-container) 100%);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-empty-inner {
+    background:
+      radial-gradient(circle at top right, rgba(69, 223, 164, 0.08), transparent 28%),
+      linear-gradient(
+        180deg,
+        var(--md3-surface-container-high),
+        var(--md3-surface-container)
+      );
+    border-color: var(--md3-outline-variant);
+    box-shadow:
+      0 24px 48px rgba(0, 0, 0, 0.24),
+      inset 0 1px 2px rgba(141, 213, 255, 0.08);
+    color: var(--md3-on-surface);
+  }
+
+  .th2-empty-label {
+    color: var(--md3-on-surface);
+  }
+
+  .th2-empty-sub {
+    color: var(--md3-outline);
+  }
+
+  #th2-empty-state::after {
+    color: var(--md3-outline);
+  }
+
+  /* Focus card and other content cards */
+  .th2-focus-card,
+  .th2-day-brief,
+  .th2-priority-rail,
+  .th2-command-brief-card {
+    background: var(--md3-surface-container);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  /* Selection and interactive states */
+  .th2-block-card:focus-visible {
+    outline-color: var(--md3-primary);
+  }
+
+  /* Text content in cards */
+  .th2-block-card h2,
+  .th2-block-card h3,
+  .th2-block-card p {
+    color: var(--md3-on-surface);
+  }
+
+  .th2-block-card .th2-time {
+    color: var(--md3-outline);
+  }
+}
