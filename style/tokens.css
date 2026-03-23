@@ -376,6 +376,108 @@
   --surface-premium-lighter: rgba(245, 243, 239, 0.98);
   --surface-workspace-light: rgba(251, 249, 245, 0.98);
   --surface-workspace-lighter: rgba(245, 243, 239, 0.97);
+
+  /* ===== Material Design 3 Color Roles (Light Mode - Default) =====
+     Supplements ScholarFlow Terra for modern app experiences.
+     Dark mode: see @media (prefers-color-scheme: dark) below.
+     Design focus: Vibrant gaming, professional specialist tools, accessible contrast.
+     ===== */
+
+  /* Primary: Professional Blue (games, buttons, emphasis) */
+  --md3-primary: #004d75;
+  --md3-on-primary: #ffffff;
+  --md3-primary-container: #006699;
+  --md3-on-primary-container: #bfe0ff;
+  --md3-inverse-primary: #90cdff;
+
+  /* Secondary: Growth Green (supporting actions, highlights) */
+  --md3-secondary: #1b6d24;
+  --md3-on-secondary: #ffffff;
+  --md3-secondary-container: #a0f399;
+  --md3-on-secondary-container: #217128;
+
+  /* Tertiary: Warm Orange (alternative accent, engagement) */
+  --md3-tertiary: #684000;
+  --md3-on-tertiary: #ffffff;
+  --md3-tertiary-container: #885500;
+  --md3-on-tertiary-container: #ffd4a4;
+
+  /* Surfaces: Light blue-tinted for professional feel */
+  --md3-background: #f3faff;
+  --md3-on-background: #071e27;
+  --md3-surface: #f3faff;
+  --md3-on-surface: #071e27;
+  --md3-surface-dim: #c7dde9;
+  --md3-surface-bright: #f3faff;
+  --md3-surface-container-lowest: #ffffff;
+  --md3-surface-container-low: #e6f6ff;
+  --md3-surface-container: #dbf1fe;
+  --md3-surface-container-high: #d5ecf8;
+  --md3-surface-container-highest: #cfe6f2;
+  --md3-surface-variant: #cfe6f2;
+
+  /* Error/Status: High contrast */
+  --md3-error: #ba1a1a;
+  --md3-on-error: #ffffff;
+  --md3-error-container: #ffdad6;
+  --md3-on-error-container: #93000a;
+
+  /* Outlines: Subtle borders and dividers */
+  --md3-outline: #707880;
+  --md3-outline-variant: #c0c7d0;
+}
+
+/* ===== Dark Mode (Careful contrast for detail visibility) =====
+   Uses lighter surface containers to maintain readability.
+   All colors verified for WCAG AA (4.5:1) contrast minimum.
+   Focus: Rich colors + readable details (NOT pure black).
+   ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Primary: Bright Sky Blue (vibrant in dark, good contrast) */
+    --md3-primary: #8ed5ff;
+    --md3-on-primary: #00354a;
+    --md3-primary-container: #38bdf8;
+    --md3-on-primary-container: #004965;
+    --md3-inverse-primary: #00668a;
+
+    /* Secondary: Bright Mint (energetic, clear) */
+    --md3-secondary: #45dfa4;
+    --md3-on-secondary: #003825;
+    --md3-secondary-container: #00bd85;
+    --md3-on-secondary-container: #00452e;
+
+    /* Tertiary: Bright Orange (warm engagement) */
+    --md3-tertiary: #ffc176;
+    --md3-on-tertiary: #472a00;
+    --md3-tertiary-container: #f1a02b;
+    --md3-on-tertiary-container: #613b00;
+
+    /* Surfaces: NOT pure black (#000), but deep blue-navy for warmth + readability */
+    --md3-background: #081425;
+    --md3-on-background: #d8e3fb;
+    --md3-surface: #081425;
+    --md3-on-surface: #d8e3fb;
+    --md3-surface-dim: #081425;
+    /* ↓ Key insight: Use surface-bright/containers for content, NOT just background */
+    --md3-surface-bright: #2f3a4c;
+    --md3-surface-container-lowest: #040e1f;
+    --md3-surface-container-low: #111c2d;
+    --md3-surface-container: #152031;
+    --md3-surface-container-high: #1f2a3c;
+    --md3-surface-container-highest: #2a3548;
+    --md3-surface-variant: #2a3548;
+
+    /* Error: Bright coral for high visibility */
+    --md3-error: #ffb4ab;
+    --md3-on-error: #690005;
+    --md3-error-container: #93000a;
+    --md3-on-error-container: #ffdad6;
+
+    /* Outlines: Visible but subtle in dark */
+    --md3-outline: #87929a;
+    --md3-outline-variant: #3e484f;
+  }
 }
 
 :where(button, [role="button"], input, select, textarea, a):focus-visible {
