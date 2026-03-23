@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Game Shell — Dark Mode Theme (Material Design 3)
+   ═══════════════════════════════════════════════════════════════════════════════
+
+   Enhances games with vibrant dark mode colors while maintaining playfulness.
+   Uses MD3 tokens for professional appearance with excellent readability.
+*/
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Override game theme colors for dark mode with vibrant MD3 */
+    --cg-primary: var(--md3-primary);
+    --cg-primary-2: var(--md3-primary-container);
+    --cg-secondary: var(--md3-secondary);
+    --cg-accent: var(--md3-tertiary);
+    --cg-surface: var(--md3-surface-container);
+    --cg-surface-strong: var(--md3-surface-container-high);
+    --cg-border-subtle: var(--md3-outline-variant);
+    --cg-border-strong: var(--md3-outline);
+    --cg-reading-ink: var(--md3-on-surface);
+    --cg-reading-muted: var(--md3-outline);
+  }
+
+  body.game-platform-page,
+  body.my-activities-page {
+    background: linear-gradient(160deg, var(--md3-surface) 0%, var(--md3-surface-container) 100%);
+    color: var(--md3-on-surface);
+  }
+
+  .cg-shell {
+    background: var(--md3-surface-container-high);
+  }
+
+  .cg-main-card,
+  .cg-rail-card {
+    background: var(--md3-surface-container);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  .cg-stage-shell,
+  .game-viewport {
+    background: var(--md3-surface-dim);
+    border-color: var(--md3-outline-variant);
+  }
+
+  .cg-brand-mark {
+    background: linear-gradient(135deg, var(--md3-primary), var(--md3-primary-container));
+    box-shadow: 0 18px 34px rgba(141, 213, 255, 0.16);
+  }
+
+  .cg-theme-toggle {
+    background:
+      linear-gradient(180deg, var(--md3-surface-container-high) 96%, var(--md3-surface-container) 100%);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  .cg-btn-primary {
+    background: var(--md3-primary);
+    color: var(--md3-on-primary);
+  }
+
+  .cg-btn-primary:hover {
+    background: var(--md3-primary-container);
+    color: var(--md3-on-primary-container);
+  }
+
+  .cg-btn-secondary {
+    background: var(--md3-secondary);
+    color: var(--md3-on-secondary);
+  }
+
+  .cg-btn-secondary:hover {
+    background: var(--md3-secondary-container);
+    color: var(--md3-on-secondary-container);
+  }
+
+  .cg-status-success {
+    background: var(--md3-secondary);
+    color: var(--md3-on-secondary);
+  }
+
+  .cg-status-error {
+    background: var(--md3-error);
+    color: var(--md3-on-error);
+  }
+
+  .cg-status-warning {
+    background: var(--md3-tertiary);
+    color: var(--md3-on-tertiary);
+  }
+
+  /* Card interactions */
+  .cg-card {
+    background: var(--md3-surface-container);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  .cg-card:hover {
+    background: var(--md3-surface-container-high);
+    border-color: var(--md3-primary);
+  }
+
+  /* Text elements */
+  .cg-heading,
+  .cg-title,
+  .cg-label {
+    color: var(--md3-on-surface);
+  }
+
+  .cg-text-muted,
+  .cg-caption {
+    color: var(--md3-outline);
+  }
+
+  /* Inputs and forms */
+  .cg-input,
+  .cg-select,
+  .cg-textarea {
+    background: var(--md3-surface-container-lowest);
+    border-color: var(--md3-outline-variant);
+    color: var(--md3-on-surface);
+  }
+
+  .cg-input:focus,
+  .cg-select:focus,
+  .cg-textarea:focus {
+    border-color: var(--md3-primary);
+    outline-color: var(--md3-primary);
+  }
+
+  /* Game board/stage */
+  .game-board,
+  .game-stage {
+    background: var(--md3-surface);
+  }
+
+  /* Focus rings */
+  .cg-btn-primary:focus-visible,
+  .cg-btn-secondary:focus-visible,
+  .cg-card:focus-visible {
+    outline: 2px solid var(--md3-primary);
+    outline-offset: 2px;
+  }
+}
