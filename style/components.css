@@ -9778,9 +9778,44 @@ button, input, select, textarea {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   100% {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 12px 32px rgba(132, 66, 44, 0.16),
+               inset 0 0 8px rgba(255, 255, 255, 0.12);
   }
+}
+
+/* Enhanced button hover glow for premium feel */
+@keyframes buttonGlow {
+  0% {
+    box-shadow: 0 4px 12px rgba(132, 66, 44, 0.1),
+               inset 0 0 0 rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 12px 32px rgba(132, 66, 44, 0.18),
+               inset 0 0 12px rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* Success state celebratory pulse */
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+  }
+  100% {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+  }
+}
+
+/* Error state feedback shake */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
 }
 
 /* Keyboard key press effect */
@@ -9862,6 +9897,75 @@ select:focus,
 textarea:focus,
 button:focus {
   animation: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POLISHED FORM CONTROLS (STITCH-LEVEL)
+   ═══════════════════════════════════════════════════════════ */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+select,
+textarea {
+  min-height: 44px;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border-subtle-line);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body);
+  font-family: inherit;
+  background-color: rgba(255, 255, 255, 0.94);
+  color: var(--text-strong);
+  transition: border-color 220ms var(--motion-ease),
+              box-shadow 220ms var(--motion-ease),
+              background-color 220ms var(--motion-ease);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+  background-color: white;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: rgba(48, 38, 20, 0.04);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Checkbox and radio polish */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--accent);
+  transition: transform 160ms var(--motion-ease);
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+  transform: scale(1.1);
+}
+
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Pulse animation for important notifications */
@@ -9949,7 +10053,20 @@ p, span, li {
   }
   100% {
     transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(44, 31, 20, 0.16);
+    border-color: color-mix(in oklab, var(--accent) 18%, transparent);
+  }
+}
+
+/* Premium card elevation on hover */
+@keyframes cardElevated {
+  0% {
+    transform: translateY(0);
     box-shadow: var(--shadow-medium);
+  }
+  100% {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(44, 31, 20, 0.18);
   }
 }
 
@@ -9960,14 +10077,33 @@ a,
 .card,
 .tile,
 .choice {
-  transition: all 0.18s var(--ease-spring);
+  transition: transform 220ms var(--motion-ease),
+              box-shadow 220ms var(--motion-ease),
+              background-color 220ms var(--motion-ease),
+              border-color 220ms var(--motion-ease),
+              filter 220ms var(--motion-ease);
 }
 
 button:not(:disabled):hover,
 a:hover,
 [role="button"]:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
+  transform: translateY(-3px);
+  filter: brightness(1.06);
+}
+
+.card:hover,
+.tile:hover {
+  animation: cardHoverLift 220ms var(--motion-ease) forwards;
+}
+
+/* Enhanced focus ring for all interactive elements */
+.card:focus-visible,
+.tile:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-md);
 }
 
 /* ==========================================
