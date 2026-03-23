@@ -95,16 +95,7 @@
 
   function scopes() {
     var c = cfg();
-    var defaultScopes = [
-      "https://www.googleapis.com/auth/classroom.courses.readonly",
-      "https://www.googleapis.com/auth/classroom.rosters.readonly",
-      "https://www.googleapis.com/auth/calendar.events.readonly",
-      "https://www.googleapis.com/auth/drive.file",
-      "https://www.googleapis.com/auth/documents",
-      "https://www.googleapis.com/auth/spreadsheets",
-      "https://www.googleapis.com/auth/presentations",
-      "https://www.googleapis.com/auth/youtube.readonly"
-    ];
+    var defaultScopes = [];
     var combined = defaultScopes.concat(normalizeScopeList(c && c.scopes));
     var seen = {};
     return combined.filter(function (scope) {
