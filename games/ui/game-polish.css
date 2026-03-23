@@ -1,0 +1,224 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Game Platform — Stitch-Level Polish (Material Design 3)
+   ═══════════════════════════════════════════════════════════════════════════════
+
+   Design focus:
+   - Premium button states with smooth transitions
+   - Enhanced card elevation and hover feedback
+   - Polished focus indicators for accessibility
+   - Consistent spacing and visual hierarchy
+   - All dark mode support included
+*/
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PRIMARY BUTTON POLISH (Game Platform & Gallery)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Enhanced primary buttons across all games */
+.cg-btn-primary,
+button[class*="btn"][class*="primary"],
+[role="button"].cg-btn-primary {
+  transition: transform 220ms var(--motion-ease),
+              box-shadow 220ms var(--motion-ease),
+              background-color 220ms var(--motion-ease),
+              border-color 220ms var(--motion-ease);
+  position: relative;
+  min-height: 44px;
+  padding: 10px 20px;
+}
+
+.cg-btn-primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(132, 66, 44, 0.18),
+             inset 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+.cg-btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(132, 66, 44, 0.12);
+}
+
+.cg-btn-primary:focus-visible {
+  outline: 2px solid var(--md3-primary);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GAME CARD POLISH (Gallery & Course Selection)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.cg-main-card,
+.cg-rail-card,
+.game-card {
+  transition: transform 220ms var(--motion-ease),
+              box-shadow 220ms var(--motion-ease),
+              border-color 220ms var(--motion-ease),
+              background-color 220ms var(--motion-ease);
+  border-radius: 18px;
+}
+
+.cg-main-card:hover,
+.cg-rail-card:hover,
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(44, 31, 20, 0.14);
+}
+
+.cg-main-card:focus-visible,
+.cg-rail-card:focus-visible,
+.game-card:focus-visible {
+  outline: 2px solid var(--md3-primary);
+  outline-offset: 4px;
+  border-radius: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GAME BOARD & STAGE POLISH
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.cg-stage-shell,
+.game-viewport,
+#game-board {
+  transition: transform 320ms var(--motion-ease),
+              box-shadow 320ms var(--motion-ease);
+  border-radius: 20px;
+}
+
+/* Stage elevation enhancement */
+.cg-stage-shell {
+  box-shadow: 0 24px 48px rgba(44, 31, 20, 0.12),
+             inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GAME TILES & INTERACTIVE ELEMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.tile,
+[data-cell],
+.game-piece,
+.choice {
+  transition: transform 160ms var(--motion-ease),
+              box-shadow 160ms var(--motion-ease),
+              background-color 160ms var(--motion-ease),
+              border-color 160ms var(--motion-ease);
+}
+
+.tile:hover,
+[data-cell]:hover,
+.game-piece:hover,
+.choice:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(44, 31, 20, 0.12);
+}
+
+.tile:focus-visible,
+[data-cell]:focus-visible,
+.game-piece:focus-visible,
+.choice:focus-visible {
+  outline: 2px solid var(--md3-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SCORE & STATUS DISPLAY POLISH
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.cg-status-success,
+.cg-status-error,
+.cg-status-warning,
+.score-card,
+.star-display,
+.points-display {
+  transition: transform 160ms var(--motion-ease),
+              box-shadow 160ms var(--motion-ease);
+  border-radius: 14px;
+}
+
+/* Success celebration feedback */
+.cg-status-success {
+  animation: successPulse 600ms var(--motion-ease) 1;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+  }
+}
+
+/* Error feedback shake */
+.cg-status-error {
+  animation: errorShake 400ms var(--motion-ease) 1;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   KEYBOARD & INPUT POLISH (Typing Quest)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.key,
+.keyboard-button,
+[data-key] {
+  transition: transform 160ms var(--motion-ease),
+              box-shadow 160ms var(--motion-ease),
+              background-color 160ms var(--motion-ease);
+  min-height: 40px;
+  border-radius: 8px;
+}
+
+.key:hover,
+.keyboard-button:hover,
+[data-key]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(44, 31, 20, 0.1);
+}
+
+.key:focus-visible,
+.keyboard-button:focus-visible,
+[data-key]:focus-visible {
+  outline: 2px solid var(--md3-primary);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DARK MODE ENHANCEMENTS (Applied Automatically)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-color-scheme: dark) {
+  .cg-main-card:hover,
+  .cg-rail-card:hover,
+  .game-card:hover {
+    box-shadow: 0 16px 40px rgba(141, 213, 255, 0.12);
+  }
+
+  .cg-stage-shell {
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24),
+               inset 0 1px 0 rgba(141, 213, 255, 0.08);
+  }
+
+  .tile:hover,
+  [data-cell]:hover,
+  .game-piece:hover,
+  .choice:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .cg-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 12px 32px rgba(141, 213, 255, 0.16),
+               inset 0 0 12px rgba(255, 255, 255, 0.08);
+  }
+}

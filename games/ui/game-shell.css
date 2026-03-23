@@ -27,6 +27,7 @@
 @import url('./game-theme-overrides.css');
 @import url('./game-responsive.css');
 @import url('./game-dark-mode.css');
+@import url('./game-polish.css');
 
 
 .cg-rail-card,
