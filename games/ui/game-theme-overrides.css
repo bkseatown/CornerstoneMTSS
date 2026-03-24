@@ -331,14 +331,22 @@ body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker {
   left: auto !important;
   bottom: auto !important;
   width: auto !important;
-  max-width: 212px !important;
+  max-width: 100% !important;
+  max-width: min(212px, calc(100vw - 40px)) !important;
   padding: 5px 7px !important;
   gap: 4px !important;
   justify-content: flex-start !important;
-  overflow-x: visible !important;
+  overflow-x: auto !important;
   overflow-y: hidden !important;
   border-radius: 18px !important;
   scrollbar-width: none !important;
+}
+
+/* Hide swatches on small viewports to save space */
+@media (max-width: 1200px) {
+  body.game-platform-page[data-shell-view="gallery"] .cg-theme-swatch:nth-child(n+3) {
+    display: none !important;
+  }
 }
 
 body.game-platform-page[data-shell-view="gallery"] #cg-theme-picker::-webkit-scrollbar {
