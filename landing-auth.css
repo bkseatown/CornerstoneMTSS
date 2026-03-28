@@ -3,17 +3,19 @@
  */
 
 body.cs-home-page--gateway {
-  min-height: 100vh;
+  height: 100vh;
   margin: 0;
+  overflow: hidden;
 }
 
 .landing-gateway {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-rows: 1fr auto auto;
   gap: var(--space-5);
   align-items: center;
   padding: clamp(24px, 4vw, 48px);
+  box-sizing: border-box;
   background:
     radial-gradient(circle at top left, rgba(132, 66, 44, 0.12), transparent 28%),
     radial-gradient(circle at top right, rgba(57, 101, 105, 0.12), transparent 24%),
@@ -39,7 +41,7 @@ body.cs-home-page--gateway {
   margin: 0;
   max-width: 12ch;
   color: var(--text-strong);
-  font-size: clamp(2.6rem, 4vw, 4.4rem);
+  font-size: var(--fs-h1);
   line-height: 1.04;
 }
 
@@ -47,22 +49,22 @@ body.cs-home-page--gateway {
   margin: 0;
   max-width: 58ch;
   color: var(--text-secondary);
-  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  font-size: var(--fs-base);
   line-height: 1.6;
 }
 
 .landing-gateway__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--space-1);
 }
 
 .landing-gateway__chips span {
   display: inline-flex;
   align-items: center;
-  padding: 8px 14px;
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-round);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--overlay-white-80);
   border: 1px solid var(--border-strong);
   color: var(--text-secondary);
   font-size: var(--fs-sm);
@@ -84,7 +86,7 @@ body.cs-home-page--gateway {
 
 .landing-auth__content {
   display: grid;
-  gap: 14px;
+  gap: var(--space-2);
 }
 
 .landing-auth__content h2 {
@@ -121,7 +123,7 @@ body.cs-home-page--gateway {
   min-height: 48px;
   padding: 0 22px;
   background: var(--btn-gradient-primary);
-  color: #fff;
+  color: var(--white);
   font-weight: var(--fw-semibold);
   box-shadow: var(--shadow-soft);
 }
@@ -136,8 +138,8 @@ body.cs-home-page--gateway {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding-top: 8px;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
 }
 
 .landing-utility__left,
@@ -145,7 +147,7 @@ body.cs-home-page--gateway {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-2);
 }
 
 .landing-utility__meta {
@@ -156,7 +158,7 @@ body.cs-home-page--gateway {
 .landing-utility__button {
   min-height: 40px;
   padding: 0 16px;
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--overlay-white-82);
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
   font-weight: var(--fw-medium);
@@ -164,7 +166,7 @@ body.cs-home-page--gateway {
 
 .landing-build {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 @media (max-width: 840px) {
@@ -180,16 +182,16 @@ body.cs-home-page--gateway {
 
 @media (max-width: 560px) {
   .landing-gateway {
-    padding: 20px;
-    gap: 20px;
+    padding: var(--space-3);
+    gap: var(--space-3);
   }
 
   .landing-gateway__chips {
-    gap: 8px;
+    gap: var(--space-1);
   }
 
   .landing-gateway__chips span {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .landing-auth__primary {
