@@ -67,12 +67,29 @@ jobs:
     if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Open freshness alert issue
+      - name: Open freshness alert issue (deduplicated)
         uses: actions/github-script@v7
         with:
           script: |
-            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+            // One open issue per calendar day — no hourly spam
             const title = `Pages freshness alert (${new Date().toISOString().slice(0,10)})`;
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              labels: 'bug',
+              per_page: 100
+            });
+            const duplicate = openIssues.find(i => i.title === title);
+            if (duplicate) {
+              core.info(`Freshness alert already open: #${duplicate.number} — skipping duplicate.`);
+              return;
+            }
+
             const body = [
               'Scheduled Pages freshness check failed.',
               '',
@@ -84,10 +101,4 @@ jobs:
               '- teacher-dashboard script markers',
               '- /CornerstoneMTSS/style/tokens.css content-type'
             ].join('\n');
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title,
-              body,
-              labels: ['bug']
-            });
+            await github.rest.issues.create({ owner, repo, title, body, labels: ['bug'] });

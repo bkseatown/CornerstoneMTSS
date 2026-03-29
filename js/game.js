@@ -172,7 +172,20 @@ const WQGame = (() => {
     }
     let word = fixedWord || '';
     if (word && !/^[a-z]{2,12}$/.test(word)) word = '';
-    if (!word) word = _pickWord(pool, scope);
+    if (!word) {
+      // Prefer adaptive selector when no teacher pool / phonics / length filter is active
+      const useSelector = !teacherPool.length
+        && (phonics === 'all' || !phonics)
+        && (lengthPref === 'any' || !lengthPref)
+        && typeof WQSelector !== 'undefined'
+        && WQSelector.getRandomWord;
+      if (useSelector) {
+        const proficiency = opts.proficiency || 3;
+        const gradeNum = { 'K-2': 1, 'G3-5': 4, 'G6-8': 7, 'G9-12': 10 }[gradeBand] || 3;
+        word = WQSelector.getRandomWord({ grade: gradeNum, proficiency }) || '';
+      }
+      if (!word) word = _pickWord(pool, scope);
+    }
 
     if (!word) {
       console.error('[WQGame] Could not pick a word');
@@ -185,6 +198,7 @@ const WQGame = (() => {
       return false;
     }
 
+    console.log('Word Engine Active', word);
     currentWord  = word;
     currentEntry = WQData.getEntry(word);
     currentGuess = '';

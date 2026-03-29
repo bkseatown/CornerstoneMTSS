@@ -321,6 +321,11 @@
 
   function syncWord() {
     var word = getWordFromChip();
+    if (!word && typeof WQSelector !== 'undefined' && WQSelector.getRandomWord) {
+      word = WQSelector.selectWords({ preferDecodable: true, limit: 1 })
+        .map(function (e) { return e.word; })[0] || '';
+      if (word) console.log('Word Engine Active', word);
+    }
     if (!word) return;
     var wordLabel = byId('wq-hw-word');
     var ghost = byId('wq-hw-ghost');

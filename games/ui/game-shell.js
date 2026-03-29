@@ -861,6 +861,10 @@
       var nextSetIndex = (Number(wordClueRoundMemory.altSetByTarget[targetKey]) || 0) % allSets.length;
       wordClueRoundMemory.altSetByTarget[targetKey] = nextSetIndex + 1;
       var blocked = (allSets[nextSetIndex] || []).slice(0, Math.max(2, difficultyCount));
+      // Fallback: if deck has no taboo words, ask the adaptive engine
+      if (!blocked.length && typeof WQSelector !== 'undefined' && WQSelector.generateTabooList) {
+        blocked = WQSelector.generateTabooList(String(picked.target_word || "").toLowerCase());
+      }
       wordClueRoundMemory.lastTarget = String(picked.target_word || "");
       var previewTargets = filtered
         .filter(function (card) { return String(card.id) !== String(picked.id); })
