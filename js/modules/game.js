@@ -10,6 +10,7 @@ import WQSelector from './wordEngine/selector.js';
 
 const BAG_KEY = 'wq_v2_shuffle_bag';
 const PROGRESS_KEY = 'wq_v2_progress';
+const STUDENT_PROFICIENCY_KEY = 'wq_v2_student_proficiency_v1';
 
 let currentWord    = '';
 let currentEntry   = null;
@@ -56,6 +57,15 @@ function _pickWord(pool, scope) {
   const next = queue.pop();
   _writeBag(scope, { queue, last: next });
   return next;
+}
+
+function _getStudentProficiency(studentId) {
+  if (!studentId) return null;
+  try {
+    const stored = JSON.parse(localStorage.getItem(STUDENT_PROFICIENCY_KEY) || '{}');
+    const val = stored[studentId];
+    return (val !== undefined && val !== null) ? Number(val) : null;
+  } catch { return null; }
 }
 
 function _getTeacherPool() {
@@ -146,7 +156,10 @@ export function startGame(opts = {}) {
       && (phonics === 'all' || !phonics)
       && (lengthPref === 'any' || !lengthPref);
     if (useSelector) {
-      const proficiency = opts.proficiency || 3;
+      const studentId = opts.studentId || '';
+      const proficiency = opts.proficiency
+        || _getStudentProficiency(studentId)
+        || 3;
       const gradeNum = { 'K-2': 1, 'G3-5': 4, 'G6-8': 7, 'G9-12': 10 }[gradeBand] || 3;
       word = WQSelector.getRandomWord({ grade: gradeNum, proficiency }) || '';
     }
