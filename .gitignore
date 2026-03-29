@@ -47,3 +47,7 @@ Music for CornerstoneMTSS/
 artifacts/
 test-results/
 coverage/
+
+# Vite
+.vite/
+js/dist/

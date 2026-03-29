@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build ES modules
+        run: npm run build:modules
+
       - name: Run guardrails checks
         run: |
           echo "🔍 Running freshness-safe release checks..."
@@ -61,6 +64,7 @@ jobs:
                     --exclude='.github' \
                     --exclude='node_modules' \
                     --exclude='dist' \
+                    --exclude='.vite' \
                     --exclude='*.log' \
                     ./ dist/
           node scripts/stamp-build-version.js dist "${GITHUB_SHA::12}-${GITHUB_RUN_NUMBER}"
@@ -78,6 +82,7 @@ jobs:
           test -f dist/style/tokens.css || { echo "Missing dist/style/tokens.css"; exit 1; }
           test -f dist/sw-runtime.js || { echo "Missing dist/sw-runtime.js"; exit 1; }
           test -f dist/build.json || { echo "Missing dist/build.json"; exit 1; }
+          test -f dist/js/dist/wq-modules.js || { echo "Missing dist/js/dist/wq-modules.js"; exit 1; }
           test -f dist/data/ava-persona.json || { echo "Missing dist/data/ava-persona.json"; exit 1; }
           test -f dist/data/ava-event-matrix.json || { echo "Missing dist/data/ava-event-matrix.json"; exit 1; }
           test -f dist/audio/ava/current/manifest.json || { echo "Missing dist/audio/ava/current/manifest.json"; exit 1; }
